@@ -17,3 +17,73 @@ NextMedal is the ultimate choice for developers, agencies, and businesses who de
 - [x] 🏗️ **Dynamic Site Architecture**: Pre-configured dynamic routing and modular components for effortless customization.
 - [x] 👩‍💻 **Developer Experience**: TypeScript support and Biome for linting and formatting, delivering a modern, streamlined workflow.
 
+## Getting Started 🚀
+
+### Prerequisites
+
+- Node.js 18+ (LTS recommended)
+- npm or pnpm
+- Git
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/Medal-Social/NextMedal.git
+cd NextMedal
+```
+
+2. Install dependencies:
+```bash
+pnpm install
+```
+
+3. Set up environment variables:
+```bash
+cp .env.example .env.local
+```
+Edit `.env.local` with your Sanity project credentials:
+```
+NEXT_PUBLIC_SANITY_PROJECT_ID=your-project-id
+NEXT_PUBLIC_SANITY_DATASET=production
+SANITY_API_TOKEN=your-api-token
+```
+
+### Development
+
+1. Start the development server:
+```bash
+pnpm dev
+```
+Your site will be available at `http://localhost:3000`
+
+2. Launch Sanity Studio:
+```bash
+pnpm sanity:dev
+```
+Access the Studio at `http://localhost:3000/admin`
+
+### Build and Deploy
+
+1. Build for production:
+```bash
+pnpm build
+```
+
+2. Preview the production build:
+```bash
+pnpm start
+```
+
+### Customization
+
+1. Modify theme settings in `styles/theme.ts`
+2. Update Sanity schema in `sanity/schemas/`
+3. Customize components in `components/`
+
+### Deployment
+
+Deploy to Vercel with one click:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FMedal-Social%2FNextMedal.git)
+
