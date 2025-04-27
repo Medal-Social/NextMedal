@@ -21,9 +21,10 @@ NextMedal is the ultimate choice for developers, agencies, and businesses who de
 
 ### Prerequisites
 
-- Node.js 18+ (LTS recommended)
-- npm or pnpm
+- Node.js 22+ (LTS recommended)
+- pnpm
 - Git
+- Sanity account (free tier)
 
 ### Installation
 
@@ -101,7 +102,7 @@ NextMedal is crafted by Medal Social, a marketing powerhouse that knows how to e
 
 ## License
 
-NextMedal is licensed under the MIT License.
+NextMedal is licensed under the Apache License 2.0.
 
 ---
 
