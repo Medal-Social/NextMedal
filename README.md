@@ -8,27 +8,12 @@ NextMedal is the ultimate choice for developers, agencies, and businesses who de
 
 ## Key Features ✨
 
-### 🎨 Gorgeous Design
-The prettiest template available, with pixel-perfect UI, smooth animations, and customizable themes featuring seamless light/dark mode switching.
-
-### ⚡️ Unrivaled Performance
-Harnesses Next.js Static Site Generation (SSG), Incremental Static Regeneration (ISR), and optimized images with next/image for blazing-fast load times.
-
-### 🚀 Cutting-Edge Tech
-Built on the latest Next.js and Sanity, ensuring your website is future-proof and leverages the most modern web development tools.
-
-### 🔍 Advanced SEO Tools
-Auto-generated sitemap.xml, robots.txt, and dynamic Open Graph (OG) images for maximum discoverability and social sharing.
-
-### 📝 Sanity-Powered CMS
-Intuitive, real-time content management with Sanity's headless CMS and customizable schemas.
-
-### ♿️ Accessibility Compliance
-Adheres to WCAG 2.1 standards, making your site inclusive for all users.
-
-### 🏗️ Dynamic Site Architecture
-Pre-configured dynamic routing and modular components for effortless customization.
-
-### 👩‍💻 Developer Experience
-TypeScript support and Biome for linting and formatting, delivering a modern, streamlined workflow.
+- [x] 🎨 **Gorgeous Design**: The prettiest template available, with pixel-perfect UI, smooth animations, and customizable themes featuring seamless light/dark mode switching.
+- [x] ⚡️ **Unrivaled Performance**: Harnesses Next.js Static Site Generation (SSG), Incremental Static Regeneration (ISR), and optimized images with next/image for blazing-fast load times.
+- [x] 🚀 **Cutting-Edge Tech**: Built on the latest Next.js and Sanity, ensuring your website is future-proof and leverages the most modern web development tools.
+- [x] 🔍 **Advanced SEO Tools**: Auto-generated sitemap.xml, robots.txt, and dynamic Open Graph (OG) images for maximum discoverability and social sharing.
+- [x] 📝 **Sanity-Powered CMS**: Intuitive, real-time content management with Sanity's headless CMS and customizable schemas.
+- [x] ♿️ **Accessibility Compliance**: Adheres to WCAG 2.1 standards, making your site inclusive for all users.
+- [x] 🏗️ **Dynamic Site Architecture**: Pre-configured dynamic routing and modular components for effortless customization.
+- [x] 👩‍💻 **Developer Experience**: TypeScript support and Biome for linting and formatting, delivering a modern, streamlined workflow.
 
