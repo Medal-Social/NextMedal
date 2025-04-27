@@ -87,3 +87,24 @@ Deploy to Vercel with one click:
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FMedal-Social%2FNextMedal.git)
 
+## Why Medal Social? 🏆
+
+NextMedal is crafted by Medal Social, a marketing powerhouse that knows how to elevate brands. While the core template is the most superior and stunning out of the box, you can take your website to the next level with Medal Social's premium marketing integrations, including:
+
+- [x] 📧 **Newsletters**: Engage your audience with beautiful, conversion-optimized email campaigns
+- [x] 📊 **Analytics**: Deep insights into your website's performance and user behavior
+- [x] 🌐 **Social media management**: Seamless integration with all major platforms
+- [x] 📅 **Events**: Built-in event management and ticketing system
+- [x] 📝 **Changelogs**: Keep users informed about your latest updates and features
+- [x] 💡 **Help pages**: Comprehensive documentation and support system
+- [x] ✨ **And much more!**: Custom integrations tailored to your needs
+
+## License
+
+NextMedal is licensed under the MIT License.
+
+---
+
+Built with ❤️ by [Medal Social](https://medalsocial.com) in Norway
+
+
