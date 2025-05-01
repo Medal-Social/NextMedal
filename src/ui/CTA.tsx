@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import resolveUrl from '@/lib/resolveUrl';
+import { validateExternalUrl } from '@/lib/validateExternalUrl';
 import { stegaClean } from 'next-sanity';
 import Link from 'next/link';
 import type { ComponentProps } from 'react';
@@ -114,9 +115,21 @@ export default function CTA(props: CTAProps) {
 
   // For external links
   if (linkType === 'external' && externalLink) {
+    const cleanUrl = stegaClean(externalLink);
+    const validatedUrl = validateExternalUrl(cleanUrl);
+    
+    if (!validatedUrl) {
+      console.warn(`Invalid external URL detected and blocked: ${cleanUrl}`);
+      return (
+        <Button variant={variant} className={buttonClassName} size={size || 'default'} disabled>
+          {buttonContent}
+        </Button>
+      );
+    }
+
     return (
       <Button variant={variant} className={buttonClassName} size={size || 'default'} asChild>
-        <Link href={stegaClean(externalLink)} {...linkProps} {...rest}>
+        <Link href={validatedUrl} {...linkProps} {...rest}>
           {buttonContent}
         </Link>
       </Button>
