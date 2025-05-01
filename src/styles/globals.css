@@ -464,6 +464,17 @@
   @apply mx-auto max-w-screen-xl pb-8 pt-8 px-8 max-md:px-4 md:pt-12;
 }
 
+@utility header-grid {
+  grid-template:
+    "logo toggle-area" auto
+    "nav nav" auto
+    "ctas ctas" auto / 1fr auto;
+
+  @media (width >= 64rem) {
+    grid-template: "logo nav ctas toggle-area" auto / auto 1fr auto auto;
+  }
+}
+
 /* richtext */
 @utility newsletter {
   /* Base typography */

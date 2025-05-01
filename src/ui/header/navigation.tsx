@@ -36,13 +36,13 @@ interface Category {
 interface Link {
   label: string;
   description?: string;
-  icon?: string;
+  icon?: Sanity.Icon;
   internal?: InternalLink;
   external?: string;
   params?: string;
 }
 
-interface MenuItem {
+export interface MenuItem {
   _type: 'link' | 'link.categories' | 'link.list';
   label?: string;
   title?: string;
