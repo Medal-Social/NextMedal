@@ -3,12 +3,12 @@ import { getSite } from '@/sanity/lib/fetch';
 import CTAList from '@/ui/CTAList';
 import { Img } from '@/ui/Img';
 import Link from 'next/link';
-import css from './Header.module.css';
 import ThemeToggleWrapper from './ThemeToggleWrapper';
 import Toggle from './Toggle';
 import Wrapper from './Wrapper';
 import MobileNavigation from './mobile-navigation';
 import Navigation from './navigation';
+import type { MenuItem } from './navigation';
 
 export default async function Header() {
   const { title, logo, ctas, headerMenu } = await getSite();
@@ -23,7 +23,7 @@ export default async function Header() {
         role="banner"
         aria-label="Site header"
       >
-        <div className={cn(css.header, 'mx-auto grid max-w-screen-xl items-center gap-x-6 p-4')}>
+        <div className="header-grid mx-auto grid max-w-screen-xl items-center gap-x-6 p-4">
           <div className="[grid-area:logo]">
             <Link 
               className={cn('h4 lg:h3 inline-block', logo?.image && 'max-w-3xs')} 
@@ -83,7 +83,7 @@ export default async function Header() {
         className="lg:hidden header-closed:hidden"
         aria-label="Mobile navigation menu"
       >
-        <MobileNavigation menu={headerMenu} ctas={ctas} />
+        <MobileNavigation menu={{ items: headerMenu?.items }} ctas={ctas} />
       </div>
     </>
   );
