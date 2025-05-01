@@ -1,0 +1,26 @@
+/* Define font variables */
+:root {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* Base fonts */
+body {
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Headings */
+:where(h1, h2, h3, h4, h5, h6, [class^="h-"]) {
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Technical text (used in pretitles) */
+.technical {
+  font-family: var(--font-mono), monospace;
+}
+
+/* Code blocks */
+code,
+pre {
+  font-family: var(--font-mono), monospace;
+}
