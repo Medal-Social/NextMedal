@@ -1,5 +1,5 @@
 import { BsDatabaseAdd } from 'react-icons/bs';
-import {  VscFiles, VscServerProcess } from 'react-icons/vsc';
+import { VscFiles, VscServerProcess } from 'react-icons/vsc';
 import { structureTool } from 'sanity/structure';
 import { group, singleton } from './lib/utils';
 export const structure = structureTool({
