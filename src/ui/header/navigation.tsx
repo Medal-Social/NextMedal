@@ -119,7 +119,6 @@ export default async function Navigation() {
                         >
                           <span 
                             className="font-medium text-base text-foreground mb-2"
-                            role="menuitem"
                           >
                             {category.title}
                           </span>
