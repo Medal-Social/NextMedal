@@ -56,7 +56,7 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<'span'>) {
       role="link"
       tabIndex={0}
       className={cn(
-        "text-sm font-medium text-muted-foreground transition-colors hover:text-foreground",
+        'text-sm font-medium text-muted-foreground transition-colors hover:text-foreground',
         className
       )}
       {...props}
