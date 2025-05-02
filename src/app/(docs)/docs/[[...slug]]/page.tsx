@@ -1,10 +1,5 @@
 import { source } from '@/lib/source';
-import {
-  DocsBody,
-  DocsDescription,
-  DocsPage,
-  DocsTitle,
-} from 'fumadocs-ui/page';
+import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/page';
 import { notFound } from 'next/navigation';
 import { getMDXComponents } from '@/mdx-components';
 
@@ -18,8 +13,8 @@ const Page = async (props: {
   const MDX = page.data.body;
 
   return (
-    <DocsPage 
-      toc={page.data.toc} 
+    <DocsPage
+      toc={page.data.toc}
       full={page.data.full}
       editOnGithub={{
         owner: 'Medal-Social',
@@ -29,9 +24,7 @@ const Page = async (props: {
       }}
     >
       <DocsTitle>{page.data.title}</DocsTitle>
-      {page.data.description && (
-        <DocsDescription>{page.data.description}</DocsDescription>
-      )}
+      {page.data.description && <DocsDescription>{page.data.description}</DocsDescription>}
       <DocsBody>
         <MDX components={getMDXComponents()} />
       </DocsBody>
@@ -56,4 +49,4 @@ export async function generateMetadata(props: {
   };
 }
 
-export default Page; 
+export default Page;
