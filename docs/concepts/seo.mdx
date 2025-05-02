@@ -1,0 +1,122 @@
+---
+title: SEO & Metadata
+description: How SEO and metadata are actually implemented in NextMedal
+---
+
+## SEO & Metadata
+
+Search Engine Optimization (SEO) is essential for making your site discoverable and attractive on search engines and social platforms. Great SEO means more visitors, better engagement, and a stronger online presence.
+
+### Features
+
+<Cards>
+  <Card icon="🤖" title="Robots.txt Support" href="/docs/features/robots-txt">
+    Pages marked as 'Hide from Search' are excluded from sitemaps and set to <code>noindex</code> for search engines.
+  </Card>
+  <Card icon="🖼️" title="Open Graph Image Generation" href="/docs/features/open-graph-image">
+    Automatic OG image generation for rich social sharing if no image is uploaded.
+  </Card>
+  <Card icon="🗺️" title="Automatic Sitemap" href="/docs/features/sitemap">
+    Sitemap includes all public pages and posts for better search engine discovery.
+  </Card>
+  <Card icon="🔗" title="Canonical URLs" href="/docs/features/canonical-urls">
+    Each page and post includes a canonical URL to prevent duplicate content issues.
+  </Card>
+  <Card icon="⚡" title="Dynamic Metadata" href="/docs/features/dynamic-metadata">
+    Customizable title, description, and social image fields managed in Sanity.
+  </Card>
+  <Card icon="♿" title="Accessibility" href="/docs/features/accessibility">
+    Semantic HTML, ARIA attributes, and keyboard navigation for better accessibility and SEO.
+  </Card>
+  <Card icon="🚀" title="Performance" href="/docs/features/performance">
+    Powered by Next.js 15 for fast page loads, image optimization, and efficient code splitting.
+  </Card>
+  <Card icon="📝" title="Blog & Multi-Page Support" href="/docs/features/blog-multi-page">
+    Supports blogs and complex multi-page structures out of the box.
+  </Card>
+  <Card icon="✅" title="Built for Google Best Practices" href="/docs/features/google-best-practices">
+    All components follow Google's SEO best practices.
+  </Card>
+  <Card icon="⭐" title="Best Practices by Default" href="/docs/features/best-practices">
+    Encourages descriptive titles, concise descriptions, and social images for every page.
+  </Card>
+</Cards>
+
+### NextMedal's Approach to SEO
+
+NextMedal uses a headless, schema-driven approach to SEO and metadata, powered by [Sanity Studio](https://www.sanity.io/studio) and [Next.js 15's metadata API](https://nextjs.org/docs/app/building-your-application/optimizing/metadata). This means you can manage all your SEO fields visually in Sanity Studio, while the template takes care of the technical details for you.
+
+### Why NextMedal is SEO-Optimized
+
+NextMedal includes a range of built-in features to help your site rank better and look great on search and social platforms:
+
+- **Dynamic Metadata:** Every page and post has customizable title, description, and social image fields, managed in [Sanity](https://www.sanity.io/).
+- **Open Graph Image Generation:** If you don't upload a social image, the site generates a dynamic OG image automatically for rich social sharing.
+- **Automatic Sitemap:** The site generates a sitemap including all public pages and posts, helping search engines discover your content. ([Sitemaps - Google Search Central](https://developers.google.com/search/docs/crawling-indexing/sitemaps/overview))
+- **Robots.txt Support:** Pages marked as "Hide from Search" are excluded from sitemaps and set to `noindex` for search engines. ([Robots.txt documentation](https://developers.google.com/search/docs/crawling-indexing/robots/intro))
+- **Canonical URLs:** Each page and post includes a canonical URL to prevent duplicate content issues. ([Canonical URLs - Google Search Central](https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls))
+- **Accessibility:** The template uses semantic HTML, ARIA attributes, and supports keyboard navigation for better accessibility and SEO. ([Web Accessibility Initiative](https://www.w3.org/WAI/fundamentals/accessibility-intro/))
+- **Performance:** [Next.js 15](https://nextjs.org/) powers fast page loads, image optimization, and efficient code splitting, all of which are SEO ranking factors. ([Core Web Vitals](https://web.dev/vitals/))
+- **Blog & Multi-Page Support:** NextMedal supports blogs and complex multi-page structures out of the box, so you can scale your content easily.
+- **Built for Google Best Practices:** All components are created with [Google's SEO best practices](https://developers.google.com/search/docs/fundamentals/seo-starter-guide) in mind, ensuring your site is search-friendly from the start.
+- **Best Practices by Default:** The template encourages descriptive titles, concise descriptions, and social images for every page.
+
+> **In short:** NextMedal is designed to give you excellent SEO out of the box, with all the technical details handled for you—just focus on your content!
+
+> All SEO fields are managed in Sanity and used by your site either instantly (if live fetching is enabled) or after the next build/revalidation (if using static generation or caching). When you update SEO content in Sanity, changes are reflected almost instantly if your site is configured for live content fetching, or after the next build/revalidation otherwise.
+
+### How to Edit SEO in NextMedal
+
+Managing SEO is easy and editor-friendly. Here's how you do it:
+
+<Steps>
+  <Step title="Open the Metadata Tab in Sanity Studio">
+    Navigate to your page or blog post in [Sanity Studio](https://www.sanity.io/studio) and click the <b>SEO & Metadata</b> tab.
+    <Files>
+      <File name="Sanity Studio - Metadata Tab" annotation="This is where you edit SEO fields for your content." />
+    </Files>
+    ![Placeholder: Sanity Studio Metadata Tab](https://placehold.co/600x300?text=Sanity+Studio+Metadata+Tab)
+  </Step>
+  <Step title="Fill Out the SEO Fields">
+    Enter a descriptive <b>Title</b>, a concise <b>Description</b>, and upload a <b>Social Image</b> for sharing. You can also set the <b>Slug</b> (URL path) and choose to hide the page from search engines.
+    <Accordions type="single">
+      <Accordion title="Title">
+        The main title for the page or post. Keep it under 60 characters for best SEO results.
+      </Accordion>
+      <Accordion title="Description">
+        A short summary for search engines and social sharing. Aim for 70–160 characters.
+      </Accordion>
+      <Accordion title="Slug">
+        The URL path for the page or post. Auto-generated from the title, but you can edit it.
+      </Accordion>
+      <Accordion title="Image">
+        The image used for social sharing (Open Graph). Recommended size: 1200x630px.
+      </Accordion>
+      <Accordion title="Hide from Search">
+        If checked, this page will not appear in search engines (noindex).
+      </Accordion>
+    </Accordions>
+    ![Placeholder: Sanity Studio SEO Fields](https://placehold.co/600x300?text=Sanity+Studio+SEO+Fields)
+  </Step>
+  <Step title="Publish Your Changes">
+    Click <b>Publish</b> in Sanity Studio. Your site's SEO metadata will update almost instantly if live fetching is enabled, or after the next build/revalidation if using static generation or caching.
+  </Step>
+</Steps>
+
+### How It Works (Under the Hood)
+
+- All SEO fields are stored in [Sanity](https://www.sanity.io/) and used by the site either instantly (if live fetching is enabled) or after the next build/revalidation (if using static generation or caching).
+- If you update SEO fields in Sanity, your site will reflect the changes almost instantly if live fetching is enabled, or after the next build/revalidation otherwise.
+- If you don't upload a social image, the site will generate a dynamic Open Graph image for sharing.
+- Pages marked as "Hide from Search" will not appear in sitemaps or search engines.
+
+### Best Practices
+
+- Use clear, descriptive titles and descriptions.
+- Always upload a social sharing image for best results.
+- Only hide a page from search if it should not be discoverable.
+
+<Files>
+  <File name="Sanity Studio - Metadata Tab" annotation="Where you edit SEO fields for each page/post." />
+  <File name="Sanity Studio - SEO Fields" annotation="Example of the SEO fields you can fill out." />
+</Files>
