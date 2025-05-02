@@ -25,15 +25,24 @@ export default function Image({
         <figcaption className="text-muted-foreground px-4 text-sm text-balance italic">
           {value.caption}
 
-          {value.source && (
-            <>
-              {' ('}
-              <a href={value.source} className="image-source link">
-                Source
-              </a>
-              {')'}
-            </>
-          )}
+          {value.source && (() => {
+            let isValid = false;
+            try {
+              const url = new URL(value.source);
+              isValid = url.protocol === 'http:' || url.protocol === 'https:';
+            } catch {
+              isValid = false;
+            }
+            return isValid ? (
+              <>
+                {' ('}
+                <a href={value.source} className="image-source link">
+                  Source
+                </a>
+                {')'}
+              </>
+            ) : null;
+          })()}
         </figcaption>
       )}
     </figure>
