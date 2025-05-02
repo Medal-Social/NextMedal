@@ -15,7 +15,7 @@ const baseOptions: BaseLayoutProps = {
   githubUrl: 'https://github.com/Medal-Social/NextMedal',
   nav: {
     title: 'NextMedal',
-  }
+  },
 };
 
 export default async function Layout({ children }: { children: ReactNode }) {
@@ -26,7 +26,11 @@ export default async function Layout({ children }: { children: ReactNode }) {
   };
 
   return (
-    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${GeistSans.variable} ${GeistMono.variable}`}
+      suppressHydrationWarning
+    >
       <body className="bg-background text-foreground font-sans flex flex-col min-h-screen">
         <ThemeProvider
           attribute="class"
@@ -40,11 +44,11 @@ export default async function Layout({ children }: { children: ReactNode }) {
               darkTheme={themeSettings.darkMode}
             />
             <main id="main-content" className="flex-1">
-              <DocsLayout 
-                tree={source.pageTree} 
+              <DocsLayout
+                tree={source.pageTree}
                 {...baseOptions}
                 containerProps={{
-                  className: "pt-8 mt-2",
+                  className: 'pt-8 mt-2',
                 }}
               >
                 {children}
@@ -55,4 +59,4 @@ export default async function Layout({ children }: { children: ReactNode }) {
       </body>
     </html>
   );
-} 
+}
