@@ -122,7 +122,7 @@ export default async function Navigation() {
                           >
                             {category.title}
                           </span>
-                          <ul className="space-y-2" role="menu">
+                          <ul className="space-y-2" role="group">
                             {category.links?.map((link, ix) => (
                               <NavigationMenuLink 
                                 asChild 
