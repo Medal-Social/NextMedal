@@ -14,6 +14,7 @@ import { getSite } from '@/sanity/lib/fetch';
 import { ExternalLink } from 'lucide-react';
 import { stegaClean } from 'next-sanity';
 import { NavLink } from './mobile-navigation';
+import type { Metadata } from '@/sanity/lib/types';
 
 interface InternalLink {
   _type: string;
@@ -21,7 +22,7 @@ interface InternalLink {
   slug?: {
     current: string;
   };
-  metadata: any;
+  metadata: Metadata;
   _id: string;
   _rev: string;
   _createdAt: string;
@@ -71,7 +72,7 @@ export default async function Navigation() {
                 <NavigationMenuItem key={key}>
                   <Link
                     href={
-                      item.internal
+                      item.internal && item.internal.metadata?.slug
                         ? resolveUrl(item.internal, {
                             base: false,
                             params: item.params,
