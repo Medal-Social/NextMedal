@@ -18,7 +18,6 @@ import { defineField, defineType } from 'sanity';
  */
 const metadataSchema = createMetadataSchema({
   required: true,
-  includeKeywords: false,
 });
 
 export default defineType({
