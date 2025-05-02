@@ -1,6 +1,6 @@
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
-import Date from '@/ui/Date';
+import DateDisplay from '@/ui/Date';
 import Content from '@/ui/modules/RichtextModule/Content';
 import TableOfContents from '@/ui/modules/RichtextModule/TableOfContents';
 import { Calendar } from 'lucide-react';
@@ -26,7 +26,7 @@ export default function PostContent({
         <div className="flex flex-wrap items-start justify-start gap-x-6 gap-y-2">
           <div className="flex items-center gap-x-2">
             <Calendar className="size-4" />
-            <Date value={post.publishDate} />
+            <DateDisplay value={post.publishDate} />
           </div>
 
           <ReadTime value={post.readTime} />
