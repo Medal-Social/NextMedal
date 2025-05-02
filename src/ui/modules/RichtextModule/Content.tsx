@@ -23,7 +23,7 @@ export default function Content({
           },
           types: {
             image: Image,
-            admonition: Admonition
+            admonition: Admonition,
           },
         }}
       />
