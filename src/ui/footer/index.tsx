@@ -45,7 +45,7 @@ export default async function Footer() {
           </Link>
 
           {tagline && (
-            <div 
+            <div
               className="max-w-sm text-sm text-muted-foreground text-balance mt-3"
               aria-label="Site tagline"
             >
@@ -58,10 +58,7 @@ export default async function Footer() {
       </div>
 
       <div className="section flex flex-wrap justify-between items-center py-2">
-        <div 
-          className="text-sm text-muted-foreground"
-          aria-label="Copyright information"
-        >
+        <div className="text-sm text-muted-foreground" aria-label="Copyright information">
           {copyright ? (
             <PortableText value={copyright} />
           ) : (
