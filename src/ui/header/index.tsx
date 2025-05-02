@@ -18,15 +18,15 @@ export default async function Header() {
 
   return (
     <>
-      <Wrapper 
-        className="bg-background max-lg:header-open:shadow-lg sticky top-0 z-50" 
+      <Wrapper
+        className="bg-background max-lg:header-open:shadow-lg sticky top-0 z-50"
         role="banner"
         aria-label="Site header"
       >
         <div className="header-grid mx-auto grid max-w-screen-xl items-center gap-x-6 p-4">
           <div className="[grid-area:logo]">
-            <Link 
-              className={cn('h4 lg:h3 inline-block', logo?.image && 'max-w-3xs')} 
+            <Link
+              className={cn('h4 lg:h3 inline-block', logo?.image && 'max-w-3xs')}
               href="/"
               aria-label={`Return to ${title} homepage`}
             >
@@ -53,21 +53,18 @@ export default async function Header() {
             </Link>
           </div>
 
-          <nav 
-            className="max-lg:hidden"
-            aria-label="Main navigation"
-          >
+          <nav className="max-lg:hidden" aria-label="Main navigation">
             <Navigation />
           </nav>
 
-          <div 
+          <div
             className="max-lg:hidden [grid-area:ctas] max-lg:*:w-full lg:ml-4"
             aria-label="Call to action buttons"
           >
             <CTAList ctas={ctas} />
           </div>
 
-          <div 
+          <div
             className="flex items-center gap-2 ml-auto [grid-area:toggle-area]"
             aria-label="Theme and menu controls"
           >
@@ -79,10 +76,7 @@ export default async function Header() {
         </div>
       </Wrapper>
 
-      <div 
-        className="lg:hidden header-closed:hidden"
-        aria-label="Mobile navigation menu"
-      >
+      <div className="lg:hidden header-closed:hidden" aria-label="Mobile navigation menu">
         <MobileNavigation menu={{ items: headerMenu?.items }} ctas={ctas} />
       </div>
     </>
