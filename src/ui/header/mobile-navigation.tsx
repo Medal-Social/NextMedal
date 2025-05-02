@@ -66,9 +66,7 @@ export const NavLink = ({ link }: { link: Link }) => (
     target={link.external ? '_blank' : undefined}
     aria-label={link.external ? `${link.label} (opens in new tab)` : undefined}
   >
-    {link.icon && (
-      <Icon icon={link.icon} className="mt-0.5 h-5 w-5" aria-hidden="true" />
-    )}
+    {link.icon && <Icon icon={link.icon} className="mt-0.5 h-5 w-5" aria-hidden="true" />}
     <div>
       <div className="flex items-center gap-2 font-medium">
         {link.label}
@@ -83,7 +81,7 @@ export const NavLink = ({ link }: { link: Link }) => (
 
 export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) {
   return (
-    <div 
+    <div
       className="fixed inset-0 top-[57px] z-50 overflow-hidden bg-background/95 border-foreground/10"
       role="dialog"
       aria-modal="true"
@@ -109,7 +107,7 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
                 return (
                   <li key={`mobile-${item.link?.label}-${index}`} role="none">
                     <Collapsible>
-                      <CollapsibleTrigger 
+                      <CollapsibleTrigger
                         className="flex w-full items-center justify-between rounded-md p-2 hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary"
                         aria-label={`${item.link?.label} submenu`}
                       >
@@ -117,15 +115,9 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
                         <ChevronDown className="h-4 w-4" aria-hidden="true" />
                       </CollapsibleTrigger>
                       <CollapsibleContent>
-                        <ul 
-                          className="ml-4 mt-2 space-y-3 border-l pl-4"
-                          role="menu"
-                        >
+                        <ul className="ml-4 mt-2 space-y-3 border-l pl-4" role="menu">
                           {item.links?.map((link: Link, linkIndex: number) => (
-                            <li 
-                              key={`mobile-${link.label}-${index}-${linkIndex}`}
-                              role="none"
-                            >
+                            <li key={`mobile-${link.label}-${index}-${linkIndex}`} role="none">
                               <NavLink link={link} />
                             </li>
                           ))}
@@ -140,7 +132,7 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
                 return (
                   <li key={`mobile-${item.title}-${index}`} role="none">
                     <Collapsible>
-                      <CollapsibleTrigger 
+                      <CollapsibleTrigger
                         className="flex w-full items-center justify-between rounded-md p-2 hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary"
                         aria-label={`${item.title} submenu`}
                       >
@@ -148,20 +140,14 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
                         <ChevronDown className="h-4 w-4" aria-hidden="true" />
                       </CollapsibleTrigger>
                       <CollapsibleContent>
-                        <div 
-                          className="ml-4 mt-2 space-y-6 border-l pl-4"
-                          role="menu"
-                        >
+                        <div className="ml-4 mt-2 space-y-6 border-l pl-4" role="menu">
                           {item.categories?.map((category, catIndex: number) => (
-                            <div 
+                            <div
                               key={`mobile-${category.title}-${index}-${catIndex}`}
                               role="group"
                               aria-label={category.title}
                             >
-                              <ul 
-                                className="space-y-3"
-                                role="menu"
-                              >
+                              <ul className="space-y-3" role="menu">
                                 {category.links?.map((link: Link, linkIndex: number) => (
                                   <li
                                     key={`mobile-${link.label}-${index}-${catIndex}-${linkIndex}`}
