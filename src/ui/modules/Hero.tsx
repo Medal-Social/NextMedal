@@ -11,12 +11,11 @@ export const StatsRow = ({ stats }: { stats?: Sanity.Stat[] }) => {
   if (!stats || stats.length === 0) return null;
 
   return (
-    <div
+    <ul
       className="mt-10 md:mt-16 flex flex-row flex-wrap justify-start gap-6 md:grid md:grid-cols-4 md:gap-x-8"
-      role="list"
     >
       {stats.map((stat) => (
-        <div key={stat._key} className="flex flex-col items-center sm:items-start" role="listitem">
+        <li key={stat._key} className="flex flex-col items-center sm:items-start">
           <div className="flex items-center gap-3 mb-2">
             {stat.icon && (
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -32,9 +31,9 @@ export const StatsRow = ({ stats }: { stats?: Sanity.Stat[] }) => {
             <span className="sr-only">Statistic label: </span>
             {stat.label}
           </p>
-        </div>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 };
 
