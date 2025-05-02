@@ -250,7 +250,19 @@ export default function VideoHero({ data }: VideoHeroProps) {
 
       {!isPlaying ? (
         // Thumbnail view
-        <div className="relative w-full h-full cursor-pointer bg-black" onClick={handlePlayClick}>
+        <div
+          className="relative w-full h-full cursor-pointer bg-black"
+          onClick={handlePlayClick}
+          tabIndex={0}
+          role="button"
+          aria-label="Play video"
+          onKeyDown={e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handlePlayClick();
+            }
+          }}
+        >
           {thumbnailUrl ? (
             <Image
               src={thumbnailUrl}
