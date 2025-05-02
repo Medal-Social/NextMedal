@@ -1,4 +1,4 @@
-import type { SanityAssetDocument, SanityDocument } from "next-sanity";
+import type { SanityAssetDocument, SanityDocument } from 'next-sanity';
 
 declare global {
   namespace Sanity {
@@ -25,7 +25,6 @@ declare global {
         a?: number;
       };
     }
-
 
     interface ThemeColors {
       background?: ColorValue;
@@ -88,7 +87,7 @@ declare global {
       social?: Navigation;
       // theme
       themeSettings?: {
-        defaultTheme?: "light" | "dark" | "system";
+        defaultTheme?: 'light' | 'dark' | 'system';
         darkMode?: ThemeColors;
         lightMode?: ThemeColors;
       };
@@ -109,7 +108,7 @@ declare global {
     }
 
     interface Page extends PageBase {
-      readonly _type: "page";
+      readonly _type: 'page';
       modules?: Module[];
     }
 
@@ -131,9 +130,8 @@ declare global {
       relatedPosts?: SanityReference[];
     }
 
-
     interface BlogCategory extends SanityDocument {
-      readonly _type: "blog.category";
+      readonly _type: 'blog.category';
       title: string;
       description?: string;
       slug?: { current: string };
@@ -183,74 +181,70 @@ declare global {
       content?: any;
     }
 
-
-
     // objects
 
     interface CTA {
-      readonly _type?: "cta";
+      readonly _type?: 'cta';
       _key?: string;
       text?: string;
-      linkType?: "internal" | "external";
+      linkType?: 'internal' | 'external';
       internalLink?: SanityDocument;
       externalLink?: string;
       style?: string;
-      size?: "default" | "sm" | "lg";
+      size?: 'default' | 'sm' | 'lg';
       icon?: any;
       newTab?: boolean;
       params?: string;
     }
 
-
-
     interface Icon {
-      readonly _type: "icon";
+      readonly _type: 'icon';
       ic0n?: string;
     }
 
     interface Img {
-      readonly _type: "img";
+      readonly _type: 'img';
       image: Image;
       responsive?: {
         image: Image;
         media: string;
       }[];
       alt?: string;
-      loading?: "lazy" | "eager";
+      loading?: 'lazy' | 'eager';
       asset?: any;
       url?: string;
     }
 
     interface Image extends SanityAssetDocument {
       alt: string;
-      loading: "lazy" | "eager";
+      loading: 'lazy' | 'eager';
     }
 
     interface Link {
-      readonly _type: "link";
+      readonly _type: 'link';
       label: string;
       description?: string;
       icon?: Icon;
-      type: "internal" | "external";
+      type: 'internal' | 'external';
       internal?: Page | BlogPost | Changelog;
       external?: string;
       params?: string;
     }
 
     interface LinkList {
-      readonly _type: "link.list";
+      readonly _type: 'link.list';
       link?: Link;
       links?: Link[];
     }
 
     interface LinkCategories {
-      readonly _type: "link.categories";
+      readonly _type: 'link.categories';
       title: string;
       categories: LinkCategory[];
     }
 
     interface LinkCategory {
-      readonly _type: "link.categories.list";
+      readonly _type: 'link.categories.list';
       title: string;
       links: Link[];
     }
@@ -282,15 +276,15 @@ declare global {
     }
 
     interface SanityImage {
-      _type: "image";
+      _type: 'image';
       asset: {
         _ref: string;
-        _type: "reference";
+        _type: 'reference';
       };
     }
 
     interface Video {
-      type: "mux" | "youtube";
+      type: 'mux' | 'youtube';
       videoId?: string;
       muxVideo?: {
         asset?: {
@@ -306,21 +300,21 @@ declare global {
     }
 
     export interface VideoHeroSanity {
-      _type: "videoHero";
-      type: "mux" | "youtube";
+      _type: 'videoHero';
+      type: 'mux' | 'youtube';
       videoId: string;
       thumbnail: SanityImage;
       title: string;
     }
 
-    interface VideoHero extends Module<"videoHero"> {
-      type: "mux" | "youtube";
+    interface VideoHero extends Module<'videoHero'> {
+      type: 'mux' | 'youtube';
       videoId: string;
       thumbnail: SanityImage;
       title: string;
     }
 
-    interface TabbedContent extends Module<"tabbedContent"> {
+    interface TabbedContent extends Module<'tabbedContent'> {
       content?: any[];
       pretitle?: string;
       tabs: Array<{
