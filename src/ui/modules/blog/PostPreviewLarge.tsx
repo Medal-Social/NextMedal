@@ -6,7 +6,7 @@ import Authors from './Authors';
 import Categories from './Categories';
 
 export default function PostPreviewLarge({ post }: { post: Sanity.BlogPost }) {
-  if (!post) return null;
+  if (!post || !post.metadata) return null;
 
   return (
     <Link
