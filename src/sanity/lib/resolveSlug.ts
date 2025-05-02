@@ -15,9 +15,7 @@ export default function resolveSlug({
     const segment = _type === 'blog.post' ? '/blog/' : '/';
     const path = internal === 'index' ? null : internal;
 
-    return [segment, path, params]
-      .filter(Boolean)
-      .join('');
+    return [segment, path, params].filter(Boolean).join('');
   }
 
   return undefined;
