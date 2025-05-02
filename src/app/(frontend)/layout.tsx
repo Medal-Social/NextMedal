@@ -24,7 +24,11 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${GeistSans.variable} ${GeistMono.variable}`}
+      suppressHydrationWarning
+    >
       <body className="bg-background text-foreground font-sans flex flex-col min-h-screen">
         <ThemeProvider
           attribute="class"
