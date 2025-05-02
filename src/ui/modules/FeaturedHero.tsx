@@ -112,6 +112,7 @@ export default function FeaturedHero({
               <Img
                 image={image.image}
                 className="w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-border sm:w-[57rem] object-cover"
+                alt={image.alt || image.image?.alt || 'Featured image'}
               />
             )}
           </div>
