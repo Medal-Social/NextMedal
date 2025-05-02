@@ -27,6 +27,7 @@ const config = {
         hostname: "cdn.sanity.io",
       },
     ],
+    domains: ['cdn.sanity.io', 'placehold.co'],
   },
   compiler: {
     removeConsole: {

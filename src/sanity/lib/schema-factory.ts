@@ -9,7 +9,6 @@ import { defineField } from 'sanity';
 interface MetadataSchemaOptions {
   group?: string;
   required?: boolean;
-  includeKeywords?: boolean;
   includeImage?: boolean;
 }
 
@@ -17,7 +16,7 @@ interface MetadataSchemaOptions {
  * Creates a metadata schema with configurable options
  */
 export const createMetadataSchema = (options: MetadataSchemaOptions = {}) => {
-  const { group = 'seo', required = false, includeKeywords = true, includeImage = true } = options;
+  const { group = 'seo', required = false, includeImage = true } = options;
 
   return defineField({
     name: 'metadata',
@@ -35,15 +34,6 @@ export const createMetadataSchema = (options: MetadataSchemaOptions = {}) => {
         type: 'text',
         rows: 3,
       }),
-      ...(includeKeywords
-        ? [
-            defineField({
-              name: 'keywords',
-              type: 'array',
-              of: [{ type: 'string' }],
-            }),
-          ]
-        : []),
       ...(includeImage
         ? [
             defineField({
