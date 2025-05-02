@@ -117,7 +117,7 @@ export default function CTA(props: CTAProps) {
   if (linkType === 'external' && externalLink) {
     const cleanUrl = stegaClean(externalLink);
     const validatedUrl = validateExternalUrl(cleanUrl);
-    
+
     if (!validatedUrl) {
       console.warn(`Invalid external URL detected and blocked: ${cleanUrl}`);
       return (
