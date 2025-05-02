@@ -23,13 +23,20 @@ export default function PostPreviewLarge({ post }: { post: Sanity.BlogPost }) {
           />
         </div>
         <div>
-          <Categories className="flex flex-wrap gap-x-2" categories={post.categories} linked badge />
+          <Categories
+            className="flex flex-wrap gap-x-2"
+            categories={post.categories}
+            linked
+            badge
+          />
           <div className="group relative max-w-xl">
             <h3 className="mt-3 text-2xl font-semibold leading-6 group-hover:text-primary sm:text-3xl">
               <span className="absolute inset-0" />
               {post.metadata.title}
             </h3>
-            <p className="mt-5 text-sm leading-6 text-muted-foreground">{post.metadata.description}</p>
+            <p className="mt-5 text-sm leading-6 text-muted-foreground">
+              {post.metadata.description}
+            </p>
           </div>
           <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm leading-6">
             <div className="flex items-center gap-x-2">
