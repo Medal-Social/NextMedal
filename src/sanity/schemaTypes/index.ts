@@ -31,7 +31,6 @@ import moduleOptions from './objects/module-options';
 import stat from './objects/stat';
 
 // modules
-import helpPage from './documents/help-page';
 import accordionList from './modules/accordion-list';
 import blogFrontpage from './modules/blog-frontpage';
 import blogList from './modules/blog-list';
