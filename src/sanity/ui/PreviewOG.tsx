@@ -28,9 +28,9 @@ export default function PreviewOG({ title }: { title?: string }) {
           )}
 
           {hasError && (
-            <Flex 
-              style={{ 
-                gridArea: '1 / 1 / -1 / -1', 
+            <Flex
+              style={{
+                gridArea: '1 / 1 / -1 / -1',
                 padding: '1rem',
                 backgroundColor: 'var(--card-error-bg)',
               }}

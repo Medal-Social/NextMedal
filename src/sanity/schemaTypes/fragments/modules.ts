@@ -21,8 +21,6 @@ export default defineField({
     { type: 'blog-list' },
     { type: 'blog-post-content' },
     { type: 'breadcrumbs' },
-
-
   ],
   options: {
     insertMenu: {
@@ -44,20 +42,11 @@ export default defineField({
         },
         {
           name: 'Feature Displays',
-          of: [
-            'feature-grid',
-            'logo-list',
-            'person-list',
-            'pricing-list',
-          ],
+          of: ['feature-grid', 'logo-list', 'person-list', 'pricing-list'],
         },
         {
           name: 'Blog',
-          of: [
-            'blog-frontpage',
-            'blog-list',
-            'blog-post-content',
-          ],
+          of: ['blog-frontpage', 'blog-list', 'blog-post-content'],
         },
         {
           name: 'Navigation',

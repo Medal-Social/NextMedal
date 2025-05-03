@@ -15,7 +15,6 @@ import BlogFrontpage from './blog/BlogFrontpage';
 import BlogList from './blog/BlogList';
 import BlogPostContent from './blog/PostContent';
 
-
 export default function Modules({
   modules,
   page,
@@ -52,14 +51,13 @@ export default function Modules({
             return (
               <Breadcrumbs
                 {...module}
-                currentPage={post || page }
+                currentPage={post || page}
                 key={module._key}
                 isTabbedModule={isTabbedModule}
               />
             );
           case 'callout':
             return <Callout {...module} key={module._key} isTabbedModule={isTabbedModule} />;
-
 
           case 'feature-grid':
             return <FeatureGrid {...module} key={module._key} isTabbedModule={isTabbedModule} />;
@@ -76,7 +74,7 @@ export default function Modules({
             return <PersonList {...module} key={module._key} isTabbedModule={isTabbedModule} />;
           case 'pricing-list':
             return <PricingList {...module} key={module._key} isTabbedModule={isTabbedModule} />;
- 
+
           case 'richtext-module':
             return <RichtextModule {...module} key={module._key} isTabbedModule={isTabbedModule} />;
 

@@ -15,7 +15,7 @@ export default function CTAList({
     <div className={cn('flex flex-wrap items-center gap-[.5em]', className)}>
       {ctas?.map((cta) => {
         // For items with a link, pass the link label as children if not already specified
-        if ("link" in cta && cta.link && !("children" in cta)) {
+        if ('link' in cta && cta.link && !('children' in cta)) {
           return (
             <CTA className="max-sm:w-full" {...cta} key={cta._key || cta.link.label}>
               {cta.link.label}

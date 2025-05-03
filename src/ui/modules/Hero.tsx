@@ -11,9 +11,7 @@ export const StatsRow = ({ stats }: { stats?: Sanity.Stat[] }) => {
   if (!stats || stats.length === 0) return null;
 
   return (
-    <ul
-      className="mt-10 md:mt-16 flex flex-row flex-wrap justify-start gap-6 md:grid md:grid-cols-4 md:gap-x-8"
-    >
+    <ul className="mt-10 md:mt-16 flex flex-row flex-wrap justify-start gap-6 md:grid md:grid-cols-4 md:gap-x-8">
       {stats.map((stat) => (
         <li key={stat._key} className="flex flex-col items-center sm:items-start">
           <div className="flex items-center gap-3 mb-2">

@@ -18,10 +18,7 @@ export default function Wrapper({ className, children }: WrapperProps) {
         if (!ref.current) return;
         const height = ref.current.offsetHeight;
         if (typeof height === 'number') {
-          document.documentElement.style.setProperty(
-            '--footer-height',
-            `${height}px`
-          );
+          document.documentElement.style.setProperty('--footer-height', `${height}px`);
         }
       } catch (error) {
         console.error('Error setting footer height:', error);

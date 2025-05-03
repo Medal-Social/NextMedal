@@ -31,7 +31,10 @@ export default function PersonList({
 
         <ul className="divide-y divide-gray-200 dark:divide-gray-800 xl:col-span-3">
           {people?.map((person) => (
-            <li key={person._key || person.name} className="flex flex-col gap-10 py-12 first:pt-0 last:pb-0 sm:flex-row">
+            <li
+              key={person._key || person.name}
+              className="flex flex-col gap-10 py-12 first:pt-0 last:pb-0 sm:flex-row"
+            >
               {person.image ? (
                 <Img
                   className="aspect-[4/5] w-52 flex-none rounded-2xl object-cover"

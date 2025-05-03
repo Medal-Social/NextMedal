@@ -256,7 +256,7 @@ export default function VideoHero({ data }: VideoHeroProps) {
           tabIndex={0}
           role="button"
           aria-label="Play video"
-          onKeyDown={e => {
+          onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
               handlePlayClick();
