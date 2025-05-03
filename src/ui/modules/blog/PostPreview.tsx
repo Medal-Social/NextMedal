@@ -1,5 +1,4 @@
 import resolveUrl from '@/lib/resolveUrl';
-import type { PageBase } from '@/types';
 import Date from '@/ui/Date';
 import { Img } from '@/ui/Img';
 import Link from 'next/link';
