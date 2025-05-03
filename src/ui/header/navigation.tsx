@@ -72,8 +72,8 @@ export default async function Navigation() {
                 <NavigationMenuItem key={key}>
                   <Link
                     href={
-                      item.internal && item.internal.metadata?.slug
-                        ? resolveUrl(item.internal, {
+                      item.internal && item.internal.metadata?.slug && item.internal.metadata.slug.current
+                        ? resolveUrl(item.internal as Sanity.PageBase, {
                             base: false,
                             params: item.params,
                           })
