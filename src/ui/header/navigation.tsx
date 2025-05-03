@@ -108,27 +108,19 @@ export default async function Navigation() {
                     {item.title}
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="bg-background">
-                    <ul 
-                      className="flex flex-row w-[800px] gap-3 p-4"
-                      role="menu"
-                    >
+                    <ul className="flex flex-row w-[800px] gap-3 p-4" role="menu">
                       {item.categories?.map((category, ix) => (
                         <li
                           key={`${category.title}-${key}-${ix}`}
                           className="overflow-hidden flex-grow"
                           role="presentation"
                         >
-                          <span 
-                            className="font-medium text-base text-foreground mb-2"
-                          >
+                          <span className="font-medium text-base text-foreground mb-2">
                             {category.title}
                           </span>
                           <ul className="space-y-2" role="group">
                             {category.links?.map((link, ix) => (
-                              <NavigationMenuLink 
-                                asChild 
-                                key={`${link.label}-${key}-${ix}`}
-                              >
+                              <NavigationMenuLink asChild key={`${link.label}-${key}-${ix}`}>
                                 <NavLink link={link} />
                               </NavigationMenuLink>
                             ))}
@@ -146,15 +138,9 @@ export default async function Navigation() {
                     {item.link?.label}
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="bg-background">
-                    <ul 
-                      className="grid w-[600px] gap-3 p-4 grid-cols-2"
-                      role="menu"
-                    >
+                    <ul className="grid w-[600px] gap-3 p-4 grid-cols-2" role="menu">
                       {item.links?.map((link, ix) => (
-                        <NavigationMenuLink 
-                          asChild 
-                          key={`${link.label}-${key}-${ix}`}
-                        >
+                        <NavigationMenuLink asChild key={`${link.label}-${key}-${ix}`}>
                           <NavLink link={link} />
                         </NavigationMenuLink>
                       ))}

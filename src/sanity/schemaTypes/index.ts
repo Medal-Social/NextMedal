@@ -39,7 +39,6 @@ import blogPostContent from './modules/blog-post-content';
 import breadcrumbs from './modules/breadcrumbs';
 import callout from './modules/callout';
 
-
 import featureGrid from './modules/feature-grid';
 import featuredHero from './modules/featured-hero';
 import galleryHero from './modules/gallery-hero';

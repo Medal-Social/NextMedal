@@ -22,9 +22,7 @@ export default function resolveUrl(
     base && process.env.NEXT_PUBLIC_BASE_URL,
     segment,
     page.parent
-      ? [...page.parent.map((p) => p?.metadata?.slug?.current), path]
-          .filter(Boolean)
-          .join('/')
+      ? [...page.parent.map((p) => p?.metadata?.slug?.current), path].filter(Boolean).join('/')
       : path,
     stegaClean(params),
   ]

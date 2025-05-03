@@ -25,7 +25,7 @@ export default async function Menu() {
   if (!footerMenu?.items?.length) return null;
 
   return (
-    <nav 
+    <nav
       className="flex flex-wrap items-start gap-x-12 gap-y-6 max-sm:flex-col"
       aria-label="Footer navigation"
     >
@@ -59,10 +59,7 @@ export default async function Menu() {
               return (
                 <div className="flex flex-col gap-2" key={key} role="navigation">
                   <h2 className="text-base font-medium">
-                    <Link
-                      href={url}
-                      className="focus:outline-none focus:ring-2 focus:ring-primary"
-                    >
+                    <Link href={url} className="focus:outline-none focus:ring-2 focus:ring-primary">
                       {item.label || item.internal.title}
                     </Link>
                   </h2>
@@ -72,7 +69,11 @@ export default async function Menu() {
             return (
               <div className="flex flex-col gap-2" key={key} role="navigation">
                 <h2 className="text-base font-medium">
-                  <CTA className="focus:outline-none focus:ring-2 focus:ring-primary" link={item} style="link" />
+                  <CTA
+                    className="focus:outline-none focus:ring-2 focus:ring-primary"
+                    link={item}
+                    style="link"
+                  />
                 </h2>
               </div>
             );

@@ -20,7 +20,10 @@ export default function PostPreview({
 
   return (
     <Root className="" href={href}>
-      <article key={skeleton ? 'skeleton' : post?._id} className="flex group flex-col items-start justify-between">
+      <article
+        key={skeleton ? 'skeleton' : post?._id}
+        className="flex group flex-col items-start justify-between"
+      >
         <div className="relative w-full rounded-full">
           <Img
             className="aspect-video w-full object-cover rounded-2xl transition-all group-hover:scale-105 group-hover:brightness-110"
@@ -32,7 +35,11 @@ export default function PostPreview({
         <div className="max-w-xl">
           <div className="mt-8 flex items-center gap-x-4 text-xs">
             <Date value={skeleton ? undefined : post?.publishDate} />
-            <Categories className="flex flex-wrap gap-x-2" categories={skeleton ? undefined : post?.categories} badge />
+            <Categories
+              className="flex flex-wrap gap-x-2"
+              categories={skeleton ? undefined : post?.categories}
+              badge
+            />
           </div>
           <div className="relative">
             <h3 className="mt-3 text-lg/6 font-semibold group-hover:text-primary">
