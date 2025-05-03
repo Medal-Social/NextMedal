@@ -3,11 +3,8 @@ import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/page
 import { notFound } from 'next/navigation';
 import { getMDXComponents } from '@/mdx-components';
 
-const Page = async (props: {
-  params: { slug?: string[] };
-}) => {
-  const params = await props.params;
-  const page = source.getPage(params.slug);
+const Page = async ({ params }: Props) => {
+  const page = await getPage(await params);
   if (!page) notFound();
 
   const MDX = page.data.body;
@@ -20,7 +17,7 @@ const Page = async (props: {
         owner: 'Medal-Social',
         repo: 'NextMedal',
         sha: 'dev',
-        path: `content/docs/${props.params.slug?.join('/') || 'index'}.mdx`,
+        path: `content/docs/${(await params).slug?.join('/') || 'index'}.mdx`,
       }}
     >
       <DocsTitle>{page.data.title}</DocsTitle>
@@ -36,11 +33,8 @@ export async function generateStaticParams() {
   return source.generateParams();
 }
 
-export async function generateMetadata(props: {
-  params: Promise<{ slug?: string[] }>;
-}) {
-  const params = await props.params;
-  const page = source.getPage(params.slug);
+export async function generateMetadata({ params }: Props) {
+  const page = await getPage(await params);
   if (!page) notFound();
 
   return {
@@ -48,5 +42,15 @@ export async function generateMetadata(props: {
     description: page.data.description,
   };
 }
+
+async function getPage(params: { slug?: string[] }) {
+  const page = source.getPage(params.slug);
+  if (!page) notFound();
+  return page;
+}
+
+type Props = {
+  params: Promise<{ slug?: string[] }>;
+};
 
 export default Page;

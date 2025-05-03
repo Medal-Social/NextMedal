@@ -51,12 +51,13 @@ export async function GET() {
       generator: 'https://www.medalsocial.com',
     });
 
-    posts.forEach((post) =>
+    posts.forEach((post) => {
+      if (!post.metadata) return; // Skip posts without metadata
       feed.addItem({
         title: escapeHTML(post.metadata.title),
         description: post.metadata.description,
-        id: resolveUrl(post),
-        link: resolveUrl(post),
+        id: resolveUrl(post as Sanity.PageBase),
+        link: resolveUrl(post as Sanity.PageBase),
         published: new Date(post.publishDate),
         date: new Date(post.publishDate),
         author: post.authors?.map((author) => ({ name: author.name })),
@@ -80,8 +81,8 @@ export async function GET() {
           },
         }),
         image: post.image,
-      })
-    );
+      });
+    });
 
     return new Response(feed.atom1(), {
       headers: {
