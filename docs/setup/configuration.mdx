@@ -1,0 +1,142 @@
+---
+title: Configuration
+description: Configure NextMedal to suit your needs
+---
+
+# Configuration
+
+NextMedal is highly configurable, allowing you to customize it for your specific project requirements.
+
+## Project Structure
+
+Understanding the NextMedal project structure is crucial for effective configuration:
+
+```
+my-project/
+├── .next/               # Next.js build output
+├── content/             # Documentation content 
+│   └── docs/            # Fumadocs content
+├── public/              # Static files
+├── src/
+│   ├── app/             # Next.js App Router
+│   ├── components/      # React components
+│   ├── lib/             # Utility functions
+│   ├── sanity/          # Sanity configuration
+│   ├── styles/          # Global styles
+│   └── ui/              # UI components
+├── .env.example         # Example environment variables
+├── .env.local           # Local environment variables (create this)
+├── next.config.ts       # Next.js configuration
+├── package.json         # Project dependencies
+├── sanity.config.ts     # Sanity configuration
+└── tailwind.config.js   # Tailwind CSS configuration
+```
+
+## Configuration Files
+
+### Environment Variables
+
+The `.env.local` file contains environment variables for your project:
+
+```
+# Next.js
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+
+# Sanity
+NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id
+NEXT_PUBLIC_SANITY_DATASET=production
+NEXT_PUBLIC_SANITY_API_VERSION=2023-05-03
+SANITY_API_TOKEN=your_api_token
+SANITY_PREVIEW_SECRET=your_preview_secret
+```
+
+### Next.js Configuration
+
+The `next.config.ts` file allows you to configure Next.js settings:
+
+```typescript
+import { createMDX } from 'fumadocs-mdx/next';
+
+const withMDX = createMDX();
+
+const config = {
+  reactStrictMode: true,
+  poweredByHeader: false,
+  output: "standalone",
+  images: {
+    dangerouslyAllowSVG: true,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cdn.sanity.io",
+      },
+    ],
+  },
+  // Add your custom configurations here
+};
+
+export default withMDX(config);
+```
+
+### Sanity Configuration
+
+The `sanity.config.ts` file configures your Sanity Studio:
+
+```typescript
+import { defineConfig } from 'sanity';
+import { deskTool } from 'sanity/desk';
+import { schemaTypes } from './src/sanity/schemas';
+
+export default defineConfig({
+  name: 'default',
+  title: 'NextMedal',
+  
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '',
+  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+  
+  plugins: [deskTool()],
+  
+  schema: {
+    types: schemaTypes,
+  },
+});
+```
+
+
+## Documentation Configuration
+
+The documentation is powered by Fumadocs, which can be configured in `src/lib/source.ts`:
+
+```typescript
+import { docs } from '../../.source';
+import { loader } from 'fumadocs-core/source';
+ 
+export const source = loader({
+  baseUrl: '/docs',
+  source: docs.toFumadocsSource(),
+});
+```
+
+## Custom Themes
+
+You can customize the visual appearance of your NextMedal site by modifying theme settings in:
+
+1. **Global CSS Variables**: Located in `src/styles/globals.css`
+2. **ThemeProvider Settings**: Located in `src/app/(frontend)/layout.tsx`
+
+## Performance Tuning
+
+For optimal performance, consider these configuration options:
+
+1. **Image Optimization**: Use Next.js Image component with proper sizes
+2. **API Route Caching**: Implement caching strategies in API routes
+3. **Static Generation**: Use static generation where possible
+4. **Content Delivery Network**: Configure CDN settings for your deployment platform
+
+## Advanced Configuration
+
+For more advanced configuration options, consult the following resources:
+
+- [Next.js Configuration Documentation](https://nextjs.org/docs/app/api-reference/next-config-js)
+- [Sanity Configuration Documentation](https://www.sanity.io/docs/configuration)
+- [Fumadocs Configuration](https://fumadocs.dev/docs/ui) 
