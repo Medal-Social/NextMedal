@@ -1,0 +1,59 @@
+---
+title: Robots.txt Support
+description: How NextMedal handles robots.txt and noindex for SEO
+---
+
+# 🤖 Robots.txt Support
+
+> **Control what search engines see.**  
+> NextMedal gives you fine-grained control over which pages are indexed by search engines, right from Sanity Studio.
+
+---
+
+## What is Robots.txt?
+
+`robots.txt` is a standard used by websites to communicate with web crawlers and search engines about which pages should be indexed or ignored.
+
+---
+
+## How NextMedal Implements Robots.txt
+
+- **Visual Control in Sanity Studio:**  
+  Editors can mark any page as “Hide from Search” in the SEO & Metadata tab.
+
+  ![Sanity Studio Hide from Search](https://placehold.co/600x300?text=Sanity+Studio+Hide+from+Search)
+
+- **Automatic Integration:**  
+  When a page is marked as “Hide from Search”:
+  - It is excluded from the sitemap.
+  - The page's metadata includes `<meta name="robots" content="noindex">`.
+  - The robots.txt file is generated to reflect these settings.
+
+**Sanity Schema Example:**
+```ts
+// In your metadata schema
+{
+  name: 'noIndex',
+  title: 'Hide from search engines',
+  type: 'boolean',
+  initialValue: false,
+}
+```
+
+**Next.js Metadata Example:**
+```ts
+robots: {
+  index: !page.metadata.noIndex,
+}
+```
+
+---
+
+## Best Practices
+
+- Use "Hide from Search" for draft, private, or duplicate pages.
+- Don't hide important content you want to rank!
+
+---
+
+[Learn more about robots.txt](https://developers.google.com/search/docs/crawling-indexing/robots/intro) 
