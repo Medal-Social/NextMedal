@@ -1,0 +1,935 @@
+@import "tailwindcss";
+@import "./fonts.css";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+
+:root {
+  --background: 222 47% 11%;
+  --foreground: 210 40% 98%;
+  --card: 222 47% 11%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222 47% 11%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 217 91% 60%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 45 100% 50%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 224.3 76.3% 48%;
+  --radius: 0.5rem;
+
+  --light-background: hsl(0 0% 100%);
+  --light-foreground: hsl(240 10% 3.9%);
+  --light-card: hsl(0 0% 100%);
+  --light-card-foreground: hsl(240 10% 3.9%);
+  --light-popover: hsl(0 0% 100%);
+  --light-popover-foreground: hsl(240 10% 3.9%);
+  --light-primary: hsl(240 5.9% 10%);
+  --light-primary-foreground: hsl(0 0% 98%);
+  --light-secondary: hsl(240 4.8% 95.9%);
+  --light-secondary-foreground: hsl(240 5.9% 10%);
+  --light-muted: hsl(240 4.8% 95.9%);
+  --light-muted-foreground: hsl(240 3.8% 46.1%);
+  --light-accent: hsl(240 4.8% 95.9%);
+  --light-accent-foreground: hsl(240 5.9% 10%);
+  --light-destructive: hsl(0 84.2% 60.2%);
+  --light-destructive-foreground: hsl(0 0% 98%);
+  --light-border: hsl(240 5.9% 90%);
+  --light-input: hsl(240 5.9% 90%);
+  --light-ring: hsl(240 5.9% 10%);
+  --light-chart-1: hsl(12 76% 61%);
+  --light-chart-2: hsl(173 58% 39%);
+  --light-chart-3: hsl(197 37% 24%);
+  --light-chart-4: hsl(43 74% 66%);
+  --light-chart-5: hsl(27 87% 67%);
+  --light-sidebar-background: hsl(0 0% 98%);
+  --light-sidebar-foreground: hsl(240 5.3% 26.1%);
+  --light-sidebar-primary: hsl(240 5.9% 10%);
+  --light-sidebar-primary-foreground: hsl(0 0% 98%);
+  --light-sidebar-accent: hsl(240 4.8% 95.9%);
+  --light-sidebar-accent-foreground: hsl(240 5.9% 10%);
+  --light-sidebar-border: hsl(220 13% 91%);
+  --light-sidebar-ring: hsl(217.2 91.2% 59.8%);
+
+  --dark-background: 222 47% 11%;
+  --dark-foreground: 210 40% 98%;
+  --dark-card: 222 47% 11%;
+  --dark-card-foreground: 210 40% 98%;
+  --dark-popover: 222 47% 11%;
+  --dark-popover-foreground: 210 40% 98%;
+  --dark-primary: 217 91% 60%;
+  --dark-primary-foreground: 210 40% 98%;
+  --dark-secondary: 217.2 32.6% 17.5%;
+  --dark-secondary-foreground: 210 40% 98%;
+  --dark-muted: 217.2 32.6% 17.5%;
+  --dark-muted-foreground: 215 20.2% 65.1%;
+  --dark-accent: 45 100% 50%;
+  --dark-accent-foreground: 222.2 47.4% 11.2%;
+  --dark-destructive: 0 62.8% 30.6%;
+  --dark-destructive-foreground: 210 40% 98%;
+  --dark-border: 217.2 32.6% 17.5%;
+  --dark-input: 217.2 32.6% 17.5%;
+  --dark-ring: 224.3 76.3% 48%;
+  --dark-chart-1: hsl(220 70% 50%);
+  --dark-chart-2: hsl(160 60% 45%);
+  --dark-chart-3: hsl(30 80% 55%);
+  --dark-chart-4: hsl(280 65% 60%);
+  --dark-chart-5: hsl(340 75% 55%);
+  --dark-sidebar-background: hsl(240 5.9% 10%);
+  --dark-sidebar-foreground: hsl(240 4.8% 95.9%);
+  --dark-sidebar-primary: hsl(0 0% 98%);
+  --dark-sidebar-primary-foreground: hsl(240 5.9% 10%);
+  --dark-sidebar-accent: hsl(240 3.7% 15.9%);
+  --dark-sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+  --dark-sidebar-border: hsl(240 3.7% 15.9%);
+  --dark-sidebar-ring: hsl(217.2 91.2% 59.8%);
+
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --card: var(--light-card);
+  --card-foreground: var(--light-card-foreground);
+  --popover: var(--light-popover);
+  --popover-foreground: var(--light-popover-foreground);
+  --primary: var(--light-primary);
+  --primary-foreground: var(--light-primary-foreground);
+  --secondary: var(--light-secondary);
+  --secondary-foreground: var(--light-secondary-foreground);
+  --muted: var(--light-muted);
+  --muted-foreground: var(--light-muted-foreground);
+  --accent: var(--light-accent);
+  --accent-foreground: var(--light-accent-foreground);
+  --destructive: var(--light-destructive);
+  --destructive-foreground: var(--light-destructive-foreground);
+  --border: var(--light-border);
+  --input: var(--light-input);
+  --ring: var(--light-ring);
+  --chart-1: var(--light-chart-1);
+  --chart-2: var(--light-chart-2);
+  --chart-3: var(--light-chart-3);
+  --chart-4: var(--light-chart-4);
+  --chart-5: var(--light-chart-5);
+  --sidebar-background: var(--light-sidebar-background);
+  --sidebar-foreground: var(--light-sidebar-foreground);
+  --sidebar-primary: var(--light-sidebar-primary);
+  --sidebar-primary-foreground: var(--light-sidebar-primary-foreground);
+  --sidebar-accent: var(--light-sidebar-accent);
+  --sidebar-accent-foreground: var(--light-sidebar-accent-foreground);
+  --sidebar-border: var(--light-sidebar-border);
+  --sidebar-ring: var(--light-sidebar-ring);
+  --radius: 0.5rem;
+
+  /* Chart colors */
+}
+
+.dark {
+  --background: var(--dark-background);
+  --foreground: var(--dark-foreground);
+  --primary: var(--dark-primary);
+  --primary-foreground: var(--dark-primary-foreground);
+  --card: var(--dark-card);
+  --card-foreground: var(--dark-card-foreground);
+  --popover: var(--dark-popover);
+  --popover-foreground: var(--dark-popover-foreground);
+  --secondary: var(--dark-secondary);
+  --secondary-foreground: var(--dark-secondary-foreground);
+  --muted: var(--dark-muted);
+  --muted-foreground: var(--dark-muted-foreground);
+  --accent: var(--dark-accent);
+  --accent-foreground: var(--dark-accent-foreground);
+  --destructive: var(--dark-destructive);
+  --destructive-foreground: var(--dark-destructive-foreground);
+  --border: var(--dark-border);
+  --input: var(--dark-input);
+  --ring: var(--dark-ring);
+  --chart-1: var(--dark-chart-1);
+  --chart-2: var(--dark-chart-2);
+  --chart-3: var(--dark-chart-3);
+  --chart-4: var(--dark-chart-4);
+  --chart-5: var(--dark-chart-5);
+  --sidebar-background: var(--dark-sidebar-background);
+  --sidebar-foreground: var(--dark-sidebar-foreground);
+  --sidebar-primary: var(--dark-sidebar-primary);
+  --sidebar-primary-foreground: var(--dark-sidebar-primary-foreground);
+  --sidebar-accent: var(--dark-sidebar-accent);
+  --sidebar-accent-foreground: var(--dark-sidebar-accent-foreground);
+  --sidebar-border: var(--dark-sidebar-border);
+  --sidebar-ring: var(--dark-sidebar-ring);
+}
+
+.light {
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --card: var(--light-card);
+  --card-foreground: var(--light-card-foreground);
+  --popover: var(--light-popover);
+  --popover-foreground: var(--light-popover-foreground);
+  --primary: var(--light-primary);
+  --primary-foreground: var(--light-primary-foreground);
+  --secondary: var(--light-secondary);
+  --secondary-foreground: var(--light-secondary-foreground);
+  --muted: var(--light-muted);
+  --muted-foreground: var(--light-muted-foreground);
+  --accent: var(--light-accent);
+  --accent-foreground: var(--light-accent-foreground);
+  --destructive: var(--light-destructive);
+  --destructive-foreground: var(--light-destructive-foreground);
+  --border: var(--light-border);
+  --input: var(--light-input);
+  --ring: var(--light-ring);
+  --chart-1: var(--light-chart-1);
+  --chart-2: var(--light-chart-2);
+  --chart-3: var(--light-chart-3);
+  --chart-4: var(--light-chart-4);
+  --chart-5: var(--light-chart-5);
+  --sidebar-background: var(--light-sidebar-background);
+  --sidebar-foreground: var(--light-sidebar-foreground);
+  --sidebar-primary: var(--light-sidebar-primary);
+  --sidebar-primary-foreground: var(--light-sidebar-primary-foreground);
+  --sidebar-accent: var(--light-sidebar-accent);
+  --sidebar-accent-foreground: var(--light-sidebar-accent-foreground);
+  --sidebar-border: var(--light-sidebar-border);
+  --sidebar-ring: var(--light-sidebar-ring);
+}
+
+@theme {
+  /* Dark Mode (Default) */
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-muted: var(--muted);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar-background);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+}
+
+@custom-variant dark (&:is(.dark *));
+@custom-variant light (&:is(.light *));
+
+@custom-variant hover (&:hover);
+
+@variant header-open (body:has(#header-toggle:checked) &);
+@variant header-closed (body:has(#header-toggle:not(:checked)) &);
+
+@variant headings (& :is(h1, h2, h3, h4, h5, h6));
+
+@layer base {
+  * {
+    min-width: 0;
+    @apply border-border outline-ring/50;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  :target {
+    scroll-margin-top: var(--header-height);
+
+    &:is(h1, h2, h3, h4, h5, h6) {
+      animation: target 2s ease-in-out forwards;
+    }
+  }
+
+  @keyframes target {
+    0%,
+    50% {
+      background-color: color-mix(in oklab, var(--color-amber-400) 50%, transparent);
+    }
+  }
+
+  html {
+    accent-color: var(--color-primary);
+    caret-color: var(--color-primary);
+    scroll-behavior: smooth;
+  }
+
+  summary,
+  label,
+  input[type="submit"],
+  button {
+    cursor: pointer;
+  }
+
+  input {
+    background-color: transparent;
+  }
+
+  ::-webkit-details-marker {
+    display: none; /* Often desired to hide default triangle */
+  }
+
+  hr {
+    @apply border-foreground/10;
+  }
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+/* animations */
+
+@utility anim-fade {
+  --x: 0;
+  --y: 0;
+  animation: anim-fade-to var(--default-transition-duration) ease-in-out forwards;
+}
+@utility anim-fade-to-l {
+  @apply anim-fade;
+  --x: 1rem;
+}
+@utility anim-fade-to-r {
+  @apply anim-fade;
+  --x: -1rem;
+}
+@utility anim-fade-to-t {
+  @apply anim-fade;
+  --y: 1rem;
+}
+@utility anim-fade-to-b {
+  @apply anim-fade;
+  --y: -1rem;
+}
+
+@keyframes anim-fade-to {
+  from {
+    opacity: 0;
+    translate: var(--x, 0) var(--y, 0);
+  }
+}
+
+/* typography */
+
+@utility h-base {
+  font-weight: bold;
+}
+
+@utility h1 {
+  @apply h-base text-5xl;
+}
+@utility h2 {
+  @apply h-base text-3xl;
+}
+@utility h3 {
+  @apply h-base text-2xl;
+}
+@utility h4 {
+  @apply h-base text-xl;
+}
+@utility h5 {
+  @apply h-base text-lg;
+}
+@utility h6 {
+  @apply h-base;
+}
+
+@utility technical {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+@utility text-shadow {
+  text-shadow: 0 0 0.2em rgb(0 0 0 / 0.25);
+}
+
+/* ctas, lforegrounds */
+
+@utility action-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5em 1em;
+  text-align: center;
+  text-shadow: none;
+  color: var(--color-foreground);
+}
+
+@utility action {
+  @apply action-base bg-primary rounded border border-transparent text-balance text-primary-foreground
+	hover:bg-primary/80 hover:text-primary-foreground transition-colors duration-200;
+}
+
+@utility action-outline {
+  @apply action-base border-primary/10 bg-background/50 to-background rounded border text-balance text-secondary
+	hover:border-primary hover:text-primary transition-all duration-200;
+}
+
+@utility ghost {
+  @apply action-base bg-background/50 rounded text-secondary
+	hover:bg-primary hover:text-white transition-all duration-200;
+}
+
+@utility input {
+  @apply border-foreground/10 border p-[.25em] text-left;
+}
+
+/* utilities */
+
+@utility sticky-below-header {
+  position: sticky;
+  top: calc(var(--header-height) + var(--offset, 0px));
+}
+
+@utility full-bleed {
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+}
+
+@utility no-scrollbar {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility overflow-fade {
+  --offset: 4rem;
+  mask: linear-gradient(
+    to right,
+    transparent,
+    black var(--offset),
+    black calc(100% - var(--offset)),
+    transparent
+  );
+}
+
+@utility overflow-fade-r {
+  --offset: 4rem;
+  mask: linear-gradient(to right, black 50%, black calc(100% - var(--offset)), transparent);
+}
+
+/* layout */
+
+@utility section {
+  @apply mx-auto max-w-screen-xl pb-8 pt-8 px-8 max-md:px-4 md:pt-12;
+}
+
+@utility header-grid {
+  grid-template:
+    "logo toggle-area" auto
+    "nav nav" auto
+    "ctas ctas" auto / 1fr auto;
+
+  @media (width >= 64rem) {
+    grid-template: "logo nav ctas toggle-area" auto / auto 1fr auto auto;
+  }
+}
+
+/* richtext */
+@utility newsletter {
+  /* Base typography */
+  @apply text-base leading-relaxed;
+
+  /* Headings */
+  & h1 {
+    @apply text-4xl md:text-5xl font-bold tracking-tight mb-6;
+  }
+
+  & h2 {
+    @apply text-2xl md:text-3xl font-bold mb-4;
+  }
+
+  & h3 {
+    @apply text-xl font-bold mb-3;
+  }
+
+  & h4 {
+    @apply text-lg font-medium mb-2;
+  }
+
+  /* Paragraphs and spacing */
+  & p {
+    @apply mb-4 text-base;
+  }
+
+  & p:last-child {
+    @apply mb-0;
+  }
+
+  /* Lists */
+  & ul,
+  & ol {
+    @apply mb-4 pl-5;
+  }
+
+  & ul {
+    @apply list-disc;
+  }
+
+  & ol {
+    @apply list-decimal;
+  }
+
+  & li {
+    @apply mb-2;
+  }
+
+  /* Blockquotes */
+  & blockquote {
+    @apply italic border-l-4 border-primary pl-4 py-1 my-4;
+  }
+
+  /* Links */
+  & a {
+    @apply text-foreground underline underline-offset-4 hover:text-foreground/80 transition-colors;
+  }
+
+  /* Section spacing */
+  & section {
+    @apply mb-8;
+  }
+
+  /* Emphasis */
+  & strong,
+  & b {
+    @apply font-bold;
+  }
+
+  & em,
+  & i {
+    @apply italic;
+  }
+
+  /* Code and pre */
+  & code {
+    @apply bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-sm;
+  }
+
+  & pre {
+    @apply bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto mb-4;
+  }
+
+  /* Tables */
+  & table {
+    @apply w-full border-collapse mb-4;
+  }
+
+  & th {
+    @apply text-left font-bold p-2 border-b-2 border-gray-200 dark:border-gray-700;
+  }
+
+  & td {
+    @apply p-2 border-b border-gray-200 dark:border-gray-700;
+  }
+
+  /* Figures and captions */
+  & figure {
+    @apply mb-4;
+  }
+
+  & figcaption {
+    @apply text-sm text-muted-foreground mt-2 italic;
+  }
+
+  /* Horizontal rule */
+  & hr {
+    @apply my-6 border-t border-gray-200 dark:border-gray-700;
+  }
+}
+
+@utility emailsignup {
+  /* Base styles */
+  @apply leading-7 text-white;
+
+  /* Headings */
+  & h1 {
+    @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
+  }
+
+  & h2 {
+    @apply scroll-m-20 text-4xl font-semibold tracking-tight text-balance  sm:text-5xl;
+  }
+
+  & h3 {
+    @apply mt-8 scroll-m-20 text-2xl font-semibold tracking-tight;
+  }
+
+  & h4 {
+    @apply scroll-m-20 text-xl font-semibold tracking-tight;
+  }
+
+  & h5 {
+    @apply scroll-m-20 text-base font-medium tracking-tight;
+  }
+
+  & h6 {
+    @apply scroll-m-20 text-base font-medium tracking-tight;
+  }
+
+  /* Paragraphs */
+  & p {
+    @apply mx-auto mt-6 max-w-xl text-lg/8 text-pretty text-gray-300;
+  }
+
+  & a {
+    @apply font-medium  underline underline-offset-4;
+  }
+
+  /* Lists */
+  & :is(ul, ol) {
+    @apply my-6 ml-6 list-disc [&>li]:mt-2;
+  }
+
+  /* Blockquotes */
+  & blockquote {
+    @apply mt-6 border-l-2 pl-6 italic;
+  }
+
+  /* Code */
+  & :not(pre) > code {
+    @apply relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold;
+  }
+
+  /* Pre blocks */
+  & pre {
+    @apply mt-6 overflow-x-auto rounded-lg bg-muted p-4 font-mono text-sm;
+  }
+}
+
+@utility richtext {
+  /* Base styles */
+  @apply leading-7;
+
+  /* Headings */
+  & h1 {
+    @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
+  }
+
+  & h2 {
+    @apply mt-10 scroll-m-20 pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0;
+  }
+
+  & h3 {
+    @apply mt-8 scroll-m-20 text-2xl font-semibold tracking-tight;
+  }
+
+  & h4 {
+    @apply scroll-m-20 text-xl font-semibold tracking-tight;
+  }
+
+  & h5 {
+    @apply scroll-m-20 text-base font-medium tracking-tight;
+  }
+
+  & h6 {
+    @apply scroll-m-20 text-base font-medium tracking-tight;
+  }
+
+  /* Paragraphs */
+  & p {
+    @apply leading-7 [&:not(:first-child)]:mt-6;
+  }
+
+  & a {
+    @apply font-medium  underline underline-offset-4;
+  }
+
+  /* Lists */
+  & :is(ul, ol) {
+    @apply my-6 ml-6 list-disc [&>li]:mt-2;
+  }
+
+  /* Blockquotes */
+  & blockquote {
+    @apply mt-6 border-l-2 pl-6 italic;
+  }
+
+  /* Code */
+  & :not(pre) > code {
+    @apply relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold;
+  }
+
+  /* Pre blocks */
+  & pre {
+    @apply mt-6 overflow-x-auto rounded-lg bg-muted p-4 font-mono text-sm;
+  }
+
+  /* Tables */
+  & table {
+    @apply w-full;
+
+    & th {
+      @apply border-b p-3 text-left font-semibold;
+    }
+
+    & td {
+      @apply border-b p-3;
+    }
+
+    & tbody tr:hover {
+      @apply bg-muted/50;
+    }
+  }
+
+  /* Keep any special styling you want to preserve */
+}
+
+@utility section-intro {
+  /* Base styles */
+  @apply leading-7;
+
+  /* Headings */
+  & h1 {
+    @apply scroll-m-20 text-5xl mb-4 font-extrabold tracking-tight sm:text-6xl;
+  }
+
+  & h2 {
+    @apply scroll-m-20 text-4xl font-semibold tracking-tight lg:text-5xl first:mt-0;
+  }
+
+  & h3 {
+    @apply scroll-m-20 text-2xl font-semibold tracking-tight;
+  }
+
+  & h4 {
+    @apply scroll-m-20 text-xl font-semibold tracking-tight;
+  }
+
+  & h5 {
+    @apply scroll-m-20 text-lg font-semibold tracking-tight;
+  }
+
+  & h6 {
+    @apply scroll-m-20 text-base font-semibold tracking-tight;
+  }
+
+  /* Paragraphs */
+  & p {
+    @apply text-center text-lg  text-pretty text-muted-foreground sm:text-xl/8;
+  }
+  & a {
+    @apply underline;
+  }
+
+  & p:not(:first-child) {
+    @apply mt-0;
+  }
+
+  /* Lists */
+  & :is(ul, ol) {
+    @apply list-disc;
+    &:not(:first-child) {
+      @apply mt-6;
+    }
+  }
+
+  /* Blockquotes */
+  & blockquote {
+    @apply mt-6 border-l-2 pl-6 italic;
+  }
+
+  /* Pre blocks */
+  & pre {
+    @apply mt-6 overflow-x-auto rounded-lg bg-muted p-4 font-mono text-sm;
+  }
+
+  /* Tables */
+  & table {
+    @apply w-full;
+
+    & th {
+      @apply border-b p-3 text-left font-semibold;
+    }
+
+    & td {
+      @apply border-b p-3;
+    }
+
+    & tbody tr:hover {
+      @apply bg-muted/50;
+    }
+  }
+}
+
+@utility hero {
+  /* Base styles */
+  @apply leading-7 text-pretty max-w-3xl mx-auto;
+
+  /* Headings */
+  & h1 {
+    @apply scroll-m-20 text-5xl font-extrabold tracking-tight lg:text-6xl;
+  }
+
+  & h2 {
+    @apply scroll-m-20 text-4xl font-semibold tracking-tight lg:text-5xl first:mt-0;
+  }
+
+  & h3 {
+    @apply scroll-m-20 text-2xl font-semibold tracking-tight;
+  }
+
+  & h4 {
+    @apply scroll-m-20 text-xl font-semibold tracking-tight;
+  }
+
+  & h5 {
+    @apply scroll-m-20 text-lg font-semibold tracking-tight;
+  }
+
+  & h6 {
+    @apply scroll-m-20 text-base font-semibold tracking-tight;
+  }
+
+  /* Paragraphs */
+  & p {
+    @apply text-pretty text-lg;
+    @apply text-muted-foreground;
+  }
+  & a {
+    @apply underline;
+  }
+
+  & p:not(:first-child) {
+    @apply mt-3;
+  }
+
+  /* Lists */
+  & :is(ul, ol) {
+    @apply list-disc;
+    &:not(:first-child) {
+      @apply mt-6;
+    }
+  }
+
+  /* Blockquotes */
+  & blockquote {
+    @apply mt-6 border-l-2 pl-6 italic;
+  }
+
+  /* Code */
+  & :not(pre) > code {
+    @apply relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold;
+  }
+
+  /* Pre blocks */
+  & pre {
+    @apply mt-6 overflow-x-auto rounded-lg bg-muted p-4 font-mono text-sm;
+  }
+
+  /* Tables */
+  & table {
+    @apply w-full;
+
+    & th {
+      @apply border-b p-3 text-left font-semibold;
+    }
+
+    & td {
+      @apply border-b p-3;
+    }
+
+    & tbody tr:hover {
+      @apply bg-muted/50;
+    }
+  }
+}
+
+/* skeleton */
+
+@utility skeleton {
+  @apply bg-foreground/3 h-[1lh];
+}
+@utility skeleton-2 {
+  @apply bg-foreground/3 h-[2lh];
+}
+@utility skeleton-3 {
+  @apply bg-foreground/3 h-[3lh];
+}
+
+@utility accordion-up {
+  @apply duration-200 ease-out;
+}
+@utility accordion-down {
+  @apply duration-200 ease-out;
+}
+
+/* components */
+
+@utility accordion {
+  & summary {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 1em;
+    @apply hover:text-secondary hover:underline;
+
+    &::after {
+      content: "+";
+      display: inline-block;
+      font-family: monospace;
+      font-size: 1.5em;
+      @apply hover:no-underline focus:no-underline;
+      &:hover {
+        @apply no-underline;
+      }
+    }
+  }
+
+  & ::-webkit-details-marker {
+    display: none;
+  }
+
+  &:open summary::after {
+    content: "-";
+  }
+}

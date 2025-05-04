@@ -100,6 +100,12 @@ NextMedal is crafted by Medal Social, a marketing powerhouse that knows how to e
 - [x] 💡 **Help pages**: Comprehensive documentation and support system
 - [x] ✨ **And much more!**: Custom integrations tailored to your needs
 
+## Sponsor Us ❤️
+
+[![GitHub Sponsor](https://img.shields.io/github/sponsors/Medal-Social?label=Sponsor&logo=GitHub&style=flat-square)](https://github.com/sponsors/Medal-Social)
+
+Support the development of NextMedal by becoming a sponsor. Your logo will appear here with a link to your website.
+
 ## License
 
 NextMedal is licensed under the Apache License 2.0.
