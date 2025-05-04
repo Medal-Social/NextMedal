@@ -5,7 +5,7 @@ FROM node:lts-alpine AS base
 WORKDIR /app
 
 # Install pnpm via corepack
-RUN corepack enable && corepack prepare pnpm@10.6.5 --activate
+RUN corepack enable && corepack prepare pnpm@10.10.0 --activate
 
 # --- Dependencies & Build ---
 FROM base AS builder
