@@ -17,28 +17,88 @@ NextMedal combines Next.js, Sanity, and a modern component library to create a f
 
 ---
 
+import { Files, Folder, File } from 'fumadocs-ui/components/files';
+
 ## Template Folder Structure
 
-```
-src/
-  app/                # Next.js app directory (routing, pages, API)
-    (docs)/           # Documentation routes
-    (frontend)/       # Main site routes (blog, pages, etc.)
-    (studio)/         # Admin/studio routes
-    api/              # API endpoints (draft mode, search, og, etc.)
-  components/         # Reusable React components
-    mdx/              # MDX-specific components
-    ui/               # shadcn/ui components (customized)
-  lib/                # Utility functions, Sanity client, helpers
-  sanity/             # Sanity schemas, config, and UI customizations
-    schemaTypes/      # Sanity document/object schemas
-    lib/              # Sanity helpers
-    ui/               # Sanity Studio UI components
-  styles/             # Global and component styles
-  types/              # TypeScript types
-public/               # Static assets
-docs/                 # Project documentation (markdown/mdx)
-```
+<Files>
+  <Folder name="src" defaultOpen>
+    <Folder name="app" defaultOpen>
+      <Folder name="(docs)" />
+      <Folder name="(frontend)">
+        <Folder name="[...slug]" />
+        <Folder name="blog">
+          <Folder name="[slug]" />
+          <File name="rss.xml" />
+        </Folder>
+      </Folder>
+      <Folder name="(studio)">
+        <Folder name="admin">
+          <Folder name="[[...tool]]" />
+        </Folder>
+      </Folder>
+      <Folder name="api">
+        <Folder name="draft-mode">
+          <Folder name="disable" />
+          <Folder name="enable" />
+        </Folder>
+        <Folder name="og" />
+        <Folder name="search" />
+      </Folder>
+      <File name="llm.txt" />
+    </Folder>
+    <Folder name="components">
+      <Folder name="mdx" />
+      <Folder name="ui" />
+    </Folder>
+    <Folder name="lib" />
+    <Folder name="sanity">
+      <Folder name="lib" />
+      <Folder name="schemaTypes">
+        <Folder name="documents" />
+        <Folder name="fragments">
+          <Folder name="fields" />
+        </Folder>
+        <Folder name="misc" />
+        <Folder name="modules" />
+        <Folder name="objects" />
+      </Folder>
+      <Folder name="ui" />
+    </Folder>
+    <Folder name="styles" />
+    <Folder name="types" />
+    <Folder name="ui">
+      <Folder name="footer" />
+      <Folder name="header" />
+      <Folder name="modules">
+        <Folder name="blog">
+          <Folder name="BlogFrontpage" />
+          <Folder name="BlogList" />
+        </Folder>
+        <Folder name="hero">
+          <Folder name="components" />
+        </Folder>
+        <Folder name="mux" />
+        <Folder name="RichtextModule" />
+      </Folder>
+    </Folder>
+  </Folder>
+  <Folder name="public" />
+  <Folder name="docs">
+    <Folder name="concepts" />
+    <Folder name="features" />
+    <Folder name="guides" />
+    <Folder name="introduction" />
+    <Folder name="setup" />
+  </Folder>
+</Files>
+
+**Key folders:**
+- `components/ui/`: shadcn/ui component library (UI primitives and design system)
+- `sanity/`: Sanity schemas, config, and studio customizations
+- `app/`: Next.js routing, pages, and API endpoints
+- `lib/`: Utility functions and Sanity client
+- `docs/`: Project documentation (markdown/mdx)
 
 ---
 
