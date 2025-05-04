@@ -10,6 +10,16 @@ RUN corepack enable && corepack prepare pnpm@10.6.5 --activate
 # --- Dependencies & Build ---
 FROM base AS builder
 
+# Build arguments for environment variables
+ARG NEXT_PUBLIC_SANITY_PROJECT_ID
+ARG NEXT_PUBLIC_SANITY_DATASET
+ARG NEXT_PUBLIC_BASE_URL
+
+# Set environment variables for build stage
+ENV NEXT_PUBLIC_SANITY_PROJECT_ID=$NEXT_PUBLIC_SANITY_PROJECT_ID \
+    NEXT_PUBLIC_SANITY_DATASET=$NEXT_PUBLIC_SANITY_DATASET \
+    NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
+
 # Copy only package manager files first for better caching
 COPY package.json ./
 COPY pnpm-lock.yaml ./
