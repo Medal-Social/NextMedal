@@ -1,0 +1,200 @@
+---
+title: Deployment
+description: Learn how to deploy your NextMedal application to various platforms
+---
+
+# Deployment Guide
+
+This guide covers how to deploy your NextMedal application to various platforms and environments.
+
+## Vercel Deployment
+
+<Steps>
+  <Step title="Prepare Your Application">
+    1. Ensure your repository is on GitHub
+    2. Update environment variables in `.env.example`
+    3. Check your `next.config.js` settings
+  </Step>
+
+  <Step title="Deploy to Vercel">
+    ```bash
+    # Install Vercel CLI
+    npm i -g vercel
+
+    # Login to Vercel
+    vercel login
+
+    # Deploy
+    vercel
+    ```
+  </Step>
+
+  <Step title="Configure Environment Variables">
+    Add your environment variables in Vercel:
+    ```bash
+    NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id
+    NEXT_PUBLIC_SANITY_DATASET=production
+    NEXTAUTH_SECRET=your_secret
+    ```
+  </Step>
+</Steps>
+
+## Production Optimizations
+
+<Accordions type="single">
+  <Accordion title="Performance">
+    ```typescript
+    // next.config.js
+    module.exports = {
+      swcMinify: true,
+      images: {
+        domains: ['cdn.sanity.io'],
+      },
+      experimental: {
+        serverActions: true,
+      },
+    };
+    ```
+  </Accordion>
+
+  <Accordion title="Caching">
+    ```typescript
+    // app/api/revalidate/route.ts
+    import { revalidatePath } from 'next/cache';
+
+    export async function POST(request: Request) {
+      const path = await request.json();
+      revalidatePath(path);
+      return Response.json({ revalidated: true });
+    }
+    ```
+  </Accordion>
+</Accordions>
+
+## Deployment Platforms
+
+<Files>
+  <Folder name="Cloud Platforms" annotation="Popular hosting options">
+    <File name="Vercel" annotation="Recommended" />
+    <File name="Netlify" annotation="Alternative" />
+    <File name="AWS Amplify" annotation="Enterprise" />
+  </Folder>
+  <Folder name="Self-Hosted" annotation="Custom deployment">
+    <File name="Docker" annotation="Containerized" />
+    <File name="PM2" annotation="Process manager" />
+    <File name="Nginx" annotation="Web server" />
+  </Folder>
+</Files>
+
+## Docker Deployment
+
+```dockerfile
+# Dockerfile
+FROM node:18-alpine AS base
+
+# Dependencies
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Builder
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN npm run build
+
+# Runner
+FROM base AS runner
+WORKDIR /app
+ENV NODE_ENV production
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+USER nextjs
+EXPOSE 3000
+ENV PORT 3000
+CMD ["node", "server.js"]
+```
+
+## CI/CD Setup
+
+<Steps>
+  <Step title="GitHub Actions">
+    ```yaml
+    # .github/workflows/deploy.yml
+    name: Deploy
+    on:
+      push:
+        branches: [main]
+    
+    jobs:
+      deploy:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v2
+          - uses: actions/setup-node@v2
+            with:
+              node-version: '18'
+          - run: npm ci
+          - run: npm run build
+          - uses: amondnet/vercel-action@v20
+            with:
+              vercel-token: ${{ secrets.VERCEL_TOKEN }}
+              vercel-org-id: ${{ secrets.ORG_ID }}
+              vercel-project-id: ${{ secrets.PROJECT_ID }}
+    ```
+  </Step>
+
+  <Step title="Quality Checks">
+    ```yaml
+    # .github/workflows/quality.yml
+    name: Quality
+    on: [pull_request]
+    
+    jobs:
+      quality:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v2
+          - run: npm ci
+          - run: npm run lint
+          - run: npm run test
+          - run: npm run build
+    ```
+  </Step>
+</Steps>
+
+## Monitoring
+
+Set up monitoring for your production deployment:
+
+<Accordions type="single">
+  <Accordion title="Error Tracking">
+    ```typescript
+    // lib/error-tracking.ts
+    import * as Sentry from '@sentry/nextjs';
+
+    Sentry.init({
+      dsn: process.env.SENTRY_DSN,
+      environment: process.env.NODE_ENV,
+      tracesSampleRate: 1.0,
+    });
+    ```
+  </Accordion>
+
+  <Accordion title="Performance Monitoring">
+    ```typescript
+    // lib/analytics.ts
+    export function reportWebVitals(metric) {
+      console.log(metric);
+      // Send to your analytics service
+    }
+    ```
+  </Accordion>
+</Accordions>
+
