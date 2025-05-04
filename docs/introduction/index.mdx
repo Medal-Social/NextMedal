@@ -111,6 +111,82 @@ NextMedal can be deployed on any platform that supports Next.js applications, su
 
 ---
 
+## Troubleshooting & FAQ
+
+### Troubleshooting
+
+If you encounter any issues during installation:
+
+1. Make sure your Node.js version is compatible
+2. Check that all environment variables are correctly set
+3. Ensure you have the necessary permissions to install packages
+4. Clear npm or yarn cache if needed:
+   ```bash
+   npm cache clean --force
+   # or
+   yarn cache clean
+   ```
+
+For further assistance, check the [GitHub issues](https://github.com/Medal-Social/NextMedal/issues) or create a new issue.
+
+### Frequently Asked Questions
+
+<Accordions type="single">
+  <Accordion title="What are the minimum system requirements?">
+    The minimum requirements for running NextMedal are:
+    - Node.js 18.0 or later
+    - 2GB RAM (4GB recommended)
+    - Modern web browser (Chrome, Firefox, Safari, or Edge)
+    - Git for version control
+    - Basic knowledge of React and Next.js
+  </Accordion>
+
+  <Accordion title="Can I use NextMedal with TypeScript?">
+    Yes! NextMedal is built with TypeScript by default. All templates and examples come with full TypeScript support and type definitions. You don't need to do any additional configuration to use TypeScript in your project.
+  </Accordion>
+
+  <Accordion title="How do I update my NextMedal installation?">
+    To update NextMedal to the latest version:
+    1. Check your current version in `package.json`
+    2. Run `npm outdated` to see available updates
+    3. Update dependencies with `npm update`
+    4. For major versions, check the migration guide in our documentation
+  </Accordion>
+
+  <Accordion title="How do I configure Sanity Studio?">
+    Sanity Studio configuration involves:
+    1. Creating a Sanity project (`npx sanity init`)
+    2. Setting environment variables in `.env.local`
+    3. Customizing schemas in `sanity/schemas`
+    4. Accessing Studio at `/studio` route
+    
+    Detailed configuration options are available in our Sanity configuration guide.
+  </Accordion>
+
+  <Accordion title="Can I deploy NextMedal to Vercel?">
+    Yes! NextMedal is optimized for Vercel deployment:
+    1. Push your code to GitHub
+    2. Import your repository in Vercel
+    3. Configure environment variables
+    4. Deploy!
+    
+    We also support other platforms like Netlify and AWS Amplify.
+  </Accordion>
+
+  <Accordion title="How do I handle environment variables?">
+    Environment variables in NextMedal:
+    1. Copy `.env.example` to `.env.local`
+    2. Add required variables:
+       - `NEXT_PUBLIC_SANITY_PROJECT_ID`
+       - `NEXT_PUBLIC_SANITY_DATASET`
+       - `NEXT_PUBLIC_SANITY_API_VERSION`
+    3. Use `process.env.VARIABLE_NAME` in your code
+    4. For production, set variables in your hosting platform
+  </Accordion>
+</Accordions>
+
+---
+
 ## Next Steps & Guides
 
 - [SEO & Metadata](/docs/concepts/seo)
