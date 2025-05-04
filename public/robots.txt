@@ -1,0 +1,22 @@
+
+# ___  ___         _       _   _____            _       _ 
+# |  \/  |        | |     | | /  ___|          (_)     | |
+# | .  . | ___  __| | __ _| | \ `--.  ___   ___ _  __ _| |
+# | |\/| |/ _ \/ _` |/ _` | |  `--. \/ _ \ / __| |/ _` | |
+# | |  | |  __/ (_| | (_| | | /\__/ / (_) | (__| | (_| | |
+# \_|  |_/\___|\__,_|\__,_|_| \____/ \___/ \___|_|\__,_|_|
+#
+# Created by  https://www.medalsocial.com/about
+#
+
+
+User-agent: *
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+Sitemap: https://www.nextmedal.com/sitemap.xml
+# RSS feed for blog content
+# https://www.nextmedal.com/blog/rss.xml
+Host: https://www.nextmedal.com
