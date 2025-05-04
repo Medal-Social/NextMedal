@@ -1,0 +1,246 @@
+---
+title: Customization
+description: Learn how to customize and extend NextMedal to match your needs
+---
+
+# Customization Guide
+
+NextMedal is designed to be highly customizable. This guide will show you how to modify and extend various aspects of your application.
+
+## Theme Customization
+
+<Steps>
+  <Step title="Colors and Typography">
+    ```typescript
+    // tailwind.config.ts
+    import { type Config } from 'tailwindcss';
+
+    export default {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#FF4785',
+              dark: '#E6366E',
+            },
+            secondary: {
+              DEFAULT: '#1EA7FD',
+              dark: '#0D8AE0',
+            },
+          },
+          fontFamily: {
+            sans: ['var(--font-inter)'],
+            mono: ['var(--font-mono)'],
+          },
+        },
+      },
+    } satisfies Config;
+    ```
+  </Step>
+
+  <Step title="Component Styles">
+    ```typescript
+    // components/ui/button.tsx
+    const buttonVariants = cva(
+      'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50',
+      {
+        variants: {
+          variant: {
+            default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+            destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+            outline: 'border border-input hover:bg-accent hover:text-accent-foreground',
+          },
+          size: {
+            default: 'h-10 px-4 py-2',
+            sm: 'h-9 px-3',
+            lg: 'h-11 px-8',
+          },
+        },
+        defaultVariants: {
+          variant: 'default',
+          size: 'default',
+        },
+      }
+    );
+    ```
+  </Step>
+</Steps>
+
+## Layout Customization
+
+<Accordions type="single">
+  <Accordion title="Custom Layout">
+    ```typescript
+    // app/layout.tsx
+    import { SiteHeader } from '@/components/site-header';
+    import { SiteFooter } from '@/components/site-footer';
+
+    export default function RootLayout({
+      children,
+    }: {
+      children: React.ReactNode;
+    }) {
+      return (
+        <html lang="en" suppressHydrationWarning>
+          <body className="min-h-screen bg-background font-sans antialiased">
+            <div className="relative flex min-h-screen flex-col">
+              <SiteHeader />
+              <div className="flex-1">{children}</div>
+              <SiteFooter />
+            </div>
+          </body>
+        </html>
+      );
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Navigation">
+    ```typescript
+    // config/site.ts
+    export const siteConfig = {
+      name: 'NextMedal',
+      description: 'Your platform description',
+      mainNav: [
+        {
+          title: 'Home',
+          href: '/',
+        },
+        {
+          title: 'Features',
+          href: '/features',
+        },
+      ],
+    };
+    ```
+  </Accordion>
+</Accordions>
+
+## Custom Components
+
+Create your own components or extend existing ones:
+
+<Files>
+  <Folder name="components" annotation="Custom components">
+    <File name="ui/card.tsx" annotation="Base components" />
+    <File name="shared/auth-form.tsx" annotation="Feature components" />
+    <File name="layouts/dashboard.tsx" annotation="Layout components" />
+  </Folder>
+</Files>
+
+## Sanity Schema Customization
+
+<Steps>
+  <Step title="Define Custom Types">
+    ```typescript
+    // sanity/schemas/post.ts
+    export const post = {
+      name: 'post',
+      title: 'Post',
+      type: 'document',
+      fields: [
+        {
+          name: 'title',
+          title: 'Title',
+          type: 'string',
+          validation: (Rule) => Rule.required(),
+        },
+        {
+          name: 'content',
+          title: 'Content',
+          type: 'array',
+          of: [{ type: 'block' }],
+        },
+      ],
+    };
+    ```
+  </Step>
+
+  <Step title="Custom Input Components">
+    ```typescript
+    // sanity/components/CustomInput.tsx
+    import { StringInputProps } from 'sanity';
+
+    export function CustomInput(props: StringInputProps) {
+      return (
+        <div className="custom-input">
+          <input
+            type="text"
+            value={props.value}
+            onChange={(event) => props.onChange(event.target.value)}
+          />
+        </div>
+      );
+    }
+    ```
+  </Step>
+</Steps>
+
+## API Customization
+
+Extend the API functionality:
+
+```typescript
+// app/api/custom/route.ts
+import { NextResponse } from 'next/server';
+import { getSession } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+
+export async function GET(request: Request) {
+  const session = await getSession();
+  
+  if (!session) {
+    return new NextResponse('Unauthorized', { status: 401 });
+  }
+
+  const data = await prisma.customModel.findMany({
+    where: {
+      userId: session.user.id,
+    },
+  });
+
+  return NextResponse.json(data);
+}
+```
+
+## Authentication Customization
+
+<Accordions type="single">
+  <Accordion title="Custom Providers">
+    ```typescript
+    // lib/auth.ts
+    import { AuthOptions } from 'next-auth';
+    import CustomProvider from '@/lib/custom-provider';
+
+    export const authOptions: AuthOptions = {
+      providers: [
+        CustomProvider({
+          clientId: process.env.CUSTOM_CLIENT_ID,
+          clientSecret: process.env.CUSTOM_CLIENT_SECRET,
+        }),
+      ],
+      callbacks: {
+        async session({ session, token }) {
+          // Customize session data
+          return session;
+        },
+      },
+    };
+    ```
+  </Accordion>
+
+  <Accordion title="Custom Pages">
+    ```typescript
+    // app/auth/login/page.tsx
+    import { CustomLoginForm } from '@/components/auth/custom-login-form';
+
+    export default function LoginPage() {
+      return (
+        <div className="auth-container">
+          <CustomLoginForm />
+        </div>
+      );
+    }
+    ```
+  </Accordion>
+</Accordions>

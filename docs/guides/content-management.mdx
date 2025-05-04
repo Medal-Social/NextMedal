@@ -1,0 +1,266 @@
+---
+title: Content Management
+description: Learn how to manage content effectively using Sanity Studio in NextMedal
+---
+
+# Content Management
+
+NextMedal integrates seamlessly with Sanity Studio for powerful content management capabilities. This guide will help you understand how to structure, create, and manage your content effectively.
+
+## Setting Up Sanity Studio
+
+<Steps>
+  <Step title="Configure Sanity Studio">
+    ```typescript
+    // sanity.config.ts
+    import { defineConfig } from 'sanity';
+    import { deskTool } from 'sanity/desk';
+    import { visionTool } from '@sanity/vision';
+    import { schemaTypes } from './schemas';
+
+    export default defineConfig({
+      name: 'default',
+      title: 'NextMedal',
+      projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+      dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
+      plugins: [deskTool(), visionTool()],
+      schema: {
+        types: schemaTypes,
+      },
+    });
+    ```
+  </Step>
+
+  <Step title="Define Content Types">
+    ```typescript
+    // schemas/post.ts
+    export default {
+      name: 'post',
+      title: 'Post',
+      type: 'document',
+      fields: [
+        {
+          name: 'title',
+          title: 'Title',
+          type: 'string',
+          validation: Rule => Rule.required(),
+        },
+        {
+          name: 'slug',
+          title: 'Slug',
+          type: 'slug',
+          options: {
+            source: 'title',
+            maxLength: 96,
+          },
+        },
+        {
+          name: 'content',
+          title: 'Content',
+          type: 'array',
+          of: [{ type: 'block' }],
+        },
+      ],
+    };
+    ```
+  </Step>
+</Steps>
+
+## Content Structure
+
+<Accordions type="single">
+  <Accordion title="Document Types">
+    ```typescript
+    // schemas/index.ts
+    import post from './post';
+    import author from './author';
+    import category from './category';
+    import product from './product';
+
+    export const schemaTypes = [
+      post,
+      author,
+      category,
+      product,
+    ];
+    ```
+  </Accordion>
+
+  <Accordion title="References and Relations">
+    ```typescript
+    // schemas/author.ts
+    export default {
+      name: 'author',
+      title: 'Author',
+      type: 'document',
+      fields: [
+        {
+          name: 'name',
+          title: 'Name',
+          type: 'string',
+        },
+        {
+          name: 'posts',
+          title: 'Posts',
+          type: 'array',
+          of: [{ type: 'reference', to: [{ type: 'post' }] }],
+        },
+      ],
+    };
+    ```
+  </Accordion>
+</Accordions>
+
+## Custom Input Components
+
+Create custom input components to enhance the editing experience:
+
+```typescript
+// components/sanity/CustomImageInput.tsx
+import { ImageInput } from 'sanity-plugin-image-input';
+
+export const CustomImageInput = ({ value, onChange }) => {
+  return (
+    <ImageInput
+      value={value}
+      onChange={onChange}
+      options={{
+        aspectRatio: 16/9,
+        hotspot: true,
+      }}
+    />
+  );
+};
+```
+
+## Content Validation
+
+<Steps>
+  <Step title="Field Validation">
+    ```typescript
+    // schemas/product.ts
+    {
+      name: 'price',
+      title: 'Price',
+      type: 'number',
+      validation: Rule => Rule
+        .required()
+        .min(0)
+        .custom((price) => {
+          if (price % 1 !== 0) {
+            return 'Price must be a whole number';
+          }
+          return true;
+        }),
+    }
+    ```
+  </Step>
+
+  <Step title="Document Validation">
+    ```typescript
+    // schemas/post.ts
+    {
+      validation: Rule => Rule.custom(fields => {
+        if (fields.featured && !fields.featuredImage) {
+          return 'Featured posts must have a featured image';
+        }
+        return true;
+      }),
+    }
+    ```
+  </Step>
+</Steps>
+
+## Content Querying
+
+<Accordions type="single">
+  <Accordion title="Basic Queries">
+    ```typescript
+    // lib/sanity/queries.ts
+    export const postQuery = groq`
+      *[_type == "post" && slug.current == $slug][0] {
+        title,
+        "slug": slug.current,
+        content,
+        "author": author->{
+          name,
+          "image": image.asset->url
+        }
+      }
+    `;
+    ```
+  </Accordion>
+
+  <Accordion title="Advanced Filtering">
+    ```typescript
+    // lib/sanity/queries.ts
+    export const filteredPostsQuery = groq`
+      *[_type == "post" && category._ref in $categories] {
+        title,
+        excerpt,
+        "slug": slug.current,
+        "category": category->name,
+        _createdAt
+      } | order(_createdAt desc)[0...10]
+    `;
+    ```
+  </Accordion>
+</Accordions>
+
+## Real-time Updates
+
+Implement real-time content updates using Sanity's real-time API:
+
+```typescript
+// lib/sanity/live-preview.ts
+import { useLiveQuery } from 'next-sanity/preview';
+
+export function usePreviewSubscription(query, params) {
+  const [data] = useLiveQuery(query, params);
+  return data;
+}
+```
+
+## Content Deployment
+
+<Steps>
+  <Step title="Production Deployment">
+    ```bash
+    # Deploy Sanity Studio
+    sanity deploy
+
+    # Deploy Next.js application
+    next build
+    next start
+    ```
+  </Step>
+
+  <Step title="Content Backup">
+    ```bash
+    # Export dataset
+    sanity dataset export production
+
+    # Import dataset
+    sanity dataset import ./production.tar.gz staging
+    ```
+  </Step>
+</Steps>
+
+## Best Practices
+
+1. **Content Modeling**
+   - Plan your content structure carefully
+   - Use references for related content
+   - Implement proper validation rules
+
+2. **Performance**
+   - Use projections to limit returned fields
+   - Implement proper caching strategies
+   - Optimize image assets
+
+3. **Workflow**
+   - Set up content workflows
+   - Use drafts for content review
+   - Implement proper access control
+
+For more information about content management, check our [Sanity integration guide](/docs/integrations/sanity) and [content API reference](/docs/reference/content). 
