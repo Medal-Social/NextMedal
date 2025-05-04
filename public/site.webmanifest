@@ -1,6 +1,7 @@
 {
   "name": "Medal Social",
   "short_name": "Medal",
+  "description": "Connect and share with the Medal Social community",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
@@ -15,6 +16,9 @@
       "purpose": "maskable"
     }
   ],
+  "start_url": "/",
+  "scope": "/",
+  "orientation": "portrait-primary",
   "theme_color": "#ffffff",
   "background_color": "#ffffff",
   "display": "standalone"
