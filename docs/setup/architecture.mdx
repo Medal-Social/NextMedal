@@ -1,0 +1,71 @@
+---
+title: Architecture
+description: Understanding how NextMedal's components work together
+full: true
+---
+
+# Architecture
+
+NextMedal combines Next.js, Sanity, and a modern component library to create a flexible content and site template. This document describes how the project is actually structured and how its main parts work together.
+
+## High-Level Overview
+
+- **Next.js**: Handles routing, rendering (SSG/SSR), API endpoints, and UI.
+- **Sanity**: Headless CMS for content management, queried from Next.js.
+- **shadcn/ui**: Component library for building UI elements.
+- **Integrations**: Custom logic, API routes, and Sanity schema extensions.
+
+---
+
+## Template Folder Structure
+
+```
+src/
+  app/                # Next.js app directory (routing, pages, API)
+    (docs)/           # Documentation routes
+    (frontend)/       # Main site routes (blog, pages, etc.)
+    (studio)/         # Admin/studio routes
+    api/              # API endpoints (draft mode, search, og, etc.)
+  components/         # Reusable React components
+    mdx/              # MDX-specific components
+    ui/               # shadcn/ui components (customized)
+  lib/                # Utility functions, Sanity client, helpers
+  sanity/             # Sanity schemas, config, and UI customizations
+    schemaTypes/      # Sanity document/object schemas
+    lib/              # Sanity helpers
+    ui/               # Sanity Studio UI components
+  styles/             # Global and component styles
+  types/              # TypeScript types
+public/               # Static assets
+docs/                 # Project documentation (markdown/mdx)
+```
+
+---
+
+## Data Flow
+
+1. **Content Authoring**: Editors use Sanity Studio (`/src/sanity/`) to create and update content.
+2. **Content Fetching**: Next.js pages and API routes use the Sanity client (`/src/lib/sanity.client.ts` or similar) to fetch content via GROQ queries.
+3. **Rendering**: Fetched data is passed to React components (from `/src/components/` and `/src/components/ui/`) for rendering.
+4. **Preview & Drafts**: Preview mode and real-time updates are handled via API routes and Sanity's Listen API.
+5. **Caching**: Next.js uses ISR/SSG/SSR and may implement additional caching in the client or CDN.
+
+---
+
+## Component Library (shadcn/ui)
+
+- All UI primitives and design system components are located in `/src/components/ui/`.
+- These are either directly from shadcn/ui or customized for the project.
+- Used throughout the app for consistent design and rapid development.
+
+---
+
+## Integrations
+
+- **Sanity**: Custom schemas, GROQ queries, and preview logic in `/src/sanity/`.
+- **API Routes**: Custom endpoints in `/src/app/api/` for search, preview, and other dynamic features.
+- **MDX**: Enhanced documentation and content via MDX components in `/src/components/mdx/`.
+- **Other**: Any additional integrations (analytics, auth, etc.) would be in `/src/lib/` or `/src/app/api/`.
+
+---
+
