@@ -17,5 +17,6 @@ User-agent: Twitterbot
 Allow: /
 
 Sitemap: https://www.nextmedal.com/sitemap.xml
-Sitemap: https://www.nextmedal.com/blog/rss.xml
+# RSS feed for blog content
+# https://www.nextmedal.com/blog/rss.xml
 Host: https://www.nextmedal.com
