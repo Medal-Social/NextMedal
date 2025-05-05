@@ -46,40 +46,39 @@ export function usePagination<T extends unknown>({
     if ((atStart && atEnd) || !paginatedItems?.length) return null;
 
     return (
-  <nav {...props}>
-    <button
-      type="button"
-      className={prevClassName || buttonClassName}
-      aria-label="Go to previous page"
-      onClick={() => {
-        onPrev();
-        onClick();
-      }}
-      disabled={atStart}
-    >
-      {prev}
-    </button>
+      <nav {...props}>
+        <button
+          type="button"
+          className={prevClassName || buttonClassName}
+          onClick={() => {
+            onPrev();
+            onClick();
+          }}
+          disabled={atStart}
+        >
+          {prev}
+        </button>
 
-    {!hidePage && (
-      <span aria-live="polite" aria-atomic="true">
-        {currentPage} of {totalPages}
-      </span>
-    )}
+        {!hidePage && (
+          <span>
+            {currentPage} of {totalPages}
+          </span>
+        )}
 
-    <button
-      type="button"
-      className={nextClassName || buttonClassName}
-      aria-label="Go to next page"
-      onClick={() => {
-        onNext();
-        onClick();
-      }}
-      disabled={atEnd}
-    >
-      {next}
-    </button>
-  </nav>
-  };
+        <button
+          type="button"
+          className={nextClassName || buttonClassName}
+          onClick={() => {
+            onNext();
+            onClick();
+          }}
+          disabled={atEnd}
+        >
+          {next}
+        </button>
+      </nav>
+    );
+  }
 
   return {
     atStart,
