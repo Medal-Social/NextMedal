@@ -50,8 +50,6 @@ COPY --from=builder /app .
 # Set permissions
 RUN chown -R nextjs:nodejs /app
 
-ENV SANITY_API_READ_TOKEN=$SANITY_API_READ_TOKEN
-
 USER nextjs
 
 # Expose Next.js default port
