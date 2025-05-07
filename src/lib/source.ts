@@ -6,7 +6,6 @@ import { createElement } from 'react';
 export const source = loader({
   baseUrl: '/docs',
   source: docs.toFumadocsSource(),
-  defaultPage: ['introduction', 'quick-start'],
   icon(icon) {
     if (!icon) return;
     if (icon in icons) {
