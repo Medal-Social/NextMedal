@@ -1,5 +1,5 @@
-import { PortableText } from 'next-sanity';
-import CTAListCallout from '../CTAListCallout';
+import { PortableText, stegaClean } from "next-sanity";
+import CTAListCallout from "../CTAListCallout";
 
 export default function Callout({
   content,
@@ -14,9 +14,12 @@ export default function Callout({
       <div className="w-full ">
         <div className="relative isolate overflow-hidden bg-gray-900 px-6 py-24 text-center shadow-2xl  sm:px-16">
           <div className="emailsignup">
-            <PortableText value={content} />
+            <PortableText value={stegaClean(content)} />
           </div>
-          <CTAListCallout className="!mt-8 justify-center" ctas={ctas} />
+          <CTAListCallout
+            className="!mt-8 justify-center"
+            ctas={stegaClean(ctas)}
+          />
           <svg
             viewBox="0 0 1024 1024"
             aria-hidden="true"
