@@ -1,6 +1,14 @@
 import { PortableText, stegaClean } from "next-sanity";
 import CTAListCallout from "../CTAListCallout";
 
+/**
+ * Renders a styled callout section with rich text content and a list of call-to-action buttons.
+ *
+ * The content and CTAs are sanitized before rendering. The section includes a decorative SVG background.
+ *
+ * @param content - Rich text content to display in the callout.
+ * @param ctas - List of call-to-action objects to render as buttons.
+ */
 export default function Callout({
   content,
   ctas,

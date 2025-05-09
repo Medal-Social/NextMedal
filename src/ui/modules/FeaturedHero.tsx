@@ -25,6 +25,13 @@ export interface FeaturedHeroProps {
   content?: any;
 }
 
+/**
+ * Renders a configurable featured hero section with optional image, content, features, call-to-actions, and statistics.
+ *
+ * The layout and alignment are controlled by the `direction` and `textAlign` props. Features, CTAs, and stats are conditionally displayed if provided. All dynamic content is sanitized before rendering.
+ *
+ * @returns The rendered featured hero React element.
+ */
 export default function FeaturedHero({
   pretitle,
   image,
