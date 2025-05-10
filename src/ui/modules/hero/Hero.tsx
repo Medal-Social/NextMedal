@@ -65,7 +65,7 @@ export default function Hero(props: Sanity.Hero & { className?: string; isTabbed
                 />
                 
                 {/* Subtle decoration on the left only */}
-                <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-rose-600/30 blur-xl pointer-events-none"></div>
+                <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-rose-600/30 blur-xl pointer-events-none" />
               </div>
             </div>
           )}
