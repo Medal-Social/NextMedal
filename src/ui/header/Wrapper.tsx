@@ -29,7 +29,7 @@ export default function Wrapper({ className, children }: React.ComponentProps<'h
     if (typeof document === 'undefined') return;
     const toggle = document.querySelector('#header-toggle') as HTMLInputElement;
     if (toggle) toggle.checked = false;
-  }, [pathname]);
+  }, []);
 
   return (
     <header ref={ref} className={className}>
