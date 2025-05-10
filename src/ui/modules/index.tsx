@@ -83,9 +83,7 @@ export default function Modules({
             return <PricingList {...module} key={module._key} isTabbedModule={isTabbedModule} />;
 
           case 'product-comparison':
-            return (
-              <ProductComparison {...module} key={module._key} />
-            );
+            return <ProductComparison {...module} key={module._key} />;
 
           case 'richtext-module':
             return <RichtextModule {...module} key={module._key} isTabbedModule={isTabbedModule} />;
