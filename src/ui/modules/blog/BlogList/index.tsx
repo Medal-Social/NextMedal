@@ -70,7 +70,7 @@ export default async function BlogList({
         fallback={
           <ul className={listClassName}>
             {Array.from({ length: limit ?? 6 }).map((_, i) => (
-              <li key={i}>
+              <li key={`skeleton-${i}`}>
                 <PostPreview skeleton />
               </li>
             ))}

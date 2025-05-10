@@ -1,13 +1,13 @@
 import { source } from '@/lib/source';
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
-import type { ReactNode } from 'react';
-import { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
-import { GeistSans } from 'geist/font/sans';
-import { GeistMono } from 'geist/font/mono';
-import { ThemeProvider } from 'next-themes';
 import { getSite } from '@/sanity/lib/fetch';
 import ThemeColorSetter from '@/ui/ThemeColorSetter';
+import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { RootProvider } from 'fumadocs-ui/provider';
+import { GeistMono } from 'geist/font/mono';
+import { GeistSans } from 'geist/font/sans';
+import { ThemeProvider } from 'next-themes';
+import type { ReactNode } from 'react';
 import '@/styles/globals.css';
 
 // Define the base options directly in this file

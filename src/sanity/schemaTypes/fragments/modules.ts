@@ -35,7 +35,7 @@ export default defineField({
       groups: [
         {
           name: 'Hero Sections',
-          of: [ 'featuredHero', 'videoHero', 'galleryHero', 'hero'],
+          of: ['featuredHero', 'videoHero', 'galleryHero', 'hero'],
         },
         {
           name: 'Content Blocks',

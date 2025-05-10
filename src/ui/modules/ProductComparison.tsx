@@ -1,24 +1,24 @@
 'use client';
 /**
  * TODO: Make highlight colors dynamic
- * 
+ *
  * Currently using hardcoded colors:
  * - Light mode: bg=#FFF0F2, text=#E11D48
  * - Dark mode: bg=#1F0912, text=#FB7185
- * 
+ *
  * These should be replaced with CSS variables in the future to:
  * 1. Ensure consistency with the global theme
  * 2. Support theme customization without code changes
  * 3. Better support for potential design system changes
- * 
+ *
  * Consider adding these colors to the global CSS and using variables like:
  * - var(--highlight-bg-light)
  * - var(--highlight-bg-dark)
  * - var(--highlight-text-light)
  * - var(--highlight-text-dark)
  */
-import { PortableText } from "next-sanity";
-import Pretitle from "../Pretitle";
+import { PortableText } from 'next-sanity';
+import Pretitle from '../Pretitle';
 
 type ProductComparisonProps = {
   pretitle?: string;
@@ -35,28 +35,20 @@ type ProductComparisonProps = {
   }>;
   _type?: string;
   _key?: string;
-}
+};
 
 /**
  * Renders the appropriate content for a feature detail cell
  */
 function renderFeatureDetail(featureDetail: string, isHighlighted: boolean) {
-  if (featureDetail === "true") {
-    return (
-      <span className={isHighlighted ? "text-[#E11D48] dark:text-[#FB7185]" : ""}>
-        ✓
-      </span>
-    );
+  if (featureDetail === 'true') {
+    return <span className={isHighlighted ? 'text-[#E11D48] dark:text-[#FB7185]' : ''}>✓</span>;
   }
-  
-  if (featureDetail === "false") {
-    return (
-      <span className={isHighlighted ? "text-[#E11D48] dark:text-[#FB7185]" : ""}>
-        ✗
-      </span>
-    );
+
+  if (featureDetail === 'false') {
+    return <span className={isHighlighted ? 'text-[#E11D48] dark:text-[#FB7185]' : ''}>✗</span>;
   }
-  
+
   return featureDetail;
 }
 
@@ -65,7 +57,6 @@ export default function ProductComparison({
   intro,
   products,
   features,
-  ...props
 }: ProductComparisonProps) {
   return (
     <section className="section space-y-8">
@@ -84,8 +75,8 @@ export default function ProductComparison({
                   key={product._key || `product-${product.name}`}
                   className={`p-4 text-center font-bold rounded-t-lg ${
                     product.highlight
-                      ? "bg-[#FFF0F2] dark:bg-[#1F0912] text-[#E11D48] dark:text-[#FB7185]"
-                      : ""
+                      ? 'bg-[#FFF0F2] dark:bg-[#1F0912] text-[#E11D48] dark:text-[#FB7185]'
+                      : ''
                   }`}
                 >
                   {product.name}
@@ -95,22 +86,19 @@ export default function ProductComparison({
           </thead>
           <tbody>
             {features?.map((feature) => (
-              <tr 
-                className="border-b" 
-                key={feature._key || `feature-${feature.name}`}
-              >
+              <tr className="border-b" key={feature._key || `feature-${feature.name}`}>
                 <td className="p-4 font-medium">{feature.name}</td>
                 {feature.featureDetails?.map((featureDetail, idx) => {
                   const correspondingProduct = products?.[idx];
                   const isHighlighted = correspondingProduct?.highlight;
-                  
+
                   return (
                     <td
                       key={`${feature._key || feature.name}-detail-${idx}`}
                       className={`p-4 text-center font-semibold ${
                         isHighlighted
-                          ? "bg-[#FFF0F2] dark:bg-[#1F0912] text-[#E11D48] dark:text-[#FB7185]"
-                          : ""
+                          ? 'bg-[#FFF0F2] dark:bg-[#1F0912] text-[#E11D48] dark:text-[#FB7185]'
+                          : ''
                       }`}
                     >
                       {renderFeatureDetail(featureDetail, !!isHighlighted)}
@@ -124,4 +112,4 @@ export default function ProductComparison({
       </div>
     </section>
   );
-} 
+}

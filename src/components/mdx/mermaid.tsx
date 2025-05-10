@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useId, useRef, useState } from 'react';
+import DOMPurify from 'dompurify';
 import type { MermaidConfig } from 'mermaid';
 import { useTheme } from 'next-themes';
+import { useEffect, useId, useRef, useState } from 'react';
 
 export function Mermaid({ chart }: { chart: string }) {
   const id = useId();
@@ -32,12 +33,17 @@ export function Mermaid({ chart }: { chart: string }) {
           chart.replaceAll('\\n', '\n'),
           containerRef.current
         );
-        setSvg(svg);
+        setSvg(DOMPurify.sanitize(svg));
       } catch (error) {
         console.error('Error while rendering mermaid', error);
       }
     }
   }, [chart, id, resolvedTheme]);
 
-  return <div ref={containerRef} dangerouslySetInnerHTML={{ __html: svg }} />;
+  return (
+    <div ref={containerRef}>
+      {/* biome-ignore lint/security/noDangerouslySetInnerHtml: SVG is sanitized with DOMPurify */}
+      <div dangerouslySetInnerHTML={{ __html: svg }} />
+    </div>
+  );
 }
