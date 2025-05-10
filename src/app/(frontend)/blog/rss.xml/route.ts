@@ -51,8 +51,8 @@ export async function GET() {
       generator: 'https://www.medalsocial.com',
     });
 
-    posts.forEach((post) => {
-      if (!post.metadata) return; // Skip posts without metadata
+    for (const post of posts) {
+      if (!post.metadata) continue; // Skip posts without metadata
       feed.addItem({
         title: escapeHTML(post.metadata.title),
         description: post.metadata.description,
@@ -68,7 +68,9 @@ export async function GET() {
                 const { alt = '', caption, source, ...imageValue } = value;
                 const img = `<img src="${urlFor(imageValue).url()}" alt="${escapeHTML(alt)}" />`;
                 const figcaption = caption && `<figcaption>${escapeHTML(caption)}</figcaption>`;
-                const aSource = source && `<a href="${escapeHTML(source)}" rel="noopener noreferrer">(Source)</a>`;
+                const aSource =
+                  source &&
+                  `<a href="${escapeHTML(source)}" rel="noopener noreferrer">(Source)</a>`;
 
                 return `<figure>${[img, figcaption, aSource].filter(Boolean).join(' ')}</figure>`;
               },
@@ -80,7 +82,7 @@ export async function GET() {
         }),
         image: post.image,
       });
-    });
+    }
 
     return new Response(feed.atom1(), {
       headers: {

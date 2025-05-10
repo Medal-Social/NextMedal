@@ -7,9 +7,9 @@
  * - 1.0.0: Initial version with pricing plan comparison functionality
  */
 
+import { getBlockText } from '@/sanity/lib/utils';
 import { LuFileSymlink } from 'react-icons/lu';
 import { defineArrayMember, defineField, defineType } from 'sanity';
-import { getBlockText } from '@/sanity/lib/utils';
 
 // Define a type for the document structure that we expect
 

@@ -26,7 +26,7 @@ export function validateExternalUrl(url: string): string | null {
 
     // Return the sanitized URL
     return urlObject.toString();
-  } catch (error) {
+  } catch (_error) {
     // If URL parsing fails, return null
     return null;
   }

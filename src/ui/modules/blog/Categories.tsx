@@ -14,8 +14,8 @@ export default function Categories({
 
   return (
     <ul {...props}>
-      {categories.map((category, key) => (
-        <li key={key}>
+      {categories.map((category) => (
+        <li key={category._id || category.title}>
           <Category value={category} linked={linked} badge={badge} />
         </li>
       ))}
