@@ -4,7 +4,6 @@ import Breadcrumbs from './Breadcrumbs';
 import Callout from './Callout';
 import FeatureGrid from './FeatureGrid';
 import FeaturedHero from './FeaturedHero';
-import Hero from './Hero';
 import { HeroImageGallery } from './HeroImageGallery';
 import LogoList from './LogoList';
 import PersonList from './PersonList';
@@ -66,8 +65,6 @@ export default function Modules({
           case 'galleryHero':
             return <HeroImageGallery {...module} key={module._key} />;
 
-          case 'hero':
-            return <Hero {...module} key={module._key} isTabbedModule={isTabbedModule} />;
           case 'logo-list':
             return <LogoList {...module} key={module._key} isTabbedModule={isTabbedModule} />;
           case 'person-list':
