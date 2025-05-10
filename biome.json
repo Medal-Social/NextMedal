@@ -36,7 +36,8 @@
         "useExhaustiveDependencies": "warn"
       },
       "suspicious": {
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "noArrayIndexKey": "off"
       },
       "style": {
         "noNonNullAssertion": "off"
@@ -48,6 +49,11 @@
       "quoteStyle": "single",
       "trailingCommas": "es5",
       "semicolons": "always"
+    }
+  },
+  "css": {
+    "parser": {
+      "cssModules": true
     }
   }
 }

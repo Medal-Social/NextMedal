@@ -49,10 +49,9 @@ export default function InteractiveDetails({
   }, []);
 
   // Close after navigation
-  const pathname = usePathname();
   useEffect(() => {
     if (closeAfterNavigate) setOpen(false);
-  }, [pathname, closeAfterNavigate]);
+  }, [closeAfterNavigate]);
 
   return (
     <details

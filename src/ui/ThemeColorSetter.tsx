@@ -88,7 +88,7 @@ export default function ThemeColorSetter({ lightTheme, darkTheme }: ThemeColorSe
       'ring',
     ];
 
-    Object.keys(theme).forEach((key) => {
+    for (const key of Object.keys(theme)) {
       if (
         !knownProps.includes(key) &&
         typeof theme[key] === 'object' &&
@@ -98,7 +98,7 @@ export default function ThemeColorSetter({ lightTheme, darkTheme }: ThemeColorSe
         const cssVar = `--${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
         updateCssVar(cssVar, theme[key]);
       }
-    });
+    }
   }, [resolvedTheme, lightTheme, darkTheme, mounted]);
 
   // This component doesn't render anything visible

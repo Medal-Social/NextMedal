@@ -8,11 +8,7 @@ export default defineType({
   title: 'Gallery Hero',
   icon: TfiLayoutCtaCenter,
   type: 'object',
-  groups: [
-    { name: 'content', default: true },
-    { name: 'asset' },
-    { name: 'options' },
-  ],
+  groups: [{ name: 'content', default: true }, { name: 'asset' }, { name: 'options' }],
   fieldsets: [
     {
       name: 'alignment',

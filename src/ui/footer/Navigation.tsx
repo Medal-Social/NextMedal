@@ -30,11 +30,14 @@ export default async function Menu() {
       aria-label="Footer navigation"
     >
       {footerMenu?.items?.map((item, key) => {
+        let itemKey: string = String(key);
+        if ('_key' in item && typeof item._key === 'string') itemKey = item._key;
+        else if ('label' in item && typeof item.label === 'string') itemKey = item.label;
         switch (item._type) {
           case 'link':
             if (item.external) {
               return (
-                <div className="flex flex-col gap-2" key={key} role="navigation">
+                <nav className="flex flex-col gap-2" key={itemKey}>
                   <h2 className="text-base font-medium">
                     <Link
                       href={item.external}
@@ -49,7 +52,7 @@ export default async function Menu() {
                       </div>
                     </Link>
                   </h2>
-                </div>
+                </nav>
               );
             }
             if (item.internal) {
@@ -57,17 +60,17 @@ export default async function Menu() {
                 base: false,
               });
               return (
-                <div className="flex flex-col gap-2" key={key} role="navigation">
+                <nav className="flex flex-col gap-2" key={itemKey}>
                   <h2 className="text-base font-medium">
                     <Link href={url} className="focus:outline-none focus:ring-2 focus:ring-primary">
                       {item.label || item.internal.title}
                     </Link>
                   </h2>
-                </div>
+                </nav>
               );
             }
             return (
-              <div className="flex flex-col gap-2" key={key} role="navigation">
+              <nav className="flex flex-col gap-2" key={itemKey}>
                 <h2 className="text-base font-medium">
                   <CTA
                     className="focus:outline-none focus:ring-2 focus:ring-primary"
@@ -75,12 +78,12 @@ export default async function Menu() {
                     style="link"
                   />
                 </h2>
-              </div>
+              </nav>
             );
 
           case 'link.list':
             return (
-              <div className="flex flex-col gap-2" key={key} role="navigation">
+              <nav className="flex flex-col gap-2" key={itemKey}>
                 {item.link?.external ? (
                   <h2 className="text-sm font-medium">{item.link.label}</h2>
                 ) : item.link?.internal ? (
@@ -94,43 +97,49 @@ export default async function Menu() {
                 ) : null}
 
                 {item.links && item.links.length > 0 && (
-                  <ul className="flex flex-col gap-2" role="list">
-                    {item.links.map((link, key) => (
-                      <li key={key}>
-                        {link.external ? (
-                          <Link
-                            href={stegaClean(link.external)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-muted-foreground text-sm hover:text-foreground hover:underline focus:outline-none focus:ring-2 focus:ring-primary"
-                            aria-label={`${link.label} (opens in new tab)`}
-                          >
-                            <div className="flex items-center gap-1">
-                              {link.label}
-                              <ExternalLink className="h-3 w-3" aria-hidden="true" />
-                            </div>
-                          </Link>
-                        ) : link.internal ? (
-                          <Link
-                            href={resolveUrl(link.internal as InternalLink, {
-                              base: false,
-                            })}
-                            className="text-muted-foreground text-sm hover:text-foreground hover:underline focus:outline-none focus:ring-2 focus:ring-primary"
-                          >
-                            {link.label || link.internal.title}
-                          </Link>
-                        ) : link ? (
-                          <CTA
-                            className="text-muted-foreground text-sm hover:text-foreground hover:underline focus:outline-none focus:ring-2 focus:ring-primary"
-                            link={link}
-                            style="link"
-                          />
-                        ) : null}
-                      </li>
-                    ))}
+                  <ul className="flex flex-col gap-2">
+                    {item.links.map((link, linkIndex) => {
+                      let linkKey: string = String(linkIndex);
+                      if ('_key' in link && typeof link._key === 'string') linkKey = link._key;
+                      else if ('label' in link && typeof link.label === 'string')
+                        linkKey = link.label;
+                      return (
+                        <li key={linkKey}>
+                          {link.external ? (
+                            <Link
+                              href={stegaClean(link.external)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-muted-foreground text-sm hover:text-foreground hover:underline focus:outline-none focus:ring-2 focus:ring-primary"
+                              aria-label={`${link.label} (opens in new tab)`}
+                            >
+                              <div className="flex items-center gap-1">
+                                {link.label}
+                                <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                              </div>
+                            </Link>
+                          ) : link.internal ? (
+                            <Link
+                              href={resolveUrl(link.internal as InternalLink, {
+                                base: false,
+                              })}
+                              className="text-muted-foreground text-sm hover:text-foreground hover:underline focus:outline-none focus:ring-2 focus:ring-primary"
+                            >
+                              {link.label || link.internal.title}
+                            </Link>
+                          ) : link ? (
+                            <CTA
+                              className="text-muted-foreground text-sm hover:text-foreground hover:underline focus:outline-none focus:ring-2 focus:ring-primary"
+                              link={link}
+                              style="link"
+                            />
+                          ) : null}
+                        </li>
+                      );
+                    })}
                   </ul>
                 )}
-              </div>
+              </nav>
             );
 
           default:

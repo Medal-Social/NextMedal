@@ -11,11 +11,16 @@ export default function LinkList({ link, links }: Sanity.LinkList) {
       </summary>
 
       <ul className="anim-fade-to-b md:bg-background/95 border-foreground/10 top-full left-0 px-3 py-2 max-md:border-l md:absolute md:min-w-max md:rounded md:border md:shadow-md">
-        {links?.map((link, key) => (
-          <li key={key}>
-            <CTA className="hover:link inline-block py-px" link={link} style="link" />
-          </li>
-        ))}
+        {links?.map((link, key) => {
+          let linkKey: string = String(key);
+          if ('_key' in link && typeof link._key === 'string') linkKey = link._key;
+          else if ('label' in link && typeof link.label === 'string') linkKey = link.label;
+          return (
+            <li key={linkKey}>
+              <CTA className="hover:link inline-block py-px" link={link} style="link" />
+            </li>
+          );
+        })}
       </ul>
     </InteractiveDetails>
   );
