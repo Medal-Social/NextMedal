@@ -330,6 +330,16 @@ declare global {
     interface ModuleOptions {
       isFullWidth?: boolean;
     }
+
+    // Add Hero module interface
+    interface Hero extends Module<'hero'> {
+      pretitle?: string;
+      highlightedTitle?: string;
+      title: string;
+      description: string;
+      ctas?: CTA[];
+      image?: Img;
+    }
   }
 }
 export {};
