@@ -192,7 +192,11 @@ const VideoError = ({
       <div>
         <p className="text-xl font-semibold mb-2">Video Error</p>
         <p>{error || `Could not find a valid video ID for this ${type || ''} video.`}</p>
-        <button onClick={onBackClick} type="button" className="mt-4 px-4 py-2 bg-white text-black rounded">
+        <button
+          onClick={onBackClick}
+          type="button"
+          className="mt-4 px-4 py-2 bg-white text-black rounded"
+        >
           Back to Thumbnail
         </button>
       </div>
