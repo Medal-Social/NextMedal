@@ -1,9 +1,10 @@
 /**
  * Product Comparison Module Schema
- * @version 1.1.0
- * @lastUpdated 2025-05-15
+ * @version 1.2.0
+ * @lastUpdated 2024-07-10
  * @description A comparison table for products/features with customizable details for each cell
  * @changelog
+ * - 1.2.0: Updated field descriptions for improved UX and clarity
  * - 1.1.0: Removed options field and options group for simplified schema
  * - 1.0.0: Initial version with basic comparison functionality
  */
@@ -16,7 +17,7 @@ export default defineType({
   title: "Product Comparison",
   icon: LuFileSymlink,
   type: "object",
-  description: "Create a comparison table to showcase differences between products or service tiers",
+  description: "Create a side-by-side comparison table to highlight differences between products or service tiers",
   groups: [
     { name: "content", default: true, title: "Content" },
   ],
@@ -24,22 +25,22 @@ export default defineType({
     defineField({
       name: "pretitle",
       title: "Pre-title",
-      description: "Optional pre-title displayed above the main content",
+      description: "Optional badge text that appears above the main heading",
       type: "string",
       group: "content",
     }),
     defineField({
       name: "intro",
       title: "Introduction",
-      description: "Introductory text for the product comparison",
+      description: "Brief text explaining the comparison (will appear centered above the table)",
       type: "array",
       of: [{ type: "block" }],
       group: "content",
     }),
     defineField({
       name: "products",
-      title: "Products",
-      description: "Define the products or service tiers to compare",
+      title: "Products to Compare",
+      description: "Add the products or service tiers that will be compared in columns",
       type: "array",
       of: [
         defineArrayMember({
@@ -48,14 +49,14 @@ export default defineType({
             defineField({
               name: "name",
               title: "Product Name",
-              description: "Name of the product or service tier",
+              description: "Name that will appear in the column header",
               type: "string",
               validation: (Rule) => Rule.required(),
             }),
             defineField({
               name: "highlight",
-              title: "Highlight",
-              description: "Mark this product as highlighted/recommended",
+              title: "Featured Product",
+              description: "Enable to visually emphasize this product (useful for recommended options)",
               type: "boolean",
               initialValue: false,
             }),
@@ -67,7 +68,7 @@ export default defineType({
             },
             prepare: ({ name, highlight }) => ({
               title: name,
-              subtitle: highlight ? "Highlighted" : undefined,
+              subtitle: highlight ? "Featured" : undefined,
             }),
           },
         }),
@@ -77,8 +78,8 @@ export default defineType({
     }),
     defineField({
       name: "features",
-      title: "Features",
-      description: "Define the features to compare across products",
+      title: "Feature Rows",
+      description: "Add the features or attributes to compare across products (shown as rows)",
       type: "array",
       of: [
         defineArrayMember({
@@ -87,21 +88,21 @@ export default defineType({
             defineField({
               name: "name",
               title: "Feature Name",
-              description: "Name of the feature being compared",
+              description: "The feature name that appears in the leftmost column",
               type: "string",
               validation: (Rule) => Rule.required(),
             }),
             defineField({
               name: "featureDetails",
-              title: "Feature details",
-              description: "Specify the availability or details for each product. Enter 'true' for checkmark or 'false' for X mark.",
+              title: "Feature Values",
+              description: "Add a value for each product column. One entry required per product.",
               type: "array",
               of: [
                 defineArrayMember({
                   type: "string",
-                  title: "Custom value",
-                  placeholder: 'Text value like "Coming soon" or "UNLIMITED"',
-                  description: 'Use "true" for checkmark, "false" for X mark, or custom text',
+                  title: "Value",
+                  placeholder: '"Included", "Optional", "$10/mo", etc.',
+                  description: 'Special values: "true" shows ✓, "false" shows ✗, or enter any custom text',
                 }),
               ],
               validation: (Rule) =>
@@ -119,10 +120,10 @@ export default defineType({
                   const tierCount = docTiers.length;
 
                   if (!featureTiers)
-                    return `You must define availability for all ${tierCount} tiers`; // Handle case when featureTiers is undefined during initial setup
+                    return `You must add a value for all ${tierCount} products`; // Handle case when featureTiers is undefined during initial setup
 
                   if (featureTiers.length !== tierCount) {
-                    return `You must define availability for all ${tierCount} tiers`;
+                    return `You must add a value for all ${tierCount} products`;
                   }
                   return true;
                 }),
@@ -138,7 +139,7 @@ export default defineType({
           },
         }),
       ],
-      validation: (Rule) => Rule.min(1).error("At least one feature is required"),
+      validation: (Rule) => Rule.min(1).error("At least one feature row is required"),
       group: "content",
     }),
   ],
@@ -150,7 +151,7 @@ export default defineType({
     },
     prepare: ({ title, tiersCount = [], categoriesCount = [] }) => ({
       title: title || "Product Comparison",
-      subtitle: `${tiersCount.length} tiers • ${categoriesCount.length} features`,
+      subtitle: `${tiersCount.length} products • ${categoriesCount.length} features`,
       media: LuFileSymlink,
     }),
   },
