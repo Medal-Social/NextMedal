@@ -40,5 +40,3 @@ public/google*.html
 public/admin/static
 
 .source
-# Turborepo
-.turbo
