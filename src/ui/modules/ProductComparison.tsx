@@ -58,7 +58,7 @@ export default function ProductComparison({
               <th className="p-4 text-left"></th>
               {products?.map((product) => (
                 <th
-                  key={product._key || product.name}
+                  key={product._key || `product-${product.name}`}
                   className={`p-4 text-center font-bold rounded-t-lg ${
                     product.highlight
                       ? "bg-[#FFF0F2] dark:bg-[#1F0912] text-[#E11D48] dark:text-[#FB7185]"
@@ -71,25 +71,39 @@ export default function ProductComparison({
             </tr>
           </thead>
           <tbody>
-            {features?.map((feature, ix) => (
-              <tr className="border-b" key={feature._key || ix}>
+            {features?.map((feature) => (
+              <tr 
+                className="border-b" 
+                key={feature._key || `feature-${feature.name}`}
+              >
                 <td className="p-4 font-medium">{feature.name}</td>
-                {feature.featureDetails?.map((featureDetail, idx) => (
-                  <td
-                    key={idx}
-                    className={`p-4 text-center font-semibold ${
-                      products && products[idx]?.highlight 
-                        ? "bg-[#FFF0F2] dark:bg-[#1F0912] text-[#E11D48] dark:text-[#FB7185]"
-                        : ""
-                    }`}
-                  >
-                    {featureDetail === "true" ? 
-                      <span className={products && products[idx]?.highlight ? "text-[#E11D48] dark:text-[#FB7185]" : ""}>✓</span> : 
-                     featureDetail === "false" ? 
-                      <span className={products && products[idx]?.highlight ? "text-[#E11D48] dark:text-[#FB7185]" : ""}>✗</span> : 
-                     featureDetail}
-                  </td>
-                ))}
+                {feature.featureDetails?.map((featureDetail, idx) => {
+                  const correspondingProduct = products?.[idx];
+                  const isHighlighted = correspondingProduct?.highlight;
+                  
+                  return (
+                    <td
+                      key={`${feature._key || feature.name}-detail-${idx}`}
+                      className={`p-4 text-center font-semibold ${
+                        isHighlighted
+                          ? "bg-[#FFF0F2] dark:bg-[#1F0912] text-[#E11D48] dark:text-[#FB7185]"
+                          : ""
+                      }`}
+                    >
+                      {featureDetail === "true" ? (
+                        <span className={isHighlighted ? "text-[#E11D48] dark:text-[#FB7185]" : ""}>
+                          ✓
+                        </span>
+                      ) : featureDetail === "false" ? (
+                        <span className={isHighlighted ? "text-[#E11D48] dark:text-[#FB7185]" : ""}>
+                          ✗
+                        </span>
+                      ) : (
+                        featureDetail
+                      )}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>
