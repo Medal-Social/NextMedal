@@ -55,20 +55,5 @@
     "parser": {
       "cssModules": true
     }
-  },
-  "overrides": [
-    {
-      "files": [
-        "src/ui/modules/blog/BlogFrontpage/index.tsx",
-        "src/ui/modules/blog/BlogList/index.tsx"
-      ],
-      "linter": {
-        "rules": {
-          "suspicious": {
-            "noArrayIndexKey": "off"
-          }
-        }
-      }
-    }
-  ]
+  }
 }
