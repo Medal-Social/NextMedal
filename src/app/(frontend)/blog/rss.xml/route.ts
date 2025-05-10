@@ -68,7 +68,9 @@ export async function GET() {
                 const { alt = '', caption, source, ...imageValue } = value;
                 const img = `<img src="${urlFor(imageValue).url()}" alt="${escapeHTML(alt)}" />`;
                 const figcaption = caption && `<figcaption>${escapeHTML(caption)}</figcaption>`;
-                const aSource = source && `<a href="${escapeHTML(source)}" rel="noopener noreferrer">(Source)</a>`;
+                const aSource =
+                  source &&
+                  `<a href="${escapeHTML(source)}" rel="noopener noreferrer">(Source)</a>`;
 
                 return `<figure>${[img, figcaption, aSource].filter(Boolean).join(' ')}</figure>`;
               },
