@@ -119,13 +119,14 @@ export default async function Navigation() {
                           <span className="font-medium text-base text-foreground mb-2">
                             {category.title}
                           </span>
-                          <ul className="space-y-2" role="group">
+                          <fieldset className="space-y-2 border-0 p-0 m-0">
+                            <legend className="sr-only">{category.title}</legend>
                             {category.links?.map((link) => (
                               <NavigationMenuLink asChild key={link.label}>
                                 <NavLink link={link} />
                               </NavigationMenuLink>
                             ))}
-                          </ul>
+                          </fieldset>
                         </li>
                       ))}
                     </ul>
