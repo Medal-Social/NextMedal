@@ -9,7 +9,7 @@
 
 import { count } from '@/lib/utils';
 import { IoShareSocialOutline } from 'react-icons/io5';
-import { VscLayoutMenubar, VscLayoutPanelLeft, VscMap, VscListUnordered } from 'react-icons/vsc';
+import { VscLayoutMenubar, VscLayoutPanelLeft, VscListUnordered, VscMap } from 'react-icons/vsc';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
