@@ -18,32 +18,35 @@ export default function TableOfContents({
 
     const headerHeight = document.querySelector('body > header')?.clientHeight || 0;
 
-    headings?.forEach(({ text }) => {
-      const target = document.getElementById(slug(text));
-
-      if (!target) return;
-
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            const tocItem = document.querySelector(`[data-toc-item="${slug(text)}"]`);
-
-            if (entry.isIntersecting) {
-              tocItem?.classList.add(css.inView);
-            } else {
-              tocItem?.classList.remove(css.inView);
+    const observers: IntersectionObserver[] = [];
+    if (headings) {
+      for (const { text } of headings) {
+        const target = document.getElementById(slug(text));
+        if (!target) continue;
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              const tocItem = document.querySelector(`[data-toc-item="${slug(text)}"]`);
+              if (entry.isIntersecting) {
+                tocItem?.classList.add(css.inView);
+              } else {
+                tocItem?.classList.remove(css.inView);
+              }
             }
-          });
-        },
-        {
-          rootMargin: `-${headerHeight}px 0px 0px 0px`,
-        }
-      );
-
-      observer.observe(target);
-
-      return () => observer.disconnect();
-    });
+          },
+          {
+            rootMargin: `-${headerHeight}px 0px 0px 0px`,
+          }
+        );
+        observer.observe(target);
+        observers.push(observer);
+      }
+    }
+    return () => {
+      for (const observer of observers) {
+        observer.disconnect();
+      }
+    };
   }, [headings]);
 
   return (
@@ -51,11 +54,11 @@ export default function TableOfContents({
       <summary className="font-bold lg:group-open:after:invisible">Table of Contents</summary>
 
       <ol className="anim-fade-to-b mt-2 leading-tight">
-        {headings?.map(({ text, style }, key) => (
+        {headings?.map(({ text, style }) => (
           <li
             className="border-foreground/10 border-l transition-all"
             data-toc-item={slug(text)}
-            key={key}
+            key={text}
           >
             <a
               className={cn(
