@@ -192,7 +192,7 @@ const VideoError = ({
       <div>
         <p className="text-xl font-semibold mb-2">Video Error</p>
         <p>{error || `Could not find a valid video ID for this ${type || ''} video.`}</p>
-        <button onClick={onBackClick} className="mt-4 px-4 py-2 bg-white text-black rounded">
+        <button onClick={onBackClick} type="button" className="mt-4 px-4 py-2 bg-white text-black rounded">
           Back to Thumbnail
         </button>
       </div>
@@ -236,7 +236,19 @@ export default function Video({
     <div className="relative w-full h-full bg-gray-900">
       {!isPlaying ? (
         // Thumbnail view
-        <div className="relative w-full h-full cursor-pointer bg-black" onClick={handlePlayClick}>
+        <div
+          className="relative w-full h-full cursor-pointer bg-black"
+          onClick={handlePlayClick}
+          tabIndex={0}
+          role="button"
+          aria-label="Play video"
+          onKeyDown={e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handlePlayClick();
+            }
+          }}
+        >
           {thumbnailUrl ? (
             <Image
               src={thumbnailUrl}
@@ -252,11 +264,13 @@ export default function Video({
           )}
           <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
             <button
+              type="button"
               className="w-16 h-16 bg-white text-black rounded-full flex items-center justify-center"
               aria-label="Play video"
             >
               {/* Play icon */}
               <svg className="w-8 h-8" viewBox="0 0 24 24">
+                <title>Play video</title>
                 <path d="M8 5v14l11-7z" fill="currentColor" />
               </svg>
             </button>
