@@ -92,7 +92,7 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
           <div className="flex items-center justify-between">
             <CTAList ctas={ctas} className="grid flex-1 gap-2 *:w-full" />
           </div>
-          <div className="h-px bg-border" role="separator" />
+          <div className="h-px bg-border" role="separator" tabIndex={0} />
           <ul className="space-y-3" role="menu">
             {menu?.items?.map((item: MenuItem, index: number) => {
               if (item._type === 'link') {
