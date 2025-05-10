@@ -40,5 +40,10 @@ export function Mermaid({ chart }: { chart: string }) {
     }
   }, [chart, id, resolvedTheme]);
 
-  return <div ref={containerRef} dangerouslySetInnerHTML={{ __html: svg }} />;
+  return (
+    <div ref={containerRef}>
+      {/* biome-ignore lint/security/noDangerouslySetInnerHtml: SVG is sanitized with DOMPurify */}
+      <div dangerouslySetInnerHTML={{ __html: svg }} />
+    </div>
+  );
 }
