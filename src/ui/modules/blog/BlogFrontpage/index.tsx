@@ -45,7 +45,7 @@ export default async function BlogFrontpage({
         fallback={
           <ul className="grid gap-x-8 gap-y-12 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
             {Array.from({ length: itemsPerPage ?? 6 }).map((_, i) => (
-              <li key={i}>
+              <li key={`skeleton-${i}`}>
                 <PostPreview skeleton />
               </li>
             ))}
