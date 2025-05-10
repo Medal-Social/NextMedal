@@ -51,8 +51,8 @@ export async function GET() {
       generator: 'https://www.medalsocial.com',
     });
 
-    posts.forEach((post) => {
-      if (!post.metadata) return; // Skip posts without metadata
+    for (const post of posts) {
+      if (!post.metadata) continue; // Skip posts without metadata
       feed.addItem({
         title: escapeHTML(post.metadata.title),
         description: post.metadata.description,
@@ -80,7 +80,7 @@ export async function GET() {
         }),
         image: post.image,
       });
-    });
+    }
 
     return new Response(feed.atom1(), {
       headers: {
