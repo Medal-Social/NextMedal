@@ -101,7 +101,8 @@ export default async function Menu() {
                     {item.links.map((link, linkIndex) => {
                       let linkKey: string = String(linkIndex);
                       if ('_key' in link && typeof link._key === 'string') linkKey = link._key;
-                      else if ('label' in link && typeof link.label === 'string') linkKey = link.label;
+                      else if ('label' in link && typeof link.label === 'string')
+                        linkKey = link.label;
                       return (
                         <li key={linkKey}>
                           {link.external ? (
