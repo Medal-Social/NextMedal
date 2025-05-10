@@ -1,9 +1,9 @@
 'use client';
 
+import DOMPurify from 'dompurify';
 import type { MermaidConfig } from 'mermaid';
 import { useTheme } from 'next-themes';
 import { useEffect, useId, useRef, useState } from 'react';
-import DOMPurify from 'dompurify';
 
 export function Mermaid({ chart }: { chart: string }) {
   const id = useId();
