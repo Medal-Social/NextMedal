@@ -1,6 +1,6 @@
-import { ThemeProvider } from 'next-themes';
-import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
+import { GeistSans } from 'geist/font/sans';
+import { ThemeProvider } from 'next-themes';
 import '@/styles/globals.css';
 import { getSite } from '@/sanity/lib/fetch';
 import Announcement from '@/ui/Announcement';
@@ -9,8 +9,8 @@ import ThemeColorSetter from '@/ui/ThemeColorSetter';
 import VisualEditingControls from '@/ui/VisualEditingControls';
 import Footer from '@/ui/footer';
 import Header from '@/ui/header';
-import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { RootProvider } from 'fumadocs-ui/provider';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 export default async function RootLayout({
   children,
