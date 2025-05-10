@@ -69,8 +69,8 @@ export default async function BlogList({
       <Suspense
         fallback={
           <ul className={listClassName}>
+            {/* biome-ignore lint/suspicious/noArrayIndexKey: Acceptable for skeleton fallback */}
             {Array.from({ length: limit ?? 6 }).map((_, i) => (
-              // eslint-disable-next-line react/no-array-index-key
               <li key={`skeleton-${i}`}>
                 <PostPreview skeleton />
               </li>
