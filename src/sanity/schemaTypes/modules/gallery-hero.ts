@@ -11,7 +11,6 @@ export default defineType({
   groups: [
     { name: 'content', default: true },
     { name: 'asset' },
-    { name: 'stats', title: 'Statistics' },
     { name: 'options' },
   ],
   fieldsets: [
@@ -33,14 +32,6 @@ export default defineType({
       type: 'array',
       of: [{ type: 'cta' }],
       group: 'content',
-    }),
-    defineField({
-      name: 'stats',
-      title: 'Statistics Row',
-      description: 'Add metrics to display in a row below the content',
-      type: 'array',
-      of: [{ type: 'stat' }],
-      group: 'stats',
     }),
     defineField({
       name: 'assets',
