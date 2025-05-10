@@ -14,7 +14,7 @@ export default async function Footer() {
   const logoImageLight = logo?.image?.light || logo?.image?.default || logo?.image?.dark;
 
   return (
-    <Wrapper className="bg-background text-foreground" role="contentinfo" aria-label="Site footer">
+    <footer className="bg-background text-foreground">
       <div className="section flex flex-wrap gap-x-12 gap-y-8 max-sm:flex-col">
         <div className="flex-1 min-w-[200px]">
           <Link
@@ -70,6 +70,6 @@ export default async function Footer() {
 
         <Social className="mt-0" aria-label="Social media links" />
       </div>
-    </Wrapper>
+    </footer>
   );
 }
