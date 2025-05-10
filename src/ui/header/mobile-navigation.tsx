@@ -19,7 +19,7 @@ interface InternalLink {
   _updatedAt: string;
 }
 
-interface Link {
+interface MobileNavLink {
   label: string;
   description?: string;
   icon?: Sanity.Icon;
@@ -37,10 +37,10 @@ interface MenuItem {
   params?: string;
   categories?: Array<{
     title: string;
-    links?: Link[];
+    links?: MobileNavLink[];
   }>;
-  link?: Link;
-  links?: Link[];
+  link?: MobileNavLink;
+  links?: MobileNavLink[];
 }
 
 interface MobileNavigationProps {
@@ -50,7 +50,7 @@ interface MobileNavigationProps {
   ctas: any;
 }
 
-export const NavLink = ({ link }: { link: Link }) => (
+export const NavLink = ({ link }: { link: MobileNavLink }) => (
   <Link
     href={
       link.internal
@@ -81,9 +81,9 @@ export const NavLink = ({ link }: { link: Link }) => (
 
 export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) {
   return (
-    <div
+    <dialog
+      open
       className="fixed inset-0 top-[57px] z-50 overflow-hidden bg-background/95 border-foreground/10"
-      role="dialog"
       aria-modal="true"
       aria-label="Mobile navigation menu"
     >
@@ -98,7 +98,7 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
               if (item._type === 'link') {
                 return (
                   <li key={`mobile-${item.label}-${index}`}>
-                    <NavLink link={item as Link} />
+                    <NavLink link={item as MobileNavLink} />
                   </li>
                 );
               }
@@ -116,7 +116,7 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
                       </CollapsibleTrigger>
                       <CollapsibleContent>
                         <ul className="ml-4 mt-2 space-y-3 border-l pl-4" role="menu">
-                          {item.links?.map((link: Link, linkIndex: number) => (
+                          {item.links?.map((link: MobileNavLink, linkIndex: number) => (
                             <li key={`mobile-${link.label}-${index}-${linkIndex}`}>
                               <NavLink link={link} />
                             </li>
@@ -148,7 +148,7 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
                               aria-label={category.title}
                             >
                               <ul className="space-y-3" role="menu">
-                                {category.links?.map((link: Link, linkIndex: number) => (
+                                {category.links?.map((link: MobileNavLink, linkIndex: number) => (
                                   <li
                                     key={`mobile-${link.label}-${index}-${catIndex}-${linkIndex}`}
                                   >
@@ -170,6 +170,6 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
           </ul>
         </div>
       </nav>
-    </div>
+    </dialog>
   );
 }
