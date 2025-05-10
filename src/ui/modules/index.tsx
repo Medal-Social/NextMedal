@@ -67,7 +67,13 @@ export default function Modules({
           case 'galleryHero':
             return <HeroImageGallery {...module} key={module._key} />;
           case 'hero':
-            return <Hero {...(module as Sanity.Hero)} key={module._key} isTabbedModule={isTabbedModule} />;
+            return (
+              <Hero
+                {...(module as Sanity.Hero)}
+                key={module._key}
+                isTabbedModule={isTabbedModule}
+              />
+            );
 
           case 'logo-list':
             return <LogoList {...module} key={module._key} isTabbedModule={isTabbedModule} />;
@@ -77,7 +83,9 @@ export default function Modules({
             return <PricingList {...module} key={module._key} isTabbedModule={isTabbedModule} />;
 
           case 'product-comparison':
-            return <ProductComparison {...module} key={module._key} isTabbedModule={isTabbedModule} />;
+            return (
+              <ProductComparison {...module} key={module._key} />
+            );
 
           case 'richtext-module':
             return <RichtextModule {...module} key={module._key} isTabbedModule={isTabbedModule} />;
