@@ -1,96 +1,87 @@
 /**
- * Hero Module Schema
- * @version 1.4.0
- * @lastUpdated 2024-06-18
+ * Hero Section Module Schema
+ * @version 1.0.0
+ * @lastUpdated 2024-05-10
  * @changelog
- * - 1.4.0: Added stats row for displaying metrics with icons
- * - 1.3.0: Removed video/Mux support to simplify
- * - 1.2.0: Added video support with Mux integration
- * - 1.1.0: Added side-by-side layout option
  * - 1.0.0: Initial version
  */
 
-import { createAlignmentField } from '@/sanity/lib/schema-factory';
-import { getBlockText } from '@/sanity/lib/utils';
-import { TfiLayoutCtaCenter } from 'react-icons/tfi';
-import { defineField, defineType } from 'sanity';
+import { BsColumns } from "react-icons/bs";
+import { defineField, defineType } from "sanity";
 
 export default defineType({
-  name: 'hero',
-  title: 'Hero',
-  icon: TfiLayoutCtaCenter,
-  type: 'object',
+  name: "hero",
+  title: "Hero Section",
+  icon: BsColumns,
+  type: "object",
   groups: [
-    { name: 'content', default: true },
-    { name: 'asset' },
-    { name: 'stats', title: 'Statistics' },
-    { name: 'options' },
-  ],
-  fieldsets: [
-    {
-      name: 'alignment',
-      title: 'Alignment',
-      options: { columns: 1 },
-    },
-  ],
-  fields: [
-    defineField({
-      name: 'pretitle',
-      type: 'string',
-      group: 'content',
-    }),
-    defineField({
-      name: 'content',
-      type: 'array',
-      of: [{ type: 'block' }],
-      group: 'content',
-    }),
-    defineField({
-      name: 'ctas',
-      title: 'Call-to-actions',
-      type: 'array',
-      of: [{ type: 'cta' }],
-      group: 'content',
-    }),
-    defineField({
-      name: 'stats',
-      title: 'Statistics Row',
-      description: 'Add metrics to display in a row below the content',
-      type: 'array',
-      of: [{ type: 'stat' }],
-      group: 'stats',
-    }),
-    defineField({
-      name: 'image',
-      title: 'Image',
-      description: 'Image to display in the hero section',
-      type: 'img',
-      group: 'asset',
-    }),
-    createAlignmentField({
-      name: 'alignment',
-      title: 'Alignment',
-      group: 'options',
-      fieldset: 'alignment',
-      initialValue: 'center',
-    }),
-    defineField({
-      name: 'options',
-      type: 'module-options',
-      group: 'options',
-    }),
+    { name: "content", title: "Content", default: true },
+    { name: "image", title: "Image" },
+    { name: "options", title: "Options" },
   ],
   preview: {
     select: {
-      content: 'content',
-      media: 'image.image',
+      title: "title",
+      highlightedTitle: "highlightedTitle",
+      pretitle: "pretitle",
+      media: "image",
     },
-    prepare: ({ content, media }) => {
+    prepare: ({ title, highlightedTitle, pretitle, media }) => {
       return {
-        title: getBlockText(content) || 'Hero',
-        subtitle: 'Hero',
-        media,
+        title: title || "Hero Section",
+        subtitle: pretitle || (highlightedTitle ? `Highlighted: ${highlightedTitle}` : "Hero Section"),
+        media: media?.image || BsColumns,
       };
     },
   },
-});
+  fields: [
+    defineField({
+      name: "options",
+      type: "module-options",
+      group: "options",
+    }),
+    defineField({
+      name: "pretitle",
+      title: "Pre-title",
+      description: "Small badge text displayed above the title",
+      type: "string",
+      group: "content",
+    }),
+    defineField({
+      name: "highlightedTitle",
+      title: "Highlighted Title",
+      description: "This text will appear highlighted above the main title",
+      type: "string",
+      group: "content",
+    }),
+    defineField({
+      name: "title",
+      title: "Title",
+      type: "string",
+      group: "content",
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "description",
+      title: "Description",
+      type: "text",
+      rows: 3,
+      group: "content",
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "ctas",
+      title: "Call-to-actions",
+      description: "Add buttons for the hero section",
+      type: "array",
+      of: [{ type: "cta" }],
+      group: "content",
+    }),
+    defineField({
+      name: "image",
+      title: "Image",
+      type: "img",
+      group: "image",
+    }),
+  ],
+}); 

@@ -2,19 +2,16 @@ import { PortableText } from 'next-sanity';
 import CTAList from '../CTAList';
 import { Img } from '../Img';
 import Pretitle from '../Pretitle';
-import { StatsRow } from './Hero';
 
 export function HeroImageGallery({
   pretitle,
   content,
   ctas,
-  stats,
   assets,
 }: {
   pretitle?: string;
   content?: any;
   ctas?: Sanity.CTA[];
-  stats?: Sanity.Stat[];
   assets?: Sanity.Img[];
 }) {
   return (
@@ -31,8 +28,6 @@ export function HeroImageGallery({
             {ctas && ctas.length > 0 && (
               <CTAList ctas={ctas} className="!mt-8 gap-4 justify-start" />
             )}
-
-            {stats && stats.length > 0 && <StatsRow stats={stats} />}
           </div>
           <div className="mt-14 flex justify-end gap-8 sm:-mt-44 sm:justify-start sm:pl-20 lg:mt-0 lg:pl-0">
             <div className="ml-auto w-44 flex-none space-y-8 pt-32 sm:ml-0 sm:pt-80 lg:order-last lg:pt-36 xl:order-none xl:pt-80">

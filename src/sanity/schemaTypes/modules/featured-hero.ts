@@ -123,14 +123,6 @@ export default defineType({
       ],
       group: "features",
     }),
-    defineField({
-      name: "stats",
-      title: "Statistics Row",
-      description: "Add metrics to display in a row below the content",
-      type: "array",
-      of: [{ type: "stat" }],
-      group: "features",
-    }),
   ],
   preview: {
     select: {
