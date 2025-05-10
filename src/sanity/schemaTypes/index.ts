@@ -47,6 +47,7 @@ import logoList from './modules/logo-list';
 import personList from './modules/person-list';
 import pricingComparison from './modules/pricing-comparison';
 import pricingList from './modules/pricing-list';
+import productComparison from './modules/productComparison';
 import richtextModule from './modules/richtext-module';
 import tabbedContent from './modules/tabbed-content';
 import videoHero from './modules/video-hero';
@@ -97,6 +98,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   personList,
   pricingComparison,
   pricingList,
+  productComparison,
   richtextModule,
   tabbedContent,
   videoHero,
