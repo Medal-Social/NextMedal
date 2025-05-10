@@ -4,7 +4,6 @@ import { Img } from "@/ui/Img";
 import Pretitle from "@/ui/Pretitle";
 import { PortableText, stegaClean } from "next-sanity";
 import Icon from "../Icon";
-import { StatsRow } from "./Hero";
 
 interface FeatureItem {
   name: string;
@@ -21,7 +20,6 @@ export interface FeaturedHeroProps {
   ctas?: any[];
   className?: string;
   isTabbedModule?: boolean;
-  stats?: Sanity.Stat[];
   content?: any;
 }
 
@@ -34,7 +32,6 @@ export default function FeaturedHero({
   ctas,
   className,
   isTabbedModule = false,
-  stats,
   content,
 }: FeaturedHeroProps) {
   const isRightDirection = stegaClean(direction) === "right";
@@ -102,9 +99,6 @@ export default function FeaturedHero({
                     ctas={stegaClean(ctas)}
                   />
                 </div>
-              )}
-              {stats && stats.length > 0 && (
-                <StatsRow stats={stegaClean(stats)} />
               )}
             </div>
           </div>
