@@ -245,7 +245,7 @@ export default function Video({
           className="relative w-full h-full cursor-pointer bg-black"
           onClick={handlePlayClick}
           aria-label="Play video"
-          onKeyDown={e => {
+          onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
               handlePlayClick();
