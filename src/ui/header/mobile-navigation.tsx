@@ -142,11 +142,11 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
                       <CollapsibleContent>
                         <div className="ml-4 mt-2 space-y-6 border-l pl-4" role="menu">
                           {item.categories?.map((category, catIndex: number) => (
-                            <div
+                            <fieldset
                               key={`mobile-${category.title}-${index}-${catIndex}`}
-                              role="group"
-                              aria-label={category.title}
+                              className="border-0 p-0 m-0"
                             >
+                              <legend className="sr-only">{category.title}</legend>
                               <ul className="space-y-3" role="menu">
                                 {category.links?.map((link: MobileNavLink, linkIndex: number) => (
                                   <li
@@ -156,7 +156,7 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
                                   </li>
                                 ))}
                               </ul>
-                            </div>
+                            </fieldset>
                           ))}
                         </div>
                       </CollapsibleContent>
