@@ -9,6 +9,7 @@ import Hero from './hero/Hero';
 import LogoList from './LogoList';
 import PersonList from './PersonList';
 import PricingList from './PricingList';
+import ProductComparison from './ProductComparison';
 import RichtextModule from './RichtextModule';
 import VideoHero from './VideoHero';
 import BlogFrontpage from './blog/BlogFrontpage';
@@ -74,6 +75,9 @@ export default function Modules({
             return <PersonList {...module} key={module._key} isTabbedModule={isTabbedModule} />;
           case 'pricing-list':
             return <PricingList {...module} key={module._key} isTabbedModule={isTabbedModule} />;
+
+          case 'product-comparison':
+            return <ProductComparison {...module} key={module._key} isTabbedModule={isTabbedModule} />;
 
           case 'richtext-module':
             return <RichtextModule {...module} key={module._key} isTabbedModule={isTabbedModule} />;
