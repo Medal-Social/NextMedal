@@ -1,9 +1,9 @@
 import resolveUrl from '@/lib/resolveUrl';
+import DateDisplay from '@/ui/Date';
 import Link from 'next/link';
 import { Img } from '@/ui/Img';
-import Categories from './Categories';
-import DateDisplay from '@/ui/Date';
 import Authors from './Authors';
+import Categories from './Categories';
 
 export default function PostPreviewLarge({ post }: { post: Sanity.BlogPost }) {
   if (!post || !post.metadata) return null;
