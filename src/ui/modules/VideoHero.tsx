@@ -250,11 +250,10 @@ export default function VideoHero({ data }: VideoHeroProps) {
 
       {!isPlaying ? (
         // Thumbnail view
-        <div
+        <button
+          type="button"
           className="relative w-full h-full cursor-pointer bg-black"
           onClick={handlePlayClick}
-          tabIndex={0}
-          role="button"
           aria-label="Play video"
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
@@ -277,17 +276,18 @@ export default function VideoHero({ data }: VideoHeroProps) {
             </div>
           )}
           <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-            <button
+            <span
               className="w-16 h-16 bg-white rounded-full flex items-center justify-center"
               aria-label="Play video"
             >
               {/* Play icon */}
               <svg className="w-8 h-8" viewBox="0 0 24 24">
+                <title>Play video icon</title>
                 <path d="M8 5v14l11-7z" fill="currentColor" />
               </svg>
-            </button>
+            </span>
           </div>
-        </div>
+        </button>
       ) : (
         // Video player
         <div className="relative w-full h-full overflow-hidden bg-black">
