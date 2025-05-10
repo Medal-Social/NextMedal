@@ -11,10 +11,10 @@ import {
 } from '@/components/ui/navigation-menu';
 import resolveUrl from '@/lib/resolveUrl';
 import { getSite } from '@/sanity/lib/fetch';
+import type { Metadata } from '@/sanity/lib/types';
 import { ExternalLink } from 'lucide-react';
 import { stegaClean } from 'next-sanity';
 import { NavLink } from './mobile-navigation';
-import type { Metadata } from '@/sanity/lib/types';
 
 interface InternalLink {
   _type: string;
@@ -72,7 +72,7 @@ export default async function Navigation() {
                 <NavigationMenuItem key={key}>
                   <Link
                     href={
-                      item.internal && item.internal.metadata?.slug && item.internal.metadata.slug.current
+                      item.internal?.metadata?.slug?.current
                         ? resolveUrl(item.internal as Sanity.PageBase, {
                             base: false,
                             params: item.params,
