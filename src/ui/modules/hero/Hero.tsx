@@ -1,13 +1,13 @@
-import type React from "react"
-import { ArrowRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
-import { Img } from "@/ui/Img"
+import type React from 'react';
+import { ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { Img } from '@/ui/Img';
 
-import CTAList from "@/ui/CTAList"
-import Pretitle from "@/ui/Pretitle"
-import { stegaClean } from "next-sanity"
+import CTAList from '@/ui/CTAList';
+import Pretitle from '@/ui/Pretitle';
+import { stegaClean } from 'next-sanity';
 
 export default function Hero(props: Sanity.Hero & { className?: string; isTabbedModule?: boolean }) {
   const { className, isTabbedModule = false } = props;
