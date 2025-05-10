@@ -29,18 +29,18 @@ interface InternalLink {
   _updatedAt: string;
 }
 
-interface Category {
-  title: string;
-  links?: Link[];
-}
-
-interface Link {
+interface NavMenuLink {
   label: string;
   description?: string;
   icon?: Sanity.Icon;
   internal?: InternalLink;
   external?: string;
   params?: string;
+}
+
+interface Category {
+  title: string;
+  links?: NavMenuLink[];
 }
 
 export interface MenuItem {
@@ -51,8 +51,8 @@ export interface MenuItem {
   external?: string;
   params?: string;
   categories?: Category[];
-  link?: Link;
-  links?: Link[];
+  link?: NavMenuLink;
+  links?: NavMenuLink[];
 }
 
 interface HeaderMenu {
@@ -65,11 +65,12 @@ export default async function Navigation() {
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        {(headerMenu as HeaderMenu)?.items?.map((item, key) => {
+        {(headerMenu as HeaderMenu)?.items?.map((item) => {
+          const itemKey = `${item._type}-${item.label || ''}-${item.title || ''}`;
           switch (item._type) {
             case 'link':
               return (
-                <NavigationMenuItem key={key}>
+                <NavigationMenuItem key={itemKey}>
                   <Link
                     href={
                       item.internal?.metadata?.slug?.current
@@ -103,15 +104,15 @@ export default async function Navigation() {
 
             case 'link.categories':
               return (
-                <NavigationMenuItem key={key}>
+                <NavigationMenuItem key={itemKey}>
                   <NavigationMenuTrigger aria-label={`${item.title} menu`}>
                     {item.title}
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="bg-background">
                     <ul className="flex flex-row w-[800px] gap-3 p-4" role="menu">
-                      {item.categories?.map((category, ix) => (
+                      {item.categories?.map((category) => (
                         <li
-                          key={`${category.title}-${key}-${ix}`}
+                          key={category.title}
                           className="overflow-hidden flex-grow"
                           role="presentation"
                         >
@@ -119,8 +120,8 @@ export default async function Navigation() {
                             {category.title}
                           </span>
                           <ul className="space-y-2" role="group">
-                            {category.links?.map((link, ix) => (
-                              <NavigationMenuLink asChild key={`${link.label}-${key}-${ix}`}>
+                            {category.links?.map((link) => (
+                              <NavigationMenuLink asChild key={link.label}>
                                 <NavLink link={link} />
                               </NavigationMenuLink>
                             ))}
@@ -133,14 +134,14 @@ export default async function Navigation() {
               );
             case 'link.list':
               return (
-                <NavigationMenuItem key={key}>
+                <NavigationMenuItem key={itemKey}>
                   <NavigationMenuTrigger aria-label={`${item.link?.label} menu`}>
                     {item.link?.label}
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="bg-background">
                     <ul className="grid w-[600px] gap-3 p-4 grid-cols-2" role="menu">
-                      {item.links?.map((link, ix) => (
-                        <NavigationMenuLink asChild key={`${link.label}-${key}-${ix}`}>
+                      {item.links?.map((link) => (
+                        <NavigationMenuLink asChild key={link.label}>
                           <NavLink link={link} />
                         </NavigationMenuLink>
                       ))}
