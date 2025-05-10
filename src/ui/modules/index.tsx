@@ -5,7 +5,6 @@ import Callout from './Callout';
 import FeatureGrid from './FeatureGrid';
 import FeaturedHero from './FeaturedHero';
 import { HeroImageGallery } from './HeroImageGallery';
-import Hero from './hero/Hero';
 import LogoList from './LogoList';
 import PersonList from './PersonList';
 import PricingList from './PricingList';
@@ -15,6 +14,7 @@ import VideoHero from './VideoHero';
 import BlogFrontpage from './blog/BlogFrontpage';
 import BlogList from './blog/BlogList';
 import BlogPostContent from './blog/PostContent';
+import Hero from './hero/Hero';
 
 export default function Modules({
   modules,
