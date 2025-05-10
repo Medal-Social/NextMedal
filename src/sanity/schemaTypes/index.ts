@@ -91,7 +91,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   featuredHero,
   galleryHero,
   featureGrid,
-
   hero,
   logoList,
 
