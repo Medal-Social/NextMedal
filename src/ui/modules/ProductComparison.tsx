@@ -37,6 +37,29 @@ type ProductComparisonProps = {
   _key?: string;
 }
 
+/**
+ * Renders the appropriate content for a feature detail cell
+ */
+function renderFeatureDetail(featureDetail: string, isHighlighted: boolean) {
+  if (featureDetail === "true") {
+    return (
+      <span className={isHighlighted ? "text-[#E11D48] dark:text-[#FB7185]" : ""}>
+        ✓
+      </span>
+    );
+  }
+  
+  if (featureDetail === "false") {
+    return (
+      <span className={isHighlighted ? "text-[#E11D48] dark:text-[#FB7185]" : ""}>
+        ✗
+      </span>
+    );
+  }
+  
+  return featureDetail;
+}
+
 export default function ProductComparison({
   pretitle,
   intro,
@@ -55,7 +78,7 @@ export default function ProductComparison({
         <table className="w-full border-collapse">
           <thead>
             <tr>
-              <th className="p-4 text-left"></th>
+              <th className="p-4 text-left" />
               {products?.map((product) => (
                 <th
                   key={product._key || `product-${product.name}`}
@@ -90,17 +113,7 @@ export default function ProductComparison({
                           : ""
                       }`}
                     >
-                      {featureDetail === "true" ? (
-                        <span className={isHighlighted ? "text-[#E11D48] dark:text-[#FB7185]" : ""}>
-                          ✓
-                        </span>
-                      ) : featureDetail === "false" ? (
-                        <span className={isHighlighted ? "text-[#E11D48] dark:text-[#FB7185]" : ""}>
-                          ✗
-                        </span>
-                      ) : (
-                        featureDetail
-                      )}
+                      {renderFeatureDetail(featureDetail, !!isHighlighted)}
                     </td>
                   );
                 })}
