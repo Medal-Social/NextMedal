@@ -1,8 +1,9 @@
 /**
  * Hero Section Module Schema
- * @version 1.0.0
- * @lastUpdated 2024-05-10
+ * @version 1.1.0
+ * @lastUpdated 2024-07-10
  * @changelog
+ * - 1.1.0: Removed options field and options group for simplified schema
  * - 1.0.0: Initial version
  */
 
@@ -17,7 +18,6 @@ export default defineType({
   groups: [
     { name: "content", title: "Content", default: true },
     { name: "image", title: "Image" },
-    { name: "options", title: "Options" },
   ],
   preview: {
     select: {
@@ -35,11 +35,6 @@ export default defineType({
     },
   },
   fields: [
-    defineField({
-      name: "options",
-      type: "module-options",
-      group: "options",
-    }),
     defineField({
       name: "pretitle",
       title: "Pre-title",
