@@ -1,9 +1,9 @@
-import type React from 'react';
-import { ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Img } from '@/ui/Img';
+import { ArrowRight } from 'lucide-react';
+import type React from 'react';
 
 import CTAList from '@/ui/CTAList';
 import Pretitle from '@/ui/Pretitle';
@@ -70,4 +70,4 @@ export default function Hero(
       </div>
     </section>
   );
-} 
+}
