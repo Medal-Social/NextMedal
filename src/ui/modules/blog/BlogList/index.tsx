@@ -69,7 +69,6 @@ export default async function BlogList({
       <Suspense
         fallback={
           <ul className={listClassName}>
-            {/* biome-ignore lint/suspicious/noArrayIndexKey: Acceptable for skeleton fallback */}
             {Array.from({ length: limit ?? 6 }).map((_, i) => (
               <li key={`skeleton-${i}`}>
                 <PostPreview skeleton />

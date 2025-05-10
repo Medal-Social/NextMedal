@@ -44,7 +44,6 @@ export default async function BlogFrontpage({
       <Suspense
         fallback={
           <ul className="grid gap-x-8 gap-y-12 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
-            {/* biome-ignore lint/suspicious/noArrayIndexKey: Acceptable for skeleton fallback */}
             {Array.from({ length: itemsPerPage ?? 6 }).map((_, i) => (
               <li key={`skeleton-${i}`}>
                 <PostPreview skeleton />
