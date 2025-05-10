@@ -7,8 +7,8 @@
  * - 1.0.0: Initial version with core site configuration options
  */
 
-import { defineField, defineType } from 'sanity';
 import { VscGlobe } from 'react-icons/vsc';
+import { defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'site',
