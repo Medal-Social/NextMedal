@@ -236,11 +236,10 @@ export default function Video({
     <div className="relative w-full h-full bg-gray-900">
       {!isPlaying ? (
         // Thumbnail view
-        <div
+        <button
+          type="button"
           className="relative w-full h-full cursor-pointer bg-black"
           onClick={handlePlayClick}
-          tabIndex={0}
-          role="button"
           aria-label="Play video"
           onKeyDown={e => {
             if (e.key === 'Enter' || e.key === ' ') {
@@ -275,7 +274,7 @@ export default function Video({
               </svg>
             </button>
           </div>
-        </div>
+        </button>
       ) : (
         // Video player
         <div className="relative w-full h-full overflow-hidden bg-black">
