@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 
 export default function Wrapper({ className, children }: React.ComponentProps<'header'>) {
   const ref = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
+  const _pathname = usePathname();
 
   // set --header-height
   useEffect(() => {
