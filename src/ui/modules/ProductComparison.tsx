@@ -56,8 +56,7 @@ export default function ProductComparison({
   pretitle,
   intro,
   products,
-  features,
-  ...props
+  features
 }: ProductComparisonProps) {
   return (
     <section className="section space-y-8">
