@@ -41,6 +41,7 @@ import callout from './modules/callout';
 import featureGrid from './modules/feature-grid';
 import featuredHero from './modules/featured-hero';
 import galleryHero from './modules/gallery-hero';
+import hero from './modules/hero';
 import logoList from './modules/logo-list';
 
 import personList from './modules/person-list';
@@ -90,7 +91,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   featuredHero,
   galleryHero,
   featureGrid,
-
+  hero,
   logoList,
 
   personList,

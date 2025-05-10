@@ -8,6 +8,7 @@ export default defineField({
     { type: 'videoHero' },
     { type: 'galleryHero' },
     { type: 'featuredHero' },
+    { type: 'hero' },
     { type: 'accordion-list' },
     { type: 'feature-grid' },
     { type: 'callout' },
@@ -33,7 +34,7 @@ export default defineField({
       groups: [
         {
           name: 'Hero Sections',
-          of: [ 'featuredHero', 'videoHero', 'galleryHero'],
+          of: [ 'featuredHero', 'videoHero', 'galleryHero', 'hero'],
         },
         {
           name: 'Content Blocks',
