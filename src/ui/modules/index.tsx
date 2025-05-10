@@ -5,15 +5,16 @@ import Callout from './Callout';
 import FeatureGrid from './FeatureGrid';
 import FeaturedHero from './FeaturedHero';
 import { HeroImageGallery } from './HeroImageGallery';
-import Hero from './hero/Hero';
 import LogoList from './LogoList';
 import PersonList from './PersonList';
 import PricingList from './PricingList';
+import ProductComparison from './ProductComparison';
 import RichtextModule from './RichtextModule';
 import VideoHero from './VideoHero';
 import BlogFrontpage from './blog/BlogFrontpage';
 import BlogList from './blog/BlogList';
 import BlogPostContent from './blog/PostContent';
+import Hero from './hero/Hero';
 
 export default function Modules({
   modules,
@@ -66,7 +67,13 @@ export default function Modules({
           case 'galleryHero':
             return <HeroImageGallery {...module} key={module._key} />;
           case 'hero':
-            return <Hero {...(module as Sanity.Hero)} key={module._key} isTabbedModule={isTabbedModule} />;
+            return (
+              <Hero
+                {...(module as Sanity.Hero)}
+                key={module._key}
+                isTabbedModule={isTabbedModule}
+              />
+            );
 
           case 'logo-list':
             return <LogoList {...module} key={module._key} isTabbedModule={isTabbedModule} />;
@@ -74,6 +81,9 @@ export default function Modules({
             return <PersonList {...module} key={module._key} isTabbedModule={isTabbedModule} />;
           case 'pricing-list':
             return <PricingList {...module} key={module._key} isTabbedModule={isTabbedModule} />;
+
+          case 'product-comparison':
+            return <ProductComparison {...module} key={module._key} />;
 
           case 'richtext-module':
             return <RichtextModule {...module} key={module._key} isTabbedModule={isTabbedModule} />;

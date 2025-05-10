@@ -11,10 +11,10 @@ import {
 } from '@/components/ui/navigation-menu';
 import resolveUrl from '@/lib/resolveUrl';
 import { getSite } from '@/sanity/lib/fetch';
+import type { Metadata } from '@/sanity/lib/types';
 import { ExternalLink } from 'lucide-react';
 import { stegaClean } from 'next-sanity';
 import { NavLink } from './mobile-navigation';
-import type { Metadata } from '@/sanity/lib/types';
 
 interface InternalLink {
   _type: string;
@@ -29,18 +29,18 @@ interface InternalLink {
   _updatedAt: string;
 }
 
-interface Category {
-  title: string;
-  links?: Link[];
-}
-
-interface Link {
+interface NavMenuLink {
   label: string;
   description?: string;
   icon?: Sanity.Icon;
   internal?: InternalLink;
   external?: string;
   params?: string;
+}
+
+interface Category {
+  title: string;
+  links?: NavMenuLink[];
 }
 
 export interface MenuItem {
@@ -51,8 +51,8 @@ export interface MenuItem {
   external?: string;
   params?: string;
   categories?: Category[];
-  link?: Link;
-  links?: Link[];
+  link?: NavMenuLink;
+  links?: NavMenuLink[];
 }
 
 interface HeaderMenu {
@@ -65,14 +65,15 @@ export default async function Navigation() {
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        {(headerMenu as HeaderMenu)?.items?.map((item, key) => {
+        {(headerMenu as HeaderMenu)?.items?.map((item) => {
+          const itemKey = `${item._type}-${item.label || ''}-${item.title || ''}`;
           switch (item._type) {
             case 'link':
               return (
-                <NavigationMenuItem key={key}>
+                <NavigationMenuItem key={itemKey}>
                   <Link
                     href={
-                      item.internal && item.internal.metadata?.slug && item.internal.metadata.slug.current
+                      item.internal?.metadata?.slug?.current
                         ? resolveUrl(item.internal as Sanity.PageBase, {
                             base: false,
                             params: item.params,
@@ -103,28 +104,29 @@ export default async function Navigation() {
 
             case 'link.categories':
               return (
-                <NavigationMenuItem key={key}>
+                <NavigationMenuItem key={itemKey}>
                   <NavigationMenuTrigger aria-label={`${item.title} menu`}>
                     {item.title}
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="bg-background">
                     <ul className="flex flex-row w-[800px] gap-3 p-4" role="menu">
-                      {item.categories?.map((category, ix) => (
+                      {item.categories?.map((category) => (
                         <li
-                          key={`${category.title}-${key}-${ix}`}
+                          key={category.title}
                           className="overflow-hidden flex-grow"
                           role="presentation"
                         >
                           <span className="font-medium text-base text-foreground mb-2">
                             {category.title}
                           </span>
-                          <ul className="space-y-2" role="group">
-                            {category.links?.map((link, ix) => (
-                              <NavigationMenuLink asChild key={`${link.label}-${key}-${ix}`}>
+                          <fieldset className="space-y-2 border-0 p-0 m-0">
+                            <legend className="sr-only">{category.title}</legend>
+                            {category.links?.map((link) => (
+                              <NavigationMenuLink asChild key={link.label}>
                                 <NavLink link={link} />
                               </NavigationMenuLink>
                             ))}
-                          </ul>
+                          </fieldset>
                         </li>
                       ))}
                     </ul>
@@ -133,14 +135,14 @@ export default async function Navigation() {
               );
             case 'link.list':
               return (
-                <NavigationMenuItem key={key}>
+                <NavigationMenuItem key={itemKey}>
                   <NavigationMenuTrigger aria-label={`${item.link?.label} menu`}>
                     {item.link?.label}
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="bg-background">
                     <ul className="grid w-[600px] gap-3 p-4 grid-cols-2" role="menu">
-                      {item.links?.map((link, ix) => (
-                        <NavigationMenuLink asChild key={`${link.label}-${key}-${ix}`}>
+                      {item.links?.map((link) => (
+                        <NavigationMenuLink asChild key={link.label}>
                           <NavLink link={link} />
                         </NavigationMenuLink>
                       ))}

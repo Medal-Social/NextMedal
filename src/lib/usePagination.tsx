@@ -78,7 +78,7 @@ export function usePagination<T extends unknown>({
         </button>
       </nav>
     );
-  }
+  };
 
   return {
     atStart,

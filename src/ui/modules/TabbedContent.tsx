@@ -51,9 +51,9 @@ export default function TabbedContent({ content, pretitle, tabs, className }: Ta
                         : 'grid-cols-1'
               )}
             >
-              {tabs.map((tab, index) => (
+              {tabs.map((tab) => (
                 <TabsTrigger
-                  key={index}
+                  key={tab.title}
                   value={tab.title}
                   className="flex bg-secondary text-secondary-foreground flex-col items-center py-2 px-3 h-auto"
                 >
@@ -64,8 +64,8 @@ export default function TabbedContent({ content, pretitle, tabs, className }: Ta
             </TabsList>
           </div>
 
-          {tabs.map((tab, index) => (
-            <TabsContent key={index} value={tab.title} className="space-y-8">
+          {tabs.map((tab) => (
+            <TabsContent key={tab.title} value={tab.title} className="space-y-8">
               {tab.content}
             </TabsContent>
           ))}
