@@ -43,12 +43,6 @@ export const MODULES_QUERY = groq`
 	_type == 'callout' => {
 		"copy": content,
 	},
-	_type == 'hero' => {
-		content[],
-		sidebysidecontent[],
-		sideBySideTextAlign,
-		assets[]{..., "image": image.asset->, altText, loading}
-	},
 	_type == 'hero.saas' => {
 		content[]
 	},
