@@ -56,20 +56,16 @@ export default function Hero(props: Sanity.Hero & { className?: string; isTabbed
           </div>
 
           {props.image && (
-            <div className="flex items-center lg:items-start justify-center lg:justify-end lg:pt-4">
-              <div className="relative overflow-hidden rounded-xl shadow-xl ring-1 ring-border">
-                <div className="aspect-[4/3] md:aspect-[16/9] bg-gradient-to-br from-gray-900 to-gray-800">
-                  <Img 
-                    image={props.image.image}
-                    className="w-[48rem] max-w-none object-cover sm:w-[57rem]" 
-                    alt={props.image.alt || props.image.image?.alt || "Hero image"}
-                  />
-                </div>
-
-                {/* Image decorative elements */}
-                <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-rose-600/30 blur-xl"></div>
-                <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-purple-600/20 blur-xl"></div>
-                <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-gradient-to-br from-rose-600/20 to-transparent rounded-tl-3xl"></div>
+            <div className="flex items-center justify-center lg:justify-end lg:pt-4">
+              <div className="relative w-full overflow-hidden rounded-xl shadow-xl ring-1 ring-border">
+                <Img 
+                  image={props.image.image}
+                  className="w-full object-cover" 
+                  alt={props.image.alt || props.image.image?.alt || "Hero image"}
+                />
+                
+                {/* Subtle decoration on the left only */}
+                <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-rose-600/30 blur-xl pointer-events-none"></div>
               </div>
             </div>
           )}
