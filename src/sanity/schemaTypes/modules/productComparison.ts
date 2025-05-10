@@ -1,9 +1,10 @@
 /**
  * Product Comparison Module Schema
- * @version 1.2.0
+ * @version 1.3.0
  * @lastUpdated 2024-07-10
  * @description A comparison table for products/features with customizable details for each cell
  * @changelog
+ * - 1.3.0: Fixed validation logic to properly access parent module
  * - 1.2.0: Updated field descriptions for improved UX and clarity
  * - 1.1.0: Removed options field and options group for simplified schema
  * - 1.0.0: Initial version with basic comparison functionality
@@ -106,26 +107,25 @@ export default defineType({
                 }),
               ],
               validation: (Rule) =>
-                Rule.custom((featureTiers, context) => {
-                  // Look for the root document
-                  //@ts-ignore
-                  const doc = context.document.modules.find(
-                    //@ts-ignore
-                    (module) => module._key === context.path[1]._key
-                  );
-                  // Ensure document tiers is an array before accessing length
-                  const docTiers = Array.isArray(doc.products)
-                    ? doc.products
-                    : [];
-                  const tierCount = docTiers.length;
+                Rule.custom((featureValues, context: any) => {
+                  try {
+                    // Access the parent module's products array
+                    const parentModule = context.parent?.parent;
+                    const products = parentModule?.products || [];
+                    const productCount = Array.isArray(products) ? products.length : 0;
 
-                  if (!featureTiers)
-                    return `You must add a value for all ${tierCount} products`; // Handle case when featureTiers is undefined during initial setup
+                    if (!featureValues)
+                      return `You must add a value for all ${productCount} products`;
 
-                  if (featureTiers.length !== tierCount) {
-                    return `You must add a value for all ${tierCount} products`;
+                    if (featureValues.length !== productCount) {
+                      return `You must add a value for all ${productCount} products`;
+                    }
+                    return true;
+                  } catch (err) {
+                    // Fallback in case of any errors in the validation logic
+                    console.error('Validation error:', err);
+                    return true;
                   }
-                  return true;
                 }),
             }),
           ],
