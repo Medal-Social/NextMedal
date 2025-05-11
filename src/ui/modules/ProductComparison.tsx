@@ -17,7 +17,7 @@
  * - var(--highlight-text-light)
  * - var(--highlight-text-dark)
  */
-import { PortableText } from 'next-sanity';
+import { PortableText, PortableTextComponents } from 'next-sanity';
 import Pretitle from '../Pretitle';
 
 type ProductComparisonProps = {
@@ -52,6 +52,7 @@ function renderFeatureDetail(featureDetail: string, isHighlighted: boolean) {
   return featureDetail;
 }
 
+
 export default function ProductComparison({
   pretitle,
   intro,
@@ -62,7 +63,20 @@ export default function ProductComparison({
     <section className="section space-y-8">
       <div className="section-intro text-center items-center flex flex-col">
         {pretitle && <Pretitle className="mb-4">{pretitle}</Pretitle>}
-        {intro && <PortableText value={intro} />}
+        {intro && (
+          <>
+            <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-center text-gray-100">
+              <PortableText value={[intro[0]]} />
+            </div>
+            <div className="mb-4" />
+            {intro[1] && (
+              <div className="text-lg md:text-xl text-center text-gray-300 font-normal mx-auto max-w-2xl">
+                <PortableText value={[intro[1]]} />
+              </div>
+            )}
+            <PortableText value={intro.slice(2)} />
+          </>
+        )}
       </div>
 
       <div className="overflow-x-auto">
