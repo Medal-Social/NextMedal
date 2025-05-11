@@ -15,9 +15,15 @@ export default function Hero(
   const { className, isTabbedModule = false } = props;
 
   return (
-    <section className={cn(!isTabbedModule && 'py-24 sm:py-32', className)}>
+    <section
+      className={cn(
+        'relative overflow-hidden',
+        !isTabbedModule && 'py-24 sm:py-32',
+        className
+      )}
+    >
       {/* Decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-[30%] -right-[10%] w-[70%] h-[70%] rounded-full bg-gradient-to-br from-rose-500/20 to-purple-500/20 blur-3xl opacity-70 dark:from-rose-500/10 dark:to-purple-500/10" />
         <div className="absolute -bottom-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 blur-3xl opacity-70 dark:from-blue-500/10 dark:to-cyan-500/10" />
       </div>

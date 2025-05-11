@@ -102,32 +102,9 @@ export default defineType({
                 defineArrayMember({
                   type: 'string',
                   title: 'Value',
-                  placeholder: '"Included", "Optional", "$10/mo", etc.',
-                  description:
-                    'Special values: "true" shows ✓, "false" shows ✗, or enter any custom text',
                 }),
               ],
-              validation: (Rule) =>
-                Rule.custom((featureValues, context: any) => {
-                  try {
-                    // Access the parent module's products array
-                    const parentModule = context.parent?.parent;
-                    const products = parentModule?.products || [];
-                    const productCount = Array.isArray(products) ? products.length : 0;
-
-                    if (!featureValues)
-                      return `You must add a value for all ${productCount} products`;
-
-                    if (featureValues.length !== productCount) {
-                      return `You must add a value for all ${productCount} products`;
-                    }
-                    return true;
-                  } catch (err) {
-                    // Fallback in case of any errors in the validation logic
-                    console.error('Validation error:', err);
-                    return true;
-                  }
-                }),
+              validation: undefined,
             }),
           ],
           preview: {
