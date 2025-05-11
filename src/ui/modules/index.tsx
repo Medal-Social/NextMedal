@@ -61,7 +61,7 @@ export default function Modules({
             return <Callout {...module} key={module._key} isTabbedModule={isTabbedModule} />;
 
           case 'feature-grid':
-            return <FeatureGrid {...module} key={module._key} isTabbedModule={isTabbedModule} />;
+            return <FeatureGrid {...module} key={module._key} />;
           case 'featuredHero':
             return <FeaturedHero {...module} key={module._key} isTabbedModule={isTabbedModule} />;
           case 'galleryHero':
