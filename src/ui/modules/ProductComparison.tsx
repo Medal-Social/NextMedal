@@ -89,8 +89,8 @@ export default function ProductComparison({
                   key={product._key || `product-${product.name}`}
                   className={`p-4 text-center font-bold rounded-t-lg ${
                     product.highlight
-                      ? 'bg-[#FFF0F2] dark:bg-[#1F0912] text-[#E11D48] dark:text-[#FB7185]'
-                      : ''
+                      ? 'text-primary'
+                      : 'text-muted-foreground'
                   }`}
                 >
                   {product.name}
