@@ -65,12 +65,12 @@ export default function ProductComparison({
         {pretitle && <Pretitle className="mb-4">{pretitle}</Pretitle>}
         {intro && (
           <>
-            <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-center text-gray-100">
+            <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-center ">
               <PortableText value={[intro[0]]} />
             </div>
             <div className="mb-4" />
             {intro[1] && (
-              <div className="text-lg md:text-xl text-center text-gray-300 font-normal mx-auto max-w-2xl">
+              <div className="text-lg md:text-xl text-center font-normal mx-auto max-w-2xl">
                 <PortableText value={[intro[1]]} />
               </div>
             )}
