@@ -50,9 +50,9 @@ export function Img({ image, width: w, height: h, ...props }: { image?: Sanity.I
       width={width}
       height={height}
       alt={props.alt || image.alt || image.altText || image.asset?.altText || ''}
-      loading={validLoading}
       unoptimized={isGif}
       {...props}
+      {...(!props.priority ? { loading: validLoading } : {})}
     />
   );
 }
