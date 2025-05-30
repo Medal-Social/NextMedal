@@ -2,6 +2,7 @@
 @import "./fonts.css";
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
+@plugin "@tailwindcss/typography";
 
 :root {
   --background: 222 47% 11%;
