@@ -2,7 +2,7 @@ import { fetchSanityLive } from '@/sanity/lib/fetch';
 import { groq } from 'next-sanity';
 import { NextRequest } from 'next/server';
 
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
   const data = await fetchSanityLive<Record<string, any>>({
     query: groq`{
@@ -27,13 +27,6 @@ export async function GET(req: NextRequest) {
     params: { baseUrl: `${baseUrl}/` },
   });
 
-  // Debug: If ?debug=1, return the raw data as JSON
-  if (req.nextUrl.searchParams.get('debug') === '1') {
-    return new Response(JSON.stringify(data, null, 2), {
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-
   const all = Object.values(data).flat();
 
   // Build XML
@@ -43,7 +36,7 @@ export async function GET(req: NextRequest) {
   for (const entry of all) {
     xml += `  <url>\n`;
     xml += `    <loc>${entry.url}</loc>\n`;
-    if (entry.lastModified) xml += `    <lastmod>${new Date(entry.lastModified).toISOString()}</lastmod>\n`;
+    if (entry.lastModified) xml += `    <lastmod>${new Date(entry.lastModified).toISOString()}\n`;
     if (entry.priority) xml += `    <priority>${entry.priority}</priority>\n`;
     xml += `  </url>\n`;
   }
