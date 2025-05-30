@@ -39,17 +39,17 @@ export async function GET(_req: NextRequest) {
   const all = Object.values(data).flat();
 
   // Build XML
-  let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-  xml += `<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>\n`;
-  xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+  xml += '<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>\n';
+  xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
   for (const entry of all) {
-    xml += `  <url>\n`;
+    xml += '  <url>\n';
     xml += `    <loc>${entry.url}</loc>\n`;
-    if (entry.lastModified) xml += `    <lastmod>${new Date(entry.lastModified).toISOString()}\n`;
+    if (entry.lastModified) xml += `    <lastmod>${new Date(entry.lastModified).toISOString()}</lastmod>\n`;
     if (entry.priority) xml += `    <priority>${entry.priority}</priority>\n`;
-    xml += `  </url>\n`;
+    xml += '  </url>\n';
   }
-  xml += `</urlset>`;
+  xml += '</urlset>';
 
   return new Response(xml, {
     headers: {
