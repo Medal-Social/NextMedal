@@ -12,27 +12,31 @@ import { VscGlobe } from 'react-icons/vsc';
 
 export default defineType({
   name: 'site',
-  title: 'Site settings',
+  title: 'Site Settings',
   type: 'document',
   groups: [
     { name: 'general', title: 'General', default: true },
-    { name: 'appearance', title: 'Appearance & Branding' },
+    { name: 'appearance', title: 'Site Logo' },
     { name: 'navigation', title: 'Navigation' },
+  ],
+  fieldsets: [
+    { name: 'branding', title: 'Branding', options: { collapsible: true, collapsed: false } },
+    { name: 'footer', title: 'Footer', options: { collapsible: false } },
   ],
   fields: [
     // General Group - Basic site information and content
     defineField({
       name: 'title',
       title: 'Site Title',
-      description: 'The name of your website',
+      description: 'The name of your website. This appears in the browser tab and search results.',
       type: 'string',
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) => Rule.required().min(3).max(60),
       group: 'general',
     }),
     defineField({
       name: 'tagline',
       title: 'Site Tagline',
-      description: 'A short slogan or motto for your site',
+      description: 'A short slogan or motto for your site. Shown in meta tags and some layouts.',
       type: 'array',
       of: [{ type: 'block' }],
       group: 'general',
@@ -40,15 +44,53 @@ export default defineType({
     defineField({
       name: 'announcements',
       title: 'Site Announcements',
-      description: 'Special announcements shown across the site',
+      description: 'Special announcements shown across the site. Useful for promotions or urgent news.',
       type: 'array',
       of: [{ type: 'reference', to: [{ type: 'announcement' }] }],
       group: 'general',
+      initialValue: [],
+    }),
+    // Appearance & Branding Group - Visual elements
+    defineField({
+      name: 'logo',
+      title: 'Site Logo',
+      description: "Upload your site's logo. Used in the header and for social sharing.",
+      type: 'logo',
+      group: 'appearance',
+      fieldset: 'branding',
+    }),
+    // Navigation Group - Header first, then footer, then rest
+    defineField({
+      name: 'headerMenu',
+      title: 'Header Menu',
+      description: 'Navigation links shown in the site header.',
+      type: 'reference',
+      to: [{ type: 'navigation' }],
+      group: 'navigation',
+    }),
+    defineField({
+      name: 'ctas',
+      title: 'Header Call-to-Actions',
+      description: 'Call to action buttons that appear in the header.',
+      type: 'array',
+      of: [{ type: 'cta' }],
+      group: 'navigation',
+      initialValue: [],
+      validation: (Rule) => Rule.min(1).error('Add at least one CTA.'),
+    }),
+    defineField({
+      name: 'footerMenu',
+      title: 'Footer Menu',
+      description: 'Navigation links shown in the site footer.',
+      type: 'reference',
+      to: [{ type: 'navigation' }],
+      group: 'navigation',
+      fieldset: 'footer',
     }),
     defineField({
       name: 'copyright',
       title: 'Copyright Text',
-      description: 'Copyright notice displayed in the footer',
+      description: 'Copyright notice displayed in the footer.',
       type: 'array',
       of: [
         {
@@ -57,62 +99,35 @@ export default defineType({
         },
       ],
       group: 'general',
-    }),
-
-    // Appearance & Branding Group - Visual elements and theme
-    defineField({
-      name: 'logo',
-      title: 'Site Logo',
-      description: "Upload your site's logo",
-      type: 'logo',
-      group: 'appearance',
-    }),
-
-    // Navigation Group - Menus and links
-    defineField({
-      name: 'headerMenu',
-      title: 'Header Menu',
-      description: 'Navigation links shown in the site header',
-      type: 'reference',
-      to: [{ type: 'navigation' }],
-      group: 'navigation',
-    }),
-    defineField({
-      name: 'footerMenu',
-      title: 'Footer Menu',
-      description: 'Navigation links shown in the site footer',
-      type: 'reference',
-      to: [{ type: 'navigation' }],
-      group: 'navigation',
+      fieldset: 'footer',
     }),
     defineField({
       name: 'socialLinks',
       title: 'Social Media Links',
-      description: 'List of social media channels (e.g., LinkedIn, Twitter, etc.)',
+      description: 'List of social media channels (e.g., LinkedIn, Twitter, etc.).',
       type: 'array',
       of: [
         {
           type: 'object',
           fields: [
-            { name: 'text', title: 'Text', type: 'string', description: 'Label for the social channel (e.g., LinkedIn, Twitter)' },
-            { name: 'url', title: 'URL', type: 'url', description: 'Link to the social profile or page' },
+            { name: 'text', title: 'Label', type: 'string', description: 'Label for the social channel (e.g., LinkedIn, Twitter)', validation: (Rule) => Rule.required() },
+            { name: 'url', title: 'URL', type: 'url', description: 'Link to the social profile or page', validation: (Rule) => Rule.required().uri({ scheme: ['http', 'https'] }) },
           ],
         },
       ],
       group: 'navigation',
-    }),
-    defineField({
-      name: 'ctas',
-      title: 'Header Call-to-Actions',
-      description: 'Call to action Buttons that appear in the header',
-      type: 'array',
-      of: [{ type: 'cta' }],
-      group: 'navigation',
+      initialValue: [],
+      validation: (Rule) => Rule.min(1).error('Add at least one social link.'),
     }),
   ],
   preview: {
-    prepare: () => ({
-      title: 'Site settings',
+    select: {
+      title: 'title',
+      tagline: 'tagline',
+    },
+    prepare: ({ title, tagline }) => ({
+      title: title || 'Site settings',
+      subtitle: tagline && tagline[0]?.children ? tagline[0].children.map((c: any) => c.text).join(' ') : '',
     }),
   },
 });
