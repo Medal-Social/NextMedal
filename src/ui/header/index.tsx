@@ -8,7 +8,6 @@ import Toggle from './Toggle';
 import Wrapper from './Wrapper';
 import MobileNavigation from './mobile-navigation';
 import Navigation from './navigation';
-import type { MenuItem } from './navigation';
 
 export default async function Header() {
   const { title, logo, ctas, headerMenu } = await getSite();

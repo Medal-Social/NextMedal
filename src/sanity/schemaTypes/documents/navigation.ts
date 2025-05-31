@@ -26,7 +26,7 @@ export default defineType({
     defineField({
       name: 'items',
       type: 'array',
-      of: [{ type: 'link' }, { type: 'link.categories' }, { type: 'link.list' }],
+      of: [{ type: 'link' }, { type: 'link.list' }],
     }),
   ],
   preview: {
