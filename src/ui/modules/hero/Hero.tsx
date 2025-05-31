@@ -16,11 +16,7 @@ export default function Hero(
 
   return (
     <section
-      className={cn(
-        'relative overflow-hidden',
-        !isTabbedModule && 'py-24 sm:py-32',
-        className
-      )}
+      className={cn('relative overflow-hidden', !isTabbedModule && 'py-24 sm:py-32', className)}
     >
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
