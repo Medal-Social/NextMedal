@@ -85,12 +85,6 @@ declare global {
       headerMenu?: Navigation;
       footerMenu?: Navigation;
       social?: Navigation;
-      // theme
-      themeSettings?: {
-        defaultTheme?: 'light' | 'dark' | 'system';
-        darkMode?: ThemeColors;
-        lightMode?: ThemeColors;
-      };
     }
 
     interface Navigation extends SanityDocument {
