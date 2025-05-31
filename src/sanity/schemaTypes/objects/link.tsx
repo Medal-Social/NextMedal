@@ -34,13 +34,6 @@ export default defineType({
       group: 'main',
     }),
     defineField({
-      name: 'icon',
-      title: 'Icon',
-      description: 'Optional icon to display with the link',
-      type: 'icon',
-      group: 'main',
-    }),
-    defineField({
       name: 'type',
       title: 'Link Type',
       description: 'Choose where this link should point to',
@@ -129,9 +122,8 @@ export default defineType({
       internal: 'internal.metadata.slug.current',
       params: 'params',
       external: 'external',
-      icon: 'icon',
     },
-    prepare: ({ label, title, _type, internal, params, external, icon }) => {
+    prepare: ({ label, title, _type, internal, params, external }) => {
       const _resolvedUrl = resolveSlug({ _type, internal, params, external });
       const linkType = external ? 'External' : 'Internal';
       const destination = external || title || internal || 'Untitled Page';
@@ -139,7 +131,7 @@ export default defineType({
       return {
         title: label || title || 'Untitled Link',
         subtitle: `${linkType} → ${destination}`,
-        media: icon ? <Icon icon={icon} /> : VscLink,
+        media: VscLink,
       };
     },
   },
