@@ -4,7 +4,6 @@ import CTAList from '@/ui/CTAList';
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import { stegaClean } from 'next-sanity';
 import Link from 'next/link';
-import Icon from '../Icon';
 
 interface InternalLink {
   _type: string;
@@ -34,8 +33,8 @@ interface MenuItem {
   internal?: InternalLink;
   external?: string;
   params?: string;
-  link?: Link;
-  links?: Link[];
+  link?: MobileNavLink;
+  links?: MobileNavLink[];
 }
 
 interface MobileNavigationProps {
@@ -103,9 +102,9 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
                     <Collapsible>
                       <CollapsibleTrigger
                         className="flex w-full items-center justify-between rounded-md p-2 hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary"
-                        aria-label={`${item.link?.label} submenu`}
+                        aria-label={`${item.label} submenu`}
                       >
-                        <span className="font-medium">{item.link?.label}</span>
+                        <span className="font-medium">{item.label}</span>
                         <ChevronDown className="h-4 w-4" aria-hidden="true" />
                       </CollapsibleTrigger>
                       <CollapsibleContent>
