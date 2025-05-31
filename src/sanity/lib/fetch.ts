@@ -70,14 +70,6 @@ export async function getSite() {
 				footerMenu->{ ${NAVIGATION_QUERY} },
 				socialLinks,
 				'ogimage': ogimage.asset->url,
-				themeSettings {
-					lightMode->{
-						...
-					},
-					darkMode->{
-						...
-					}
-				},
 			}
 		`,
   });
