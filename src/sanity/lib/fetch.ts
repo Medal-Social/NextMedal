@@ -68,7 +68,7 @@ export async function getSite() {
 				ctas[]{ ${CTA_QUERY} },
 				headerMenu->{ ${NAVIGATION_QUERY} },
 				footerMenu->{ ${NAVIGATION_QUERY} },
-				social->{ ${NAVIGATION_QUERY} },
+				socialLinks,
 				'ogimage': ogimage.asset->url,
 				themeSettings {
 					lightMode->{
