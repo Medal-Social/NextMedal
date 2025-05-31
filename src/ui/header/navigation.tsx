@@ -11,10 +11,10 @@ import {
 } from '@/components/ui/navigation-menu';
 import resolveUrl from '@/lib/resolveUrl';
 import { getSite } from '@/sanity/lib/fetch';
-import type { Metadata } from '@/sanity/lib/types';
+import type { Link as LinkType, Metadata } from '@/sanity/lib/types';
 import { ExternalLink } from 'lucide-react';
 import { stegaClean } from 'next-sanity';
-import { NavLink } from './mobile-navigation';
+import { type MobileNavLink, NavLink } from './mobile-navigation';
 
 interface InternalLink {
   _type: string;
@@ -29,19 +29,6 @@ interface InternalLink {
   _updatedAt: string;
 }
 
-interface Link {
-  label: string;
-  description?: string;
-  internal?: InternalLink;
-  external?: string;
-  params?: string;
-}
-
-interface Category {
-  title: string;
-  links?: NavMenuLink[];
-}
-
 export interface MenuItem {
   _type: 'link' | 'link.list';
   label?: string;
@@ -49,12 +36,37 @@ export interface MenuItem {
   internal?: InternalLink;
   external?: string;
   params?: string;
-  link?: Link;
-  links?: Link[];
+  link?: LinkType;
+  links?: LinkType[];
 }
 
 interface HeaderMenu {
   items?: MenuItem[];
+}
+
+// Helper to parse params string to Record<string, string>
+function parseParams(params?: string): Record<string, string> | undefined {
+  if (!params) return undefined;
+  try {
+    const searchParams = new URLSearchParams(params);
+    const result: Record<string, string> = {};
+    for (const [key, value] of searchParams.entries()) {
+      result[key] = value;
+    }
+    return result;
+  } catch {
+    return undefined;
+  }
+}
+
+function mapToMobileNavLink(link: LinkType): MobileNavLink {
+  return {
+    label: link.label ?? '',
+    description: undefined,
+    internal: link.internal,
+    external: link.external,
+    params: link.params,
+  };
 }
 
 export default async function Navigation() {
@@ -109,7 +121,7 @@ export default async function Navigation() {
                     <ul className="grid w-[600px] gap-3 p-4 grid-cols-2" role="menu">
                       {item.links?.map((link) => (
                         <NavigationMenuLink asChild key={link.label}>
-                          <NavLink link={link} />
+                          <NavLink link={mapToMobileNavLink(link)} />
                         </NavigationMenuLink>
                       ))}
                     </ul>
