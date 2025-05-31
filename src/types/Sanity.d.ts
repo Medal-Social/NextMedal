@@ -89,7 +89,7 @@ declare global {
 
     interface Navigation extends SanityDocument {
       title: string;
-      items?: (Link | LinkList | LinkCategories)[];
+      items?: (Link | LinkList)[];
     }
 
     // pages
@@ -218,7 +218,6 @@ declare global {
       readonly _type: 'link';
       label: string;
       description?: string;
-      icon?: Icon;
       type: 'internal' | 'external';
       internal?: Page | BlogPost | Changelog;
       external?: string;
@@ -229,18 +228,6 @@ declare global {
       readonly _type: 'link.list';
       link?: Link;
       links?: Link[];
-    }
-
-    interface LinkCategories {
-      readonly _type: 'link.categories';
-      title: string;
-      categories: LinkCategory[];
-    }
-
-    interface LinkCategory {
-      readonly _type: 'link.categories.list';
-      title: string;
-      links: Link[];
     }
 
     interface Metadata {

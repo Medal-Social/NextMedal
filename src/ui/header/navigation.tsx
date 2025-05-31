@@ -29,10 +29,9 @@ interface InternalLink {
   _updatedAt: string;
 }
 
-interface NavMenuLink {
+interface Link {
   label: string;
   description?: string;
-  icon?: Sanity.Icon;
   internal?: InternalLink;
   external?: string;
   params?: string;
@@ -44,15 +43,14 @@ interface Category {
 }
 
 export interface MenuItem {
-  _type: 'link' | 'link.categories' | 'link.list';
+  _type: 'link' | 'link.list';
   label?: string;
   title?: string;
   internal?: InternalLink;
   external?: string;
   params?: string;
-  categories?: Category[];
-  link?: NavMenuLink;
-  links?: NavMenuLink[];
+  link?: Link;
+  links?: Link[];
 }
 
 interface HeaderMenu {
@@ -101,38 +99,6 @@ export default async function Navigation() {
                   </Link>
                 </NavigationMenuItem>
               );
-
-            case 'link.categories':
-              return (
-                <NavigationMenuItem key={itemKey}>
-                  <NavigationMenuTrigger aria-label={`${item.title} menu`}>
-                    {item.title}
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="bg-background">
-                    <ul className="flex flex-row w-[800px] gap-3 p-4" role="menu">
-                      {item.categories?.map((category) => (
-                        <li
-                          key={category.title}
-                          className="overflow-hidden flex-grow"
-                          role="presentation"
-                        >
-                          <span className="font-medium text-base text-foreground mb-2">
-                            {category.title}
-                          </span>
-                          <fieldset className="space-y-2 border-0 p-0 m-0">
-                            <legend className="sr-only">{category.title}</legend>
-                            {category.links?.map((link) => (
-                              <NavigationMenuLink asChild key={link.label}>
-                                <NavLink link={link} />
-                              </NavigationMenuLink>
-                            ))}
-                          </fieldset>
-                        </li>
-                      ))}
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              );
             case 'link.list':
               return (
                 <NavigationMenuItem key={itemKey}>
@@ -150,7 +116,6 @@ export default async function Navigation() {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
               );
-
             default:
               return null;
           }

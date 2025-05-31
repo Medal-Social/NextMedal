@@ -22,25 +22,20 @@ interface InternalLink {
 interface MobileNavLink {
   label: string;
   description?: string;
-  icon?: Sanity.Icon;
   internal?: InternalLink;
   external?: string;
   params?: string;
 }
 
 interface MenuItem {
-  _type: 'link' | 'link.categories' | 'link.list';
+  _type: 'link' | 'link.list';
   label?: string;
   title?: string;
   internal?: InternalLink;
   external?: string;
   params?: string;
-  categories?: Array<{
-    title: string;
-    links?: MobileNavLink[];
-  }>;
-  link?: MobileNavLink;
-  links?: MobileNavLink[];
+  link?: Link;
+  links?: Link[];
 }
 
 interface MobileNavigationProps {
@@ -66,7 +61,6 @@ export const NavLink = ({ link }: { link: MobileNavLink }) => (
     target={link.external ? '_blank' : undefined}
     aria-label={link.external ? `${link.label} (opens in new tab)` : undefined}
   >
-    {link.icon && <Icon icon={link.icon} className="mt-0.5 h-5 w-5" aria-hidden="true" />}
     <div>
       <div className="flex items-center gap-2 font-medium">
         {link.label}
@@ -127,44 +121,6 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
                   </li>
                 );
               }
-
-              if (item._type === 'link.categories') {
-                return (
-                  <li key={`mobile-${item.title}-${index}`}>
-                    <Collapsible>
-                      <CollapsibleTrigger
-                        className="flex w-full items-center justify-between rounded-md p-2 hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary"
-                        aria-label={`${item.title} submenu`}
-                      >
-                        <span className="font-medium">{item.title}</span>
-                        <ChevronDown className="h-4 w-4" aria-hidden="true" />
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <div className="ml-4 mt-2 space-y-6 border-l pl-4" role="menu">
-                          {item.categories?.map((category, catIndex: number) => (
-                            <fieldset
-                              key={`mobile-${category.title}-${index}-${catIndex}`}
-                              className="border-0 p-0 m-0"
-                            >
-                              <legend className="sr-only">{category.title}</legend>
-                              <ul className="space-y-3" role="menu">
-                                {category.links?.map((link: MobileNavLink, linkIndex: number) => (
-                                  <li
-                                    key={`mobile-${link.label}-${index}-${catIndex}-${linkIndex}`}
-                                  >
-                                    <NavLink link={link} />
-                                  </li>
-                                ))}
-                              </ul>
-                            </fieldset>
-                          ))}
-                        </div>
-                      </CollapsibleContent>
-                    </Collapsible>
-                  </li>
-                );
-              }
-
               return null;
             })}
           </ul>

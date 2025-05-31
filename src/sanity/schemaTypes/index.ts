@@ -22,8 +22,6 @@ import cta from './objects/cta';
 import icon from './objects/icon';
 import img from './objects/img';
 import link from './objects/link';
-import linkCategories from './objects/link.categories';
-import linkCategoriesList from './objects/link.categories.list';
 import linkList from './objects/link.list';
 import metadata from './objects/metadata';
 import moduleOptions from './objects/module-options';
@@ -72,8 +70,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   icon,
   img,
   link,
-  linkCategories,
-  linkCategoriesList,
   linkList,
   metadata,
   moduleOptions,
