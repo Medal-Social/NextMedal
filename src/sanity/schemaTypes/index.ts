@@ -15,7 +15,6 @@ import announcement from './misc/announcement';
 import logo from './misc/logo';
 import person from './misc/person';
 import pricing from './misc/pricing';
-import theme from './misc/theme';
 
 // objects
 import modules from './fragments/modules';
@@ -67,7 +66,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   logo,
   person,
   pricing,
-  theme,
 
   // objects
   cta,
