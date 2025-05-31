@@ -127,7 +127,7 @@ export default defineType({
     },
     prepare: ({ title, tagline }) => ({
       title: title || 'Site settings',
-      subtitle: tagline && tagline[0]?.children ? tagline[0].children.map((c: any) => c.text).join(' ') : '',
+      subtitle: tagline && tagline[0]?.children ? tagline[0]?.children.map((c: any) => c.text).join(' ') : '',
     }),
   },
 });
