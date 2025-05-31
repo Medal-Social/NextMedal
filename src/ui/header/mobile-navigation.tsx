@@ -23,7 +23,7 @@ export interface MobileNavLink {
   description?: string;
   internal?: InternalLink;
   external?: string;
-  params?: Record<string, string>;
+  params?: string | Record<string, string>;
 }
 
 interface MenuItem {
@@ -32,7 +32,7 @@ interface MenuItem {
   title?: string;
   internal?: InternalLink;
   external?: string;
-  params?: string;
+  params?: string | Record<string, string>;
   link?: MobileNavLink;
   links?: MobileNavLink[];
 }
