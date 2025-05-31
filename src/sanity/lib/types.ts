@@ -57,23 +57,6 @@ export interface Site extends SanityBase {
   title: string;
   tagline?: any[];
   logo?: any;
-  themeSettings: {
-    defaultTheme: 'light' | 'dark' | 'system';
-    darkMode?: {
-      canvas?: string;
-      ink?: string;
-      accent?: string;
-      secondary?: string;
-      muted?: string;
-    };
-    lightMode?: {
-      canvas?: string;
-      ink?: string;
-      accent?: string;
-      secondary?: string;
-      muted?: string;
-    };
-  };
 }
 
 export interface BlogPost extends SanityBase {
