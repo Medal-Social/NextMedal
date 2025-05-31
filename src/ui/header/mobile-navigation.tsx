@@ -18,12 +18,12 @@ interface InternalLink {
   _updatedAt: string;
 }
 
-interface MobileNavLink {
+export interface MobileNavLink {
   label: string;
   description?: string;
   internal?: InternalLink;
   external?: string;
-  params?: string;
+  params?: Record<string, string>;
 }
 
 interface MenuItem {
