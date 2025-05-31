@@ -19,7 +19,7 @@ export default function PostContent({
   return (
     <div className={cn('section', showTOC && 'grid gap-8', showTOC && 'lg:grid-cols-[1fr_auto]')}
       {...moduleProps(props)}>
-      <article>
+      <article aria-describedby={showTOC ? 'toc-aside' : undefined}>
         <header className="space-y-6 pt-4 pb-8 text-start max-w-screen-md">
           <Categories className="flex flex-wrap gap-x-2" categories={post.categories} linked badge />
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight  mb-8 leading-tight">
@@ -52,7 +52,7 @@ export default function PostContent({
         </div>
       </article>
       {showTOC && (
-        <aside className="lg:sticky-below-header mx-auto w-full max-w-lg self-start [--offset:1rem] lg:order-1 lg:w-3xs lg:col-auto">
+        <aside id="toc-aside" className="lg:sticky-below-header mx-auto w-full max-w-lg self-start [--offset:1rem] lg:order-1 lg:w-3xs lg:col-auto">
           <TableOfContents headings={post.headings} />
         </aside>
       )}

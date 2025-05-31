@@ -52,30 +52,31 @@ export default function TableOfContents({
   return (
     <details className={cn(css.root, 'group accordion max-lg:bg-foreground/3 max-lg:p-3')} open>
       <summary className="font-bold lg:group-open:after:invisible">Table of Contents</summary>
-
-      <ol className="anim-fade-to-b mt-2 leading-tight">
-        {headings?.map(({ text, style }) => (
-          <li
-            className="border-foreground/10 border-l transition-all"
-            data-toc-item={slug(text)}
-            key={text}
-          >
-            <a
-              className={cn(
-                'block py-1 hover:underline',
-                stegaClean(style) === 'h2' && 'pl-4',
-                stegaClean(style) === 'h3' && 'pl-6',
-                stegaClean(style) === 'h4' && 'pl-8',
-                stegaClean(style) === 'h5' && 'pl-10',
-                stegaClean(style) === 'h6' && 'pl-12'
-              )}
-              href={`#${slug(text)}`}
+      <nav aria-label="Table of contents">
+        <ol className="anim-fade-to-b mt-2 leading-tight">
+          {headings?.map(({ text, style }) => (
+            <li
+              className="border-foreground/10 border-l transition-all"
+              data-toc-item={slug(text)}
+              key={text}
             >
-              {text}
-            </a>
-          </li>
-        ))}
-      </ol>
+              <a
+                className={cn(
+                  'block py-1 hover:underline',
+                  stegaClean(style) === 'h2' && 'pl-4',
+                  stegaClean(style) === 'h3' && 'pl-6',
+                  stegaClean(style) === 'h4' && 'pl-8',
+                  stegaClean(style) === 'h5' && 'pl-10',
+                  stegaClean(style) === 'h6' && 'pl-12'
+                )}
+                href={`#${slug(text)}`}
+              >
+                {text}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
     </details>
   );
 }
