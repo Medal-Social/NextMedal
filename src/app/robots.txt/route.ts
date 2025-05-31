@@ -23,7 +23,7 @@ export async function GET() {
     `Sitemap: ${siteUrl}/sitemap.xml`,
     '# RSS feed for blog content',
     `# ${siteUrl}/blog/rss.xml`,
-    `Host: ${siteUrl}`
+    `Host: ${siteUrl}`,
   ].join('\n');
 
   return new NextResponse(content, {
@@ -31,4 +31,4 @@ export async function GET() {
       'Content-Type': 'text/plain',
     },
   });
-} 
+}
