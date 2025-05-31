@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import CTA from './CTA';
 
 import { getSite } from '@/sanity/lib/fetch';
 import {
@@ -16,42 +15,32 @@ import {
 import { IoIosLink } from 'react-icons/io';
 
 export default async function Social({ className }: React.ComponentProps<'div'>) {
-  const { social } = await getSite();
+  const { socialLinks } = await getSite();
 
-  if (!social?.items?.length) return null;
+  if (!socialLinks?.length) return null;
+
+  type SocialLink = { text: string; url: string };
 
   return (
     <nav className={cn('flex flex-wrap items-center gap-1', className)}>
-      {social.items.map((item) => {
-        switch (item._type) {
-          case 'link':
-            return item.external ? (
-              <Button
-                key={`${item._type}-${item.external}`}
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 rounded-full"
-                asChild
-              >
-                <a
-                  href={item.external}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={item.label}
-                >
-                  <Icon url={item.external} aria-hidden="true" className="h-4 w-4" />
-                </a>
-              </Button>
-            ) : (
-              <CTA className="px-2 py-1" link={item} key={`${item._type}-${item.label}`}>
-                <Icon url={item.external} aria-label={item.label} />
-              </CTA>
-            );
-
-          default:
-            return null;
-        }
-      })}
+      {socialLinks.map((item: SocialLink, idx: number) => (
+        <Button
+          key={item.url || idx}
+          variant="ghost"
+          size="icon"
+          className="h-9 w-9 rounded-full"
+          asChild
+        >
+          <a
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={item.text}
+          >
+            <Icon url={item.url} aria-hidden="true" className="h-4 w-4" />
+          </a>
+        </Button>
+      ))}
     </nav>
   );
 }
