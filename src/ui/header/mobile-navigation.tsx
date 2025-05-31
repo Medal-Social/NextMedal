@@ -19,7 +19,7 @@ interface InternalLink {
   _updatedAt: string;
 }
 
-interface Link {
+interface MobileNavLink {
   label: string;
   description?: string;
   internal?: InternalLink;
@@ -45,7 +45,7 @@ interface MobileNavigationProps {
   ctas: any;
 }
 
-export const NavLink = ({ link }: { link: Link }) => (
+export const NavLink = ({ link }: { link: MobileNavLink }) => (
   <Link
     href={
       link.internal
@@ -75,9 +75,9 @@ export const NavLink = ({ link }: { link: Link }) => (
 
 export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) {
   return (
-    <div
+    <dialog
+      open
       className="fixed inset-0 top-[57px] z-50 overflow-hidden bg-background/95 border-foreground/10"
-      role="dialog"
       aria-modal="true"
       aria-label="Mobile navigation menu"
     >
@@ -86,20 +86,20 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
           <div className="flex items-center justify-between">
             <CTAList ctas={ctas} className="grid flex-1 gap-2 *:w-full" />
           </div>
-          <div className="h-px bg-border" role="separator" />
+          <div className="h-px bg-border" role="separator" tabIndex={0} />
           <ul className="space-y-3" role="menu">
             {menu?.items?.map((item: MenuItem, index: number) => {
               if (item._type === 'link') {
                 return (
-                  <li key={`mobile-${item.label}-${index}`} role="none">
-                    <NavLink link={item as Link} />
+                  <li key={`mobile-${item.label}-${index}`}>
+                    <NavLink link={item as MobileNavLink} />
                   </li>
                 );
               }
 
               if (item._type === 'link.list') {
                 return (
-                  <li key={`mobile-${item.link?.label}-${index}`} role="none">
+                  <li key={`mobile-${item.link?.label}-${index}`}>
                     <Collapsible>
                       <CollapsibleTrigger
                         className="flex w-full items-center justify-between rounded-md p-2 hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary"
@@ -110,8 +110,8 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
                       </CollapsibleTrigger>
                       <CollapsibleContent>
                         <ul className="ml-4 mt-2 space-y-3 border-l pl-4" role="menu">
-                          {item.links?.map((link: Link, linkIndex: number) => (
-                            <li key={`mobile-${link.label}-${index}-${linkIndex}`} role="none">
+                          {item.links?.map((link: MobileNavLink, linkIndex: number) => (
+                            <li key={`mobile-${link.label}-${index}-${linkIndex}`}>
                               <NavLink link={link} />
                             </li>
                           ))}
@@ -121,12 +121,11 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
                   </li>
                 );
               }
-
               return null;
             })}
           </ul>
         </div>
       </nav>
-    </div>
+    </dialog>
   );
 }

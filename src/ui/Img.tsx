@@ -54,6 +54,7 @@ export function Img({ image, width: w, height: h, ...props }: { image?: Sanity.I
       loading={validLoading}
       unoptimized={isGif || isSvg}
       {...props}
+      {...(!props.priority ? { loading: validLoading } : {})}
     />
   );
 }

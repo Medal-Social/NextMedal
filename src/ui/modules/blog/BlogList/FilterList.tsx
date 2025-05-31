@@ -21,8 +21,12 @@ export default async function FilterList() {
         <Suspense>
           <Filter label="All" />
 
-          {categories?.map((category, key) => (
-            <Filter label={category.title} value={category.slug?.current} key={key} />
+          {categories?.map((category) => (
+            <Filter
+              label={category.title}
+              value={category.slug?.current}
+              key={category.slug?.current || category.title}
+            />
           ))}
         </Suspense>
       </div>

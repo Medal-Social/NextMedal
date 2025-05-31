@@ -1,5 +1,5 @@
 import resolveUrl from '@/lib/resolveUrl';
-import Date from '@/ui/Date';
+import BlogDate from '@/ui/Date';
 import { Img } from '@/ui/Img';
 import Link from 'next/link';
 import Authors from './Authors';
@@ -33,7 +33,7 @@ export default function PostPreview({
         </div>
         <div className="max-w-xl">
           <div className="mt-8 flex items-center gap-x-4 text-xs">
-            <Date value={skeleton ? undefined : post?.publishDate} />
+            <BlogDate value={skeleton ? undefined : post?.publishDate} />
             <Categories
               className="flex flex-wrap gap-x-2"
               categories={skeleton ? undefined : post?.categories}

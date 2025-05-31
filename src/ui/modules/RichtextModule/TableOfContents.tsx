@@ -18,61 +18,65 @@ export default function TableOfContents({
 
     const headerHeight = document.querySelector('body > header')?.clientHeight || 0;
 
-    headings?.forEach(({ text }) => {
-      const target = document.getElementById(slug(text));
-
-      if (!target) return;
-
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            const tocItem = document.querySelector(`[data-toc-item="${slug(text)}"]`);
-
-            if (entry.isIntersecting) {
-              tocItem?.classList.add(css.inView);
-            } else {
-              tocItem?.classList.remove(css.inView);
+    const observers: IntersectionObserver[] = [];
+    if (headings) {
+      for (const { text } of headings) {
+        const target = document.getElementById(slug(text));
+        if (!target) continue;
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              const tocItem = document.querySelector(`[data-toc-item="${slug(text)}"]`);
+              if (entry.isIntersecting) {
+                tocItem?.classList.add(css.inView);
+              } else {
+                tocItem?.classList.remove(css.inView);
+              }
             }
-          });
-        },
-        {
-          rootMargin: `-${headerHeight}px 0px 0px 0px`,
-        }
-      );
-
-      observer.observe(target);
-
-      return () => observer.disconnect();
-    });
+          },
+          {
+            rootMargin: `-${headerHeight}px 0px 0px 0px`,
+          }
+        );
+        observer.observe(target);
+        observers.push(observer);
+      }
+    }
+    return () => {
+      for (const observer of observers) {
+        observer.disconnect();
+      }
+    };
   }, [headings]);
 
   return (
     <details className={cn(css.root, 'group accordion max-lg:bg-foreground/3 max-lg:p-3')} open>
       <summary className="font-bold lg:group-open:after:invisible">Table of Contents</summary>
-
-      <ol className="anim-fade-to-b mt-2 leading-tight">
-        {headings?.map(({ text, style }, key) => (
-          <li
-            className="border-foreground/10 border-l transition-all"
-            data-toc-item={slug(text)}
-            key={key}
-          >
-            <a
-              className={cn(
-                'block py-1 hover:underline',
-                stegaClean(style) === 'h2' && 'pl-4',
-                stegaClean(style) === 'h3' && 'pl-6',
-                stegaClean(style) === 'h4' && 'pl-8',
-                stegaClean(style) === 'h5' && 'pl-10',
-                stegaClean(style) === 'h6' && 'pl-12'
-              )}
-              href={`#${slug(text)}`}
+      <nav aria-label="Table of contents">
+        <ol className="anim-fade-to-b mt-2 leading-tight">
+          {headings?.map(({ text, style }) => (
+            <li
+              className="border-foreground/10 border-l transition-all"
+              data-toc-item={slug(text)}
+              key={text}
             >
-              {text}
-            </a>
-          </li>
-        ))}
-      </ol>
+              <a
+                className={cn(
+                  'block py-1 hover:underline',
+                  stegaClean(style) === 'h2' && 'pl-4',
+                  stegaClean(style) === 'h3' && 'pl-6',
+                  stegaClean(style) === 'h4' && 'pl-8',
+                  stegaClean(style) === 'h5' && 'pl-10',
+                  stegaClean(style) === 'h6' && 'pl-12'
+                )}
+                href={`#${slug(text)}`}
+              >
+                {text}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
     </details>
   );
 }
