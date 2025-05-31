@@ -128,17 +128,25 @@ export default defineType({
       group: 'navigation',
     }),
     defineField({
-      name: 'social',
+      name: 'socialLinks',
       title: 'Social Media Links',
-      description: 'Links to your social media profiles',
-      type: 'reference',
-      to: [{ type: 'navigation' }],
+      description: 'List of social media channels (e.g., LinkedIn, Twitter, etc.)',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            { name: 'text', title: 'Text', type: 'string', description: 'Label for the social channel (e.g., LinkedIn, Twitter)' },
+            { name: 'url', title: 'URL', type: 'url', description: 'Link to the social profile or page' },
+          ],
+        },
+      ],
       group: 'navigation',
     }),
     defineField({
       name: 'ctas',
       title: 'Global Call-to-Actions',
-      description: 'Buttons that appear in the header and/or footer',
+      description: 'Call to action Buttons that appear in the header',
       type: 'array',
       of: [{ type: 'cta' }],
       group: 'navigation',
