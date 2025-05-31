@@ -4,8 +4,8 @@ import CTAList from '@/ui/CTAList';
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import { stegaClean } from 'next-sanity';
 import Link from 'next/link';
-import Icon from '../Icon';
 
+type SanityReference = { _ref: string; _type: 'reference'; _weak?: boolean };
 interface InternalLink {
   _type: string;
   title: string;
@@ -19,23 +19,23 @@ interface InternalLink {
   _updatedAt: string;
 }
 
-interface MobileNavLink {
+export interface MobileNavLink {
   label: string;
   description?: string;
-  internal?: InternalLink;
+  internal?: InternalLink | SanityReference;
   external?: string;
-  params?: string;
+  params?: string | Record<string, string>;
 }
 
 interface MenuItem {
   _type: 'link' | 'link.list';
   label?: string;
   title?: string;
-  internal?: InternalLink;
+  internal?: InternalLink | SanityReference;
   external?: string;
-  params?: string;
-  link?: Link;
-  links?: Link[];
+  params?: string | Record<string, string>;
+  link?: MobileNavLink;
+  links?: MobileNavLink[];
 }
 
 interface MobileNavigationProps {
@@ -48,8 +48,8 @@ interface MobileNavigationProps {
 export const NavLink = ({ link }: { link: MobileNavLink }) => (
   <Link
     href={
-      link.internal
-        ? resolveUrl(link.internal, {
+      link.internal && (link.internal as any)._type !== 'reference'
+        ? resolveUrl(link.internal as any, {
             base: false,
             params: link.params,
           })
@@ -103,9 +103,9 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
                     <Collapsible>
                       <CollapsibleTrigger
                         className="flex w-full items-center justify-between rounded-md p-2 hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary"
-                        aria-label={`${item.link?.label} submenu`}
+                        aria-label={`${item.label} submenu`}
                       >
-                        <span className="font-medium">{item.link?.label}</span>
+                        <span className="font-medium">{item.label}</span>
                         <ChevronDown className="h-4 w-4" aria-hidden="true" />
                       </CollapsibleTrigger>
                       <CollapsibleContent>

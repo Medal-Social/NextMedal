@@ -1,9 +1,9 @@
+import { Card, CardDescription, CardTitle } from '@/components/ui/card';
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
 import Icon from '@/ui/Icon';
 import Pretitle from '@/ui/Pretitle';
 import { PortableText } from 'next-sanity';
-import { Card, CardTitle, CardDescription } from '@/components/ui/card';
 
 export default function FeatureGrid({
   pretitle,
@@ -61,9 +61,7 @@ export default function FeatureGrid({
                     <div className="flex-shrink-0 w-10 h-10 rounded-md flex items-center justify-center bg-muted text-foreground">
                       {item.icon && <Icon icon={item.icon} className="w-6 h-6" />}
                     </div>
-                    <CardTitle>
-                      {item.summary}
-                    </CardTitle>
+                    <CardTitle>{item.summary}</CardTitle>
                   </div>
                   {/* Description */}
                   <CardDescription>

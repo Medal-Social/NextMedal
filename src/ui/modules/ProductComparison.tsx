@@ -52,7 +52,6 @@ function renderFeatureDetail(featureDetail: string, isHighlighted: boolean) {
   return featureDetail;
 }
 
-
 export default function ProductComparison({
   pretitle,
   intro,
@@ -88,9 +87,7 @@ export default function ProductComparison({
                 <th
                   key={product._key || `product-${product.name}`}
                   className={`p-4 text-center font-bold rounded-t-lg ${
-                    product.highlight
-                      ? 'text-primary'
-                      : 'text-muted-foreground'
+                    product.highlight ? 'text-primary' : 'text-muted-foreground'
                   }`}
                 >
                   {product.name}
