@@ -8,15 +8,16 @@ export default defineField({
     { type: 'videoHero' },
     { type: 'galleryHero' },
     { type: 'featuredHero' },
+    { type: 'hero' },
     { type: 'accordion-list' },
     { type: 'feature-grid' },
     { type: 'callout' },
-    { type: 'hero' },
     { type: 'tabbedContent' },
     { type: 'richtext-module' },
     { type: 'logo-list' },
     { type: 'person-list' },
     { type: 'pricing-list' },
+    { type: 'product-comparison' },
     { type: 'blog-frontpage' },
     { type: 'blog-list' },
     { type: 'blog-post-content' },
@@ -34,7 +35,7 @@ export default defineField({
       groups: [
         {
           name: 'Hero Sections',
-          of: ['hero', 'featuredHero', 'videoHero', 'galleryHero'],
+          of: ['featuredHero', 'videoHero', 'galleryHero', 'hero'],
         },
         {
           name: 'Content Blocks',
@@ -42,7 +43,7 @@ export default defineField({
         },
         {
           name: 'Feature Displays',
-          of: ['feature-grid', 'logo-list', 'person-list', 'pricing-list'],
+          of: ['feature-grid', 'logo-list', 'person-list', 'pricing-list', 'product-comparison'],
         },
         {
           name: 'Blog',

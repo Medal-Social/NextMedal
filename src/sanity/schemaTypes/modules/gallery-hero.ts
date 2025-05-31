@@ -8,12 +8,7 @@ export default defineType({
   title: 'Gallery Hero',
   icon: TfiLayoutCtaCenter,
   type: 'object',
-  groups: [
-    { name: 'content', default: true },
-    { name: 'asset' },
-    { name: 'stats', title: 'Statistics' },
-    { name: 'options' },
-  ],
+  groups: [{ name: 'content', default: true }, { name: 'asset' }, { name: 'options' }],
   fieldsets: [
     {
       name: 'alignment',
@@ -33,14 +28,6 @@ export default defineType({
       type: 'array',
       of: [{ type: 'cta' }],
       group: 'content',
-    }),
-    defineField({
-      name: 'stats',
-      title: 'Statistics Row',
-      description: 'Add metrics to display in a row below the content',
-      type: 'array',
-      of: [{ type: 'stat' }],
-      group: 'stats',
     }),
     defineField({
       name: 'assets',

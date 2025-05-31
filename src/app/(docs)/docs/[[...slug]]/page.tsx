@@ -1,7 +1,7 @@
 import { source } from '@/lib/source';
+import { getMDXComponents } from '@/mdx-components';
 import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/page';
 import { notFound } from 'next/navigation';
-import { getMDXComponents } from '@/mdx-components';
 
 const Page = async ({ params }: Props) => {
   const page = await getPage(await params);
