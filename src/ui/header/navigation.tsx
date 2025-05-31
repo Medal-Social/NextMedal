@@ -14,7 +14,7 @@ import { getSite } from '@/sanity/lib/fetch';
 import type { Link as LinkType, Metadata } from '@/sanity/lib/types';
 import { ExternalLink } from 'lucide-react';
 import { stegaClean } from 'next-sanity';
-import { NavLink } from './mobile-navigation';
+import { type MobileNavLink, NavLink } from './mobile-navigation';
 
 interface InternalLink {
   _type: string;
@@ -42,6 +42,31 @@ export interface MenuItem {
 
 interface HeaderMenu {
   items?: MenuItem[];
+}
+
+// Helper to parse params string to Record<string, string>
+function parseParams(params?: string): Record<string, string> | undefined {
+  if (!params) return undefined;
+  try {
+    const searchParams = new URLSearchParams(params);
+    const result: Record<string, string> = {};
+    for (const [key, value] of searchParams.entries()) {
+      result[key] = value;
+    }
+    return result;
+  } catch {
+    return undefined;
+  }
+}
+
+function mapToMobileNavLink(link: LinkType): MobileNavLink {
+  return {
+    label: link.label ?? '',
+    description: undefined,
+    internal: link.internal,
+    external: link.external,
+    params: parseParams(link.params),
+  };
 }
 
 export default async function Navigation() {
@@ -96,15 +121,7 @@ export default async function Navigation() {
                     <ul className="grid w-[600px] gap-3 p-4 grid-cols-2" role="menu">
                       {item.links?.map((link) => (
                         <NavigationMenuLink asChild key={link.label}>
-                          <NavLink
-                            link={{
-                              label: link.label || '',
-                              description: undefined,
-                              internal: link.internal as any,
-                              external: link.external,
-                              params: link.params as any,
-                            }}
-                          />
+                          <NavLink link={mapToMobileNavLink(link)} />
                         </NavigationMenuLink>
                       ))}
                     </ul>

@@ -27,7 +27,13 @@ export function ResponsiveImg({
   );
 }
 
-export function Img({ image, width: w, height: h, loading: _loading, ...props }: { image?: Sanity.Image } & ImgProps) {
+export function Img({
+  image,
+  width: w,
+  height: h,
+  loading: _loading,
+  ...props
+}: { image?: Sanity.Image } & ImgProps) {
   if (!image) return null;
 
   const generatedSrc = generateSrc(image, w, h);
