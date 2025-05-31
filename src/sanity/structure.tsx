@@ -21,7 +21,6 @@ export const structure = structureTool({
           S.documentTypeListItem('logo').title('Logos'),
           S.documentTypeListItem('person').title('People'),
           S.documentTypeListItem('pricing').title('Pricing tiers'),
-          S.documentTypeListItem('theme').title('Themes'),
           S.documentTypeListItem('blog.category').title('Blog categories'),
           S.documentTypeListItem('global-module').title('Global modules'),
           S.documentTypeListItem('navigation'),
