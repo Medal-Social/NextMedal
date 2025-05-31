@@ -27,7 +27,13 @@ export function ResponsiveImg({
   );
 }
 
-export function Img({ image, width: w, height: h, ...props }: { image?: Sanity.Image } & ImgProps) {
+export function Img({
+  image,
+  width: w,
+  height: h,
+  loading: _loading,
+  ...props
+}: { image?: Sanity.Image } & ImgProps) {
   if (!image) return null;
 
   const generatedSrc = generateSrc(image, w, h);
@@ -51,10 +57,9 @@ export function Img({ image, width: w, height: h, ...props }: { image?: Sanity.I
       width={width}
       height={height}
       alt={props.alt || image.alt || image.altText || image.asset?.altText || ''}
-      loading={validLoading}
       unoptimized={isGif || isSvg}
       {...props}
-      {...(!props.priority ? { loading: validLoading } : {})}
+      loading={validLoading}
     />
   );
 }

@@ -47,7 +47,7 @@ export default async function RootLayout({
               <Header />
               <main
                 id="main-content"
-                className="min-h-[calc(100dvh-var(--header-height)-var(--footer-height))]"
+                className="flex-1 min-h-[calc(100dvh-var(--header-height)-var(--footer-height))]"
                 tabIndex={-1}
               >
                 {children}

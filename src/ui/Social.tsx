@@ -31,12 +31,7 @@ export default async function Social({ className }: React.ComponentProps<'div'>)
           className="h-9 w-9 rounded-full"
           asChild
         >
-          <a
-            href={item.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={item.text}
-          >
+          <a href={item.url} target="_blank" rel="noopener noreferrer" aria-label={item.text}>
             <Icon url={item.url} aria-hidden="true" className="h-4 w-4" />
           </a>
         </Button>

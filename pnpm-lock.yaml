@@ -2630,8 +2630,8 @@ packages:
     peerDependencies:
       '@sanity/client': ^7.1.0
 
-  '@sanity/runtime-cli@7.6.1':
-    resolution: {integrity: sha512-PGAsQh0sw/Xt1JuRhjniKYObfaRPMB6+jwT61NQ54tfrY3wFQZq15cUIW7vEzLbvM7HhgHI74zH19yCD6DqWig==}
+  '@sanity/runtime-cli@7.6.2':
+    resolution: {integrity: sha512-91j044KcQmOKr2mkmECwXmle+Y9zW1x+bTWB8so7uyXLjsmRHOz+8UHW+z1ME6VVi19F6sAEq2vJ6/8J3Ol5jg==}
     engines: {node: '>=18.20.0'}
     hasBin: true
 
@@ -6170,8 +6170,8 @@ packages:
       react: '>=16.6.0'
       react-dom: '>=16.6.0'
 
-  react-virtuoso@4.12.7:
-    resolution: {integrity: sha512-njJp764he6Fi1p89PUW0k2kbyWu9w/y+MwdxmwK2kvdwwzVDbz2c2wMj5xdSruBFVgFTsI7Z85hxZR7aSHBrbQ==}
+  react-virtuoso@4.12.8:
+    resolution: {integrity: sha512-NMMKfDBr/+xZZqCQF3tN1SZsh6FwOJkYgThlfnsPLkaEhdyQo0EuWUzu3ix6qjnI7rYwJhMwRGoJBi+aiDfGsA==}
     peerDependencies:
       react: '>=16 || >=17 || >= 18 || >= 19'
       react-dom: '>=16 || >=17 || >= 18 || >=19'
@@ -9736,7 +9736,7 @@ snapshots:
       '@babel/traverse': 7.27.4
       '@sanity/client': 7.4.0(debug@4.4.1)
       '@sanity/codegen': 3.90.0
-      '@sanity/runtime-cli': 7.6.1(@types/node@22.15.29)(jiti@2.4.2)(lightningcss@1.30.1)(typescript@5.8.3)(yaml@2.8.0)
+      '@sanity/runtime-cli': 7.6.2(@types/node@22.15.29)(jiti@2.4.2)(lightningcss@1.30.1)(typescript@5.8.3)(yaml@2.8.0)
       '@sanity/telemetry': 0.8.1(react@19.1.0)
       '@sanity/template-validator': 2.4.3
       '@sanity/util': 3.90.0(@types/react@19.0.10)(debug@4.4.1)
@@ -10061,7 +10061,7 @@ snapshots:
       '@sanity/client': 7.4.0(debug@4.4.1)
       '@sanity/uuid': 3.0.2
 
-  '@sanity/runtime-cli@7.6.1(@types/node@22.15.29)(jiti@2.4.2)(lightningcss@1.30.1)(typescript@5.8.3)(yaml@2.8.0)':
+  '@sanity/runtime-cli@7.6.2(@types/node@22.15.29)(jiti@2.4.2)(lightningcss@1.30.1)(typescript@5.8.3)(yaml@2.8.0)':
     dependencies:
       '@oclif/core': 4.3.0
       '@oclif/plugin-help': 6.2.28
@@ -14214,7 +14214,7 @@ snapshots:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
 
-  react-virtuoso@4.12.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  react-virtuoso@4.12.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
@@ -14560,7 +14560,7 @@ snapshots:
       react-is: 18.3.1
       react-redux: 9.2.0(@types/react@19.0.10)(react@19.1.0)(redux@5.0.1)
       react-select: 5.10.1(@types/react@19.0.10)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      react-virtuoso: 4.12.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react-virtuoso: 4.12.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       redux: 5.0.1
       redux-observable: 3.0.0-rc.2(redux@5.0.1)(rxjs@7.8.2)
       rxjs: 7.8.2

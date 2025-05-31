@@ -1,10 +1,10 @@
 import { fetchSanityLive } from '@/sanity/lib/fetch';
 import { groq } from 'next-sanity';
-import { NextRequest } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 export async function GET(_req: NextRequest) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
-  let data;
+  let data: Record<string, any>;
   try {
     data = await fetchSanityLive<Record<string, any>>({
       query: groq`{
@@ -45,7 +45,8 @@ export async function GET(_req: NextRequest) {
   for (const entry of all) {
     xml += '  <url>\n';
     xml += `    <loc>${entry.url}</loc>\n`;
-    if (entry.lastModified) xml += `    <lastmod>${new Date(entry.lastModified).toISOString()}</lastmod>\n`;
+    if (entry.lastModified)
+      xml += `    <lastmod>${new Date(entry.lastModified).toISOString()}</lastmod>\n`;
     if (entry.priority) xml += `    <priority>${entry.priority}</priority>\n`;
     xml += '  </url>\n';
   }
@@ -57,4 +58,4 @@ export async function GET(_req: NextRequest) {
       'Cache-Control': 'public, max-age=3600',
     },
   });
-} 
+}

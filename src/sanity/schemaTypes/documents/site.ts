@@ -44,7 +44,8 @@ export default defineType({
     defineField({
       name: 'announcements',
       title: 'Site Announcements',
-      description: 'Special announcements shown across the site. Useful for promotions or urgent news.',
+      description:
+        'Special announcements shown across the site. Useful for promotions or urgent news.',
       type: 'array',
       of: [{ type: 'reference', to: [{ type: 'announcement' }] }],
       group: 'general',
@@ -110,8 +111,20 @@ export default defineType({
         {
           type: 'object',
           fields: [
-            { name: 'text', title: 'Label', type: 'string', description: 'Label for the social channel (e.g., LinkedIn, Twitter)', validation: (Rule) => Rule.required() },
-            { name: 'url', title: 'URL', type: 'url', description: 'Link to the social profile or page', validation: (Rule) => Rule.required().uri({ scheme: ['http', 'https'] }) },
+            {
+              name: 'text',
+              title: 'Label',
+              type: 'string',
+              description: 'Label for the social channel (e.g., LinkedIn, Twitter)',
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: 'url',
+              title: 'URL',
+              type: 'url',
+              description: 'Link to the social profile or page',
+              validation: (Rule) => Rule.required().uri({ scheme: ['http', 'https'] }),
+            },
           ],
         },
       ],
@@ -127,7 +140,9 @@ export default defineType({
     },
     prepare: ({ title, tagline }) => ({
       title: title || 'Site settings',
-      subtitle: tagline && tagline[0]?.children ? tagline[0]?.children.map((c: any) => c.text).join(' ') : '',
+      subtitle: tagline?.[0]?.children
+        ? tagline[0]?.children.map((c: any) => c.text).join(' ')
+        : '',
     }),
   },
 });
