@@ -67,48 +67,6 @@ export default defineType({
       type: 'logo',
       group: 'appearance',
     }),
-    defineField({
-      name: 'themeSettings',
-      title: 'Theme Options',
-      description: 'Configure dark and light mode appearances',
-      type: 'object',
-      group: 'appearance',
-      options: {
-        collapsible: true,
-        collapsed: false,
-      },
-      fields: [
-        defineField({
-          name: 'defaultTheme',
-          title: 'Default Theme Mode',
-          description:
-            'The default theme that will be used when a user visits the site for the first time',
-          type: 'string',
-          options: {
-            list: [
-              { title: 'Light Mode', value: 'light' },
-              { title: 'Dark Mode', value: 'dark' },
-              { title: 'System Default', value: 'system' },
-            ],
-          },
-          initialValue: 'dark',
-        }),
-        defineField({
-          name: 'darkMode',
-          title: 'Dark Mode Colors',
-          description: 'Color theme used in dark mode',
-          type: 'reference',
-          to: [{ type: 'theme' }],
-        }),
-        defineField({
-          name: 'lightMode',
-          title: 'Light Mode Colors',
-          description: 'Color theme used in light mode',
-          type: 'reference',
-          to: [{ type: 'theme' }],
-        }),
-      ],
-    }),
 
     // Navigation Group - Menus and links
     defineField({
@@ -145,7 +103,7 @@ export default defineType({
     }),
     defineField({
       name: 'ctas',
-      title: 'Global Call-to-Actions',
+      title: 'Header Call-to-Actions',
       description: 'Call to action Buttons that appear in the header',
       type: 'array',
       of: [{ type: 'cta' }],
