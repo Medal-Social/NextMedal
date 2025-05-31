@@ -138,7 +138,7 @@ export default defineType({
     defineField({
       name: 'ctas',
       title: 'Global Call-to-Actions',
-      description: 'Buttons that appear in the header and/or footer',
+      description: 'Call to action Buttons that appear in the header',
       type: 'array',
       of: [{ type: 'cta' }],
       group: 'navigation',
