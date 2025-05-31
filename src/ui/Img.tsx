@@ -32,6 +32,7 @@ export function Img({ image, width: w, height: h, ...props }: { image?: Sanity.I
 
   const generatedSrc = generateSrc(image, w, h);
   const isGif = generatedSrc?.src?.includes('.gif');
+  const isSvg = generatedSrc?.src?.toLowerCase().endsWith('.svg');
   if (!generatedSrc) return null;
 
   const { src, width, height } = generatedSrc;
@@ -51,7 +52,7 @@ export function Img({ image, width: w, height: h, ...props }: { image?: Sanity.I
       height={height}
       alt={props.alt || image.alt || image.altText || image.asset?.altText || ''}
       loading={validLoading}
-      unoptimized={isGif}
+      unoptimized={isGif || isSvg}
       {...props}
     />
   );
