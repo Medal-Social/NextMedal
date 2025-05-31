@@ -65,7 +65,7 @@ function mapToMobileNavLink(link: LinkType): MobileNavLink {
     description: undefined,
     internal: link.internal,
     external: link.external,
-    params: parseParams(link.params),
+    params: link.params,
   };
 }
 

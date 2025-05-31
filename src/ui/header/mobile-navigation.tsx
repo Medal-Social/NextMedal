@@ -5,6 +5,7 @@ import { ChevronDown, ExternalLink } from 'lucide-react';
 import { stegaClean } from 'next-sanity';
 import Link from 'next/link';
 
+type SanityReference = { _ref: string; _type: 'reference'; _weak?: boolean };
 interface InternalLink {
   _type: string;
   title: string;
@@ -21,7 +22,7 @@ interface InternalLink {
 export interface MobileNavLink {
   label: string;
   description?: string;
-  internal?: InternalLink;
+  internal?: InternalLink | SanityReference;
   external?: string;
   params?: string | Record<string, string>;
 }
@@ -30,7 +31,7 @@ interface MenuItem {
   _type: 'link' | 'link.list';
   label?: string;
   title?: string;
-  internal?: InternalLink;
+  internal?: InternalLink | SanityReference;
   external?: string;
   params?: string | Record<string, string>;
   link?: MobileNavLink;
@@ -47,8 +48,8 @@ interface MobileNavigationProps {
 export const NavLink = ({ link }: { link: MobileNavLink }) => (
   <Link
     href={
-      link.internal
-        ? resolveUrl(link.internal, {
+      link.internal && (link.internal as any)._type !== 'reference'
+        ? resolveUrl(link.internal as any, {
             base: false,
             params: link.params,
           })
