@@ -128,11 +128,19 @@ export default defineType({
       group: 'navigation',
     }),
     defineField({
-      name: 'social',
+      name: 'socialLinks',
       title: 'Social Media Links',
-      description: 'Links to your social media profiles',
-      type: 'reference',
-      to: [{ type: 'navigation' }],
+      description: 'List of social media channels (e.g., LinkedIn, Twitter, etc.)',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            { name: 'text', title: 'Text', type: 'string', description: 'Label for the social channel (e.g., LinkedIn, Twitter)' },
+            { name: 'url', title: 'URL', type: 'url', description: 'Link to the social profile or page' },
+          ],
+        },
+      ],
       group: 'navigation',
     }),
     defineField({
