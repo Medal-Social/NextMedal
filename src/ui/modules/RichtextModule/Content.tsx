@@ -9,7 +9,7 @@ export default function Content({
   children,
 }: { value: any } & React.ComponentProps<'div'>) {
   return (
-    <div className={cn('richtext mx-auto', className)}>
+    <div className={cn('prose', className)}>
       <PortableText
         value={value}
         components={{

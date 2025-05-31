@@ -17,23 +17,25 @@ export default function PostContent({
   const showTOC = !post.hideTableOfContents && !!post.headings?.length;
 
   return (
-    <article {...moduleProps(props)}>
-      <header className="section space-y-6 pt-4 text-start max-w-screen-md">
-        <Categories className="flex flex-wrap gap-x-2" categories={post.categories} linked badge />
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight  mb-8 leading-tight">
-          {post.metadata.title}
-        </h1>
-        <div className="flex flex-wrap items-start justify-start gap-x-6 gap-y-2">
-          <div className="flex items-center gap-x-2">
-            <Calendar className="size-4" />
-            <DateDisplay value={post.publishDate} />
+    <div className={cn('section', showTOC && 'grid gap-8', showTOC && 'lg:grid-cols-[1fr_auto]')}
+      {...moduleProps(props)}>
+      <article aria-describedby={showTOC ? 'toc-aside' : undefined}>
+        <header className="space-y-6 pt-4 pb-8 text-start max-w-screen-md">
+          <Categories className="flex flex-wrap gap-x-2" categories={post.categories} linked badge />
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight  mb-8 leading-tight">
+            {post.metadata.title}
+          </h1>
+          <div className="flex flex-wrap items-start justify-start gap-x-6 gap-y-2">
+            <div className="flex items-center gap-x-2">
+              <Calendar className="size-4" />
+              <DateDisplay value={post.publishDate} />
+            </div>
+            <ReadTime value={post.readTime} />
           </div>
-
-          <ReadTime value={post.readTime} />
-        </div>
+        </header>
 
         {post.authors?.length && (
-          <div className="flex items-center gap-5 border-t pt-8 mt-10">
+          <div className="flex items-center gap-5 border-t pt-6 mb-8">
             <Authors
               className="flex flex-wrap items-start justify-start gap-4"
               authors={post.authors}
@@ -42,19 +44,18 @@ export default function PostContent({
             />
           </div>
         )}
-      </header>
 
-      <div className={cn('section grid gap-8', showTOC && 'lg:grid-cols-[1fr_auto]')}>
-        {showTOC && (
-          <aside className="lg:sticky-below-header mx-auto w-full max-w-lg self-start [--offset:1rem] lg:order-1 lg:w-3xs">
-            <TableOfContents headings={post.headings} />
-          </aside>
-        )}
-
-        <Content value={post.body} className={cn(css.body, 'grid max-w-screen-md')}>
-          <hr />
-        </Content>
-      </div>
-    </article>
+        <div className={cn(showTOC && 'lg:col-span-1')}>
+          <Content value={post.body} className={cn(css.body, 'prose dark:prose-invert')}>
+            <hr />
+          </Content>
+        </div>
+      </article>
+      {showTOC && (
+        <aside id="toc-aside" className="lg:sticky-below-header mx-auto w-full max-w-lg self-start [--offset:1rem] lg:order-1 lg:w-3xs lg:col-auto">
+          <TableOfContents headings={post.headings} />
+        </aside>
+      )}
+    </div>
   );
 }
