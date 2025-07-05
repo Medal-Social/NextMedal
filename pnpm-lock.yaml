@@ -15,8 +15,8 @@ importers:
         specifier: ^3.4.0
         version: 3.4.0(@types/react-dom@19.0.4(@types/react@19.0.10))(@types/react@19.0.10)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@nosecone/next':
-        specifier: 1.0.0-beta.5
-        version: 1.0.0-beta.5(next@15.3.3(@babel/core@7.27.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))
+        specifier: 1.0.0-beta.8
+        version: 1.0.0-beta.8(next@15.3.3(@babel/core@7.27.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))
       '@portabletext/to-html':
         specifier: ^2.0.14
         version: 2.0.14
@@ -1670,8 +1670,8 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
-  '@nosecone/next@1.0.0-beta.5':
-    resolution: {integrity: sha512-VJL31SlT+1nK5RqUcoYNFBxSuQxU4pvPab5G4oyxocc+LL/rtiTDQnhdk9W6vbV047okMerfxJ/6Ct0pDAqwvg==}
+  '@nosecone/next@1.0.0-beta.8':
+    resolution: {integrity: sha512-sjgk8UP3+C/E+l1bRo09QXNUPaq9w+HtKu25HPhMzSnJmYeMnBbKB/KbXbbH8VRaGppQs2h1IunVxZKXKu5sqg==}
     engines: {node: '>=18'}
     peerDependencies:
       next: '>=14'
@@ -5485,8 +5485,8 @@ packages:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
     engines: {node: '>=0.10.0'}
 
-  nosecone@1.0.0-beta.5:
-    resolution: {integrity: sha512-qqrdBNdRxQO2VzyEfx9ggJlJsWuktcaYmNk+EK3VtlHNOTprK97eHVtOYJTbup+IIX5C0wtPGoltjX9ZPMTtiA==}
+  nosecone@1.0.0-beta.8:
+    resolution: {integrity: sha512-uOS+VoivSJ6TlS8yb7weIc+wc9w6TMpWXchT91/NAul6hNG6bfj/m7LmTE97wGLYf0DImGgOUXqkiKsawX/B2g==}
     engines: {node: '>=18'}
 
   npm-run-path@3.1.0:
@@ -8881,10 +8881,10 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.19.1
 
-  '@nosecone/next@1.0.0-beta.5(next@15.3.3(@babel/core@7.27.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))':
+  '@nosecone/next@1.0.0-beta.8(next@15.3.3(@babel/core@7.27.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))':
     dependencies:
       next: 15.3.3(@babel/core@7.27.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      nosecone: 1.0.0-beta.5
+      nosecone: 1.0.0-beta.8
 
   '@oclif/core@4.3.3':
     dependencies:
@@ -13492,7 +13492,7 @@ snapshots:
 
   normalize-path@3.0.0: {}
 
-  nosecone@1.0.0-beta.5: {}
+  nosecone@1.0.0-beta.8: {}
 
   npm-run-path@3.1.0:
     dependencies:
