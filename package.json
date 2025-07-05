@@ -78,7 +78,7 @@
     "tailwind-merge": "^3.3.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "2.0.6",
     "@sanity/template-validator": "^2.4.3",
     "@tailwindcss/typography": "^0.5.16",
     "@types/mdx": "^2.0.13",
