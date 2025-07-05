@@ -48,7 +48,7 @@
     "cmdk": "^1.1.1",
     "dompurify": "^3.2.6",
     "fast-glob": "^3.3.3",
-    "feed": "^4.2.2",
+    "feed": "^5.0.0",
     "framer-motion": "^12.15.0",
     "fumadocs-core": "^15.4.2",
     "fumadocs-mdx": "^11.6.6",
