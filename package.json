@@ -39,7 +39,7 @@
     "@sanity/color-input": "^4.0.3",
     "@sanity/image-url": "^1.1.0",
     "@sanity/preview-url-secret": "^2.1.11",
-    "@sanity/ui": "^2.15.18",
+    "@sanity/ui": "^3.0.0",
     "@sanity/vision": "^3.90.0",
     "@tailwindcss/postcss": "^4.1.8",
     "class-variance-authority": "^0.7.1",
