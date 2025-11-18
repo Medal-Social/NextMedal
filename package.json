@@ -35,7 +35,7 @@
     "@radix-ui/react-tabs": "^1.1.12",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@sanity/asset-utils": "^2.2.1",
-    "@sanity/code-input": "^5.1.2",
+    "@sanity/code-input": "^6.0.0",
     "@sanity/color-input": "^4.0.3",
     "@sanity/image-url": "^1.1.0",
     "@sanity/preview-url-secret": "^2.1.11",
