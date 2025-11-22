@@ -1,6 +1,6 @@
-import { getBlockText } from '@/sanity/lib/utils';
 import { VscInfo, VscLightbulb, VscReport, VscWarning } from 'react-icons/vsc';
 import { defineArrayMember, defineField } from 'sanity';
+import { getBlockText } from '@/sanity/lib/utils';
 
 export default defineArrayMember({
   name: 'admonition',

@@ -1,4 +1,3 @@
-import TextInputWithPresets from '@/sanity/ui/TextInputWithPresets';
 import {
   MdFormatAlignCenter,
   MdFormatAlignJustify,
@@ -9,7 +8,8 @@ import {
   MdVerticalAlignTop,
   MdVerticalDistribute,
 } from 'react-icons/md';
-import { type FieldsetDefinition, defineField } from 'sanity';
+import { defineField, type FieldsetDefinition } from 'sanity';
+import TextInputWithPresets from '@/sanity/ui/TextInputWithPresets';
 
 export const alignmentFieldset: FieldsetDefinition = {
   name: 'alignment',

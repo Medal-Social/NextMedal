@@ -1,9 +1,9 @@
+import { ExternalLink } from 'lucide-react';
+import Link from 'next/link';
+import { stegaClean } from 'next-sanity';
 import resolveUrl from '@/lib/resolveUrl';
 import { getSite } from '@/sanity/lib/fetch';
 import CTA from '@/ui/CTA';
-import { ExternalLink } from 'lucide-react';
-import { stegaClean } from 'next-sanity';
-import Link from 'next/link';
 
 // Extend the type to match PageBase interface
 type InternalLink = {

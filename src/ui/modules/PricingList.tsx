@@ -1,13 +1,14 @@
 'use client';
+import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
+import { CircleCheckBig } from 'lucide-react';
+import { PortableText, type PortableTextComponents } from 'next-sanity';
+import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import moduleProps from '@/lib/moduleProps';
 import CTAList from '@/ui/CTAList';
 import Pretitle from '@/ui/Pretitle';
-import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
-import { CircleCheckBig } from 'lucide-react';
-import { PortableText, type PortableTextComponents } from 'next-sanity';
-import { useEffect, useState } from 'react';
+
 const components: PortableTextComponents = {
   list: {
     bullet: ({ children }) => <ul className="space-y-2 my-4">{children}</ul>,
@@ -101,15 +102,15 @@ export default function PricingList({
                     {tier.price.base !== undefined && tier.price.base && (
                       <span className="text-4xl text-foreground font-semibold">
                         {tier.price.currency}{' '}
-                        {!Number.isNaN(Number.parseInt(tier.price.base)) &&
-                        Number.parseInt(tier.price.base) > 0 &&
-                        !Number.isNaN(Number.parseInt(tier.price.yearly || '0')) &&
-                        Number.parseInt(tier.price.yearly || '0') > 0 ? (
+                        {!Number.isNaN(Number.parseInt(tier.price.base, 10)) &&
+                        Number.parseInt(tier.price.base, 10) > 0 &&
+                        !Number.isNaN(Number.parseInt(tier.price.yearly || '0', 10)) &&
+                        Number.parseInt(tier.price.yearly || '0', 10) > 0 ? (
                           <AnimatedNumber
                             value={
                               isYearly && tier.price?.yearly
-                                ? Number.parseInt(tier.price.yearly)
-                                : Number.parseInt(tier.price.base)
+                                ? Number.parseInt(tier.price.yearly, 10)
+                                : Number.parseInt(tier.price.base, 10)
                             }
                           />
                         ) : (

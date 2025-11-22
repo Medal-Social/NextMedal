@@ -1,13 +1,9 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { stegaClean } from 'next-sanity';
 import { cn } from '@/lib/utils';
-import { Img } from '@/ui/Img';
-import { ArrowRight } from 'lucide-react';
-import type React from 'react';
 
 import CTAList from '@/ui/CTAList';
+import { Img } from '@/ui/Img';
 import Pretitle from '@/ui/Pretitle';
-import { stegaClean } from 'next-sanity';
 
 export default function Hero(
   props: Sanity.Hero & { className?: string; isTabbedModule?: boolean }

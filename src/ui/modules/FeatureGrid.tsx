@@ -1,9 +1,9 @@
+import { PortableText } from 'next-sanity';
 import { Card, CardDescription, CardTitle } from '@/components/ui/card';
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
 import Icon from '@/ui/Icon';
 import Pretitle from '@/ui/Pretitle';
-import { PortableText } from 'next-sanity';
 
 export default function FeatureGrid({
   pretitle,

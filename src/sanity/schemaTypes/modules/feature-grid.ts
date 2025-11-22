@@ -7,9 +7,9 @@
  * - 1.0.0: Initial version
  */
 
-import { getBlockText } from '@/sanity/lib/utils';
 import { Grid2x2 } from 'lucide-react';
 import { defineArrayMember, defineField, defineType } from 'sanity';
+import { getBlockText } from '@/sanity/lib/utils';
 
 export default defineType({
   name: 'feature-grid',

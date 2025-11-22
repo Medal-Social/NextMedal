@@ -1,9 +1,9 @@
+import { Calendar } from 'lucide-react';
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
 import DateDisplay from '@/ui/Date';
 import Content from '@/ui/modules/RichtextModule/Content';
 import TableOfContents from '@/ui/modules/RichtextModule/TableOfContents';
-import { Calendar } from 'lucide-react';
 import Authors from './Authors';
 import Categories from './Categories';
 import css from './PostContent.module.css';

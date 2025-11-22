@@ -1,9 +1,8 @@
 'use client';
 
-import { cn } from '@/lib/utils';
-import { usePathname } from 'next/navigation';
 import { type ComponentProps, useEffect, useRef, useState } from 'react';
 import { isMobile } from 'react-device-detect';
+import { cn } from '@/lib/utils';
 import css from './InteractiveDetails.module.css';
 
 /**

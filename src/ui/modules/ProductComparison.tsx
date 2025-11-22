@@ -17,7 +17,7 @@
  * - var(--highlight-text-light)
  * - var(--highlight-text-dark)
  */
-import { PortableText, PortableTextComponents } from 'next-sanity';
+import { PortableText } from 'next-sanity';
 import Pretitle from '../Pretitle';
 
 type ProductComparisonProps = {

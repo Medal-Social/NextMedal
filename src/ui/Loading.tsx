@@ -1,6 +1,6 @@
-import { cn } from '@/lib/utils';
 import type { ComponentProps } from 'react';
 import { VscLoading } from 'react-icons/vsc';
+import { cn } from '@/lib/utils';
 
 export default function Loading({ className, children }: ComponentProps<'div'>) {
   return (
