@@ -1,5 +1,5 @@
-import CTA from '@/ui/CTA';
 import { CgChevronRight } from 'react-icons/cg';
+import CTA from '@/ui/CTA';
 import InteractiveDetails from './InteractiveDetails';
 
 export default function LinkList({ link, links }: Sanity.LinkList) {
