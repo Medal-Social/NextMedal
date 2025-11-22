@@ -5,6 +5,7 @@ import '@mux/mux-player/themes/classic';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+
 // Define the structure of the Sanity data we receive
 
 // Define the VideoHero data structure
@@ -37,7 +38,7 @@ const MuxPlayer = dynamic(() => import('@mux/mux-player-react'), {
 });
 
 // Import regular ReactPlayer instead of YouTube specific
-const ReactPlayer = dynamic(() => import('react-player/lazy'), {
+const ReactPlayer = dynamic(() => import('react-player'), {
   loading: () => (
     <div className="w-full h-full bg-black flex flex-col items-center justify-center">
       <div className="w-16 h-16 rounded-full border-4 border-transparent border-t-primary animate-spin mb-4" />
@@ -46,7 +47,7 @@ const ReactPlayer = dynamic(() => import('react-player/lazy'), {
     </div>
   ),
   ssr: false,
-});
+}) as any;
 
 // -------------- Modular YouTube Utilities --------------
 
@@ -133,13 +134,7 @@ const useMuxVideo = (data: Video) => {
 };
 
 // YouTube Player Component
-const YouTubePlayer = ({
-  url,
-  onError,
-}: {
-  url: string;
-  onError: (err: any) => void;
-}) => {
+const YouTubePlayer = ({ url, onError }: { url: string; onError: (err: any) => void }) => {
   return (
     <div className="w-full h-full">
       <ReactPlayer url={url} width="100%" height="100%" playing controls onError={onError} />
@@ -204,13 +199,7 @@ const VideoError = ({
   );
 };
 
-export default function Video({
-  data,
-  onClick,
-}: {
-  data: Sanity.Video;
-  onClick: () => void;
-}) {
+export default function Video({ data, onClick }: { data: Sanity.Video; onClick: () => void }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

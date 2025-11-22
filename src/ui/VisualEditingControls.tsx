@@ -1,6 +1,7 @@
-import { SanityLive, fetchSanityLive } from '@/sanity/lib/fetch';
-import { VisualEditing, groq } from 'next-sanity';
 import { draftMode } from 'next/headers';
+import { groq } from 'next-sanity';
+import { VisualEditing } from 'next-sanity/visual-editing';
+import { fetchSanityLive, SanityLive } from '@/sanity/lib/fetch';
 import DraftModeControls from './DraftModeControls';
 
 export default async function VisualEditingControls() {
