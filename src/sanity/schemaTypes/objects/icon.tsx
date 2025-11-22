@@ -1,7 +1,7 @@
-import Icon from '@/ui/Icon';
 import * as Lucide from 'lucide-react';
 import { VscSymbolMisc } from 'react-icons/vsc';
 import { defineField, defineType } from 'sanity';
+import Icon from '@/ui/Icon';
 
 export default defineType({
   name: 'icon',
@@ -24,6 +24,7 @@ export default defineType({
       validation: (Rule) =>
         Rule.custom((value) => {
           if (!value) return 'Icon is required';
+          // biome-ignore lint/performance/noDynamicNamespaceImportAccess: needed for icon validation
           if (!Lucide[value as keyof typeof Lucide]) return 'Invalid icon name';
           return true;
         }),
