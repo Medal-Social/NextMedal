@@ -1,6 +1,6 @@
-import { getSite } from '@/sanity/lib/fetch';
 import { ImageResponse } from 'next/og';
 import type { NextRequest } from 'next/server';
+import { getSite } from '@/sanity/lib/fetch';
 
 const domain = process.env.NEXT_PUBLIC_BASE_URL?.replace(/https?:\/\//, '');
 

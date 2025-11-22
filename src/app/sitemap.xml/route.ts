@@ -1,6 +1,6 @@
-import { fetchSanityLive } from '@/sanity/lib/fetch';
-import { groq } from 'next-sanity';
 import type { NextRequest } from 'next/server';
+import { groq } from 'next-sanity';
+import { fetchSanityLive } from '@/sanity/lib/fetch';
 
 export async function GET(_req: NextRequest) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
