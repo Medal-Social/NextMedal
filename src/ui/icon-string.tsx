@@ -16,20 +16,23 @@ export default function Icon({
     // Get the icon library prefix (e.g., 'Fa' from 'FaHome')
     const name = iconName.includes('/') ? iconName.split('/')[1] : iconName;
     if (name in Lucide) {
-      //@ts-ignore - dynamically accessing the icon
+      //@ts-expect-error - dynamically accessing the icon
+      // biome-ignore lint/performance/noDynamicNamespaceImportAccess: needed for dynamic icon loading
       const IconComponent = Lucide[name];
       return <IconComponent {...props} />;
     }
     if (name.substring(0, 2) === 'Lu') {
       const stippedName = name.substring(2);
       if (stippedName in Lucide) {
-        // @ts-ignore - dynamically accessing the icon
+        // @ts-expect-error - dynamically accessing the icon
+        // biome-ignore lint/performance/noDynamicNamespaceImportAccess: needed for dynamic icon loading
         const IconComponent = Lucide[stippedName];
         return <IconComponent {...props} />;
       }
     }
 
     // Fallback to original img if icon not found in react-icons
+    // biome-ignore lint/performance/noImgElement: external icon service
     return <img src={`https://ic0n.dev/${iconName}`} alt="" loading="lazy" {...props} />;
   }
   return null;
