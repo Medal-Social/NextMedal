@@ -7,7 +7,6 @@
  * - 1.0.0: Initial version with pricing plan comparison functionality
  */
 
-import { getBlockText } from '@/sanity/lib/utils';
 import { LuFileSymlink } from 'react-icons/lu';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 
@@ -145,9 +144,9 @@ export default defineType({
                       validation: (Rule) =>
                         Rule.custom((featureTiers, context) => {
                           // Look for the root document
-                          //@ts-ignore
+                          //@ts-expect-error
                           const doc = context.document.modules.find(
-                            //@ts-ignore
+                            //@ts-expect-error
                             (module) => module._key === context.path[1]._key
                           );
                           // Ensure document tiers is an array before accessing length
@@ -200,11 +199,11 @@ export default defineType({
                               validation: (Rule) =>
                                 Rule.custom((featureTiers, context) => {
                                   // Look for the root document
-                                  //@ts-ignore
+                                  //@ts-expect-error
                                   const doc = context.document.modules.find(
-                                    //@ts-ignore
+                                    //@ts-expect-error
                                     (module) =>
-                                      //@ts-ignore
+                                      //@ts-expect-error
                                       module._key === context.path[1]._key
                                   );
                                   // Ensure document tiers is an array before accessing length
