@@ -52,7 +52,7 @@
     "framer-motion": "^12.15.0",
     "fumadocs-core": "^15.4.2",
     "fumadocs-mdx": "^11.6.6",
-    "fumadocs-ui": "^15.4.2",
+    "fumadocs-ui": "^16.0.0",
     "geist": "^1.4.2",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.525.0",
