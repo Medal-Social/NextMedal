@@ -1,7 +1,6 @@
-import { fetchSanityLive } from '@/sanity/lib/fetch';
-import { groq } from 'next-sanity';
-import { stegaClean } from 'next-sanity';
+import { groq, stegaClean } from 'next-sanity';
 import { Suspense } from 'react';
+import { fetchSanityLive } from '@/sanity/lib/fetch';
 import FilterList from '../BlogList/FilterList';
 import PostPreview from '../PostPreview';
 import PostPreviewLarge from '../PostPreviewLarge';

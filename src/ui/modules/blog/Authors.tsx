@@ -1,8 +1,8 @@
-import { cn } from '@/lib/utils';
-import { Img } from '@/ui/Img';
 import Link from 'next/link';
 import { FaInstagram, FaLinkedin, FaXTwitter, FaYoutube } from 'react-icons/fa6';
 import { GoPerson } from 'react-icons/go';
+import { cn } from '@/lib/utils';
+import { Img } from '@/ui/Img';
 
 export default function Authors({
   authors,
