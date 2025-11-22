@@ -1,10 +1,9 @@
+import { groq, PortableText, stegaClean } from 'next-sanity';
+import { Suspense } from 'react';
 import { cn } from '@/lib/utils';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
-import Pretitle from '@/ui/Pretitle';
 import FilterList from '@/ui/modules/blog/BlogList/FilterList';
-import { groq } from 'next-sanity';
-import { PortableText, stegaClean } from 'next-sanity';
-import { Suspense } from 'react';
+import Pretitle from '@/ui/Pretitle';
 import PostPreview from '../PostPreview';
 import List from './List';
 
