@@ -1,9 +1,10 @@
 'use client';
 
-import { ResponsiveImg } from '@/ui/Img';
 import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
+import NextImage from 'next/image';
 import { useState } from 'react';
+import { ResponsiveImg } from '@/ui/Img';
 import { VideoModal } from './video-modal';
 
 interface VideoThumbnailProps {
@@ -57,13 +58,14 @@ export function VideoThumbnail({
               draggable={false}
             />
           ) : (
-            <img
-              src={thumbnailUrl}
+            <NextImage
+              src={thumbnailUrl!}
               alt={title || 'Video thumbnail'}
               width={width}
               height={height}
               className={`w-full h-full object-cover ${className}`}
               draggable={false}
+              unoptimized
             />
           )}
         </motion.div>
