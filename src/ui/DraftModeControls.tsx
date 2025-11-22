@@ -1,8 +1,8 @@
 'use client';
 
-import { createDataAttribute, stegaClean } from 'next-sanity';
 // import { useDraftModeEnvironment } from 'next-sanity/hooks'
 import { usePathname } from 'next/navigation';
+import { createDataAttribute, stegaClean } from 'next-sanity';
 import { VscBeakerStop, VscSymbolField } from 'react-icons/vsc';
 
 export default function DraftModeControls({
