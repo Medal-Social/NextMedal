@@ -2,7 +2,6 @@ import { createClient, groq } from "next-sanity";
 import { projectId, dataset, apiVersion } from "@/sanity/lib/env";
 // import { token } from '@/lib/sanity/token'
 import type { NextConfig } from "next";
-import { createMDX } from 'fumadocs-mdx/next';
 
 const client = createClient({
   projectId,
@@ -11,8 +10,6 @@ const client = createClient({
   apiVersion,
   useCdn: true,
 });
-
-const withMDX = createMDX();
 
 const config = {
   reactStrictMode: true,
@@ -68,4 +65,4 @@ const config = {
 
 } satisfies NextConfig;
 
-export default withMDX(config);
+export default config;
