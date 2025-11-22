@@ -7,9 +7,9 @@
  * - 1.0.0: Initial version with grid/carousel layouts and category filtering
  */
 
-import { getBlockText } from '@/sanity/lib/utils';
 import { VscEdit } from 'react-icons/vsc';
 import { defineField, defineType } from 'sanity';
+import { getBlockText } from '@/sanity/lib/utils';
 
 export default defineType({
   name: 'blog-list',
