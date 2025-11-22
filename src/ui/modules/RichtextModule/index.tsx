@@ -1,6 +1,6 @@
+import { stegaClean } from 'next-sanity';
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
-import { stegaClean } from 'next-sanity';
 import Content from './Content';
 import TableOfContents from './TableOfContents';
 

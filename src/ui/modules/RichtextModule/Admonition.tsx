@@ -1,5 +1,5 @@
-import { cn } from '@/lib/utils';
 import { PortableText } from 'next-sanity';
+import { cn } from '@/lib/utils';
 
 export default function Admonition({
   value,
