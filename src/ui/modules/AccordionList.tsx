@@ -1,3 +1,4 @@
+import { PortableText } from 'next-sanity';
 import {
   Accordion,
   AccordionContent,
@@ -7,7 +8,6 @@ import {
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
 import Pretitle from '@/ui/Pretitle';
-import { PortableText } from 'next-sanity';
 
 export default function AccordionList({
   pretitle,
@@ -81,10 +81,7 @@ export default function AccordionList({
                 itemType: 'https://schema.org/Question',
               })}
             >
-              <AccordionTrigger
-                className="hover:text-primary hover:underline group"
-                iconClassName="group-hover:text-primary"
-              >
+              <AccordionTrigger className="hover:text-primary hover:underline group [&>svg]:group-hover:text-primary">
                 <span
                   {...(generateSchema && {
                     itemProp: 'name',
