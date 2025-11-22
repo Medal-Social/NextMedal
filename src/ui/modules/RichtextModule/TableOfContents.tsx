@@ -1,8 +1,8 @@
 'use client';
 
-import { cn, slug } from '@/lib/utils';
 import { stegaClean } from 'next-sanity';
 import { useEffect } from 'react';
+import { cn, slug } from '@/lib/utils';
 import css from './TableOfContents.module.css';
 
 export default function TableOfContents({
