@@ -1,6 +1,6 @@
-import { count } from '@/lib/utils';
 import { VscSymbolField } from 'react-icons/vsc';
 import { defineArrayMember, defineField, defineType } from 'sanity';
+import { count } from '@/lib/utils';
 import modules from '../fragments/modules';
 
 export default defineType({
