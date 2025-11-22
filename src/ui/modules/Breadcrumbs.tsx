@@ -1,3 +1,5 @@
+import { stegaClean } from 'next-sanity';
+import { Fragment } from 'react';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -7,8 +9,6 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import resolveUrl from '@/lib/resolveUrl';
-import { stegaClean } from 'next-sanity';
-import { Fragment } from 'react';
 
 export default async function Breadcrumbs({
   crumbs,

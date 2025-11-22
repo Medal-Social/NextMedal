@@ -1,8 +1,8 @@
+import { PortableText, stegaClean } from 'next-sanity';
 import { cn } from '@/lib/utils';
 import CTAList from '@/ui/CTAList';
 import { Img } from '@/ui/Img';
 import Pretitle from '@/ui/Pretitle';
-import { PortableText, stegaClean } from 'next-sanity';
 import Icon from '../Icon';
 
 interface FeatureItem {
