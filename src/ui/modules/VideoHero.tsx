@@ -1,9 +1,9 @@
 'use client';
 
-import { urlFor } from '@/sanity/lib/image';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { urlFor } from '@/sanity/lib/image';
 import '@mux/mux-player/themes/classic';
 // Define the structure of the Sanity data we receive
 type SanityImage = {
@@ -48,7 +48,7 @@ const MuxPlayer = dynamic(() => import('@mux/mux-player-react'), {
 });
 
 // Import regular ReactPlayer instead of YouTube specific
-const ReactPlayer = dynamic(() => import('react-player/lazy'), {
+const ReactPlayer = dynamic(() => import('react-player'), {
   loading: () => (
     <div className="w-full h-full bg-black flex flex-col items-center justify-center">
       <div className="w-16 h-16 rounded-full border-4 border-transparent border-t-primary animate-spin mb-4" />
@@ -57,7 +57,7 @@ const ReactPlayer = dynamic(() => import('react-player/lazy'), {
     </div>
   ),
   ssr: false,
-});
+}) as any;
 
 interface VideoHeroProps {
   data: VideoHero;
@@ -149,13 +149,7 @@ const useMuxVideo = (data: VideoHero) => {
 };
 
 // YouTube Player Component
-const YouTubePlayer = ({
-  url,
-  onError,
-}: {
-  url: string;
-  onError: (err: any) => void;
-}) => {
+const YouTubePlayer = ({ url, onError }: { url: string; onError: (err: any) => void }) => {
   return (
     <div className="w-full h-full">
       <ReactPlayer url={url} width="100%" height="100%" playing controls onError={onError} />
@@ -280,10 +274,7 @@ export default function VideoHero({ data }: VideoHeroProps) {
             </div>
           )}
           <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-            <span
-              className="w-16 h-16 bg-white rounded-full flex items-center justify-center"
-              aria-label="Play video"
-            >
+            <span className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
               {/* Play icon */}
               <svg className="w-8 h-8" viewBox="0 0 24 24">
                 <title>Play video icon</title>
