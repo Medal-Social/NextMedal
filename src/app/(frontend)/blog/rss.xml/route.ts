@@ -1,9 +1,9 @@
-import resolveUrl from '@/lib/resolveUrl';
-import { fetchSanityLive } from '@/sanity/lib/fetch';
-import { urlFor } from '@/sanity/lib/image';
 import { escapeHTML, toHTML } from '@portabletext/to-html';
 import { Feed } from 'feed';
 import { groq } from 'next-sanity';
+import resolveUrl from '@/lib/resolveUrl';
+import { fetchSanityLive } from '@/sanity/lib/fetch';
+import { urlFor } from '@/sanity/lib/image';
 
 // Next.js Route Handler for RSS feed
 export async function GET() {
