@@ -1,9 +1,9 @@
-import { urlFor } from '@/sanity/lib/image';
 import { getImageDimensions } from '@sanity/asset-utils';
-import { stegaClean } from 'next-sanity';
 import Image, { type ImageProps } from 'next/image';
+import { stegaClean } from 'next-sanity';
 import type { ComponentProps } from 'react';
 import { preload } from 'react-dom';
+import { urlFor } from '@/sanity/lib/image';
 
 type ImgProps = { alt?: string } & Omit<ImageProps, 'src' | 'alt'>;
 
@@ -44,8 +44,13 @@ export function Img({
   const { src, width, height } = generatedSrc;
 
   // Get loading value and ensure it's valid
+  // Get loading value and ensure it's valid
   const loadingValue = stegaClean(image.loading);
-  const validLoading = loadingValue === 'eager' || loadingValue === 'lazy' ? loadingValue : 'lazy';
+  const validLoading = props.priority
+    ? undefined
+    : loadingValue === 'eager' || loadingValue === 'lazy'
+      ? loadingValue
+      : 'lazy';
 
   if (validLoading === 'eager') {
     preload(src, { as: 'image' });
