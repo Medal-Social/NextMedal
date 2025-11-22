@@ -30,5 +30,6 @@ export const structure = structureTool({
 });
 
 export function icon() {
+  // biome-ignore lint/performance/noImgElement: Sanity admin favicon
   return <img style={{ width: '100%', aspectRatio: 1 }} src="/favicon.ico" alt="Medal Social" />;
 }
