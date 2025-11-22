@@ -8,10 +8,9 @@
  * - 1.0.0: Initial version
  */
 
-import resolveSlug from '@/sanity/lib/resolveSlug';
-import Icon from '@/ui/Icon';
 import { VscLink } from 'react-icons/vsc';
 import { defineField, defineType } from 'sanity';
+import resolveSlug from '@/sanity/lib/resolveSlug';
 
 export default defineType({
   name: 'link',
