@@ -11,8 +11,6 @@ export default function Scheduler({
   end: string;
   children: React.ReactNode;
 }>) {
-  if (!start && !end) return children;
-
   const checkActive = useCallback(() => {
     const now = new Date();
     return (!start || new Date(start) < now) && (!end || new Date(end) > now);
@@ -70,6 +68,8 @@ export default function Scheduler({
       }
     };
   }, [checkActive]);
+
+  if (!start && !end) return children;
 
   if (!isActive) return null;
 
