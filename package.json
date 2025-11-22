@@ -51,7 +51,7 @@
     "feed": "^5.0.0",
     "framer-motion": "^12.15.0",
     "fumadocs-core": "^15.4.2",
-    "fumadocs-mdx": "^11.6.6",
+    "fumadocs-mdx": "^14.0.0",
     "fumadocs-ui": "^15.4.2",
     "geist": "^1.4.2",
     "gray-matter": "^4.0.3",
