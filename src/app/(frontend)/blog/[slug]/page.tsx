@@ -1,10 +1,10 @@
+import { notFound } from 'next/navigation';
+import { groq } from 'next-sanity';
 import processMetadata from '@/lib/processMetadata';
 import { client } from '@/sanity/lib/client';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
 import { MODULES_QUERY } from '@/sanity/lib/queries';
 import Modules from '@/ui/modules';
-import { groq } from 'next-sanity';
-import { notFound } from 'next/navigation';
 
 export default async function Page({ params }: Props) {
   const post = await getPost(await params);
