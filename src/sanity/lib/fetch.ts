@@ -1,10 +1,11 @@
 'use server';
 
+import { draftMode } from 'next/headers';
+import { groq, type QueryOptions, type QueryParams } from 'next-sanity';
+import { defineLive } from 'next-sanity/live';
 import { dev } from '@/lib/env';
 import { client } from '@/sanity/lib/client';
 import { token } from '@/sanity/lib/token';
-import { type QueryOptions, type QueryParams, defineLive, groq } from 'next-sanity';
-import { draftMode } from 'next/headers';
 import { CTA_QUERY, NAVIGATION_QUERY } from './queries';
 
 export async function fetchSanity<T = any>({
