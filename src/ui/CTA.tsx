@@ -1,9 +1,9 @@
+import Link from 'next/link';
+import { stegaClean } from 'next-sanity';
+import type { ComponentProps } from 'react';
 import { Button } from '@/components/ui/button';
 import resolveUrl from '@/lib/resolveUrl';
 import { validateExternalUrl } from '@/lib/validateExternalUrl';
-import { stegaClean } from 'next-sanity';
-import Link from 'next/link';
-import type { ComponentProps } from 'react';
 
 // Define the allowed button variants and sizes from shadcn
 type ButtonVariant = 'default' | 'secondary' | 'outline' | 'ghost' | 'link' | 'destructive';
@@ -74,6 +74,7 @@ export default function CTA(props: CTAProps) {
     internalLink,
     externalLink,
     style,
+    // biome-ignore lint/correctness/noUnusedVariables: reserved for future use
     icon,
     newTab,
     params,
@@ -137,6 +138,7 @@ export default function CTA(props: CTAProps) {
   }
 
   // Omit anchor-specific props when rendering as Button
+  // biome-ignore lint/correctness/noUnusedVariables: intentionally omitted
   const { href, target, rel, ...buttonProps } = rest as any;
 
   return (
