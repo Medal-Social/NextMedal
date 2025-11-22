@@ -1,9 +1,9 @@
 'use client';
 
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 
 // Dynamically import MuxPlayer to avoid server-side rendering issues
 const MuxPlayer = dynamic(() => import('@mux/mux-player-react'), {
