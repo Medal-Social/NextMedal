@@ -1,7 +1,7 @@
-import { createAlignmentField } from '@/sanity/lib/schema-factory';
-import { getBlockText } from '@/sanity/lib/utils';
 import { TfiLayoutCtaCenter } from 'react-icons/tfi';
 import { defineField, defineType } from 'sanity';
+import { createAlignmentField } from '@/sanity/lib/schema-factory';
+import { getBlockText } from '@/sanity/lib/utils';
 
 export default defineType({
   name: 'galleryHero',

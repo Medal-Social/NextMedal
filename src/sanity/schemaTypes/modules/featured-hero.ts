@@ -6,10 +6,10 @@
  * - 1.0.0: Initial version
  */
 
-import { createAlignmentField } from '@/sanity/lib/schema-factory';
-import { getBlockText } from '@/sanity/lib/utils';
 import { BsColumnsGap } from 'react-icons/bs';
 import { defineField, defineType } from 'sanity';
+import { createAlignmentField } from '@/sanity/lib/schema-factory';
+import { getBlockText } from '@/sanity/lib/utils';
 
 export default defineType({
   name: 'featuredHero',
