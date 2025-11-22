@@ -1,7 +1,7 @@
-import { count } from '@/lib/utils';
-import { getBlockText } from '@/sanity/lib/utils';
 import { LuDollarSign } from 'react-icons/lu';
 import { defineField, defineType } from 'sanity';
+import { count } from '@/lib/utils';
+import { getBlockText } from '@/sanity/lib/utils';
 
 export default defineType({
   name: 'pricing-list',

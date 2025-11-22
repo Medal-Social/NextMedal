@@ -1,6 +1,6 @@
-import { getBlockText } from '@/sanity/lib/utils';
 import { VscSymbolKeyword } from 'react-icons/vsc';
 import { defineField, defineType } from 'sanity';
+import { getBlockText } from '@/sanity/lib/utils';
 import { admonition, imageBlock } from '../fragments';
 
 export default defineType({
