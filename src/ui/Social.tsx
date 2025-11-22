@@ -1,7 +1,3 @@
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-
-import { getSite } from '@/sanity/lib/fetch';
 import {
   FaBluesky,
   FaFacebookF,
@@ -13,6 +9,9 @@ import {
   FaYoutube,
 } from 'react-icons/fa6';
 import { IoIosLink } from 'react-icons/io';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { getSite } from '@/sanity/lib/fetch';
 
 export default async function Social({ className }: React.ComponentProps<'div'>) {
   const { socialLinks } = await getSite();
