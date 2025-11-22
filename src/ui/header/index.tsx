@@ -1,13 +1,13 @@
+import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { getSite } from '@/sanity/lib/fetch';
 import CTAList from '@/ui/CTAList';
 import { Img } from '@/ui/Img';
-import Link from 'next/link';
+import MobileNavigation from './mobile-navigation';
+import Navigation from './navigation';
 import ThemeToggleWrapper from './ThemeToggleWrapper';
 import Toggle from './Toggle';
 import Wrapper from './Wrapper';
-import MobileNavigation from './mobile-navigation';
-import Navigation from './navigation';
 
 export default async function Header() {
   const { title, logo, ctas, headerMenu } = await getSite();
@@ -29,26 +29,24 @@ export default async function Header() {
               href="/"
               aria-label={`Return to ${title} homepage`}
             >
-              <>
-                {logoImageDark ? (
-                  <Img
-                    className="hidden dark:inline-block max-h-[1.2em] w-auto filter brightness-150 drop-shadow-md"
-                    image={logoImageDark}
-                    alt={`${logo?.name || title} logo - dark version`}
-                  />
-                ) : (
-                  <span className="hidden dark:inline-block">{title}</span>
-                )}
-                {logoImageLight ? (
-                  <Img
-                    className="inline-block dark:hidden max-h-[1.2em] w-auto filter brightness-150 drop-shadow-md"
-                    image={logoImageLight}
-                    alt={`${logo?.name || title} logo - light version`}
-                  />
-                ) : (
-                  <span className="inline-block dark:hidden">{title}</span>
-                )}
-              </>
+              {logoImageDark ? (
+                <Img
+                  className="hidden dark:inline-block max-h-[1.2em] w-auto filter brightness-150 drop-shadow-md"
+                  image={logoImageDark}
+                  alt={`${logo?.name || title} logo - dark version`}
+                />
+              ) : (
+                <span className="hidden dark:inline-block">{title}</span>
+              )}
+              {logoImageLight ? (
+                <Img
+                  className="inline-block dark:hidden max-h-[1.2em] w-auto filter brightness-150 drop-shadow-md"
+                  image={logoImageLight}
+                  alt={`${logo?.name || title} logo - light version`}
+                />
+              ) : (
+                <span className="inline-block dark:hidden">{title}</span>
+              )}
             </Link>
           </div>
 
@@ -56,17 +54,11 @@ export default async function Header() {
             <Navigation />
           </nav>
 
-          <div
-            className="max-lg:hidden [grid-area:ctas] max-lg:*:w-full lg:ml-4"
-            aria-label="Call to action buttons"
-          >
+          <div className="max-lg:hidden [grid-area:ctas] max-lg:*:w-full lg:ml-4">
             <CTAList ctas={ctas} />
           </div>
 
-          <div
-            className="flex items-center gap-2 ml-auto [grid-area:toggle-area]"
-            aria-label="Theme and menu controls"
-          >
+          <div className="flex items-center gap-2 ml-auto [grid-area:toggle-area]">
             <div className="lg:block">
               <ThemeToggleWrapper />
             </div>
@@ -75,7 +67,7 @@ export default async function Header() {
         </div>
       </Wrapper>
 
-      <div className="lg:hidden header-closed:hidden" aria-label="Mobile navigation menu">
+      <div className="lg:hidden header-closed:hidden">
         <MobileNavigation menu={{ items: headerMenu?.items }} ctas={ctas} />
       </div>
     </>
