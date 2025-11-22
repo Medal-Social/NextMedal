@@ -1,9 +1,9 @@
+import { ChevronDown, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
+import { stegaClean } from 'next-sanity';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import resolveUrl from '@/lib/resolveUrl';
 import CTAList from '@/ui/CTAList';
-import { ChevronDown, ExternalLink } from 'lucide-react';
-import { stegaClean } from 'next-sanity';
-import Link from 'next/link';
 
 type SanityReference = { _ref: string; _type: 'reference'; _weak?: boolean };
 interface InternalLink {
@@ -86,8 +86,8 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
           <div className="flex items-center justify-between">
             <CTAList ctas={ctas} className="grid flex-1 gap-2 *:w-full" />
           </div>
-          <div className="h-px bg-border" role="separator" tabIndex={0} />
-          <ul className="space-y-3" role="menu">
+          <hr className="h-px bg-border border-0" />
+          <ul className="space-y-3">
             {menu?.items?.map((item: MenuItem, index: number) => {
               if (item._type === 'link') {
                 return (
@@ -109,7 +109,7 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
                         <ChevronDown className="h-4 w-4" aria-hidden="true" />
                       </CollapsibleTrigger>
                       <CollapsibleContent>
-                        <ul className="ml-4 mt-2 space-y-3 border-l pl-4" role="menu">
+                        <ul className="ml-4 mt-2 space-y-3 border-l pl-4">
                           {item.links?.map((link: MobileNavLink, linkIndex: number) => (
                             <li key={`mobile-${link.label}-${index}-${linkIndex}`}>
                               <NavLink link={link} />
