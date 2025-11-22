@@ -1,20 +1,20 @@
 import TabbedContentModule from '@/ui/modules/TabbedContentModule';
 import AccordionList from './AccordionList';
 import Breadcrumbs from './Breadcrumbs';
+import BlogFrontpage from './blog/BlogFrontpage';
+import BlogList from './blog/BlogList';
+import BlogPostContent from './blog/PostContent';
 import Callout from './Callout';
-import FeatureGrid from './FeatureGrid';
 import FeaturedHero from './FeaturedHero';
+import FeatureGrid from './FeatureGrid';
 import { HeroImageGallery } from './HeroImageGallery';
+import Hero from './hero/Hero';
 import LogoList from './LogoList';
 import PersonList from './PersonList';
 import PricingList from './PricingList';
 import ProductComparison from './ProductComparison';
 import RichtextModule from './RichtextModule';
 import VideoHero from './VideoHero';
-import BlogFrontpage from './blog/BlogFrontpage';
-import BlogList from './blog/BlogList';
-import BlogPostContent from './blog/PostContent';
-import Hero from './hero/Hero';
 
 export default function Modules({
   modules,
