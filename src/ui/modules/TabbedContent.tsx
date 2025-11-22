@@ -1,7 +1,7 @@
+import { PortableText } from 'next-sanity';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import Pretitle from '@/ui/Pretitle';
-import { PortableText } from 'next-sanity';
 import Icon from '../Icon';
 
 interface Tab {
