@@ -1,6 +1,6 @@
+import { groq } from 'next-sanity';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
 import { LINK_QUERY } from '@/sanity/lib/queries';
-import { groq } from 'next-sanity';
 import AnnouncementClient from './Announcement-client';
 
 export default async function Announcement() {
