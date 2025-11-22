@@ -1,9 +1,8 @@
+import { groq, PortableText } from 'next-sanity';
 import { cn } from '@/lib/utils';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
 import { Img } from '@/ui/Img';
 import Pretitle from '@/ui/Pretitle';
-import { groq } from 'next-sanity';
-import { PortableText } from 'next-sanity';
 import css from './LogoList.module.css';
 
 export default async function LogoList({
