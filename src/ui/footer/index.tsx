@@ -1,11 +1,10 @@
+import Link from 'next/link';
+import { PortableText } from 'next-sanity';
 import { cn } from '@/lib/utils';
 import { getSite } from '@/sanity/lib/fetch';
 import { Img } from '@/ui/Img';
 import Social from '@/ui/Social';
-import { PortableText } from 'next-sanity';
-import Link from 'next/link';
 import Navigation from './Navigation';
-import Wrapper from './wrapper';
 
 export default async function Footer() {
   const { title, tagline, logo, copyright } = await getSite();
@@ -22,33 +21,28 @@ export default async function Footer() {
             href="/"
             aria-label={`Return to ${title} homepage`}
           >
-            <>
-              {logoImageDark ? (
-                <Img
-                  className="hidden dark:inline-block max-h-[1.5em] w-auto"
-                  image={logoImageDark}
-                  alt={`${logo?.name || title} logo - dark version`}
-                />
-              ) : (
-                <span className="hidden dark:inline-block">{title}</span>
-              )}
-              {logoImageLight ? (
-                <Img
-                  className="inline-block dark:hidden max-h-[1.5em] w-auto"
-                  image={logoImageLight}
-                  alt={`${logo?.name || title} logo - light version`}
-                />
-              ) : (
-                <span className="inline-block dark:hidden">{title}</span>
-              )}
-            </>
+            {logoImageDark ? (
+              <Img
+                className="hidden dark:inline-block max-h-[1.5em] w-auto"
+                image={logoImageDark}
+                alt={`${logo?.name || title} logo - dark version`}
+              />
+            ) : (
+              <span className="hidden dark:inline-block">{title}</span>
+            )}
+            {logoImageLight ? (
+              <Img
+                className="inline-block dark:hidden max-h-[1.5em] w-auto"
+                image={logoImageLight}
+                alt={`${logo?.name || title} logo - light version`}
+              />
+            ) : (
+              <span className="inline-block dark:hidden">{title}</span>
+            )}
           </Link>
 
           {tagline && (
-            <div
-              className="max-w-sm text-sm text-muted-foreground text-balance mt-3"
-              aria-label="Site tagline"
-            >
+            <div className="max-w-sm text-sm text-muted-foreground text-balance mt-3">
               <PortableText value={tagline} />
             </div>
           )}
@@ -58,7 +52,7 @@ export default async function Footer() {
       </div>
 
       <div className="section flex flex-wrap justify-between items-center py-2">
-        <div className="text-sm text-muted-foreground" aria-label="Copyright information">
+        <div className="text-sm text-muted-foreground">
           {copyright ? (
             <PortableText value={copyright} />
           ) : (
