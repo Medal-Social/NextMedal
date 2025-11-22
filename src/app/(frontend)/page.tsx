@@ -1,8 +1,8 @@
+import { groq } from 'next-sanity';
 import processMetadata from '@/lib/processMetadata';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
 import { MODULES_QUERY } from '@/sanity/lib/queries';
 import Modules from '@/ui/modules';
-import { groq } from 'next-sanity';
 export const dynamic = 'force-static';
 
 export default async function Page() {
