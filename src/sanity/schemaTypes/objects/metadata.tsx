@@ -7,10 +7,10 @@
  * - 1.0.0: Initial version
  */
 
+import { defineField, defineType } from 'sanity';
 import { createMetadataSchema } from '@/sanity/lib/schema-factory';
 import CharacterCount from '@/sanity/ui/CharacterCount';
 import PreviewOG from '@/sanity/ui/PreviewOG';
-import { defineField, defineType } from 'sanity';
 
 /**
  * This is a custom metadata schema that extends the base metadata schema
