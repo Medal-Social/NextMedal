@@ -1,9 +1,9 @@
 'use client';
-import resolveUrl from '@/lib/resolveUrl';
 import { X } from 'lucide-react';
-import { PortableText } from 'next-sanity';
 import Link from 'next/link';
+import { PortableText } from 'next-sanity';
 import { useState } from 'react';
+import resolveUrl from '@/lib/resolveUrl';
 import Scheduler from './Scheduler';
 export default function AnnouncementClient({
   announcement,
