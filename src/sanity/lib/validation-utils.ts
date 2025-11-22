@@ -4,8 +4,7 @@
  * @lastUpdated 2024-03-13
  */
 
-import type { Rule } from 'sanity';
-import type { CustomValidator } from 'sanity';
+import type { CustomValidator, Rule } from 'sanity';
 
 /**
  * Marks a field as required
