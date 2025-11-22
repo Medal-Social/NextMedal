@@ -1,6 +1,6 @@
-import { fetchSanityLive } from '@/sanity/lib/fetch';
 import { groq } from 'next-sanity';
 import { Suspense } from 'react';
+import { fetchSanityLive } from '@/sanity/lib/fetch';
 import Filter from './Filter';
 
 export default async function FilterList() {

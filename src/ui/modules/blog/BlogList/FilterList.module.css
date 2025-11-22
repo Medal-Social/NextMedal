@@ -27,8 +27,8 @@
     position: relative;
 
     &:global(.ghost) {
-      background: none !important;
-      backdrop-filter: none !important;
+      background: none;
+      backdrop-filter: none;
     }
   }
 }

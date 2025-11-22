@@ -1,9 +1,9 @@
 'use client';
 
-import { BASE_URL } from '@/lib/env';
 import { Box, Button, Flex, Popover, Spinner, Text } from '@sanity/ui';
 import { useState } from 'react';
 import { VscEye, VscEyeClosed } from 'react-icons/vsc';
+import { BASE_URL } from '@/lib/env';
 
 export default function PreviewOG({ title }: { title?: string }) {
   const [open, setOpen] = useState(false);
@@ -39,6 +39,7 @@ export default function PreviewOG({ title }: { title?: string }) {
             </Flex>
           )}
 
+          {/* biome-ignore lint/performance/noImgElement: Sanity admin preview */}
           <img
             style={{
               gridArea: '1 / 1 / -1 / -1',

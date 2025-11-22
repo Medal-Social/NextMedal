@@ -1,5 +1,6 @@
+import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
-
+import { stegaClean } from 'next-sanity';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -12,8 +13,6 @@ import {
 import resolveUrl from '@/lib/resolveUrl';
 import { getSite } from '@/sanity/lib/fetch';
 import type { Link as LinkType, Metadata } from '@/sanity/lib/types';
-import { ExternalLink } from 'lucide-react';
-import { stegaClean } from 'next-sanity';
 import { type MobileNavLink, NavLink } from './mobile-navigation';
 
 interface InternalLink {
@@ -45,7 +44,7 @@ interface HeaderMenu {
 }
 
 // Helper to parse params string to Record<string, string>
-function parseParams(params?: string): Record<string, string> | undefined {
+function _parseParams(params?: string): Record<string, string> | undefined {
   if (!params) return undefined;
   try {
     const searchParams = new URLSearchParams(params);
@@ -81,21 +80,18 @@ export default async function Navigation() {
             case 'link':
               return (
                 <NavigationMenuItem key={itemKey}>
-                  <Link
-                    href={
-                      item.internal?.metadata?.slug?.current
-                        ? resolveUrl(item.internal as Sanity.PageBase, {
-                            base: false,
-                            params: item.params,
-                          })
-                        : item.external
-                          ? stegaClean(item.external)
-                          : '/'
-                    }
-                    legacyBehavior
-                    passHref
-                  >
-                    <NavigationMenuLink
+                  <NavigationMenuLink asChild>
+                    <Link
+                      href={
+                        item.internal?.metadata?.slug?.current
+                          ? resolveUrl(item.internal as Sanity.PageBase, {
+                              base: false,
+                              params: item.params,
+                            })
+                          : item.external
+                            ? stegaClean(item.external)
+                            : '/'
+                      }
                       className={navigationMenuTriggerStyle()}
                       target={item.external ? '_blank' : undefined}
                       aria-label={item.external ? `${item.label} (opens in new tab)` : undefined}
@@ -107,8 +103,8 @@ export default async function Navigation() {
                       ) : (
                         item.label
                       )}
-                    </NavigationMenuLink>
-                  </Link>
+                    </Link>
+                  </NavigationMenuLink>
                 </NavigationMenuItem>
               );
             case 'link.list':
@@ -118,7 +114,7 @@ export default async function Navigation() {
                     {item.link?.label}
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="bg-background">
-                    <ul className="grid w-[600px] gap-3 p-4 grid-cols-2" role="menu">
+                    <ul className="grid w-[600px] gap-3 p-4 grid-cols-2">
                       {item.links?.map((link) => (
                         <NavigationMenuLink asChild key={link.label}>
                           <NavLink link={mapToMobileNavLink(link)} />

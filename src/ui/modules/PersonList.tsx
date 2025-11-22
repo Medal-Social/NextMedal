@@ -1,9 +1,9 @@
-import moduleProps from '@/lib/moduleProps';
-import { Img } from '@/ui/Img';
-import Pretitle from '@/ui/Pretitle';
 import { PortableText } from 'next-sanity';
 import { FaInstagram, FaLinkedin, FaUser, FaYoutube } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
+import moduleProps from '@/lib/moduleProps';
+import { Img } from '@/ui/Img';
+import Pretitle from '@/ui/Pretitle';
 
 export default function PersonList({
   pretitle,

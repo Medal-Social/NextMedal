@@ -1,6 +1,6 @@
+import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
 
 export default function Category({
   value,
