@@ -1,10 +1,6 @@
 import { ResponsiveImg } from '@/ui/Img';
 
-export default function Asset({
-  asset,
-}: {
-  asset?: Sanity.Img;
-}) {
+export default function Asset({ asset }: { asset?: Sanity.Img }) {
   if (!asset) return null;
 
   switch (asset?._type) {
