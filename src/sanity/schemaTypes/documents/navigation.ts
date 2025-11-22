@@ -7,10 +7,10 @@
  * - 1.0.0: Initial version with menu structure and link management
  */
 
-import { count } from '@/lib/utils';
 import { IoShareSocialOutline } from 'react-icons/io5';
-import { VscLayoutMenubar, VscLayoutPanelLeft, VscListUnordered, VscMap } from 'react-icons/vsc';
+import { VscLayoutMenubar, VscLayoutPanelLeft, VscMap } from 'react-icons/vsc';
 import { defineField, defineType } from 'sanity';
+import { count } from '@/lib/utils';
 
 export default defineType({
   name: 'navigation',
