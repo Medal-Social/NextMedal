@@ -32,6 +32,12 @@ export default defineType({
   ],
   fields: [
     defineField({
+      name: 'language',
+      type: 'string',
+      readOnly: true,
+      hidden: true,
+    }),
+    defineField({
       name: 'title',
       title: 'Page Title',
       description: 'The main title of the page',
@@ -59,8 +65,9 @@ export default defineType({
       slug: 'metadata.slug.current',
       media: 'metadata.image',
       noindex: 'metadata.noIndex',
+      language: 'language',
     },
-    prepare: ({ title, slug, media, noindex }) => {
+    prepare: ({ title, slug, media, noindex, language }) => {
       // Choose an appropriate icon based on the page type
       const icon =
         media ||
@@ -72,9 +79,17 @@ export default defineType({
         (noindex && VscEyeClosed) ||
         VscFile;
 
+      // Format language display
+      const languageLabel =
+        language === 'en' ? '🇺🇸 EN' : language === 'nb' ? '🇳🇴 NO' : language?.toUpperCase();
+
+      // Build subtitle with language and slug
+      const urlPath = slug === 'index' ? '/' : `/${slug}`;
+      const subtitle = language ? `${languageLabel} • ${urlPath}` : urlPath;
+
       return {
         title: title || 'Untitled Page',
-        subtitle: slug ? (slug === 'index' ? '/' : `/${slug}`) : '(No URL path)',
+        subtitle,
         media: icon,
       };
     },
