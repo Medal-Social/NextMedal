@@ -1,0 +1,18 @@
+{
+  "HomePage": {
+    "title": "Hello world!"
+  },
+  "LocaleSwitcher": {
+    "label": "Change language",
+    "locale": "{locale, select, en {English} nb {Norsk} other {Unknown}}",
+    "selectLanguage": "Select Language",
+    "language": "Language",
+    "translationNotAvailable": "This page is only available in the current language"
+  },
+  "ThemeSelector": {
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  }
+}

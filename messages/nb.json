@@ -1,0 +1,18 @@
+{
+  "HomePage": {
+    "title": "Hei verden!"
+  },
+  "LocaleSwitcher": {
+    "label": "Endre språk",
+    "locale": "{locale, select, en {English} nb {Norsk} other {Ukjent}}",
+    "selectLanguage": "Velg språk",
+    "language": "Språk",
+    "translationNotAvailable": "Denne siden er kun tilgjengelig på det nåværende språket"
+  },
+  "ThemeSelector": {
+    "theme": "Tema",
+    "light": "Lys",
+    "dark": "Mørk",
+    "system": "System"
+  }
+}
