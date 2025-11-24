@@ -1,6 +1,7 @@
 import { GoPerson } from 'react-icons/go';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
+import { createUidField } from './uid-input';
 
 export default defineType({
   name: 'person-list',
@@ -9,6 +10,13 @@ export default defineType({
   icon: GoPerson,
   groups: [{ name: 'content', default: true }, { name: 'options' }],
   fields: [
+    defineField({
+      name: 'options',
+      type: 'object',
+      title: 'Options',
+      group: 'options',
+      fields: [createUidField()],
+    }),
     defineField({
       name: 'pretitle',
       type: 'string',

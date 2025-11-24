@@ -1,5 +1,6 @@
 import { VscDeviceCameraVideo } from 'react-icons/vsc';
 import { defineField } from 'sanity';
+import { createUidField } from './uid-input';
 
 // Extract YouTube video ID from various URL formats
 export const getYouTubeVideoId = (url: string) => {
@@ -53,9 +54,9 @@ export default defineField({
       let subtitle = '';
 
       if (videoType === 'youtube') {
-        subtitle = 'YouTube Video';
+        subtitle = `YouTube Video`;
       } else if (videoType === 'mux') {
-        subtitle = 'Mux Video';
+        subtitle = `Mux Video`;
       }
 
       return {
@@ -66,6 +67,7 @@ export default defineField({
     },
   },
   fields: [
+    createUidField(),
     {
       name: 'title',
       title: 'Title',

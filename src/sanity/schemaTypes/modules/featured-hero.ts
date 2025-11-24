@@ -1,8 +1,9 @@
 /**
  * Featured Hero Module Schema
- * @version 1.0.0
- * @lastUpdated 2024-03-26
+ * @version 2.0.0
+ * @lastUpdated 2024-12-XX
  * @changelog
+ * - 2.0.0: Added video support, removed features/stats/direction fields
  * - 1.0.0: Initial version
  */
 
@@ -18,8 +19,7 @@ export default defineType({
   type: 'object',
   groups: [
     { name: 'content', title: 'Content', default: true },
-    { name: 'image', title: 'Image' },
-    { name: 'features', title: 'Feature Points' },
+    { name: 'media', title: 'Media' },
     { name: 'options', title: 'Layout Options' },
   ],
   fieldsets: [
@@ -27,6 +27,11 @@ export default defineType({
       name: 'alignment',
       title: 'Alignment',
       options: { columns: 2 },
+    },
+    {
+      name: 'videoOptions',
+      title: 'Video Source',
+      options: { collapsible: false },
     },
   ],
   fields: [
@@ -54,9 +59,43 @@ export default defineType({
       group: 'content',
     }),
     defineField({
+      name: 'videoType',
+      title: 'Media Type',
+      description: 'Choose between video or image',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Image', value: 'image' },
+          { title: 'Mux Video', value: 'mux' },
+          { title: 'Video URL', value: 'url' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'image',
+      group: 'media',
+    }),
+    defineField({
+      name: 'muxVideo',
+      title: 'Mux Video',
+      type: 'mux.video',
+      description: 'Upload or select a video from Mux',
+      group: 'media',
+      hidden: ({ parent }) => parent?.videoType !== 'mux',
+    }),
+    defineField({
+      name: 'videoUrl',
+      title: 'Video URL',
+      description: 'URL for the video (MP4, WebM, etc.)',
+      type: 'url',
+      group: 'media',
+      hidden: ({ parent }) => parent?.videoType !== 'url',
+    }),
+    defineField({
       name: 'image',
       type: 'img',
-      group: 'image',
+      group: 'media',
+      description: 'Image to show if no video is provided or as fallback',
+      hidden: ({ parent }) => parent?.videoType === 'mux' || parent?.videoType === 'url',
     }),
     createAlignmentField({
       name: 'textAlign',
@@ -65,73 +104,21 @@ export default defineType({
       fieldset: 'alignment',
       initialValue: 'left',
     }),
-    defineField({
-      name: 'direction',
-      title: 'Image Direction',
-      description: 'Choose which side the image appears on',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Right Side', value: 'right' },
-          { title: 'Left Side', value: 'left' },
-        ],
-        layout: 'radio',
-      },
-      initialValue: 'right',
-      group: 'options',
-    }),
-    defineField({
-      name: 'features',
-      title: 'Feature Points',
-      description: 'Add feature points with icons',
-      type: 'array',
-      of: [
-        {
-          type: 'object',
-          fields: [
-            defineField({
-              name: 'name',
-              title: 'Feature Title',
-              type: 'string',
-              validation: (Rule) => Rule.required().error('Feature title is required'),
-            }),
-            defineField({
-              name: 'description',
-              title: 'Feature Description',
-              type: 'text',
-              rows: 2,
-              validation: (Rule) => Rule.required().error('Feature description is required'),
-            }),
-            defineField({
-              name: 'icon',
-              title: 'Icon',
-              type: 'icon',
-              validation: (Rule) => Rule.required().error('Feature icon is required'),
-            }),
-          ],
-          preview: {
-            select: {
-              title: 'name',
-              subtitle: 'description',
-              media: 'icon',
-            },
-          },
-        },
-      ],
-      group: 'features',
-    }),
   ],
   preview: {
     select: {
       title: 'title',
       pretitle: 'pretitle',
       media: 'image',
-      description: 'description',
+      videoType: 'videoType',
+      description: 'content',
     },
-    prepare: ({ title, pretitle, media, description }) => {
+    prepare: ({ title, pretitle, media, videoType, description }) => {
+      const mediaLabel =
+        videoType === 'mux' ? 'Mux Video' : videoType === 'url' ? 'Video URL' : 'Image';
       return {
         title: title || getBlockText(description) || 'Featured Hero',
-        subtitle: pretitle || 'Featured Hero',
+        subtitle: `${pretitle || 'Featured Hero'} • ${mediaLabel}`,
         media: media?.image || BsColumnsGap,
       };
     },

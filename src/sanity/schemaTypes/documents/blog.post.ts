@@ -19,6 +19,12 @@ export default defineType({
   groups: [{ name: 'content', default: true }, { name: 'options' }, { name: 'seo', title: 'SEO' }],
   fields: [
     defineField({
+      name: 'language',
+      type: 'string',
+      readOnly: true,
+      hidden: true,
+    }),
+    defineField({
       name: 'body',
       type: 'array',
       of: [{ type: 'block' }, imageBlock],

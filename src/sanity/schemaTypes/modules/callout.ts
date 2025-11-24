@@ -1,6 +1,7 @@
 import { VscInspect } from 'react-icons/vsc';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
+import { createUidField } from './uid-input';
 
 export default defineType({
   name: 'callout',
@@ -8,6 +9,7 @@ export default defineType({
   icon: VscInspect,
   type: 'object',
   fields: [
+    createUidField(),
     defineField({
       name: 'content',
       type: 'array',
