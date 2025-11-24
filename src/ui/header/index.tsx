@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { getCurrentPage } from '@/lib/getCurrentPage';
 import { cn } from '@/lib/utils';
 import { getSite } from '@/sanity/lib/fetch';
 import CTAList from '@/ui/CTAList';
@@ -11,11 +10,8 @@ import ThemeToggleWrapper from './ThemeToggleWrapper';
 import Toggle from './Toggle';
 import Wrapper from './Wrapper';
 
-export default async function Header({ page: pageProp }: { page?: Sanity.PageBase } = {}) {
+export default async function Header() {
   const { title, logo, ctas, headerMenu } = await getSite();
-
-  // Fetch current page if not provided
-  const page = pageProp || (await getCurrentPage());
 
   const logoImageDark = logo?.image?.dark || logo?.image?.default || logo?.image?.light;
   const logoImageLight = logo?.image?.light || logo?.image?.default || logo?.image?.dark;
@@ -65,7 +61,7 @@ export default async function Header({ page: pageProp }: { page?: Sanity.PageBas
 
           <div className="flex items-center gap-2 ml-auto [grid-area:toggle-area]">
             <div className="lg:block">
-              <LocaleSwitcher page={page} />
+              <LocaleSwitcher />
             </div>
             <div className="lg:block">
               <ThemeToggleWrapper />
@@ -76,7 +72,7 @@ export default async function Header({ page: pageProp }: { page?: Sanity.PageBas
       </Wrapper>
 
       <div className="lg:hidden header-closed:hidden">
-        <MobileNavigation menu={{ items: headerMenu?.items }} ctas={ctas} page={page} />
+        <MobileNavigation menu={{ items: headerMenu?.items }} ctas={ctas} />
       </div>
     </>
   );
