@@ -2,6 +2,7 @@ import { createClient, groq } from "next-sanity";
 import { projectId, dataset, apiVersion } from "@/sanity/lib/env";
 // import { token } from '@/lib/sanity/token'
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 
 const client = createClient({
   projectId,
@@ -65,4 +66,6 @@ const config = {
 
 } satisfies NextConfig;
 
-export default config;
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
+
+export default withNextIntl(config);
