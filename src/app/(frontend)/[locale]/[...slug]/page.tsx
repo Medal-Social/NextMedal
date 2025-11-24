@@ -10,15 +10,20 @@ import {
   TRANSLATIONS_QUERY,
 } from '@/sanity/lib/queries';
 import Modules from '@/ui/modules';
+import { PageProvider } from '@/contexts/PageContext';
 
 export default async function Page({ params }: Props) {
-  const page = await getPage(await params);
+  const page = await getPage(params);
   if (!page) notFound();
-  return <Modules modules={page.modules} page={page} />;
+  return (
+    <PageProvider page={page}>
+      <Modules modules={page.modules} page={page} />
+    </PageProvider>
+  );
 }
 
 export async function generateMetadata({ params }: Props) {
-  const page = await getPage(await params);
+  const page = await getPage(params);
   if (!page) notFound();
   return processMetadata(page);
 }
@@ -71,5 +76,5 @@ async function getPage(params: { slug?: string[] }) {
 }
 
 type Props = {
-  params: Promise<{ slug?: string[] }>;
+  params: { slug?: string[] };
 };
