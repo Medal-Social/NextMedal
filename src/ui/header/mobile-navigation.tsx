@@ -4,6 +4,7 @@ import { stegaClean } from 'next-sanity';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import resolveUrl from '@/lib/resolveUrl';
 import CTAList from '@/ui/CTAList';
+import LocaleSwitcher from '@/ui/language-switcher';
 
 type SanityReference = { _ref: string; _type: 'reference'; _weak?: boolean };
 interface InternalLink {
@@ -43,6 +44,7 @@ interface MobileNavigationProps {
     items?: MenuItem[];
   };
   ctas: any;
+  page?: Sanity.PageBase;
 }
 
 export const NavLink = ({ link }: { link: MobileNavLink }) => (
@@ -73,7 +75,7 @@ export const NavLink = ({ link }: { link: MobileNavLink }) => (
   </Link>
 );
 
-export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) {
+export default function MobileNavigation({ menu, ctas, page }: MobileNavigationProps) {
   return (
     <dialog
       open
@@ -83,8 +85,9 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
     >
       <nav className="h-full overflow-y-auto" aria-label="Mobile navigation">
         <div className="mx-auto max-w-screen-xl p-4 space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             <CTAList ctas={ctas} className="grid flex-1 gap-2 *:w-full" />
+            <LocaleSwitcher page={page} />
           </div>
           <hr className="h-px bg-border border-0" />
           <ul className="space-y-3">
