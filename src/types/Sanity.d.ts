@@ -99,6 +99,12 @@ declare global {
       title?: string;
       parent?: Page[];
       metadata: Metadata;
+      language?: string;
+      translations?: Array<{
+        slug: string;
+        language: string;
+        _type: string;
+      }>;
     }
 
     interface Page extends PageBase {
