@@ -124,3 +124,11 @@ export const GLOBAL_MODULE_QUERY = groq`
 		true
 	)
 `;
+
+export const TRANSLATIONS_QUERY = groq`
+	'translations': *[_type == 'translation.metadata' && references(^._id)].translations[].value->{
+		'slug': metadata.slug.current,
+		language,
+		_type
+	}
+`;
