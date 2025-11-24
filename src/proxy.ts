@@ -1,7 +1,15 @@
-import { createMiddleware, defaults as noseconeDefaults } from '@nosecone/next';
+import {
+  type NoseconeOptions,
+  defaults as noseconeDefaults,
+  createMiddleware as noseconeMiddleware,
+} from '@nosecone/next';
+import type { NextFetchEvent, NextProxy, ProxyConfig } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import createMiddleware from 'next-intl/middleware';
+import { routing } from './i18n/routing';
 
 // Use the any type assertion to override type checking for this specific case
-export default createMiddleware({
+const noseconeOptions: NoseconeOptions = {
   contentSecurityPolicy: {
     ...noseconeDefaults.contentSecurityPolicy,
     directives: {
@@ -20,6 +28,7 @@ export default createMiddleware({
         'https://www.youtube.com',
         'https://s.ytimg.com',
         'https://*.sanity.io',
+        'https://analytics.medal.social',
         'blob:',
       ] as const,
       styleSrc: [...noseconeDefaults.contentSecurityPolicy.directives.styleSrc, "'self'"] as const,
@@ -46,6 +55,7 @@ export default createMiddleware({
         'https://data.mux.com',
         'https://www.youtube.com',
         'https://youtube.googleapis.com',
+        'https://analytics.medal.social',
       ] as const,
       fontSrc: [...noseconeDefaults.contentSecurityPolicy.directives.fontSrc, "'self'"] as const,
       objectSrc: [...noseconeDefaults.contentSecurityPolicy.directives.objectSrc] as const,
@@ -54,6 +64,7 @@ export default createMiddleware({
         "'self'",
         'https://stream.mux.com',
         'https://www.youtube.com',
+        'blob:',
       ] as const,
       frameSrc: [
         "'self'",
@@ -89,8 +100,35 @@ export default createMiddleware({
     ...noseconeDefaults.crossOriginOpenerPolicy,
     policy: 'unsafe-none',
   },
-} as any);
+} as any;
 
-export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+const securityHeaders = noseconeMiddleware(noseconeOptions);
+
+// Chain multiple middleware functions together and propagate redirects/rewrites
+function chain(middlewares: NextProxy[]): NextProxy {
+  return async (request: NextRequest, event: NextFetchEvent) => {
+    let response: NextResponse | Response | undefined;
+
+    for (const proxy of middlewares) {
+      const result = await proxy(request, event);
+
+      if (result) {
+        response = result;
+        if (result instanceof NextResponse) {
+          request = new NextRequest(result.url || request.url, {
+            headers: result.headers,
+          });
+        }
+      }
+    }
+
+    return response;
+  };
+}
+const translationMiddleware = createMiddleware(routing);
+
+export default chain([securityHeaders, translationMiddleware]);
+
+export const config: ProxyConfig = {
+  matcher: ['/((?!favicon\\.ico|_next|api|admin|sitemap\\.xml|sitemap\\.xsl|robots\\.txt).*)'],
 };

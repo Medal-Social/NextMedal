@@ -11,6 +11,10 @@ import { media } from "sanity-plugin-media";
 import { muxInput } from "sanity-plugin-mux-input";
 import { schemaTypes } from "./src/sanity/schemaTypes";
 
+import { documentInternationalization } from "@sanity/document-internationalization";
+import { routing } from "@/i18n/routing";
+import { table } from "@sanity/table";
+
 export default defineConfig({
   title: "Medal Social Enterprise",
   projectId,
@@ -29,10 +33,22 @@ export default defineConfig({
     visionTool({
       defaultApiVersion: apiVersion,
     }),
+    table(),
+    documentInternationalization({
+      supportedLanguages: routing.locales.map((locale) => ({
+        id: locale,
+        title: locale === "nb" ? "Norsk" : "English",
+      })),
+      schemaTypes: ["page", "blog.post", "site"],
+    }),
   ],
 
   schema: {
     types: schemaTypes,
+    templates: (prev) =>
+      prev.filter(
+        (template) => !["page", "blog.post", "site"].includes(template.id)
+      ),
   },
   document: {
     productionUrl: async (prev, { document }) => {

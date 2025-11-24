@@ -44,7 +44,6 @@ interface MobileNavigationProps {
     items?: MenuItem[];
   };
   ctas: any;
-  page?: Sanity.PageBase;
 }
 
 export const NavLink = ({ link }: { link: MobileNavLink }) => (
@@ -75,7 +74,7 @@ export const NavLink = ({ link }: { link: MobileNavLink }) => (
   </Link>
 );
 
-export default function MobileNavigation({ menu, ctas, page }: MobileNavigationProps) {
+export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) {
   return (
     <dialog
       open
@@ -87,7 +86,7 @@ export default function MobileNavigation({ menu, ctas, page }: MobileNavigationP
         <div className="mx-auto max-w-screen-xl p-4 space-y-6">
           <div className="flex items-center justify-between gap-2">
             <CTAList ctas={ctas} className="grid flex-1 gap-2 *:w-full" />
-            <LocaleSwitcher page={page} />
+            <LocaleSwitcher />
           </div>
           <hr className="h-px bg-border border-0" />
           <ul className="space-y-3">

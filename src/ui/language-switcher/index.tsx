@@ -1,14 +1,14 @@
+'use client';
+
 import { useLocale, useTranslations } from 'next-intl';
 import { routing } from '@/i18n/routing';
+import { usePage } from '@/contexts/PageContext';
 import LocaleSwitcherSelect from './LocaleSwitcherSelect';
 
-interface LocaleSwitcherProps {
-  page?: Sanity.PageBase;
-}
-
-export default function LocaleSwitcher({ page }: LocaleSwitcherProps = {}) {
+export default function LocaleSwitcher() {
   const t = useTranslations('LocaleSwitcher');
   const locale = useLocale();
+  const { page } = usePage();
 
   // Build translation map: locale -> URL
   const translationUrls: Record<string, string> = {};

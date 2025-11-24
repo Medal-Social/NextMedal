@@ -38,7 +38,7 @@ export default function Icon({
     // Access the correct icon library based on prefix
 
     // Check if the icon exists in the library
-    // @ts-expect-error - dynamically accessing the icon
+    // Check if the icon exists in the library
 
     // Fallback to original img if icon not found in react-icons
     return (
