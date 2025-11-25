@@ -13,7 +13,8 @@ import Modules from '@/ui/modules';
 import { PageProvider } from '@/contexts/PageContext';
 
 export default async function Page({ params }: Props) {
-  const page = await getPage(params);
+  const resolvedParams = await params;
+  const page = await getPage(resolvedParams);
   if (!page) notFound();
   return (
     <PageProvider page={page}>
@@ -23,7 +24,8 @@ export default async function Page({ params }: Props) {
 }
 
 export async function generateMetadata({ params }: Props) {
-  const page = await getPage(params);
+  const resolvedParams = await params;
+  const page = await getPage(resolvedParams);
   if (!page) notFound();
   return processMetadata(page);
 }
@@ -76,5 +78,5 @@ async function getPage(params: { slug?: string[] }) {
 }
 
 type Props = {
-  params: { slug?: string[] };
+  params: Promise<{ slug?: string[] }>;
 };
