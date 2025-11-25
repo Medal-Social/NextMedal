@@ -1,9 +1,31 @@
 'use client';
 
 import { type ComponentProps, useEffect, useRef, useState } from 'react';
-import { isMobile } from 'react-device-detect';
 import { cn } from '@/lib/utils';
 import css from './InteractiveDetails.module.css';
+
+const DESKTOP_BREAKPOINT = '(min-width: 1024px)'; // tailwind's lg breakpoint
+
+function useMediaQuery(query: string, defaultValue = false) {
+  const [matches, setMatches] = useState(defaultValue);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const mediaQuery = window.matchMedia(query);
+
+    const handler = (event: MediaQueryListEvent) => {
+      setMatches(event.matches);
+    };
+
+    setMatches(mediaQuery.matches);
+    mediaQuery.addEventListener('change', handler);
+
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, [query]);
+
+  return matches;
+}
 
 /**
  * @param safeAreaOnHover - Adds a safe area around the details element to prevent it from closing when the mouse leaves the element
@@ -23,8 +45,9 @@ export default function InteractiveDetails({
 } & ComponentProps<'details'>) {
   const [open, setOpen] = useState(false);
   const timeout = useRef<NodeJS.Timeout | null>(null);
+  const isDesktop = useMediaQuery(DESKTOP_BREAKPOINT);
 
-  const events = !isMobile
+  const events = isDesktop
     ? {
         onMouseEnter: () => {
           if (delay) {

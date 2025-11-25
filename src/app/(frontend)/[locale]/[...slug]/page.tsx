@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { groq } from 'next-sanity';
+import { PageProvider } from '@/contexts/PageContext';
 import processMetadata from '@/lib/processMetadata';
 import { client } from '@/sanity/lib/client';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
@@ -10,7 +11,6 @@ import {
   TRANSLATIONS_QUERY,
 } from '@/sanity/lib/queries';
 import Modules from '@/ui/modules';
-import { PageProvider } from '@/contexts/PageContext';
 
 export default async function Page({ params }: Props) {
   const resolvedParams = await params;
