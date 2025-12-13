@@ -14,7 +14,10 @@
     "format": "biome format . --write",
     "manifest": "SANITY_CLI_EXTRACT_MANIFEST_ENABLED=false echo 'Manifest extraction disabled'",
     "typecheck": "tsc --noEmit",
-    "validate": "sanity-template-validate"
+    "validate": "sanity-template-validate",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest --run --coverage"
   },
   "dependencies": {
     "@mux/mux-player": "^3.9.0",
@@ -59,14 +62,23 @@
     "@biomejs/biome": "2.3.7",
     "@sanity/template-validator": "^2.4.3",
     "@tailwindcss/typography": "^0.5.19",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/mdx": "^2.0.13",
     "@types/node": "^24.10.1",
     "@types/react": "19.2.6",
     "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "^5.1.2",
+    "@vitest/coverage-v8": "4.0.15",
     "depcheck": "^1.4.7",
+    "fast-check": "^4.4.0",
+    "jsdom": "^27.3.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.17",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.15",
+    "vitest-axe": "^0.1.0"
   },
   "packageManager": "pnpm@10.12.4"
 }
