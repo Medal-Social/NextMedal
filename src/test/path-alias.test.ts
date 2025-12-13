@@ -1,11 +1,10 @@
-import { describe, expect, it } from 'vitest';
 import * as fc from 'fast-check';
-
-// Static imports using @/* alias - these must resolve correctly for tests to run
-import { cn } from '@/lib/utils';
+import { describe, expect, it } from 'vitest';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+// Static imports using @/* alias - these must resolve correctly for tests to run
+import { cn } from '@/lib/utils';
 
 // Static import using $/* alias - resolves to root directory
 // Using messages/en.json as a simple JSON file that doesn't have complex dependencies
@@ -31,15 +30,12 @@ describe('Path Alias Resolution', () => {
 
       // Property: cn function should merge class names correctly
       fc.assert(
-        fc.property(
-          fc.array(fc.string(), { minLength: 0, maxLength: 5 }),
-          (classNames) => {
-            const result = cn(...classNames);
-            // Property: Result should always be a string
-            expect(typeof result).toBe('string');
-            return true;
-          }
-        ),
+        fc.property(fc.array(fc.string(), { minLength: 0, maxLength: 5 }), (classNames) => {
+          const result = cn(...classNames);
+          // Property: Result should always be a string
+          expect(typeof result).toBe('string');
+          return true;
+        }),
         { numRuns: 100 }
       );
     });
@@ -80,17 +76,13 @@ describe('Path Alias Resolution', () => {
       const sizes = ['default', 'sm', 'lg', 'icon'] as const;
 
       fc.assert(
-        fc.property(
-          fc.constantFrom(...variants),
-          fc.constantFrom(...sizes),
-          (variant, size) => {
-            const result = buttonVariants({ variant, size });
-            // Property: Result should be a non-empty string
-            expect(typeof result).toBe('string');
-            expect(result.length).toBeGreaterThan(0);
-            return true;
-          }
-        ),
+        fc.property(fc.constantFrom(...variants), fc.constantFrom(...sizes), (variant, size) => {
+          const result = buttonVariants({ variant, size });
+          // Property: Result should be a non-empty string
+          expect(typeof result).toBe('string');
+          expect(result.length).toBeGreaterThan(0);
+          return true;
+        }),
         { numRuns: 100 }
       );
     });
