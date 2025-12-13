@@ -8,6 +8,13 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test/setup.tsx'],
+    env: {
+      NEXT_PUBLIC_BASE_URL: 'https://test.example.com',
+      NEXT_PUBLIC_SANITY_PROJECT_ID: 'test-project-id',
+      NEXT_PUBLIC_SANITY_DATASET: 'test-dataset',
+      NEXT_PUBLIC_SANITY_API_VERSION: '2024-12-01',
+      SANITY_API_READ_TOKEN: 'test-token',
+    },
     include: ['**/*.test.{ts,tsx}'],
     coverage: {
       provider: 'v8',
