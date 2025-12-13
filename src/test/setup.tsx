@@ -10,7 +10,8 @@ expect.extend(matchers);
 
 // Extend Vitest's expect types for TypeScript
 declare module 'vitest' {
-  interface Assertion<T = unknown> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  interface Assertion<T = any> {
     toHaveNoViolations(): T;
   }
   interface AsymmetricMatchersContaining {
