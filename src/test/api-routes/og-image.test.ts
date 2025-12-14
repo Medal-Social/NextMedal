@@ -25,16 +25,23 @@ vi.mock('next/og', () => {
   };
 });
 
-// Mock fetch for Google Fonts
+// Mock fetch for Google Fonts - using proper URL parsing to avoid security issues
 global.fetch = vi.fn().mockImplementation((url: string) => {
-  if (url.includes('fonts.googleapis.com')) {
+  let hostname = '';
+  try {
+    hostname = new URL(url).hostname;
+  } catch {
+    return Promise.reject(new Error('Invalid URL'));
+  }
+
+  if (hostname === 'fonts.googleapis.com') {
     return Promise.resolve({
       text: () =>
         Promise.resolve("src: url(https://fonts.gstatic.com/test-font.woff2) format('truetype')"),
       status: 200,
     });
   }
-  if (url.includes('fonts.gstatic.com')) {
+  if (hostname === 'fonts.gstatic.com') {
     return Promise.resolve({
       status: 200,
       arrayBuffer: () => Promise.resolve(new ArrayBuffer(100)),
