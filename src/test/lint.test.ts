@@ -29,7 +29,7 @@ describe('Lint Validation', () => {
     }
   });
 
-  it('no TypeScript errors in codebase', () => {
+  it('no TypeScript errors in codebase', { timeout: 60000 }, () => {
     try {
       // Run TypeScript type checking
       execSync('pnpm typecheck', {

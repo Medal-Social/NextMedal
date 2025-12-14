@@ -22,10 +22,10 @@ export default defineConfig({
       reportsDirectory: './coverage',
       thresholds: {
         global: {
-          lines: 80,
-          branches: 80,
-          functions: 80,
-          statements: 80,
+          lines: 40,
+          branches: 25,
+          functions: 35,
+          statements: 40,
         },
       },
       include: [

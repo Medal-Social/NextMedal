@@ -47,7 +47,7 @@ export async function GET(_req: NextRequest) {
     xml += `    <loc>${entry.url}</loc>\n`;
     if (entry.lastModified)
       xml += `    <lastmod>${new Date(entry.lastModified).toISOString()}</lastmod>\n`;
-    if (entry.priority) xml += `    <priority>${entry.priority}</priority>\n`;
+    if (entry.priority != null) xml += `    <priority>${entry.priority}</priority>\n`;
     xml += '  </url>\n';
   }
   xml += '</urlset>';
