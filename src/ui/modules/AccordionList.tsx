@@ -92,7 +92,6 @@ export default function AccordionList({
               </AccordionTrigger>
               {generateSchema && (
                 <div
-                  key={`answer-${itemKey}`}
                   className="sr-only"
                   itemScope
                   itemProp="acceptedAnswer"
@@ -104,7 +103,7 @@ export default function AccordionList({
                 </div>
               )}
 
-              <AccordionContent className="richtext" key={`answer-${itemKey}`}>
+              <AccordionContent className="richtext">
                 <PortableText value={content} />
               </AccordionContent>
             </AccordionItem>

@@ -1,0 +1,144 @@
+/**
+ * Layout Tests
+ * @description Tests for the root layout component structure and accessibility
+ * Tests SkipToContent, Header/main/Footer structure, main-content id, lang attribute, ThemeProvider
+ * _Requirements: 13.1, 13.2, 13.3, 13.4, 13.5_
+ */
+
+import fs from 'node:fs';
+import path from 'node:path';
+import { render, screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+import { routing } from '@/i18n/routing';
+import SkipToContent from '@/ui/SkipToContent';
+
+describe('Layout Components', () => {
+  describe('SkipToContent', () => {
+    it('renders as a link targeting main-content', () => {
+      render(<SkipToContent />);
+      const skipLink = screen.getByRole('link', { name: /skip to content/i });
+      expect(skipLink).toBeInTheDocument();
+      expect(skipLink).toHaveAttribute('href', '#main-content');
+    });
+
+    it('has tabIndex 0 for keyboard accessibility', () => {
+      render(<SkipToContent />);
+      const skipLink = screen.getByRole('link', { name: /skip to content/i });
+      expect(skipLink).toHaveAttribute('tabIndex', '0');
+    });
+
+    it('is positioned for screen reader accessibility', () => {
+      render(<SkipToContent />);
+      const skipLink = screen.getByRole('link', { name: /skip to content/i });
+      // The component uses sr-only class when not focused
+      expect(skipLink).toHaveClass('absolute');
+    });
+  });
+
+  describe('Layout Structure Requirements', () => {
+    /**
+     * Validates: Requirements 13.1
+     * WHEN the root layout renders THEN the layout SHALL include a SkipToContent link as the first focusable element
+     */
+    it('SkipToContent should be designed to be first focusable element', () => {
+      render(<SkipToContent />);
+      const skipLink = screen.getByRole('link', { name: /skip to content/i });
+      // SkipToContent has tabIndex=0 and is positioned at top-left (left-0 top-0)
+      expect(skipLink).toHaveAttribute('tabIndex', '0');
+      expect(skipLink).toHaveClass('left-0', 'top-0');
+    });
+
+    /**
+     * Validates: Requirements 13.3
+     * WHEN the main content area renders THEN the area SHALL have id="main-content" for skip link targeting
+     */
+    it('SkipToContent links to #main-content', () => {
+      render(<SkipToContent />);
+      const skipLink = screen.getByRole('link', { name: /skip to content/i });
+      expect(skipLink.getAttribute('href')).toBe('#main-content');
+    });
+  });
+
+  describe('Layout Configuration Verification', () => {
+    const layoutPath = path.join(process.cwd(), 'src/app/(frontend)/[locale]/layout.tsx');
+    let layoutSource: string;
+
+    // Read layout source once for static analysis
+    try {
+      layoutSource = fs.readFileSync(layoutPath, 'utf-8');
+    } catch {
+      layoutSource = '';
+    }
+
+    /**
+     * Validates: Requirements 13.2
+     * Verifies the layout structure includes Header, main, and Footer
+     */
+    it('layout includes Header component', () => {
+      expect(layoutSource).toContain('import Header from');
+      expect(layoutSource).toContain('<Header');
+    });
+
+    it('layout includes Footer component', () => {
+      expect(layoutSource).toContain('import Footer from');
+      expect(layoutSource).toContain('<Footer');
+    });
+
+    it('layout includes main element with id="main-content"', () => {
+      expect(layoutSource).toContain('<main');
+      expect(layoutSource).toContain('id="main-content"');
+    });
+
+    /**
+     * Validates: Requirements 13.1
+     * Verifies SkipToContent is imported and used
+     */
+    it('layout includes SkipToContent component', () => {
+      expect(layoutSource).toContain('import SkipToContent from');
+      expect(layoutSource).toContain('<SkipToContent');
+    });
+
+    /**
+     * Validates: Requirements 13.4
+     * Verifies html element has lang attribute from locale
+     */
+    it('layout sets lang attribute on html element', () => {
+      expect(layoutSource).toContain('lang={locale}');
+    });
+
+    /**
+     * Validates: Requirements 13.5
+     * Verifies ThemeProvider is configured with defaultTheme
+     */
+    it('layout uses ThemeProvider with defaultTheme', () => {
+      expect(layoutSource).toContain('import { ThemeProvider }');
+      expect(layoutSource).toContain('<ThemeProvider');
+      expect(layoutSource).toContain('defaultTheme');
+    });
+  });
+
+  describe('Locale Configuration', () => {
+    /**
+     * Validates: Requirements 13.4
+     * Verifies supported locales are configured
+     */
+    it('routing has configured locales', () => {
+      expect(routing.locales).toBeDefined();
+      expect(Array.isArray(routing.locales)).toBe(true);
+      expect(routing.locales.length).toBeGreaterThan(0);
+    });
+
+    it('routing includes English locale', () => {
+      expect(routing.locales).toContain('en');
+    });
+
+    it('routing includes Norwegian locale', () => {
+      expect(routing.locales).toContain('nb');
+    });
+
+    it('routing has a default locale', () => {
+      expect(routing.defaultLocale).toBeDefined();
+      expect(typeof routing.defaultLocale).toBe('string');
+    });
+  });
+});
