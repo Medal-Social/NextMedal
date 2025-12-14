@@ -18,8 +18,8 @@ importers:
         specifier: 1.0.0-beta.15
         version: 1.0.0-beta.15(next@16.0.10(@babel/core@7.28.5)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))
       '@portabletext/to-html':
-        specifier: ^4.0.1
-        version: 4.0.1
+        specifier: ^5.0.0
+        version: 5.0.0
       '@radix-ui/react-accordion':
         specifier: ^1.2.12
         version: 1.2.12(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -2223,10 +2223,6 @@ packages:
 
   '@portabletext/schema@2.1.0':
     resolution: {integrity: sha512-wtTYmMslVZFlONd5Ncm8wpb3MChw6s5w73icPHPZBHd+TTJn0lMGuROHhE+9XEQuD7Ly465ooH+7T/k2eQVxHg==}
-    engines: {node: '>=20.19 <22 || >=22.12'}
-
-  '@portabletext/to-html@4.0.1':
-    resolution: {integrity: sha512-DBMpj3lLnQjyljyJ+rC0E2GMGaFIniLGqojTMyBCDBNRu1nxuFCmLVEw3l4mBgyFN1TGVM0mcHxII+jdPuVgaQ==}
     engines: {node: '>=20.19 <22 || >=22.12'}
 
   '@portabletext/to-html@5.0.0':
@@ -9707,11 +9703,6 @@ snapshots:
       - supports-color
 
   '@portabletext/schema@2.1.0': {}
-
-  '@portabletext/to-html@4.0.1':
-    dependencies:
-      '@portabletext/toolkit': 4.0.0
-      '@portabletext/types': 3.0.1
 
   '@portabletext/to-html@5.0.0':
     dependencies:

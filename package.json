@@ -23,7 +23,7 @@
     "@mux/mux-player": "^3.10.1",
     "@mux/mux-player-react": "^3.10.1",
     "@nosecone/next": "1.0.0-beta.15",
-    "@portabletext/to-html": "^4.0.1",
+    "@portabletext/to-html": "^5.0.0",
     "@radix-ui/react-accordion": "^1.2.12",
     "@sanity/asset-utils": "^2.3.0",
     "@sanity/code-input": "^6.0.3",
