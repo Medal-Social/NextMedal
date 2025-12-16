@@ -43,3 +43,8 @@ public/admin/static
 
 .env.backup
 .kiro
+
+# Sanity Functions
+functions/**/.env*
+functions/**/.build/
+functions/**/node_modules/
