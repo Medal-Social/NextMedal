@@ -130,5 +130,7 @@ const translationMiddleware = createMiddleware(routing);
 export default chain([securityHeaders, translationMiddleware]);
 
 export const config: ProxyConfig = {
-  matcher: ['/((?!favicon\\.ico|block-previews|_next|api|studio|sitemap\\.xml|sitemap\\.xsl|robots\\.txt).*)'],
+  matcher: [
+    '/((?!favicon\\.ico|block-previews|_next|api|studio|sitemap\\.xml|sitemap\\.xsl|robots\\.txt).*)',
+  ],
 };
