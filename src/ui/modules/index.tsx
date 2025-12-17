@@ -5,6 +5,7 @@ import BlogFrontpage from './blog/BlogFrontpage';
 import BlogList from './blog/BlogList';
 import BlogPostContent from './blog/PostContent';
 import Callout from './Callout';
+import ComponentGallery from './ComponentGallery';
 import FeaturedHero from './FeaturedHero';
 import FeatureGrid from './FeatureGrid';
 import { HeroImageGallery } from './HeroImageGallery';
@@ -33,6 +34,8 @@ export default function Modules({
         if (!module) return null;
 
         switch (module._type) {
+          case 'component-gallery':
+            return <ComponentGallery {...module} key={module._key} />;
           case 'accordion-list':
             return <AccordionList {...module} key={module._key} isTabbedModule={isTabbedModule} />;
           case 'blog-frontpage':

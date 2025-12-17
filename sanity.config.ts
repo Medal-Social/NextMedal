@@ -19,7 +19,7 @@ export default defineConfig({
   title: "Medal Social Enterprise",
   projectId,
   dataset,
-  basePath: "/admin",
+  basePath: "/studio",
 
   plugins: [
     structure,
