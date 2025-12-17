@@ -53,7 +53,6 @@ import {
   createMockPricingListModule,
   createMockProductComparisonModule,
   createMockRichtextModule,
-  createMockTabbedContentModule,
   createMockVideoHeroModule,
   MODULE_TYPES,
 } from './mocks/sanity';
@@ -77,7 +76,6 @@ const moduleFactories = {
   'pricing-list': createMockPricingListModule,
   'product-comparison': createMockProductComparisonModule,
   'richtext-module': createMockRichtextModule,
-  tabbedContent: createMockTabbedContentModule,
   videoHero: createMockVideoHeroModule,
 } as const;
 
@@ -94,7 +92,6 @@ const SYNC_MODULE_TYPES = [
   'pricing-list',
   'product-comparison',
   'richtext-module',
-  'tabbedContent',
   'videoHero',
 ] as const;
 

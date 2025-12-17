@@ -122,7 +122,6 @@ export interface MockBlogPost {
   authors?: Array<{ _ref: string; _type: 'reference' }>;
   publishDate: string;
   featured?: boolean;
-  hideTableOfContents?: boolean;
   metadata: MockMetadata;
 }
 
@@ -387,19 +386,6 @@ export interface MockRichtextModule {
   stretch?: boolean;
 }
 
-export interface MockTabbedContentModule {
-  _type: 'tabbedContent';
-  _key: string;
-  options?: MockModuleOptions;
-  pretitle?: string;
-  content?: MockPortableTextBlock[];
-  tabs?: Array<{
-    _key: string;
-    title: string;
-    icon: MockIcon;
-    content: MockFeaturedHeroModule[];
-  }>;
-}
 
 export interface MockVideoHeroModule {
   _type: 'videoHero';
@@ -429,5 +415,4 @@ export type MockModule =
   | MockPricingListModule
   | MockProductComparisonModule
   | MockRichtextModule
-  | MockTabbedContentModule
   | MockVideoHeroModule;

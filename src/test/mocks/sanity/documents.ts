@@ -52,7 +52,6 @@ export function createMockBlogPost(overrides?: Partial<MockBlogPost>): MockBlogP
     authors: [],
     publishDate: new Date().toISOString().split('T')[0],
     featured: false,
-    hideTableOfContents: false,
     metadata: createMockMetadata({
       slug: createMockSlug('test-blog-post'),
       title: 'Test Blog Post Title - Engaging Content for Readers',

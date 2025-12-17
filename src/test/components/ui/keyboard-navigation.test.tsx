@@ -1553,10 +1553,10 @@ describe('Keyboard Navigation Tests', () => {
             for (const trigger of triggers) {
               const className = trigger.className;
 
-              // Accordion triggers use flex layout with py-4 (16px top + 16px bottom = 32px min height)
+              // Accordion triggers use flex layout with py-5 (20px top + 20px bottom = 40px min height)
               // and full width, ensuring adequate target size
               expect(className).toContain('flex');
-              expect(className).toContain('py-4');
+              expect(className).toContain('py-5');
             }
 
             unmount();
@@ -1721,8 +1721,8 @@ describe('Keyboard Navigation Tests', () => {
                   </Accordion>
                 );
                 const trigger = screen.getByRole('button');
-                // Accordion triggers have py-4 which provides 32px+ height
-                hasAdequateSize = trigger.className.includes('py-4');
+                // Accordion triggers have py-5 which provides 40px+ height
+                hasAdequateSize = trigger.className.includes('py-5');
                 unmountFn = unmount;
                 break;
               }
