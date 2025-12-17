@@ -35,7 +35,8 @@ export const CTA_QUERY = groq`
 	}
 `;
 
-export const MODULES_QUERY = groq`
+// Base modules query for non-recursive parts
+const BASE_MODULES_QUERY = groq`
 	...,
 	ctas[]{${CTA_QUERY}},
 	_type == 'blog-list' => { filteredCategory-> },
@@ -73,22 +74,6 @@ export const MODULES_QUERY = groq`
 			}
 		),
 	},
-	_type == 'tabbedContent' => {
-		tabs[]{
-			...,
-			ctas[]{ ${CTA_QUERY} },
-			content[]{
-				...,
-				_type == 'featuredHero' => {
-					...,
-					ctas[]{ ${CTA_QUERY} },
-					content[],
-					image{..., "image": image.asset->, altText, loading}
-
-				},
-			}
-		}
-	},
 	_type == 'featuredHero' => {
 		ctas[]{ ${CTA_QUERY} },
 		content[],
@@ -114,6 +99,19 @@ export const MODULES_QUERY = groq`
 		},
 		thumbnail,
 		title
+	},
+`;
+
+export const MODULES_QUERY = groq`
+	${BASE_MODULES_QUERY}
+	_type == 'component-gallery' => {
+		...,
+		groups[]{
+			...,
+			items[]{
+				${BASE_MODULES_QUERY}
+			}
+		}
 	},
 `;
 

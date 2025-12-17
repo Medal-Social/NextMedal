@@ -6,13 +6,13 @@ export default defineField({
   type: 'array',
   of: [
     { type: 'videoHero' },
+    { type: 'component-gallery' },
     { type: 'galleryHero' },
     { type: 'featuredHero' },
     { type: 'hero' },
     { type: 'accordion-list' },
     { type: 'feature-grid' },
     { type: 'callout' },
-    { type: 'tabbedContent' },
     { type: 'richtext-module' },
     { type: 'logo-list' },
     { type: 'person-list' },
@@ -28,7 +28,7 @@ export default defineField({
       views: [
         {
           name: 'grid',
-          previewImageUrl: (schemaType) => `/admin/thumbnails/${schemaType}.webp`,
+          previewImageUrl: (schemaType) => `/block-previews/${schemaType}.png`,
         },
         { name: 'list' },
       ],
@@ -38,8 +38,12 @@ export default defineField({
           of: ['featuredHero', 'videoHero', 'galleryHero', 'hero'],
         },
         {
+          name: 'Components',
+          of: ['component-gallery'],
+        },
+        {
           name: 'Content Blocks',
-          of: ['richtext-module', 'callout', 'tabbedContent', 'accordion-list'],
+          of: ['richtext-module', 'callout', 'accordion-list'],
         },
         {
           name: 'Feature Displays',

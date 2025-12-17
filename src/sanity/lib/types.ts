@@ -66,7 +66,6 @@ export interface BlogPost extends SanityBase {
   authors: SanityReference[];
   publishDate: string;
   featured?: boolean;
-  hideTableOfContents?: boolean;
   metadata?: Metadata;
   relatedPosts?: SanityReference[];
 }
@@ -147,21 +146,6 @@ export interface FeaturedHero extends SanityBase {
   options?: ModuleOptions;
 }
 
-export interface TabbedContent extends SanityBase {
-  _type: 'tabbedContent';
-  title?: string;
-  subtitle?: string;
-  tabs: {
-    title: string;
-    icon: {
-      ic0n: string;
-    };
-    content: any[];
-  }[];
-  tabPosition?: 'top' | 'bottom';
-  tabAlignment?: 'left' | 'center' | 'right';
-  options?: ModuleOptions;
-}
 
 export interface ModuleOptions {
   _type: 'module-options';
