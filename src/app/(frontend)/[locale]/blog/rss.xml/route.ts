@@ -74,8 +74,6 @@ export async function GET() {
 
                 return `<figure>${[img, figcaption, aSource].filter(Boolean).join(' ')}</figure>`;
               },
-              admonition: ({ value: { title, content } }) =>
-                `<dl><dt>${title}</dt><dd>${escapeHTML(content)}</dd></dl>`,
               code: ({ value }) => `<pre><code>${escapeHTML(value.code)}</code></pre>`,
             },
           },

@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/navigation-menu';
 import resolveUrl from '@/lib/resolveUrl';
 import { getSite } from '@/sanity/lib/fetch';
-import type { Link as LinkType, Metadata } from '@/sanity/lib/types';
+import type { MenuItem as MenuItemType, Metadata } from '@/sanity/lib/types';
 import { type MobileNavLink, NavLink } from './mobile-navigation';
 
 interface InternalLink {
@@ -29,14 +29,13 @@ interface InternalLink {
 }
 
 export interface MenuItem {
-  _type: 'link' | 'link.list';
+  _type: 'menuItem' | 'dropdownMenu';
   label?: string;
   title?: string;
   internal?: InternalLink;
   external?: string;
   params?: string;
-  link?: LinkType;
-  links?: LinkType[];
+  links?: MenuItemType[];
 }
 
 interface HeaderMenu {
@@ -58,7 +57,7 @@ function _parseParams(params?: string): Record<string, string> | undefined {
   }
 }
 
-function mapToMobileNavLink(link: LinkType): MobileNavLink {
+function mapToMobileNavLink(link: MenuItemType): MobileNavLink {
   return {
     label: link.label ?? '',
     description: undefined,
@@ -77,7 +76,7 @@ export default async function Navigation() {
         {(headerMenu as HeaderMenu)?.items?.map((item) => {
           const itemKey = `${item._type}-${item.label || ''}-${item.title || ''}`;
           switch (item._type) {
-            case 'link':
+            case 'menuItem':
               return (
                 <NavigationMenuItem key={itemKey}>
                   <NavigationMenuLink asChild>
@@ -107,11 +106,11 @@ export default async function Navigation() {
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               );
-            case 'link.list':
+            case 'dropdownMenu':
               return (
                 <NavigationMenuItem key={itemKey}>
-                  <NavigationMenuTrigger aria-label={`${item.link?.label} menu`}>
-                    {item.link?.label}
+                  <NavigationMenuTrigger aria-label={`${item.title} menu`}>
+                    {item.title}
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="bg-background">
                     <ul className="grid w-[600px] gap-3 p-4 grid-cols-2">
