@@ -11,6 +11,7 @@ interface ComponentPreviewProps {
   schemaHtml?: string;
   schemaObject?: any;
   children: React.ReactNode;
+  hasRegistry?: boolean;
 }
 
 export function ComponentPreview({
@@ -19,6 +20,7 @@ export function ComponentPreview({
   schemaHtml,
   schemaObject,
   children,
+  hasRegistry = false,
 }: ComponentPreviewProps) {
   return (
     <Tabs defaultValue="preview" className="w-full">
@@ -29,7 +31,7 @@ export function ComponentPreview({
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <OpenInV0Button name={moduleType} />
+          {hasRegistry && <OpenInV0Button name={moduleType} />}
           <TabsList>
             <TabsTrigger value="preview">Preview</TabsTrigger>
             <TabsTrigger value="structure">Structure</TabsTrigger>
