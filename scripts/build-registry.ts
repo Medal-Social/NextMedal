@@ -9,10 +9,11 @@ const COMPONENT_DIR = path.join(__dirname, '../src/components/ui');
 const MODULES_DIR = path.join(__dirname, '../src/ui/modules');
 const REGISTRY_DIR = path.join(__dirname, '../public/registry');
 
-// Ensure registry directory exists
-if (!fs.existsSync(REGISTRY_DIR)) {
-  fs.mkdirSync(REGISTRY_DIR, { recursive: true });
+// Ensure registry directory exists and is empty
+if (fs.existsSync(REGISTRY_DIR)) {
+  fs.rmSync(REGISTRY_DIR, { recursive: true, force: true });
 }
+fs.mkdirSync(REGISTRY_DIR, { recursive: true });
 
 interface RegistryItem {
   name: string;
@@ -105,13 +106,18 @@ async function buildRegistry() {
     }
   }
 
-  // Write index.json
-  fs.writeFileSync(path.join(REGISTRY_DIR, 'index.json'), JSON.stringify(registry, null, 2));
+  // Write files concurrently
+  const writes = [
+    fs.promises.writeFile(path.join(REGISTRY_DIR, 'index.json'), JSON.stringify(registry, null, 2)),
+    ...registry.map((item) =>
+      fs.promises.writeFile(
+        path.join(REGISTRY_DIR, `${item.name}.json`),
+        JSON.stringify(item, null, 2)
+      )
+    ),
+  ];
 
-  // Write individual component files
-  for (const item of registry) {
-    fs.writeFileSync(path.join(REGISTRY_DIR, `${item.name}.json`), JSON.stringify(item, null, 2));
-  }
+  await Promise.all(writes);
 
   console.log(
     `✅ Registry built with ${registry.length} items (${uiFiles.length} UI, ${Object.keys(MODULES_MAPPING).length} Modules).`
@@ -128,7 +134,7 @@ function parseDependencies(content: string) {
   while (match !== null) {
     const importPath = match[1];
     if (importPath.startsWith('@/components/ui/')) {
-      const depName = path.basename(importPath);
+      const depName = path.basename(importPath, path.extname(importPath));
       registryDependencies.add(depName);
     } else if (!importPath.startsWith('.') && !importPath.startsWith('@/')) {
       dependencies.add(importPath);

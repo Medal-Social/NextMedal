@@ -45,6 +45,7 @@ export default function SocialShare({ title, slug }: { title: string; slug: stri
         </a>
       ))}
       <button
+        type="button"
         onClick={handleCopy}
         className="p-2 rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
         aria-label="Copy link"

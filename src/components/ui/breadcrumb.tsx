@@ -51,12 +51,14 @@ function BreadcrumbLink({ className, render, ...props }: useRender.ComponentProp
 
 function BreadcrumbPage({ className, ...props }: React.ComponentProps<'span'>) {
   return (
+    // biome-ignore lint/a11y/useSemanticElements: styling requires span
     <span
       data-slot="breadcrumb-page"
       role="link"
       aria-disabled="true"
       aria-current="page"
       className={cn('text-foreground font-normal', className)}
+      tabIndex={0}
       {...props}
     />
   );

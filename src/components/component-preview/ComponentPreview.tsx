@@ -59,6 +59,7 @@ export function ComponentPreview({
           {schemaHtml ? (
             <div
               className="text-sm font-mono p-4 rounded-lg bg-card border text-card-foreground [&>pre]:!bg-transparent [&>pre]:p-0"
+              // biome-ignore lint/security/noDangerouslySetInnerHtml: Required for syntax highlighting
               dangerouslySetInnerHTML={{ __html: schemaHtml }}
             />
           ) : (
