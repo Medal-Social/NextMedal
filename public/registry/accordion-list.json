@@ -1,13 +1,8 @@
 {
   "name": "accordion-list",
   "type": "components:module",
-  "dependencies": [
-    "next-sanity"
-  ],
-  "registryDependencies": [
-    "accordion",
-    "section"
-  ],
+  "dependencies": ["next-sanity"],
+  "registryDependencies": ["accordion", "section"],
   "files": [
     {
       "path": "modules/AccordionList.tsx",
