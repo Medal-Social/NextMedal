@@ -1,9 +1,9 @@
 import DateDisplay from '@/ui/Date';
 import { Img } from '@/ui/Img';
-import Breadcrumbs from '@/ui/modules/Breadcrumbs';
 import Authors from '@/ui/modules/blog/Authors';
 import Categories from '@/ui/modules/blog/Categories';
 import ReadTime from '@/ui/modules/blog/ReadTime';
+import SocialShare from '@/ui/modules/blog/SocialShare';
 import Content from '@/ui/modules/RichtextModule/Content';
 import TableOfContents from './TableOfContents';
 
@@ -11,22 +11,6 @@ export default function BlogPostLayout({ post }: { post: any }) {
   return (
     <article className="section space-y-8 md:space-y-12 py-12 md:py-24">
       <div className="container max-w-4xl mx-auto px-4 space-y-8">
-        {/* Breadcrumbs */}
-        <Breadcrumbs
-          crumbs={
-            [
-              {
-                label: 'Blog',
-                internal: {
-                  _type: 'page',
-                  metadata: { slug: { current: 'blog' }, title: 'Blog' },
-                },
-              },
-            ] as any
-          }
-          currentPage={post}
-        />
-
         {/* Header */}
         <div className="space-y-6">
           <Categories categories={post.categories} linked badge />
@@ -38,7 +22,13 @@ export default function BlogPostLayout({ post }: { post: any }) {
             {post.readTime && <ReadTime value={post.readTime} />}
           </div>
 
-          <Authors authors={post.authors} bio socialLinks />
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-t pt-6 border-border/40">
+            <Authors authors={post.authors} bio socialLinks className="flex-1" />
+            <SocialShare
+              title={post.metadata?.title || ''}
+              slug={post.metadata?.slug?.current || ''}
+            />
+          </div>
         </div>
 
         {/* Hero Image */}
