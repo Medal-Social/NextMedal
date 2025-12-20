@@ -32,8 +32,8 @@ type VideoHero = {
     };
     playbackId?: string;
   };
-  thumbnail: SanityImage;
-  title: string;
+  thumbnail?: SanityImage;
+  title?: string;
 };
 
 // Use regular dynamic imports for video players
@@ -48,18 +48,6 @@ const MuxPlayer = dynamic(() => import('@mux/mux-player-react'), {
   ssr: false,
 });
 
-// Import regular ReactPlayer instead of YouTube specific
-const ReactPlayer = dynamic(() => import('react-player'), {
-  loading: () => (
-    <div className="w-full h-full bg-muted flex flex-col items-center justify-center">
-      <div className="w-16 h-16 rounded-full border-4 border-transparent border-t-primary animate-spin mb-4" />
-      <p className="text-foreground font-medium text-lg">Loading your content...</p>
-      <p className="text-muted-foreground text-sm mt-1">YouTube player is being prepared</p>
-    </div>
-  ),
-  ssr: false,
-}) as any;
-
 interface VideoHeroProps {
   data: VideoHero;
 }
@@ -70,13 +58,38 @@ interface VideoHeroProps {
 const getYouTubeVideoId = (url: string): string => {
   if (!url) return '';
 
-  // Handle youtu.be format
+  try {
+    // Handle standard URL formats
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+      const urlObj = new URL(url.startsWith('http') ? url : `https://${url}`);
+
+      if (urlObj.hostname.includes('youtu.be')) {
+        return urlObj.pathname.slice(1);
+      }
+
+      if (urlObj.pathname.includes('/watch')) {
+        return urlObj.searchParams.get('v') || '';
+      }
+
+      if (urlObj.pathname.includes('/embed/')) {
+        return urlObj.pathname.split('/embed/')[1];
+      }
+
+      if (urlObj.pathname.includes('/shorts/')) {
+        return urlObj.pathname.split('/shorts/')[1];
+      }
+    }
+  } catch (_e) {
+    // Fallback to string manipulation if URL parsing fails
+  }
+
+  // Handle youtu.be format (legacy string split)
   if (url.includes('youtu.be/')) {
     const id = url.split('youtu.be/')[1];
     return id.split('?')[0];
   }
 
-  // Handle youtube.com/watch?v= format
+  // Handle youtube.com/watch?v= format (legacy)
   if (url.includes('youtube.com/watch')) {
     try {
       const urlParams = new URLSearchParams(url.split('?')[1]);
@@ -86,9 +99,15 @@ const getYouTubeVideoId = (url: string): string => {
     }
   }
 
-  // Handle youtube.com/embed/ format
+  // Handle youtube.com/embed/ format (legacy)
   if (url.includes('youtube.com/embed/')) {
     const id = url.split('youtube.com/embed/')[1];
+    return id.split('?')[0];
+  }
+
+  // Handle youtube.com/shorts/ format (legacy)
+  if (url.includes('youtube.com/shorts/')) {
+    const id = url.split('youtube.com/shorts/')[1];
     return id.split('?')[0];
   }
 
@@ -116,9 +135,16 @@ const useYouTubeVideo = (videoIdOrUrl?: string) => {
 
     if (extractedId) {
       setVideoId(extractedId);
-      setYoutubeUrl(`https://www.youtube.com/watch?v=${extractedId}`);
+      // If the input looks like a URL, use it directly to be safe, otherwise construct it
+      const isUrl = videoIdOrUrl.includes('youtube.com') || videoIdOrUrl.includes('youtu.be');
+      setYoutubeUrl(isUrl ? videoIdOrUrl : `https://www.youtube.com/watch?v=${extractedId}`);
     } else {
-      setError('Could not extract YouTube video ID from URL');
+      // If extraction fails but it looks like a URL, try using it anyway
+      if (videoIdOrUrl.includes('http')) {
+        setYoutubeUrl(videoIdOrUrl);
+      } else {
+        setError('Could not extract YouTube video ID from URL');
+      }
     }
   }, [videoIdOrUrl]);
 
@@ -149,10 +175,18 @@ const useMuxVideo = (data: VideoHero) => {
 };
 
 // YouTube Player Component
-const YouTubePlayer = ({ url, onError }: { url: string; onError: (err: any) => void }) => {
+const YouTubePlayer = ({ videoId, title }: { videoId: string; title?: string }) => {
+  const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+
   return (
     <div className="w-full h-full">
-      <ReactPlayer url={url} width="100%" height="100%" playing controls onError={onError} />
+      <iframe
+        src={embedUrl}
+        title={title || 'YouTube video player'}
+        className="w-full h-full border-0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowFullScreen
+      />
     </div>
   );
 };
@@ -164,14 +198,14 @@ const MuxVideoPlayer = ({
   onError,
 }: {
   playbackId: string;
-  title: string;
+  title?: string;
   onError: (err: any) => void;
 }) => {
   return (
     <MuxPlayer
       playbackId={playbackId}
       metadata={{
-        video_title: title,
+        video_title: title || 'Video',
         player_name: 'Medal Socials Player',
       }}
       theme="classic"
@@ -223,10 +257,19 @@ export default function VideoHero({ data }: VideoHeroProps) {
   const mux = useMuxVideo(data);
 
   // Generate thumbnail URL
-  const thumbnailUrl =
+  let thumbnailUrl =
     (data?.thumbnail as any)?.src ||
     (data?.thumbnail as any)?.url ||
     (data?.thumbnail ? urlFor(data.thumbnail as any).url() : null);
+
+  // Fallback to automatic thumbnails if manual one is missing
+  if (!thumbnailUrl) {
+    if (data?.type === 'mux' && mux.videoId) {
+      thumbnailUrl = `https://image.mux.com/${mux.videoId}/thumbnail.jpg?width=1920&height=1080&fit_mode=preserve`;
+    } else if (data?.type === 'youtube' && youtube.videoId) {
+      thumbnailUrl = `https://img.youtube.com/vi/${youtube.videoId}/maxresdefault.jpg`;
+    }
+  }
 
   const handlePlayClick = () => {
     setIsPlaying(true);
@@ -297,8 +340,8 @@ export default function VideoHero({ data }: VideoHeroProps) {
             />
           ) : data?.type === 'mux' && mux.videoId ? (
             <MuxVideoPlayer playbackId={mux.videoId} title={data.title} onError={handleError} />
-          ) : data?.type === 'youtube' && youtube.youtubeUrl ? (
-            <YouTubePlayer url={youtube.youtubeUrl} onError={handleError} />
+          ) : data?.type === 'youtube' && youtube.videoId ? (
+            <YouTubePlayer videoId={youtube.videoId} title={data.title} />
           ) : (
             <VideoError error={null} type={data?.type} onBackClick={() => setIsPlaying(false)} />
           )}

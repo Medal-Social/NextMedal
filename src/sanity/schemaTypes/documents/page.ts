@@ -8,7 +8,14 @@
  * - 1.0.0: Initial version
  */
 
-import { VscEdit, VscEyeClosed, VscFile, VscHome, VscQuestion, VscSearch } from 'react-icons/vsc';
+import {
+  DocumentIcon,
+  EditIcon,
+  EyeClosedIcon,
+  HelpCircleIcon,
+  HomeIcon,
+  SearchIcon,
+} from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import modules from '../fragments/modules';
 
@@ -16,7 +23,7 @@ export default defineType({
   name: 'page',
   title: 'Page',
   type: 'document',
-  icon: VscFile,
+  icon: DocumentIcon,
   description: 'Standard page with modules for building content',
   groups: [
     { name: 'content', title: 'Content', default: true },
@@ -38,6 +45,7 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'modules',
       ...modules,
       title: 'Page Content',
       description: 'Add content modules to build the page',
@@ -63,12 +71,12 @@ export default defineType({
       // Choose an appropriate icon based on the page type
       const icon =
         media ||
-        (slug === 'index' && VscHome) ||
-        (slug === '404' && VscQuestion) ||
-        (slug === 'search' && VscSearch) ||
-        (slug === 'blog' && VscEdit) ||
-        (noindex && VscEyeClosed) ||
-        VscFile;
+        (slug === 'index' && HomeIcon) ||
+        (slug === '404' && HelpCircleIcon) ||
+        (slug === 'search' && SearchIcon) ||
+        (slug === 'blog' && EditIcon) ||
+        (noindex && EyeClosedIcon) ||
+        DocumentIcon;
 
       // Format language display
       const languageLabel =

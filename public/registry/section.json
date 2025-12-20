@@ -1,0 +1,16 @@
+{
+  "name": "section",
+  "type": "components:ui",
+  "dependencies": [
+    "class-variance-authority",
+    "react"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "ui/section.tsx",
+      "content": "import { cva, type VariantProps } from 'class-variance-authority';\nimport type * as React from 'react';\nimport { cn } from '@/lib/utils';\n\nconst sectionVariants = cva(\n  'w-full mx-auto px-4 sm:px-6 lg:px-8', // Base: Consistent horizontal padding\n  {\n    variants: {\n      width: {\n        default: 'max-w-7xl', // Standard page width\n        narrow: 'max-w-3xl', // Blog posts, legal pages\n        wide: 'max-w-screen-2xl', // Galleries, large tables\n        full: 'max-w-none p-0', // Full-bleed backgrounds (Hero)\n      },\n      spacing: {\n        default: 'py-12 md:py-20', // Standard vertical rhythm\n        compact: 'py-8 md:py-12', // Tighter sections\n        relaxed: 'py-16 md:py-32', // Landing page airy sections\n        none: 'py-0', // For when you need total control\n      },\n    },\n    defaultVariants: {\n      width: 'default',\n      spacing: 'default',\n    },\n  }\n);\n\nexport interface SectionProps\n  extends React.HTMLAttributes<HTMLElement>,\n    VariantProps<typeof sectionVariants> {\n  as?: React.ElementType;\n}\n\nfunction Section({ className, width, spacing, as: Component = 'section', ...props }: SectionProps) {\n  return <Component className={cn(sectionVariants({ width, spacing }), className)} {...props} />;\n}\n\nexport { Section, sectionVariants };\n",
+      "type": "registry:ui"
+    }
+  ]
+}

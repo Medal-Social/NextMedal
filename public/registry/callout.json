@@ -1,0 +1,15 @@
+{
+  "name": "callout",
+  "type": "components:module",
+  "dependencies": [
+    "next-sanity"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "modules/Callout.tsx",
+      "content": "import { PortableText, stegaClean } from 'next-sanity';\nimport CTAListCallout from '../CTAListCallout';\n\nexport default function Callout({\n  content,\n  ctas,\n}: Partial<{\n  content: any;\n  ctas: Sanity.CTA[];\n  isTabbedModule?: boolean;\n}>) {\n  return (\n    <section className=\"w-full py-24 sm:py-32\">\n      <div className=\"w-full \">\n        <div className=\"relative isolate overflow-hidden bg-gray-900 text-white px-6 py-24 text-center shadow-2xl  sm:px-16\">\n          <div className=\"emailsignup\">\n            <PortableText value={stegaClean(content)} />\n          </div>\n          <CTAListCallout className=\"!mt-8 justify-center\" ctas={stegaClean(ctas)} />\n          <svg\n            viewBox=\"0 0 1024 1024\"\n            aria-hidden=\"true\"\n            className=\"absolute top-1/2 left-1/2 -z-10 size-[64rem] -translate-x-1/2 [mask-image:radial-gradient(closest-side,white,transparent)]\"\n          >\n            <circle\n              r={512}\n              cx={512}\n              cy={512}\n              fill=\"url(#827591b1-ce8c-4110-b064-7cb85a0b1217)\"\n              fillOpacity=\"0.7\"\n            />\n            <defs>\n              <radialGradient id=\"827591b1-ce8c-4110-b064-7cb85a0b1217\">\n                <stop stopColor=\"#7775D6\" />\n                <stop offset={1} stopColor=\"#E935C1\" />\n              </radialGradient>\n            </defs>\n          </svg>\n        </div>\n      </div>\n    </section>\n  );\n}\n",
+      "type": "registry:component"
+    }
+  ]
+}

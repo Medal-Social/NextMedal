@@ -24,12 +24,45 @@ const config = {
         protocol: "https",
         hostname: "cdn.sanity.io",
       },
+      { 
+        protocol: "https",
+        hostname: "unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "image.mux.com",
+      },
+      {
+        protocol: "https",
+        hostname: "img.youtube.com",
+      },
+      {
+        protocol: "https",
+        hostname: "placehold.co",
+      },
     ],
   },
   compiler: {
     removeConsole: {
       exclude: ['error'],
     },
+  },
+
+  async headers() {
+    return [
+      {
+        source: "/registry/:path*",
+        headers: [
+          { key: "Access-Control-Allow-Origin", value: "*" },
+          { key: "Access-Control-Allow-Methods", value: "GET" },
+          { key: "Access-Control-Allow-Headers", value: "Content-Type" },
+        ],
+      },
+    ];
   },
 
   async redirects() {

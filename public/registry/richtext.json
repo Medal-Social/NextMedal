@@ -1,0 +1,15 @@
+{
+  "name": "richtext",
+  "type": "components:module",
+  "dependencies": [],
+  "registryDependencies": [
+    "section"
+  ],
+  "files": [
+    {
+      "path": "modules/RichtextModule/index.tsx",
+      "content": "import { Section } from '@/components/ui/section';\nimport moduleProps from '@/lib/moduleProps';\nimport Content from './Content';\n\nexport default function RichtextModule({\n  content,\n  ...props\n}: Partial<{\n  content: any;\n}> &\n  Sanity.Module) {\n  return (\n    <Section className=\"grid gap-8\" width=\"narrow\" {...moduleProps(props)}>\n      <Content value={content} />\n    </Section>\n  );\n}\n",
+      "type": "registry:component"
+    }
+  ]
+}

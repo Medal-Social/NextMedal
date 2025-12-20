@@ -1,5 +1,4 @@
-import { BsDatabaseAdd } from 'react-icons/bs';
-import { VscEdit, VscFiles, VscServerProcess } from 'react-icons/vsc';
+import { ControlsIcon, DatabaseIcon, DocumentsIcon, EditIcon } from '@sanity/icons';
 import { structureTool } from 'sanity/structure';
 import { group, singleton } from './lib/utils';
 export const structure = structureTool({
@@ -7,13 +6,13 @@ export const structure = structureTool({
     S.list()
       .title('Content')
       .items([
-        S.documentTypeListItem('page').title('Pages').icon(VscFiles),
+        S.documentTypeListItem('page').title('Pages').icon(DocumentsIcon),
         // S.documentTypeListItem('component.library').title('Components'),
         S.divider(),
 
         S.listItem()
           .title('Blog')
-          .icon(VscEdit)
+          .icon(EditIcon)
           .child(
             S.list()
               .title('Blog')
@@ -24,7 +23,7 @@ export const structure = structureTool({
           ),
         S.divider(),
 
-        singleton(S, 'site', 'Site settings').icon(VscServerProcess),
+        singleton(S, 'site', 'Site settings').icon(ControlsIcon),
         S.divider(),
 
         group(S, 'Site Elements', [
@@ -35,7 +34,7 @@ export const structure = structureTool({
           S.documentTypeListItem('global-module').title('Global modules'),
           S.documentTypeListItem('navigation'),
           S.documentTypeListItem('redirect').title('Redirects'),
-        ]).icon(BsDatabaseAdd),
+        ]).icon(DatabaseIcon),
       ]),
 });
 

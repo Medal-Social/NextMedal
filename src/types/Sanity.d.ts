@@ -84,12 +84,19 @@ declare global {
       ctas?: CTA[];
       headerMenu?: Navigation;
       footerMenu?: Navigation;
+      footerLinks?: MenuItem[];
+      systemStatus?: {
+        title: string;
+        url: string;
+      };
       social?: Navigation;
       socialLinks?: {
         _key: string;
         platform: string;
         url: string;
       }[];
+      // custom
+      brandPage?: string;
     }
 
     interface Navigation extends SanityDocument {
@@ -287,7 +294,7 @@ declare global {
         playbackId?: string;
       };
       thumbnail: Sanity.Image;
-      title: string;
+      title?: string;
     }
 
     export interface VideoHeroSanity {
@@ -295,14 +302,14 @@ declare global {
       type: 'mux' | 'youtube';
       videoId: string;
       thumbnail: SanityImage;
-      title: string;
+      title?: string;
     }
 
     interface VideoHero extends Module<'videoHero'> {
       type: 'mux' | 'youtube';
       videoId: string;
       thumbnail: SanityImage;
-      title: string;
+      title?: string;
     }
 
     interface ModuleOptions {

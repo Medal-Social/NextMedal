@@ -5,6 +5,7 @@ import { CommandMenu } from '@/ui/CommandMenu';
 import CTAList from '@/ui/CTAList';
 import { Img } from '@/ui/Img';
 import LocaleSwitcher from '@/ui/language-switcher';
+import BrandMenu from './BrandMenu';
 import MobileNavigation from './mobile-navigation';
 import Navigation from './navigation';
 import ThemeToggleWrapper from './ThemeToggleWrapper';
@@ -12,36 +13,38 @@ import Toggle from './Toggle';
 import Wrapper from './Wrapper';
 
 export default async function Header() {
-  const { title, logo, ctas, headerMenu } = await getSite();
+  const { title, logo, ctas, headerMenu, brandPage } = await getSite();
 
   const logoImageDark = logo?.image?.dark || logo?.image?.default || logo?.image?.light;
   const logoImageLight = logo?.image?.light || logo?.image?.default || logo?.image?.dark;
 
   const logoNode = (
-    <Link
-      className={cn('h4 lg:h3 inline-block', logo?.image && 'max-w-3xs')}
-      href="/"
-      aria-label={`Return to ${title} homepage`}
-    >
-      {logoImageDark ? (
-        <Img
-          className="hidden dark:inline-block max-h-[1.2em] w-auto filter brightness-150 drop-shadow-md"
-          image={logoImageDark}
-          alt={`${logo?.name || title} logo - dark version`}
-        />
-      ) : (
-        <span className="hidden dark:inline-block">{title}</span>
-      )}
-      {logoImageLight ? (
-        <Img
-          className="inline-block dark:hidden max-h-[1.2em] w-auto filter brightness-150 drop-shadow-md"
-          image={logoImageLight}
-          alt={`${logo?.name || title} logo - light version`}
-        />
-      ) : (
-        <span className="inline-block dark:hidden">{title}</span>
-      )}
-    </Link>
+    <BrandMenu logoData={logo} hasBrandPage={!!brandPage}>
+      <Link
+        className={cn('h4 lg:h3 inline-block cursor-pointer', logo?.image && 'max-w-3xs')}
+        href="/"
+        aria-label={`Return to ${title} homepage`}
+      >
+        {logoImageDark ? (
+          <Img
+            className="hidden dark:inline-block max-h-[1.2em] w-auto filter brightness-150 drop-shadow-md"
+            image={logoImageDark}
+            alt={`${logo?.name || title} logo - dark version`}
+          />
+        ) : (
+          <span className="hidden dark:inline-block">{title}</span>
+        )}
+        {logoImageLight ? (
+          <Img
+            className="inline-block dark:hidden max-h-[1.2em] w-auto filter brightness-150 drop-shadow-md"
+            image={logoImageLight}
+            alt={`${logo?.name || title} logo - light version`}
+          />
+        ) : (
+          <span className="inline-block dark:hidden">{title}</span>
+        )}
+      </Link>
+    </BrandMenu>
   );
 
   return (
@@ -51,7 +54,7 @@ export default async function Header() {
         role="banner"
         aria-label="Site header"
       >
-        <div className="header-grid mx-auto grid max-w-screen-xl items-center gap-x-6 p-4">
+        <div className="header-grid mx-auto grid max-w-7xl items-center gap-x-6 p-4 px-4 sm:px-6 lg:px-8">
           <div className="[grid-area:logo]">{logoNode}</div>
 
           <nav className="max-lg:hidden" aria-label="Main navigation">

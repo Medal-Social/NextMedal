@@ -38,10 +38,11 @@ NextMedal is the ultimate choice for developers, agencies, and businesses who de
 - **Responsive**: Mobile-first design
 
 ### Quality & DX
-- **Biome**: Fast linting and formatting
+- **Biome**: Fast linting and formatting with strict accessibility rules
+- **Husky**: Pre-commit hooks for quality assurance
 - **Vitest**: Unit and integration testing
 - **SEO Ready**: Dynamic sitemaps, OG images
-- **Accessibility**: WCAG 2.1 compliant
+- **Accessibility**: WCAG 2.1 compliant (enforced by linter)
 
 ## Getting Started 🚀
 
@@ -89,6 +90,14 @@ Your site will be available at `http://localhost:3000`
 pnpm sanity:dev
 ```
 Access the Studio at `http://localhost:3000/admin`
+
+### Component Registry & v0 Integration
+
+NextMedal includes a built-in component registry compatible with [v0](https://v0.dev).
+
+- **Registry API**: Available at `/registry` (e.g., `/registry/button.json`).
+- **Open in v0**: UI components in the preview gallery have an "Open in v0" button to instantly edit them in v0.
+- **Build Registry**: Run `pnpm build:registry` to regenerate the registry files in `public/registry`.
 
 ### Build and Deploy
 
