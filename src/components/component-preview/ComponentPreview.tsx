@@ -2,7 +2,6 @@
 
 import type * as React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { OpenInV0Button } from './OpenInV0Button';
 import { SchemaVisualizer } from './SchemaVisualizer';
 
 interface ComponentPreviewProps {
@@ -31,7 +30,6 @@ export function ComponentPreview({
           </span>
         </div>
         <div className="flex items-center gap-2">
-          {hasRegistry && <OpenInV0Button name={moduleType} />}
           <TabsList>
             <TabsTrigger value="preview">Preview</TabsTrigger>
             <TabsTrigger value="structure">Structure</TabsTrigger>

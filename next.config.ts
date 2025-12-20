@@ -52,19 +52,6 @@ const config = {
     },
   },
 
-  async headers() {
-    return [
-      {
-        source: "/registry/:path*",
-        headers: [
-          { key: "Access-Control-Allow-Origin", value: process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000" },
-          { key: "Access-Control-Allow-Methods", value: "GET" },
-          { key: "Access-Control-Allow-Headers", value: "Content-Type" },
-        ],
-      },
-    ];
-  },
-
   async redirects() {
     return await client.fetch(groq`*[_type == 'redirect']{
 			'source': select(source match "/*" => source, "/" + source),

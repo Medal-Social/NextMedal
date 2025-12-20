@@ -72,20 +72,20 @@ const getYouTubeVideoId = (url: string): string => {
       return '';
     }
 
+    let videoId = '';
     if (hostname === 'youtu.be') {
-      return urlObj.pathname.slice(1);
+      videoId = urlObj.pathname.slice(1);
+    } else if (urlObj.pathname.includes('/watch')) {
+      videoId = urlObj.searchParams.get('v') || '';
+    } else if (urlObj.pathname.includes('/embed/')) {
+      videoId = urlObj.pathname.split('/embed/')[1];
+    } else if (urlObj.pathname.includes('/shorts/')) {
+      videoId = urlObj.pathname.split('/shorts/')[1];
     }
 
-    if (urlObj.pathname.includes('/watch')) {
-      return urlObj.searchParams.get('v') || '';
-    }
-
-    if (urlObj.pathname.includes('/embed/')) {
-      return urlObj.pathname.split('/embed/')[1];
-    }
-
-    if (urlObj.pathname.includes('/shorts/')) {
-      return urlObj.pathname.split('/shorts/')[1];
+    // Validate video ID to prevent open redirect
+    if (videoId && /^[a-zA-Z0-9_-]{11}$/.test(videoId.split('?')[0])) {
+      return videoId;
     }
   } catch (_e) {
     // Fallback to empty string if URL parsing fails

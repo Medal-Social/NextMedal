@@ -91,14 +91,6 @@ pnpm sanity:dev
 ```
 Access the Studio at `http://localhost:3000/admin`
 
-### Component Registry & v0 Integration
-
-NextMedal includes a built-in component registry compatible with [v0](https://v0.dev).
-
-- **Registry API**: Available at `/registry` (e.g., `/registry/button.json`).
-- **Open in v0**: UI components in the preview gallery have an "Open in v0" button to instantly edit them in v0.
-- **Build Registry**: Run `pnpm build:registry` to regenerate the registry files in `public/registry`.
-
 ### Build and Deploy
 
 1. Build for production:
@@ -148,5 +140,3 @@ NextMedal is licensed under the Apache License 2.0.
 ---
 
 Built with ❤️ by [Medal Social](https://medalsocial.com) in Norway
-
-

@@ -1,6 +1,5 @@
 import Modules from '@/ui/modules';
 import ComponentGalleryClient, { type GalleryComponent } from './ComponentGallery.client';
-import { shadcnComponents } from './shadcn-components';
 
 type GalleryItem = Sanity.Module & {
   _key: string;
@@ -19,6 +18,8 @@ export default function ComponentGallery({
   intro: any[];
   groups: Group[];
 }>) {
+  if (!groups?.length) return null;
+
   // Helper to extract title from portable text content
   const getContentTitle = (content: any) => {
     if (!content || !Array.isArray(content)) return null;
@@ -34,7 +35,7 @@ export default function ComponentGallery({
   };
 
   // Flatten groups into a single list of components with category info
-  const sanityComponents: GalleryComponent[] =
+  const components: GalleryComponent[] =
     groups?.flatMap(
       (group) =>
         group.items?.map((item) => {
@@ -63,10 +64,6 @@ export default function ComponentGallery({
           };
         }) || []
     ) || [];
-
-  const components = [...sanityComponents, ...shadcnComponents];
-
-  if (!components.length) return null;
 
   return <ComponentGalleryClient intro={intro} components={components} />;
 }

@@ -13,8 +13,12 @@ export const getYouTubeVideoId = (url: string) => {
 
   // Handle youtube.com/watch?v= format
   if (url.includes('youtube.com/watch')) {
-    const urlParams = new URLSearchParams(url.split('?')[1]);
-    return urlParams.get('v') || '';
+    const queryString = url.split('?')[1];
+    if (queryString) {
+      const urlParams = new URLSearchParams(queryString);
+      return urlParams.get('v') || '';
+    }
+    return '';
   }
 
   // Handle youtube.com/embed/ format
