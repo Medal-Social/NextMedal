@@ -28,10 +28,10 @@ type Video = {
 // Use regular dynamic imports for video players
 const MuxPlayer = dynamic(() => import('@mux/mux-player-react'), {
   loading: () => (
-    <div className="w-full h-full bg-black flex flex-col items-center justify-center">
+    <div className="w-full h-full bg-muted flex flex-col items-center justify-center">
       <div className="w-16 h-16 rounded-full border-4 border-transparent border-t-primary animate-spin mb-4" />
-      <p className="text-white font-medium text-lg">Preparing your video...</p>
-      <p className="text-white/70 text-sm mt-1">High quality experience loading</p>
+      <p className="text-foreground font-medium text-lg">Preparing your video...</p>
+      <p className="text-muted-foreground text-sm mt-1">High quality experience loading</p>
     </div>
   ),
   ssr: false,
@@ -40,10 +40,10 @@ const MuxPlayer = dynamic(() => import('@mux/mux-player-react'), {
 // Import regular ReactPlayer instead of YouTube specific
 const ReactPlayer = dynamic(() => import('react-player'), {
   loading: () => (
-    <div className="w-full h-full bg-black flex flex-col items-center justify-center">
+    <div className="w-full h-full bg-muted flex flex-col items-center justify-center">
       <div className="w-16 h-16 rounded-full border-4 border-transparent border-t-primary animate-spin mb-4" />
-      <p className="text-white font-medium text-lg">Loading your content...</p>
-      <p className="text-white/70 text-sm mt-1">YouTube player is being prepared</p>
+      <p className="text-foreground font-medium text-lg">Loading your content...</p>
+      <p className="text-muted-foreground text-sm mt-1">YouTube player is being prepared</p>
     </div>
   ),
   ssr: false,
@@ -183,14 +183,14 @@ const VideoError = ({
   onBackClick: () => void;
 }) => {
   return (
-    <div className="flex items-center justify-center h-full bg-black text-white text-center p-4">
+    <div className="flex items-center justify-center h-full bg-muted text-foreground text-center p-4">
       <div>
         <p className="text-xl font-semibold mb-2">Video Error</p>
         <p>{error || `Could not find a valid video ID for this ${type || ''} video.`}</p>
         <button
           onClick={onBackClick}
           type="button"
-          className="mt-4 px-4 py-2 bg-white text-black rounded"
+          className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded"
         >
           Back to Thumbnail
         </button>
@@ -226,12 +226,12 @@ export default function Video({ data, onClick }: { data: Sanity.Video; onClick: 
     (data?.type === 'mux' ? mux.error : null);
 
   return (
-    <div className="relative w-full h-full bg-gray-900">
+    <div className="relative w-full h-full bg-muted">
       {!isPlaying ? (
         // Thumbnail view
         <button
           type="button"
-          className="relative w-full h-full cursor-pointer bg-black"
+          className="relative w-full h-full cursor-pointer bg-muted"
           onClick={handlePlayClick}
           aria-label="Play video"
           onKeyDown={(e) => {
@@ -250,14 +250,14 @@ export default function Video({ data, onClick }: { data: Sanity.Video; onClick: 
               className="object-cover"
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-white">
+            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
               <p>No thumbnail available</p>
             </div>
           )}
-          <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+          <div className="absolute inset-0 bg-background/30 flex items-center justify-center">
             <button
               type="button"
-              className="w-16 h-16 bg-white text-black rounded-full flex items-center justify-center"
+              className="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center"
               aria-label="Play video"
             >
               {/* Play icon */}
@@ -270,7 +270,7 @@ export default function Video({ data, onClick }: { data: Sanity.Video; onClick: 
         </button>
       ) : (
         // Video player
-        <div className="relative w-full h-full overflow-hidden bg-black">
+        <div className="relative w-full h-full overflow-hidden bg-muted">
           {videoError ? (
             <VideoError
               error={videoError}
