@@ -35,9 +35,19 @@ export async function getComponentSchema(type: string) {
     };
   }
 
+  // Security check: Ensure filename doesn't contain path traversal characters
+  if (filename.includes('..')) {
+    console.error('Security Warning: Potential path traversal in schema filename:', filename);
+    return {
+      code: '// Error: Invalid schema filename',
+      html: '',
+      object: null,
+    };
+  }
+
   try {
     const schemaRoot = path.join(process.cwd(), 'src/sanity/schemaTypes');
-    let filePath = path.resolve(schemaRoot, 'modules', filename);
+    let filePath = path.resolve(schemaRoot, filename);
 
     // Security check: Ensure the resolved path is within the schemaRoot
     const relativePath = path.relative(schemaRoot, filePath);

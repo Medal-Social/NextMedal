@@ -32,9 +32,7 @@ export default async function NotFound() {
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <Button asChild>
-              <Link href="/">Go to Homepage</Link>
-            </Button>
+            <Button nativeButton={false} render={<Link href="/">Go to Homepage</Link>} />
           </EmptyContent>
         </Empty>
       </Section>

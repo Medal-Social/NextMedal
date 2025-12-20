@@ -35,34 +35,35 @@ export default function ComponentGallery({
   };
 
   // Flatten groups into a single list of components with category info
-  const components: GalleryComponent[] = groups.flatMap(
-    (group) =>
-      group.items?.map((item) => {
-        // item IS the module now
+  const components: GalleryComponent[] =
+    groups?.flatMap(
+      (group) =>
+        group.items?.map((item) => {
+          // item IS the module now
 
-        // Infer title/name from module data
-        const title =
-          // @ts-expect-error - dynamic access
-          item.title ||
-          // @ts-expect-error - dynamic access
-          item.summary ||
-          // @ts-expect-error - dynamic access
-          item.pretitle ||
-          // @ts-expect-error - dynamic access
-          getContentTitle(item.content) ||
-          item._type;
+          // Infer title/name from module data
+          const title =
+            // @ts-expect-error - dynamic access
+            item.title ||
+            // @ts-expect-error - dynamic access
+            item.summary ||
+            // @ts-expect-error - dynamic access
+            item.pretitle ||
+            // @ts-expect-error - dynamic access
+            getContentTitle(item.content) ||
+            item._type;
 
-        return {
-          id: item._key,
-          name: title || 'Untitled',
-          // @ts-expect-error - dynamic access
-          description: item.description || item.subtitle || '',
-          category: group.title,
-          moduleType: item._type,
-          children: <Modules modules={[item]} />,
-        };
-      }) || []
-  );
+          return {
+            id: item._key,
+            name: title || 'Untitled',
+            // @ts-expect-error - dynamic access
+            description: item.description || item.subtitle || '',
+            category: group.title,
+            moduleType: item._type,
+            children: <Modules modules={[item]} />,
+          };
+        }) || []
+    ) || [];
 
   return <ComponentGalleryClient intro={intro} components={components} />;
 }

@@ -45,7 +45,6 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'modules',
       ...modules,
       title: 'Page Content',
       description: 'Add content modules to build the page',

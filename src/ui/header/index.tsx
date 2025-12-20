@@ -4,11 +4,9 @@ import { getSite } from '@/sanity/lib/fetch';
 import { CommandMenu } from '@/ui/CommandMenu';
 import CTAList from '@/ui/CTAList';
 import { Img } from '@/ui/Img';
-import LocaleSwitcher from '@/ui/language-switcher';
 import BrandMenu from './BrandMenu';
 import MobileNavigation from './mobile-navigation';
 import Navigation from './navigation';
-import ThemeToggleWrapper from './ThemeToggleWrapper';
 import Toggle from './Toggle';
 import Wrapper from './Wrapper';
 
@@ -57,7 +55,7 @@ export default async function Header() {
         <div className="header-grid mx-auto grid max-w-7xl items-center gap-x-6 p-4 px-4 sm:px-6 lg:px-8">
           <div className="[grid-area:logo]">{logoNode}</div>
 
-          <nav className="max-lg:hidden" aria-label="Main navigation">
+          <nav className="max-lg:hidden [grid-area:nav]" aria-label="Main navigation">
             <Navigation />
           </nav>
 
@@ -68,13 +66,7 @@ export default async function Header() {
             <CTAList ctas={ctas} />
           </div>
 
-          <div className="flex items-center gap-2 ml-auto [grid-area:toggle-area]">
-            <div className="hidden lg:block">
-              <LocaleSwitcher />
-            </div>
-            <div className="hidden lg:block">
-              <ThemeToggleWrapper />
-            </div>
+          <div className="flex items-center gap-2 ml-auto [grid-area:toggle-area] lg:hidden">
             <Toggle />
           </div>
         </div>

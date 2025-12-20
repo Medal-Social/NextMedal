@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
@@ -48,34 +49,38 @@ export default function HeaderThemeToggle({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          size="sm"
-          variant="ghost"
-          aria-label={t('theme')}
-          className={cn('h-8 px-2', className)}
-        >
-          <Palette className="h-4 w-4" />
-          <span className="hidden ml-2">{t('theme')}</span>
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            size="sm"
+            variant="ghost"
+            aria-label={t('theme')}
+            className={cn('h-8 px-2', className)}
+          >
+            <Palette className="h-4 w-4" />
+            <span className="hidden ml-2">{t('theme')}</span>
+          </Button>
+        }
+      />
       <DropdownMenuContent className="w-48 z-[200]" align={dropdownAlign}>
-        <DropdownMenuLabel>{t('theme')}</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup onValueChange={setTheme} value={theme}>
-          <DropdownMenuRadioItem value="light">
-            <Sun className="mr-2 h-4 w-4" />
-            {t('light')}
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="dark">
-            <Moon className="mr-2 h-4 w-4" />
-            {t('dark')}
-          </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="system">
-            <Monitor className="mr-2 h-4 w-4" />
-            {t('system')}
-          </DropdownMenuRadioItem>
-        </DropdownMenuRadioGroup>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>{t('theme')}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuRadioGroup onValueChange={setTheme} value={theme}>
+            <DropdownMenuRadioItem value="light">
+              <Sun className="mr-2 h-4 w-4" />
+              {t('light')}
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="dark">
+              <Moon className="mr-2 h-4 w-4" />
+              {t('dark')}
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="system">
+              <Monitor className="mr-2 h-4 w-4" />
+              {t('system')}
+            </DropdownMenuRadioItem>
+          </DropdownMenuRadioGroup>
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

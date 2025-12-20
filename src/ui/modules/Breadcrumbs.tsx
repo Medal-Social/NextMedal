@@ -15,13 +15,15 @@ export default async function Breadcrumbs({
   crumbs,
   hideCurrent,
   currentPage,
+  ...props
 }: Partial<{
   crumbs: Sanity.Link[];
   hideCurrent?: boolean;
   currentPage: Sanity.Page | Sanity.BlogPost | Sanity.ComponentLibrary;
-}>) {
+}> &
+  React.ComponentProps<typeof Section>) {
   return (
-    <Section as={Breadcrumb} className="py-4 text-sm" spacing="none">
+    <Section as={Breadcrumb} className="py-4 text-sm" spacing="none" {...props}>
       <BreadcrumbList itemScope itemType="https://schema.org/BreadcrumbList">
         {crumbs?.map((crumb, index) => (
           <Fragment key={(crumb as any)._key || index}>

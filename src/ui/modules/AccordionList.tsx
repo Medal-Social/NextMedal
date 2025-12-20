@@ -65,11 +65,7 @@ export default function AccordionList({
         </div>
       )}
 
-      <Accordion
-        type="multiple"
-        defaultValue={defaultOpenItems}
-        className={cn('mx-auto w-full text-left')}
-      >
+      <Accordion defaultValue={defaultOpenItems} className={cn('mx-auto w-full text-left')}>
         {items?.map(({ summary, content, open: _open }, index) => {
           // Create a stable key for the accordion item
           const itemKey = `accordion-item-${index}-${summary ? summary.substring(0, 20).replace(/\s+/g, '-').toLowerCase() : ''}`;

@@ -4,7 +4,9 @@ import { Section } from '@/components/ui/section';
 import resolveUrl from '@/lib/resolveUrl';
 import { cn } from '@/lib/utils';
 import { getSite } from '@/sanity/lib/fetch';
+import ThemeToggleWrapper from '@/ui/header/ThemeToggleWrapper';
 import { Img } from '@/ui/Img';
+import LocaleSwitcher from '@/ui/language-switcher';
 import Social from '@/ui/Social';
 import Navigation from './Navigation';
 import SystemStatus from './SystemStatus';
@@ -85,7 +87,15 @@ export default async function Footer() {
             })}
           </div>
 
-          {systemStatus && <SystemStatus status={systemStatus} />}
+          <div className="flex items-center gap-4">
+            <div className="hidden lg:block">
+              <LocaleSwitcher dropdownAlign="end" className="[&>span]:inline-block" />
+            </div>
+            <div className="hidden lg:block">
+              <ThemeToggleWrapper dropdownAlign="end" className="[&>span]:inline-block" />
+            </div>
+            {systemStatus && <SystemStatus status={systemStatus} />}
+          </div>
         </Section>
       </div>
     </footer>

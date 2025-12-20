@@ -136,13 +136,9 @@ describe('Button Component - Unit Tests', () => {
     });
   });
 
-  describe('asChild Pattern', () => {
-    it('renders child element when asChild is true', () => {
-      render(
-        <Button asChild>
-          <a href="/test">Link Button</a>
-        </Button>
-      );
+  describe('Polymorphism (render prop)', () => {
+    it('renders as a link when using render prop', () => {
+      render(<Button render={<a href="/test">Link Button</a>} />);
 
       const link = screen.getByRole('link', { name: 'Link Button' });
       expect(link).toBeInTheDocument();
@@ -150,12 +146,8 @@ describe('Button Component - Unit Tests', () => {
       expect(link).toHaveAttribute('href', '/test');
     });
 
-    it('applies button styles to child element when asChild is true', () => {
-      render(
-        <Button asChild variant="destructive">
-          <a href="/test">Styled Link</a>
-        </Button>
-      );
+    it('applies button styles to rendered element', () => {
+      render(<Button variant="destructive" render={<a href="/test">Styled Link</a>} />);
 
       const link = screen.getByRole('link');
       expect(link.className).toContain('bg-destructive');
@@ -323,19 +315,17 @@ describe('Button Component - Property-Based Tests', () => {
   });
 
   /**
-   * **Feature: component-accessibility-testing, Property 5: Component asChild Pattern**
+   * **Feature: component-accessibility-testing, Property 5: Component Polymorphism**
    * **Validates: Requirements 2.5**
    *
-   * For any component supporting the asChild pattern, when asChild is true,
-   * the component SHALL render the child element with the component's props merged.
+   * For any component supporting polymorphism, it SHALL render the target element
+   * with the component's props merged.
    */
-  it('Property 5: Component asChild Pattern - renders child element with merged props', () => {
+  it('Property 5: Component Polymorphism - renders target element with merged props', () => {
     fc.assert(
       fc.property(variantArb, sizeArb, (variant, size) => {
         const { container } = render(
-          <Button asChild variant={variant} size={size}>
-            <a href="/test">Link</a>
-          </Button>
+          <Button variant={variant} size={size} render={<a href="/test">Link</a>} />
         );
 
         // Should render as anchor, not button
@@ -401,12 +391,8 @@ describe('Button Component - Accessibility Tests', () => {
       expect(results).toHaveNoViolations();
     });
 
-    it('has no accessibility violations with asChild pattern', async () => {
-      const { container } = render(
-        <Button asChild>
-          <a href="/test">Link Button</a>
-        </Button>
-      );
+    it('has no accessibility violations with polymorphic render', async () => {
+      const { container } = render(<Button render={<a href="/test">Link Button</a>} />);
       const results = await axe(container);
       expect(results).toHaveNoViolations();
     });

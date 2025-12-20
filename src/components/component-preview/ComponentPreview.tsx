@@ -3,7 +3,6 @@
 import type * as React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SchemaVisualizer } from './SchemaVisualizer';
-import { OpenInV0Button } from './OpenInV0Button';
 
 interface ComponentPreviewProps {
   moduleType: string;
@@ -31,7 +30,6 @@ export function ComponentPreview({
           </span>
         </div>
         <div className="flex items-center gap-2">
-          {hasRegistry && <OpenInV0Button name={moduleType} />}
           <TabsList>
             <TabsTrigger value="preview">Preview</TabsTrigger>
             <TabsTrigger value="structure">Structure</TabsTrigger>
@@ -59,6 +57,7 @@ export function ComponentPreview({
           {schemaHtml ? (
             <div
               className="text-sm font-mono p-4 rounded-lg bg-card border text-card-foreground [&>pre]:!bg-transparent [&>pre]:p-0"
+              // biome-ignore lint/security/noDangerouslySetInnerHtml: Required for syntax highlighting
               dangerouslySetInnerHTML={{ __html: schemaHtml }}
             />
           ) : (

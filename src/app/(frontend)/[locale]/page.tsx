@@ -37,11 +37,15 @@ export default async function Page() {
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <Button asChild variant="outline">
-              <a href="https://www.medalsocial.com" target="_blank" rel="noopener noreferrer">
-                Visit Medal Social
-              </a>
-            </Button>
+            <Button
+              nativeButton={false}
+              render={
+                <a href="https://www.medalsocial.com" target="_blank" rel="noopener noreferrer">
+                  Visit Medal Social
+                </a>
+              }
+              variant="outline"
+            />
           </EmptyContent>
         </Empty>
       </Section>

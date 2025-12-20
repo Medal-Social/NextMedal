@@ -62,12 +62,12 @@ function Author({
         </Link>
       )}
 
-      <div className="flex items-center gap-x-4">
+      <div className="flex items-center gap-x-3">
         {author?.image ? (
           <Img
-            className="aspect-square rounded-full object-cover relative z-0"
+            className="aspect-square rounded-full object-cover relative z-0 w-10 h-10"
             image={author.image}
-            width={40}
+            width={80}
             alt={author.name}
           />
         ) : (

@@ -58,62 +58,38 @@ interface VideoHeroProps {
 const getYouTubeVideoId = (url: string): string => {
   if (!url) return '';
 
-  try {
-    // Handle standard URL formats
-    if (url.includes('youtube.com') || url.includes('youtu.be')) {
-      const urlObj = new URL(url.startsWith('http') ? url : `https://${url}`);
-
-      if (urlObj.hostname.includes('youtu.be')) {
-        return urlObj.pathname.slice(1);
-      }
-
-      if (urlObj.pathname.includes('/watch')) {
-        return urlObj.searchParams.get('v') || '';
-      }
-
-      if (urlObj.pathname.includes('/embed/')) {
-        return urlObj.pathname.split('/embed/')[1];
-      }
-
-      if (urlObj.pathname.includes('/shorts/')) {
-        return urlObj.pathname.split('/shorts/')[1];
-      }
-    }
-  } catch (_e) {
-    // Fallback to string manipulation if URL parsing fails
-  }
-
-  // Handle youtu.be format (legacy string split)
-  if (url.includes('youtu.be/')) {
-    const id = url.split('youtu.be/')[1];
-    return id.split('?')[0];
-  }
-
-  // Handle youtube.com/watch?v= format (legacy)
-  if (url.includes('youtube.com/watch')) {
-    try {
-      const urlParams = new URLSearchParams(url.split('?')[1]);
-      return urlParams.get('v') || '';
-    } catch (_) {
-      return '';
-    }
-  }
-
-  // Handle youtube.com/embed/ format (legacy)
-  if (url.includes('youtube.com/embed/')) {
-    const id = url.split('youtube.com/embed/')[1];
-    return id.split('?')[0];
-  }
-
-  // Handle youtube.com/shorts/ format (legacy)
-  if (url.includes('youtube.com/shorts/')) {
-    const id = url.split('youtube.com/shorts/')[1];
-    return id.split('?')[0];
-  }
-
   // If it's already just an ID (no slashes or dots)
   if (!url.includes('/') && !url.includes('.')) {
     return url;
+  }
+
+  try {
+    const urlObj = new URL(url.startsWith('http') ? url : `https://${url}`);
+    const hostname = urlObj.hostname.toLowerCase();
+    const allowedDomains = ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be'];
+
+    if (!allowedDomains.includes(hostname)) {
+      return '';
+    }
+
+    let videoId = '';
+    if (hostname === 'youtu.be') {
+      videoId = urlObj.pathname.slice(1);
+    } else if (urlObj.pathname.includes('/watch')) {
+      videoId = urlObj.searchParams.get('v') || '';
+    } else if (urlObj.pathname.includes('/embed/')) {
+      videoId = urlObj.pathname.split('/embed/')[1];
+    } else if (urlObj.pathname.includes('/shorts/')) {
+      videoId = urlObj.pathname.split('/shorts/')[1];
+    }
+
+    // Validate video ID to prevent open redirect
+    if (videoId && /^[a-zA-Z0-9_-]{11}$/.test(videoId.split('?')[0])) {
+      return videoId;
+    }
+  } catch (_e) {
+    // Fallback to empty string if URL parsing fails
+    return '';
   }
 
   return '';

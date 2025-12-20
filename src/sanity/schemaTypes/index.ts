@@ -43,6 +43,7 @@ import menuItem from './objects/menu-item';
 import metadata from './objects/metadata';
 import moduleOptions from './objects/module-options';
 import stat from './objects/stat';
+import video from './objects/video';
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   // documents
@@ -70,6 +71,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   metadata,
   moduleOptions,
   stat,
+  video,
   modules,
 
   // modules

@@ -28,7 +28,7 @@ export default function DraftModeControls({
     <details className="fixed right-4 bottom-0 rounded-t bg-amber-200/90 text-xs shadow-xl not-hover:opacity-50 open:opacity-100">
       <summary className="p-2">Draft Mode</summary>
 
-      <menu className="anim-fade-to-r p-2 pt-0">
+      <menu className="animate-fade-to-r p-2 pt-0">
         {filteredGlobalModules?.map(({ _id, path }) => {
           const attr = createDataAttribute({
             id: _id,
