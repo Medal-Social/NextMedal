@@ -1,13 +1,8 @@
 {
   "name": "pagination",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "lucide-react"
-  ],
-  "registryDependencies": [
-    "button"
-  ],
+  "dependencies": ["react", "lucide-react"],
+  "registryDependencies": ["button"],
   "files": [
     {
       "path": "ui/pagination.tsx",
