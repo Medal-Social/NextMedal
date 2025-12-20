@@ -1,14 +1,8 @@
 {
   "name": "field",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "class-variance-authority"
-  ],
-  "registryDependencies": [
-    "label",
-    "separator"
-  ],
+  "dependencies": ["react", "class-variance-authority"],
+  "registryDependencies": ["label", "separator"],
   "files": [
     {
       "path": "ui/field.tsx",
