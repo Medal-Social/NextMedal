@@ -1,14 +1,8 @@
 {
   "name": "sheet",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "@base-ui/react/dialog",
-    "lucide-react"
-  ],
-  "registryDependencies": [
-    "button"
-  ],
+  "dependencies": ["react", "@base-ui/react/dialog", "lucide-react"],
+  "registryDependencies": ["button"],
   "files": [
     {
       "path": "ui/sheet.tsx",
