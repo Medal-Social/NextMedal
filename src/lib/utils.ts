@@ -1,8 +1,67 @@
-import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
+type ClassValue =
+  | string
+  | number
+  | boolean
+  | undefined
+  | null
+  | { [key: string]: any }
+  | ClassValue[];
+
+function classNames(...args: ClassValue[]): string {
+  let classes = '';
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg) {
+      classes = appendClass(classes, parseValue(arg));
+    }
+  }
+
+  return classes;
+}
+
+function parseValue(arg: any): string {
+  if (typeof arg === 'string' || typeof arg === 'number') {
+    return String(arg);
+  }
+
+  if (Array.isArray(arg)) {
+    if (arg.length) {
+      return classNames(...arg);
+    }
+    return '';
+  }
+
+  if (typeof arg === 'object') {
+    if (
+      arg.toString !== Object.prototype.toString &&
+      !arg.toString.toString().includes('[native code]')
+    ) {
+      return arg.toString();
+    }
+
+    let inner = '';
+    for (const key in arg) {
+      if (Object.hasOwn(arg, key) && arg[key]) {
+        inner = appendClass(inner, key);
+      }
+    }
+    return inner;
+  }
+
+  return '';
+}
+
+function appendClass(value: string, newClass: string): string {
+  if (!newClass) return value;
+  if (value) return `${value} ${newClass}`;
+  return newClass;
+}
+
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  return twMerge(classNames(inputs));
 }
 
 export function count(arr: Array<any> | number, singular = 'item', plural?: string) {
