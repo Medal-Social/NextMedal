@@ -4,6 +4,7 @@ import { CircleCheckBig } from 'lucide-react';
 import { PortableText, type PortableTextComponents } from 'next-sanity';
 import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
+import { Section } from '@/components/ui/section';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import moduleProps from '@/lib/moduleProps';
 import CTAList from '@/ui/CTAList';
@@ -34,23 +35,19 @@ export default function PricingList({
   pretitle: string;
   intro: any;
   tiers: Sanity.Pricing[];
-  isTabbedModule?: boolean;
 }> &
   Sanity.Module) {
   const [isYearly, setIsYearly] = useState(false);
   return (
-    <section
-      className="section [&:first-child]:mt-8 md:[&:first-child]:mt-16 space-y-8"
-      {...moduleProps(props)}
-    >
+    <Section className="space-y-8" {...moduleProps(props)}>
       {(pretitle || intro) && (
-        <header className="section-intro text-center items-center flex flex-col">
-          <Pretitle className="mb-4">{pretitle}</Pretitle>
+        <header className="section-intro text-center items-center flex flex-col gap-4">
+          <Pretitle>{pretitle}</Pretitle>
           <PortableText value={intro} />
         </header>
       )}
       {tiers?.find((tier) => tier.price?.yearly !== undefined) && (
-        <div className="flex justify-center items-center space-x-4  rounded-full ">
+        <div className="flex justify-center items-center space-x-4 rounded-full">
           <Tabs
             onValueChange={(value) => setIsYearly(value === 'yearly')}
             defaultValue="monthly"
@@ -84,21 +81,23 @@ export default function PricingList({
           (tier) =>
             !!tier && (
               <article
-                className="backdrop-blur-sm bg-card/30 p-8 rounded-lg border border-primary/10 hover:border-primary/20 transition-all duration-300 flex flex-col"
+                className="backdrop-blur-sm bg-card/30 p-8 rounded-lg border border-primary/10 hover:border-primary/20 transition-colors duration-300 flex flex-col gap-6"
                 key={tier._id}
               >
-                <div className="text-2xl mb-4 flex items-center justify-between">
-                  {tier.title}
-                  {tier.highlight && (
-                    <Badge className="text-xs text-primary-foreground ">{tier.highlight}</Badge>
+                <div className="flex flex-col gap-2">
+                  <div className="text-2xl flex items-center justify-between">
+                    {tier.title}
+                    {tier.highlight && (
+                      <Badge className="text-xs text-primary-foreground ">{tier.highlight}</Badge>
+                    )}
+                  </div>
+                  {tier.description && (
+                    <p className="text-sm text-muted-foreground">{tier.description}</p>
                   )}
                 </div>
-                {tier.description && (
-                  <p className="text-sm text-muted-foreground mb-4">{tier.description}</p>
-                )}
 
                 {tier.price?.base !== undefined && (
-                  <div className="flex flex-wrap items-end gap-x-1 mb-6">
+                  <div className="flex flex-wrap items-end gap-x-1">
                     {tier.price.base !== undefined && tier.price.base && (
                       <span className="text-4xl text-foreground font-semibold">
                         {tier.price.currency}{' '}
@@ -126,15 +125,15 @@ export default function PricingList({
                   </div>
                 )}
 
-                <CTAList className="grid mb-6" ctas={tier.ctas} />
-                <div className="hero">
+                <CTAList className="grid" ctas={tier.ctas} />
+                <div className="prose prose-slate dark:prose-invert max-w-none">
                   <PortableText components={components} value={tier.content} />
                 </div>
               </article>
             )
         )}
       </div>
-    </section>
+    </Section>
   );
 }
 
