@@ -5,11 +5,7 @@
 
 import { createMockBlogPost, createMockPage, createMockSite } from './documents';
 import { createMockMetadata, createMockPortableText, createMockSlug } from './helpers';
-import {
-  createMockCalloutModule,
-  createMockFeaturesModule,
-  createMockHeroModule,
-} from './modules';
+import { createMockCalloutModule, createMockFeaturesModule, createMockHeroModule } from './modules';
 
 /**
  * Pre-built mock page with common modules
