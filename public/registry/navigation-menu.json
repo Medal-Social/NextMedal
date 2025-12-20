@@ -1,11 +1,7 @@
 {
   "name": "navigation-menu",
   "type": "components:ui",
-  "dependencies": [
-    "@base-ui/react/navigation-menu",
-    "class-variance-authority",
-    "lucide-react"
-  ],
+  "dependencies": ["@base-ui/react/navigation-menu", "class-variance-authority", "lucide-react"],
   "registryDependencies": [],
   "files": [
     {
