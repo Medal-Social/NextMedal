@@ -99,7 +99,7 @@ export default function PricingList({
                 {tier.price?.base !== undefined && (
                   <div className="flex flex-wrap items-end gap-x-1">
                     {tier.price.base !== undefined && tier.price.base && (
-                      <span className="text-4xl text-foreground font-semibold">
+                      <span className="text-4xl text-foreground font-semibold font-numeric">
                         {tier.price.currency}{' '}
                         {!Number.isNaN(Number.parseInt(tier.price.base, 10)) &&
                         Number.parseInt(tier.price.base, 10) > 0 &&
