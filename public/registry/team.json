@@ -1,14 +1,8 @@
 {
   "name": "team",
   "type": "components:module",
-  "dependencies": [
-    "next-sanity",
-    "react-icons/fa",
-    "react-icons/fa6"
-  ],
-  "registryDependencies": [
-    "section"
-  ],
+  "dependencies": ["next-sanity", "react-icons/fa", "react-icons/fa6"],
+  "registryDependencies": ["section"],
   "files": [
     {
       "path": "modules/Team.tsx",
