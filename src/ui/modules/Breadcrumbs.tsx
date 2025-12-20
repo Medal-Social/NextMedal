@@ -23,10 +23,8 @@ export default async function Breadcrumbs({
   return (
     <Section as={Breadcrumb} className="py-4 text-sm" spacing="none">
       <BreadcrumbList itemScope itemType="https://schema.org/BreadcrumbList">
-        {crumbs?.map((crumb) => (
-          <Fragment
-            key={crumb.external || (crumb.internal && resolveUrl(crumb.internal, { base: false }))}
-          >
+        {crumbs?.map((crumb, index) => (
+          <Fragment key={(crumb as any)._key || index}>
             <BreadcrumbItem
               itemProp="itemListElement"
               itemScope
