@@ -1,13 +1,8 @@
 {
   "name": "search",
   "type": "components:ui",
-  "dependencies": [
-    "lucide-react",
-    "react"
-  ],
-  "registryDependencies": [
-    "input"
-  ],
+  "dependencies": ["lucide-react", "react"],
+  "registryDependencies": ["input"],
   "files": [
     {
       "path": "ui/search.tsx",
