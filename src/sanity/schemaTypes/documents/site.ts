@@ -8,6 +8,8 @@
  */
 
 import { defineField, defineType } from 'sanity';
+import { getBlockText } from '@/sanity/lib/utils';
+// import modules from '../fragments/modules';
 
 export default defineType({
   name: 'site',
@@ -15,13 +17,12 @@ export default defineType({
   type: 'document',
   groups: [
     { name: 'general', title: 'General', default: true },
-    { name: 'appearance', title: 'Site Logo' },
     { name: 'navigation', title: 'Navigation' },
     { name: 'compliance', title: 'Compliance' },
   ],
   fieldsets: [
-    { name: 'branding', title: 'Branding', options: { collapsible: true, collapsed: false } },
-    { name: 'footer', title: 'Footer', options: { collapsible: false } },
+    { name: 'header', title: 'Header', options: { collapsible: true, collapsed: false } },
+    { name: 'footer', title: 'Footer', options: { collapsible: true, collapsed: false } },
     {
       name: 'cookies',
       title: 'Cookie Settings',
@@ -29,12 +30,22 @@ export default defineType({
     },
   ],
   fields: [
-    // General Group - Basic site information and content
+    // General Group
     defineField({
       name: 'language',
       type: 'string',
       readOnly: true,
       hidden: true,
+    }),
+    defineField({
+      name: 'banners',
+      title: 'Site Banners',
+      description:
+        'Special banners shown across the site. Useful for promotions or urgent news.',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'banner' }] }],
+      group: 'general',
+      initialValue: [],
     }),
     defineField({
       name: 'title',
@@ -45,33 +56,42 @@ export default defineType({
       group: 'general',
     }),
     defineField({
+      name: 'logo',
+      title: 'Site Logo',
+      description: "Upload your site's logo. Used in the header and for social sharing.",
+      type: 'reference',
+      to: [{ type: 'logo' }],
+      group: 'general',
+    }),
+    defineField({
       name: 'tagline',
       title: 'Site Tagline',
       description: 'A short slogan or motto for your site. Shown in meta tags and some layouts.',
       type: 'array',
-      of: [{ type: 'block' }],
+      of: [
+        {
+          type: 'block',
+          styles: [],
+          lists: [],
+          marks: {
+            decorators: [
+              { title: 'Strong', value: 'strong' },
+              { title: 'Emphasis', value: 'em' },
+            ],
+          },
+        },
+      ],
       group: 'general',
+      validation: (Rule) =>
+        Rule.custom((blocks: any) => {
+          const text = getBlockText(blocks, ' ');
+          return text.length > 200
+            ? 'Tagline should be concise (recommended max 200 characters)'
+            : true;
+        }).warning(),
     }),
-    defineField({
-      name: 'announcements',
-      title: 'Site Announcements',
-      description:
-        'Special announcements shown across the site. Useful for promotions or urgent news.',
-      type: 'array',
-      of: [{ type: 'reference', to: [{ type: 'announcement' }] }],
-      group: 'general',
-      initialValue: [],
-    }),
-    // Appearance & Branding Group - Visual elements
-    defineField({
-      name: 'logo',
-      title: 'Site Logo',
-      description: "Upload your site's logo. Used in the header and for social sharing.",
-      type: 'logo',
-      group: 'appearance',
-      fieldset: 'branding',
-    }),
-    // Navigation Group - Header first, then footer, then rest
+    
+    // Navigation Group
     defineField({
       name: 'headerMenu',
       title: 'Header Menu',
@@ -79,17 +99,19 @@ export default defineType({
       type: 'reference',
       to: [{ type: 'navigation' }],
       group: 'navigation',
+      fieldset: 'header',
     }),
     defineField({
       name: 'ctas',
-      title: 'Header Call-to-Actions',
-      description: 'Call to action buttons that appear in the header.',
+      title: 'Action Buttons',
+      description: 'Primary action buttons displayed in the header (e.g., "Get Started", "Contact").',
       type: 'array',
       of: [{ type: 'cta' }],
       group: 'navigation',
+      fieldset: 'header',
       initialValue: [],
-      validation: (Rule) => Rule.min(1).error('Add at least one CTA.'),
     }),
+
     defineField({
       name: 'footerMenu',
       title: 'Footer Menu',
@@ -107,11 +129,25 @@ export default defineType({
       of: [
         {
           type: 'block',
-          styles: [{ title: 'Normal', value: 'normal' }],
+          styles: [],
+          lists: [],
+          marks: {
+            decorators: [
+              { title: 'Strong', value: 'strong' },
+              { title: 'Emphasis', value: 'em' },
+            ],
+          },
         },
       ],
-      group: 'general',
+      group: 'navigation',
       fieldset: 'footer',
+      validation: (Rule) =>
+        Rule.custom((blocks: any) => {
+          const text = getBlockText(blocks, ' ');
+          return text.length > 300
+            ? 'Copyright text should be concise (recommended max 300 characters)'
+            : true;
+        }).warning(),
     }),
     defineField({
       name: 'socialLinks',
@@ -124,9 +160,19 @@ export default defineType({
           fields: [
             {
               name: 'text',
-              title: 'Label',
+              title: 'Platform',
               type: 'string',
-              description: 'Label for the social channel (e.g., LinkedIn, Twitter)',
+              options: {
+                list: [
+                  'Facebook',
+                  'Instagram',
+                  'LinkedIn',
+                  'X (Twitter)',
+                  'YouTube',
+                  'TikTok',
+                  'GitHub',
+                ],
+              },
               validation: (Rule) => Rule.required(),
             },
             {
@@ -137,11 +183,17 @@ export default defineType({
               validation: (Rule) => Rule.required().uri({ scheme: ['http', 'https'] }),
             },
           ],
+          preview: {
+            select: {
+              title: 'text',
+              subtitle: 'url',
+            },
+          },
         },
       ],
       group: 'navigation',
+      fieldset: 'footer',
       initialValue: [],
-      validation: (Rule) => Rule.min(1).error('Add at least one social link.'),
     }),
     defineField({
       name: 'cookieConsent',
@@ -301,7 +353,6 @@ export default defineType({
               },
             },
           ],
-          validation: (Rule: any) => Rule.required().min(1),
         },
       ],
     }),
