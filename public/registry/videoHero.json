@@ -1,14 +1,8 @@
 {
   "name": "videoHero",
   "type": "components:module",
-  "dependencies": [
-    "next/dynamic",
-    "next/image",
-    "react"
-  ],
-  "registryDependencies": [
-    "section"
-  ],
+  "dependencies": ["next/dynamic", "next/image", "react"],
+  "registryDependencies": ["section"],
   "files": [
     {
       "path": "modules/VideoHero.tsx",
