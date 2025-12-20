@@ -1,10 +1,7 @@
 {
   "name": "alert",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "class-variance-authority"
-  ],
+  "dependencies": ["react", "class-variance-authority"],
   "registryDependencies": [],
   "files": [
     {
