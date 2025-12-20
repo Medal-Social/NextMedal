@@ -60,7 +60,6 @@ function _parseParams(params?: string): Record<string, string> | undefined {
 function mapToMobileNavLink(link: MenuItemType): MobileNavLink {
   return {
     label: link.label ?? '',
-    description: undefined,
     internal: link.internal,
     external: link.external,
     params: link.params,
