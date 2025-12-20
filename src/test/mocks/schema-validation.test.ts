@@ -16,17 +16,21 @@ import {
   createMockBlogPost,
   createMockBreadcrumbsModule,
   createMockCalloutModule,
+  createMockComponentGalleryModule,
   createMockFeaturesModule,
   createMockHeroModule,
+  createMockLatestArticlesModule,
   createMockLogoCloudModule,
+  createMockLogoListModule,
   createMockPage,
   createMockPerson,
-  createMockTeamModule,
   createMockPricingComparisonModule,
   createMockPricingListModule,
   createMockProductComparisonModule,
   createMockRichtextModule,
   createMockSite,
+  createMockTeamListModule,
+  createMockTeamModule,
   createMockVideoHeroModule,
   MODULE_TYPES,
 } from './sanity';
@@ -209,9 +213,19 @@ describe('Module Schema Validation', () => {
     },
     { moduleType: 'blog-list', schemaName: 'blog-list', createMock: createMockBlogListModule },
     {
+      moduleType: 'latest-articles',
+      schemaName: 'latest-articles',
+      createMock: createMockLatestArticlesModule,
+    },
+    {
       moduleType: 'breadcrumbs',
       schemaName: 'breadcrumbs',
       createMock: createMockBreadcrumbsModule,
+    },
+    {
+      moduleType: 'component-gallery',
+      schemaName: 'component-gallery',
+      createMock: createMockComponentGalleryModule,
     },
     {
       moduleType: 'features',
@@ -219,10 +233,16 @@ describe('Module Schema Validation', () => {
       createMock: createMockFeaturesModule,
     },
     { moduleType: 'logo-cloud', schemaName: 'logo-cloud', createMock: createMockLogoCloudModule },
+    { moduleType: 'logo-list', schemaName: 'logo-list', createMock: createMockLogoListModule },
     {
       moduleType: 'team',
       schemaName: 'team',
       createMock: createMockTeamModule,
+    },
+    {
+      moduleType: 'team-list',
+      schemaName: 'team-list',
+      createMock: createMockTeamListModule,
     },
     {
       moduleType: 'pricing-comparison',
@@ -248,8 +268,8 @@ describe('Module Schema Validation', () => {
   ];
 
   it('all 18 module types have corresponding schemas', () => {
-    expect(MODULE_TYPES).toHaveLength(14);
-    expect(moduleConfigs).toHaveLength(14);
+    expect(MODULE_TYPES).toHaveLength(18);
+    expect(moduleConfigs).toHaveLength(18);
   });
 
   describe.each(moduleConfigs)('$schemaName module', ({ moduleType, schemaName, createMock }) => {
