@@ -33,10 +33,29 @@ export function Img({
   height: h,
   loading: _loading,
   ...props
-}: { image?: Sanity.Image } & ImgProps) {
+}: {
+  image?:
+    | Sanity.Image
+    | { src?: string; url?: string; alt?: string; width?: number; height?: number };
+} & ImgProps) {
   if (!image) return null;
 
-  const generatedSrc = generateSrc(image, w, h);
+  // Handle direct URL (mock/external)
+  if (('src' in image && image.src) || ('url' in image && image.url)) {
+    const src = (image as any).src || (image as any).url;
+    return (
+      <Image
+        src={src}
+        width={Number(w) || (image as any).width || 800}
+        height={Number(h) || (image as any).height || 600}
+        alt={props.alt || image.alt || ''}
+        {...props}
+      />
+    );
+  }
+
+  const sanityImage = image as Sanity.Image;
+  const generatedSrc = generateSrc(sanityImage, w, h);
   const isGif = generatedSrc?.src?.includes('.gif');
   const isSvg = generatedSrc?.src?.toLowerCase().endsWith('.svg');
   if (!generatedSrc) return null;
@@ -44,8 +63,7 @@ export function Img({
   const { src, width, height } = generatedSrc;
 
   // Get loading value and ensure it's valid
-  // Get loading value and ensure it's valid
-  const loadingValue = stegaClean(image.loading);
+  const loadingValue = stegaClean(sanityImage.loading);
   const validLoading = props.priority
     ? undefined
     : loadingValue === 'eager' || loadingValue === 'lazy'
@@ -61,7 +79,7 @@ export function Img({
       src={isGif ? src.split('?')[0] : src}
       width={width}
       height={height}
-      alt={props.alt || image.alt || image.altText || image.asset?.altText || ''}
+      alt={props.alt || sanityImage.alt || sanityImage.altText || sanityImage.asset?.altText || ''}
       unoptimized={isGif || isSvg}
       {...props}
       loading={validLoading}
