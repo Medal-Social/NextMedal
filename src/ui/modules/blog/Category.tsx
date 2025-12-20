@@ -16,7 +16,12 @@ export default function Category({
   const props = {
     className: cn('before:text-current/50 hover:*:underline', !linked && 'pointer-events-none'),
     children: badge ? (
-      <Badge variant="secondary">{label || value?.title}</Badge>
+      <Badge
+        variant="secondary"
+        className="bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:hover:bg-purple-900/50 rounded-full px-3 py-1 font-semibold"
+      >
+        {label || value?.title}
+      </Badge>
     ) : (
       <span>{label || value?.title}</span>
     ),
