@@ -1,11 +1,7 @@
 {
   "name": "input-otp",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "input-otp",
-    "lucide-react"
-  ],
+  "dependencies": ["react", "input-otp", "lucide-react"],
   "registryDependencies": [],
   "files": [
     {
