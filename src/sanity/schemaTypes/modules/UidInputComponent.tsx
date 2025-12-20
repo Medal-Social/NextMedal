@@ -29,9 +29,3 @@ export const UidInputComponent = ({ elementProps, path }: any) => {
     </Flex>
   );
 };
-
-
-
-
-
-
