@@ -11,7 +11,7 @@
  * - 1.0.0: Initial version
  */
 
-import { TfiLayoutCtaCenter } from 'react-icons/tfi';
+import { BlockContentIcon } from '@sanity/icons';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 import { createUidField } from './uid-input';
@@ -19,7 +19,7 @@ import { createUidField } from './uid-input';
 export default defineType({
   name: 'hero',
   title: 'Hero',
-  icon: TfiLayoutCtaCenter,
+  icon: BlockContentIcon,
   type: 'object',
   groups: [
     { name: 'content', title: 'Content', default: true },
@@ -153,6 +153,7 @@ export default defineType({
                     value: 'outline',
                   },
                 ],
+                layout: 'radio',
               },
               initialValue: 'default',
             }),
@@ -269,7 +270,7 @@ export default defineType({
       return {
         title: title || getBlockText(description) || 'Hero',
         subtitle: `Hero • ${mediaLabel}`,
-        media: media?.image || TfiLayoutCtaCenter,
+        media: media?.image || BlockContentIcon,
       };
     },
   },

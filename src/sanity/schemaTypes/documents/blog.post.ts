@@ -7,16 +7,20 @@
  * - 1.0.0: Initial version with core blog post functionality
  */
 
-import { VscEdit, VscEyeClosed } from 'react-icons/vsc';
+import { EditIcon, EyeClosedIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import { imageBlock } from '../fragments';
 
 export default defineType({
   name: 'blog.post',
   title: 'Blog post',
-  icon: VscEdit,
+  icon: EditIcon,
   type: 'document',
-  groups: [{ name: 'content', default: true }, { name: 'options' }, { name: 'seo', title: 'SEO' }],
+  groups: [
+    { name: 'content', default: true },
+    { name: 'options' },
+    { name: 'metadata', title: 'SEO & Metadata' },
+  ],
   fields: [
     defineField({
       name: 'language',
@@ -70,16 +74,23 @@ export default defineType({
       name: 'featured',
       title: 'Featured',
       description: 'Highlight this post on the blog homepage.',
-      type: 'boolean',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Standard', value: 'standard' },
+          { title: 'Featured', value: 'featured' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'standard',
       group: 'options',
-      initialValue: false,
     }),
     defineField({
       name: 'metadata',
       title: 'SEO & Metadata',
       description: 'Search engine optimization settings.',
       type: 'metadata',
-      group: 'seo',
+      group: 'metadata',
     }),
   ],
   preview: {
@@ -99,9 +110,9 @@ export default defineType({
       const subtitle = [languageLabel, publishDate, slug && `/${slug}`].filter(Boolean).join(' • ');
 
       return {
-        title: [featured && '★', title].filter(Boolean).join(' '),
+        title: [featured === 'featured' && '★', title].filter(Boolean).join(' '),
         subtitle,
-        media: media || (noindex ? VscEyeClosed : VscEdit),
+        media: media || (noindex ? EyeClosedIcon : EditIcon),
       };
     },
   },

@@ -3,6 +3,8 @@
 @plugin "@tailwindcss/typography";
 
 :root {
+  --header-height: 4rem; /* 64px default, updated by JS */
+  --header-z-index: 50;
   --background: hsl(222 47% 11%);
   --foreground: hsl(210 40% 98%);
   --card: hsl(222 47% 11%);
@@ -295,6 +297,7 @@
     accent-color: var(--color-primary);
     caret-color: var(--color-primary);
     scroll-behavior: smooth;
+    scroll-padding-top: var(--header-height);
   }
 
   summary,

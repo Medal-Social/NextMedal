@@ -48,31 +48,40 @@ function Author({
   socialLinks?: boolean;
   bio?: boolean;
 }) {
-  const props = {
-    className: cn(
-      'flex items-center gap-[.5ch] ',
-      linked && 'hover:underline',
-      !linked || (!socialLinks && 'pointer-events-none')
-    ),
-    children: (
+  return (
+    <div
+      className={cn(
+        'relative flex items-center gap-[.5ch]',
+        linked && 'group',
+        !linked && !socialLinks && 'pointer-events-none'
+      )}
+    >
+      {linked && author?.slug?.current && (
+        <Link href={`/blog?author=${author.slug.current}`} className="absolute inset-0 z-0">
+          <span className="sr-only">View author {author.name}</span>
+        </Link>
+      )}
+
       <div className="flex items-center gap-x-4">
         {author?.image ? (
           <Img
-            className="aspect-square rounded-full object-cover"
+            className="aspect-square rounded-full object-cover relative z-0"
             image={author.image}
             width={40}
             alt={author.name}
           />
         ) : (
-          <GoPerson className="text-primary/20 text-xl" />
+          <GoPerson className="text-primary/20 text-xl relative z-0" />
         )}
-        <div>
-          <div className="font-semibold">{author?.name}</div>
+        <div className="relative z-0">
+          <div className={cn('font-semibold', linked && 'group-hover:underline')}>
+            {author?.name}
+          </div>
           {bio && author?.title && (
             <div className="text-muted-foreground">{`${author?.title}`}</div>
           )}
           {socialLinks && Array.isArray(author?.socialLinks) ? (
-            <ul className="mt-1 flex items-center  gap-x-6">
+            <ul className="mt-1 flex items-center gap-x-6 relative z-10">
               {author.socialLinks.map((link, index) => {
                 const Icon =
                   {
@@ -91,7 +100,7 @@ function Author({
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-muted-foreground hover:text-foreground h-auto w-fit"
+                      className="text-muted-foreground hover:text-foreground h-auto w-fit block"
                       aria-label={`${link.platform} profile for ${author.name}`}
                     >
                       <span className="sr-only">{link.platform}</span>
@@ -104,11 +113,6 @@ function Author({
           ) : null}
         </div>
       </div>
-    ),
-  };
-  return linked ? (
-    <Link href={`/blog?author=${author?.slug?.current}`} {...props} />
-  ) : (
-    <div {...props} />
+    </div>
   );
 }

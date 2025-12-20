@@ -3,10 +3,30 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { codeToHtml } from 'shiki';
+import { z } from 'zod';
 import { sanitizeSchema, schemaMap, schemaObjects } from '@/lib/schema-config';
 
+// Schema validation for inputs
+const GetSchemaInput = z
+  .string()
+  .min(1)
+  .regex(/^[a-zA-Z0-9._-]+$/);
+
 export async function getComponentSchema(type: string) {
-  const filename = schemaMap[type];
+  // Validate input
+  const parseResult = GetSchemaInput.safeParse(type);
+  if (!parseResult.success) {
+    console.error('Security Warning: Invalid schema type requested:', type);
+    return {
+      code: '// Error: Invalid schema type',
+      html: '',
+      object: null,
+    };
+  }
+
+  const safeType = parseResult.data;
+  const filename = schemaMap[safeType];
+
   if (!filename) {
     return {
       code: '// Schema definition not found',
@@ -66,10 +86,10 @@ export async function getComponentSchema(type: string) {
     return {
       code: content,
       html,
-      object: sanitizeSchema(schemaObjects[type]),
+      object: sanitizeSchema(schemaObjects[safeType]),
     };
   } catch (error) {
-    const safeType = String(type).replace(/[\r\n]/g, '');
+    // safeType is already validated by Zod above
     console.error('Error loading schema for:', safeType, error);
     return {
       code: `// Error loading schema: ${filename}`,

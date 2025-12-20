@@ -26,7 +26,7 @@ export default async function Menu() {
 
   return (
     <nav
-      className="flex flex-wrap items-start gap-x-12 gap-y-6 max-sm:flex-col"
+      className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
       aria-label="Footer navigation"
     >
       {footerMenu?.items?.map((item, key) => {

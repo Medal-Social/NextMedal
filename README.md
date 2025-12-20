@@ -38,10 +38,11 @@ NextMedal is the ultimate choice for developers, agencies, and businesses who de
 - **Responsive**: Mobile-first design
 
 ### Quality & DX
-- **Biome**: Fast linting and formatting
+- **Biome**: Fast linting and formatting with strict accessibility rules
+- **Husky**: Pre-commit hooks for quality assurance
 - **Vitest**: Unit and integration testing
 - **SEO Ready**: Dynamic sitemaps, OG images
-- **Accessibility**: WCAG 2.1 compliant
+- **Accessibility**: WCAG 2.1 compliant (enforced by linter)
 
 ## Getting Started 🚀
 

@@ -6,7 +6,7 @@ import { defineLive } from 'next-sanity/live';
 import { dev } from '@/lib/env';
 import { client } from '@/sanity/lib/client';
 import { token } from '@/sanity/lib/token';
-import { CTA_QUERY, NAVIGATION_QUERY } from './queries';
+import { CTA_QUERY, LINK_QUERY, NAVIGATION_QUERY } from './queries';
 
 export async function fetchSanity<T = any>({
   query,
@@ -64,13 +64,29 @@ export async function fetchSanityLive<T = any>(args: Parameters<typeof sanityFet
 export async function getSite() {
   const site = await fetchSanityLive<Sanity.Site>({
     query: groq`
-			*[_type == 'site'][0]{
+			*[_type == 'site' && _id == 'site'][0]{
 				...,
+				logo->{
+					...,
+					image {
+						default {
+							...,
+							asset->
+						},
+						dark {
+							...,
+							asset->
+						}
+					}
+				},
 				ctas[]{ ${CTA_QUERY} },
 				headerMenu->{ ${NAVIGATION_QUERY} },
 				footerMenu->{ ${NAVIGATION_QUERY} },
+				footerLinks[]{ ${LINK_QUERY} },
+				systemStatus,
 				socialLinks,
 				'ogimage': ogimage.asset->url,
+				'brandPage': *[_type == "page" && metadata.slug.current == "brand"][0]._id
 			}
 		`,
   });

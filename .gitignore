@@ -55,3 +55,6 @@ src/app/(frontend)/\[locale\]/page-templates/
 src/app/(frontend)/\[locale\]/all-components/
 src/components/TemplateView.tsx
 src/components/component-preview/
+openspec
+
+dist

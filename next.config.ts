@@ -24,6 +24,26 @@ const config = {
         protocol: "https",
         hostname: "cdn.sanity.io",
       },
+      { 
+        protocol: "https",
+        hostname: "unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "image.mux.com",
+      },
+      {
+        protocol: "https",
+        hostname: "img.youtube.com",
+      },
+      {
+        protocol: "https",
+        hostname: "placehold.co",
+      },
     ],
   },
   compiler: {

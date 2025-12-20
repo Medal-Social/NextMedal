@@ -46,21 +46,21 @@ export default defineField({
   ],
   preview: {
     select: {
-      title: 'title',
       videoType: 'type',
       media: 'thumbnail',
     },
-    prepare({ title, videoType, media }) {
+    prepare({ videoType, media }) {
+      const title = 'Video Hero';
       let subtitle = '';
 
       if (videoType === 'youtube') {
-        subtitle = `YouTube Video`;
+        subtitle = 'YouTube Video';
       } else if (videoType === 'mux') {
-        subtitle = `Mux Video`;
+        subtitle = 'Mux Video';
       }
 
       return {
-        title: title || 'Video Hero',
+        title,
         subtitle,
         media,
       };
@@ -68,13 +68,6 @@ export default defineField({
   },
   fields: [
     createUidField(),
-    {
-      name: 'title',
-      title: 'Title',
-      type: 'string',
-      fieldset: 'videoOptions',
-      validation: (Rule: any) => Rule.required(),
-    },
     {
       name: 'type',
       title: 'Video Type',
@@ -92,7 +85,7 @@ export default defineField({
     {
       name: 'videoId',
       title: 'YouTube URL or ID',
-      type: 'url',
+      type: 'string',
       description:
         'Paste the full YouTube video URL (or just the ID). The video ID will be automatically extracted.',
       fieldset: 'videoOptions',
@@ -132,7 +125,8 @@ export default defineField({
       options: {
         hotspot: true,
       },
-      validation: (Rule: any) => Rule.required(),
+      validation: (Rule: any) =>
+        Rule.warning('A thumbnail is recommended for better user experience'),
     },
   ],
 });

@@ -14,9 +14,6 @@ importers:
       '@mux/mux-player-react':
         specifier: ^3.10.2
         version: 3.10.2(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@nosecone/next':
-        specifier: 1.0.0-beta.15
-        version: 1.0.0-beta.15(next@16.1.0(@babel/core@7.28.5)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))
       '@portabletext/to-html':
         specifier: ^4.0.1
         version: 4.0.1
@@ -32,6 +29,9 @@ importers:
       '@sanity/document-internationalization':
         specifier: ^4.1.1
         version: 4.1.1(@emotion/is-prop-valid@1.2.2)(@types/react@19.2.6)(react-dom@19.2.3(react@19.2.3))(react-is@19.2.3)(react@19.2.3)(rxjs@7.8.2)(sanity@4.22.0(@emotion/is-prop-valid@1.2.2)(@portabletext/sanity-bridge@1.2.14(@types/react@19.2.6))(@types/node@24.10.4)(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(immer@11.0.1)(jiti@2.6.1)(lightningcss@1.30.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(styled-components@6.1.19(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(typescript@5.9.3)(yaml@2.8.2))(styled-components@6.1.19(react-dom@19.2.3(react@19.2.3))(react@19.2.3))
+      '@sanity/icons':
+        specifier: ^3.7.4
+        version: 3.7.4(react@19.2.3)
       '@sanity/image-url':
         specifier: ^1.2.0
         version: 1.2.0
@@ -125,6 +125,9 @@ importers:
       tailwind-merge:
         specifier: ^3.4.0
         version: 3.4.0
+      zod:
+        specifier: ^4.2.1
+        version: 4.2.1
     devDependencies:
       '@biomejs/biome':
         specifier: 2.3.7
@@ -171,6 +174,9 @@ importers:
       fast-check:
         specifier: ^4.5.0
         version: 4.5.0
+      husky:
+        specifier: ^9.1.7
+        version: 9.1.7
       jsdom:
         specifier: ^27.3.0
         version: 27.3.0
@@ -1987,12 +1993,6 @@ packages:
   '@nodelib/fs.walk@1.2.8':
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
-
-  '@nosecone/next@1.0.0-beta.15':
-    resolution: {integrity: sha512-uX3pnSeengqiPnKa06mq2X/e4AKnu0WeLd1mGrjVGYU0eB1inRgvmn3Vsxk1cauEQ5NLw+RhK6MPJYaO1l6cdA==}
-    engines: {node: '>=20'}
-    peerDependencies:
-      next: '>=14'
 
   '@oclif/core@4.8.0':
     resolution: {integrity: sha512-jteNUQKgJHLHFbbz806aGZqf+RJJ7t4gwF4MYa8fCwCxQ8/klJNWc0MvaJiBebk7Mc+J39mdlsB4XraaCKznFw==}
@@ -5174,6 +5174,11 @@ packages:
   humanize-list@1.0.1:
     resolution: {integrity: sha512-4+p3fCRF21oUqxhK0yZ6yaSP/H5/wZumc7q1fH99RkW7Q13aAxDeP78BKjoR+6y+kaHqKF/JWuQhsNuuI2NKtA==}
 
+  husky@9.1.7:
+    resolution: {integrity: sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   i18next@23.16.8:
     resolution: {integrity: sha512-06r/TitrM88Mg5FdUXAKL96dJMzgqLE5dv3ryBAra4KCwD9mJ4ndOTS95ZuymIGoE+2hzfdaMak2X11/es7ZWg==}
 
@@ -5953,10 +5958,6 @@ packages:
   normalize-path@3.0.0:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
     engines: {node: '>=0.10.0'}
-
-  nosecone@1.0.0-beta.15:
-    resolution: {integrity: sha512-e3D16yrYQKu+qtILUNEoopdhloAjBcjpREwi2XSyi9tt6Tupk+rPEh/omydf9OJqkBZaM05hyFcBpBJbYvndIg==}
-    engines: {node: '>=20'}
 
   npm-run-path@3.1.0:
     resolution: {integrity: sha512-Dbl4A/VfiVGLgQv29URL9xshU8XDY1GeLy+fsaZ1AA8JDSfjvr5P5+pzRbWqRSBxk6/DW7MIh8lTM/PaGnP2kg==}
@@ -7663,6 +7664,9 @@ packages:
 
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
+
+  zod@4.2.1:
+    resolution: {integrity: sha512-0wZ1IRqGGhMP76gLqz8EyfBXKk0J2qo2+H3fi4mcUP/KtTocoX08nmIAHl1Z2kJIZbZee8KOpBCSNPRgauucjw==}
 
   zustand@5.0.9:
     resolution: {integrity: sha512-ALBtUj0AfjJt3uNRQoL1tL2tMvj6Gp/6e39dnfT6uzpelGru8v1tPOGBzayOWbPJvujM8JojDk3E1LxeFisBNg==}
@@ -9550,11 +9554,6 @@ snapshots:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.19.1
-
-  '@nosecone/next@1.0.0-beta.15(next@16.1.0(@babel/core@7.28.5)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))':
-    dependencies:
-      next: 16.1.0(@babel/core@7.28.5)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      nosecone: 1.0.0-beta.15
 
   '@oclif/core@4.8.0':
     dependencies:
@@ -13230,6 +13229,8 @@ snapshots:
 
   humanize-list@1.0.1: {}
 
+  husky@9.1.7: {}
+
   i18next@23.16.8:
     dependencies:
       '@babel/runtime': 7.28.4
@@ -13997,8 +13998,6 @@ snapshots:
       validate-npm-package-license: 3.0.4
 
   normalize-path@3.0.0: {}
-
-  nosecone@1.0.0-beta.15: {}
 
   npm-run-path@3.1.0:
     dependencies:
@@ -15967,6 +15966,8 @@ snapshots:
       readable-stream: 4.7.0
 
   zod@3.25.76: {}
+
+  zod@4.2.1: {}
 
   zustand@5.0.9(@types/react@19.2.6)(immer@11.0.1)(react@19.2.3)(use-sync-external-store@1.6.0(react@19.2.3)):
     optionalDependencies:

@@ -150,6 +150,38 @@ export default defineType({
         }).warning(),
     }),
     defineField({
+      name: 'footerLinks',
+      title: 'Additional Links',
+      description: 'Additional links to display in the footer (e.g. Locations, Legal)',
+      type: 'array',
+      of: [{ type: 'menuItem' }],
+      group: 'navigation',
+      fieldset: 'footer',
+    }),
+    defineField({
+      name: 'systemStatus',
+      title: 'System Status',
+      description: 'System status indicator link',
+      type: 'object',
+      group: 'navigation',
+      fieldset: 'footer',
+      fields: [
+        defineField({
+          name: 'title',
+          title: 'Title',
+          type: 'string',
+          initialValue: 'All Systems Normal',
+          validation: (Rule) => Rule.required(),
+        }),
+        defineField({
+          name: 'url',
+          title: 'URL',
+          type: 'url',
+          validation: (Rule) => Rule.required().uri({ scheme: ['http', 'https'] }),
+        }),
+      ],
+    }),
+    defineField({
       name: 'socialLinks',
       title: 'Social Media Links',
       description: 'List of social media channels (e.g., LinkedIn, Twitter, etc.).',
@@ -306,6 +338,7 @@ export default defineType({
                           title: 'Type',
                           type: 'string',
                           options: {
+                            layout: 'radio',
                             list: [
                               { title: 'HTTP Cookie', value: 'http' },
                               { title: 'Local Storage', value: 'local' },
