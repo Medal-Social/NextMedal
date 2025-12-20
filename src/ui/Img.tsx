@@ -66,10 +66,7 @@ export function Img({
   const loadingValue = stegaClean(sanityImage.loading);
   const validLoading = props.priority
     ? undefined
-    : _loading ||
-      (loadingValue === 'eager' || loadingValue === 'lazy'
-        ? loadingValue
-        : 'lazy');
+    : _loading || (loadingValue === 'eager' || loadingValue === 'lazy' ? loadingValue : 'lazy');
 
   if (validLoading === 'eager') {
     preload(src, { as: 'image' });
