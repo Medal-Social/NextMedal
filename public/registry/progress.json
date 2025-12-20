@@ -1,9 +1,7 @@
 {
   "name": "progress",
   "type": "components:ui",
-  "dependencies": [
-    "@base-ui/react/progress"
-  ],
+  "dependencies": ["@base-ui/react/progress"],
   "registryDependencies": [],
   "files": [
     {
