@@ -1,11 +1,7 @@
 {
   "name": "radio-group",
   "type": "components:ui",
-  "dependencies": [
-    "@base-ui/react/radio",
-    "@base-ui/react/radio-group",
-    "lucide-react"
-  ],
+  "dependencies": ["@base-ui/react/radio", "@base-ui/react/radio-group", "lucide-react"],
   "registryDependencies": [],
   "files": [
     {
