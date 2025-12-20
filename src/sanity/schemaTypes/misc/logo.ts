@@ -1,44 +1,71 @@
+/**
+ * Brand/Logo Schema
+ * @version 1.0.0
+ * @lastUpdated 2024-03-22
+ * @description Central place to manage brand assets like logos.
+ * @changelog
+ * - 1.0.0: Initial version
+ */
+
 import { VscVerified } from 'react-icons/vsc';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'logo',
-  title: 'Logo',
+  title: 'Brand',
   icon: VscVerified,
   type: 'document',
+  fieldsets: [
+    {
+      name: 'brand-info',
+      title: 'Brand Info',
+      options: { columns: 2 },
+    },
+  ],
   fields: [
     defineField({
-      name: 'name',
+      name: 'title',
+      title: 'Brand Name',
+      description: 'The name of the brand.',
       type: 'string',
+      fieldset: 'brand-info',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'link',
+      title: 'Link',
+      description: 'Optional link for the logo (usually the home page).',
+      type: 'url',
+      fieldset: 'brand-info',
     }),
     defineField({
       name: 'image',
+      title: 'Assets',
       type: 'object',
+      description: 'Upload SVG or transparent PNG.',
       options: {
-        columns: 3,
+        columns: 2,
       },
       fields: [
         defineField({
           name: 'default',
+          title: 'Primary Logo',
+          description: 'For light backgrounds.',
           type: 'image',
           options: {
             hotspot: true,
+            accept: 'image/svg+xml,image/png',
           },
-        }),
-        defineField({
-          name: 'light',
-          description: 'On light backgrounds',
-          type: 'image',
-          options: {
-            hotspot: true,
-          },
+          validation: (Rule) => Rule.required(),
         }),
         defineField({
           name: 'dark',
-          description: 'On dark backgrounds',
+          title: 'Dark Mode',
+          description: 'For dark backgrounds (optional).',
           type: 'image',
           options: {
             hotspot: true,
+            accept: 'image/svg+xml,image/png',
           },
         }),
       ],
@@ -46,12 +73,13 @@ export default defineType({
   ],
   preview: {
     select: {
-      title: 'name',
+      title: 'title',
       media: 'image.default',
+      link: 'link',
     },
-    prepare: ({ title, media }) => ({
+    prepare: ({ title, media, link }) => ({
       title,
-      subtitle: 'Logo',
+      subtitle: link || 'No link provided',
       media,
     }),
   },
