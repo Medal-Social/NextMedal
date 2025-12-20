@@ -2,8 +2,8 @@
 
 import type * as React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { SchemaVisualizer } from './SchemaVisualizer';
 import { OpenInV0Button } from './OpenInV0Button';
+import { SchemaVisualizer } from './SchemaVisualizer';
 
 interface ComponentPreviewProps {
   moduleType: string;
