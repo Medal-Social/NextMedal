@@ -30,7 +30,7 @@ export default function Paginated({
       />
 
       <Pagination
-        className="sticky bottom-0 flex items-center justify-center gap-4 bg-background/95 p-2 pb-[max(env(safe-area-inset-bottom),0.5rem)] tabular-nums"
+        className="sticky bottom-0 flex items-center justify-center gap-4 bg-background/95 p-2 pb-[max(env(safe-area-inset-bottom),0.5rem)] tabular-nums font-numeric"
         buttonClassName="hover:underline disabled:opacity-20"
         onClick={scrollToList}
       />
