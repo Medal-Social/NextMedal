@@ -85,6 +85,11 @@ declare global {
       headerMenu?: Navigation;
       footerMenu?: Navigation;
       social?: Navigation;
+      socialLinks?: {
+        _key: string;
+        platform: string;
+        url: string;
+      }[];
     }
 
     interface Navigation extends SanityDocument {
