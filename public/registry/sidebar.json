@@ -8,14 +8,7 @@
     "class-variance-authority",
     "lucide-react"
   ],
-  "registryDependencies": [
-    "button",
-    "input",
-    "separator",
-    "sheet",
-    "skeleton",
-    "tooltip"
-  ],
+  "registryDependencies": ["button", "input", "separator", "sheet", "skeleton", "tooltip"],
   "files": [
     {
       "path": "ui/sidebar.tsx",
