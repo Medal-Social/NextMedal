@@ -1,8 +1,8 @@
+import Link from 'next/link';
 import { groq, PortableText } from 'next-sanity';
 import { Section } from '@/components/ui/section';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
 import { Img } from '@/ui/Img';
-import Link from 'next/link';
 
 export default async function LogoCloud({
   content,
@@ -30,18 +30,12 @@ export default async function LogoCloud({
                   <p className="text-muted-foreground text-lg">{children}</p>
                 ),
                 h2: ({ children }) => (
-                  <h2 className="text-2xl font-bold md:text-3xl mb-3">
-                    {children}
-                  </h2>
+                  <h2 className="text-2xl font-bold md:text-3xl mb-3">{children}</h2>
                 ),
                 h3: ({ children }) => (
-                  <h3 className="text-xl font-semibold md:text-2xl mb-3">
-                    {children}
-                  </h3>
+                  <h3 className="text-xl font-semibold md:text-2xl mb-3">{children}</h3>
                 ),
-                h4: ({ children }) => (
-                  <h4 className="text-lg font-semibold mb-2">{children}</h4>
-                ),
+                h4: ({ children }) => <h4 className="text-lg font-semibold mb-2">{children}</h4>,
               },
             }}
           />
