@@ -22,7 +22,29 @@ export default async function LogoCloud({
     <Section className="space-y-8 text-center">
       {content && (
         <div className="prose prose-slate dark:prose-invert mx-auto text-muted-foreground">
-          <PortableText value={content} />
+          <PortableText
+            value={content}
+            components={{
+              block: {
+                normal: ({ children }) => (
+                  <p className="text-muted-foreground text-lg">{children}</p>
+                ),
+                h2: ({ children }) => (
+                  <h2 className="text-2xl font-bold md:text-3xl mb-3">
+                    {children}
+                  </h2>
+                ),
+                h3: ({ children }) => (
+                  <h3 className="text-xl font-semibold md:text-2xl mb-3">
+                    {children}
+                  </h3>
+                ),
+                h4: ({ children }) => (
+                  <h4 className="text-lg font-semibold mb-2">{children}</h4>
+                ),
+              },
+            }}
+          />
         </div>
       )}
 
@@ -51,7 +73,7 @@ export default async function LogoCloud({
 
 function LogoItem({ logo }: { logo: Sanity.Logo }) {
   const defaultLogo = logo.image?.default;
-  const lightLogo = logo.image?.light;
+  const lightLogo = logo.image?.light || defaultLogo;
   const darkLogo = logo.image?.dark;
 
   const hasDualMode = lightLogo && darkLogo;
