@@ -27,7 +27,7 @@ export default function Team({
 }> &
   Sanity.Module) {
   return (
-    <Section className="bg-white dark:bg-slate-950" {...moduleProps(props)}>
+    <Section className="bg-card" {...moduleProps(props)}>
       {layout === 'grid' && (
         <>
           {(pretitle || intro) && (
@@ -54,14 +54,14 @@ export default function Team({
           <div className="max-w-2xl xl:col-span-2 xl:sticky xl:top-24">
             {pretitle && <Pretitle className="mb-4 ml-1">{pretitle}</Pretitle>}
             {intro && (
-              <div className="prose prose-slate dark:prose-invert [&>:first-child]:mt-0">
+              <div className="prose dark:prose-invert [&>:first-child]:mt-0">
                 <PortableText value={intro} />
               </div>
             )}
           </div>
 
           <div className="xl:col-span-3">
-            <ul className="divide-y divide-gray-200 dark:divide-gray-800">
+            <ul className="divide-y divide-border">
               {people?.map((person) => (
                 <TeamMember
                   person={person}
@@ -95,23 +95,23 @@ function TeamMember({
             height={260}
           />
         ) : (
-          <div className="flex aspect-[4/5] w-24 sm:w-52 flex-none items-center justify-center rounded-2xl bg-slate-200 dark:bg-slate-700">
-            <FaUser className="h-8 w-8 sm:h-16 sm:w-16 text-slate-400 dark:text-slate-500" />
+          <div className="flex aspect-[4/5] w-24 sm:w-52 flex-none items-center justify-center rounded-2xl bg-muted">
+            <FaUser className="h-8 w-8 sm:h-16 sm:w-16 text-muted-foreground" />
           </div>
         )}
 
         <div className="max-w-xl flex-auto">
-          <h3 className="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
+          <h3 className="text-lg font-semibold tracking-tight text-foreground">
             {person.name}
           </h3>
           {person.title && (
-            <p className="text-sm sm:text-base/7 text-gray-600 dark:text-gray-400">
+            <p className="text-sm sm:text-base/7 text-muted-foreground">
               {person.title}
             </p>
           )}
 
           {person.bio && (
-            <div className="mt-2 sm:mt-6 text-sm sm:text-base/7 text-gray-600 dark:text-gray-400">
+            <div className="mt-2 sm:mt-6 text-sm sm:text-base/7 text-muted-foreground">
               <PortableText value={person.bio} />
             </div>
           )}
@@ -132,23 +132,23 @@ function TeamMember({
           height={500}
         />
       ) : (
-        <div className="flex aspect-[4/5] w-full items-center justify-center rounded-2xl bg-slate-200 dark:bg-slate-700">
-          <FaUser className="h-20 w-20 text-slate-400 dark:text-slate-500" />
+        <div className="flex aspect-[4/5] w-full items-center justify-center rounded-2xl bg-muted">
+          <FaUser className="h-20 w-20 text-muted-foreground" />
         </div>
       )}
 
       <div className="flex flex-col gap-2">
-        <h3 className="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
+        <h3 className="text-lg font-semibold tracking-tight text-foreground">
           {person.name}
         </h3>
         {person.title && (
-          <p className="text-base text-gray-600 dark:text-gray-400">
+          <p className="text-base text-muted-foreground">
             {person.title}
           </p>
         )}
 
         {person.bio && (
-          <div className="text-base text-gray-600 dark:text-gray-400 line-clamp-4">
+          <div className="text-base text-muted-foreground line-clamp-4">
             <PortableText value={person.bio} />
           </div>
         )}
@@ -188,8 +188,8 @@ function SocialLinks({
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
-              aria-label={`${link.platform} profile for ${person.name}`}
+              className="text-muted-foreground hover:text-foreground"
+              aria-label={`${link.platform.charAt(0).toUpperCase() + link.platform.slice(1)} profile for ${person.name}`}
             >
               <span className="sr-only">{link.platform}</span>
               <Icon className="size-5" />
