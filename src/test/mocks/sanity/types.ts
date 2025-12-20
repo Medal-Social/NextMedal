@@ -378,16 +378,6 @@ export interface MockComponentGalleryModule {
   }>;
 }
 
-export interface MockLogoListModule {
-  _type: 'logo-list';
-  _key: string;
-  options?: MockModuleOptions;
-  pretitle?: string;
-  intro?: MockPortableTextBlock[];
-  logos?: Array<{ _ref: string; _type: 'reference' }>;
-  logoType?: 'default' | 'light' | 'dark';
-}
-
 export interface MockTeamListModule {
   _type: 'team-list';
   _key: string;
@@ -416,5 +406,5 @@ export type MockModule =
   | MockVideoHeroModule
   | MockBlogListModule
   | MockComponentGalleryModule
-  | MockLogoListModule
   | MockTeamListModule;
+

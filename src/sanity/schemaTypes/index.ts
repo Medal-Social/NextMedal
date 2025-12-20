@@ -28,7 +28,6 @@ import features from './modules/features';
 import hero from './modules/hero';
 import latestArticles from './modules/latest-articles';
 import logoCloud from './modules/logo-cloud';
-import logoList from './modules/logo-list';
 import pricingComparison from './modules/pricing-comparison';
 import pricingList from './modules/pricing-list';
 import productComparison from './modules/productComparison';
@@ -84,7 +83,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   features,
   hero,
   logoCloud,
-  logoList,
 
   team,
   teamList,

@@ -23,7 +23,6 @@ import type {
   MockHeroModule,
   MockLatestArticlesModule,
   MockLogoCloudModule,
-  MockLogoListModule,
   MockModule,
   MockPricingComparisonModule,
   MockPricingListModule,
@@ -336,21 +335,6 @@ export function createMockComponentGalleryModule(
   };
 }
 
-export function createMockLogoListModule(
-  overrides?: Partial<MockLogoListModule>
-): MockLogoListModule {
-  return {
-    _type: 'logo-list',
-    _key: generateKey(),
-    options: { uid: 'logo-list' },
-    pretitle: 'Logos',
-    intro: createMockPortableText(['Our Partners']),
-    logos: [],
-    logoType: 'default',
-    ...overrides,
-  };
-}
-
 export function createMockTeamListModule(
   overrides?: Partial<MockTeamListModule>
 ): MockTeamListModule {
@@ -419,8 +403,6 @@ export function createMockModule(type: string, overrides?: Partial<MockModule>):
       return createMockBlogListModule(overrides as Partial<MockBlogListModule>);
     case 'component-gallery':
       return createMockComponentGalleryModule(overrides as Partial<MockComponentGalleryModule>);
-    case 'logo-list':
-      return createMockLogoListModule(overrides as Partial<MockLogoListModule>);
     case 'team-list':
       return createMockTeamListModule(overrides as Partial<MockTeamListModule>);
     default:
@@ -449,7 +431,6 @@ export const MODULE_TYPES = [
   'videoHero',
   'blog-list',
   'component-gallery',
-  'logo-list',
   'team-list',
 ] as const;
 

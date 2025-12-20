@@ -21,7 +21,6 @@ import {
   createMockHeroModule,
   createMockLatestArticlesModule,
   createMockLogoCloudModule,
-  createMockLogoListModule,
   createMockPage,
   createMockPerson,
   createMockPricingComparisonModule,
@@ -233,7 +232,6 @@ describe('Module Schema Validation', () => {
       createMock: createMockFeaturesModule,
     },
     { moduleType: 'logo-cloud', schemaName: 'logo-cloud', createMock: createMockLogoCloudModule },
-    { moduleType: 'logo-list', schemaName: 'logo-list', createMock: createMockLogoListModule },
     {
       moduleType: 'team',
       schemaName: 'team',
@@ -268,8 +266,8 @@ describe('Module Schema Validation', () => {
   ];
 
   it('all 18 module types have corresponding schemas', () => {
-    expect(MODULE_TYPES).toHaveLength(18);
-    expect(moduleConfigs).toHaveLength(18);
+    expect(MODULE_TYPES).toHaveLength(17);
+    expect(moduleConfigs).toHaveLength(17);
   });
 
   describe.each(moduleConfigs)('$schemaName module', ({ moduleType, schemaName, createMock }) => {
