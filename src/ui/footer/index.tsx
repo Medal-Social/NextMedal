@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { PortableText } from 'next-sanity';
+import { Section } from '@/components/ui/section';
 import { cn } from '@/lib/utils';
 import { getSite } from '@/sanity/lib/fetch';
-import { Section } from '@/components/ui/section';
 import { Img } from '@/ui/Img';
 import Social from '@/ui/Social';
 import Navigation from './Navigation';
