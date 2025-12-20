@@ -1,11 +1,7 @@
 {
   "name": "select",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "@base-ui/react/select",
-    "lucide-react"
-  ],
+  "dependencies": ["react", "@base-ui/react/select", "lucide-react"],
   "registryDependencies": [],
   "files": [
     {
