@@ -1,13 +1,52 @@
+import { LayoutTemplate } from 'lucide-react';
 import { groq } from 'next-sanity';
+import { Button } from '@/components/ui/button';
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
+import { Section } from '@/components/ui/section';
 import { PageProvider } from '@/contexts/PageContext';
 import processMetadata from '@/lib/processMetadata';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
 import { MODULES_QUERY, TRANSLATIONS_QUERY } from '@/sanity/lib/queries';
 import Modules from '@/ui/modules';
+
 export const dynamic = 'force-static';
 
 export default async function Page() {
   const page = await getPage();
+
+  if (!page)
+    return (
+      <Section className="min-h-[50vh] flex items-center justify-center">
+        <Empty className="border-none max-w-lg mx-auto">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <LayoutTemplate />
+            </EmptyMedia>
+            <EmptyTitle>No Index Page Found</EmptyTitle>
+            <EmptyDescription>
+              There's no place like... index?
+              <br className="mb-2" />
+              Add a new Page document in your Medal Social Studio with the slug "index".
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button asChild variant="outline">
+              <a href="https://www.medalsocial.com" target="_blank" rel="noopener noreferrer">
+                Visit Medal Social
+              </a>
+            </Button>
+          </EmptyContent>
+        </Empty>
+      </Section>
+    );
+
   return (
     <PageProvider page={page}>
       <Modules modules={page?.modules} />
@@ -17,6 +56,7 @@ export default async function Page() {
 
 export async function generateMetadata() {
   const page = await getPage();
+  if (!page) return {};
   return processMetadata(page);
 }
 
@@ -39,13 +79,6 @@ async function getPage() {
 			${TRANSLATIONS_QUERY}
 		}`,
   });
-
-  if (!page)
-    throw new Error(
-      "Missing homepage: 🏚️ There's no place like... index?\n\n" +
-        'Solution: Add a new Page document in your Medal Social Studio with the slug "index".\n\n' +
-        '💁‍♂️ https://www.medalsocial.com'
-    );
 
   return page;
 }
