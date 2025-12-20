@@ -27,7 +27,10 @@ export default defineType({
     prepare: ({ crumbs }) => {
       const crumbCount = Array.isArray(crumbs) ? crumbs.length : 0;
       return {
-        title: crumbCount === 0 ? 'Current page' : `${crumbCount} crumb${crumbCount === 1 ? '' : 's'} + Current page`,
+        title:
+          crumbCount === 0
+            ? 'Current page'
+            : `${crumbCount} crumb${crumbCount === 1 ? '' : 's'} + Current page`,
         subtitle: 'Breadcrumbs',
       };
     },
