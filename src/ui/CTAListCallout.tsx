@@ -13,9 +13,9 @@ export default function CTAListCallout({
 
   return (
     <div className={cn('flex flex-wrap items-center gap-4', className)}>
-      {ctas?.map((cta) => {
+      {ctas?.map((cta, i) => {
         // Ensure default style if missing
-        const style = cta.style || 'default';
+        const style = (cta.style || 'primary') as Sanity.CTA['style'];
         const props = { ...cta, style };
 
         // For items with a link, pass the link label as children if not already specified
@@ -25,7 +25,7 @@ export default function CTAListCallout({
               className="max-sm:w-full"
               size="lg"
               {...props}
-              key={cta._key || cta.link.label}
+              key={cta._key || i}
             >
               {cta.link.label}
             </CTA>
@@ -36,7 +36,7 @@ export default function CTAListCallout({
             className="max-sm:w-full"
             size="lg"
             {...props}
-            key={cta._key || Math.random()}
+            key={cta._key || i}
           />
         );
       })}
