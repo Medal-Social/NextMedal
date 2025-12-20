@@ -228,6 +228,8 @@ declare global {
       newTab?: boolean;
     }
 
+    type Link = MenuItem;
+
     interface DropdownMenu {
       readonly _type: 'dropdownMenu';
       title: string;

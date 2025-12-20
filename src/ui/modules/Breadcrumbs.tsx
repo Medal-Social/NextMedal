@@ -18,7 +18,7 @@ export default async function Breadcrumbs({
 }: Partial<{
   crumbs: Sanity.Link[];
   hideCurrent?: boolean;
-  currentPage: Sanity.Page | Sanity.BlogPost;
+  currentPage: Sanity.Page | Sanity.BlogPost | Sanity.ComponentLibrary;
 }>) {
   return (
     <Section as={Breadcrumb} className="py-4 text-sm" spacing="none">
