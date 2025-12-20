@@ -71,7 +71,7 @@
     "@types/react": "19.2.6",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "^5.1.2",
-    "@vitest/coverage-v8": "4.0.15",
+    "@vitest/coverage-v8": "4.0.16",
     "depcheck": "^1.4.7",
     "fast-check": "^4.4.0",
     "jsdom": "^27.3.0",
