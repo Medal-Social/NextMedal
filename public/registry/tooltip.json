@@ -1,9 +1,7 @@
 {
   "name": "tooltip",
   "type": "components:ui",
-  "dependencies": [
-    "@base-ui/react/tooltip"
-  ],
+  "dependencies": ["@base-ui/react/tooltip"],
   "registryDependencies": [],
   "files": [
     {
