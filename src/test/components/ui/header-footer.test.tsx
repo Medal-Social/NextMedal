@@ -1,28 +1,8 @@
-import { beforeAll, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { axe, render, screen, userEvent } from '@/test/setup';
 import FooterWrapper from '@/ui/footer/wrapper';
 import Toggle from '@/ui/header/Toggle';
 import Wrapper from '@/ui/header/Wrapper';
-
-// Mock window.matchMedia for InteractiveDetails component
-beforeAll(() => {
-  Object.defineProperty(window, 'matchMedia', {
-    writable: true,
-    value: vi.fn().mockImplementation((query: string) => ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addListener: vi.fn(), // deprecated
-      removeListener: vi.fn(), // deprecated
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    })),
-  });
-});
-
-// Import InteractiveDetails after matchMedia mock is set up
-import InteractiveDetails from '@/ui/header/InteractiveDetails';
 
 // Mock next-themes for ThemeToggle tests
 vi.mock('next-themes', () => ({
@@ -136,63 +116,6 @@ describe('Header Components - Unit Tests', () => {
       expect(screen.getByTestId('content')).toBeInTheDocument();
     });
   });
-
-  describe('InteractiveDetails Component', () => {
-    it('renders without throwing errors', () => {
-      expect(() =>
-        render(
-          <InteractiveDetails>
-            <summary>Toggle</summary>
-            <div>Content</div>
-          </InteractiveDetails>
-        )
-      ).not.toThrow();
-    });
-
-    it('renders as a details element', () => {
-      const { container } = render(
-        <InteractiveDetails>
-          <summary>Toggle</summary>
-          <div>Content</div>
-        </InteractiveDetails>
-      );
-      const details = container.querySelector('details');
-      expect(details).toBeInTheDocument();
-    });
-
-    it('applies custom className', () => {
-      const { container } = render(
-        <InteractiveDetails className="custom-details">
-          <summary>Toggle</summary>
-          <div>Content</div>
-        </InteractiveDetails>
-      );
-      const details = container.querySelector('details');
-      expect(details).toHaveClass('custom-details');
-    });
-
-    it('renders summary and content', () => {
-      render(
-        <InteractiveDetails>
-          <summary>Toggle Menu</summary>
-          <div data-testid="content">Menu Content</div>
-        </InteractiveDetails>
-      );
-      expect(screen.getByText('Toggle Menu')).toBeInTheDocument();
-      expect(screen.getByTestId('content')).toBeInTheDocument();
-    });
-
-    it('starts closed by default', () => {
-      const { container } = render(
-        <InteractiveDetails>
-          <summary>Toggle</summary>
-          <div>Content</div>
-        </InteractiveDetails>
-      );
-      const details = container.querySelector('details');
-      expect(details).not.toHaveAttribute('open');
-    });
-  });
 });
 
 // ============================================================================
@@ -299,52 +222,6 @@ describe('Header Components - Accessibility Tests', () => {
       // Header element has implicit banner role when it's a direct child of body
     });
   });
-
-  describe('InteractiveDetails Component Accessibility', () => {
-    it('has no accessibility violations', async () => {
-      const { container } = render(
-        <InteractiveDetails>
-          <summary>Menu</summary>
-          <ul>
-            <li>
-              <a href="/about">About</a>
-            </li>
-            <li>
-              <a href="/contact">Contact</a>
-            </li>
-          </ul>
-        </InteractiveDetails>
-      );
-      const results = await axe(container);
-      expect(results).toHaveNoViolations();
-    });
-
-    it('summary element is present and can receive focus', () => {
-      render(
-        <InteractiveDetails>
-          <summary>Menu</summary>
-          <div>Content</div>
-        </InteractiveDetails>
-      );
-
-      const summary = screen.getByText('Menu');
-      // Summary elements are natively focusable
-      summary.focus();
-      expect(summary).toHaveFocus();
-    });
-
-    it('summary has correct role', () => {
-      render(
-        <InteractiveDetails>
-          <summary>Menu</summary>
-          <div>Content</div>
-        </InteractiveDetails>
-      );
-      // Summary elements have implicit button role in disclosure widgets
-      const summary = screen.getByText('Menu');
-      expect(summary.tagName).toBe('SUMMARY');
-    });
-  });
 });
 
 describe('Footer Components - Accessibility Tests', () => {
@@ -441,60 +318,6 @@ describe('Header/Footer Keyboard Navigation', () => {
       // Click on label should toggle the checkbox
       await user.click(label!);
       expect(checkbox).toBeChecked();
-    });
-  });
-
-  describe('InteractiveDetails Keyboard Navigation', () => {
-    it('summary can be clicked to toggle open state', async () => {
-      const user = userEvent.setup();
-      const { container } = render(
-        <InteractiveDetails>
-          <summary>Open Menu</summary>
-          <div data-testid="menu-content">Menu Items</div>
-        </InteractiveDetails>
-      );
-
-      const summary = screen.getByText('Open Menu');
-      const details = container.querySelector('details');
-
-      // Initially closed
-      expect(details).not.toHaveAttribute('open');
-
-      // Click to open
-      await user.click(summary);
-      expect(details).toHaveAttribute('open');
-    });
-
-    it('details element supports open attribute', () => {
-      const { container } = render(
-        <InteractiveDetails>
-          <summary>Menu</summary>
-          <div>Menu Items</div>
-        </InteractiveDetails>
-      );
-
-      const details = container.querySelector('details');
-
-      // Initially closed
-      expect(details).not.toHaveAttribute('open');
-
-      // The component uses React state to control open attribute
-      // This verifies the details element is properly rendered
-      expect(details).toBeInTheDocument();
-      expect(details?.tagName).toBe('DETAILS');
-    });
-
-    it('summary element is focusable for keyboard users', () => {
-      render(
-        <InteractiveDetails>
-          <summary>Toggle Menu</summary>
-          <div>Menu Items</div>
-        </InteractiveDetails>
-      );
-
-      const summary = screen.getByText('Toggle Menu');
-      summary.focus();
-      expect(summary).toHaveFocus();
     });
   });
 

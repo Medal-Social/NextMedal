@@ -88,11 +88,8 @@ describe('Accordion Component', () => {
 
       await user.click(screen.getByText('Item 1'));
 
-      // Content should remain in DOM but be in closed state (forceMount)
-      // This is important for accessibility - screen readers can still access content
-      const collapsedContent = screen.getByText('Content 1');
-      expect(collapsedContent).toBeInTheDocument();
-      expect(collapsedContent.closest('[data-state]')).toHaveAttribute('data-state', 'closed');
+      // Content should be removed from DOM or hidden (Radix default behavior without forceMount is to unmount)
+      expect(screen.queryByText('Content 1')).not.toBeInTheDocument();
     });
 
     it('only one item open at a time in single mode', async () => {
@@ -110,11 +107,8 @@ describe('Accordion Component', () => {
         'data-state',
         'open'
       );
-      // Content 1 should be closed but still in DOM (forceMount)
-      expect(screen.getByText('Content 1').closest('[data-state]')).toHaveAttribute(
-        'data-state',
-        'closed'
-      );
+      // Content 1 should be closed (unmounted)
+      expect(screen.queryByText('Content 1')).not.toBeInTheDocument();
     });
   });
 

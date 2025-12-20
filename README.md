@@ -17,6 +17,32 @@ NextMedal is the ultimate choice for developers, agencies, and businesses who de
 - [x] 🏗️ **Dynamic Site Architecture**: Pre-configured dynamic routing and modular components for effortless customization.
 - [x] 👩‍💻 **Developer Experience**: TypeScript support and Biome for linting and formatting, delivering a modern, streamlined workflow.
 
+## Tech Stack 🛠️
+
+### Core Tech
+- **Next.js 16**: Latest App Router, Server Components, Turbopack
+- **React 19**: Bleeding edge React features
+- **TypeScript**: End-to-end type safety
+- **Tailwind CSS 4**: Modern utility-first styling
+
+### Content & Media
+- **Sanity CMS**: Visual editing, real-time collaboration
+- **Mux Video**: High-performance video streaming
+- **Next-Intl**: Built-in internationalization
+- **Portable Text**: Structured content format
+
+### UI & UX
+- **Framer Motion**: Production-ready animations
+- **Radix UI**: Accessible unstyled primitives
+- **Dark Mode**: System-aware theme switching
+- **Responsive**: Mobile-first design
+
+### Quality & DX
+- **Biome**: Fast linting and formatting
+- **Vitest**: Unit and integration testing
+- **SEO Ready**: Dynamic sitemaps, OG images
+- **Accessibility**: WCAG 2.1 compliant
+
 ## Getting Started 🚀
 
 ### Prerequisites
