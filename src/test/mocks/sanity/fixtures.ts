@@ -7,7 +7,7 @@ import { createMockBlogPost, createMockPage, createMockSite } from './documents'
 import { createMockMetadata, createMockPortableText, createMockSlug } from './helpers';
 import {
   createMockCalloutModule,
-  createMockFeatureGridModule,
+  createMockFeaturesModule,
   createMockHeroModule,
 } from './modules';
 
@@ -16,7 +16,7 @@ import {
  */
 export const mockPage = createMockPage({
   title: 'Home Page',
-  modules: [createMockHeroModule(), createMockFeatureGridModule(), createMockCalloutModule()],
+  modules: [createMockHeroModule(), createMockFeaturesModule(), createMockCalloutModule()],
   metadata: createMockMetadata({
     slug: createMockSlug('index'),
     title: 'Home - Your Trusted Platform for Modern Development',

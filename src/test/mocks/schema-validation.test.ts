@@ -14,17 +14,14 @@ import {
   createMockBlogFrontpageModule,
   createMockBlogListModule,
   createMockBlogPost,
-  createMockBlogPostContentModule,
   createMockBreadcrumbsModule,
   createMockCalloutModule,
-  createMockFeaturedHeroModule,
-  createMockFeatureGridModule,
-  createMockGalleryHeroModule,
+  createMockFeaturesModule,
   createMockHeroModule,
-  createMockLogoListModule,
+  createMockLogoCloudModule,
   createMockPage,
   createMockPerson,
-  createMockPersonListModule,
+  createMockTeamModule,
   createMockPricingComparisonModule,
   createMockPricingListModule,
   createMockProductComparisonModule,
@@ -212,35 +209,20 @@ describe('Module Schema Validation', () => {
     },
     { moduleType: 'blog-list', schemaName: 'blog-list', createMock: createMockBlogListModule },
     {
-      moduleType: 'blog-post-content',
-      schemaName: 'blog-post-content',
-      createMock: createMockBlogPostContentModule,
-    },
-    {
       moduleType: 'breadcrumbs',
       schemaName: 'breadcrumbs',
       createMock: createMockBreadcrumbsModule,
     },
     {
-      moduleType: 'feature-grid',
-      schemaName: 'feature-grid',
-      createMock: createMockFeatureGridModule,
+      moduleType: 'features',
+      schemaName: 'features',
+      createMock: createMockFeaturesModule,
     },
+    { moduleType: 'logo-cloud', schemaName: 'logo-cloud', createMock: createMockLogoCloudModule },
     {
-      moduleType: 'featuredHero',
-      schemaName: 'featuredHero',
-      createMock: createMockFeaturedHeroModule,
-    },
-    {
-      moduleType: 'galleryHero',
-      schemaName: 'galleryHero',
-      createMock: createMockGalleryHeroModule,
-    },
-    { moduleType: 'logo-list', schemaName: 'logo-list', createMock: createMockLogoListModule },
-    {
-      moduleType: 'person-list',
-      schemaName: 'person-list',
-      createMock: createMockPersonListModule,
+      moduleType: 'team',
+      schemaName: 'team',
+      createMock: createMockTeamModule,
     },
     {
       moduleType: 'pricing-comparison',
@@ -258,16 +240,16 @@ describe('Module Schema Validation', () => {
       createMock: createMockProductComparisonModule,
     },
     {
-      moduleType: 'richtext-module',
-      schemaName: 'richtext-module',
+      moduleType: 'richtext',
+      schemaName: 'richtext',
       createMock: createMockRichtextModule,
     },
     { moduleType: 'videoHero', schemaName: 'videoHero', createMock: createMockVideoHeroModule },
   ];
 
   it('all 18 module types have corresponding schemas', () => {
-    expect(MODULE_TYPES).toHaveLength(17);
-    expect(moduleConfigs).toHaveLength(17);
+    expect(MODULE_TYPES).toHaveLength(14);
+    expect(moduleConfigs).toHaveLength(14);
   });
 
   describe.each(moduleConfigs)('$schemaName module', ({ moduleType, schemaName, createMock }) => {

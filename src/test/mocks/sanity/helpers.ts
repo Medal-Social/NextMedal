@@ -8,7 +8,7 @@ import type {
   MockIcon,
   MockImage,
   MockImg,
-  MockLink,
+  MockMenuItem,
   MockMetadata,
   MockPortableTextBlock,
   MockSlug,
@@ -146,11 +146,11 @@ export function createMockIcon(name = 'star'): MockIcon {
 }
 
 /**
- * Creates a mock link
+ * Creates a mock menu item
  */
-export function createMockLink(overrides?: Partial<MockLink>): MockLink {
+export function createMockMenuItem(overrides?: Partial<MockMenuItem>): MockMenuItem {
   return {
-    _type: 'link',
+    _type: 'menuItem',
     _key: generateKey(),
     type: 'external',
     label: 'Test Link',
