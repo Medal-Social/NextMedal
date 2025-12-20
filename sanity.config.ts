@@ -6,12 +6,11 @@ import { visionTool } from "@sanity/vision";
 import { structure } from "./src/sanity/structure";
 import resolveUrl from "@/lib/resolveUrl";
 import { codeInput } from "@sanity/code-input";
-import { colorInput } from "@sanity/color-input";
+import { documentInternationalization } from "@sanity/document-internationalization";
 import { media } from "sanity-plugin-media";
 import { muxInput } from "sanity-plugin-mux-input";
 import { schemaTypes } from "./src/sanity/schemaTypes";
 
-import { documentInternationalization } from "@sanity/document-internationalization";
 import { routing } from "@/i18n/routing";
 import { table } from "@sanity/table";
 
@@ -28,7 +27,6 @@ export default defineConfig({
     structure,
     presentation,
     codeInput(),
-    colorInput(),
     media(),
     muxInput({
       mp4_support: "standard",
