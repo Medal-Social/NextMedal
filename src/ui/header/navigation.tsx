@@ -78,31 +78,33 @@ export default async function Navigation() {
             case 'menuItem':
               return (
                 <NavigationMenuItem key={itemKey}>
-                  <NavigationMenuLink asChild>
-                    <Link
-                      href={
-                        item.internal?.metadata?.slug?.current
-                          ? resolveUrl(item.internal as Sanity.PageBase, {
-                              base: false,
-                              params: item.params,
-                            })
-                          : item.external
-                            ? stegaClean(item.external)
-                            : '/'
-                      }
-                      className={navigationMenuTriggerStyle()}
-                      target={item.external ? '_blank' : undefined}
-                      aria-label={item.external ? `${item.label} (opens in new tab)` : undefined}
-                    >
-                      {item.external ? (
-                        <p className="flex items-center gap-2">
-                          {item.label} <ExternalLink className="w-3 h-3" aria-hidden="true" />
-                        </p>
-                      ) : (
-                        item.label
-                      )}
-                    </Link>
-                  </NavigationMenuLink>
+                  <NavigationMenuLink
+                    render={
+                      <Link
+                        href={
+                          item.internal?.metadata?.slug?.current
+                            ? resolveUrl(item.internal as Sanity.PageBase, {
+                                base: false,
+                                params: item.params,
+                              })
+                            : item.external
+                              ? stegaClean(item.external)
+                              : '/'
+                        }
+                        className={navigationMenuTriggerStyle()}
+                        target={item.external ? '_blank' : undefined}
+                        aria-label={item.external ? `${item.label} (opens in new tab)` : undefined}
+                      >
+                        {item.external ? (
+                          <p className="flex items-center gap-2">
+                            {item.label} <ExternalLink className="w-3 h-3" aria-hidden="true" />
+                          </p>
+                        ) : (
+                          item.label
+                        )}
+                      </Link>
+                    }
+                  />
                 </NavigationMenuItem>
               );
             case 'dropdownMenu':
@@ -114,9 +116,10 @@ export default async function Navigation() {
                   <NavigationMenuContent className="bg-background">
                     <ul className="grid w-[600px] gap-3 p-4 grid-cols-2">
                       {item.links?.map((link) => (
-                        <NavigationMenuLink asChild key={link.label}>
-                          <NavLink link={mapToMobileNavLink(link)} />
-                        </NavigationMenuLink>
+                        <NavigationMenuLink
+                          key={link.label}
+                          render={<NavLink link={mapToMobileNavLink(link)} />}
+                        />
                       ))}
                     </ul>
                   </NavigationMenuContent>
