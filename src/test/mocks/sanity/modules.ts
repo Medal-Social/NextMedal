@@ -10,24 +10,27 @@ import {
   createMockImg,
   createMockMenuItem,
   createMockPortableText,
-  createMockStat,
   generateKey,
 } from './helpers';
 import type {
   MockAccordionListModule,
   MockBlogFrontpageModule,
-  MockLatestArticlesModule,
+  MockBlogListModule,
   MockBreadcrumbsModule,
   MockCalloutModule,
+  MockComponentGalleryModule,
   MockFeaturesModule,
   MockHeroModule,
+  MockLatestArticlesModule,
   MockLogoCloudModule,
+  MockLogoListModule,
   MockModule,
-  MockTeamModule,
   MockPricingComparisonModule,
   MockPricingListModule,
   MockProductComparisonModule,
   MockRichtextModule,
+  MockTeamListModule,
+  MockTeamModule,
   MockVideoHeroModule,
 } from './types';
 
@@ -87,9 +90,7 @@ export function createMockAccordionListModule(
     _type: 'accordion-list',
     _key: generateKey(),
     options: { uid: 'faq-section' },
-    isFullWidth: false,
-    pretitle: 'FAQ',
-    intro: createMockPortableText(['Frequently Asked Questions']),
+    content: createMockPortableText(['Frequently Asked Questions']),
     items: [
       {
         _key: generateKey(),
@@ -108,7 +109,6 @@ export function createMockAccordionListModule(
         open: false,
       },
     ],
-    layout: 'vertical',
     generateSchema: true,
     ...overrides,
   };
@@ -165,32 +165,25 @@ export function createMockFeaturesModule(
     _type: 'features',
     _key: generateKey(),
     options: { uid: 'features-section' },
-    showBorder: false,
     pretitle: 'Features',
     intro: createMockPortableText(['Everything you need to succeed']),
     items: [
       {
         _key: generateKey(),
         icon: createMockIcon('zap'),
-        pretitle: 'Fast',
         summary: 'Lightning Speed',
         content: createMockPortableText(['Experience blazing fast performance.']),
       },
       {
         _key: generateKey(),
         icon: createMockIcon('shield'),
-        pretitle: 'Secure',
         summary: 'Enterprise Security',
         content: createMockPortableText(['Bank-level security for your data.']),
       },
     ],
-    layout: 'vertical',
-    textAlign: 'center',
-    columns: 3,
     ...overrides,
   };
 }
-
 
 export function createMockLogoCloudModule(
   overrides?: Partial<MockLogoCloudModule>
@@ -205,9 +198,7 @@ export function createMockLogoCloudModule(
   };
 }
 
-export function createMockTeamModule(
-  overrides?: Partial<MockTeamModule>
-): MockTeamModule {
+export function createMockTeamModule(overrides?: Partial<MockTeamModule>): MockTeamModule {
   return {
     _type: 'team',
     _key: generateKey(),
@@ -317,6 +308,63 @@ export function createMockRichtextModule(
   };
 }
 
+export function createMockBlogListModule(
+  overrides?: Partial<MockBlogListModule>
+): MockBlogListModule {
+  return {
+    _type: 'blog-list',
+    _key: generateKey(),
+    pretitle: 'Blog',
+    intro: createMockPortableText(['Blog List']),
+    layout: 'grid',
+    showFeaturedPostsFirst: true,
+    displayFilters: false,
+    limit: 6,
+    ...overrides,
+  };
+}
+
+export function createMockComponentGalleryModule(
+  overrides?: Partial<MockComponentGalleryModule>
+): MockComponentGalleryModule {
+  return {
+    _type: 'component-gallery',
+    _key: generateKey(),
+    intro: createMockPortableText(['Component Gallery']),
+    groups: [],
+    ...overrides,
+  };
+}
+
+export function createMockLogoListModule(
+  overrides?: Partial<MockLogoListModule>
+): MockLogoListModule {
+  return {
+    _type: 'logo-list',
+    _key: generateKey(),
+    options: { uid: 'logo-list' },
+    pretitle: 'Logos',
+    intro: createMockPortableText(['Our Partners']),
+    logos: [],
+    logoType: 'default',
+    ...overrides,
+  };
+}
+
+export function createMockTeamListModule(
+  overrides?: Partial<MockTeamListModule>
+): MockTeamListModule {
+  return {
+    _type: 'team-list',
+    _key: generateKey(),
+    options: { uid: 'team-list' },
+    pretitle: 'Team',
+    intro: createMockPortableText(['Our Team']),
+    people: [],
+    layout: 'carousel',
+    ...overrides,
+  };
+}
 
 export function createMockVideoHeroModule(
   overrides?: Partial<MockVideoHeroModule>
@@ -367,6 +415,14 @@ export function createMockModule(type: string, overrides?: Partial<MockModule>):
       return createMockRichtextModule(overrides as Partial<MockRichtextModule>);
     case 'videoHero':
       return createMockVideoHeroModule(overrides as Partial<MockVideoHeroModule>);
+    case 'blog-list':
+      return createMockBlogListModule(overrides as Partial<MockBlogListModule>);
+    case 'component-gallery':
+      return createMockComponentGalleryModule(overrides as Partial<MockComponentGalleryModule>);
+    case 'logo-list':
+      return createMockLogoListModule(overrides as Partial<MockLogoListModule>);
+    case 'team-list':
+      return createMockTeamListModule(overrides as Partial<MockTeamListModule>);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }
@@ -391,6 +447,10 @@ export const MODULE_TYPES = [
   'product-comparison',
   'richtext',
   'videoHero',
+  'blog-list',
+  'component-gallery',
+  'logo-list',
+  'team-list',
 ] as const;
 
 export type ModuleType = (typeof MODULE_TYPES)[number];
