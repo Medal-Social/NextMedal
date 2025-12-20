@@ -15,7 +15,7 @@ export default function BannerClient({
   return (
     !isClosed && (
       <Scheduler start={start} end={end}>
-        <div className="relative isolate flex items-center gap-x-6 overflow-hidden dark:bg-gray-900 bg-gray-50 px-6 py-2.5 sm:px-3.5 sm:before:flex-1">
+        <div className="relative isolate flex items-center gap-x-6 overflow-hidden bg-muted px-6 py-2.5 sm:px-3.5 sm:before:flex-1">
           <div
             aria-hidden="true"
             className="absolute top-1/2 left-[max(-7rem,calc(50%-52rem))] -z-10 -translate-y-1/2 transform-gpu blur-2xl"
@@ -41,7 +41,7 @@ export default function BannerClient({
             />
           </div>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <div className="text-sm/6 text-gray-900 dark:text-white">
+            <div className="text-sm/6 text-foreground">
               <div className="">
                 <PortableText value={content} />
               </div>
@@ -56,7 +56,7 @@ export default function BannerClient({
                     : '#'
               }
               target={cta?.external && '_blank'}
-              className="flex-none rounded-full bg-gray-900 dark:bg-white px-3.5 py-1 text-sm font-semibold text-white dark:text-gray-900 shadow-xs hover:bg-gray-700 dark:hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900 dark:focus-visible:outline-white"
+              className="flex-none rounded-full bg-foreground px-3.5 py-1 text-sm font-semibold text-background shadow-xs hover:bg-foreground/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
             >
               {cta?.label}
             </Link>
@@ -64,11 +64,11 @@ export default function BannerClient({
           <div className="flex flex-1 justify-end">
             <button
               type="button"
-              className="-m-3 p-1 focus-visible:outline-offset-[-4px] hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+              className="-m-3 p-1 focus-visible:outline-offset-[-4px] hover:bg-foreground/10 rounded-full"
               onClick={() => setIsClosed(true)}
             >
               <span className="sr-only">Dismiss</span>
-              <X aria-hidden="true" className="size-5 text-gray-900 dark:text-white" />
+              <X aria-hidden="true" className="size-5 text-foreground" />
             </button>
           </div>
         </div>
