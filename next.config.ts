@@ -34,7 +34,7 @@ const config = {
 
   async redirects() {
     return await client.fetch(groq`*[_type == 'redirect']{
-			source,
+			'source': select(source match "/*" => source, "/" + source),
 			'destination': select(
 				destination.type == 'internal' =>
 					select(
@@ -45,19 +45,6 @@ const config = {
 			),
 			permanent
 		}`);
-  },
-
-  async rewrites() {
-    return [
-      {
-        source: '/docs',
-        destination: '/docs',
-      },
-      {
-        source: '/docs/:path*',
-        destination: '/docs/:path*',
-      }
-    ];
   },
 
   env: {
