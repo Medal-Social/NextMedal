@@ -1,13 +1,8 @@
 {
   "name": "logo-cloud",
   "type": "components:module",
-  "dependencies": [
-    "next/link",
-    "next-sanity"
-  ],
-  "registryDependencies": [
-    "section"
-  ],
+  "dependencies": ["next/link", "next-sanity"],
+  "registryDependencies": ["section"],
   "files": [
     {
       "path": "modules/LogoCloud.tsx",
