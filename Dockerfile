@@ -32,7 +32,7 @@ RUN pnpm install --frozen-lockfile
 # Copy the rest of the code
 COPY . .
 
-# Build the Next.js app (includes Sanity Studio at /admin)
+# Build the Next.js app (includes Sanity Studio at /studio)
 RUN pnpm build
 
 # --- Production image ---

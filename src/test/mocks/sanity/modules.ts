@@ -31,7 +31,6 @@ import type {
   MockPricingListModule,
   MockProductComparisonModule,
   MockRichtextModule,
-  MockTabbedContentModule,
   MockVideoHeroModule,
 } from './types';
 
@@ -378,32 +377,6 @@ export function createMockRichtextModule(
   };
 }
 
-export function createMockTabbedContentModule(
-  overrides?: Partial<MockTabbedContentModule>
-): MockTabbedContentModule {
-  return {
-    _type: 'tabbedContent',
-    _key: generateKey(),
-    options: { uid: 'tabbed-content' },
-    pretitle: 'Features',
-    content: createMockPortableText(['Explore Our Features']),
-    tabs: [
-      {
-        _key: generateKey(),
-        title: 'Tab 1',
-        icon: createMockIcon('home'),
-        content: [createMockFeaturedHeroModule()],
-      },
-      {
-        _key: generateKey(),
-        title: 'Tab 2',
-        icon: createMockIcon('settings'),
-        content: [createMockFeaturedHeroModule()],
-      },
-    ],
-    ...overrides,
-  };
-}
 
 export function createMockVideoHeroModule(
   overrides?: Partial<MockVideoHeroModule>
@@ -458,8 +431,6 @@ export function createMockModule(type: string, overrides?: Partial<MockModule>):
       return createMockProductComparisonModule(overrides as Partial<MockProductComparisonModule>);
     case 'richtext-module':
       return createMockRichtextModule(overrides as Partial<MockRichtextModule>);
-    case 'tabbedContent':
-      return createMockTabbedContentModule(overrides as Partial<MockTabbedContentModule>);
     case 'videoHero':
       return createMockVideoHeroModule(overrides as Partial<MockVideoHeroModule>);
     default:
@@ -488,7 +459,6 @@ export const MODULE_TYPES = [
   'pricing-list',
   'product-comparison',
   'richtext-module',
-  'tabbedContent',
   'videoHero',
 ] as const;
 

@@ -66,7 +66,6 @@ export interface BlogPost extends SanityBase {
   authors: SanityReference[];
   publishDate: string;
   featured?: boolean;
-  hideTableOfContents?: boolean;
   metadata?: Metadata;
   relatedPosts?: SanityReference[];
 }
@@ -101,8 +100,8 @@ export interface CTA {
   };
 }
 
-export interface Link {
-  _type: 'link';
+export interface MenuItem {
+  _type: 'menuItem';
   label?: string;
   internal?: SanityReference;
   external?: string;
@@ -125,43 +124,7 @@ export interface Hero extends SanityBase {
   sideBySideTextAlign?: 'left' | 'center' | 'right';
 }
 
-export interface FeaturedHero extends SanityBase {
-  _type: 'featuredHero';
-  title?: string;
-  pretitle?: string;
-  description?: any[];
-  image?: {
-    image: SanityImage;
-    alt?: string;
-  };
-  direction?: 'left' | 'right';
-  textAlign?: 'left' | 'center' | 'right';
-  ctas?: CTA[];
-  features?: {
-    name: string;
-    description: string;
-    icon: {
-      ic0n: string;
-    };
-  }[];
-  options?: ModuleOptions;
-}
 
-export interface TabbedContent extends SanityBase {
-  _type: 'tabbedContent';
-  title?: string;
-  subtitle?: string;
-  tabs: {
-    title: string;
-    icon: {
-      ic0n: string;
-    };
-    content: any[];
-  }[];
-  tabPosition?: 'top' | 'bottom';
-  tabAlignment?: 'left' | 'center' | 'right';
-  options?: ModuleOptions;
-}
 
 export interface ModuleOptions {
   _type: 'module-options';

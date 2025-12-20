@@ -18,11 +18,15 @@ export default defineType({
   fields: [
     defineField({
       name: 'title',
+      title: 'Name',
+      description: 'The name of the category (e.g. "Technology", "Design").',
       type: 'string',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'slug',
+      title: 'Slug',
+      description: 'URL-friendly version of the name.',
       type: 'slug',
       options: {
         source: 'title',

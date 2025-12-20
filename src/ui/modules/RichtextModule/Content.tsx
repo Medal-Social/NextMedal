@@ -1,6 +1,5 @@
 import { PortableText } from 'next-sanity';
 import { cn } from '@/lib/utils';
-import Admonition from './Admonition';
 import Image from './Image';
 
 export default function Content({
@@ -9,13 +8,12 @@ export default function Content({
   children,
 }: { value: any } & React.ComponentProps<'div'>) {
   return (
-    <div className={cn('prose', className)}>
+    <div className={cn('prose prose-slate dark:prose-invert max-w-none', className)}>
       <PortableText
         value={value}
         components={{
           types: {
             image: Image,
-            admonition: Admonition,
           },
         }}
       />

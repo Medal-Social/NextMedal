@@ -1,25 +1,20 @@
 import { groq, PortableText } from 'next-sanity';
+import { Section } from '@/components/ui/section';
 import { cn } from '@/lib/utils';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
 import { Img } from '@/ui/Img';
 import Pretitle from '@/ui/Pretitle';
-import css from './LogoList.module.css';
 
 export default async function LogoList({
   pretitle,
   intro,
   logos,
   logoType = 'default',
-  autoScroll,
-  duration = 12,
 }: Partial<{
   pretitle: string;
   intro: any;
   logos: Sanity.Logo[];
   logoType: 'default' | 'light' | 'dark';
-  autoScroll?: boolean;
-  duration?: number;
-  isTabbedModule?: boolean;
 }>) {
   const allLogos =
     logos ||
@@ -28,31 +23,18 @@ export default async function LogoList({
     }));
 
   return (
-    <section className="section space-y-8">
+    <Section className="space-y-8">
       {(pretitle || intro) && (
-        <header className="richtext mx-auto max-w-screen-sm text-center text-balance">
+        <header className="mx-auto max-w-screen-sm text-center text-balance prose prose-slate dark:prose-invert">
           <Pretitle>{pretitle}</Pretitle>
           <PortableText value={intro} />
         </header>
       )}
 
-      <figure
-        className={cn(
-          'mx-auto flex items-center gap-y-8 pb-4',
-          autoScroll
-            ? `${css.track} overflow-fade max-w-max overflow-hidden`
-            : 'flex-wrap justify-center gap-x-4'
-        )}
-        style={
-          {
-            '--count': allLogos?.length,
-            '--dur': `${duration}s`,
-          } as React.CSSProperties
-        }
-      >
+      <figure className="mx-auto flex flex-wrap items-center justify-center gap-x-12 gap-y-8">
         {allLogos.map((logo) => (
           <Img
-            className="h-[2.5em] w-[200px] shrink-0 object-contain px-4 max-sm:w-[150px]"
+            className="h-[2.5em] w-[200px] shrink-0 object-contain max-sm:w-[150px]"
             image={logo.image?.[logoType] || logo.image?.default}
             height={100}
             width={400}
@@ -61,6 +43,6 @@ export default async function LogoList({
           />
         ))}
       </figure>
-    </section>
+    </Section>
   );
 }

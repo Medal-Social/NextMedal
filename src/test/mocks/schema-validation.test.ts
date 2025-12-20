@@ -30,7 +30,6 @@ import {
   createMockProductComparisonModule,
   createMockRichtextModule,
   createMockSite,
-  createMockTabbedContentModule,
   createMockVideoHeroModule,
   MODULE_TYPES,
 } from './sanity';
@@ -263,17 +262,12 @@ describe('Module Schema Validation', () => {
       schemaName: 'richtext-module',
       createMock: createMockRichtextModule,
     },
-    {
-      moduleType: 'tabbedContent',
-      schemaName: 'tabbedContent',
-      createMock: createMockTabbedContentModule,
-    },
     { moduleType: 'videoHero', schemaName: 'videoHero', createMock: createMockVideoHeroModule },
   ];
 
   it('all 18 module types have corresponding schemas', () => {
-    expect(MODULE_TYPES).toHaveLength(18);
-    expect(moduleConfigs).toHaveLength(18);
+    expect(MODULE_TYPES).toHaveLength(17);
+    expect(moduleConfigs).toHaveLength(17);
   });
 
   describe.each(moduleConfigs)('$schemaName module', ({ moduleType, schemaName, createMock }) => {

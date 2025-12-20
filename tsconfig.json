@@ -29,7 +29,6 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "docs/index.mdx",
     ".next/dev/types/**/*.ts"
   ],
   "exclude": ["node_modules"]

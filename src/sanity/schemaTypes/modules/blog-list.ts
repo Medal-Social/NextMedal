@@ -13,24 +13,30 @@ import { getBlockText } from '@/sanity/lib/utils';
 
 export default defineType({
   name: 'blog-list',
-  title: 'Blog list',
+  title: 'Latest Articles',
   icon: VscEdit,
   type: 'object',
   groups: [{ name: 'content', default: true }, { name: 'filtering' }, { name: 'options' }],
   fields: [
     defineField({
       name: 'pretitle',
+      title: 'Pretitle',
+      description: 'Small text above the main title.',
       type: 'string',
       group: 'content',
     }),
     defineField({
       name: 'intro',
+      title: 'Intro',
+      description: 'Introduction text/title for the blog list.',
       type: 'array',
       of: [{ type: 'block' }],
       group: 'content',
     }),
     defineField({
       name: 'layout',
+      title: 'Layout Style',
+      description: 'Choose how the posts are displayed.',
       type: 'string',
       options: {
         list: ['grid', 'carousel'],
@@ -41,6 +47,8 @@ export default defineType({
     }),
     defineField({
       name: 'showFeaturedPostsFirst',
+      title: 'Show featured posts first',
+      description: 'If enabled, posts marked as "Featured" will appear at the top.',
       type: 'boolean',
       initialValue: true,
       group: 'filtering',
@@ -78,7 +86,7 @@ export default defineType({
     },
     prepare: ({ intro }) => ({
       title: getBlockText(intro),
-      subtitle: 'Blog list',
+      subtitle: 'Latest Articles',
     }),
   },
 });

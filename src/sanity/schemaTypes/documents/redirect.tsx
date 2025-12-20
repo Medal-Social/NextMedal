@@ -1,8 +1,15 @@
+/**
+ * Redirect Schema
+ * @version 1.0.0
+ * @lastUpdated 2024-03-22
+ * @description Defines URL redirects (HTTP 301/307/308).
+ * @changelog
+ * - 1.0.0: Initial version
+ */
+
 import { PiFlowArrow } from 'react-icons/pi';
 import { defineField, defineType } from 'sanity';
 import resolveSlug from '@/sanity/lib/resolveSlug';
-
-const regex = /^(\/|https?:\/\/)/;
 
 export default defineType({
   name: 'redirect',
@@ -12,10 +19,29 @@ export default defineType({
   fields: [
     defineField({
       name: 'source',
-      description: 'Redirect from',
-      placeholder: 'e.g. /old-path, /old-blog/:slug',
+      title: 'Redirect From',
+      placeholder: 'e.g. /about-us or about-us',
+      description: (
+        <>
+          <p>
+            Enter the path to redirect from. You don&apos;t need to worry about the
+            leading slash <code>/</code>.
+          </p>
+          <p style={{ marginTop: '8px', fontSize: '0.9em', opacity: 0.8 }}>
+            <strong>Advanced:</strong> To match dynamic paths (like any blog post),
+            use a colon + name. <br />
+            <em>Example: <code>/blog/:slug</code> will match <code>/blog/anything</code></em>
+          </p>
+        </>
+      ),
       type: 'string',
-      validation: (Rule) => Rule.required().regex(regex),
+      validation: (Rule) =>
+        Rule.required().custom((value) => {
+          if (typeof value === 'string' && value.startsWith('http')) {
+            return 'Please enter a relative path (e.g. /about), not a full URL.';
+          }
+          return true;
+        }),
     }),
     defineField({
       name: 'destination',

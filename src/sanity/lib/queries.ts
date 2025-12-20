@@ -18,7 +18,6 @@ export const NAVIGATION_QUERY = groq`
 	title,
 	items[]{
 		${LINK_QUERY},
-		link{ ${LINK_QUERY} },
 		links[]{ ${LINK_QUERY} },
 		categories[]{
 		...,
@@ -35,7 +34,8 @@ export const CTA_QUERY = groq`
 	}
 `;
 
-export const MODULES_QUERY = groq`
+// Base modules query for non-recursive parts
+const BASE_MODULES_QUERY = groq`
 	...,
 	ctas[]{${CTA_QUERY}},
 	_type == 'blog-list' => { filteredCategory-> },
@@ -49,13 +49,8 @@ export const MODULES_QUERY = groq`
 	_type == 'hero.split' => {
 		content[]
 	},
-	_type== 'galleryHero' => {
-		...,
-		content[],
-		assets[]{..., "image": image.asset->, alt, loading}
-	},
-	_type == 'logo-list' => { logos[]-> },
-	_type == 'person-list' => { 
+	_type == 'logo-cloud' => { logos[]-> },
+	_type == 'team' => { 
 		...,
 		people[]->{...,  "image": image.asset->, altText, loading},
 	},
@@ -65,7 +60,7 @@ export const MODULES_QUERY = groq`
 			ctas[]{${CTA_QUERY}}
 		}
 	},
-	_type == 'richtext-module' => {
+	_type == 'richtext' => {
 		'headings': select(
 			tableOfContents => content[style in ['h2', 'h3', 'h4', 'h5', 'h6']]{
 				style,
@@ -73,28 +68,7 @@ export const MODULES_QUERY = groq`
 			}
 		),
 	},
-	_type == 'tabbedContent' => {
-		tabs[]{
-			...,
-			ctas[]{ ${CTA_QUERY} },
-			content[]{
-				...,
-				_type == 'featuredHero' => {
-					...,
-					ctas[]{ ${CTA_QUERY} },
-					content[],
-					image{..., "image": image.asset->, altText, loading}
-
-				},
-			}
-		}
-	},
-	_type == 'featuredHero' => {
-		ctas[]{ ${CTA_QUERY} },
-		content[],
-		image{..., "image": image.asset->, altText, loading}
-	},
-	_type == 'feature-grid' => {
+	_type == 'features' => {
 		...,
 		items[]{
 			...,
@@ -114,6 +88,19 @@ export const MODULES_QUERY = groq`
 		},
 		thumbnail,
 		title
+	},
+`;
+
+export const MODULES_QUERY = groq`
+	${BASE_MODULES_QUERY}
+	_type == 'component-gallery' => {
+		...,
+		groups[]{
+			...,
+			items[]{
+				${BASE_MODULES_QUERY}
+			}
+		}
 	},
 `;
 

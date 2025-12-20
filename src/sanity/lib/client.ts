@@ -8,6 +8,6 @@ export const client = createClient({
   apiVersion,
   useCdn: !dev,
   stega: {
-    studioUrl: '/admin',
+    studioUrl: '/studio',
   },
 });

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { PortableText } from 'next-sanity';
 import { cn } from '@/lib/utils';
 import { getSite } from '@/sanity/lib/fetch';
+import { Section } from '@/components/ui/section';
 import { Img } from '@/ui/Img';
 import Social from '@/ui/Social';
 import Navigation from './Navigation';
@@ -14,7 +15,7 @@ export default async function Footer() {
 
   return (
     <footer className="bg-background text-foreground">
-      <div className="section flex flex-wrap gap-x-12 gap-y-8 max-sm:flex-col">
+      <Section className="flex flex-wrap gap-x-12 gap-y-8 max-sm:flex-col">
         <div className="flex-1 min-w-[200px]">
           <Link
             className={cn('h3 md:h2 max-w-max', 'transition-colors hover:text-primary')}
@@ -49,9 +50,9 @@ export default async function Footer() {
         </div>
 
         <Navigation />
-      </div>
+      </Section>
 
-      <div className="section flex flex-wrap justify-between items-center py-2">
+      <Section className="flex flex-wrap justify-between items-center py-2" spacing="none">
         <div className="text-sm text-muted-foreground">
           {copyright ? (
             <PortableText value={copyright} />
@@ -63,7 +64,7 @@ export default async function Footer() {
         </div>
 
         <Social className="mt-0" aria-label="Social media links" />
-      </div>
+      </Section>
     </footer>
   );
 }

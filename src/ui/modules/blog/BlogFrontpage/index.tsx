@@ -1,7 +1,8 @@
 import { groq, stegaClean } from 'next-sanity';
 import { Suspense } from 'react';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
-import FilterList from '../BlogList/FilterList';
+import { Section } from '@/components/ui/section';
+import FilterList from '../LatestArticles/FilterList';
 import PostPreview from '../PostPreview';
 import PostPreviewLarge from '../PostPreviewLarge';
 import Paginated from './Paginated';
@@ -11,14 +12,17 @@ export default async function BlogFrontpage({
   mainPost,
   showFeaturedPostsFirst,
   itemsPerPage,
+  posts: postsProp,
 }: Partial<{
   mainPost: 'recent' | 'featured';
   showFeaturedPostsFirst: boolean;
   itemsPerPage: number;
-  isTabbedModule?: boolean;
+  posts?: Sanity.BlogPost[];
 }>) {
-  const posts = await fetchSanityLive<Sanity.BlogPost[]>({
-    query: groq`*[_type == 'blog.post']|order(publishDate desc){
+  const posts =
+    postsProp ||
+    (await fetchSanityLive<Sanity.BlogPost[]>({
+      query: groq`*[_type == 'blog.post']|order(publishDate desc){
 			_type,
 			_id,
 			featured,
@@ -27,13 +31,13 @@ export default async function BlogFrontpage({
 			authors[]->,
 			publishDate,
 		}`,
-  });
+    }));
 
   const [firstPost, ...otherPosts] =
     stegaClean(mainPost) === 'featured' ? sortFeaturedPosts(posts) : posts;
 
   return (
-    <section className="section space-y-12">
+    <Section className="space-y-12">
       <PostPreviewLarge post={firstPost} />
 
       <hr />
@@ -56,6 +60,6 @@ export default async function BlogFrontpage({
           itemsPerPage={itemsPerPage}
         />
       </Suspense>
-    </section>
+    </Section>
   );
 }

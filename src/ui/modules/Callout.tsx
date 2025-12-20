@@ -1,4 +1,5 @@
 import { PortableText, stegaClean } from 'next-sanity';
+import { Section } from '@/components/ui/section';
 import CTAListCallout from '../CTAListCallout';
 
 export default function Callout({
@@ -7,12 +8,11 @@ export default function Callout({
 }: Partial<{
   content: any;
   ctas: Sanity.CTA[];
-  isTabbedModule?: boolean;
 }>) {
   return (
-    <section className="w-full py-24 sm:py-32">
-      <div className="w-full ">
-        <div className="relative isolate overflow-hidden bg-gray-900 px-6 py-24 text-center shadow-2xl  sm:px-16">
+    <Section>
+      <div className="w-full">
+        <div className="relative isolate overflow-hidden bg-gray-900 px-6 py-24 text-center shadow-2xl sm:px-16">
           <div className="emailsignup">
             <PortableText value={stegaClean(content)} />
           </div>
@@ -38,6 +38,6 @@ export default function Callout({
           </svg>
         </div>
       </div>
-    </section>
+    </Section>
   );
 }

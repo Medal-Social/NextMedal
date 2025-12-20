@@ -19,7 +19,10 @@ export default defineConfig({
   title: "Medal Social Enterprise",
   projectId,
   dataset,
-  basePath: "/admin",
+  basePath: "/studio",
+
+  tasks: { enabled: false },
+  scheduledPublishing: { enabled: false },
 
   plugins: [
     structure,
@@ -51,6 +54,20 @@ export default defineConfig({
       ),
   },
   document: {
+    comments: { enabled: false },
+    newDocumentOptions: (prev, { creationContext }) => {
+      if (creationContext.type === 'global') {
+        return prev.filter((templateItem) => templateItem.templateId !== 'site');
+      }
+      return prev;
+    },
+    actions: (prev, context) => {
+      // Singleton protection: Prevent delete/duplicate/unpublish for 'site' document
+      if (context.schemaType === 'site') {
+        return prev.filter(({ action }) => action && !['delete', 'duplicate', 'unpublish'].includes(action));
+      }
+      return prev;
+    },
     productionUrl: async (prev, { document }) => {
       if (["page", "blog.post"].includes(document?._type)) {
         return resolveUrl(document as Sanity.PageBase, { base: true });

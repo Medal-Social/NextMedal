@@ -34,7 +34,7 @@ export default async function Menu() {
         if ('_key' in item && typeof item._key === 'string') itemKey = item._key;
         else if ('label' in item && typeof item.label === 'string') itemKey = item.label;
         switch (item._type) {
-          case 'link':
+          case 'menuItem':
             if (item.external) {
               return (
                 <nav className="flex flex-col gap-2" key={itemKey}>
@@ -81,20 +81,10 @@ export default async function Menu() {
               </nav>
             );
 
-          case 'link.list':
+          case 'dropdownMenu':
             return (
               <nav className="flex flex-col gap-2" key={itemKey}>
-                {item.link?.external ? (
-                  <h2 className="text-sm font-medium">{item.link.label}</h2>
-                ) : item.link?.internal ? (
-                  <h2 className="text-sm font-medium">
-                    {stegaClean(item.link?.label) || item.link?.internal?.title}
-                  </h2>
-                ) : item.link ? (
-                  <h2 className="text-sm font-medium">
-                    {stegaClean(item.link?.label) || item.link?.internal?.title}
-                  </h2>
-                ) : null}
+                <h2 className="text-sm font-medium">{item.title}</h2>
 
                 {item.links && item.links.length > 0 && (
                   <ul className="flex flex-col gap-2">

@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import CTA from './CTA';
 
-type CTAItem = Sanity.CTA | { _key?: string; link?: Sanity.Link; style?: string };
+type CTAItem = Sanity.CTA | { _key?: string; link?: Sanity.MenuItem; style?: Sanity.CTA['style'] };
 
 export default function CTAList({
   ctas,
@@ -17,12 +17,12 @@ export default function CTAList({
         // For items with a link, pass the link label as children if not already specified
         if ('link' in cta && cta.link && !('children' in cta)) {
           return (
-            <CTA className="max-sm:w-full" {...cta} key={cta._key || cta.link.label}>
+            <CTA {...cta} key={cta._key || cta.link.label}>
               {cta.link.label}
             </CTA>
           );
         }
-        return <CTA className="max-sm:w-full" {...cta} key={cta._key || Math.random()} />;
+        return <CTA {...cta} key={cta._key || Math.random()} />;
       })}
     </div>
   );

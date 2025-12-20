@@ -39,21 +39,17 @@ import {
   createMockAccordionListModule,
   createMockBlogFrontpageModule,
   createMockBlogListModule,
-  createMockBlogPostContentModule,
   createMockBreadcrumbsModule,
   createMockCalloutModule,
-  createMockFeaturedHeroModule,
-  createMockFeatureGridModule,
-  createMockGalleryHeroModule,
+  createMockFeaturesModule,
   createMockHeroModule,
-  createMockLogoListModule,
+  createMockLogoCloudModule,
   createMockPage,
-  createMockPersonListModule,
+  createMockTeamModule,
   createMockPricingComparisonModule,
   createMockPricingListModule,
   createMockProductComparisonModule,
   createMockRichtextModule,
-  createMockTabbedContentModule,
   createMockVideoHeroModule,
   MODULE_TYPES,
 } from './mocks/sanity';
@@ -66,18 +62,14 @@ const moduleFactories = {
   'accordion-list': createMockAccordionListModule,
   'blog-frontpage': createMockBlogFrontpageModule,
   'blog-list': createMockBlogListModule,
-  'blog-post-content': createMockBlogPostContentModule,
   breadcrumbs: createMockBreadcrumbsModule,
-  'feature-grid': createMockFeatureGridModule,
-  featuredHero: createMockFeaturedHeroModule,
-  galleryHero: createMockGalleryHeroModule,
-  'logo-list': createMockLogoListModule,
-  'person-list': createMockPersonListModule,
+  'features': createMockFeaturesModule,
+  'logo-cloud': createMockLogoCloudModule,
+  team: createMockTeamModule,
   'pricing-comparison': createMockPricingComparisonModule,
   'pricing-list': createMockPricingListModule,
   'product-comparison': createMockProductComparisonModule,
-  'richtext-module': createMockRichtextModule,
-  tabbedContent: createMockTabbedContentModule,
+  'richtext': createMockRichtextModule,
   videoHero: createMockVideoHeroModule,
 } as const;
 
@@ -86,15 +78,12 @@ const SYNC_MODULE_TYPES = [
   'hero',
   'callout',
   'accordion-list',
-  'feature-grid',
-  'featuredHero',
-  'galleryHero',
-  'logo-list',
-  'person-list',
+  'features',
+  'logo-cloud',
+  'team',
   'pricing-list',
   'product-comparison',
-  'richtext-module',
-  'tabbedContent',
+  'richtext',
   'videoHero',
 ] as const;
 
@@ -167,24 +156,6 @@ describe('Property 37: Sanity Component Rendering', () => {
       );
     });
 
-    it('renders modules with isTabbedModule flag without throwing', () => {
-      const moduleTypeArb = fc.constantFrom(...SYNC_MODULE_TYPES);
-      const isTabbedArb = fc.boolean();
-
-      fc.assert(
-        fc.property(moduleTypeArb, isTabbedArb, (moduleType, isTabbedModule) => {
-          const factory = moduleFactories[moduleType];
-          const module = factory();
-
-          expect(() => {
-            renderWithProviders(
-              <Modules modules={[module as Sanity.Module]} isTabbedModule={isTabbedModule} />
-            );
-          }).not.toThrow();
-        }),
-        { numRuns: 30 }
-      );
-    });
   });
 
   describe('Edge cases', () => {

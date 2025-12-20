@@ -1,5 +1,11 @@
 import Link from 'next/link';
-import { FaInstagram, FaLinkedin, FaXTwitter, FaYoutube } from 'react-icons/fa6';
+import {
+  FaFacebook,
+  FaInstagram,
+  FaLinkedin,
+  FaYoutube,
+} from 'react-icons/fa6';
+import { FaXTwitter } from 'react-icons/fa6';
 import { GoPerson } from 'react-icons/go';
 import { cn } from '@/lib/utils';
 import { Img } from '@/ui/Img';
@@ -52,13 +58,13 @@ function Author({
     className: cn(
       'flex items-center gap-[.5ch] ',
       linked && 'hover:underline',
-      !linked || (!socialLinks && 'pointer-events-none')
+      !linked || (!socialLinks && 'pointer-events-none'),
     ),
     children: (
       <div className="flex items-center gap-x-4">
         {author?.image ? (
           <Img
-            className="aspect-square rounded-full"
+            className="aspect-square rounded-full object-cover"
             image={author.image}
             width={40}
             alt={author.name}
@@ -73,62 +79,33 @@ function Author({
           )}
           {socialLinks && author?.socialLinks ? (
             <ul className="mt-1 flex items-center  gap-x-6">
-              {author.socialLinks.twitter && (
-                <li className=" w-fit h-fit">
-                  <Link
-                    href={author.socialLinks.twitter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-muted-foreground hover:text-foreground w-fit h-auto "
-                    aria-label={`X/Twitter profile for ${author.name}`}
-                  >
-                    <span className="sr-only">X</span>
-                    <FaXTwitter className="size-4" aria-hidden="true" />
-                  </Link>
-                </li>
-              )}
-              {author.socialLinks.linkedIn && (
-                <li>
-                  <Link
-                    href={author.socialLinks.linkedIn}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-muted-foreground hover:text-foreground w-fit h-auto "
-                    aria-label={`LinkedIn profile for ${author.name}`}
-                  >
-                    <span className="sr-only">LinkedIn</span>
-                    <FaLinkedin className="size-4" aria-hidden="true" />
-                  </Link>
-                </li>
-              )}
-              {author.socialLinks.instagram && (
-                <li>
-                  <Link
-                    href={author.socialLinks.instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-muted-foreground hover:text-foreground w-fit h-auto"
-                    aria-label={`Instagram profile for ${author.name}`}
-                  >
-                    <span className="sr-only">Instagram</span>
-                    <FaInstagram className="size-4" aria-hidden="true" />
-                  </Link>
-                </li>
-              )}
-              {author.socialLinks.youtube && (
-                <li>
-                  <Link
-                    href={author.socialLinks.youtube}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-muted-foreground hover:text-foreground w-fit h-auto"
-                    aria-label={`YouTube channel for ${author.name}`}
-                  >
-                    <span className="sr-only">YouTube</span>
-                    <FaYoutube className="size-4" aria-hidden="true" />
-                  </Link>
-                </li>
-              )}
+              {author.socialLinks.map((link) => {
+                const Icon =
+                  {
+                    linkedin: FaLinkedin,
+                    twitter: FaXTwitter,
+                    instagram: FaInstagram,
+                    youtube: FaYoutube,
+                    facebook: FaFacebook,
+                  }[link.platform] || GoPerson;
+
+                if (!link.url) return null;
+
+                return (
+                  <li key={link._key} className="h-fit w-fit">
+                    <Link
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground hover:text-foreground h-auto w-fit"
+                      aria-label={`${link.platform} profile for ${author.name}`}
+                    >
+                      <span className="sr-only">{link.platform}</span>
+                      <Icon className="size-4" aria-hidden="true" />
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           ) : null}
         </div>

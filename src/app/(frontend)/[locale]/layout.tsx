@@ -10,7 +10,7 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { Toaster } from '@/components/ui/sonner';
 import { routing } from '@/i18n/routing';
 import { getSite } from '@/sanity/lib/fetch';
-import Announcement from '@/ui/Announcement';
+import Banner from '@/ui/Banner';
 import Footer from '@/ui/footer';
 import Header from '@/ui/header';
 import SkipToContent from '@/ui/SkipToContent';
@@ -61,7 +61,7 @@ export default async function RootLayout({ children, params }: Props) {
           <NuqsAdapter>
             <NextIntlClientProvider locale={locale}>
               <SkipToContent />
-              <Announcement />
+              <Banner />
               <Header />
               <main
                 id="main-content"
