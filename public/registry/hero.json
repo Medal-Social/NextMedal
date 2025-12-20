@@ -1,12 +1,8 @@
 {
   "name": "hero",
   "type": "components:module",
-  "dependencies": [
-    "next-sanity"
-  ],
-  "registryDependencies": [
-    "section"
-  ],
+  "dependencies": ["next-sanity"],
+  "registryDependencies": ["section"],
   "files": [
     {
       "path": "modules/hero/Hero.tsx",
