@@ -149,7 +149,7 @@ function FeatureRow({
             </TooltipProvider>
           )}
         </td>
-        {feature.tiers?.map((value, i) => (
+        {feature.tiers?.slice(0, tiersCount).map((value, i) => (
           <td key={i} className="p-4 text-center">
             {renderValue(value)}
           </td>
@@ -175,34 +175,36 @@ function FeatureRow({
   );
 }
 
-function renderValue(value: FeatureTier) {
-  let actualValue: string | boolean;
+function renderValue(value: FeatureTier | null | undefined) {
+  // Resolve the value to a primitive (string, boolean, or null/undefined)
+  let resolved: string | boolean | null | undefined = value as any;
 
-  if (typeof value === 'object' && value !== null && 'title' in value) {
-    actualValue = value.title;
-  } else {
-    actualValue = value as string | boolean;
-  }
-
-  // Safety check: if actualValue is still an object, try to extract title or stringify, or return null to avoid React error
-  if (typeof actualValue === 'object' && actualValue !== null) {
-    if ('title' in (actualValue as any)) {
-      actualValue = (actualValue as any).title;
+  if (typeof value === 'object' && value !== null) {
+    if ('title' in value) {
+      resolved = value.title;
     } else {
-      console.error('Invalid value in PricingComparison renderValue:', value);
-      return null;
+      // If we receive an unknown object, treating it as empty/dash is safer than crashing or printing [object Object]
+      resolved = null;
     }
   }
 
-  if (typeof actualValue === 'boolean') {
-    return actualValue ? (
-      <Check className="w-5 h-5 text-primary mx-auto" />
-    ) : (
-      <X className="w-5 h-5 text-muted-foreground/30 mx-auto" />
-    );
-  }
-  if (actualValue === 'true') return <Check className="w-5 h-5 text-primary mx-auto" />;
-  if (actualValue === 'false') return <X className="w-5 h-5 text-muted-foreground/30 mx-auto" />;
+  // Normalize boolean strings
+  if (resolved === 'true') resolved = true;
+  if (resolved === 'false') resolved = false;
 
-  return <span className="text-sm font-medium">{actualValue}</span>;
+  // Render based on type
+  if (resolved === true) {
+    return <Check className="w-5 h-5 text-primary mx-auto" />;
+  }
+
+  if (resolved === false) {
+    return <X className="w-5 h-5 text-muted-foreground/30 mx-auto" />;
+  }
+
+  if (typeof resolved === 'string' && resolved.trim().length > 0) {
+    return <span className="text-sm font-medium">{resolved}</span>;
+  }
+
+  // Default fallback for null, undefined, empty strings, or unhandled types
+  return <span className="text-muted-foreground">-</span>;
 }

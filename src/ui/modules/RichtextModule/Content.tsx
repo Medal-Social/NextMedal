@@ -1,5 +1,5 @@
 import { PortableText, type PortableTextComponents } from 'next-sanity';
-import { cn } from '@/lib/utils';
+import { cn, slug } from '@/lib/utils';
 import Image from './Image';
 
 const components: PortableTextComponents = {
@@ -8,10 +8,7 @@ const components: PortableTextComponents = {
   },
   block: {
     h2: ({ children, value }: any) => {
-      const id = value.children?.[0]?.text
-        ?.toLowerCase()
-        .replace(/[^\w\s-]/g, '')
-        .replace(/\s+/g, '-');
+      const id = slug(value.children?.map((child: any) => child.text).join('') || '');
       return (
         <h2 id={id} className="scroll-mt-24">
           {children}
@@ -19,10 +16,7 @@ const components: PortableTextComponents = {
       );
     },
     h3: ({ children, value }: any) => {
-      const id = value.children?.[0]?.text
-        ?.toLowerCase()
-        .replace(/[^\w\s-]/g, '')
-        .replace(/\s+/g, '-');
+      const id = slug(value.children?.map((child: any) => child.text).join('') || '');
       return (
         <h3 id={id} className="scroll-mt-24">
           {children}

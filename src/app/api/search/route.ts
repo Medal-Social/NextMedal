@@ -3,7 +3,8 @@ import { groq } from 'next-sanity';
 import { client } from '@/sanity/lib/client';
 
 export async function GET() {
-  const query = groq`{
+  try {
+    const query = groq`{
     "posts": *[_type == "blog.post" && defined(metadata.slug.current)] {
       _id,
       _type,
@@ -25,12 +26,24 @@ export async function GET() {
     }
   }`;
 
-  const data = await client.fetch(query);
+    const data = await client.fetch(query);
 
-  const results = [
-    ...data.posts.map((p: any) => ({ ...p, type: 'Blog', href: `/blog/${p.slug}` })),
-    ...data.pages.map((p: any) => ({ ...p, type: 'Page', href: `/${p.slug}` })),
-  ];
+    const results = [
+      ...(Array.isArray(data.posts) ? data.posts : []).map((p: any) => ({
+        ...p,
+        type: 'Blog',
+        href: `/blog/${p.slug}`,
+      })),
+      ...(Array.isArray(data.pages) ? data.pages : []).map((p: any) => ({
+        ...p,
+        type: 'Page',
+        href: `/${p.slug}`,
+      })),
+    ];
 
-  return NextResponse.json(results);
+    return NextResponse.json(results);
+  } catch (error) {
+    console.error('Search API Error:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
 }

@@ -1,7 +1,7 @@
 import type { PortableTextBlock } from 'next-sanity';
 
 // Helper to generate a random key
-const key = () => Math.random().toString(36).substring(7);
+const key = () => crypto.randomUUID();
 
 // Helper for basic text block
 const pt = (text: string, style = 'normal', marks: string[] = []): PortableTextBlock => ({
@@ -149,6 +149,7 @@ export const mockPost = {
       children: [
         {
           _type: 'span',
+          _key: key(),
           text: "Zero bundle size for server components: They don't hydrate on the client.",
         },
       ],
@@ -160,7 +161,7 @@ export const mockPost = {
       level: 1,
       _key: key(),
       children: [
-        { _type: 'span', text: 'Direct access to backend resources: Query databases directly.' },
+        { _type: 'span', _key: key(), text: 'Direct access to backend resources: Query databases directly.' },
       ],
     },
     {
@@ -170,7 +171,7 @@ export const mockPost = {
       level: 1,
       _key: key(),
       children: [
-        { _type: 'span', text: 'Automatic code splitting: Next.js handles this automatically.' },
+        { _type: 'span', _key: key(), text: 'Automatic code splitting: Next.js handles this automatically.' },
       ],
     },
 
@@ -183,7 +184,7 @@ export const mockPost = {
       level: 1,
       _key: key(),
       children: [
-        { _type: 'span', text: 'Audit your existing codebase for client-side dependencies.' },
+        { _type: 'span', _key: key(), text: 'Audit your existing codebase for client-side dependencies.' },
       ],
     },
     {
@@ -192,7 +193,7 @@ export const mockPost = {
       listItem: 'number',
       level: 1,
       _key: key(),
-      children: [{ _type: 'span', text: 'Move global providers to a Client Component wrapper.' }],
+      children: [{ _type: 'span', _key: key(), text: 'Move global providers to a Client Component wrapper.' }],
     },
     {
       _type: 'block',
@@ -203,6 +204,7 @@ export const mockPost = {
       children: [
         {
           _type: 'span',
+          _key: key(),
           text: 'Identify leaf nodes that require interactivity (useState, useEffect).',
         },
       ],
@@ -238,10 +240,11 @@ export const mockPost = {
       children: [
         {
           _type: 'span',
+          _key: key(),
           text: 'We can handle various text styles beyond simple bold and italic. For example, inline code looks like this: ',
         },
-        { _type: 'span', marks: ['code'], text: 'export default function Page() {}' },
-        { _type: 'span', text: '. This is useful for technical documentation.' },
+        { _type: 'span', _key: key(), marks: ['code'], text: 'export default function Page() {}' },
+        { _type: 'span', _key: key(), text: '. This is useful for technical documentation.' },
       ],
     },
 
@@ -252,19 +255,21 @@ export const mockPost = {
       style: 'normal',
       _key: key(),
       children: [
-        { _type: 'span', text: 'You can reference external resources like the ' },
+        { _type: 'span', _key: key(), text: 'You can reference external resources like the ' },
         {
           _type: 'span',
+          _key: key(),
           marks: ['link1'],
           text: 'official Next.js documentation',
         },
-        { _type: 'span', text: ' or internal pages like our ' },
+        { _type: 'span', _key: key(), text: ' or internal pages like our ' },
         {
           _type: 'span',
+          _key: key(),
           marks: ['link2'],
           text: 'Component Library',
         },
-        { _type: 'span', text: '.' },
+        { _type: 'span', _key: key(), text: '.' },
       ],
       markDefs: [
         {
@@ -294,7 +299,7 @@ export const mockPost = {
         {
           _type: 'block',
           style: 'h3',
-          children: [{ _type: 'span', text: 'Subscribe to the Newsletter' }],
+          children: [{ _type: 'span', _key: key(), text: 'Subscribe to the Newsletter' }],
         },
         {
           _type: 'block',
@@ -302,6 +307,7 @@ export const mockPost = {
           children: [
             {
               _type: 'span',
+              _key: key(),
               text: 'Get the latest updates directly to your inbox. No spam, just code.',
             },
           ],

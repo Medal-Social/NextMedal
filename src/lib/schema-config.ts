@@ -77,7 +77,7 @@ export const schemaObjects: Record<string, any> = {
   logo: logoSchema,
 };
 
-export function sanitizeSchema(obj: any): any {
+export function sanitizeSchema(obj: any, visited = new WeakSet<any>()): any {
   if (obj === null || obj === undefined) {
     return obj;
   }
@@ -86,25 +86,33 @@ export function sanitizeSchema(obj: any): any {
     return `[Function: ${obj.name || 'anonymous'}]`;
   }
 
-  // Handle Sanity icon components which might be functions or objects
-  if (typeof obj === 'function' || (typeof obj === 'object' && obj.$$typeof)) {
+  if (typeof obj !== 'object') {
+    return obj;
+  }
+
+  // Handle Sanity icon components which might be objects
+  if (obj.$$typeof) {
     return '[Icon Component]';
   }
 
+  if (visited.has(obj)) {
+    return '[Circular]';
+  }
+
+  visited.add(obj);
+
   if (Array.isArray(obj)) {
-    return obj.map(sanitizeSchema);
+    const result = obj.map((item) => sanitizeSchema(item, visited));
+    visited.delete(obj);
+    return result;
   }
 
-  if (typeof obj === 'object') {
-    const newObj: any = {};
-    for (const key in obj) {
-      if (Object.hasOwn(obj, key)) {
-        // Skip internal React/Sanity properties if necessary, but stringifying functions handles most cases
-        newObj[key] = sanitizeSchema(obj[key]);
-      }
+  const newObj: any = {};
+  for (const key in obj) {
+    if (Object.hasOwn(obj, key)) {
+      newObj[key] = sanitizeSchema(obj[key], visited);
     }
-    return newObj;
   }
-
-  return obj;
+  visited.delete(obj);
+  return newObj;
 }

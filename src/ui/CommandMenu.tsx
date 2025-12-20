@@ -28,11 +28,30 @@ export function CommandMenu() {
     };
     document.addEventListener('keydown', down);
 
-    fetch('/api/search')
-      .then((res) => res.json())
-      .then(setItems);
+    const controller = new AbortController();
+    const { signal } = controller;
 
-    return () => document.removeEventListener('keydown', down);
+    async function fetchItems() {
+      try {
+        const res = await fetch('/api/search', { signal });
+        if (!res.ok) throw new Error('Failed to fetch search items');
+        const data = await res.json();
+        setItems(data);
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') {
+          return;
+        }
+        console.error('Search fetch error:', error);
+        setItems([]);
+      }
+    }
+
+    fetchItems();
+
+    return () => {
+      document.removeEventListener('keydown', down);
+      controller.abort();
+    };
   }, []);
 
   const runCommand = React.useCallback((command: () => unknown) => {

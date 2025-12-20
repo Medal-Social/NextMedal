@@ -86,17 +86,13 @@ export default function MobileNavigation({ menu, ctas, headerLogo }: MobileNavig
         {/* Mobile Header Bar */}
         <div className="flex items-center justify-between p-4 border-b border-border/10 min-h-[var(--header-height)]">
           <div className="flex items-center">{headerLogo}</div>
-          <button
-            type="button"
+          <label
+            htmlFor="header-toggle"
             className="p-2 -mr-2 cursor-pointer"
-            onClick={() => {
-              const toggle = document.getElementById('header-toggle') as HTMLInputElement;
-              if (toggle) toggle.checked = false;
-            }}
           >
             <X className="h-6 w-6" />
             <span className="sr-only">Close menu</span>
-          </button>
+          </label>
         </div>
 
         <nav className="flex-1 overflow-y-auto pb-safe" aria-label="Mobile navigation">
