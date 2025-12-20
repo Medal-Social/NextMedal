@@ -1,14 +1,8 @@
 {
   "name": "form",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "@base-ui/react/merge-props",
-    "react-hook-form"
-  ],
-  "registryDependencies": [
-    "label"
-  ],
+  "dependencies": ["react", "@base-ui/react/merge-props", "react-hook-form"],
+  "registryDependencies": ["label"],
   "files": [
     {
       "path": "ui/form.tsx",
