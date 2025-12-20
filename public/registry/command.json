@@ -1,15 +1,8 @@
 {
   "name": "command",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "@base-ui/react",
-    "lucide-react"
-  ],
-  "registryDependencies": [
-    "dialog",
-    "input-group"
-  ],
+  "dependencies": ["react", "@base-ui/react", "lucide-react"],
+  "registryDependencies": ["dialog", "input-group"],
   "files": [
     {
       "path": "ui/command.tsx",
