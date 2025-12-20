@@ -1,13 +1,8 @@
 {
   "name": "alert-dialog",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "@base-ui/react/alert-dialog"
-  ],
-  "registryDependencies": [
-    "button"
-  ],
+  "dependencies": ["react", "@base-ui/react/alert-dialog"],
+  "registryDependencies": ["button"],
   "files": [
     {
       "path": "ui/alert-dialog.tsx",
