@@ -19,8 +19,8 @@ export default function List({
 
   return (
     <ul className="" {...props}>
-      {filtered?.map((post) => (
-        <li className="anim-fade" key={post._id}>
+      {filtered?.map((post, index) => (
+        <li className="anim-fade" key={post._id ? `${post._id}-${index}` : index}>
           <PostPreview post={post} sizes={sizes} />
         </li>
       ))}
