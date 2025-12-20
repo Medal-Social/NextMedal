@@ -1,10 +1,7 @@
 {
   "name": "drawer",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "vaul"
-  ],
+  "dependencies": ["react", "vaul"],
   "registryDependencies": [],
   "files": [
     {
