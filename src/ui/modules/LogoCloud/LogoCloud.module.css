@@ -1,0 +1,19 @@
+.track {
+  width: max-content;
+  animation: scroll var(--dur) linear infinite;
+}
+
+@keyframes scroll {
+  to {
+    /* -25% of total width minus 0.25 * gap (gap-12 = 3rem) */
+    transform: translateX(calc(-25% - 0.75rem));
+  }
+}
+
+.logo-link {
+  transition: opacity 0.2s;
+}
+
+.logo-link:hover {
+  opacity: 0.8;
+}
