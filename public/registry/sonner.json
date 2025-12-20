@@ -1,11 +1,7 @@
 {
   "name": "sonner",
   "type": "components:ui",
-  "dependencies": [
-    "next-themes",
-    "sonner",
-    "lucide-react"
-  ],
+  "dependencies": ["next-themes", "sonner", "lucide-react"],
   "registryDependencies": [],
   "files": [
     {
