@@ -1,5 +1,5 @@
 import { BsDatabaseAdd } from 'react-icons/bs';
-import { VscFiles, VscServerProcess } from 'react-icons/vsc';
+import { VscFiles, VscServerProcess, VscEdit } from 'react-icons/vsc';
 import { structureTool } from 'sanity/structure';
 import { group, singleton } from './lib/utils';
 export const structure = structureTool({
@@ -8,20 +8,30 @@ export const structure = structureTool({
       .title('Content')
       .items([
         S.documentTypeListItem('page').title('Pages').icon(VscFiles),
+        // S.documentTypeListItem('component.library').title('Components'),
         S.divider(),
 
-        S.documentTypeListItem('blog.post').title('Blog posts'),
+        S.listItem()
+          .title('Blog')
+          .icon(VscEdit)
+          .child(
+            S.list()
+              .title('Blog')
+              .items([
+                S.documentTypeListItem('blog.post').title('Posts'),
+                S.documentTypeListItem('blog.category').title('Categories'),
+              ])
+          ),
         S.divider(),
 
         singleton(S, 'site', 'Site settings').icon(VscServerProcess),
         S.divider(),
 
         group(S, 'Site Elements', [
-          S.documentTypeListItem('announcement').title('Announcements'),
+          S.documentTypeListItem('banner').title('Banners'),
           S.documentTypeListItem('logo').title('Logos'),
-          S.documentTypeListItem('person').title('People'),
+          S.documentTypeListItem('person').title('Team Members'),
           S.documentTypeListItem('pricing').title('Pricing tiers'),
-          S.documentTypeListItem('blog.category').title('Blog categories'),
           S.documentTypeListItem('global-module').title('Global modules'),
           S.documentTypeListItem('navigation'),
           S.documentTypeListItem('redirect').title('Redirects'),
