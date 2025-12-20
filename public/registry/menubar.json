@@ -1,15 +1,8 @@
 {
   "name": "menubar",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "@base-ui/react/menu",
-    "@base-ui/react/menubar",
-    "lucide-react"
-  ],
-  "registryDependencies": [
-    "dropdown-menu"
-  ],
+  "dependencies": ["react", "@base-ui/react/menu", "@base-ui/react/menubar", "lucide-react"],
+  "registryDependencies": ["dropdown-menu"],
   "files": [
     {
       "path": "ui/menubar.tsx",
