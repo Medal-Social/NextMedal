@@ -1,9 +1,7 @@
 {
   "name": "callout",
   "type": "components:module",
-  "dependencies": [
-    "next-sanity"
-  ],
+  "dependencies": ["next-sanity"],
   "registryDependencies": [],
   "files": [
     {
