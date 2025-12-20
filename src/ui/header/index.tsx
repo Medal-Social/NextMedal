@@ -59,15 +59,15 @@ export default async function Header() {
             <Navigation />
           </nav>
 
-          <div className="max-lg:hidden [grid-area:ctas] max-lg:*:w-full lg:ml-4">
+          <div className="[grid-area:ctas] lg:ml-4 flex justify-end">
             <CTAList ctas={ctas} />
           </div>
 
           <div className="flex items-center gap-2 ml-auto [grid-area:toggle-area]">
-            <div className="lg:block">
+            <div className="hidden lg:block">
               <LocaleSwitcher />
             </div>
-            <div className="lg:block">
+            <div className="hidden lg:block">
               <ThemeToggleWrapper />
             </div>
             <Toggle />

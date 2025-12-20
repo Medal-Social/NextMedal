@@ -4,6 +4,7 @@ import { Monitor, Moon, Palette, Sun } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -15,7 +16,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-export default function HeaderThemeToggle() {
+export default function HeaderThemeToggle({
+  className,
+  dropdownAlign = 'end',
+}: {
+  className?: string;
+  dropdownAlign?: 'start' | 'end' | 'center';
+}) {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
   const t = useTranslations('ThemeSelector');
@@ -31,7 +38,7 @@ export default function HeaderThemeToggle() {
         variant="ghost"
         size="sm"
         disabled
-        className="h-8 px-2 opacity-50"
+        className={cn('h-8 px-2 opacity-50', className)}
         aria-label="Loading theme selector"
       >
         <Palette className="h-4 w-4" />
@@ -42,11 +49,17 @@ export default function HeaderThemeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button size="sm" variant="ghost" aria-label={t('theme')} className="h-8 px-2">
+        <Button
+          size="sm"
+          variant="ghost"
+          aria-label={t('theme')}
+          className={cn('h-8 px-2', className)}
+        >
           <Palette className="h-4 w-4" />
+          <span className="hidden ml-2">{t('theme')}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-48" align="end">
+      <DropdownMenuContent className="w-48 z-[200]" align={dropdownAlign}>
         <DropdownMenuLabel>{t('theme')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup onValueChange={setTheme} value={theme}>
