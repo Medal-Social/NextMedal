@@ -22,7 +22,7 @@ export async function getComponentSchema(type: string) {
     // Security check: Ensure the resolved path is within the schemaRoot
     const relativePath = path.relative(schemaRoot, filePath);
     if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
-      console.error(`Security Warning: Attempted to access file outside schema root: ${filePath}`);
+      console.error('Security Warning: Attempted to access file outside schema root:', filePath);
       return {
         code: '// Error: Invalid schema path',
         html: '',
@@ -70,7 +70,7 @@ export async function getComponentSchema(type: string) {
     };
   } catch (error) {
     const safeType = String(type).replace(/[\r\n]/g, '');
-    console.error(`Error loading schema for ${safeType}:`, error);
+    console.error('Error loading schema for:', safeType, error);
     return {
       code: `// Error loading schema: ${filename}`,
       html: '',
