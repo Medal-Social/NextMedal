@@ -12,19 +12,19 @@ export default function CTAListCallout({
   if (!ctas?.length) return null;
 
   return (
-    <div className={cn('flex flex-wrap items-center gap-[.5em]', className)}>
+    <div className={cn('flex flex-wrap items-center gap-4', className)}>
       {ctas?.map((cta) => {
+        // Ensure default style if missing
+        const style = cta.style || 'default';
+        const props = { ...cta, style };
+
         // For items with a link, pass the link label as children if not already specified
         if ('link' in cta && cta.link && !('children' in cta)) {
           return (
             <CTA
-              className={cn(
-                'max-sm:w-full',
-                cta.style === 'default' &&
-                  'rounded-md bg-[#7c3aed] px-8 py-3 text-base font-semibold text-white shadow-sm hover:bg-[#7c3aed]/90  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7c3aed]'
-              )}
-              size={'lg'}
-              {...cta}
+              className="max-sm:w-full"
+              size="lg"
+              {...props}
               key={cta._key || cta.link.label}
             >
               {cta.link.label}
@@ -33,13 +33,9 @@ export default function CTAListCallout({
         }
         return (
           <CTA
-            className={cn(
-              cta.style === 'default'
-                ? 'rounded-md bg-[#7c3aed] px-8 py-3 text-base font-semibold text-white shadow-sm hover:bg-[#7c3aed]/90  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7c3aed]'
-                : 'text-sm/6 font-semibold hover:text-white text-white bg-transparent hover:bg-transparent border-none'
-            )}
-            size={'lg'}
-            {...cta}
+            className="max-sm:w-full"
+            size="lg"
+            {...props}
             key={cta._key || Math.random()}
           />
         );
