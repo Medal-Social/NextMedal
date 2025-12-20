@@ -89,7 +89,6 @@ export default defineType({
   ],
   preview: {
     select: {
-      intro: 'intro',
       groupCount: 'groups.length',
     },
     prepare({ groupCount }) {
