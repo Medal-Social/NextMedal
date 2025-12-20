@@ -5,7 +5,7 @@ import { createUidField } from './uid-input';
 
 export default defineType({
   name: 'logo-list',
-  title: 'Logo list',
+  title: 'Logo Cloud',
   icon: VscSymbolMisc,
   type: 'object',
   groups: [{ name: 'content', default: true }, { name: 'options' }],
@@ -45,20 +45,6 @@ export default defineType({
       initialValue: 'default',
       group: 'options',
     }),
-    defineField({
-      name: 'autoScroll',
-      type: 'boolean',
-      initialValue: false,
-      group: 'options',
-    }),
-    defineField({
-      name: 'duration',
-      type: 'number',
-      description: 'Duration in seconds for a complete cycle',
-      initialValue: 12,
-      hidden: ({ parent }) => !parent?.autoScroll,
-      group: 'options',
-    }),
   ],
   preview: {
     select: {
@@ -67,7 +53,7 @@ export default defineType({
     },
     prepare: ({ pretitle, intro }) => ({
       title: getBlockText(intro) || pretitle,
-      subtitle: 'Logo list',
+      subtitle: 'Logo Cloud',
     }),
   },
 });
