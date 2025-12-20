@@ -7,9 +7,7 @@
     "@base-ui/react/toggle-group",
     "class-variance-authority"
   ],
-  "registryDependencies": [
-    "toggle"
-  ],
+  "registryDependencies": ["toggle"],
   "files": [
     {
       "path": "ui/toggle-group.tsx",
