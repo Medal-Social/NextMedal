@@ -24,3 +24,14 @@ code,
 pre {
   font-family: var(--font-mono), monospace;
 }
+
+/* Data and Numbers */
+.font-numeric,
+time,
+td,
+th,
+output,
+data {
+  font-family: var(--font-mono), monospace;
+  font-variant-numeric: tabular-nums;
+}
