@@ -7,6 +7,7 @@ import { client } from '@/sanity/lib/client';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
 import { MODULES_QUERY } from '@/sanity/lib/queries';
 import JsonLd from '@/ui/JsonLd';
+import Modules from '@/ui/modules';
 import BlogPostLayout from '@/ui/modules/blog/BlogPostLayout';
 
 export default async function Page({ params }: Props) {
@@ -37,6 +38,7 @@ export default async function Page({ params }: Props) {
           },
         }}
       />
+      <Modules modules={post.modules} post={post} />
       <BlogPostLayout post={post} />
     </>
   );
