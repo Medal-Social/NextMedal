@@ -125,7 +125,7 @@ importers:
         version: 2.3.7
       '@sanity/blueprints':
         specifier: ^0.7.0
-        version: 0.7.0
+        version: 0.7.1
       '@sanity/template-validator':
         specifier: ^2.4.3
         version: 2.4.3
@@ -889,6 +889,9 @@ packages:
 
   '@codemirror/commands@6.10.0':
     resolution: {integrity: sha512-2xUIc5mHXQzT16JnyOFkh8PvfeXuIut3pslWGfsGOhxP/lpgRm9HOl/mpzLErgt5mXDovqA0d11P21gofRLb9w==}
+
+  '@codemirror/commands@6.10.1':
+    resolution: {integrity: sha512-uWDWFypNdQmz2y1LaNJzK7fL7TYKLeUAU0npEC685OKTF3KcQ2Vu3klIM78D7I6wGhktme0lh3CuQLv0ZCrD9Q==}
 
   '@codemirror/lang-css@6.3.1':
     resolution: {integrity: sha512-kr5fwBGiGtmz6l0LSJIbno9QrifNMUusivHbnA1H6Dmqy4HZFte3UAICix1VuKo0lMPKQr2rqB+0BkKi/S3Ejg==}
@@ -3079,8 +3082,8 @@ packages:
     resolution: {integrity: sha512-kS/MU3r71MXExzatvP6lCO7J/mhnmxO2qSsC+/j+YXm1qZo9BoXTRMsC8f0M/Hi5r+1i/l/6NSk3RUsNEtHAyg==}
     engines: {node: '>=20.19 <22 || >=22.12'}
 
-  '@sanity/blueprints@0.7.0':
-    resolution: {integrity: sha512-s83JaMnRcgkZJdDLIxRht5YTwhxEDRh9CWTiIJcMGQnG1ZjU0ttD8muAXuGbWEyQGzhTXyC6e7RbSywsgFzirQ==}
+  '@sanity/blueprints@0.7.1':
+    resolution: {integrity: sha512-5YEhOirhxKITqmrcQ+D7hs7k5waXahTJfUAWSjclePtcT+slO5VkHwlKdhwIGg0oGxwiCMfuEacUykzcdDe9sw==}
     engines: {node: '>=20'}
 
   '@sanity/cli@4.22.0':
@@ -8460,6 +8463,13 @@ snapshots:
       '@codemirror/view': 6.39.4
       '@lezer/common': 1.4.0
 
+  '@codemirror/commands@6.10.1':
+    dependencies:
+      '@codemirror/language': 6.11.3
+      '@codemirror/state': 6.5.2
+      '@codemirror/view': 6.39.4
+      '@lezer/common': 1.4.0
+
   '@codemirror/lang-css@6.3.1':
     dependencies:
       '@codemirror/autocomplete': 6.20.0
@@ -10579,7 +10589,7 @@ snapshots:
 
   '@sanity/blueprints-parser@0.3.0': {}
 
-  '@sanity/blueprints@0.7.0': {}
+  '@sanity/blueprints@0.7.1': {}
 
   '@sanity/cli@4.22.0(@types/node@24.10.4)(lightningcss@1.30.2)(react@19.2.3)(typescript@5.9.3)(yaml@2.8.2)':
     dependencies:
@@ -10985,7 +10995,7 @@ snapshots:
       '@inquirer/prompts': 8.1.0(@types/node@24.10.4)
       '@oclif/core': 4.8.0
       '@oclif/plugin-help': 6.2.36
-      '@sanity/blueprints': 0.7.0
+      '@sanity/blueprints': 0.7.1
       '@sanity/blueprints-parser': 0.3.0
       '@sanity/client': 7.13.2(debug@4.4.3)
       adm-zip: 0.5.16
@@ -12115,7 +12125,7 @@ snapshots:
   codemirror@6.0.1:
     dependencies:
       '@codemirror/autocomplete': 6.20.0
-      '@codemirror/commands': 6.10.0
+      '@codemirror/commands': 6.10.1
       '@codemirror/language': 6.11.3
       '@codemirror/lint': 6.9.2
       '@codemirror/search': 6.5.11
