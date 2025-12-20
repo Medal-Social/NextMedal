@@ -3,7 +3,7 @@ import { BASE_URL, vercelPreview } from './env';
 import resolveUrl from './resolveUrl';
 
 export default async function processMetadata(
-  page: Sanity.Page | Sanity.BlogPost
+  page: Sanity.Page | Sanity.BlogPost | Sanity.ComponentLibrary
 ): Promise<Metadata> {
   if (!page.metadata) {
     throw new Error('Page metadata is required');

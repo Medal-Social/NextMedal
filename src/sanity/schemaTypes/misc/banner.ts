@@ -31,6 +31,16 @@ export default defineType({
       description: 'Date and time when the banner should stop appearing.',
       type: 'datetime',
       fieldset: 'schedule',
+      validation: (Rule) =>
+        Rule.custom((end, context) => {
+          const start = (context.document as any)?.start as string | undefined;
+
+          if (end && start && new Date(end) <= new Date(start)) {
+            return 'End date must be after start date';
+          }
+
+          return true;
+        }),
     }),
     defineField({
       name: 'content',
@@ -52,7 +62,7 @@ export default defineType({
       ],
       validation: (Rule) =>
         Rule.custom((blocks) => {
-          const text = getBlockText(blocks, ' ');
+          const text = getBlockText(blocks as any, ' ');
           return text.length > 150
             ? 'Banner content should be concise (recommended max 150 characters)'
             : true;
