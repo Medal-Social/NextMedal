@@ -1,9 +1,7 @@
 {
   "name": "separator",
   "type": "components:ui",
-  "dependencies": [
-    "@base-ui/react/separator"
-  ],
+  "dependencies": ["@base-ui/react/separator"],
   "registryDependencies": [],
   "files": [
     {
