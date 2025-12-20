@@ -3,13 +3,28 @@ import { groq } from 'next-sanity';
 import processMetadata from '@/lib/processMetadata';
 import { client } from '@/sanity/lib/client';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
-import { MODULES_QUERY } from '@/sanity/lib/queries';
+import { GLOBAL_MODULE_QUERY, MODULES_QUERY } from '@/sanity/lib/queries';
 import Modules from '@/ui/modules';
+import Content from '@/ui/modules/RichtextModule/Content';
 
 export default async function Page({ params }: Props) {
-  const post = await getPost(await params);
+  const resolvedParams = await params;
+  const post = await getPost(resolvedParams);
+
   if (!post) notFound();
-  return <Modules modules={post.modules} post={post} />;
+  
+  return (
+    <>
+      <Modules modules={post.modules} />
+
+      <article className="section py-12 md:py-24">
+        <div className="container max-w-4xl mx-auto px-4">
+           <h1 className="text-4xl md:text-6xl font-bold mb-8">{post.metadata.title}</h1>
+           <Content value={post.body} />
+        </div>
+      </article>
+    </>
+  );
 }
 
 export async function generateMetadata({ params }: Props) {
@@ -27,18 +42,6 @@ export async function generateStaticParams() {
 }
 
 async function getPost(params: { slug?: string }) {
-  const blogTemplateExists = await fetchSanityLive<boolean>({
-    query: groq`count(*[_type == 'global-module' && path == 'blog/']) > 0`,
-  });
-
-  if (!blogTemplateExists)
-    throw new Error(
-      'Missing blog template: 👻 Oof, your blog posts are ghosting...\n\n' +
-        'Solution: Add a new Global module document in your Medal Social Studio with the path "blog/".\n' +
-        'Also add the Blog post content module to display blog post content.\n\n' +
-        '💁‍♂️ https://www.medalsocial.com'
-    );
-
   return await fetchSanityLive<Sanity.BlogPost & { modules: Sanity.Module[] }>({
     query: groq`*[_type == 'blog.post' && metadata.slug.current == $slug][0]{
 			...,
@@ -68,7 +71,7 @@ async function getPost(params: { slug?: string }) {
 				+ *[_type == 'global-module' && path == '*'].after[]{ ${MODULES_QUERY} }
 			)
 		}`,
-    params,
+    params: { ...params, slug: params.slug },
   });
 }
 
