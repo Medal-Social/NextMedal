@@ -3,7 +3,7 @@ import type { SchemaTypeDefinition } from 'sanity';
 // documents
 import blogCategory from './documents/blog.category';
 import blogPost from './documents/blog.post';
-// import componentLibrary from './documents/component-library';
+import componentLibrary from './documents/component-library';
 import globalModule from './documents/global-module';
 
 import navigation from './documents/navigation';
@@ -48,7 +48,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   // documents
   blogCategory,
   blogPost,
-  // componentLibrary,
+  componentLibrary,
   globalModule,
   page,
   redirect,
