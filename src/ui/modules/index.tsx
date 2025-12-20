@@ -7,10 +7,11 @@ import ComponentGallery from './ComponentGallery';
 import Features from './Features';
 import Hero from './hero/Hero';
 import LogoCloud from './LogoCloud';
-import Team from './Team';
+import PricingComparison from './PricingComparison';
 import PricingList from './PricingList';
 import ProductComparison from './ProductComparison';
 import RichtextModule from './RichtextModule';
+import Team from './Team';
 import VideoHero from './VideoHero';
 
 export default function Modules({
@@ -37,25 +38,14 @@ export default function Modules({
           case 'latest-articles':
             return <LatestArticles {...module} key={module._key} />;
           case 'breadcrumbs':
-            return (
-              <Breadcrumbs
-                {...module}
-                currentPage={post || page}
-                key={module._key}
-              />
-            );
+            return <Breadcrumbs {...module} currentPage={post || page} key={module._key} />;
           case 'callout':
             return <Callout {...module} key={module._key} />;
 
           case 'features':
             return <Features {...module} key={module._key} />;
           case 'hero':
-            return (
-              <Hero
-                {...(module as Sanity.Hero)}
-                key={module._key}
-              />
-            );
+            return <Hero {...(module as Sanity.Hero)} key={module._key} />;
 
           case 'logo-cloud':
             return <LogoCloud {...module} key={module._key} />;
@@ -64,6 +54,9 @@ export default function Modules({
           case 'pricing-list':
             return <PricingList {...module} key={module._key} />;
 
+          case 'pricing-comparison':
+            return <PricingComparison {...module} key={module._key} />;
+
           case 'product-comparison':
             return <ProductComparison {...module} key={module._key} />;
 
@@ -71,9 +64,7 @@ export default function Modules({
             return <RichtextModule {...module} key={module._key} />;
 
           case 'videoHero':
-            return (
-              <VideoHero data={module as any} key={module._key} />
-            );
+            return <VideoHero data={module as any} key={module._key} />;
 
           default:
             return <div data-type={module._type} key={module._key} />;
