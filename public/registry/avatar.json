@@ -1,10 +1,7 @@
 {
   "name": "avatar",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "@base-ui/react/avatar"
-  ],
+  "dependencies": ["react", "@base-ui/react/avatar"],
   "registryDependencies": [],
   "files": [
     {
