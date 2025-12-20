@@ -1,15 +1,9 @@
 import { PortableText } from 'next-sanity';
-import {
-  FaFacebook,
-  FaInstagram,
-  FaLinkedin,
-  FaUser,
-  FaYoutube,
-} from 'react-icons/fa';
+import { FaFacebook, FaInstagram, FaLinkedin, FaUser, FaYoutube } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { Section } from '@/components/ui/section';
-import { cn } from '@/lib/utils';
 import moduleProps from '@/lib/moduleProps';
+import { cn } from '@/lib/utils';
 import { Img } from '@/ui/Img';
 import Pretitle from '@/ui/Pretitle';
 
@@ -63,11 +57,7 @@ export default function Team({
           <div className="xl:col-span-3">
             <ul className="divide-y divide-border">
               {people?.map((person) => (
-                <TeamMember
-                  person={person}
-                  key={person._key || person.name}
-                  layout="list"
-                />
+                <TeamMember person={person} key={person._key || person.name} layout="list" />
               ))}
             </ul>
           </div>
@@ -101,13 +91,9 @@ function TeamMember({
         )}
 
         <div className="max-w-xl flex-auto">
-          <h3 className="text-lg font-semibold tracking-tight text-foreground">
-            {person.name}
-          </h3>
+          <h3 className="text-lg font-semibold tracking-tight text-foreground">{person.name}</h3>
           {person.title && (
-            <p className="text-sm sm:text-base/7 text-muted-foreground">
-              {person.title}
-            </p>
+            <p className="text-sm sm:text-base/7 text-muted-foreground">{person.title}</p>
           )}
 
           {person.bio && (
@@ -138,14 +124,8 @@ function TeamMember({
       )}
 
       <div className="flex flex-col gap-2">
-        <h3 className="text-lg font-semibold tracking-tight text-foreground">
-          {person.name}
-        </h3>
-        {person.title && (
-          <p className="text-base text-muted-foreground">
-            {person.title}
-          </p>
-        )}
+        <h3 className="text-lg font-semibold tracking-tight text-foreground">{person.name}</h3>
+        {person.title && <p className="text-base text-muted-foreground">{person.title}</p>}
 
         {person.bio && (
           <div className="text-base text-muted-foreground line-clamp-4">
@@ -159,14 +139,8 @@ function TeamMember({
   );
 }
 
-function SocialLinks({
-  person,
-  className,
-}: {
-  person: Sanity.Person;
-  className?: string;
-}) {
-  if (!person.socialLinks) return null;
+function SocialLinks({ person, className }: { person: Sanity.Person; className?: string }) {
+  if (!person.socialLinks || !Array.isArray(person.socialLinks)) return null;
 
   return (
     <ul className={cn('flex gap-x-4', className)}>
