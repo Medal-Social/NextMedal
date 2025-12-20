@@ -3,25 +3,25 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --background: 222 47% 11%;
-  --foreground: 210 40% 98%;
-  --card: 222 47% 11%;
-  --card-foreground: 210 40% 98%;
-  --popover: 222 47% 11%;
-  --popover-foreground: 210 40% 98%;
-  --primary: 217 91% 60%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 217.2 32.6% 17.5%;
-  --secondary-foreground: 210 40% 98%;
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
-  --accent: 45 100% 50%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
-  --ring: 224.3 76.3% 48%;
+  --background: hsl(222 47% 11%);
+  --foreground: hsl(210 40% 98%);
+  --card: hsl(222 47% 11%);
+  --card-foreground: hsl(210 40% 98%);
+  --popover: hsl(222 47% 11%);
+  --popover-foreground: hsl(210 40% 98%);
+  --primary: hsl(217 91% 60%);
+  --primary-foreground: hsl(210 40% 98%);
+  --secondary: hsl(217.2 32.6% 17.5%);
+  --secondary-foreground: hsl(210 40% 98%);
+  --muted: hsl(217.2 32.6% 17.5%);
+  --muted-foreground: hsl(215 20.2% 65.1%);
+  --accent: hsl(45 100% 50%);
+  --accent-foreground: hsl(222.2 47.4% 11.2%);
+  --destructive: hsl(0 62.8% 30.6%);
+  --destructive-foreground: hsl(210 40% 98%);
+  --border: hsl(217.2 32.6% 17.5%);
+  --input: hsl(217.2 32.6% 17.5%);
+  --ring: hsl(224.3 76.3% 48%);
   --radius: 0.5rem;
 
   --light-background: hsl(0 0% 100%);
@@ -56,26 +56,28 @@
   --light-sidebar-accent-foreground: hsl(240 5.9% 10%);
   --light-sidebar-border: hsl(220 13% 91%);
   --light-sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --light-highlight: hsl(352 100% 97%);
+  --light-highlight-foreground: hsl(347 77% 50%);
 
-  --dark-background: 222 47% 11%;
-  --dark-foreground: 210 40% 98%;
-  --dark-card: 222 47% 11%;
-  --dark-card-foreground: 210 40% 98%;
-  --dark-popover: 222 47% 11%;
-  --dark-popover-foreground: 210 40% 98%;
-  --dark-primary: 217 91% 60%;
-  --dark-primary-foreground: 210 40% 98%;
-  --dark-secondary: 217.2 32.6% 17.5%;
-  --dark-secondary-foreground: 210 40% 98%;
-  --dark-muted: 217.2 32.6% 17.5%;
-  --dark-muted-foreground: 215 20.2% 65.1%;
-  --dark-accent: 45 100% 50%;
-  --dark-accent-foreground: 222.2 47.4% 11.2%;
-  --dark-destructive: 0 62.8% 30.6%;
-  --dark-destructive-foreground: 210 40% 98%;
-  --dark-border: 217.2 32.6% 17.5%;
-  --dark-input: 217.2 32.6% 17.5%;
-  --dark-ring: 224.3 76.3% 48%;
+  --dark-background: hsl(222 47% 11%);
+  --dark-foreground: hsl(210 40% 98%);
+  --dark-card: hsl(222 47% 11%);
+  --dark-card-foreground: hsl(210 40% 98%);
+  --dark-popover: hsl(222 47% 11%);
+  --dark-popover-foreground: hsl(210 40% 98%);
+  --dark-primary: hsl(217 91% 60%);
+  --dark-primary-foreground: hsl(210 40% 98%);
+  --dark-secondary: hsl(217.2 32.6% 17.5%);
+  --dark-secondary-foreground: hsl(210 40% 98%);
+  --dark-muted: hsl(217.2 32.6% 17.5%);
+  --dark-muted-foreground: hsl(215 20.2% 65.1%);
+  --dark-accent: hsl(45 100% 50%);
+  --dark-accent-foreground: hsl(222.2 47.4% 11.2%);
+  --dark-destructive: hsl(0 62.8% 30.6%);
+  --dark-destructive-foreground: hsl(210 40% 98%);
+  --dark-border: hsl(217.2 32.6% 17.5%);
+  --dark-input: hsl(217.2 32.6% 17.5%);
+  --dark-ring: hsl(224.3 76.3% 48%);
   --dark-chart-1: hsl(220 70% 50%);
   --dark-chart-2: hsl(160 60% 45%);
   --dark-chart-3: hsl(30 80% 55%);
@@ -89,6 +91,8 @@
   --dark-sidebar-accent-foreground: hsl(240 4.8% 95.9%);
   --dark-sidebar-border: hsl(240 3.7% 15.9%);
   --dark-sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --dark-highlight: hsl(335 55% 8%);
+  --dark-highlight-foreground: hsl(351 91% 71%);
 
   --background: var(--light-background);
   --foreground: var(--light-foreground);
@@ -122,6 +126,8 @@
   --sidebar-accent-foreground: var(--light-sidebar-accent-foreground);
   --sidebar-border: var(--light-sidebar-border);
   --sidebar-ring: var(--light-sidebar-ring);
+  --highlight: var(--light-highlight);
+  --highlight-foreground: var(--light-highlight-foreground);
   --radius: 0.5rem;
 
   /* Chart colors */
@@ -160,6 +166,8 @@
   --sidebar-accent-foreground: var(--dark-sidebar-accent-foreground);
   --sidebar-border: var(--dark-sidebar-border);
   --sidebar-ring: var(--dark-sidebar-ring);
+  --highlight: var(--dark-highlight);
+  --highlight-foreground: var(--dark-highlight-foreground);
 }
 
 .light {
@@ -195,6 +203,8 @@
   --sidebar-accent-foreground: var(--light-sidebar-accent-foreground);
   --sidebar-border: var(--light-sidebar-border);
   --sidebar-ring: var(--light-sidebar-ring);
+  --highlight: var(--light-highlight);
+  --highlight-foreground: var(--light-highlight-foreground);
 }
 
 @theme {
@@ -240,8 +250,10 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --animate-accordion-down: accordion-down 0.2s ease-out;
-  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --color-highlight: var(--highlight);
+  --color-highlight-foreground: var(--highlight-foreground);
+  --animate-accordion-down: accordion-down 0.2s cubic-bezier(0.87, 0, 0.13, 1);
+  --animate-accordion-up: accordion-up 0.2s cubic-bezier(0.87, 0, 0.13, 1);
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -308,18 +320,26 @@
 @keyframes accordion-down {
   from {
     height: 0;
+    opacity: 0;
+    transform: translateY(-0.5rem);
   }
   to {
     height: var(--radix-accordion-content-height);
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 @keyframes accordion-up {
   from {
     height: var(--radix-accordion-content-height);
+    opacity: 1;
+    transform: translateY(0);
   }
   to {
     height: 0;
+    opacity: 0;
+    transform: translateY(-0.5rem);
   }
 }
 
@@ -351,6 +371,23 @@
   from {
     opacity: 0;
     translate: var(--x, 0) var(--y, 0);
+  }
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@utility animate-marquee {
+  animation: marquee var(--marquee-duration, 30s) linear infinite;
+  width: max-content;
+}
+
+@utility pause-on-hover {
+  &:hover {
+    animation-play-state: paused;
   }
 }
 
@@ -408,12 +445,12 @@
 
 @utility action-outline {
   @apply action-base border-primary/10 bg-background/50 to-background rounded border text-balance text-secondary
-	hover:border-primary hover:text-primary transition-all duration-200;
+	hover:border-primary hover:text-primary transition-colors duration-200;
 }
 
 @utility ghost {
   @apply action-base bg-background/50 rounded text-secondary
-	hover:bg-primary hover:text-white transition-all duration-200;
+	hover:bg-primary hover:text-white transition-colors duration-200;
 }
 
 @utility input {
@@ -458,16 +495,10 @@
 }
 
 /* layout */
-
-@utility section {
-  @apply mx-auto max-w-screen-xl pb-8 pt-8 px-8 max-md:px-4 md:pt-12;
-}
+/* Section utilities replaced by component-driven layouts (src/components/ui/section.tsx) */
 
 @utility header-grid {
-  grid-template:
-    "logo toggle-area" auto
-    "nav nav" auto
-    "ctas ctas" auto / 1fr auto;
+  grid-template: "logo ctas toggle-area" auto / auto 1fr auto;
 
   @media (width >= 64rem) {
     grid-template: "logo nav ctas toggle-area" auto / auto 1fr auto auto;
@@ -551,11 +582,11 @@
 
   /* Code and pre */
   & code {
-    @apply bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-sm;
+    @apply bg-muted px-1.5 py-0.5 rounded text-sm;
   }
 
   & pre {
-    @apply bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto mb-4;
+    @apply bg-muted p-4 rounded-lg overflow-x-auto mb-4;
   }
 
   /* Tables */
@@ -564,11 +595,11 @@
   }
 
   & th {
-    @apply text-left font-bold p-2 border-b-2 border-gray-200 dark:border-gray-700;
+    @apply text-left font-bold p-2 border-b-2 border-border;
   }
 
   & td {
-    @apply p-2 border-b border-gray-200 dark:border-gray-700;
+    @apply p-2 border-b border-border;
   }
 
   /* Figures and captions */
@@ -582,305 +613,13 @@
 
   /* Horizontal rule */
   & hr {
-    @apply my-6 border-t border-gray-200 dark:border-gray-700;
+    @apply my-6 border-t border-border;
   }
 }
 
 @utility emailsignup {
   /* Base styles */
   @apply leading-7 text-white;
-
-  /* Headings */
-  & h1 {
-    @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
-  }
-
-  & h2 {
-    @apply scroll-m-20 text-4xl font-semibold tracking-tight text-balance  sm:text-5xl;
-  }
-
-  & h3 {
-    @apply mt-8 scroll-m-20 text-2xl font-semibold tracking-tight;
-  }
-
-  & h4 {
-    @apply scroll-m-20 text-xl font-semibold tracking-tight;
-  }
-
-  & h5 {
-    @apply scroll-m-20 text-base font-medium tracking-tight;
-  }
-
-  & h6 {
-    @apply scroll-m-20 text-base font-medium tracking-tight;
-  }
-
-  /* Paragraphs */
-  & p {
-    @apply mx-auto mt-6 max-w-xl text-lg/8 text-pretty text-gray-300;
-  }
-
-  & a {
-    @apply font-medium  underline underline-offset-4;
-  }
-
-  /* Lists */
-  & :is(ul, ol) {
-    @apply my-6 ml-6 list-disc [&>li]:mt-2;
-  }
-
-  /* Blockquotes */
-  & blockquote {
-    @apply mt-6 border-l-2 pl-6 italic;
-  }
-
-  /* Code */
-  & :not(pre) > code {
-    @apply relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold;
-  }
-
-  /* Pre blocks */
-  & pre {
-    @apply mt-6 overflow-x-auto rounded-lg bg-muted p-4 font-mono text-sm;
-  }
-}
-
-@utility richtext {
-  /* Base styles */
-  @apply leading-7;
-
-  /* Headings */
-  & h1 {
-    @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
-  }
-
-  & h2 {
-    @apply mt-10 scroll-m-20 pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0;
-  }
-
-  & h3 {
-    @apply mt-8 scroll-m-20 text-2xl font-semibold tracking-tight;
-  }
-
-  & h4 {
-    @apply scroll-m-20 text-xl font-semibold tracking-tight;
-  }
-
-  & h5 {
-    @apply scroll-m-20 text-base font-medium tracking-tight;
-  }
-
-  & h6 {
-    @apply scroll-m-20 text-base font-medium tracking-tight;
-  }
-
-  /* Paragraphs */
-  & p {
-    @apply leading-7 [&:not(:first-child)]:mt-6;
-  }
-
-  & a {
-    @apply font-medium  underline underline-offset-4;
-  }
-
-  /* Lists */
-  & :is(ul, ol) {
-    @apply my-6 ml-6 list-disc [&>li]:mt-2;
-  }
-
-  /* Blockquotes */
-  & blockquote {
-    @apply mt-6 border-l-2 pl-6 italic;
-  }
-
-  /* Code */
-  & :not(pre) > code {
-    @apply relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold;
-  }
-
-  /* Pre blocks */
-  & pre {
-    @apply mt-6 overflow-x-auto rounded-lg bg-muted p-4 font-mono text-sm;
-  }
-
-  /* Tables */
-  & table {
-    @apply w-full;
-
-    & th {
-      @apply border-b p-3 text-left font-semibold;
-    }
-
-    & td {
-      @apply border-b p-3;
-    }
-
-    & tbody tr:hover {
-      @apply bg-muted/50;
-    }
-  }
-
-  /* Keep any special styling you want to preserve */
-}
-
-@utility section-intro {
-  /* Base styles */
-  @apply leading-7;
-
-  /* Headings */
-  & h1 {
-    @apply scroll-m-20 text-5xl mb-4 font-extrabold tracking-tight sm:text-6xl;
-  }
-
-  & h2 {
-    @apply scroll-m-20 text-4xl font-semibold tracking-tight lg:text-5xl first:mt-0;
-  }
-
-  & h3 {
-    @apply scroll-m-20 text-2xl font-semibold tracking-tight;
-  }
-
-  & h4 {
-    @apply scroll-m-20 text-xl font-semibold tracking-tight;
-  }
-
-  & h5 {
-    @apply scroll-m-20 text-lg font-semibold tracking-tight;
-  }
-
-  & h6 {
-    @apply scroll-m-20 text-base font-semibold tracking-tight;
-  }
-
-  /* Paragraphs */
-  & p {
-    @apply text-center text-lg  text-pretty text-muted-foreground sm:text-xl/8;
-  }
-  & a {
-    @apply underline;
-  }
-
-  & p:not(:first-child) {
-    @apply mt-0;
-  }
-
-  /* Lists */
-  & :is(ul, ol) {
-    @apply list-disc;
-    &:not(:first-child) {
-      @apply mt-6;
-    }
-  }
-
-  /* Blockquotes */
-  & blockquote {
-    @apply mt-6 border-l-2 pl-6 italic;
-  }
-
-  /* Pre blocks */
-  & pre {
-    @apply mt-6 overflow-x-auto rounded-lg bg-muted p-4 font-mono text-sm;
-  }
-
-  /* Tables */
-  & table {
-    @apply w-full;
-
-    & th {
-      @apply border-b p-3 text-left font-semibold;
-    }
-
-    & td {
-      @apply border-b p-3;
-    }
-
-    & tbody tr:hover {
-      @apply bg-muted/50;
-    }
-  }
-}
-
-@utility hero {
-  /* Base styles */
-  @apply leading-7 text-pretty max-w-3xl mx-auto;
-
-  /* Headings */
-  & h1 {
-    @apply scroll-m-20 text-5xl font-extrabold tracking-tight lg:text-6xl;
-  }
-
-  & h2 {
-    @apply scroll-m-20 text-4xl font-semibold tracking-tight lg:text-5xl first:mt-0;
-  }
-
-  & h3 {
-    @apply scroll-m-20 text-2xl font-semibold tracking-tight;
-  }
-
-  & h4 {
-    @apply scroll-m-20 text-xl font-semibold tracking-tight;
-  }
-
-  & h5 {
-    @apply scroll-m-20 text-lg font-semibold tracking-tight;
-  }
-
-  & h6 {
-    @apply scroll-m-20 text-base font-semibold tracking-tight;
-  }
-
-  /* Paragraphs */
-  & p {
-    @apply text-pretty text-lg;
-    @apply text-muted-foreground;
-  }
-  & a {
-    @apply underline;
-  }
-
-  & p:not(:first-child) {
-    @apply mt-3;
-  }
-
-  /* Lists */
-  & :is(ul, ol) {
-    @apply list-disc;
-    &:not(:first-child) {
-      @apply mt-6;
-    }
-  }
-
-  /* Blockquotes */
-  & blockquote {
-    @apply mt-6 border-l-2 pl-6 italic;
-  }
-
-  /* Code */
-  & :not(pre) > code {
-    @apply relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold;
-  }
-
-  /* Pre blocks */
-  & pre {
-    @apply mt-6 overflow-x-auto rounded-lg bg-muted p-4 font-mono text-sm;
-  }
-
-  /* Tables */
-  & table {
-    @apply w-full;
-
-    & th {
-      @apply border-b p-3 text-left font-semibold;
-    }
-
-    & td {
-      @apply border-b p-3;
-    }
-
-    & tbody tr:hover {
-      @apply bg-muted/50;
-    }
-  }
 }
 
 /* skeleton */
@@ -896,10 +635,11 @@
 }
 
 @utility accordion-up {
-  @apply duration-200 ease-out;
+  @apply duration-200 ease-[cubic-bezier(0.87,0,0.13,1)];
+  animation-fill-mode: forwards;
 }
 @utility accordion-down {
-  @apply duration-200 ease-out;
+  @apply duration-200 ease-[cubic-bezier(0.87,0,0.13,1)];
 }
 
 /* components */
