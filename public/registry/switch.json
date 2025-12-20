@@ -1,9 +1,7 @@
 {
   "name": "switch",
   "type": "components:ui",
-  "dependencies": [
-    "@base-ui/react/switch"
-  ],
+  "dependencies": ["@base-ui/react/switch"],
   "registryDependencies": [],
   "files": [
     {
