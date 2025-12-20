@@ -3,6 +3,7 @@ import type { SchemaTypeDefinition } from 'sanity';
 // documents
 import blogCategory from './documents/blog.category';
 import blogPost from './documents/blog.post';
+// import componentLibrary from './documents/component-library';
 import globalModule from './documents/global-module';
 
 import navigation from './documents/navigation';
@@ -12,34 +13,31 @@ import site from './documents/site';
 // objects
 import modules from './fragments/modules';
 // miscellaneous
-import announcement from './misc/announcement';
+import banner from './misc/banner';
 import logo from './misc/logo';
 import person from './misc/person';
 import pricing from './misc/pricing';
 // modules
 import accordionList from './modules/accordion-list';
 import blogFrontpage from './modules/blog-frontpage';
-import blogList from './modules/blog-list';
-import blogPostContent from './modules/blog-post-content';
+import latestArticles from './modules/latest-articles';
 import breadcrumbs from './modules/breadcrumbs';
 import callout from './modules/callout';
-import featureGrid from './modules/feature-grid';
-import featuredHero from './modules/featured-hero';
-import galleryHero from './modules/gallery-hero';
+import componentGallery from './modules/component-gallery';
+import features from './modules/features';
 import hero from './modules/hero';
-import logoList from './modules/logo-list';
-import personList from './modules/person-list';
+import logoCloud from './modules/logo-cloud';
+import team from './modules/team';
 import pricingComparison from './modules/pricing-comparison';
 import pricingList from './modules/pricing-list';
 import productComparison from './modules/productComparison';
-import richtextModule from './modules/richtext-module';
-import tabbedContent from './modules/tabbed-content';
+import text from './modules/text';
 import videoHero from './modules/video-hero';
 import cta from './objects/cta';
 import icon from './objects/icon';
 import img from './objects/img';
-import link from './objects/link';
-import linkList from './objects/link.list';
+import menuItem from './objects/menu-item';
+import dropdownMenu from './objects/dropdown-menu';
 import metadata from './objects/metadata';
 import moduleOptions from './objects/module-options';
 import stat from './objects/stat';
@@ -48,6 +46,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   // documents
   blogCategory,
   blogPost,
+  // componentLibrary,
   globalModule,
   page,
   redirect,
@@ -55,7 +54,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   navigation,
 
   // miscellaneous
-  announcement,
+  banner,
   logo,
   person,
   pricing,
@@ -64,8 +63,8 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   cta,
   icon,
   img,
-  link,
-  linkList,
+  menuItem,
+  dropdownMenu,
   metadata,
   moduleOptions,
   stat,
@@ -74,21 +73,18 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   // modules
   accordionList,
   blogFrontpage,
-  blogList,
-  blogPostContent,
+  latestArticles,
   breadcrumbs,
   callout,
-  featuredHero,
-  galleryHero,
-  featureGrid,
+  componentGallery,
+  features,
   hero,
-  logoList,
+  logoCloud,
 
-  personList,
+  team,
   pricingComparison,
   pricingList,
   productComparison,
-  richtextModule,
-  tabbedContent,
+  text,
   videoHero,
 ];
