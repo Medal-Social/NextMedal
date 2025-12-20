@@ -1,14 +1,8 @@
 {
   "name": "calendar",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "react-day-picker",
-    "lucide-react"
-  ],
-  "registryDependencies": [
-    "button"
-  ],
+  "dependencies": ["react", "react-day-picker", "lucide-react"],
+  "registryDependencies": ["button"],
   "files": [
     {
       "path": "ui/calendar.tsx",
