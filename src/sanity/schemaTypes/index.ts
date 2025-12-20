@@ -20,24 +20,27 @@ import pricing from './misc/pricing';
 // modules
 import accordionList from './modules/accordion-list';
 import blogFrontpage from './modules/blog-frontpage';
-import latestArticles from './modules/latest-articles';
+import blogList from './modules/blog-list';
 import breadcrumbs from './modules/breadcrumbs';
 import callout from './modules/callout';
 import componentGallery from './modules/component-gallery';
 import features from './modules/features';
 import hero from './modules/hero';
+import latestArticles from './modules/latest-articles';
 import logoCloud from './modules/logo-cloud';
-import team from './modules/team';
+import logoList from './modules/logo-list';
 import pricingComparison from './modules/pricing-comparison';
 import pricingList from './modules/pricing-list';
 import productComparison from './modules/productComparison';
+import team from './modules/team';
+import teamList from './modules/team-list';
 import text from './modules/text';
 import videoHero from './modules/video-hero';
 import cta from './objects/cta';
+import dropdownMenu from './objects/dropdown-menu';
 import icon from './objects/icon';
 import img from './objects/img';
 import menuItem from './objects/menu-item';
-import dropdownMenu from './objects/dropdown-menu';
 import metadata from './objects/metadata';
 import moduleOptions from './objects/module-options';
 import stat from './objects/stat';
@@ -73,6 +76,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   // modules
   accordionList,
   blogFrontpage,
+  blogList,
   latestArticles,
   breadcrumbs,
   callout,
@@ -80,8 +84,10 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   features,
   hero,
   logoCloud,
+  logoList,
 
   team,
+  teamList,
   pricingComparison,
   pricingList,
   productComparison,
