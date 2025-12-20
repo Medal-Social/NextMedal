@@ -1,9 +1,7 @@
 {
   "name": "collapsible",
   "type": "components:ui",
-  "dependencies": [
-    "@base-ui/react/collapsible"
-  ],
+  "dependencies": ["@base-ui/react/collapsible"],
   "registryDependencies": [],
   "files": [
     {
