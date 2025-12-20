@@ -1,10 +1,7 @@
 {
   "name": "toggle",
   "type": "components:ui",
-  "dependencies": [
-    "@base-ui/react/toggle",
-    "class-variance-authority"
-  ],
+  "dependencies": ["@base-ui/react/toggle", "class-variance-authority"],
   "registryDependencies": [],
   "files": [
     {
