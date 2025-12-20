@@ -329,11 +329,9 @@ describe('XSS Prevention Tests', () => {
     it('PortableText only renders defined component types', () => {
       // The Content component in RichtextModule/Content.tsx defines:
       // - types.image: Image component
-      // - types.admonition: Admonition component
       // Any other content types are not rendered, preventing XSS
-      const definedTypes = ['image', 'admonition'];
+      const definedTypes = ['image'];
       expect(definedTypes).toContain('image');
-      expect(definedTypes).toContain('admonition');
       // Script, iframe, and other dangerous elements are NOT in the list
       expect(definedTypes).not.toContain('script');
       expect(definedTypes).not.toContain('iframe');

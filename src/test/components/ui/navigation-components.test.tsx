@@ -350,7 +350,7 @@ describe('NavigationMenu Component', () => {
           <NavigationMenuItem>
             <NavigationMenuTrigger>Getting Started</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <NavigationMenuLink href="/docs">Documentation</NavigationMenuLink>
+              <NavigationMenuLink href="/products">Products</NavigationMenuLink>
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem>
