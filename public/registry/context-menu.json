@@ -1,11 +1,7 @@
 {
   "name": "context-menu",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "@base-ui/react/context-menu",
-    "lucide-react"
-  ],
+  "dependencies": ["react", "@base-ui/react/context-menu", "lucide-react"],
   "registryDependencies": [],
   "files": [
     {
