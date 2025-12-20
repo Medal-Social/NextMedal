@@ -1,10 +1,7 @@
 {
   "name": "chart",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "recharts"
-  ],
+  "dependencies": ["react", "recharts"],
   "registryDependencies": [],
   "files": [
     {
