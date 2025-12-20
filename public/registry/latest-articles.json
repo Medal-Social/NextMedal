@@ -1,13 +1,8 @@
 {
   "name": "latest-articles",
   "type": "components:module",
-  "dependencies": [
-    "next-sanity",
-    "react"
-  ],
-  "registryDependencies": [
-    "section"
-  ],
+  "dependencies": ["next-sanity", "react"],
+  "registryDependencies": ["section"],
   "files": [
     {
       "path": "modules/blog/LatestArticles/index.tsx",
