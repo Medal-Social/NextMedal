@@ -22,7 +22,7 @@ type Video = {
     playbackId?: string;
   };
   thumbnail: Sanity.Image;
-  title: string;
+  title?: string;
 };
 
 // Use regular dynamic imports for video players
@@ -149,14 +149,14 @@ const MuxVideoPlayer = ({
   onError,
 }: {
   playbackId: string;
-  title: string;
+  title?: string;
   onError: (err: any) => void;
 }) => {
   return (
     <MuxPlayer
       playbackId={playbackId}
       metadata={{
-        video_title: title,
+        video_title: title || 'Video',
         player_name: 'Medal Socials Player',
       }}
       theme="classic"
@@ -199,7 +199,7 @@ const VideoError = ({
   );
 };
 
-export default function Video({ data, onClick }: { data: Sanity.Video; onClick: () => void }) {
+export default function Video({ data, onClick }: { data: Sanity.Video; onClick?: () => void }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -212,7 +212,7 @@ export default function Video({ data, onClick }: { data: Sanity.Video; onClick: 
 
   const handlePlayClick = () => {
     setIsPlaying(true);
-    onClick();
+    onClick?.();
   };
 
   const handleError = (err: any) => {
