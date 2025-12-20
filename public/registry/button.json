@@ -1,11 +1,7 @@
 {
   "name": "button",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "@base-ui/react/button",
-    "class-variance-authority"
-  ],
+  "dependencies": ["react", "@base-ui/react/button", "class-variance-authority"],
   "registryDependencies": [],
   "files": [
     {
