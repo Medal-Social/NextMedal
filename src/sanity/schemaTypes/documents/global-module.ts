@@ -1,3 +1,12 @@
+/**
+ * Global Module Schema
+ * @version 1.0.0
+ * @lastUpdated 2024-03-22
+ * @description Allows inserting modules (like banners or CTAs) globally across multiple pages.
+ * @changelog
+ * - 1.0.0: Initial version
+ */
+
 import { VscSymbolField } from 'react-icons/vsc';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { count } from '@/lib/utils';
