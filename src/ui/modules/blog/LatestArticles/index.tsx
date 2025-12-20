@@ -1,8 +1,8 @@
 import { groq, PortableText, stegaClean } from 'next-sanity';
 import { Suspense } from 'react';
+import { Section } from '@/components/ui/section';
 import { cn } from '@/lib/utils';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
-import { Section } from '@/components/ui/section';
 import FilterList from '@/ui/modules/blog/LatestArticles/FilterList';
 import Pretitle from '@/ui/Pretitle';
 import PostPreview from '../PostPreview';
@@ -58,6 +58,11 @@ export default async function LatestArticles({
       : 'carousel max-xl:full-bleed md:overflow-fade-r pb-4 [--size:320px] max-xl:px-4'
   );
 
+  const sizes =
+    stegaClean(layout) === 'grid'
+      ? '(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw'
+      : '320px';
+
   return (
     <Section className="space-y-8">
       {intro && (
@@ -80,7 +85,7 @@ export default async function LatestArticles({
           </ul>
         }
       >
-        <List posts={posts} className={listClassName} />
+        <List posts={posts} className={listClassName} sizes={sizes} />
       </Suspense>
     </Section>
   );

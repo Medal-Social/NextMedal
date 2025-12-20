@@ -41,15 +41,18 @@ import {
   createMockBlogListModule,
   createMockBreadcrumbsModule,
   createMockCalloutModule,
+  createMockComponentGalleryModule,
   createMockFeaturesModule,
   createMockHeroModule,
+  createMockLatestArticlesModule,
   createMockLogoCloudModule,
   createMockPage,
-  createMockTeamModule,
   createMockPricingComparisonModule,
   createMockPricingListModule,
   createMockProductComparisonModule,
   createMockRichtextModule,
+  createMockTeamListModule,
+  createMockTeamModule,
   createMockVideoHeroModule,
   MODULE_TYPES,
 } from './mocks/sanity';
@@ -62,14 +65,17 @@ const moduleFactories = {
   'accordion-list': createMockAccordionListModule,
   'blog-frontpage': createMockBlogFrontpageModule,
   'blog-list': createMockBlogListModule,
+  'latest-articles': createMockLatestArticlesModule,
   breadcrumbs: createMockBreadcrumbsModule,
-  'features': createMockFeaturesModule,
+  'component-gallery': createMockComponentGalleryModule,
+  features: createMockFeaturesModule,
   'logo-cloud': createMockLogoCloudModule,
   team: createMockTeamModule,
+  'team-list': createMockTeamListModule,
   'pricing-comparison': createMockPricingComparisonModule,
   'pricing-list': createMockPricingListModule,
   'product-comparison': createMockProductComparisonModule,
-  'richtext': createMockRichtextModule,
+  richtext: createMockRichtextModule,
   videoHero: createMockVideoHeroModule,
 } as const;
 
@@ -78,9 +84,13 @@ const SYNC_MODULE_TYPES = [
   'hero',
   'callout',
   'accordion-list',
+  'blog-list',
+  'latest-articles',
+  'component-gallery',
   'features',
   'logo-cloud',
   'team',
+  'team-list',
   'pricing-list',
   'product-comparison',
   'richtext',
@@ -155,7 +165,6 @@ describe('Property 37: Sanity Component Rendering', () => {
         { numRuns: 30 }
       );
     });
-
   });
 
   describe('Edge cases', () => {

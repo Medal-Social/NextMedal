@@ -7,7 +7,8 @@ export default function ReadTime({
   const minutes = Math.ceil(value);
   return (
     <span className="flex items-center gap-x-1" {...props}>
-      <Clock className="size-4" /> {minutes} {minutes === 1 ? 'minute' : 'minutes'}
+      <Clock className="size-4" /> <span className="font-numeric">{minutes}</span>{' '}
+      {minutes === 1 ? 'minute' : 'minutes'}
     </span>
   );
 }

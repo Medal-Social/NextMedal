@@ -89,13 +89,12 @@ export default defineType({
   ],
   preview: {
     select: {
-      intro: 'intro',
       groupCount: 'groups.length',
     },
     prepare({ groupCount }) {
       return {
         title: 'Component Gallery',
-        subtitle: `${groupCount || 0} groups`,
+        subtitle: `${groupCount || 0} group${groupCount === 1 ? '' : 's'}`,
         media: TfiGallery,
       };
     },

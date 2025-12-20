@@ -8,29 +8,28 @@ import {
   createMockIcon,
   createMockImage,
   createMockImg,
-  createMockLink,
+  createMockMenuItem,
   createMockPortableText,
-  createMockStat,
   generateKey,
 } from './helpers';
 import type {
   MockAccordionListModule,
   MockBlogFrontpageModule,
   MockBlogListModule,
-  MockBlogPostContentModule,
   MockBreadcrumbsModule,
   MockCalloutModule,
-  MockFeaturedHeroModule,
-  MockFeatureGridModule,
-  MockGalleryHeroModule,
+  MockComponentGalleryModule,
+  MockFeaturesModule,
   MockHeroModule,
-  MockLogoListModule,
+  MockLatestArticlesModule,
+  MockLogoCloudModule,
   MockModule,
-  MockPersonListModule,
   MockPricingComparisonModule,
   MockPricingListModule,
   MockProductComparisonModule,
   MockRichtextModule,
+  MockTeamListModule,
+  MockTeamModule,
   MockVideoHeroModule,
 } from './types';
 
@@ -90,9 +89,7 @@ export function createMockAccordionListModule(
     _type: 'accordion-list',
     _key: generateKey(),
     options: { uid: 'faq-section' },
-    isFullWidth: false,
-    pretitle: 'FAQ',
-    intro: createMockPortableText(['Frequently Asked Questions']),
+    content: createMockPortableText(['Frequently Asked Questions']),
     items: [
       {
         _key: generateKey(),
@@ -111,7 +108,6 @@ export function createMockAccordionListModule(
         open: false,
       },
     ],
-    layout: 'vertical',
     generateSchema: true,
     ...overrides,
   };
@@ -130,11 +126,11 @@ export function createMockBlogFrontpageModule(
   };
 }
 
-export function createMockBlogListModule(
-  overrides?: Partial<MockBlogListModule>
-): MockBlogListModule {
+export function createMockLatestArticlesModule(
+  overrides?: Partial<MockLatestArticlesModule>
+): MockLatestArticlesModule {
   return {
-    _type: 'blog-list',
+    _type: 'latest-articles',
     _key: generateKey(),
     pretitle: 'Blog',
     intro: createMockPortableText(['Latest Articles']),
@@ -146,17 +142,6 @@ export function createMockBlogListModule(
   };
 }
 
-export function createMockBlogPostContentModule(
-  overrides?: Partial<MockBlogPostContentModule>
-): MockBlogPostContentModule {
-  return {
-    _type: 'blog-post-content',
-    _key: generateKey(),
-    options: { uid: 'blog-content' },
-    ...overrides,
-  };
-}
-
 export function createMockBreadcrumbsModule(
   overrides?: Partial<MockBreadcrumbsModule>
 ): MockBreadcrumbsModule {
@@ -164,109 +149,57 @@ export function createMockBreadcrumbsModule(
     _type: 'breadcrumbs',
     _key: generateKey(),
     crumbs: [
-      createMockLink({ label: 'Home', type: 'internal' }),
-      createMockLink({ label: 'Products', type: 'internal' }),
+      createMockMenuItem({ label: 'Home', type: 'internal' }),
+      createMockMenuItem({ label: 'Products', type: 'internal' }),
     ],
     hideCurrent: false,
     ...overrides,
   };
 }
 
-export function createMockFeatureGridModule(
-  overrides?: Partial<MockFeatureGridModule>
-): MockFeatureGridModule {
+export function createMockFeaturesModule(
+  overrides?: Partial<MockFeaturesModule>
+): MockFeaturesModule {
   return {
-    _type: 'feature-grid',
+    _type: 'features',
     _key: generateKey(),
     options: { uid: 'features-section' },
-    showBorder: false,
     pretitle: 'Features',
     intro: createMockPortableText(['Everything you need to succeed']),
     items: [
       {
         _key: generateKey(),
         icon: createMockIcon('zap'),
-        pretitle: 'Fast',
         summary: 'Lightning Speed',
         content: createMockPortableText(['Experience blazing fast performance.']),
       },
       {
         _key: generateKey(),
         icon: createMockIcon('shield'),
-        pretitle: 'Secure',
         summary: 'Enterprise Security',
         content: createMockPortableText(['Bank-level security for your data.']),
       },
     ],
-    layout: 'vertical',
-    textAlign: 'center',
-    columns: 3,
     ...overrides,
   };
 }
 
-export function createMockFeaturedHeroModule(
-  overrides?: Partial<MockFeaturedHeroModule>
-): MockFeaturedHeroModule {
+export function createMockLogoCloudModule(
+  overrides?: Partial<MockLogoCloudModule>
+): MockLogoCloudModule {
   return {
-    _type: 'featuredHero',
+    _type: 'logo-cloud',
     _key: generateKey(),
-    options: { uid: 'featured-hero' },
-    pretitle: 'New Feature',
-    content: createMockPortableText([
-      'Introducing Our Latest Innovation',
-      'Transform the way you work with our new tools.',
-    ]),
-    ctas: [createMockCta({ text: 'Try It Now' })],
-    videoType: 'image',
-    image: createMockImg(),
-    textAlign: 'left',
-    ...overrides,
-  };
-}
-
-export function createMockGalleryHeroModule(
-  overrides?: Partial<MockGalleryHeroModule>
-): MockGalleryHeroModule {
-  return {
-    _type: 'galleryHero',
-    _key: generateKey(),
-    pretitle: 'Gallery',
-    content: createMockPortableText(['Explore Our Work']),
-    ctas: [createMockCta({ text: 'View All' })],
-    stats: [
-      createMockStat({ value: '500+', label: 'Projects' }),
-      createMockStat({ value: '100+', label: 'Clients' }),
-    ],
-    assets: [createMockImg(), createMockImg()],
-    alignment: 'center',
-    options: { uid: 'gallery-hero' },
-    ...overrides,
-  };
-}
-
-export function createMockLogoListModule(
-  overrides?: Partial<MockLogoListModule>
-): MockLogoListModule {
-  return {
-    _type: 'logo-list',
-    _key: generateKey(),
-    options: { uid: 'logo-list' },
-    pretitle: 'Trusted By',
-    intro: createMockPortableText(['Industry leaders trust our platform']),
+    options: { uid: 'logo-cloud' },
+    content: createMockPortableText(['Trusted by Industry Leaders']),
     logos: [],
-    logoType: 'default',
-    autoScroll: false,
-    duration: 12,
     ...overrides,
   };
 }
 
-export function createMockPersonListModule(
-  overrides?: Partial<MockPersonListModule>
-): MockPersonListModule {
+export function createMockTeamModule(overrides?: Partial<MockTeamModule>): MockTeamModule {
   return {
-    _type: 'person-list',
+    _type: 'team',
     _key: generateKey(),
     options: { uid: 'team-section' },
     pretitle: 'Our Team',
@@ -363,20 +296,59 @@ export function createMockRichtextModule(
   overrides?: Partial<MockRichtextModule>
 ): MockRichtextModule {
   return {
-    _type: 'richtext-module',
+    _type: 'richtext',
     _key: generateKey(),
     options: { uid: 'richtext-section' },
     content: createMockPortableText([
       'This is a rich text section.',
       'It supports multiple paragraphs and formatting.',
     ]),
-    tableOfContents: false,
-    tocPosition: 'right',
-    stretch: false,
     ...overrides,
   };
 }
 
+export function createMockBlogListModule(
+  overrides?: Partial<MockBlogListModule>
+): MockBlogListModule {
+  return {
+    _type: 'blog-list',
+    _key: generateKey(),
+    pretitle: 'Blog',
+    intro: createMockPortableText(['Blog List']),
+    layout: 'grid',
+    showFeaturedPostsFirst: true,
+    displayFilters: false,
+    limit: 6,
+    ...overrides,
+  };
+}
+
+export function createMockComponentGalleryModule(
+  overrides?: Partial<MockComponentGalleryModule>
+): MockComponentGalleryModule {
+  return {
+    _type: 'component-gallery',
+    _key: generateKey(),
+    intro: createMockPortableText(['Component Gallery']),
+    groups: [],
+    ...overrides,
+  };
+}
+
+export function createMockTeamListModule(
+  overrides?: Partial<MockTeamListModule>
+): MockTeamListModule {
+  return {
+    _type: 'team-list',
+    _key: generateKey(),
+    options: { uid: 'team-list' },
+    pretitle: 'Team',
+    intro: createMockPortableText(['Our Team']),
+    people: [],
+    layout: 'carousel',
+    ...overrides,
+  };
+}
 
 export function createMockVideoHeroModule(
   overrides?: Partial<MockVideoHeroModule>
@@ -407,32 +379,32 @@ export function createMockModule(type: string, overrides?: Partial<MockModule>):
       return createMockAccordionListModule(overrides as Partial<MockAccordionListModule>);
     case 'blog-frontpage':
       return createMockBlogFrontpageModule(overrides as Partial<MockBlogFrontpageModule>);
-    case 'blog-list':
-      return createMockBlogListModule(overrides as Partial<MockBlogListModule>);
-    case 'blog-post-content':
-      return createMockBlogPostContentModule(overrides as Partial<MockBlogPostContentModule>);
+    case 'latest-articles':
+      return createMockLatestArticlesModule(overrides as Partial<MockLatestArticlesModule>);
     case 'breadcrumbs':
       return createMockBreadcrumbsModule(overrides as Partial<MockBreadcrumbsModule>);
-    case 'feature-grid':
-      return createMockFeatureGridModule(overrides as Partial<MockFeatureGridModule>);
-    case 'featuredHero':
-      return createMockFeaturedHeroModule(overrides as Partial<MockFeaturedHeroModule>);
-    case 'galleryHero':
-      return createMockGalleryHeroModule(overrides as Partial<MockGalleryHeroModule>);
-    case 'logo-list':
-      return createMockLogoListModule(overrides as Partial<MockLogoListModule>);
-    case 'person-list':
-      return createMockPersonListModule(overrides as Partial<MockPersonListModule>);
+    case 'features':
+      return createMockFeaturesModule(overrides as Partial<MockFeaturesModule>);
+    case 'logo-cloud':
+      return createMockLogoCloudModule(overrides as Partial<MockLogoCloudModule>);
+    case 'team':
+      return createMockTeamModule(overrides as Partial<MockTeamModule>);
     case 'pricing-comparison':
       return createMockPricingComparisonModule(overrides as Partial<MockPricingComparisonModule>);
     case 'pricing-list':
       return createMockPricingListModule(overrides as Partial<MockPricingListModule>);
     case 'product-comparison':
       return createMockProductComparisonModule(overrides as Partial<MockProductComparisonModule>);
-    case 'richtext-module':
+    case 'richtext':
       return createMockRichtextModule(overrides as Partial<MockRichtextModule>);
     case 'videoHero':
       return createMockVideoHeroModule(overrides as Partial<MockVideoHeroModule>);
+    case 'blog-list':
+      return createMockBlogListModule(overrides as Partial<MockBlogListModule>);
+    case 'component-gallery':
+      return createMockComponentGalleryModule(overrides as Partial<MockComponentGalleryModule>);
+    case 'team-list':
+      return createMockTeamListModule(overrides as Partial<MockTeamListModule>);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }
@@ -447,19 +419,19 @@ export const MODULE_TYPES = [
   'callout',
   'accordion-list',
   'blog-frontpage',
-  'blog-list',
-  'blog-post-content',
+  'latest-articles',
   'breadcrumbs',
-  'feature-grid',
-  'featuredHero',
-  'galleryHero',
-  'logo-list',
-  'person-list',
+  'features',
+  'logo-cloud',
+  'team',
   'pricing-comparison',
   'pricing-list',
   'product-comparison',
-  'richtext-module',
+  'richtext',
   'videoHero',
+  'blog-list',
+  'component-gallery',
+  'team-list',
 ] as const;
 
 export type ModuleType = (typeof MODULE_TYPES)[number];

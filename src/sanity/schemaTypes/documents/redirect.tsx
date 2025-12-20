@@ -24,13 +24,15 @@ export default defineType({
       description: (
         <>
           <p>
-            Enter the path to redirect from. You don&apos;t need to worry about the
-            leading slash <code>/</code>.
+            Enter the path to redirect from. You don&apos;t need to worry about the leading slash{' '}
+            <code>/</code>.
           </p>
           <p style={{ marginTop: '8px', fontSize: '0.9em', opacity: 0.8 }}>
-            <strong>Advanced:</strong> To match dynamic paths (like any blog post),
-            use a colon + name. <br />
-            <em>Example: <code>/blog/:slug</code> will match <code>/blog/anything</code></em>
+            <strong>Advanced:</strong> To match dynamic paths (like any blog post), use a colon +
+            name. <br />
+            <em>
+              Example: <code>/blog/:slug</code> will match <code>/blog/anything</code>
+            </em>
           </p>
         </>
       ),

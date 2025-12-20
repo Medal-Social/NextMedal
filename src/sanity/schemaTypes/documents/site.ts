@@ -40,8 +40,7 @@ export default defineType({
     defineField({
       name: 'banners',
       title: 'Site Banners',
-      description:
-        'Special banners shown across the site. Useful for promotions or urgent news.',
+      description: 'Special banners shown across the site. Useful for promotions or urgent news.',
       type: 'array',
       of: [{ type: 'reference', to: [{ type: 'banner' }] }],
       group: 'general',
@@ -90,7 +89,7 @@ export default defineType({
             : true;
         }).warning(),
     }),
-    
+
     // Navigation Group
     defineField({
       name: 'headerMenu',
@@ -104,7 +103,8 @@ export default defineType({
     defineField({
       name: 'ctas',
       title: 'Action Buttons',
-      description: 'Primary action buttons displayed in the header (e.g., "Get Started", "Contact").',
+      description:
+        'Primary action buttons displayed in the header (e.g., "Get Started", "Contact").',
       type: 'array',
       of: [{ type: 'cta' }],
       group: 'navigation',

@@ -1,12 +1,14 @@
-import ThemeToggleWrapper from './ThemeToggleWrapper';
+'use client';
+
 import { ChevronDown, ExternalLink, X } from 'lucide-react';
 import Link from 'next/link';
 import { stegaClean } from 'next-sanity';
+import type { ReactNode } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import resolveUrl from '@/lib/resolveUrl';
 import CTAList from '@/ui/CTAList';
 import LocaleSwitcher from '@/ui/language-switcher';
-import type { ReactNode } from 'react';
+import ThemeToggleWrapper from './ThemeToggleWrapper';
 
 type SanityReference = { _ref: string; _type: 'reference'; _weak?: boolean };
 interface InternalLink {
@@ -83,9 +85,7 @@ export default function MobileNavigation({ menu, ctas, headerLogo }: MobileNavig
       <div className="flex h-full flex-col">
         {/* Mobile Header Bar */}
         <div className="flex items-center justify-between p-4 border-b border-border/10 min-h-[var(--header-height)]">
-          <div className="flex items-center">
-             {headerLogo}
-          </div>
+          <div className="flex items-center">{headerLogo}</div>
           <label htmlFor="header-toggle" className="p-2 -mr-2 cursor-pointer">
             <X className="h-6 w-6" />
             <span className="sr-only">Close menu</span>
@@ -97,49 +97,58 @@ export default function MobileNavigation({ menu, ctas, headerLogo }: MobileNavig
             <ul className="space-y-2">
               {menu?.items?.map((item: MenuItem, index: number) => {
                 // ... (rest of the list mapping)
-              if (item._type === 'menuItem') {
-                return (
-                  <li key={`mobile-${item.label}-${index}`}>
-                    <NavLink link={item as MobileNavLink} />
-                  </li>
-                );
-              }
+                if (item._type === 'menuItem') {
+                  return (
+                    <li key={`mobile-${item.label}-${index}`}>
+                      <NavLink link={item as MobileNavLink} />
+                    </li>
+                  );
+                }
 
-              if (item._type === 'dropdownMenu') {
-                return (
-                  <li key={`mobile-${item.title}-${index}`}>
-                    <Collapsible>
-                      <CollapsibleTrigger
-                        className="flex w-full items-center justify-between rounded-lg p-4 text-lg font-medium hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
-                        aria-label={`${item.title} submenu`}
-                      >
-                        <span className="font-medium">{item.title}</span>
-                        <ChevronDown className="h-5 w-5 transition-transform duration-200 group-data-[state=open]:rotate-180" aria-hidden="true" />
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <ul className="ml-4 mt-2 space-y-2 border-l-2 border-border pl-4">
-                          {item.links?.map((link: MobileNavLink, linkIndex: number) => (
-                            <li key={`mobile-${link.label}-${index}-${linkIndex}`}>
-                              <NavLink link={link} />
-                            </li>
-                          ))}
-                        </ul>
-                      </CollapsibleContent>
-                    </Collapsible>
-                  </li>
-                );
-              }
-              return null;
+                if (item._type === 'dropdownMenu') {
+                  return (
+                    <li key={`mobile-${item.title}-${index}`}>
+                      <Collapsible>
+                        <CollapsibleTrigger
+                          className="flex w-full items-center justify-between rounded-lg p-4 text-lg font-medium hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+                          aria-label={`${item.title} submenu`}
+                        >
+                          <span className="font-medium">{item.title}</span>
+                          <ChevronDown
+                            className="h-5 w-5 transition-transform duration-200 group-data-[state=open]:rotate-180"
+                            aria-hidden="true"
+                          />
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <ul className="ml-4 mt-2 space-y-2 border-l-2 border-border pl-4">
+                            {item.links?.map((link: MobileNavLink, linkIndex: number) => (
+                              <li key={`mobile-${link.label}-${index}-${linkIndex}`}>
+                                <NavLink link={link} />
+                              </li>
+                            ))}
+                          </ul>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    </li>
+                  );
+                }
+                return null;
               })}
             </ul>
 
             <div className="space-y-6 pt-6 border-t border-border">
               <CTAList ctas={ctas} className="grid gap-4 *:w-full *:text-lg *:py-6" />
-              
-            <div className="flex flex-col gap-4 px-4 pb-6">
-               <LocaleSwitcher dropdownAlign="start" className="w-full justify-start h-14 px-4 text-lg [&>span]:inline-block [&>span]:text-lg" />
-               <ThemeToggleWrapper dropdownAlign="start" className="w-full justify-start h-14 px-4 text-lg [&>span]:inline-block [&>span]:text-lg" />
-            </div>
+
+              <div className="flex flex-col gap-4 px-4 pb-6">
+                <LocaleSwitcher
+                  dropdownAlign="start"
+                  className="w-full justify-start h-14 px-4 text-lg [&>span]:inline-block [&>span]:text-lg"
+                />
+                <ThemeToggleWrapper
+                  dropdownAlign="start"
+                  className="w-full justify-start h-14 px-4 text-lg [&>span]:inline-block [&>span]:text-lg"
+                />
+              </div>
             </div>
           </div>
         </nav>

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { getSite } from '@/sanity/lib/fetch';
+import { CommandMenu } from '@/ui/CommandMenu';
 import CTAList from '@/ui/CTAList';
 import { Img } from '@/ui/Img';
 import LocaleSwitcher from '@/ui/language-switcher';
@@ -51,15 +52,16 @@ export default async function Header() {
         aria-label="Site header"
       >
         <div className="header-grid mx-auto grid max-w-screen-xl items-center gap-x-6 p-4">
-          <div className="[grid-area:logo]">
-            {logoNode}
-          </div>
+          <div className="[grid-area:logo]">{logoNode}</div>
 
           <nav className="max-lg:hidden" aria-label="Main navigation">
             <Navigation />
           </nav>
 
-          <div className="[grid-area:ctas] lg:ml-4 flex justify-end">
+          <div className="[grid-area:ctas] flex items-center justify-end gap-4 lg:ml-4">
+            <div className="hidden lg:block">
+              <CommandMenu />
+            </div>
             <CTAList ctas={ctas} />
           </div>
 
@@ -76,11 +78,7 @@ export default async function Header() {
       </Wrapper>
 
       <div className="lg:hidden header-closed:hidden">
-        <MobileNavigation
-          menu={{ items: headerMenu?.items }}
-          ctas={ctas}
-          headerLogo={logoNode}
-        />
+        <MobileNavigation menu={{ items: headerMenu?.items }} ctas={ctas} headerLogo={logoNode} />
       </div>
     </>
   );

@@ -10,6 +10,7 @@ import {
   createMockPortableText,
   createMockSlug,
   generateId,
+  generateKey,
 } from './helpers';
 import type { MockBlogCategory, MockBlogPost, MockPage, MockPerson, MockSite } from './types';
 
@@ -93,6 +94,18 @@ export function createMockPerson(overrides?: Partial<MockPerson>): MockPerson {
     name: 'John Doe',
     title: 'Software Engineer',
     image: createMockImage(),
+    socialLinks: [
+      {
+        _key: generateKey(),
+        platform: 'twitter',
+        url: 'https://twitter.com/johndoe',
+      },
+      {
+        _key: generateKey(),
+        platform: 'linkedin',
+        url: 'https://linkedin.com/in/johndoe',
+      },
+    ],
     ...overrides,
   };
 }

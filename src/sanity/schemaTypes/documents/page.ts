@@ -8,14 +8,7 @@
  * - 1.0.0: Initial version
  */
 
-import {
-  VscEdit,
-  VscEyeClosed,
-  VscFile,
-  VscHome,
-  VscQuestion,
-  VscSearch,
-} from 'react-icons/vsc';
+import { VscEdit, VscEyeClosed, VscFile, VscHome, VscQuestion, VscSearch } from 'react-icons/vsc';
 import { defineField, defineType } from 'sanity';
 import modules from '../fragments/modules';
 

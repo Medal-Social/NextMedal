@@ -25,6 +25,7 @@ export default defineType({
       title: 'Link',
       description: 'The destination link.',
       type: 'menuItem',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'style',
@@ -52,7 +53,3 @@ export default defineType({
     }),
   },
 });
-
-
-
-

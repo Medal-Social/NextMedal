@@ -1,7 +1,7 @@
 import { groq, stegaClean } from 'next-sanity';
 import { Suspense } from 'react';
-import { fetchSanityLive } from '@/sanity/lib/fetch';
 import { Section } from '@/components/ui/section';
+import { fetchSanityLive } from '@/sanity/lib/fetch';
 import FilterList from '../LatestArticles/FilterList';
 import PostPreview from '../PostPreview';
 import PostPreviewLarge from '../PostPreviewLarge';

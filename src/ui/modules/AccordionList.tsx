@@ -58,9 +58,7 @@ export default function AccordionList({
                 h3: ({ children }) => (
                   <h3 className="text-xl font-semibold md:text-2xl mb-3">{children}</h3>
                 ),
-                h4: ({ children }) => (
-                  <h4 className="text-lg font-semibold mb-2">{children}</h4>
-                ),
+                h4: ({ children }) => <h4 className="text-lg font-semibold mb-2">{children}</h4>,
               },
             }}
           />

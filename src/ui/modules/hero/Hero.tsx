@@ -6,16 +6,11 @@ import CTAList from '@/ui/CTAList';
 import { Img } from '@/ui/Img';
 import Pretitle from '@/ui/Pretitle';
 
-export default function Hero(
-  props: Sanity.Hero & { className?: string }
-) {
+export default function Hero(props: Sanity.Hero & { className?: string }) {
   const { className } = props;
 
   return (
-    <Section
-      spacing="relaxed"
-      className={cn('relative overflow-hidden', className)}
-    >
+    <Section spacing="relaxed" className={cn('relative overflow-hidden', className)}>
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-[30%] -right-[10%] w-[70%] h-[70%] rounded-full bg-gradient-to-br from-rose-500/20 to-purple-500/20 blur-3xl opacity-70 dark:from-rose-500/10 dark:to-purple-500/10" />
@@ -58,6 +53,9 @@ export default function Hero(
                 image={props.image.image}
                 className="w-full object-cover"
                 alt={props.image.alt || props.image.image?.alt || 'Hero image'}
+                loading="eager"
+                fetchPriority="high"
+                sizes="(min-width: 1024px) 50vw, 100vw"
               />
 
               {/* Subtle decoration on the left only */}

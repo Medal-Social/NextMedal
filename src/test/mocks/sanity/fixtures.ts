@@ -5,18 +5,14 @@
 
 import { createMockBlogPost, createMockPage, createMockSite } from './documents';
 import { createMockMetadata, createMockPortableText, createMockSlug } from './helpers';
-import {
-  createMockCalloutModule,
-  createMockFeatureGridModule,
-  createMockHeroModule,
-} from './modules';
+import { createMockCalloutModule, createMockFeaturesModule, createMockHeroModule } from './modules';
 
 /**
  * Pre-built mock page with common modules
  */
 export const mockPage = createMockPage({
   title: 'Home Page',
-  modules: [createMockHeroModule(), createMockFeatureGridModule(), createMockCalloutModule()],
+  modules: [createMockHeroModule(), createMockFeaturesModule(), createMockCalloutModule()],
   metadata: createMockMetadata({
     slug: createMockSlug('index'),
     title: 'Home - Your Trusted Platform for Modern Development',

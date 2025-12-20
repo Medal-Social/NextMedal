@@ -5,9 +5,11 @@ import { useBlogFilters } from '../store';
 
 export default function List({
   posts,
+  sizes,
   ...props
 }: {
   posts: Sanity.BlogPost[];
+  sizes?: string;
 } & React.ComponentProps<'ul'>) {
   const filtered = filterPosts(posts);
 
@@ -17,9 +19,9 @@ export default function List({
 
   return (
     <ul className="" {...props}>
-      {filtered?.map((post) => (
-        <li className="anim-fade" key={post._id}>
-          <PostPreview post={post} />
+      {filtered?.map((post, index) => (
+        <li className="anim-fade" key={post._id ? `${post._id}-${index}` : index}>
+          <PostPreview post={post} sizes={sizes} />
         </li>
       ))}
     </ul>

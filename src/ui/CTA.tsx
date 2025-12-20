@@ -9,7 +9,7 @@ import { validateExternalUrl } from '@/lib/validateExternalUrl';
 type ButtonVariant = 'default' | 'ghost' | 'link';
 
 // Convert Link to CTA props
-function linkToCta(link: Sanity.MenuItem | null | undefined): Sanity.CTA {
+function _linkToCta(link: Sanity.MenuItem | null | undefined): Sanity.CTA {
   if (!link) {
     return {
       _type: 'cta',
@@ -34,8 +34,20 @@ export default function CTA({
   style = 'primary',
   className,
   children,
+  // Destructure Sanity-specific props to remove them from 'rest'
+  internalLink,
+  externalLink,
+  linkType,
+  text,
   ...rest
-}: Sanity.CTA & ComponentProps<typeof Button>) {
+}: Sanity.CTA &
+  ComponentProps<typeof Button> & {
+    // Add optional types for the props we want to exclude
+    internalLink?: any;
+    externalLink?: any;
+    linkType?: any;
+    text?: any;
+  }) {
   if (!link) return null;
 
   const { label, type, internal, external, params, newTab } = link;
@@ -77,7 +89,7 @@ export default function CTA({
 
     return (
       <Button variant={variant} className={className} asChild {...rest}>
-        <Link 
+        <Link
           href={validatedUrl}
           target={newTab !== false ? '_blank' : undefined}
           rel={newTab !== false ? 'noopener noreferrer' : undefined}

@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Props) {
 export async function generateStaticParams() {
   const slugs = await client.fetch<{ slug: string }[]>(
     groq`*[
-			_type == 'page' &&
+			_type in ['page', 'component.library'] &&
 			defined(metadata.slug.current) &&
 			!(metadata.slug.current in ['index'])
 		]{
@@ -47,9 +47,9 @@ export async function generateStaticParams() {
 async function getPage(params: { slug?: string[] }) {
   const slug = params.slug?.join('/');
 
-  return await fetchSanityLive<Sanity.Page>({
+  return await fetchSanityLive<Sanity.Page | Sanity.ComponentLibrary>({
     query: groq`*[
-			_type == 'page' &&
+			_type in ['page', 'component.library'] &&
 			${SLUG_QUERY} == $slug &&
 			!(metadata.slug.current in ['index'])
 		][0]{

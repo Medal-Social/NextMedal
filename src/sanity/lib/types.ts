@@ -124,8 +124,6 @@ export interface Hero extends SanityBase {
   sideBySideTextAlign?: 'left' | 'center' | 'right';
 }
 
-
-
 export interface ModuleOptions {
   _type: 'module-options';
   background?: string;

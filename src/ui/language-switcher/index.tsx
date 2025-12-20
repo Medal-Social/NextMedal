@@ -5,7 +5,13 @@ import { usePage } from '@/contexts/PageContext';
 import { routing } from '@/i18n/routing';
 import LocaleSwitcherSelect from './LocaleSwitcherSelect';
 
-export default function LocaleSwitcher({ className, dropdownAlign }: { className?: string, dropdownAlign?: 'start' | 'end' | 'center' }) {
+export default function LocaleSwitcher({
+  className,
+  dropdownAlign,
+}: {
+  className?: string;
+  dropdownAlign?: 'start' | 'end' | 'center';
+}) {
   const t = useTranslations('LocaleSwitcher');
   const locale = useLocale();
   const { page } = usePage();

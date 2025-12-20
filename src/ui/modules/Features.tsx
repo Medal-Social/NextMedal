@@ -43,9 +43,9 @@ export default function Features({
         </div>
       )}
       <div className={cn('grid gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-12')}>
-        {items?.map((item) => (
+        {items?.map((item, index) => (
           <Card
-            key={item._key}
+            key={item._key || index}
             className={cn(
               'h-full relative overflow-hidden shadow-none !border-none',
               'dark:bg-card/80 dark:backdrop-blur-sm'

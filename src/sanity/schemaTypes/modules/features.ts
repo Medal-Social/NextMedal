@@ -9,8 +9,8 @@
 
 import { TfiLayoutGrid2 } from 'react-icons/tfi';
 import { defineArrayMember, defineField, defineType } from 'sanity';
-import { createAlignmentField } from '@/sanity/lib/schema-factory';
 import { getBlockText } from '@/sanity/lib/utils';
+import { createUidField } from './uid-input';
 
 export default defineType({
   name: 'features',
@@ -20,31 +20,15 @@ export default defineType({
   description: 'Grid layout of features with icons and descriptions',
   groups: [
     { name: 'content', title: 'Content', default: true },
-    { name: 'options', title: 'Layout Options' },
-  ],
-  fieldsets: [
-    {
-      name: 'alignment',
-      title: 'Alignment Options',
-      options: { columns: 2 },
-    },
+    { name: 'options', title: 'Advanced Options' },
   ],
   fields: [
     defineField({
       name: 'options',
-      type: 'module-options',
+      type: 'object',
+      title: 'Advanced Options',
       group: 'options',
-    }),
-    defineField({
-      name: 'showBorder',
-      title: 'Show Border',
-      description: 'Show a border around the feature grid',
-      type: 'boolean',
-      options: {
-        layout: 'switch',
-      },
-      initialValue: false,
-      group: 'options',
+      fields: [createUidField()],
     }),
     defineField({
       name: 'pretitle',
@@ -78,19 +62,12 @@ export default defineType({
               type: 'icon',
             }),
             defineField({
-              name: 'pretitle',
-              title: 'Pre-title',
-              description: 'Pre-title for this feature',
-              type: 'string',
-            }),
-            defineField({
               name: 'summary',
               title: 'Feature Title',
               description: 'Short title for this feature',
               type: 'string',
               validation: (Rule) => Rule.required(),
             }),
-
             defineField({
               name: 'content',
               title: 'Feature Description',
@@ -99,7 +76,6 @@ export default defineType({
               of: [{ type: 'block' }],
               validation: (Rule) => Rule.required(),
             }),
-
             defineField({
               name: 'link',
               title: 'Link',
@@ -123,42 +99,6 @@ export default defineType({
       ],
       validation: (Rule) => Rule.min(1).max(12).error('Must have between 1 and 12 feature items'),
       group: 'content',
-    }),
-    defineField({
-      name: 'layout',
-      title: 'Layout Style',
-      description: 'Choose how features are arranged in the grid',
-      type: 'string',
-      options: {
-        layout: 'radio',
-        list: [
-          { title: 'Vertical (stacked)', value: 'vertical' },
-          { title: 'Horizontal (side by side)', value: 'horizontal' },
-        ],
-      },
-      initialValue: 'vertical',
-      group: 'options',
-    }),
-    createAlignmentField({
-      name: 'textAlign',
-      title: 'Text alignment',
-      group: 'options',
-      fieldset: 'alignment',
-    }),
-    defineField({
-      name: 'columns',
-      title: 'Number of Columns',
-      description: 'Number of columns to display on desktop (will adjust for mobile)',
-      type: 'number',
-      options: {
-        list: [
-          { title: '2 Columns', value: 2 },
-          { title: '3 Columns', value: 3 },
-          { title: '4 Columns', value: 4 },
-        ],
-      },
-      initialValue: 3,
-      group: 'options',
     }),
   ],
   preview: {

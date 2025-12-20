@@ -409,11 +409,8 @@ describe('Keyboard Navigation Tests', () => {
 
         await user.keyboard('{Enter}');
 
-        // Should be collapsed
-        expect(screen.getByText('Content 1').closest('[data-state]')).toHaveAttribute(
-          'data-state',
-          'closed'
-        );
+        // Should be collapsed (unmounted/hidden)
+        expect(screen.queryByText('Content 1')).not.toBeInTheDocument();
       });
     });
   });
@@ -658,10 +655,8 @@ describe('Keyboard Navigation Tests', () => {
       expect(triggers[1]).toHaveFocus();
 
       // Content should not be visible (accordion is collapsible and no item is expanded)
-      const content1 = screen.getByText('Content 1');
-      const content2 = screen.getByText('Content 2');
-      expect(content1.closest('[data-state]')).toHaveAttribute('data-state', 'closed');
-      expect(content2.closest('[data-state]')).toHaveAttribute('data-state', 'closed');
+      expect(screen.queryByText('Content 1')).not.toBeInTheDocument();
+      expect(screen.queryByText('Content 2')).not.toBeInTheDocument();
     });
   });
 
@@ -1553,10 +1548,10 @@ describe('Keyboard Navigation Tests', () => {
             for (const trigger of triggers) {
               const className = trigger.className;
 
-              // Accordion triggers use flex layout with py-4 (16px top + 16px bottom = 32px min height)
+              // Accordion triggers use flex layout with py-5 (20px top + 20px bottom = 40px min height)
               // and full width, ensuring adequate target size
               expect(className).toContain('flex');
-              expect(className).toContain('py-4');
+              expect(className).toContain('py-5');
             }
 
             unmount();
@@ -1721,8 +1716,8 @@ describe('Keyboard Navigation Tests', () => {
                   </Accordion>
                 );
                 const trigger = screen.getByRole('button');
-                // Accordion triggers have py-4 which provides 32px+ height
-                hasAdequateSize = trigger.className.includes('py-4');
+                // Accordion triggers have py-5 which provides 40px+ height
+                hasAdequateSize = trigger.className.includes('py-5');
                 unmountFn = unmount;
                 break;
               }

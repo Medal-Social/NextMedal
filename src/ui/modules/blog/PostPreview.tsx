@@ -7,9 +7,11 @@ import Categories from './Categories';
 export default function PostPreview({
   post,
   skeleton,
+  sizes,
 }: {
   post?: Sanity.BlogPost;
   skeleton?: boolean;
+  sizes?: string;
 }) {
   if (!skeleton && (!post || !post.metadata)) return null;
 
@@ -22,12 +24,13 @@ export default function PostPreview({
       key={skeleton ? 'skeleton' : post?._id}
       className="flex group flex-col items-start justify-between"
     >
-      <div className="relative w-full rounded-full">
+      <div className="relative w-full">
         {skeleton ? (
           <Img
             className="aspect-video w-full object-cover rounded-2xl transition-transform duration-300 group-hover:scale-105 group-hover:brightness-110"
             image={metadata?.image}
             width={700}
+            sizes={sizes}
             alt={metadata?.title || ''}
           />
         ) : (
@@ -36,6 +39,7 @@ export default function PostPreview({
               className="aspect-video w-full object-cover rounded-2xl transition-transform duration-300 group-hover:scale-105 group-hover:brightness-110"
               image={metadata?.image}
               width={700}
+              sizes={sizes}
               alt={metadata?.title || ''}
             />
           </Link>

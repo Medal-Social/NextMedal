@@ -11,7 +11,7 @@ import {
   createMockBlogPost,
   createMockPerson,
 } from '@/test/mocks/sanity/documents';
-import { createMockMetadata, createMockSlug } from '@/test/mocks/sanity/helpers';
+import { createMockMetadata, createMockSlug, generateKey } from '@/test/mocks/sanity/helpers';
 import { axe, render, screen } from '@/test/setup';
 
 // Import components
@@ -89,12 +89,12 @@ function createExpandedPerson(overrides?: Record<string, unknown>): Sanity.Perso
     slug: createMockSlug(
       (overrides?.name as string)?.toLowerCase().replace(/\s+/g, '-') || 'john-doe'
     ),
-    socialLinks: {
-      twitter: 'https://twitter.com/johndoe',
-      linkedIn: 'https://linkedin.com/in/johndoe',
-      instagram: 'https://instagram.com/johndoe',
-      youtube: 'https://youtube.com/@johndoe',
-    },
+    socialLinks: [
+      { _key: generateKey(), platform: 'twitter', url: 'https://twitter.com/johndoe' },
+      { _key: generateKey(), platform: 'linkedin', url: 'https://linkedin.com/in/johndoe' },
+      { _key: generateKey(), platform: 'instagram', url: 'https://instagram.com/johndoe' },
+      { _key: generateKey(), platform: 'youtube', url: 'https://youtube.com/@johndoe' },
+    ],
     ...overrides,
   } as Sanity.Person;
 }
@@ -827,12 +827,12 @@ describe('Blog Components - Comprehensive Accessibility Tests', () => {
     const mockAuthors = [
       createExpandedPerson({
         name: 'Social Author',
-        socialLinks: {
-          twitter: 'https://twitter.com/test',
-          linkedIn: 'https://linkedin.com/in/test',
-          instagram: 'https://instagram.com/test',
-          youtube: 'https://youtube.com/@test',
-        },
+        socialLinks: [
+          { _key: generateKey(), platform: 'twitter', url: 'https://twitter.com/test' },
+          { _key: generateKey(), platform: 'linkedin', url: 'https://linkedin.com/in/test' },
+          { _key: generateKey(), platform: 'instagram', url: 'https://instagram.com/test' },
+          { _key: generateKey(), platform: 'youtube', url: 'https://youtube.com/@test' },
+        ],
       } as Partial<Sanity.Person>),
     ];
 
