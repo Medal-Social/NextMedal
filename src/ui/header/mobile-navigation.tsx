@@ -86,10 +86,7 @@ export default function MobileNavigation({ menu, ctas, headerLogo }: MobileNavig
         {/* Mobile Header Bar */}
         <div className="flex items-center justify-between p-4 border-b border-border/10 min-h-[var(--header-height)]">
           <div className="flex items-center">{headerLogo}</div>
-          <label
-            htmlFor="header-toggle"
-            className="p-2 -mr-2 cursor-pointer"
-          >
+          <label htmlFor="header-toggle" className="p-2 -mr-2 cursor-pointer">
             <X className="h-6 w-6" />
             <span className="sr-only">Close menu</span>
           </label>

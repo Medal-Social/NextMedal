@@ -161,7 +161,11 @@ export const mockPost = {
       level: 1,
       _key: key(),
       children: [
-        { _type: 'span', _key: key(), text: 'Direct access to backend resources: Query databases directly.' },
+        {
+          _type: 'span',
+          _key: key(),
+          text: 'Direct access to backend resources: Query databases directly.',
+        },
       ],
     },
     {
@@ -171,7 +175,11 @@ export const mockPost = {
       level: 1,
       _key: key(),
       children: [
-        { _type: 'span', _key: key(), text: 'Automatic code splitting: Next.js handles this automatically.' },
+        {
+          _type: 'span',
+          _key: key(),
+          text: 'Automatic code splitting: Next.js handles this automatically.',
+        },
       ],
     },
 
@@ -184,7 +192,11 @@ export const mockPost = {
       level: 1,
       _key: key(),
       children: [
-        { _type: 'span', _key: key(), text: 'Audit your existing codebase for client-side dependencies.' },
+        {
+          _type: 'span',
+          _key: key(),
+          text: 'Audit your existing codebase for client-side dependencies.',
+        },
       ],
     },
     {
@@ -193,7 +205,13 @@ export const mockPost = {
       listItem: 'number',
       level: 1,
       _key: key(),
-      children: [{ _type: 'span', _key: key(), text: 'Move global providers to a Client Component wrapper.' }],
+      children: [
+        {
+          _type: 'span',
+          _key: key(),
+          text: 'Move global providers to a Client Component wrapper.',
+        },
+      ],
     },
     {
       _type: 'block',
