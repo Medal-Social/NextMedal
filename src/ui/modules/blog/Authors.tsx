@@ -1,11 +1,5 @@
 import Link from 'next/link';
-import {
-  FaFacebook,
-  FaInstagram,
-  FaLinkedin,
-  FaYoutube,
-} from 'react-icons/fa6';
-import { FaXTwitter } from 'react-icons/fa6';
+import { FaFacebook, FaInstagram, FaLinkedin, FaXTwitter, FaYoutube } from 'react-icons/fa6';
 import { GoPerson } from 'react-icons/go';
 import { cn } from '@/lib/utils';
 import { Img } from '@/ui/Img';
@@ -28,10 +22,10 @@ export default function Authors({
 
   return (
     <div {...props}>
-      {authors?.map((author) => (
+      {authors?.map((author, index) => (
         <Author
           author={author}
-          key={author._id}
+          key={author._id ? `${author._id}-${index}` : index}
           linked={linked}
           socialLinks={socialLinks}
           bio={bio}
@@ -58,7 +52,7 @@ function Author({
     className: cn(
       'flex items-center gap-[.5ch] ',
       linked && 'hover:underline',
-      !linked || (!socialLinks && 'pointer-events-none'),
+      !linked || (!socialLinks && 'pointer-events-none')
     ),
     children: (
       <div className="flex items-center gap-x-4">
@@ -77,9 +71,9 @@ function Author({
           {bio && author?.title && (
             <div className="text-muted-foreground">{`${author?.title}`}</div>
           )}
-          {socialLinks && author?.socialLinks ? (
+          {socialLinks && Array.isArray(author?.socialLinks) ? (
             <ul className="mt-1 flex items-center  gap-x-6">
-              {author.socialLinks.map((link) => {
+              {author.socialLinks.map((link, index) => {
                 const Icon =
                   {
                     linkedin: FaLinkedin,
@@ -92,7 +86,7 @@ function Author({
                 if (!link.url) return null;
 
                 return (
-                  <li key={link._key} className="h-fit w-fit">
+                  <li key={link._key || index} className="h-fit w-fit">
                     <Link
                       href={link.url}
                       target="_blank"
