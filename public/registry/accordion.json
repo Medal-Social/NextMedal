@@ -1,10 +1,7 @@
 {
   "name": "accordion",
   "type": "components:ui",
-  "dependencies": [
-    "@base-ui/react/accordion",
-    "lucide-react"
-  ],
+  "dependencies": ["@base-ui/react/accordion", "lucide-react"],
   "registryDependencies": [],
   "files": [
     {
