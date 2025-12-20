@@ -48,16 +48,16 @@ export default function BrandMenu({ children, logoData, hasBrandPage }: BrandMen
 
   return (
     <ContextMenu>
-      <ContextMenuTrigger asChild>
-        <div className="cursor-pointer">{children}</div>
-      </ContextMenuTrigger>
+      <ContextMenuTrigger render={<div className="cursor-pointer">{children}</div>} />
       <ContextMenuContent className="w-56 p-2 z-[200]">
-        <ContextMenuItem asChild>
-          <Link href="/" className="flex items-center cursor-pointer gap-2">
-            <Home className="w-4 h-4" />
-            <span>Go to Home</span>
-          </Link>
-        </ContextMenuItem>
+        <ContextMenuItem
+          render={
+            <Link href="/" className="flex items-center cursor-pointer gap-2">
+              <Home className="w-4 h-4" />
+              <span>Go to Home</span>
+            </Link>
+          }
+        />
         <ContextMenuItem onClick={handleCopyLogo} className="cursor-pointer gap-2">
           <Copy className="w-4 h-4" />
           <span>{label}</span>
@@ -72,12 +72,14 @@ export default function BrandMenu({ children, logoData, hasBrandPage }: BrandMen
         )}
 
         {hasBrandPage && (
-          <ContextMenuItem asChild>
-            <Link href="/brand" className="flex items-center cursor-pointer gap-2 font-medium">
-              <LayoutGrid className="w-4 h-4 text-primary" />
-              <span>Brand Center</span>
-            </Link>
-          </ContextMenuItem>
+          <ContextMenuItem
+            render={
+              <Link href="/brand" className="flex items-center cursor-pointer gap-2 font-medium">
+                <LayoutGrid className="w-4 h-4 text-primary" />
+                <span>Brand Center</span>
+              </Link>
+            }
+          />
         )}
       </ContextMenuContent>
     </ContextMenu>
