@@ -1,3 +1,5 @@
+'use client';
+
 import ThemeToggleWrapper from './ThemeToggleWrapper';
 import { ChevronDown, ExternalLink, X } from 'lucide-react';
 import Link from 'next/link';
@@ -86,10 +88,16 @@ export default function MobileNavigation({ menu, ctas, headerLogo }: MobileNavig
           <div className="flex items-center">
              {headerLogo}
           </div>
-          <label htmlFor="header-toggle" className="p-2 -mr-2 cursor-pointer">
+          <button
+            className="p-2 -mr-2 cursor-pointer"
+            onClick={() => {
+              const toggle = document.getElementById('header-toggle') as HTMLInputElement;
+              if (toggle) toggle.checked = false;
+            }}
+          >
             <X className="h-6 w-6" />
             <span className="sr-only">Close menu</span>
-          </label>
+          </button>
         </div>
 
         <nav className="flex-1 overflow-y-auto pb-safe" aria-label="Mobile navigation">
