@@ -59,7 +59,7 @@
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.7",
+    "@biomejs/biome": "2.3.10",
     "@sanity/blueprints": "^0.7.0",
     "@sanity/template-validator": "^2.4.3",
     "@tailwindcss/typography": "^0.5.19",
