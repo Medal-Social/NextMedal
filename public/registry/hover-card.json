@@ -1,9 +1,7 @@
 {
   "name": "hover-card",
   "type": "components:ui",
-  "dependencies": [
-    "@base-ui/react/preview-card"
-  ],
+  "dependencies": ["@base-ui/react/preview-card"],
   "registryDependencies": [],
   "files": [
     {
