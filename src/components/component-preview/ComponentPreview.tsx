@@ -19,7 +19,6 @@ export function ComponentPreview({
   schemaHtml,
   schemaObject,
   children,
-  hasRegistry = false,
 }: ComponentPreviewProps) {
   return (
     <Tabs defaultValue="preview" className="w-full">
