@@ -13,6 +13,7 @@ import { getSite } from '@/sanity/lib/fetch';
 import Banner from '@/ui/Banner';
 import Footer from '@/ui/footer';
 import Header from '@/ui/header';
+import SiteJsonLd from '@/ui/SiteJsonLd';
 import SkipToContent from '@/ui/SkipToContent';
 import ThemeColorSetter from '@/ui/ThemeColorSetter';
 import VisualEditingControls from '@/ui/VisualEditingControls';
@@ -48,6 +49,7 @@ export default async function RootLayout({ children, params }: Props) {
       suppressHydrationWarning
     >
       <body className="bg-background text-foreground font-sans flex flex-col min-h-screen">
+        <SiteJsonLd />
         <ThemeProvider
           attribute="class"
           defaultTheme={themeSettings.defaultTheme || 'light'}
