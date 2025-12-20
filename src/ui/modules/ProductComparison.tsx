@@ -65,9 +65,9 @@ export default function ProductComparison({
           <thead>
             <tr>
               <th className="p-4 text-left" />
-              {products?.map((product) => (
+              {products?.map((product, index) => (
                 <th
-                  key={product._key || `product-${product.name}`}
+                  key={product._key || `product-${product.name}-${index}`}
                   className={`p-4 text-center font-bold rounded-t-lg ${
                     product.highlight ? 'text-primary' : 'text-muted-foreground'
                   }`}
@@ -78,8 +78,8 @@ export default function ProductComparison({
             </tr>
           </thead>
           <tbody>
-            {features?.map((feature) => (
-              <tr className="border-b" key={feature._key || `feature-${feature.name}`}>
+            {features?.map((feature, index) => (
+              <tr className="border-b" key={feature._key || `feature-${feature.name}-${index}`}>
                 <td className="p-4 font-medium">{feature.name}</td>
                 {feature.featureDetails?.map((featureDetail, idx) => {
                   const correspondingProduct = products?.[idx];
@@ -89,9 +89,7 @@ export default function ProductComparison({
                     <td
                       key={`${feature._key || feature.name}-detail-${idx}`}
                       className={`p-4 text-center font-semibold ${
-                        isHighlighted
-                          ? 'bg-highlight text-highlight-foreground'
-                          : ''
+                        isHighlighted ? 'bg-highlight text-highlight-foreground' : ''
                       }`}
                     >
                       {renderFeatureDetail(featureDetail, !!isHighlighted)}
