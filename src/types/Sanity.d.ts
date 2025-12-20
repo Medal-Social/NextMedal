@@ -77,7 +77,7 @@ declare global {
       tagline?: any;
       logo?: Logo;
       // info
-      announcements?: Announcement[];
+      banners?: Banner[];
       copyright?: any;
       ogimage?: string;
       // navigation
@@ -89,7 +89,7 @@ declare global {
 
     interface Navigation extends SanityDocument {
       title: string;
-      items?: (Link | LinkList)[];
+      items?: (MenuItem | DropdownMenu)[];
     }
 
     // pages
@@ -112,6 +112,11 @@ declare global {
       modules?: Module[];
     }
 
+    interface ComponentLibrary extends PageBase {
+      readonly _type: 'component.library';
+      modules?: Module[];
+    }
+
     interface GlobalModule extends SanityDocument {
       path: string;
       excludePaths?: string[];
@@ -125,7 +130,6 @@ declare global {
       authors: SanityReference[];
       publishDate: string;
       featured?: boolean;
-      hideTableOfContents?: boolean;
       metadata?: Metadata;
       relatedPosts?: SanityReference[];
     }
@@ -139,33 +143,34 @@ declare global {
 
     // miscellaneous
 
-    interface Announcement extends SanityDocument {
+    interface Banner extends SanityDocument {
       content: any;
-      cta?: Link;
+      cta?: MenuItem;
       start?: string;
       end?: string;
     }
 
     interface Logo extends SanityDocument {
       name: string;
+      title?: string;
       image?: Partial<{
         default: Image;
         light: Image;
         dark: Image;
       }>;
+      link?: string;
     }
 
     interface Person extends SanityDocument {
       name: string;
       title?: string;
-      bio?: string;
+      bio?: any;
       image?: Image;
       socialLinks?: {
-        twitter?: string;
-        linkedIn?: string;
-        instagram?: string;
-        youtube?: string;
-      };
+        _key: string;
+        platform: string;
+        url: string;
+      }[];
     }
 
     interface Pricing extends SanityDocument {
@@ -186,15 +191,8 @@ declare global {
     interface CTA {
       readonly _type?: 'cta';
       _key?: string;
-      text?: string;
-      linkType?: 'internal' | 'external';
-      internalLink?: SanityDocument;
-      externalLink?: string;
-      style?: string;
-      size?: 'default' | 'sm' | 'lg';
-      icon?: any;
-      newTab?: boolean;
-      params?: string;
+      link?: MenuItem;
+      style?: 'primary' | 'ghost' | 'link';
     }
 
     interface Icon {
@@ -220,20 +218,20 @@ declare global {
       loading: 'lazy' | 'eager';
     }
 
-    interface Link {
-      readonly _type: 'link';
+    interface MenuItem {
+      readonly _type: 'menuItem';
       label: string;
-      description?: string;
       type: 'internal' | 'external';
       internal?: Page | BlogPost | Changelog;
       external?: string;
       params?: string;
+      newTab?: boolean;
     }
 
-    interface LinkList {
-      readonly _type: 'link.list';
-      link?: Link;
-      links?: Link[];
+    interface DropdownMenu {
+      readonly _type: 'dropdownMenu';
+      title: string;
+      links?: MenuItem[];
     }
 
     interface Metadata {
@@ -249,7 +247,6 @@ declare global {
       _type: T;
       _key: string;
       options?: {
-        hidden?: boolean;
         uid?: string;
       };
     }
@@ -301,19 +298,6 @@ declare global {
       title: string;
     }
 
-    interface TabbedContent extends Module<'tabbedContent'> {
-      content?: any[];
-      pretitle?: string;
-      tabs: Array<{
-        _key: string;
-        title: string;
-        icon: {
-          ic0n: string;
-        };
-        content: any[];
-      }>;
-      options?: ModuleOptions;
-    }
     interface ModuleOptions {
       isFullWidth?: boolean;
     }
