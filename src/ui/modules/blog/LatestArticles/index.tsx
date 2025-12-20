@@ -1,8 +1,8 @@
 import { groq, PortableText, stegaClean } from 'next-sanity';
 import { Suspense } from 'react';
+import { Section } from '@/components/ui/section';
 import { cn } from '@/lib/utils';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
-import { Section } from '@/components/ui/section';
 import FilterList from '@/ui/modules/blog/LatestArticles/FilterList';
 import Pretitle from '@/ui/Pretitle';
 import PostPreview from '../PostPreview';
