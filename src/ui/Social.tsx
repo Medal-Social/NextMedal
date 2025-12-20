@@ -28,12 +28,13 @@ export default async function Social({ className }: React.ComponentProps<'div'>)
           variant="ghost"
           size="icon"
           className="h-9 w-9 rounded-full"
-          asChild
-        >
-          <a href={item.url} target="_blank" rel="noopener noreferrer" aria-label={item.platform}>
-            <Icon url={item.url} aria-hidden="true" className="h-4 w-4" />
-          </a>
-        </Button>
+          nativeButton={false}
+          render={
+            <a href={item.url} target="_blank" rel="noopener noreferrer" aria-label={item.platform}>
+              <Icon url={item.url} aria-hidden="true" className="h-4 w-4" />
+            </a>
+          }
+        />
       ))}
     </nav>
   );
