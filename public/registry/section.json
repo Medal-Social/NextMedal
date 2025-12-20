@@ -1,10 +1,7 @@
 {
   "name": "section",
   "type": "components:ui",
-  "dependencies": [
-    "class-variance-authority",
-    "react"
-  ],
+  "dependencies": ["class-variance-authority", "react"],
   "registryDependencies": [],
   "files": [
     {
