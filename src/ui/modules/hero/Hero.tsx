@@ -58,6 +58,9 @@ export default function Hero(
                 image={props.image.image}
                 className="w-full object-cover"
                 alt={props.image.alt || props.image.image?.alt || 'Hero image'}
+                loading="eager"
+                fetchPriority="high"
+                sizes="(min-width: 1024px) 50vw, 100vw"
               />
 
               {/* Subtle decoration on the left only */}
