@@ -1177,7 +1177,7 @@ export default async function AllComponentsPage({ params }: Props) {
               <div className="space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
                   <span className="text-muted-foreground font-mono text-xs">Icons (Lucide)</span>
-                  <div className="col-span-2 flex flex-wrap gap-6 text-foreground/80">
+                  <div className="col-span-2 flex flex-wrap gap-6 text-brand-vibrant">
                     <Icon icon={{ _type: 'icon', ic0n: 'Home' }} size={24} />
                     <Icon icon={{ _type: 'icon', ic0n: 'User' }} size={24} />
                     <Icon icon={{ _type: 'icon', ic0n: 'Settings' }} size={24} />
@@ -1190,11 +1190,11 @@ export default async function AllComponentsPage({ params }: Props) {
                   <span className="text-muted-foreground font-mono text-xs">Image Component</span>
                   <div className="col-span-2 grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <div className="aspect-video relative rounded-lg overflow-hidden border">
+                      <div className="aspect-video relative rounded-lg overflow-hidden border ring-1 ring-brand-purple/20">
                         <Img
                           image={image(
-                            'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?auto=format&fit=crop&w=800&q=80',
-                            'Gradient'
+                            'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=800&auto=format&fit=crop',
+                            'On-brand Purple Gradient'
                           )}
                           className="object-cover w-full h-full"
                           width={400}
@@ -1204,11 +1204,11 @@ export default async function AllComponentsPage({ params }: Props) {
                       <div className="text-xs text-muted-foreground">Aspect Video</div>
                     </div>
                     <div className="space-y-2">
-                      <div className="aspect-square relative rounded-lg overflow-hidden border">
+                      <div className="aspect-square relative rounded-lg overflow-hidden border ring-1 ring-brand-purple/20">
                         <Img
                           image={image(
-                            'https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=800&q=80',
-                            'Abstract'
+                            'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop',
+                            'On-brand Abstract Liquid'
                           )}
                           className="object-cover w-full h-full"
                           width={400}

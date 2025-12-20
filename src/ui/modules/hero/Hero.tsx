@@ -13,8 +13,8 @@ export default function Hero(props: Sanity.Hero & { className?: string }) {
     <section className={cn('relative w-full overflow-hidden', className)}>
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute -top-[30%] -right-[10%] w-[70%] h-[70%] rounded-full bg-gradient-to-br from-rose-500/20 to-purple-500/20 blur-3xl opacity-70 dark:from-rose-500/10 dark:to-purple-500/10" />
-        <div className="absolute -bottom-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-gradient-to-tr from-blue-500/20 to-cyan-500/20 blur-3xl opacity-70 dark:from-blue-500/10 dark:to-cyan-500/10" />
+        <div className="absolute -top-[30%] -right-[10%] w-[70%] h-[70%] rounded-full bg-gradient-to-br from-brand-vibrant/20 to-brand-purple/20 blur-3xl opacity-70 dark:from-brand-vibrant/10 dark:to-brand-purple/10" />
+        <div className="absolute -bottom-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-gradient-to-tr from-brand-cyan/20 to-brand-rich/20 blur-3xl opacity-70 dark:from-brand-cyan/10 dark:to-brand-rich/10" />
       </div>
 
       <Section spacing="relaxed" className="relative z-10">
@@ -25,7 +25,7 @@ export default function Hero(props: Sanity.Hero & { className?: string }) {
               <h1 className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
                 {props.highlightedTitle ? (
                   <>
-                    <span className="inline-block mb-2 bg-gradient-to-r from-rose-500 to-rose-700 bg-clip-text text-transparent dark:text-rose-400 font-extrabold">
+                    <span className="inline-block mb-2 bg-gradient-to-r from-brand-vibrant to-brand-purple bg-clip-text text-transparent dark:text-brand-400 font-extrabold">
                       {props.highlightedTitle}
                     </span>{' '}
                     <br />
@@ -60,7 +60,7 @@ export default function Hero(props: Sanity.Hero & { className?: string }) {
                 />
 
                 {/* Subtle decoration on the left only */}
-                <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-rose-600/30 blur-xl pointer-events-none" />
+                <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-brand-vibrant/30 blur-xl pointer-events-none" />
               </div>
             </div>
           )}

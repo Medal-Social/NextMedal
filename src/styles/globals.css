@@ -48,15 +48,29 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
   
-  /* Brand Specific Utility Colors (mapped to brand-data.ts names) */
-  --color-brand-navy: #1A1035;
-  --color-brand-purple: #3B1D6C;
-  --color-brand-rich: #5B2D8C;
-  --color-brand-vibrant: #7E3FAC;
+  /* Brand Tonal Palette */
+  --color-brand-50: #F5F3F7;
+  --color-brand-100: #E8E4ED;
+  --color-brand-200: #D4CCE0;
+  --color-brand-300: #B9A8CC;
+  --color-brand-400: #9F5FC8;
+  --color-brand-500: #7E3FAC;
+  --color-brand-600: #5B2D8C;
+  --color-brand-700: #3B1D6C;
+  --color-brand-800: #2D1650;
+  --color-brand-900: #1A1035;
+
+  /* Brand Specific Utility Colors (mapped to tonal palette) */
+  --color-brand-navy: var(--color-brand-900);
+  --color-brand-purple: var(--color-brand-700);
+  --color-brand-rich: var(--color-brand-600);
+  --color-brand-vibrant: var(--color-brand-500);
+  --color-brand-lavender: var(--color-brand-200);
+  
+  /* Other Brand Colors */
   --color-brand-cyan: #06B6D4;
   --color-brand-magenta: #C026D3;
   --color-brand-gold: #D97706;
-  --color-brand-lavender: #D4CCE0;
 
   /* Sidebar vars */
   --color-sidebar: var(--sidebar-background);
@@ -534,6 +548,14 @@ html.dark .shiki span {
 @utility overflow-fade-r {
   --offset: 4rem;
   mask: linear-gradient(to right, black 50%, black calc(100% - var(--offset)), transparent);
+}
+
+@utility bg-gradient-brand {
+  background-image: linear-gradient(135deg, var(--color-brand-700), var(--color-brand-500));
+}
+
+@utility bg-gradient-page {
+  background-image: linear-gradient(180deg, #F8F5FC, #FFFFFF);
 }
 
 /* layout */
