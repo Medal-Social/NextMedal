@@ -1,6 +1,12 @@
 import { PortableText } from 'next-sanity';
-import { FaInstagram, FaLinkedin, FaUser, FaYoutube } from 'react-icons/fa';
-import { FaXTwitter } from 'react-icons/fa6';
+import {
+  FaFacebook,
+  FaInstagram,
+  FaLinkedin,
+  FaUser,
+  FaXTwitter,
+  FaYoutube,
+} from 'react-icons/fa6';
 import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
 import { Img } from '@/ui/Img';
@@ -61,64 +67,35 @@ export default function TeamList({
                   <p className="mt-6 text-base/7 text-muted-foreground">{person.bio}</p>
                 )}
 
-                {person.socialLinks && (
+                {person.socialLinks && Array.isArray(person.socialLinks) && (
                   <ul className="mt-6 flex gap-x-6">
-                    {person.socialLinks.twitter && (
-                      <li>
-                        <a
-                          href={person.socialLinks.twitter}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-muted-foreground hover:text-foreground"
-                          aria-label={`X/Twitter profile for ${person.name}`}
-                        >
-                          <span className="sr-only">X</span>
-                          <FaXTwitter className="size-5" />
-                        </a>
-                      </li>
-                    )}
-                    {person.socialLinks.linkedIn && (
-                      <li>
-                        <a
-                          href={person.socialLinks.linkedIn}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-muted-foreground hover:text-foreground"
-                          aria-label={`LinkedIn profile for ${person.name}`}
-                        >
-                          <span className="sr-only">LinkedIn</span>
-                          <FaLinkedin className="size-5" />
-                        </a>
-                      </li>
-                    )}
-                    {person.socialLinks.instagram && (
-                      <li>
-                        <a
-                          href={person.socialLinks.instagram}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-muted-foreground hover:text-foreground"
-                          aria-label={`Instagram profile for ${person.name}`}
-                        >
-                          <span className="sr-only">Instagram</span>
-                          <FaInstagram className="size-5" />
-                        </a>
-                      </li>
-                    )}
-                    {person.socialLinks.youtube && (
-                      <li>
-                        <a
-                          href={person.socialLinks.youtube}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-muted-foreground hover:text-foreground"
-                          aria-label={`YouTube channel for ${person.name}`}
-                        >
-                          <span className="sr-only">YouTube</span>
-                          <FaYoutube className="size-6" />
-                        </a>
-                      </li>
-                    )}
+                    {person.socialLinks.map((link) => {
+                      const Icon =
+                        {
+                          linkedin: FaLinkedin,
+                          twitter: FaXTwitter,
+                          instagram: FaInstagram,
+                          youtube: FaYoutube,
+                          facebook: FaFacebook,
+                        }[link.platform] || FaUser;
+
+                      if (!link.url) return null;
+
+                      return (
+                        <li key={link._key}>
+                          <a
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-muted-foreground hover:text-foreground"
+                            aria-label={`${link.platform} profile for ${person.name}`}
+                          >
+                            <span className="sr-only">{link.platform}</span>
+                            <Icon className="size-5" />
+                          </a>
+                        </li>
+                      );
+                    })}
                   </ul>
                 )}
               </div>
