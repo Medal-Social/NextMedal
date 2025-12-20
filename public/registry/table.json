@@ -1,9 +1,7 @@
 {
   "name": "table",
   "type": "components:ui",
-  "dependencies": [
-    "react"
-  ],
+  "dependencies": ["react"],
   "registryDependencies": [],
   "files": [
     {
