@@ -2,10 +2,7 @@
   {
     "name": "accordion",
     "type": "components:ui",
-    "dependencies": [
-      "@base-ui/react/accordion",
-      "lucide-react"
-    ],
+    "dependencies": ["@base-ui/react/accordion", "lucide-react"],
     "registryDependencies": [],
     "files": [
       {
@@ -18,13 +15,8 @@
   {
     "name": "alert-dialog",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "@base-ui/react/alert-dialog"
-    ],
-    "registryDependencies": [
-      "button"
-    ],
+    "dependencies": ["react", "@base-ui/react/alert-dialog"],
+    "registryDependencies": ["button"],
     "files": [
       {
         "path": "ui/alert-dialog.tsx",
@@ -36,10 +28,7 @@
   {
     "name": "alert",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "class-variance-authority"
-    ],
+    "dependencies": ["react", "class-variance-authority"],
     "registryDependencies": [],
     "files": [
       {
@@ -65,10 +54,7 @@
   {
     "name": "avatar",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "@base-ui/react/avatar"
-    ],
+    "dependencies": ["react", "@base-ui/react/avatar"],
     "registryDependencies": [],
     "files": [
       {
@@ -121,9 +107,7 @@
       "@base-ui/react/use-render",
       "class-variance-authority"
     ],
-    "registryDependencies": [
-      "separator"
-    ],
+    "registryDependencies": ["separator"],
     "files": [
       {
         "path": "ui/button-group.tsx",
@@ -135,11 +119,7 @@
   {
     "name": "button",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "@base-ui/react/button",
-      "class-variance-authority"
-    ],
+    "dependencies": ["react", "@base-ui/react/button", "class-variance-authority"],
     "registryDependencies": [],
     "files": [
       {
@@ -152,14 +132,8 @@
   {
     "name": "calendar",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "react-day-picker",
-      "lucide-react"
-    ],
-    "registryDependencies": [
-      "button"
-    ],
+    "dependencies": ["react", "react-day-picker", "lucide-react"],
+    "registryDependencies": ["button"],
     "files": [
       {
         "path": "ui/calendar.tsx",
@@ -171,9 +145,7 @@
   {
     "name": "card",
     "type": "components:ui",
-    "dependencies": [
-      "react"
-    ],
+    "dependencies": ["react"],
     "registryDependencies": [],
     "files": [
       {
@@ -186,14 +158,8 @@
   {
     "name": "carousel",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "embla-carousel-react",
-      "lucide-react"
-    ],
-    "registryDependencies": [
-      "button"
-    ],
+    "dependencies": ["react", "embla-carousel-react", "lucide-react"],
+    "registryDependencies": ["button"],
     "files": [
       {
         "path": "ui/carousel.tsx",
@@ -205,10 +171,7 @@
   {
     "name": "chart",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "recharts"
-    ],
+    "dependencies": ["react", "recharts"],
     "registryDependencies": [],
     "files": [
       {
@@ -221,10 +184,7 @@
   {
     "name": "checkbox",
     "type": "components:ui",
-    "dependencies": [
-      "@base-ui/react/checkbox",
-      "lucide-react"
-    ],
+    "dependencies": ["@base-ui/react/checkbox", "lucide-react"],
     "registryDependencies": [],
     "files": [
       {
@@ -237,9 +197,7 @@
   {
     "name": "collapsible",
     "type": "components:ui",
-    "dependencies": [
-      "@base-ui/react/collapsible"
-    ],
+    "dependencies": ["@base-ui/react/collapsible"],
     "registryDependencies": [],
     "files": [
       {
@@ -252,15 +210,8 @@
   {
     "name": "combobox",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "@base-ui/react",
-      "lucide-react"
-    ],
-    "registryDependencies": [
-      "button",
-      "input-group"
-    ],
+    "dependencies": ["react", "@base-ui/react", "lucide-react"],
+    "registryDependencies": ["button", "input-group"],
     "files": [
       {
         "path": "ui/combobox.tsx",
@@ -272,15 +223,8 @@
   {
     "name": "command",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "@base-ui/react",
-      "lucide-react"
-    ],
-    "registryDependencies": [
-      "dialog",
-      "input-group"
-    ],
+    "dependencies": ["react", "@base-ui/react", "lucide-react"],
+    "registryDependencies": ["dialog", "input-group"],
     "files": [
       {
         "path": "ui/command.tsx",
@@ -292,11 +236,7 @@
   {
     "name": "context-menu",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "@base-ui/react/context-menu",
-      "lucide-react"
-    ],
+    "dependencies": ["react", "@base-ui/react/context-menu", "lucide-react"],
     "registryDependencies": [],
     "files": [
       {
@@ -309,14 +249,8 @@
   {
     "name": "dialog",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "@base-ui/react/dialog",
-      "lucide-react"
-    ],
-    "registryDependencies": [
-      "button"
-    ],
+    "dependencies": ["react", "@base-ui/react/dialog", "lucide-react"],
+    "registryDependencies": ["button"],
     "files": [
       {
         "path": "ui/dialog.tsx",
@@ -328,10 +262,7 @@
   {
     "name": "drawer",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "vaul"
-    ],
+    "dependencies": ["react", "vaul"],
     "registryDependencies": [],
     "files": [
       {
@@ -344,11 +275,7 @@
   {
     "name": "dropdown-menu",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "@base-ui/react/menu",
-      "lucide-react"
-    ],
+    "dependencies": ["react", "@base-ui/react/menu", "lucide-react"],
     "registryDependencies": [],
     "files": [
       {
@@ -361,9 +288,7 @@
   {
     "name": "empty",
     "type": "components:ui",
-    "dependencies": [
-      "class-variance-authority"
-    ],
+    "dependencies": ["class-variance-authority"],
     "registryDependencies": [],
     "files": [
       {
@@ -376,14 +301,8 @@
   {
     "name": "field",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "class-variance-authority"
-    ],
-    "registryDependencies": [
-      "label",
-      "separator"
-    ],
+    "dependencies": ["react", "class-variance-authority"],
+    "registryDependencies": ["label", "separator"],
     "files": [
       {
         "path": "ui/field.tsx",
@@ -395,14 +314,8 @@
   {
     "name": "form",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "@base-ui/react/merge-props",
-      "react-hook-form"
-    ],
-    "registryDependencies": [
-      "label"
-    ],
+    "dependencies": ["react", "@base-ui/react/merge-props", "react-hook-form"],
+    "registryDependencies": ["label"],
     "files": [
       {
         "path": "ui/form.tsx",
@@ -414,9 +327,7 @@
   {
     "name": "hover-card",
     "type": "components:ui",
-    "dependencies": [
-      "@base-ui/react/preview-card"
-    ],
+    "dependencies": ["@base-ui/react/preview-card"],
     "registryDependencies": [],
     "files": [
       {
@@ -429,15 +340,8 @@
   {
     "name": "input-group",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "class-variance-authority"
-    ],
-    "registryDependencies": [
-      "button",
-      "input",
-      "textarea"
-    ],
+    "dependencies": ["react", "class-variance-authority"],
+    "registryDependencies": ["button", "input", "textarea"],
     "files": [
       {
         "path": "ui/input-group.tsx",
@@ -449,11 +353,7 @@
   {
     "name": "input-otp",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "input-otp",
-      "lucide-react"
-    ],
+    "dependencies": ["react", "input-otp", "lucide-react"],
     "registryDependencies": [],
     "files": [
       {
@@ -466,10 +366,7 @@
   {
     "name": "input",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "@base-ui/react/input"
-    ],
+    "dependencies": ["react", "@base-ui/react/input"],
     "registryDependencies": [],
     "files": [
       {
@@ -488,9 +385,7 @@
       "@base-ui/react/use-render",
       "class-variance-authority"
     ],
-    "registryDependencies": [
-      "separator"
-    ],
+    "registryDependencies": ["separator"],
     "files": [
       {
         "path": "ui/item.tsx",
@@ -515,9 +410,7 @@
   {
     "name": "label",
     "type": "components:ui",
-    "dependencies": [
-      "react"
-    ],
+    "dependencies": ["react"],
     "registryDependencies": [],
     "files": [
       {
@@ -530,15 +423,8 @@
   {
     "name": "menubar",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "@base-ui/react/menu",
-      "@base-ui/react/menubar",
-      "lucide-react"
-    ],
-    "registryDependencies": [
-      "dropdown-menu"
-    ],
+    "dependencies": ["react", "@base-ui/react/menu", "@base-ui/react/menubar", "lucide-react"],
+    "registryDependencies": ["dropdown-menu"],
     "files": [
       {
         "path": "ui/menubar.tsx",
@@ -550,10 +436,7 @@
   {
     "name": "native-select",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "lucide-react"
-    ],
+    "dependencies": ["react", "lucide-react"],
     "registryDependencies": [],
     "files": [
       {
@@ -566,11 +449,7 @@
   {
     "name": "navigation-menu",
     "type": "components:ui",
-    "dependencies": [
-      "@base-ui/react/navigation-menu",
-      "class-variance-authority",
-      "lucide-react"
-    ],
+    "dependencies": ["@base-ui/react/navigation-menu", "class-variance-authority", "lucide-react"],
     "registryDependencies": [],
     "files": [
       {
@@ -583,13 +462,8 @@
   {
     "name": "pagination",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "lucide-react"
-    ],
-    "registryDependencies": [
-      "button"
-    ],
+    "dependencies": ["react", "lucide-react"],
+    "registryDependencies": ["button"],
     "files": [
       {
         "path": "ui/pagination.tsx",
@@ -601,10 +475,7 @@
   {
     "name": "popover",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "@base-ui/react/popover"
-    ],
+    "dependencies": ["react", "@base-ui/react/popover"],
     "registryDependencies": [],
     "files": [
       {
@@ -617,9 +488,7 @@
   {
     "name": "progress",
     "type": "components:ui",
-    "dependencies": [
-      "@base-ui/react/progress"
-    ],
+    "dependencies": ["@base-ui/react/progress"],
     "registryDependencies": [],
     "files": [
       {
@@ -632,11 +501,7 @@
   {
     "name": "radio-group",
     "type": "components:ui",
-    "dependencies": [
-      "@base-ui/react/radio",
-      "@base-ui/react/radio-group",
-      "lucide-react"
-    ],
+    "dependencies": ["@base-ui/react/radio", "@base-ui/react/radio-group", "lucide-react"],
     "registryDependencies": [],
     "files": [
       {
@@ -649,10 +514,7 @@
   {
     "name": "resizable",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "react-resizable-panels"
-    ],
+    "dependencies": ["react", "react-resizable-panels"],
     "registryDependencies": [],
     "files": [
       {
@@ -665,10 +527,7 @@
   {
     "name": "scroll-area",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "@base-ui/react/scroll-area"
-    ],
+    "dependencies": ["react", "@base-ui/react/scroll-area"],
     "registryDependencies": [],
     "files": [
       {
@@ -681,13 +540,8 @@
   {
     "name": "search",
     "type": "components:ui",
-    "dependencies": [
-      "lucide-react",
-      "react"
-    ],
-    "registryDependencies": [
-      "input"
-    ],
+    "dependencies": ["lucide-react", "react"],
+    "registryDependencies": ["input"],
     "files": [
       {
         "path": "ui/search.tsx",
@@ -699,10 +553,7 @@
   {
     "name": "section",
     "type": "components:ui",
-    "dependencies": [
-      "class-variance-authority",
-      "react"
-    ],
+    "dependencies": ["class-variance-authority", "react"],
     "registryDependencies": [],
     "files": [
       {
@@ -715,11 +566,7 @@
   {
     "name": "select",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "@base-ui/react/select",
-      "lucide-react"
-    ],
+    "dependencies": ["react", "@base-ui/react/select", "lucide-react"],
     "registryDependencies": [],
     "files": [
       {
@@ -732,9 +579,7 @@
   {
     "name": "separator",
     "type": "components:ui",
-    "dependencies": [
-      "@base-ui/react/separator"
-    ],
+    "dependencies": ["@base-ui/react/separator"],
     "registryDependencies": [],
     "files": [
       {
@@ -747,14 +592,8 @@
   {
     "name": "sheet",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "@base-ui/react/dialog",
-      "lucide-react"
-    ],
-    "registryDependencies": [
-      "button"
-    ],
+    "dependencies": ["react", "@base-ui/react/dialog", "lucide-react"],
+    "registryDependencies": ["button"],
     "files": [
       {
         "path": "ui/sheet.tsx",
@@ -773,14 +612,7 @@
       "class-variance-authority",
       "lucide-react"
     ],
-    "registryDependencies": [
-      "button",
-      "input",
-      "separator",
-      "sheet",
-      "skeleton",
-      "tooltip"
-    ],
+    "registryDependencies": ["button", "input", "separator", "sheet", "skeleton", "tooltip"],
     "files": [
       {
         "path": "ui/sidebar.tsx",
@@ -805,10 +637,7 @@
   {
     "name": "slider",
     "type": "components:ui",
-    "dependencies": [
-      "react",
-      "@base-ui/react/slider"
-    ],
+    "dependencies": ["react", "@base-ui/react/slider"],
     "registryDependencies": [],
     "files": [
       {
@@ -821,11 +650,7 @@
   {
     "name": "sonner",
     "type": "components:ui",
-    "dependencies": [
-      "next-themes",
-      "sonner",
-      "lucide-react"
-    ],
+    "dependencies": ["next-themes", "sonner", "lucide-react"],
     "registryDependencies": [],
     "files": [
       {
@@ -838,9 +663,7 @@
   {
     "name": "spinner",
     "type": "components:ui",
-    "dependencies": [
-      "lucide-react"
-    ],
+    "dependencies": ["lucide-react"],
     "registryDependencies": [],
     "files": [
       {
@@ -853,9 +676,7 @@
   {
     "name": "switch",
     "type": "components:ui",
-    "dependencies": [
-      "@base-ui/react/switch"
-    ],
+    "dependencies": ["@base-ui/react/switch"],
     "registryDependencies": [],
     "files": [
       {
@@ -868,9 +689,7 @@
   {
     "name": "table",
     "type": "components:ui",
-    "dependencies": [
-      "react"
-    ],
+    "dependencies": ["react"],
     "registryDependencies": [],
     "files": [
       {
@@ -883,10 +702,7 @@
   {
     "name": "tabs",
     "type": "components:ui",
-    "dependencies": [
-      "@base-ui/react/tabs",
-      "class-variance-authority"
-    ],
+    "dependencies": ["@base-ui/react/tabs", "class-variance-authority"],
     "registryDependencies": [],
     "files": [
       {
@@ -899,9 +715,7 @@
   {
     "name": "textarea",
     "type": "components:ui",
-    "dependencies": [
-      "react"
-    ],
+    "dependencies": ["react"],
     "registryDependencies": [],
     "files": [
       {
@@ -920,9 +734,7 @@
       "@base-ui/react/toggle-group",
       "class-variance-authority"
     ],
-    "registryDependencies": [
-      "toggle"
-    ],
+    "registryDependencies": ["toggle"],
     "files": [
       {
         "path": "ui/toggle-group.tsx",
@@ -934,10 +746,7 @@
   {
     "name": "toggle",
     "type": "components:ui",
-    "dependencies": [
-      "@base-ui/react/toggle",
-      "class-variance-authority"
-    ],
+    "dependencies": ["@base-ui/react/toggle", "class-variance-authority"],
     "registryDependencies": [],
     "files": [
       {
@@ -950,9 +759,7 @@
   {
     "name": "tooltip",
     "type": "components:ui",
-    "dependencies": [
-      "@base-ui/react/tooltip"
-    ],
+    "dependencies": ["@base-ui/react/tooltip"],
     "registryDependencies": [],
     "files": [
       {
@@ -965,13 +772,8 @@
   {
     "name": "accordion-list",
     "type": "components:module",
-    "dependencies": [
-      "next-sanity"
-    ],
-    "registryDependencies": [
-      "accordion",
-      "section"
-    ],
+    "dependencies": ["next-sanity"],
+    "registryDependencies": ["accordion", "section"],
     "files": [
       {
         "path": "modules/AccordionList.tsx",
@@ -983,14 +785,8 @@
   {
     "name": "breadcrumbs",
     "type": "components:module",
-    "dependencies": [
-      "next-sanity",
-      "react"
-    ],
-    "registryDependencies": [
-      "breadcrumb",
-      "section"
-    ],
+    "dependencies": ["next-sanity", "react"],
+    "registryDependencies": ["breadcrumb", "section"],
     "files": [
       {
         "path": "modules/Breadcrumbs.tsx",
@@ -1002,9 +798,7 @@
   {
     "name": "callout",
     "type": "components:module",
-    "dependencies": [
-      "next-sanity"
-    ],
+    "dependencies": ["next-sanity"],
     "registryDependencies": [],
     "files": [
       {
@@ -1017,13 +811,8 @@
   {
     "name": "features",
     "type": "components:module",
-    "dependencies": [
-      "next-sanity"
-    ],
-    "registryDependencies": [
-      "card",
-      "section"
-    ],
+    "dependencies": ["next-sanity"],
+    "registryDependencies": ["card", "section"],
     "files": [
       {
         "path": "modules/Features.tsx",
@@ -1035,12 +824,8 @@
   {
     "name": "hero",
     "type": "components:module",
-    "dependencies": [
-      "next-sanity"
-    ],
-    "registryDependencies": [
-      "section"
-    ],
+    "dependencies": ["next-sanity"],
+    "registryDependencies": ["section"],
     "files": [
       {
         "path": "modules/hero/Hero.tsx",
@@ -1052,13 +837,8 @@
   {
     "name": "logo-cloud",
     "type": "components:module",
-    "dependencies": [
-      "next/link",
-      "next-sanity"
-    ],
-    "registryDependencies": [
-      "section"
-    ],
+    "dependencies": ["next/link", "next-sanity"],
+    "registryDependencies": ["section"],
     "files": [
       {
         "path": "modules/LogoCloud.tsx",
@@ -1070,17 +850,8 @@
   {
     "name": "pricing-list",
     "type": "components:module",
-    "dependencies": [
-      "framer-motion",
-      "lucide-react",
-      "next-sanity",
-      "react"
-    ],
-    "registryDependencies": [
-      "badge",
-      "section",
-      "tabs"
-    ],
+    "dependencies": ["framer-motion", "lucide-react", "next-sanity", "react"],
+    "registryDependencies": ["badge", "section", "tabs"],
     "files": [
       {
         "path": "modules/PricingList.tsx",
@@ -1092,15 +863,8 @@
   {
     "name": "pricing-comparison",
     "type": "components:module",
-    "dependencies": [
-      "lucide-react",
-      "react"
-    ],
-    "registryDependencies": [
-      "badge",
-      "section",
-      "tooltip"
-    ],
+    "dependencies": ["lucide-react", "react"],
+    "registryDependencies": ["badge", "section", "tooltip"],
     "files": [
       {
         "path": "modules/PricingComparison.tsx",
@@ -1112,12 +876,8 @@
   {
     "name": "product-comparison",
     "type": "components:module",
-    "dependencies": [
-      "next-sanity"
-    ],
-    "registryDependencies": [
-      "section"
-    ],
+    "dependencies": ["next-sanity"],
+    "registryDependencies": ["section"],
     "files": [
       {
         "path": "modules/ProductComparison.tsx",
@@ -1130,9 +890,7 @@
     "name": "richtext",
     "type": "components:module",
     "dependencies": [],
-    "registryDependencies": [
-      "section"
-    ],
+    "registryDependencies": ["section"],
     "files": [
       {
         "path": "modules/RichtextModule/index.tsx",
@@ -1144,14 +902,8 @@
   {
     "name": "team",
     "type": "components:module",
-    "dependencies": [
-      "next-sanity",
-      "react-icons/fa",
-      "react-icons/fa6"
-    ],
-    "registryDependencies": [
-      "section"
-    ],
+    "dependencies": ["next-sanity", "react-icons/fa", "react-icons/fa6"],
+    "registryDependencies": ["section"],
     "files": [
       {
         "path": "modules/Team.tsx",
@@ -1163,14 +915,8 @@
   {
     "name": "videoHero",
     "type": "components:module",
-    "dependencies": [
-      "next/dynamic",
-      "next/image",
-      "react"
-    ],
-    "registryDependencies": [
-      "section"
-    ],
+    "dependencies": ["next/dynamic", "next/image", "react"],
+    "registryDependencies": ["section"],
     "files": [
       {
         "path": "modules/VideoHero.tsx",
@@ -1195,13 +941,8 @@
   {
     "name": "blog-frontpage",
     "type": "components:module",
-    "dependencies": [
-      "next-sanity",
-      "react"
-    ],
-    "registryDependencies": [
-      "section"
-    ],
+    "dependencies": ["next-sanity", "react"],
+    "registryDependencies": ["section"],
     "files": [
       {
         "path": "modules/blog/BlogFrontpage/index.tsx",
@@ -1213,13 +954,8 @@
   {
     "name": "latest-articles",
     "type": "components:module",
-    "dependencies": [
-      "next-sanity",
-      "react"
-    ],
-    "registryDependencies": [
-      "section"
-    ],
+    "dependencies": ["next-sanity", "react"],
+    "registryDependencies": ["section"],
     "files": [
       {
         "path": "modules/blog/LatestArticles/index.tsx",
