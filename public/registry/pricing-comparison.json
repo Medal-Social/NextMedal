@@ -1,15 +1,8 @@
 {
   "name": "pricing-comparison",
   "type": "components:module",
-  "dependencies": [
-    "lucide-react",
-    "react"
-  ],
-  "registryDependencies": [
-    "badge",
-    "section",
-    "tooltip"
-  ],
+  "dependencies": ["lucide-react", "react"],
+  "registryDependencies": ["badge", "section", "tooltip"],
   "files": [
     {
       "path": "modules/PricingComparison.tsx",
