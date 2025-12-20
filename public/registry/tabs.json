@@ -1,10 +1,7 @@
 {
   "name": "tabs",
   "type": "components:ui",
-  "dependencies": [
-    "@base-ui/react/tabs",
-    "class-variance-authority"
-  ],
+  "dependencies": ["@base-ui/react/tabs", "class-variance-authority"],
   "registryDependencies": [],
   "files": [
     {
