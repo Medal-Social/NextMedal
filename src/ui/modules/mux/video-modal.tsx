@@ -46,7 +46,7 @@ export function VideoModal({ playbackId, isOpen, onClose }: VideoModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent
-        className="bg-black/80 max-h-[95vh] h-auto max-w-7xl overflow-hidden p-0 border-none shadow-xl w-[100vw]"
+        className="bg-background/80 max-h-[95vh] h-auto max-w-7xl overflow-hidden p-0 border-none shadow-xl w-[100vw]"
         aria-label="Video player"
       >
         <DialogTitle className="sr-only">Video player</DialogTitle>
@@ -60,7 +60,7 @@ export function VideoModal({ playbackId, isOpen, onClose }: VideoModalProps) {
                 </div>
               )}
               {error && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/50 p-4 text-center text-red-500">
+                <div className="absolute inset-0 flex items-center justify-center bg-muted/50 p-4 text-center text-destructive">
                   {error}
                 </div>
               )}

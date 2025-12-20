@@ -50,7 +50,7 @@ export function AutoPlayVideo({
     // Return a placeholder when not mounted
     return (
       <div className={`relative ${className}`} style={{ aspectRatio: '16/9' }}>
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/10">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted/50">
           <div className="w-16 h-16 rounded-full border-4 border-transparent border-t-primary animate-spin mb-4" />
           <p className="text-primary font-medium text-lg">Preparing your video...</p>
         </div>
@@ -61,13 +61,13 @@ export function AutoPlayVideo({
   return (
     <div className={`relative ${className}`} style={{ aspectRatio: '16/9' }}>
       {isLoading && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/10">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted/50">
           <div className="w-16 h-16 rounded-full border-4 border-transparent border-t-primary animate-spin mb-4" />
           <p className="text-primary font-medium text-lg">Preparing your video...</p>
         </div>
       )}
       {error && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/50 p-4 text-center text-red-500">
+        <div className="absolute inset-0 flex items-center justify-center bg-muted/50 p-4 text-center text-destructive">
           {error}
         </div>
       )}
