@@ -7,9 +7,7 @@
     "@base-ui/react/use-render",
     "class-variance-authority"
   ],
-  "registryDependencies": [
-    "separator"
-  ],
+  "registryDependencies": ["separator"],
   "files": [
     {
       "path": "ui/item.tsx",
