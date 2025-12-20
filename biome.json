@@ -53,7 +53,7 @@
   "javascript": {
     "formatter": {
       "quoteStyle": "single",
-      "trailingCommas": "esnext",
+      "trailingCommas": "es5",
       "semicolons": "always"
     }
   },
