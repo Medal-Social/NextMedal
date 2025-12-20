@@ -1,14 +1,8 @@
 {
   "name": "carousel",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "embla-carousel-react",
-    "lucide-react"
-  ],
-  "registryDependencies": [
-    "button"
-  ],
+  "dependencies": ["react", "embla-carousel-react", "lucide-react"],
+  "registryDependencies": ["button"],
   "files": [
     {
       "path": "ui/carousel.tsx",
