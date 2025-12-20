@@ -18,7 +18,6 @@ export const NAVIGATION_QUERY = groq`
 	title,
 	items[]{
 		${LINK_QUERY},
-		link{ ${LINK_QUERY} },
 		links[]{ ${LINK_QUERY} },
 		categories[]{
 		...,
@@ -50,13 +49,8 @@ const BASE_MODULES_QUERY = groq`
 	_type == 'hero.split' => {
 		content[]
 	},
-	_type== 'galleryHero' => {
-		...,
-		content[],
-		assets[]{..., "image": image.asset->, alt, loading}
-	},
-	_type == 'logo-list' => { logos[]-> },
-	_type == 'person-list' => { 
+	_type == 'logo-cloud' => { logos[]-> },
+	_type == 'team' => { 
 		...,
 		people[]->{...,  "image": image.asset->, altText, loading},
 	},
@@ -66,7 +60,7 @@ const BASE_MODULES_QUERY = groq`
 			ctas[]{${CTA_QUERY}}
 		}
 	},
-	_type == 'richtext-module' => {
+	_type == 'richtext' => {
 		'headings': select(
 			tableOfContents => content[style in ['h2', 'h3', 'h4', 'h5', 'h6']]{
 				style,
@@ -74,12 +68,7 @@ const BASE_MODULES_QUERY = groq`
 			}
 		),
 	},
-	_type == 'featuredHero' => {
-		ctas[]{ ${CTA_QUERY} },
-		content[],
-		image{..., "image": image.asset->, altText, loading}
-	},
-	_type == 'feature-grid' => {
+	_type == 'features' => {
 		...,
 		items[]{
 			...,
