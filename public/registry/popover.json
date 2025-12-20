@@ -1,10 +1,7 @@
 {
   "name": "popover",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "@base-ui/react/popover"
-  ],
+  "dependencies": ["react", "@base-ui/react/popover"],
   "registryDependencies": [],
   "files": [
     {
