@@ -48,7 +48,7 @@ export default async function Header() {
   return (
     <>
       <Wrapper
-        className="bg-background/80 backdrop-blur-md border-b border-border/40 sticky top-0 z-50"
+        className="@container bg-background/80 backdrop-blur-md border-b border-border/40 sticky top-0 z-50"
         role="banner"
         aria-label="Site header"
       >

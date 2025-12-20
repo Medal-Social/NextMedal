@@ -89,7 +89,7 @@ export default function ProductComparison({
                     <td
                       key={`${feature._key || feature.name}-detail-${idx}`}
                       className={`p-4 text-center font-semibold ${
-                        isHighlighted ? 'bg-highlight text-highlight-foreground' : ''
+                        isHighlighted ? 'bg-accent text-accent-foreground' : ''
                       }`}
                     >
                       {renderFeatureDetail(featureDetail, !!isHighlighted)}

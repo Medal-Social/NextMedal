@@ -56,6 +56,7 @@
   --color-brand-cyan: #06B6D4;
   --color-brand-magenta: #C026D3;
   --color-brand-gold: #D97706;
+  --color-brand-lavender: #D4CCE0;
 
   /* Sidebar vars */
   --color-sidebar: var(--sidebar-background);
@@ -67,9 +68,6 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   
-  --color-highlight: var(--highlight);
-  --color-highlight-foreground: var(--highlight-foreground);
-
   --animate-accordion-down: accordion-down 0.2s cubic-bezier(0.87, 0, 0.13, 1);
   --animate-accordion-up: accordion-up 0.2s cubic-bezier(0.87, 0, 0.13, 1);
   --animate-marquee: marquee var(--marquee-duration, 30s) linear infinite;
@@ -189,9 +187,6 @@
   --sidebar-accent-foreground: oklch(0.319 0.132 282.82);
   --sidebar-border: oklch(0.88 0.01 285.82);
   --sidebar-ring: oklch(0.319 0.132 282.82);
-  
-  --highlight: hsl(352 100% 97%);
-  --highlight-foreground: hsl(347 77% 50%);
 }
 
 .dark {
@@ -227,9 +222,6 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0.02 285.82);
   --sidebar-ring: oklch(0.669 0.132 282.82);
-
-  --highlight: hsl(335 55% 8%);
-  --highlight-foreground: hsl(351 91% 71%);
 }
 
 /* Ensure font variables are available on :root for Tailwind @theme to resolve */
@@ -358,6 +350,11 @@ samp,
     @apply border-border outline-ring/50;
   }
 
+  ::selection {
+    background-color: var(--color-brand-lavender);
+    color: var(--color-brand-purple);
+  }
+
   [hidden] {
     display: none;
   }
@@ -432,27 +429,33 @@ html.dark .shiki span {
 
 /* typography */
 
-@utility h-base {
-  font-weight: bold;
-}
-
 @utility h1 {
-  @apply h-base text-5xl;
+  font-weight: bold;
+  font-size: 3rem;
+  line-height: 1;
 }
 @utility h2 {
-  @apply h-base text-3xl;
+  font-weight: bold;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
 }
 @utility h3 {
-  @apply h-base text-2xl;
+  font-weight: bold;
+  font-size: 1.5rem;
+  line-height: 2rem;
 }
 @utility h4 {
-  @apply h-base text-xl;
+  font-weight: bold;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
 }
 @utility h5 {
-  @apply h-base text-lg;
+  font-weight: bold;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
 }
 @utility h6 {
-  @apply h-base;
+  font-weight: bold;
 }
 
 @utility technical {
@@ -539,7 +542,7 @@ html.dark .shiki span {
 @utility header-grid {
   grid-template: "logo ctas toggle-area" auto / auto 1fr auto;
 
-  @media (width >= 64rem) {
+  @container (width >= 64rem) {
     grid-template: "logo nav ctas toggle-area" auto / auto 1fr auto auto;
   }
 }
