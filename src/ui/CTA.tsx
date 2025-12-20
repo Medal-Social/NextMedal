@@ -6,7 +6,7 @@ import resolveUrl from '@/lib/resolveUrl';
 import { validateExternalUrl } from '@/lib/validateExternalUrl';
 
 // Define the allowed button variants
-type ButtonVariant = 'default' | 'ghost';
+type ButtonVariant = 'default' | 'ghost' | 'link';
 
 // Convert Link to CTA props
 function linkToCta(link: Sanity.MenuItem | null | undefined): Sanity.CTA {
