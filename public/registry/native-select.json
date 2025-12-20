@@ -1,10 +1,7 @@
 {
   "name": "native-select",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "lucide-react"
-  ],
+  "dependencies": ["react", "lucide-react"],
   "registryDependencies": [],
   "files": [
     {
