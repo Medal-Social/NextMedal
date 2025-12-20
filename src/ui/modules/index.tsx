@@ -19,7 +19,7 @@ export default function Modules({
   post,
 }: {
   modules?: Sanity.Module[];
-  page?: Sanity.Page;
+  page?: Sanity.Page | Sanity.ComponentLibrary;
   post?: Sanity.BlogPost;
 }) {
   return (
