@@ -1,9 +1,7 @@
 {
   "name": "spinner",
   "type": "components:ui",
-  "dependencies": [
-    "lucide-react"
-  ],
+  "dependencies": ["lucide-react"],
   "registryDependencies": [],
   "files": [
     {
