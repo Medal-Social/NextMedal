@@ -18,11 +18,12 @@ export default function Image({
       <Img
         className="bg-primary/3 mx-auto max-h-svh w-auto text-[0px]"
         image={value}
-        width={1500}
+        width={1200}
+        sizes="(max-width: 1024px) 100vw, 850px"
       />
 
       {value.caption && (
-        <figcaption className="text-muted-foreground px-4 text-sm text-balance italic">
+        <figcaption className="text-muted-foreground px-4 text-sm text-balance font-mono">
           {value.caption}
 
           {value.source &&
