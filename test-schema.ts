@@ -1,5 +1,4 @@
-
-const { getComponentSchema } = require('./src/app/actions/get-component-schema');
+import { getComponentSchema } from './src/app/actions/get-component-schema';
 
 async function test() {
   const result = await getComponentSchema('hero');
@@ -9,4 +8,3 @@ async function test() {
 }
 
 test();
-
