@@ -9,6 +9,7 @@
     "clean": "rimraf .next ",
     "dev": "next dev --turbopack",
     "build": "next build",
+    "build:registry": "tsx scripts/build-registry.ts",
     "start": "next start",
     "lint": "biome check .",
     "format": "biome format . --write",
