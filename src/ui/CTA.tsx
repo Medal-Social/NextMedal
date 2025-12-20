@@ -59,18 +59,24 @@ export default function CTA({
   // For internal links
   if (type === 'internal' && internal) {
     return (
-      <Button variant={variant} className={className} asChild {...rest}>
-        <Link
-          href={resolveUrl(internal, {
-            base: false,
-            params: params,
-          })}
-          target={newTab ? '_blank' : undefined}
-          rel={newTab ? 'noopener noreferrer' : undefined}
-        >
-          {buttonContent}
-        </Link>
-      </Button>
+      <Button
+        variant={variant}
+        className={className}
+        nativeButton={false}
+        render={
+          <Link
+            href={resolveUrl(internal, {
+              base: false,
+              params: params,
+            })}
+            target={newTab ? '_blank' : undefined}
+            rel={newTab ? 'noopener noreferrer' : undefined}
+          >
+            {buttonContent}
+          </Link>
+        }
+        {...rest}
+      />
     );
   }
 
@@ -88,15 +94,21 @@ export default function CTA({
     }
 
     return (
-      <Button variant={variant} className={className} asChild {...rest}>
-        <Link
-          href={validatedUrl}
-          target={newTab !== false ? '_blank' : undefined}
-          rel={newTab !== false ? 'noopener noreferrer' : undefined}
-        >
-          {buttonContent}
-        </Link>
-      </Button>
+      <Button
+        variant={variant}
+        className={className}
+        nativeButton={false}
+        render={
+          <Link
+            href={validatedUrl}
+            target={newTab !== false ? '_blank' : undefined}
+            rel={newTab !== false ? 'noopener noreferrer' : undefined}
+          >
+            {buttonContent}
+          </Link>
+        }
+        {...rest}
+      />
     );
   }
 
