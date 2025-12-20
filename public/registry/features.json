@@ -1,13 +1,8 @@
 {
   "name": "features",
   "type": "components:module",
-  "dependencies": [
-    "next-sanity"
-  ],
-  "registryDependencies": [
-    "card",
-    "section"
-  ],
+  "dependencies": ["next-sanity"],
+  "registryDependencies": ["card", "section"],
   "files": [
     {
       "path": "modules/Features.tsx",
