@@ -144,6 +144,11 @@ export interface MockPerson {
   name: string;
   title?: string;
   image?: MockImage;
+  socialLinks?: Array<{
+    _key: string;
+    platform: 'linkedin' | 'twitter' | 'instagram' | 'youtube' | 'facebook';
+    url: string;
+  }>;
 }
 
 export interface MockSite {
@@ -201,16 +206,13 @@ export interface MockAccordionListModule {
   _type: 'accordion-list';
   _key: string;
   options?: MockModuleOptions;
-  isFullWidth?: boolean;
-  pretitle?: string;
-  intro?: MockPortableTextBlock[];
+  content?: MockPortableTextBlock[];
   items?: Array<{
     _key: string;
     summary: string;
     content: MockPortableTextBlock[];
     open?: boolean;
   }>;
-  layout?: 'vertical' | 'horizontal';
   generateSchema?: boolean;
 }
 
@@ -245,22 +247,16 @@ export interface MockFeaturesModule {
   _type: 'features';
   _key: string;
   options?: MockModuleOptions;
-  showBorder?: boolean;
   pretitle?: string;
   intro?: MockPortableTextBlock[];
   items?: Array<{
     _key: string;
     icon?: MockIcon;
-    pretitle?: string;
     summary: string;
     content: MockPortableTextBlock[];
     link?: MockMenuItem;
   }>;
-  layout?: 'vertical' | 'horizontal';
-  textAlign?: 'left' | 'center' | 'right';
-  columns?: 2 | 3 | 4;
 }
-
 
 export interface MockLogoCloudModule {
   _type: 'logo-cloud';
@@ -349,7 +345,6 @@ export interface MockRichtextModule {
   content?: MockPortableTextBlock[];
 }
 
-
 export interface MockVideoHeroModule {
   _type: 'videoHero';
   _key: string;
@@ -358,6 +353,49 @@ export interface MockVideoHeroModule {
   type: 'mux' | 'youtube';
   videoId?: string;
   thumbnail: MockImage;
+}
+
+export interface MockBlogListModule {
+  _type: 'blog-list';
+  _key: string;
+  pretitle?: string;
+  intro?: MockPortableTextBlock[];
+  layout?: 'grid' | 'carousel';
+  showFeaturedPostsFirst?: boolean;
+  displayFilters?: boolean;
+  limit?: number;
+  filteredCategory?: { _ref: string; _type: 'reference' };
+}
+
+export interface MockComponentGalleryModule {
+  _type: 'component-gallery';
+  _key: string;
+  intro?: MockPortableTextBlock[];
+  groups?: Array<{
+    _key: string;
+    title: string;
+    items: MockModule[];
+  }>;
+}
+
+export interface MockLogoListModule {
+  _type: 'logo-list';
+  _key: string;
+  options?: MockModuleOptions;
+  pretitle?: string;
+  intro?: MockPortableTextBlock[];
+  logos?: Array<{ _ref: string; _type: 'reference' }>;
+  logoType?: 'default' | 'light' | 'dark';
+}
+
+export interface MockTeamListModule {
+  _type: 'team-list';
+  _key: string;
+  options?: MockModuleOptions;
+  pretitle?: string;
+  intro?: MockPortableTextBlock[];
+  people?: Array<{ _ref: string; _type: 'reference' }>;
+  layout?: 'grid' | 'carousel';
 }
 
 // Union type for all modules
@@ -375,4 +413,8 @@ export type MockModule =
   | MockPricingListModule
   | MockProductComparisonModule
   | MockRichtextModule
-  | MockVideoHeroModule;
+  | MockVideoHeroModule
+  | MockBlogListModule
+  | MockComponentGalleryModule
+  | MockLogoListModule
+  | MockTeamListModule;
