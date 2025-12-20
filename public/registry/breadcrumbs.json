@@ -1,14 +1,8 @@
 {
   "name": "breadcrumbs",
   "type": "components:module",
-  "dependencies": [
-    "next-sanity",
-    "react"
-  ],
-  "registryDependencies": [
-    "breadcrumb",
-    "section"
-  ],
+  "dependencies": ["next-sanity", "react"],
+  "registryDependencies": ["breadcrumb", "section"],
   "files": [
     {
       "path": "modules/Breadcrumbs.tsx",
