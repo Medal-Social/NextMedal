@@ -1,34 +1,50 @@
 import { notFound } from 'next/navigation';
 import { groq } from 'next-sanity';
+import { mockPost } from '@/lib/mock-blog-post';
 import processMetadata from '@/lib/processMetadata';
+import resolveUrl from '@/lib/resolveUrl';
 import { client } from '@/sanity/lib/client';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
-import { GLOBAL_MODULE_QUERY, MODULES_QUERY } from '@/sanity/lib/queries';
-import Modules from '@/ui/modules';
-import Content from '@/ui/modules/RichtextModule/Content';
+import { MODULES_QUERY } from '@/sanity/lib/queries';
+import JsonLd from '@/ui/JsonLd';
+import BlogPostLayout from '@/ui/modules/blog/BlogPostLayout';
 
 export default async function Page({ params }: Props) {
   const resolvedParams = await params;
   const post = await getPost(resolvedParams);
 
   if (!post) notFound();
-  
+
   return (
     <>
-      <Modules modules={post.modules} />
-
-      <article className="section py-12 md:py-24">
-        <div className="container max-w-4xl mx-auto px-4">
-           <h1 className="text-4xl md:text-6xl font-bold mb-8">{post.metadata.title}</h1>
-           <Content value={post.body} />
-        </div>
-      </article>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'BlogPosting',
+          headline: post.metadata?.title,
+          description: post.metadata?.description,
+          image: post.metadata?.ogimage,
+          datePublished: post.publishDate,
+          dateModified: post._updatedAt,
+          author: post.authors?.map((author: any) => ({
+            '@type': 'Person',
+            name: author.name,
+            url: resolveUrl(author, { base: true }),
+          })),
+          mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': resolveUrl(post, { base: true }),
+          },
+        }}
+      />
+      <BlogPostLayout post={post} />
     </>
   );
 }
 
 export async function generateMetadata({ params }: Props) {
-  const post = await getPost(await params);
+  const resolvedParams = await params;
+  const post = await getPost(resolvedParams);
   if (!post) notFound();
   return processMetadata(post);
 }
@@ -42,6 +58,10 @@ export async function generateStaticParams() {
 }
 
 async function getPost(params: { slug?: string }) {
+  if (params.slug === 'example-post') {
+    return mockPost as any;
+  }
+
   return await fetchSanityLive<Sanity.BlogPost & { modules: Sanity.Module[] }>({
     query: groq`*[_type == 'blog.post' && metadata.slug.current == $slug][0]{
 			...,
