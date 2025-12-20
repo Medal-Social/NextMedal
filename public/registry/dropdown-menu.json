@@ -1,11 +1,7 @@
 {
   "name": "dropdown-menu",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "@base-ui/react/menu",
-    "lucide-react"
-  ],
+  "dependencies": ["react", "@base-ui/react/menu", "lucide-react"],
   "registryDependencies": [],
   "files": [
     {
