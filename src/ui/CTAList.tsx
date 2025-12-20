@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import CTA from './CTA';
 
-type CTAItem = Sanity.CTA | { _key?: string; link?: Sanity.Link; style?: string };
+type CTAItem = Sanity.CTA | { _key?: string; link?: Sanity.MenuItem; style?: Sanity.CTA['style'] };
 
 export default function CTAList({
   ctas,
