@@ -1,10 +1,7 @@
 {
   "name": "resizable",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "react-resizable-panels"
-  ],
+  "dependencies": ["react", "react-resizable-panels"],
   "registryDependencies": [],
   "files": [
     {
