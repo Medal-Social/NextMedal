@@ -35,6 +35,7 @@ export default defineType({
         list: [
           { title: 'Primary', value: 'primary' },
           { title: 'Ghost', value: 'ghost' },
+          { title: 'Link', value: 'link' },
         ],
       },
       initialValue: 'primary',
