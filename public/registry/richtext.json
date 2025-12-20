@@ -2,9 +2,7 @@
   "name": "richtext",
   "type": "components:module",
   "dependencies": [],
-  "registryDependencies": [
-    "section"
-  ],
+  "registryDependencies": ["section"],
   "files": [
     {
       "path": "modules/RichtextModule/index.tsx",
