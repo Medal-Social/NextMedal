@@ -2,8 +2,8 @@
 
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { sanitizeSchema, schemaMap, schemaObjects } from '@/lib/schema-config';
 import { codeToHtml } from 'shiki';
+import { sanitizeSchema, schemaMap, schemaObjects } from '@/lib/schema-config';
 
 export async function getComponentSchema(type: string) {
   const filename = schemaMap[type];
@@ -69,7 +69,8 @@ export async function getComponentSchema(type: string) {
       object: sanitizeSchema(schemaObjects[type]),
     };
   } catch (error) {
-    console.error(`Error loading schema for ${type}:`, error);
+    const safeType = String(type).replace(/[\r\n]/g, '');
+    console.error(`Error loading schema for ${safeType}:`, error);
     return {
       code: `// Error loading schema: ${filename}`,
       html: '',

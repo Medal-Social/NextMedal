@@ -129,8 +129,8 @@ describe('Sanity Mock Factories', () => {
   });
 
   describe('Module Factories', () => {
-    it('creates all 18 module types', () => {
-      expect(MODULE_TYPES).toHaveLength(18);
+    it('creates all 17 module types', () => {
+      expect(MODULE_TYPES).toHaveLength(17);
     });
 
     it.each(MODULE_TYPES)('creates a valid %s module', (moduleType) => {
@@ -141,7 +141,7 @@ describe('Sanity Mock Factories', () => {
 
     it('creates all mock modules at once', () => {
       const allModules = createAllMockModules();
-      expect(Object.keys(allModules)).toHaveLength(18);
+      expect(Object.keys(allModules)).toHaveLength(17);
 
       for (const type of MODULE_TYPES) {
         expect(allModules[type]).toBeDefined();

@@ -407,4 +407,3 @@ export type MockModule =
   | MockBlogListModule
   | MockComponentGalleryModule
   | MockTeamListModule;
-
