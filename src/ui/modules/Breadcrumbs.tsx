@@ -8,6 +8,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import { Section } from '@/components/ui/section';
 import resolveUrl from '@/lib/resolveUrl';
 
 export default async function Breadcrumbs({
@@ -18,10 +19,9 @@ export default async function Breadcrumbs({
   crumbs: Sanity.Link[];
   hideCurrent?: boolean;
   currentPage: Sanity.Page | Sanity.BlogPost;
-  isTabbedModule?: boolean;
 }>) {
   return (
-    <Breadcrumb className="section py-4  text-sm">
+    <Section as={Breadcrumb} className="py-4 text-sm" spacing="none">
       <BreadcrumbList itemScope itemType="https://schema.org/BreadcrumbList">
         {crumbs?.map((crumb) => (
           <Fragment
@@ -71,6 +71,6 @@ export default async function Breadcrumbs({
           </BreadcrumbItem>
         )}
       </BreadcrumbList>
-    </Breadcrumb>
+    </Section>
   );
 }
