@@ -27,7 +27,7 @@
     "@mux/mux-player-react": "^3.10.2",
     "@portabletext/to-html": "^4.0.1",
     "@sanity/asset-utils": "^2.3.0",
-    "@sanity/code-input": "^6.0.4",
+    "@sanity/code-input": "^7.0.0",
     "@sanity/document-internationalization": "^4.1.1",
     "@sanity/icons": "^3.7.4",
     "@sanity/image-url": "^1.2.0",
