@@ -1,9 +1,7 @@
 {
   "name": "empty",
   "type": "components:ui",
-  "dependencies": [
-    "class-variance-authority"
-  ],
+  "dependencies": ["class-variance-authority"],
   "registryDependencies": [],
   "files": [
     {
