@@ -42,8 +42,3 @@ export default defineType({
     }),
   },
 });
-
-
-
-
-
