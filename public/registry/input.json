@@ -1,10 +1,7 @@
 {
   "name": "input",
   "type": "components:ui",
-  "dependencies": [
-    "react",
-    "@base-ui/react/input"
-  ],
+  "dependencies": ["react", "@base-ui/react/input"],
   "registryDependencies": [],
   "files": [
     {
