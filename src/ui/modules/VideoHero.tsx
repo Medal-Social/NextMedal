@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { Section } from '@/components/ui/section';
 import { urlFor } from '@/sanity/lib/image';
 import '@mux/mux-player/themes/classic';
 // Define the structure of the Sanity data we receive
@@ -61,7 +62,6 @@ const ReactPlayer = dynamic(() => import('react-player'), {
 
 interface VideoHeroProps {
   data: VideoHero;
-  isTabbedModule?: boolean;
 }
 
 // -------------- Modular YouTube Utilities --------------
@@ -223,7 +223,10 @@ export default function VideoHero({ data }: VideoHeroProps) {
   const mux = useMuxVideo(data);
 
   // Generate thumbnail URL
-  const thumbnailUrl = data?.thumbnail ? urlFor(data.thumbnail as any).url() : null;
+  const thumbnailUrl =
+    (data?.thumbnail as any)?.src ||
+    (data?.thumbnail as any)?.url ||
+    (data?.thumbnail ? urlFor(data.thumbnail as any).url() : null);
 
   const handlePlayClick = () => {
     setIsPlaying(true);
@@ -240,7 +243,7 @@ export default function VideoHero({ data }: VideoHeroProps) {
     (data?.type === 'mux' ? mux.error : null);
 
   return (
-    <section className="relative w-full h-[80vh] bg-gray-900">
+    <Section width="full" spacing="none" className="relative w-full h-[80dvh] bg-gray-900">
       {/* SEO-friendly metadata */}
       <div className="hidden">
         <h1>{data?.title || 'Video'}</h1>
@@ -301,6 +304,6 @@ export default function VideoHero({ data }: VideoHeroProps) {
           )}
         </div>
       )}
-    </section>
+    </Section>
   );
 }
