@@ -1,13 +1,6 @@
-'use client';
-
-import { Search } from 'lucide-react';
-import { PortableText } from 'next-sanity';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import Modules from '@/ui/modules';
+import ComponentGalleryClient, { type GalleryComponent } from './ComponentGallery.client';
 
-// Type definition matching Sanity schema structure
 type GalleryItem = Sanity.Module & {
   _key: string;
 };
@@ -18,14 +11,6 @@ type Group = {
   items: GalleryItem[];
 };
 
-interface Component {
-  id: string;
-  name: string;
-  description?: string;
-  category: string;
-  module: Sanity.Module;
-}
-
 export default function ComponentGallery({
   intro,
   groups,
@@ -33,9 +18,6 @@ export default function ComponentGallery({
   intro: any[];
   groups: Group[];
 }>) {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-
   if (!groups?.length) return null;
 
   // Helper to extract title from portable text content
@@ -53,7 +35,7 @@ export default function ComponentGallery({
   };
 
   // Flatten groups into a single list of components with category info
-  const components: Component[] = groups.flatMap(
+  const components: GalleryComponent[] = groups.flatMap(
     (group) =>
       group.items?.map((item) => {
         // item IS the module now
@@ -76,124 +58,11 @@ export default function ComponentGallery({
           // @ts-expect-error - dynamic access
           description: item.description || item.subtitle || '',
           category: group.title,
-          module: item,
+          moduleType: item._type,
+          children: <Modules modules={[item]} />,
         };
       }) || []
   );
 
-  const categories = Array.from(new Set(components.map((c) => c.category)));
-
-  const filteredComponents = components.filter((component) => {
-    const matchesSearch = component.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = !selectedCategory || component.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
-
-  return (
-    <div className="min-h-screen">
-      {intro && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
-          <div className="richtext text-center mx-auto max-w-3xl">
-            <PortableText value={intro} />
-          </div>
-        </div>
-      )}
-
-      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-lg border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-            {/* Category Pills - Horizontal Scroll */}
-            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1 no-scrollbar">
-              <button
-                type="button"
-                onClick={() => setSelectedCategory(null)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
-                  selectedCategory === null
-                    ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'bg-transparent text-muted-foreground hover:text-foreground hover:bg-accent'
-                }`}
-              >
-                All
-              </button>
-              {categories.map((category) => (
-                <button
-                  type="button"
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
-                    selectedCategory === category
-                      ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'bg-transparent text-muted-foreground hover:text-foreground hover:bg-accent'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
-
-            {/* Search */}
-            <div className="relative w-full sm:w-64 sm:ml-auto">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search components..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        <div className="space-y-16">
-          {filteredComponents.map((item) => (
-            <div key={item.id} id={item.id} className="scroll-mt-32">
-              <div className="mb-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-xl font-semibold capitalize">
-                      {item.name.replace(/-/g, ' ')}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">{item.category}</p>
-                  </div>
-                </div>
-                {item.description && (
-                  <p className="mt-2 text-sm text-muted-foreground max-w-2xl">{item.description}</p>
-                )}
-              </div>
-
-              <div className="rounded-xl border border-border bg-background shadow-sm overflow-hidden ring-1 ring-border/50 relative">
-                <div className="bg-checkered absolute inset-0 opacity-[0.03] pointer-events-none" />
-                <div className="relative">
-                  {/* 
-                       Render module in preview container.
-                     */}
-                  <Modules modules={[item.module]} />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {filteredComponents.length === 0 && (
-          <div className="text-center py-16">
-            <p className="text-muted-foreground text-lg">No components found</p>
-            <Button
-              variant="outline"
-              className="mt-4 bg-transparent"
-              onClick={() => {
-                setSearchQuery('');
-                setSelectedCategory(null);
-              }}
-            >
-              Clear Filters
-            </Button>
-          </div>
-        )}
-      </main>
-    </div>
-  );
+  return <ComponentGalleryClient intro={intro} components={components} />;
 }
