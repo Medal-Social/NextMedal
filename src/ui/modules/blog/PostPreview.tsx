@@ -25,7 +25,7 @@ export default function PostPreview({
       <div className="relative w-full rounded-full">
         {skeleton ? (
           <Img
-            className="aspect-video w-full object-cover rounded-2xl transition-all group-hover:scale-105 group-hover:brightness-110"
+            className="aspect-video w-full object-cover rounded-2xl transition-transform duration-300 group-hover:scale-105 group-hover:brightness-110"
             image={metadata?.image}
             width={700}
             alt={metadata?.title || ''}
@@ -33,7 +33,7 @@ export default function PostPreview({
         ) : (
           <Link href={href}>
             <Img
-              className="aspect-video w-full object-cover rounded-2xl transition-all group-hover:scale-105 group-hover:brightness-110"
+              className="aspect-video w-full object-cover rounded-2xl transition-transform duration-300 group-hover:scale-105 group-hover:brightness-110"
               image={metadata?.image}
               width={700}
               alt={metadata?.title || ''}

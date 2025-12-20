@@ -15,7 +15,7 @@ export default function PostPreviewLarge({ post }: { post: Sanity.BlogPost }) {
       <div className="relative aspect-square w-full lg:aspect-[16/9] lg:w-64 lg:shrink-0">
         <Link href={href}>
           <Img
-            className="absolute inset-0 h-full w-full rounded-2xl bg-gray-50 object-cover transition-all group-hover:scale-105 group-hover:brightness-110"
+            className="absolute inset-0 h-full w-full rounded-2xl bg-gray-50 object-cover transition-transform duration-300 group-hover:scale-105 group-hover:brightness-110"
             image={post.metadata.image}
             sizes="(min-width: 1024px) 16rem, 100vw"
             priority
