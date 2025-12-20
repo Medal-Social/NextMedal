@@ -1,12 +1,8 @@
 {
   "name": "product-comparison",
   "type": "components:module",
-  "dependencies": [
-    "next-sanity"
-  ],
-  "registryDependencies": [
-    "section"
-  ],
+  "dependencies": ["next-sanity"],
+  "registryDependencies": ["section"],
   "files": [
     {
       "path": "modules/ProductComparison.tsx",
