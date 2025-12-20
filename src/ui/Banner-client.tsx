@@ -5,11 +5,7 @@ import { PortableText } from 'next-sanity';
 import { useState } from 'react';
 import resolveUrl from '@/lib/resolveUrl';
 import Scheduler from './Scheduler';
-export default function BannerClient({
-  banner,
-}: {
-  banner: Sanity.Banner & Sanity.Module;
-}) {
+export default function BannerClient({ banner }: { banner: Sanity.Banner & Sanity.Module }) {
   const { start, end, content, cta } = banner;
   const [isClosed, setIsClosed] = useState(false);
   return (
