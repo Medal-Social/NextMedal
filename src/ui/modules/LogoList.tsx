@@ -1,6 +1,5 @@
 import { groq, PortableText } from 'next-sanity';
 import { Section } from '@/components/ui/section';
-import { cn } from '@/lib/utils';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
 import { Img } from '@/ui/Img';
 import Pretitle from '@/ui/Pretitle';
