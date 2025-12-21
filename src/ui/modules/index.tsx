@@ -34,8 +34,6 @@ export default function Modules({
         if (!module) return null;
 
         switch (module._type) {
-          case 'component-gallery':
-            return <ComponentGallery {...module} key={module._key} />;
           case 'accordion-list':
             return <AccordionList {...module} key={module._key} />;
           case 'blog-frontpage':
@@ -46,6 +44,9 @@ export default function Modules({
             return <Breadcrumbs {...module} currentPage={post || page} key={module._key} />;
           case 'callout':
             return <Callout {...module} key={module._key} />;
+
+          case 'component-gallery':
+            return <ComponentGallery {...module} key={module._key} />;
 
           case 'features':
             return <Features {...module} key={module._key} />;

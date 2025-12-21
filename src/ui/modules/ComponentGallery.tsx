@@ -60,6 +60,7 @@ export default function ComponentGallery({
             description: item.description || item.subtitle || '',
             category: group.title,
             moduleType: item._type,
+            componentData: item,
             children: <Modules modules={[item]} />,
           };
         }) || []

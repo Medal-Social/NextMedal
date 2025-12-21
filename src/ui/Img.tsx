@@ -18,7 +18,7 @@ export function ResponsiveImg({
   if (!img) return null;
 
   return (
-    <picture {...pictureProps}>
+    <picture {...(pictureProps as any)}>
       {img.responsive?.map((r) => (
         <Source {...r} key={r.image.url || r.media} />
       ))}
@@ -116,7 +116,7 @@ export function Source({
     preload(src, { as: 'image' });
   }
 
-  return <source srcSet={src} width={width} height={height} media={media} {...props} />;
+  return <source srcSet={src} width={width} height={height} media={media} {...(props as any)} />;
 }
 
 function generateSrc(

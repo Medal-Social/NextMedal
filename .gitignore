@@ -50,12 +50,6 @@ functions/**/.env*
 functions/**/.build/
 functions/**/node_modules/
 
-# Local Testing / Kitchen Sink
-src/app/(frontend)/\[locale\]/kitchen-sink/
-src/app/(frontend)/\[locale\]/page-templates/
-src/app/(frontend)/\[locale\]/all-components/
-src/components/TemplateView.tsx
-src/components/component-preview/
 openspec
 
 dist

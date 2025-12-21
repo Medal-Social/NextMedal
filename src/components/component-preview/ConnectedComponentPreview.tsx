@@ -6,11 +6,13 @@ import { ComponentPreview } from './ComponentPreview';
 
 interface ConnectedComponentPreviewProps {
   moduleType: string;
+  componentData?: any;
   children: React.ReactNode;
 }
 
 export function ConnectedComponentPreview({
   moduleType,
+  componentData,
   children,
 }: ConnectedComponentPreviewProps) {
   const [schemaData, setSchemaData] = useState<{
@@ -44,6 +46,7 @@ export function ConnectedComponentPreview({
   return (
     <ComponentPreview
       moduleType={moduleType}
+      componentData={componentData}
       schemaCode={schemaData?.code || 'Loading schema...'}
       schemaHtml={schemaData?.html}
       schemaObject={schemaData?.object}
