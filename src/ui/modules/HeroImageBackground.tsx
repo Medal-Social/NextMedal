@@ -11,7 +11,7 @@ export const ImageBackground = ({ asset }: { asset?: Sanity.Img }) => {
         width={2400}
         draggable={false}
       />
-      <div className="absolute inset-0 bg-black/60" />
+      <div className="absolute inset-0 bg-brand-navy/60" />
     </div>
   );
 };

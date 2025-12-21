@@ -38,20 +38,18 @@ export default async function Menu() {
             if (item.external) {
               return (
                 <nav className="flex flex-col gap-2" key={itemKey}>
-                  <h2 className="text-base font-medium">
-                    <Link
-                      href={item.external}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="focus:outline-none focus:ring-2 focus:ring-primary"
-                      aria-label={`${item.label} (opens in new tab)`}
-                    >
-                      <div className="flex items-center gap-2">
-                        {item.label}
-                        <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                      </div>
-                    </Link>
-                  </h2>
+                  <Link
+                    href={item.external}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+                    aria-label={`${item.label} (opens in new tab)`}
+                  >
+                    <div className="flex items-center gap-2">
+                      {item.label}
+                      <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                    </div>
+                  </Link>
                 </nav>
               );
             }
@@ -61,30 +59,31 @@ export default async function Menu() {
               });
               return (
                 <nav className="flex flex-col gap-2" key={itemKey}>
-                  <h2 className="text-base font-medium">
-                    <Link href={url} className="focus:outline-none focus:ring-2 focus:ring-primary">
-                      {item.label || item.internal.title}
-                    </Link>
-                  </h2>
+                  <Link
+                    href={url}
+                    className="text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    {item.label || item.internal.title}
+                  </Link>
                 </nav>
               );
             }
             return (
               <nav className="flex flex-col gap-2" key={itemKey}>
-                <h2 className="text-base font-medium">
-                  <CTA
-                    className="focus:outline-none focus:ring-2 focus:ring-primary"
-                    link={item}
-                    style="link"
-                  />
-                </h2>
+                <CTA
+                  className="text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+                  link={item}
+                  style="link"
+                />
               </nav>
             );
 
           case 'dropdownMenu':
             return (
               <nav className="flex flex-col gap-2" key={itemKey}>
-                <h2 className="text-sm font-medium">{item.title}</h2>
+                <div className="font-semibold text-muted-foreground text-xs uppercase tracking-wider mb-1">
+                  {item.title}
+                </div>
 
                 {item.links && item.links.length > 0 && (
                   <ul className="flex flex-col gap-2">

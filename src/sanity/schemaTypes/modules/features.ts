@@ -31,18 +31,27 @@ export default defineType({
       fields: [createUidField()],
     }),
     defineField({
-      name: 'pretitle',
-      title: 'Pre-title',
-      description: 'Optional pre-title displayed above the main content',
-      type: 'string',
-      group: 'content',
-    }),
-    defineField({
       name: 'intro',
       title: 'Introduction',
       description: 'Introductory text for the feature grid',
       type: 'array',
-      of: [{ type: 'block' }],
+      of: [
+        {
+          type: 'block',
+          styles: [
+            { title: 'Normal', value: 'normal' },
+            { title: 'Heading 2', value: 'h2' },
+            { title: 'Heading 3', value: 'h3' },
+          ],
+          lists: [],
+          marks: {
+            decorators: [
+              { title: 'Strong', value: 'strong' },
+              { title: 'Emphasis', value: 'em' },
+            ],
+          },
+        },
+      ],
       group: 'content',
     }),
     defineField({
@@ -73,14 +82,25 @@ export default defineType({
               title: 'Feature Description',
               description: 'Detailed description of this feature',
               type: 'array',
-              of: [{ type: 'block' }],
+              of: [
+                {
+                  type: 'block',
+                  styles: [{ title: 'Normal', value: 'normal' }],
+                  lists: [],
+                  marks: {
+                    decorators: [
+                      { title: 'Strong', value: 'strong' },
+                      { title: 'Emphasis', value: 'em' },
+                      {
+                        title: 'Highlight',
+                        value: 'highlight',
+                        icon: () => '✨',
+                      },
+                    ],
+                  },
+                },
+              ],
               validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'link',
-              title: 'Link',
-              description: 'Link to more information about this feature',
-              type: 'menuItem',
             }),
           ],
           preview: {

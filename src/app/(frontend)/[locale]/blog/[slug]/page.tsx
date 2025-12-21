@@ -38,7 +38,7 @@ export default async function Page({ params }: Props) {
           },
         }}
       />
-      <Modules modules={post.modules} post={post} />
+      {post.modules && post.modules.length > 0 && <Modules modules={post.modules} post={post} />}
       <BlogPostLayout post={post} />
     </>
   );

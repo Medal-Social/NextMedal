@@ -43,11 +43,18 @@ export function Img({
   // Handle direct URL (mock/external)
   if (('src' in image && image.src) || ('url' in image && image.url)) {
     const src = (image as any).src || (image as any).url;
+    const w_orig = (image as any).width || 800;
+    const h_orig = (image as any).height || 600;
+
+    const w_calc = w ? Number(w) : !!h && Math.floor((Number(h) * w_orig) / h_orig);
+
+    const h_calc = h ? Number(h) : !!w && Math.floor((Number(w) * h_orig) / w_orig);
+
     return (
       <Image
         src={src}
-        width={Number(w) || (image as any).width || 800}
-        height={Number(h) || (image as any).height || 600}
+        width={w_calc || w_orig}
+        height={h_calc || h_orig}
         alt={props.alt || image.alt || ''}
         {...props}
       />

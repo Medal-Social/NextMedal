@@ -4,12 +4,10 @@ import { Section } from '@/components/ui/section';
 import { cn } from '@/lib/utils';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
 import FilterList from '@/ui/modules/blog/LatestArticles/FilterList';
-import Pretitle from '@/ui/Pretitle';
 import PostPreview from '../PostPreview';
 import List from './List';
 
 export default async function LatestArticles({
-  pretitle,
   intro,
   layout,
   limit,
@@ -18,7 +16,6 @@ export default async function LatestArticles({
   filteredCategory,
   posts: postsProp,
 }: Partial<{
-  pretitle: string;
   intro: any;
   layout: 'grid' | 'carousel';
   limit: number;
@@ -67,7 +64,6 @@ export default async function LatestArticles({
     <Section className="space-y-8">
       {intro && (
         <header className="richtext">
-          <Pretitle>{pretitle}</Pretitle>
           <PortableText value={intro} />
         </header>
       )}

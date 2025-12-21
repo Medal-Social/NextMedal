@@ -185,7 +185,7 @@ const MuxVideoPlayer = ({
         player_name: 'Medal Socials Player',
       }}
       theme="classic"
-      accentColor="hsl(var(--primary))"
+      accentColor="var(--color-brand-vibrant)"
       autoPlay
       style={{
         height: '100%',
@@ -295,8 +295,8 @@ export default function VideoHero({ data }: VideoHeroProps) {
               <p>No thumbnail available</p>
             </div>
           )}
-          <div className="absolute inset-0 bg-background/30 flex items-center justify-center">
-            <span className="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
+          <div className="absolute inset-0 bg-brand-navy/30 flex items-center justify-center">
+            <span className="w-16 h-16 bg-brand-vibrant text-white rounded-full flex items-center justify-center transition-transform hover:scale-110">
               {/* Play icon */}
               <svg className="w-8 h-8" viewBox="0 0 24 24">
                 <title>Play video icon</title>

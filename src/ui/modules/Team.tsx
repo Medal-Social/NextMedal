@@ -5,16 +5,13 @@ import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
 import { Img } from '@/ui/Img';
-import Pretitle from '@/ui/Pretitle';
 
 export default function Team({
-  pretitle,
   intro,
   people,
   layout = 'grid',
   ...props
 }: Partial<{
-  pretitle: string;
   intro: any;
   people: Sanity.Person[];
   layout: 'grid' | 'split';
@@ -24,9 +21,8 @@ export default function Team({
     <Section className="bg-card" {...moduleProps(props)}>
       {layout === 'grid' && (
         <>
-          {(pretitle || intro) && (
+          {intro && (
             <div className="section-intro mb-12 flex flex-col items-center gap-4 text-center">
-              {pretitle && <Pretitle>{pretitle}</Pretitle>}
               {intro && (
                 <div className="text-center font-bold">
                   <PortableText value={intro} />
@@ -46,7 +42,6 @@ export default function Team({
       {layout === 'split' && (
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-20 xl:grid-cols-5 items-start">
           <div className="max-w-2xl xl:col-span-2 xl:sticky xl:top-24">
-            {pretitle && <Pretitle className="mb-4 ml-1">{pretitle}</Pretitle>}
             {intro && (
               <div className="prose dark:prose-invert [&>:first-child]:mt-0">
                 <PortableText value={intro} />

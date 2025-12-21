@@ -11,7 +11,7 @@ import Toggle from './Toggle';
 import Wrapper from './Wrapper';
 
 export default async function Header() {
-  const { title, logo, ctas, headerMenu, brandPage } = await getSite();
+  const { title, logo, ctas, headerMenu, brandPage, enableSearch } = await getSite();
 
   const logoImageDark = logo?.image?.dark || logo?.image?.default || logo?.image?.light;
   const logoImageLight = logo?.image?.light || logo?.image?.default || logo?.image?.dark;
@@ -19,7 +19,10 @@ export default async function Header() {
   const logoNode = (
     <BrandMenu logoData={logo} hasBrandPage={!!brandPage}>
       <Link
-        className={cn('h4 lg:h3 inline-block cursor-pointer', logo?.image && 'max-w-3xs')}
+        className={cn(
+          'h4 lg:h3 flex items-center gap-2 cursor-pointer',
+          logo?.image && 'max-w-3xs'
+        )}
         href="/"
         aria-label={`Return to ${title} homepage`}
       >
@@ -48,21 +51,26 @@ export default async function Header() {
   return (
     <>
       <Wrapper
-        className="bg-background/80 backdrop-blur-md border-b border-border/40 sticky top-0 z-50"
+        className="@container fixed top-0 w-full z-50"
         role="banner"
         aria-label="Site header"
       >
         <div className="header-grid mx-auto grid max-w-7xl items-center gap-x-6 p-4 px-4 sm:px-6 lg:px-8">
-          <div className="[grid-area:logo]">{logoNode}</div>
+          <div className="[grid-area:logo] flex items-center">{logoNode}</div>
 
-          <nav className="max-lg:hidden [grid-area:nav]" aria-label="Main navigation">
+          <nav
+            className="max-lg:hidden [grid-area:nav] flex items-center"
+            aria-label="Main navigation"
+          >
             <Navigation />
           </nav>
 
           <div className="[grid-area:ctas] flex items-center justify-end gap-4 lg:ml-4">
-            <div className="hidden lg:block">
-              <CommandMenu />
-            </div>
+            {enableSearch && (
+              <div className="hidden lg:block">
+                <CommandMenu />
+              </div>
+            )}
             <CTAList ctas={ctas} />
           </div>
 

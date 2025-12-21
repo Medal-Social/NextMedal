@@ -11,36 +11,17 @@ export default function BannerClient({ banner }: { banner: Sanity.Banner & Sanit
   return (
     !isClosed && (
       <Scheduler start={start} end={end}>
-        <div className="relative isolate flex items-center gap-x-6 overflow-hidden bg-muted px-6 py-2.5 sm:px-3.5 sm:before:flex-1">
-          <div
-            aria-hidden="true"
-            className="absolute top-1/2 left-[max(-7rem,calc(50%-52rem))] -z-10 -translate-y-1/2 transform-gpu blur-2xl"
-          >
-            <div
-              style={{
-                clipPath:
-                  'polygon(74.8% 41.9%, 97.2% 73.2%, 100% 34.9%, 92.5% 0.4%, 87.5% 0%, 75% 28.6%, 58.5% 54.6%, 50.1% 56.8%, 46.9% 44%, 48.3% 17.4%, 24.7% 53.9%, 0% 27.9%, 11.9% 74.2%, 24.9% 54.1%, 68.6% 100%, 74.8% 41.9%)',
-              }}
-              className="aspect-577/310 w-[36.0625rem] bg-linear-to-r from-[#ff80b5] to-[#9089fc] opacity-30"
-            />
-          </div>
-          <div
-            aria-hidden="true"
-            className="absolute top-1/2 left-[max(45rem,calc(50%+8rem))] -z-10 -translate-y-1/2 transform-gpu blur-2xl"
-          >
-            <div
-              style={{
-                clipPath:
-                  'polygon(74.8% 41.9%, 97.2% 73.2%, 100% 34.9%, 92.5% 0.4%, 87.5% 0%, 75% 28.6%, 58.5% 54.6%, 50.1% 56.8%, 46.9% 44%, 48.3% 17.4%, 24.7% 53.9%, 0% 27.9%, 11.9% 74.2%, 24.9% 54.1%, 68.6% 100%, 74.8% 41.9%)',
-              }}
-              className="aspect-577/310 w-[36.0625rem] bg-linear-to-r from-[#ff80b5] to-[#9089fc] opacity-30"
-            />
-          </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <div className="text-sm/6 text-foreground">
-              <div className="">
-                <PortableText value={content} />
-              </div>
+        <div className="relative isolate flex items-center justify-center gap-x-6 overflow-hidden bg-gradient-brand text-white px-6 py-2.5 sm:px-3.5">
+          <div className="relative flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+            <div className="text-sm font-medium text-white/90 [&_p]:m-0 [&_p]:leading-normal">
+              <PortableText
+                value={content}
+                components={{
+                  block: {
+                    normal: ({ children }) => <p className="inline">{children}</p>,
+                  },
+                }}
+              />
             </div>
 
             <Link
@@ -52,19 +33,19 @@ export default function BannerClient({ banner }: { banner: Sanity.Banner & Sanit
                     : '#'
               }
               target={cta?.external && '_blank'}
-              className="flex-none rounded-full bg-foreground px-3.5 py-1 text-sm font-semibold text-background shadow-xs hover:bg-foreground/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+              className="flex-none inline-flex items-center justify-center rounded-full bg-white px-4 py-1 text-sm font-bold text-brand-navy shadow-sm hover:bg-white/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white transition-colors leading-none h-7"
             >
               {cta?.label}
             </Link>
           </div>
-          <div className="flex flex-1 justify-end">
+          <div className="absolute right-0 top-0 bottom-0 flex items-center pr-4">
             <button
               type="button"
-              className="-m-3 p-1 focus-visible:outline-offset-[-4px] hover:bg-foreground/10 rounded-full"
+              className="-m-3 p-1 focus-visible:outline-offset-[-4px] hover:bg-white/10 rounded-full transition-colors"
               onClick={() => setIsClosed(true)}
             >
               <span className="sr-only">Dismiss</span>
-              <X aria-hidden="true" className="size-5 text-foreground" />
+              <X aria-hidden="true" className="size-4 text-white/80 hover:text-white" />
             </button>
           </div>
         </div>

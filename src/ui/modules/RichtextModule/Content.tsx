@@ -1,12 +1,14 @@
 import { PortableText, type PortableTextComponents } from 'next-sanity';
 import { cn, slug } from '@/lib/utils';
 import Video from '@/ui/Video';
+import Code from './Code';
 import Image from './Image';
 
 const components: PortableTextComponents = {
   types: {
     image: Image,
     video: ({ value }: { value: any }) => <Video data={value} />,
+    code: Code,
   },
   block: {
     h2: ({ children, value }: any) => {

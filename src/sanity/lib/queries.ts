@@ -71,8 +71,7 @@ const BASE_MODULES_QUERY = groq`
 	_type == 'features' => {
 		...,
 		items[]{
-			...,
-			link{ ${LINK_QUERY} }
+			...
 		}
 	},
 	_type == 'videoHero' => {

@@ -1,3 +1,5 @@
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
 import { ImageResponse } from 'next/og';
 import type { NextRequest } from 'next/server';
 import { getSite } from '@/sanity/lib/fetch';
@@ -139,24 +141,9 @@ export async function GET(request: NextRequest) {
       fonts: [
         {
           name: 'serif',
-          data: await loadGoogleFont('Inter'),
+          data: await fs.readFile(path.join(process.cwd(), 'src/assets/fonts/Inter-SemiBold.ttf')),
         },
       ],
     }
   );
-}
-
-async function loadGoogleFont(fontFamily: string) {
-  const url = `https://fonts.googleapis.com/css2?family=${fontFamily}:wght@600`;
-  const css = await (await fetch(url)).text();
-  const resource = css.match(/src: url\((.+)\) format\('(opentype|truetype)'\)/);
-
-  if (resource) {
-    const response = await fetch(resource[1]);
-    if (response.status === 200) {
-      return await response.arrayBuffer();
-    }
-  }
-
-  throw new Error('failed to load font data');
 }

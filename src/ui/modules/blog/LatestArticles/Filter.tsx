@@ -17,8 +17,12 @@ export default function Filter({
 
   return (
     <Button
-      className="rounded-full"
-      variant={category === value ? 'secondary' : 'outline'}
+      variant="ghost"
+      className={
+        category === value
+          ? 'bg-primary/5 text-primary hover:bg-primary/5 hover:text-primary'
+          : 'hover:bg-primary/5 hover:text-primary'
+      }
       onClick={() => {
         setCategory(value);
         setPage(1);

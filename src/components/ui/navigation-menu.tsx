@@ -40,7 +40,7 @@ function NavigationMenuItem({ className, ...props }: NavigationMenuPrimitive.Ite
 }
 
 const navigationMenuTriggerStyle = cva(
-  'bg-background hover:bg-primary/5 hover:text-primary focus:bg-primary/5 focus:text-primary data-open:hover:bg-primary/5 data-open:hover:text-primary data-open:focus:bg-primary/5 data-open:focus:text-primary data-open:bg-primary/5 data-open:text-primary focus-visible:ring-ring/50 data-popup-open:bg-primary/5 data-popup-open:text-primary data-popup-open:hover:bg-primary/5 data-popup-open:hover:text-primary rounded-md px-4 py-2 text-sm font-medium transition-all focus-visible:ring-[3px] focus-visible:outline-1 disabled:opacity-50 group/navigation-menu-trigger inline-flex h-9 w-max items-center justify-center disabled:pointer-events-none outline-none'
+  'bg-transparent hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-open:hover:bg-accent data-open:hover:text-accent-foreground data-open:focus:bg-accent data-open:focus:text-accent-foreground data-open:bg-accent data-open:text-accent-foreground focus-visible:ring-ring/50 data-popup-open:bg-accent data-popup-open:text-accent-foreground data-popup-open:hover:bg-accent data-popup-open:hover:text-accent-foreground rounded-md px-4 py-2 text-sm font-medium transition-all focus-visible:ring-[3px] focus-visible:outline-1 disabled:opacity-50 group/navigation-menu-trigger inline-flex h-9 w-max items-center justify-center disabled:pointer-events-none outline-none'
 );
 
 function NavigationMenuTrigger({
@@ -110,7 +110,7 @@ function NavigationMenuLink({ className, ...props }: NavigationMenuPrimitive.Lin
     <NavigationMenuPrimitive.Link
       data-slot="navigation-menu-link"
       className={cn(
-        "data-[active=true]:focus:bg-primary/5 data-[active=true]:focus:text-primary data-[active=true]:hover:bg-primary/5 data-[active=true]:hover:text-primary data-[active=true]:bg-primary/5 data-[active=true]:text-primary focus-visible:ring-ring/50 hover:bg-primary/5 hover:text-primary focus:bg-primary/5 focus:text-primary flex items-center gap-1.5 rounded-sm p-2 text-sm transition-all outline-none focus-visible:ring-[3px] focus-visible:outline-1 [&_svg:not([class*='size-'])]:size-4",
+        "data-[active=true]:focus:bg-accent data-[active=true]:focus:text-accent-foreground data-[active=true]:hover:bg-accent data-[active=true]:hover:text-accent-foreground data-[active=true]:bg-accent data-[active=true]:text-accent-foreground focus-visible:ring-ring/50 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground flex items-center gap-1.5 rounded-sm p-2 text-sm transition-all outline-none focus-visible:ring-[3px] focus-visible:outline-1 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}

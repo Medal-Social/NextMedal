@@ -48,11 +48,26 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
   
-  /* Brand Specific Utility Colors (mapped to brand-data.ts names) */
-  --color-brand-navy: #1A1035;
-  --color-brand-purple: #3B1D6C;
-  --color-brand-rich: #5B2D8C;
-  --color-brand-vibrant: #7E3FAC;
+  /* Brand Tonal Palette */
+  --color-brand-50: #F5F3F7;
+  --color-brand-100: #E8E4ED;
+  --color-brand-200: #D4CCE0;
+  --color-brand-300: #B9A8CC;
+  --color-brand-400: #9F5FC8;
+  --color-brand-500: #7E3FAC;
+  --color-brand-600: #5B2D8C;
+  --color-brand-700: #3B1D6C;
+  --color-brand-800: #2D1650;
+  --color-brand-900: #1A1035;
+
+  /* Brand Specific Utility Colors (mapped to tonal palette) */
+  --color-brand-navy: var(--color-brand-900);
+  --color-brand-purple: var(--color-brand-700);
+  --color-brand-rich: var(--color-brand-600);
+  --color-brand-vibrant: var(--color-brand-500);
+  --color-brand-lavender: var(--color-brand-200);
+  
+  /* Other Brand Colors */
   --color-brand-cyan: #06B6D4;
   --color-brand-magenta: #C026D3;
   --color-brand-gold: #D97706;
@@ -67,9 +82,6 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   
-  --color-highlight: var(--highlight);
-  --color-highlight-foreground: var(--highlight-foreground);
-
   --animate-accordion-down: accordion-down 0.2s cubic-bezier(0.87, 0, 0.13, 1);
   --animate-accordion-up: accordion-up 0.2s cubic-bezier(0.87, 0, 0.13, 1);
   --animate-marquee: marquee var(--marquee-duration, 30s) linear infinite;
@@ -156,127 +168,74 @@
   --header-height: 4rem;
   --header-z-index: 50;
 
-  /* Light Mode - "Pearl White" Theme */
-  --background: #FAFAFA; /* Pearl White */
-  --foreground: #1A1035; /* Deep Navy (Text Primary) */
-
-  --card: #FFFFFF;
-  --card-foreground: #1A1035;
-
-  --popover: #FFFFFF;
-  --popover-foreground: #1A1035;
-
-  --primary: #3B1D6C; /* Deep Navy Purple (Brand Primary) */
-  --primary-foreground: #FAFAFA;
-
-  --secondary: #5B2D8C; /* Rich Purple (Brand Secondary) */
-  --secondary-foreground: #FAFAFA;
-
-  --muted: #F5F3F7; /* Tonal 50 */
-  --muted-foreground: #4A4A68; /* Tonal 200/Text Secondary */
-
-  --accent: #7E3FAC; /* Vibrant Purple (Brand Accent) */
-  --accent-foreground: #FAFAFA;
-
-  --destructive: #C026D3; /* Deep Magenta (Error) */
-  --destructive-foreground: #FAFAFA;
-
-  --border: #B9A8CC; /* Tonal 300 (Borders) */
-  --input: #B9A8CC;
-  --ring: #7E3FAC; /* Accent color for focus rings */
-
-  --radius: 0.5rem;
-
-  /* Charts */
-  --chart-1: #3B1D6C;
-  --chart-2: #5B2D8C;
-  --chart-3: #7E3FAC;
-  --chart-4: #06B6D4;
-  --chart-5: #C026D3;
-  
-  /* Legacy Compat Variables (Mapping old vars to new system) */
-  --bg-primary: var(--background);
-  --bg-secondary: var(--muted);
-  --text-primary: var(--foreground);
-  --text-secondary: var(--muted-foreground);
-  --accent-primary: var(--secondary); /* Old code used #5B2D8C as primary accent */
-  --accent-secondary: var(--accent);
-  --border-color: var(--border);
-  --success: #06B6D4;
-  --error: var(--destructive);
-
-  /* Sidebar Light */
-  --sidebar-background: #FAFAFA; 
-  --sidebar-foreground: #1A1035;
-  --sidebar-primary: #3B1D6C;
-  --sidebar-primary-foreground: #FAFAFA;
-  --sidebar-accent: #F5F3F7;
-  --sidebar-accent-foreground: #1A1035;
-  --sidebar-border: #B9A8CC;
-  --sidebar-ring: #7E3FAC;
-
-  --highlight: hsl(352 100% 97%);
-  --highlight-foreground: hsl(347 77% 50%);
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.19 0.013 285.82);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.19 0.013 285.82);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.19 0.013 285.82);
+  --primary: oklch(0.319 0.132 282.82);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.95 0.005 285.82);
+  --secondary-foreground: oklch(0.319 0.132 282.82);
+  --muted: oklch(0.95 0.005 285.82);
+  --muted-foreground: oklch(0.556 0.02 285.82);
+  --accent: oklch(0.924 0.02 282.82);
+  --accent-foreground: oklch(0.319 0.132 282.82);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.88 0.01 285.82);
+  --input: oklch(0.88 0.01 285.82);
+  --ring: oklch(0.319 0.132 282.82);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --radius: 0.625rem;
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.19 0.013 285.82);
+  --sidebar-primary: oklch(0.319 0.132 282.82);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.95 0.005 285.82);
+  --sidebar-accent-foreground: oklch(0.319 0.132 282.82);
+  --sidebar-border: oklch(0.88 0.01 285.82);
+  --sidebar-ring: oklch(0.319 0.132 282.82);
 }
 
 .dark {
-  /* Dark Mode - "Deep Brand" Theme */
-  --background: #1A1035; /* Deep Navy (Tonal 900) */
-  --foreground: #FAFAFA;
-
-  --card: #2D1650; /* Tonal 800 (Dark Mode Surfaces) */
-  --card-foreground: #FAFAFA;
-
-  --popover: #2D1650;
-  --popover-foreground: #FAFAFA;
-
-  --primary: #7E3FAC; /* Vibrant Purple (Lighter for better contrast on dark) */
-  --primary-foreground: #1A1035;
-
-  --secondary: #5B2D8C; /* Rich Purple */
-  --secondary-foreground: #FAFAFA;
-
-  --muted: #2D1650; /* Surface color */
-  --muted-foreground: #B9A8CC; /* Tonal 300 */
-
-  --accent: #3B1D6C; /* Deep Navy Purple as accent in dark mode */
-  --accent-foreground: #FAFAFA;
-
-  --destructive: #C026D3;
-  --destructive-foreground: #FAFAFA;
-
-  --border: #3B1D6C; /* Tonal 700 */
-  --input: #3B1D6C;
-  --ring: #7E3FAC; /* Keep vibrant ring */
-
-  --chart-1: #7E3FAC;
-  --chart-2: #5B2D8C;
-  --chart-3: #06B6D4;
-  --chart-4: #C026D3;
-  --chart-5: #3B1D6C;
-  
-  /* Legacy Compat */
-  --bg-primary: var(--background);
-  --bg-secondary: var(--muted);
-  --text-primary: var(--foreground);
-  --text-secondary: var(--muted-foreground);
-  /* In dark mode, old accent primary was likely still purple. */
-  --accent-primary: var(--primary); 
-  --accent-secondary: var(--accent);
-  --border-color: var(--border);
-
-  /* Sidebar Dark */
-  --sidebar-background: #1A1035;
-  --sidebar-foreground: #FAFAFA;
-  --sidebar-primary: #7E3FAC;
-  --sidebar-primary-foreground: #1A1035;
-  --sidebar-accent: #2D1650;
-  --sidebar-accent-foreground: #FAFAFA;
-  --sidebar-border: #3B1D6C;
-  --sidebar-ring: #7E3FAC;
-
-  --highlight: hsl(335 55% 8%);
-  --highlight-foreground: hsl(351 91% 71%);
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.19 0.013 285.82);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.19 0.013 285.82);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.669 0.132 282.82);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.269 0.02 285.82);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0.02 285.82);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0.02 285.82);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.269 0.02 285.82);
+  --input: oklch(0.269 0.02 285.82);
+  --ring: oklch(0.669 0.132 282.82);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.19 0.013 285.82);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.669 0.132 282.82);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0.02 285.82);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0.02 285.82);
+  --sidebar-ring: oklch(0.669 0.132 282.82);
 }
 
 /* Ensure font variables are available on :root for Tailwind @theme to resolve */
@@ -405,6 +364,11 @@ samp,
     @apply border-border outline-ring/50;
   }
 
+  ::selection {
+    background-color: var(--color-brand-lavender);
+    color: var(--color-brand-purple);
+  }
+
   [hidden] {
     display: none;
   }
@@ -479,27 +443,33 @@ html.dark .shiki span {
 
 /* typography */
 
-@utility h-base {
-  font-weight: bold;
-}
-
 @utility h1 {
-  @apply h-base text-5xl;
+  font-weight: bold;
+  font-size: 3rem;
+  line-height: 1;
 }
 @utility h2 {
-  @apply h-base text-3xl;
+  font-weight: bold;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
 }
 @utility h3 {
-  @apply h-base text-2xl;
+  font-weight: bold;
+  font-size: 1.5rem;
+  line-height: 2rem;
 }
 @utility h4 {
-  @apply h-base text-xl;
+  font-weight: bold;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
 }
 @utility h5 {
-  @apply h-base text-lg;
+  font-weight: bold;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
 }
 @utility h6 {
-  @apply h-base;
+  font-weight: bold;
 }
 
 @utility technical {
@@ -580,13 +550,21 @@ html.dark .shiki span {
   mask: linear-gradient(to right, black 50%, black calc(100% - var(--offset)), transparent);
 }
 
+@utility bg-gradient-brand {
+  background-image: linear-gradient(135deg, var(--color-brand-700), var(--color-brand-500));
+}
+
+@utility bg-gradient-page {
+  background-image: linear-gradient(180deg, #F8F5FC, #FFFFFF);
+}
+
 /* layout */
 /* Section utilities replaced by component-driven layouts (src/components/ui/section.tsx) */
 
 @utility header-grid {
   grid-template: "logo ctas toggle-area" auto / auto 1fr auto;
 
-  @media (width >= 64rem) {
+  @container (width >= 64rem) {
     grid-template: "logo nav ctas toggle-area" auto / auto 1fr auto auto;
   }
 }

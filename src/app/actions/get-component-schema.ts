@@ -1,8 +1,6 @@
 'use server';
 
-import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { codeToHtml } from 'shiki';
 import { z } from 'zod';
 import { sanitizeSchema, schemaMap, schemaObjects } from '@/lib/schema-config';
 
@@ -47,7 +45,7 @@ export async function getComponentSchema(type: string) {
 
   try {
     const schemaRoot = path.join(process.cwd(), 'src/sanity/schemaTypes');
-    let filePath = path.resolve(schemaRoot, filename);
+    const filePath = path.resolve(schemaRoot, filename);
 
     // Security check: Ensure the resolved path is within the schemaRoot
     const relativePath = path.relative(schemaRoot, filePath);
@@ -60,49 +58,18 @@ export async function getComponentSchema(type: string) {
       };
     }
 
-    // Check if file exists, if not try .tsx if .ts was requested or vice versa
-    try {
-      await fs.access(filePath);
-    } catch {
-      if (filename.endsWith('.ts')) {
-        const altPath = filePath.replace(/\.ts$/, '.tsx');
-        try {
-          await fs.access(altPath);
-          filePath = altPath;
-        } catch {
-          // Keep original path to throw error later
-        }
-      } else if (filename.endsWith('.tsx')) {
-        const altPath = filePath.replace(/\.tsx$/, '.ts');
-        try {
-          await fs.access(altPath);
-          filePath = altPath;
-        } catch {
-          // Keep original path
-        }
-      }
-    }
-
-    const content = await fs.readFile(filePath, 'utf-8');
-
-    const html = await codeToHtml(content, {
-      lang: 'typescript',
-      themes: {
-        light: 'github-light',
-        dark: 'github-dark',
-      },
-    });
-
+    // We no longer need the code or HTML for the schema preview as the "Code" tab has been removed.
+    // Returning empty strings to avoid unnecessary file reading and processing.
     return {
-      code: content,
-      html,
+      code: '',
+      html: '',
       object: sanitizeSchema(schemaObjects[safeType]),
     };
   } catch (error) {
     // safeType is already validated by Zod above
     console.error('Error loading schema for:', safeType, error);
     return {
-      code: `// Error loading schema: ${filename}`,
+      code: '',
       html: '',
       object: null,
     };

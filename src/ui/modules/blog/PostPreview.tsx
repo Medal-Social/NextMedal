@@ -17,7 +17,19 @@ export default function PostPreview({
 
   const _Root = skeleton ? 'div' : Link;
   const metadata = skeleton ? null : post!.metadata;
-  const href = skeleton ? '' : resolveUrl({ ...post!, metadata: post!.metadata! });
+  const href = skeleton ? '' : resolveUrl({ ...post!, metadata: post!.metadata! }, { base: false });
+
+  const fallbackImage =
+    !skeleton && !metadata?.image
+      ? {
+          src: `/api/og/blog-fallback?title=${encodeURIComponent(metadata?.title || '')}&category=${encodeURIComponent(
+            post?.categories?.[0]?.title || ''
+          )}`,
+          alt: metadata?.title || '',
+          width: 1200,
+          height: 630,
+        }
+      : undefined;
 
   return (
     <article
@@ -37,7 +49,7 @@ export default function PostPreview({
           <Link href={href}>
             <Img
               className="aspect-video w-full object-cover rounded-2xl transition-transform duration-300 group-hover:scale-105 group-hover:brightness-110"
-              image={metadata?.image}
+              image={metadata?.image || fallbackImage}
               width={700}
               sizes={sizes}
               alt={metadata?.title || ''}

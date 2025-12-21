@@ -65,7 +65,7 @@ export function CommandMenu() {
         type="button"
         onClick={() => setOpen(true)}
         className={cn(
-          'inline-flex h-9 items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm',
+          'inline-flex h-9 items-center justify-between rounded-md border border-solid border-input bg-transparent px-3 py-2 text-sm shadow-sm',
           'ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring',
           'disabled:cursor-not-allowed disabled:opacity-50 w-full md:w-[200px] lg:w-[240px] text-muted-foreground hover:bg-muted/50 transition-colors'
         )}

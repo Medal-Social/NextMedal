@@ -111,7 +111,6 @@ export interface MenuItem {
 // Module types
 export interface Hero extends SanityBase {
   _type: 'hero';
-  pretitle?: string;
   content?: any[];
   ctas?: CTA[];
   assets?: SanityImage[];

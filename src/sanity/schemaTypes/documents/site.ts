@@ -101,6 +101,15 @@ export default defineType({
       fieldset: 'header',
     }),
     defineField({
+      name: 'enableSearch',
+      title: 'Enable Search',
+      description: 'Show the search bar in the header.',
+      type: 'boolean',
+      initialValue: true,
+      group: 'navigation',
+      fieldset: 'header',
+    }),
+    defineField({
       name: 'ctas',
       title: 'Action Buttons',
       description:
@@ -123,8 +132,8 @@ export default defineType({
     }),
     defineField({
       name: 'copyright',
-      title: 'Copyright Text',
-      description: 'Copyright notice displayed in the footer.',
+      title: 'Footer Text',
+      description: 'Copyright notice and credits displayed in the footer.',
       type: 'array',
       of: [
         {
@@ -144,8 +153,8 @@ export default defineType({
       validation: (Rule) =>
         Rule.custom((blocks: any) => {
           const text = getBlockText(blocks, ' ');
-          return text.length > 300
-            ? 'Copyright text should be concise (recommended max 300 characters)'
+          return text.length > 500
+            ? 'Footer text should be concise (recommended max 500 characters)'
             : true;
         }).warning(),
     }),

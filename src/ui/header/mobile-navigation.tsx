@@ -61,7 +61,7 @@ export const NavLink = ({ link }: { link: MobileNavLink }) => (
           ? stegaClean(link.external)
           : '/'
     }
-    className="flex items-center gap-4 rounded-lg p-4 text-lg font-medium hover:bg-accent text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+    className="flex items-center gap-4 rounded-lg p-4 text-lg font-medium hover:bg-accent hover:text-primary text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
     target={link.external ? '_blank' : undefined}
     aria-label={link.external ? `${link.label} (opens in new tab)` : undefined}
   >
