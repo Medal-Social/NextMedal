@@ -17,15 +17,7 @@ export function ComponentPreview({ moduleType, componentData, children }: Compon
     if (!componentData) return null;
     return JSON.parse(
       JSON.stringify(componentData, (key, value) => {
-        if (
-          [
-            'src',
-            'width',
-            'height',
-            'alt',
-            'sanityData',
-          ].includes(key)
-        ) {
+        if (['src', 'width', 'height', 'alt', 'sanityData'].includes(key)) {
           return undefined;
         }
         return value;

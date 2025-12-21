@@ -115,10 +115,7 @@ export default function ComponentGalleryClient({
               </div>
 
               <div className="rounded-xl border border-border bg-background shadow-sm overflow-hidden ring-1 ring-border/50 relative">
-                <ComponentPreview
-                  moduleType={item.moduleType}
-                  componentData={item.componentData}
-                >
+                <ComponentPreview moduleType={item.moduleType} componentData={item.componentData}>
                   <div className="bg-checkered absolute inset-0 opacity-[0.03] pointer-events-none" />
                   <div className="relative">{item.children}</div>
                 </ComponentPreview>
