@@ -1,5 +1,7 @@
 import { ImageResponse } from 'next/og';
 import type { NextRequest } from 'next/server';
+import { promises as fs } from 'fs';
+import path from 'path';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -17,7 +19,9 @@ export async function GET(request: NextRequest) {
   };
 
   // Load font
-  const fontData = await loadGoogleFont('Inter');
+  const fontData = await fs.readFile(
+    path.join(process.cwd(), 'src/assets/fonts/Inter-SemiBold.ttf')
+  );
 
   return new ImageResponse(
     <div
@@ -139,25 +143,4 @@ export async function GET(request: NextRequest) {
       ],
     }
   );
-}
-
-// Helper to load Google Font
-async function loadGoogleFont(fontFamily: string) {
-  try {
-    const url = `https://fonts.googleapis.com/css2?family=${fontFamily}:wght@600`;
-    const css = await (await fetch(url)).text();
-    const resource = css.match(/src: url\((.+)\) format\('(opentype|truetype)'\)/);
-
-    if (resource) {
-      const response = await fetch(resource[1]);
-      if (response.status === 200) {
-        return await response.arrayBuffer();
-      }
-    }
-  } catch (e) {
-    console.error('Failed to load font', e);
-  }
-
-  // Return empty buffer as fallback to prevent crash, though text will look wrong
-  return new ArrayBuffer(0);
 }

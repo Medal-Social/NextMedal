@@ -90,7 +90,7 @@ export default function CTA({
             href={href}
             target={newTab ? '_blank' : undefined}
             rel={newTab ? 'noopener noreferrer' : undefined}
-            onClick={(_e) => {
+            onClick={(e) => {
               if (href.includes('#')) {
                 const [path, hash] = href.split('#');
                 const currentPath = window.location.pathname;
@@ -100,6 +100,7 @@ export default function CTA({
                   (!path || path === currentPath || (path === '/' && currentPath === '/')) &&
                   hash
                 ) {
+                  e.preventDefault();
                   const element = document.getElementById(hash);
                   if (element) {
                     element.scrollIntoView({ behavior: 'smooth' });
