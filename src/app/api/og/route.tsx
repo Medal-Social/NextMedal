@@ -1,8 +1,8 @@
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
 import { ImageResponse } from 'next/og';
 import type { NextRequest } from 'next/server';
 import { getSite } from '@/sanity/lib/fetch';
-import { promises as fs } from 'fs';
-import path from 'path';
 
 const domain = process.env.NEXT_PUBLIC_BASE_URL?.replace(/https?:\/\//, '');
 
@@ -141,9 +141,7 @@ export async function GET(request: NextRequest) {
       fonts: [
         {
           name: 'serif',
-          data: await fs.readFile(
-            path.join(process.cwd(), 'src/assets/fonts/Inter-SemiBold.ttf')
-          ),
+          data: await fs.readFile(path.join(process.cwd(), 'src/assets/fonts/Inter-SemiBold.ttf')),
         },
       ],
     }

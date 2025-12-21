@@ -6,22 +6,10 @@ import { hasLocale } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { getComponentSchema } from '@/app/actions/get-component-schema';
 import { ComponentPreview } from '@/components/component-preview/ComponentPreview';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
 import { routing } from '@/i18n/routing';
-import { mockPost as robustMockPost } from '@/lib/mock-blog-post';
 import BannerClient from '@/ui/Banner-client';
-import DateDisplay from '@/ui/Date';
-import Icon from '@/ui/Icon';
 import { Img } from '@/ui/Img';
 import Modules from '@/ui/modules';
-import Breadcrumbs from '@/ui/modules/Breadcrumbs';
-import Authors from '@/ui/modules/blog/Authors';
-import Categories from '@/ui/modules/blog/Categories';
-import ReadTime from '@/ui/modules/blog/ReadTime';
-import Content from '@/ui/modules/RichtextModule/Content';
 
 export const dynamic = 'force-static';
 
@@ -31,21 +19,44 @@ const pt = (text: string, style = 'normal') => ({
   _type: 'block',
   style,
   _key: Math.random().toString(36).substring(7),
+  markDefs: [],
   children: [
     {
       _type: 'span',
       _key: Math.random().toString(36).substring(7),
       text,
+      marks: [],
     },
   ],
 });
 
-const image = (url: string, alt: string, w = 800, h = 600) => ({
+const image = (url: string, alt: string) => ({
   _type: 'image',
+  asset: {
+    _type: 'reference',
+    _ref: 'image-0000000000000000000000000000000000000000-0x0-jpg',
+  },
+  // Frontend-only props for preview
   src: url,
   alt,
-  width: w,
-  height: h,
+});
+
+const img = (url: string, alt: string) => ({
+  _type: 'img',
+  image: image(url, alt),
+});
+
+const menuItem = (label: string, external?: string) => ({
+  _type: 'menuItem',
+  type: 'external',
+  label,
+  external: external || '#',
+});
+
+const cta = (label: string, style = 'primary', external?: string) => ({
+  _type: 'cta',
+  link: menuItem(label, external),
+  style,
 });
 
 // --- Mock Data ---
@@ -53,7 +64,6 @@ const image = (url: string, alt: string, w = 800, h = 600) => ({
 const heroModule: Sanity.Module = {
   _type: 'hero',
   _key: 'hero1',
-  pretitle: 'The Ultimate Next.js Starter',
   content: [
     pt('Ship your SaaS in days, not months.', 'h1'),
     pt(
@@ -61,21 +71,18 @@ const heroModule: Sanity.Module = {
     ),
   ],
   ctas: [
-    { _type: 'cta', _key: 'c1', title: 'Get Started', link: { _type: 'menuItem', external: '#' } },
-    {
-      _type: 'cta',
-      _key: 'c2',
-      title: 'View Documentation',
-      link: { _type: 'menuItem', external: '#' },
-      style: 'outline',
-    },
+    { ...cta('Get Started'), _key: 'c1' },
+    { ...cta('View Documentation', 'outline'), _key: 'c2' },
   ],
-  bgImage: image(
+  videoType: 'image',
+  image: img(
     'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop',
     'Abstract background'
   ),
-  textAlign: 'center',
-  alignItems: 'center',
+  options: {
+    bgFrom: 'brand-vibrant',
+    bgTo: 'brand-purple',
+  },
 } as any;
 
 const featuresModule: Sanity.Module = {
@@ -90,37 +97,37 @@ const featuresModule: Sanity.Module = {
       content: [
         pt('Built on the latest React Server Components architecture with Turbopack support.'),
       ],
-      icon: { ic0n: 'Zap' },
+      icon: { ic0n: 'Zap', _type: 'icon' },
     },
     {
       _key: 'f2',
       summary: 'Sanity Studio',
       content: [pt('Embedded headless CMS with visual editing and live previews.')],
-      icon: { ic0n: 'Edit' },
+      icon: { ic0n: 'Edit', _type: 'icon' },
     },
     {
       _key: 'f3',
       summary: 'TypeScript',
       content: [pt('Fully typed codebase for better developer experience and fewer bugs.')],
-      icon: { ic0n: 'FileCode' },
+      icon: { ic0n: 'FileCode', _type: 'icon' },
     },
     {
       _key: 'f4',
       summary: 'Tailwind CSS',
       content: [pt('Utility-first CSS framework with a custom design system and dark mode.')],
-      icon: { ic0n: 'Palette' },
+      icon: { ic0n: 'Palette', _type: 'icon' },
     },
     {
       _key: 'f5',
       summary: 'Framer Motion',
       content: [pt('Beautiful animations and layout transitions out of the box.')],
-      icon: { ic0n: 'Sparkles' },
+      icon: { ic0n: 'Sparkles', _type: 'icon' },
     },
     {
       _key: 'f6',
       summary: 'SEO Optimized',
       content: [pt('Perfect Lighthouse scores, dynamic sitemaps, and Open Graph generation.')],
-      icon: { ic0n: 'BarChart' },
+      icon: { ic0n: 'BarChart', _type: 'icon' },
     },
   ],
 } as any;
@@ -175,7 +182,6 @@ const logoCloudModule: Sanity.Module = {
 const productComparisonModule: Sanity.Module = {
   _type: 'product-comparison',
   _key: 'comp1',
-  pretitle: 'Why Choose Medal?',
   intro: [pt('Compare Medal against traditional development.', 'h2')],
   products: [
     { name: 'Traditional Dev', highlight: false, _key: 'p1' },
@@ -188,6 +194,54 @@ const productComparisonModule: Sanity.Module = {
     { name: 'Dark Mode', featureDetails: ['Manual Setup', 'Built-in'], _key: 'ft4' },
     { name: 'Type Safety', featureDetails: ['Optional', 'Strict'], _key: 'ft5' },
     { name: 'Components', featureDetails: ['Build from scratch', '50+ Pre-built'], _key: 'ft6' },
+  ],
+} as any;
+
+const metalSocialComparisonModule: Sanity.Module = {
+  _type: 'product-comparison',
+  _key: 'metal-social-comp',
+  intro: [
+    pt('Supercharge with Metal Social', 'h2'),
+    pt(
+      'Metal Social delivers enterprise-grade capabilities to your Next Medal template.',
+      'normal'
+    ),
+  ],
+  products: [
+    { name: 'Self-hosted', highlight: false, _key: 'p1' },
+    { name: 'Metal Social Managed', highlight: true, _key: 'p2' },
+  ],
+  features: [
+    {
+      name: 'Account Manager',
+      featureDetails: ['None / DIY Support', 'Dedicated Success Manager'],
+      _key: 'ft1',
+    },
+    {
+      name: 'SLA / Uptime Guarantee',
+      featureDetails: ['None', '99.9% Uptime Guarantee'],
+      _key: 'ft2',
+    },
+    {
+      name: 'Marketing Tools',
+      featureDetails: ['Standard', 'Advanced Suite'],
+      _key: 'ft3',
+    },
+    {
+      name: 'Privacy and Compliance',
+      featureDetails: ['Standard (GDPR)', 'Enterprise (SOC2, HIPAA)'],
+      _key: 'ft4',
+    },
+    {
+      name: 'Marketing Automation',
+      featureDetails: ['None', 'Full Automation Workflows'],
+      _key: 'ft5',
+    },
+    {
+      name: 'AI Brand Understanding',
+      featureDetails: ['Basic', 'Custom Brand Model'],
+      _key: 'ft6',
+    },
   ],
 } as any;
 
@@ -266,8 +320,7 @@ const teamModuleGrid: Sanity.Module = {
   _type: 'team',
   _key: 'team1',
   layout: 'grid',
-  pretitle: 'Meet the Team',
-  intro: [pt('The experts behind the platform.', 'h2')],
+  intro: [pt('Meet the Team', 'h2'), pt('The experts behind the platform.', 'normal')],
   people: [
     {
       _key: 'p1',
@@ -346,29 +399,20 @@ const teamModuleList: Sanity.Module = {
   ...teamModuleGrid,
   _key: 'team2',
   layout: 'split',
-  pretitle: 'Leadership',
-  intro: [pt('Board Members (Split Layout)', 'h2')],
+  intro: [pt('Leadership', 'h2'), pt('Board Members (Split Layout)', 'normal')],
 } as any;
 
 const pricingListModule: Sanity.Module = {
   _type: 'pricing-list',
   _key: 'price1',
-  pretitle: 'Simple Pricing',
-  intro: [pt('Choose the plan that fits your needs.', 'h2')],
+  intro: [pt('Simple Pricing', 'h2'), pt('Choose the plan that fits your needs.', 'normal')],
   tiers: [
     {
       _id: 't1',
       title: 'Hobby',
       description: 'For personal projects',
       price: { base: '0', currency: '$', suffix: '/mo' },
-      ctas: [
-        {
-          _type: 'cta',
-          title: 'Start Free',
-          link: { _type: 'menuItem', external: '#' },
-          style: 'outline',
-        },
-      ],
+      ctas: [cta('Start Free', 'outline')],
       content: [pt('• 1 User\n• 5 Projects\n• Community Support')],
     },
     {
@@ -377,7 +421,7 @@ const pricingListModule: Sanity.Module = {
       description: 'For growing teams',
       price: { base: '49', currency: '$', suffix: '/mo' },
       highlight: 'Most Popular',
-      ctas: [{ _type: 'cta', title: 'Get Started', link: { _type: 'menuItem', external: '#' } }],
+      ctas: [cta('Get Started')],
       content: [pt('• 5 Users\n• Unlimited Projects\n• Priority Support\n• Advanced Analytics')],
     },
     {
@@ -385,14 +429,7 @@ const pricingListModule: Sanity.Module = {
       title: 'Enterprise',
       description: 'For large organizations',
       price: { base: '199', currency: '$', suffix: '/mo' },
-      ctas: [
-        {
-          _type: 'cta',
-          title: 'Contact Sales',
-          link: { _type: 'menuItem', external: '#' },
-          style: 'outline',
-        },
-      ],
+      ctas: [cta('Contact Sales', 'outline')],
       content: [pt('• Unlimited Users\n• SSO & SAML\n• Dedicated Success Manager\n• Custom SLAs')],
     },
   ],
@@ -401,8 +438,7 @@ const pricingListModule: Sanity.Module = {
 const accordionListModule: Sanity.Module = {
   _type: 'accordion-list',
   _key: 'acc1',
-  pretitle: 'FAQ',
-  intro: [pt('Frequently Asked Questions', 'h2')],
+  intro: [pt('FAQ', 'h2'), pt('Frequently Asked Questions', 'normal')],
   items: [
     {
       _key: 'q1',
@@ -460,13 +496,8 @@ const calloutModule: Sanity.Module = {
     pt('Join thousands of developers using Medal to ship faster.'),
   ],
   ctas: [
-    { _type: 'cta', title: 'Get Started Now', link: { _type: 'menuItem', external: '#' } },
-    {
-      _type: 'cta',
-      title: 'Read the Docs',
-      link: { _type: 'menuItem', external: '#' },
-      style: 'outline',
-    },
+    cta('Get Started Now'),
+    cta('Read the Docs', 'outline'),
   ],
 } as any;
 
@@ -531,7 +562,6 @@ const richtextModule: Sanity.Module = {
 const videoHeroModule: Sanity.Module = {
   _type: 'videoHero',
   _key: 'vh1',
-  title: 'Cinematic Experience',
   type: 'youtube',
   videoId: 'dQw4w9WgXcQ', // Placeholder
   thumbnail: image(
@@ -544,9 +574,9 @@ const breadcrumbsModule: Sanity.Module = {
   _type: 'breadcrumbs',
   _key: 'bc1',
   crumbs: [
-    { _type: 'menuItem', _key: 'l1', label: 'Home', external: '/' },
-    { _type: 'menuItem', _key: 'l2', label: 'Components', external: '#' },
-    { _type: 'menuItem', _key: 'l3', label: 'Breadcrumbs', external: '#' },
+    { ...menuItem('Home', '/'), _key: 'l1', type: 'external' },
+    { ...menuItem('Components', '#'), _key: 'l2', type: 'external' },
+    { ...menuItem('Breadcrumbs', '#'), _key: 'l3', type: 'external' },
   ],
 } as any;
 
@@ -573,7 +603,7 @@ const mockPosts: Sanity.BlogPost[] = [
   {
     _type: 'blog.post',
     _id: 'post1',
-    featured: true,
+    featured: 'featured',
     publishDate: '2023-01-01',
     metadata: {
       title: 'The Future of Next.js',
@@ -598,7 +628,7 @@ const mockPosts: Sanity.BlogPost[] = [
   {
     _type: 'blog.post',
     _id: 'post2',
-    featured: false,
+    featured: 'standard',
     publishDate: '2023-02-15',
     metadata: {
       title: 'Mastering Tailwind CSS',
@@ -623,7 +653,7 @@ const mockPosts: Sanity.BlogPost[] = [
   {
     _type: 'blog.post',
     _id: 'post3',
-    featured: false,
+    featured: 'standard',
     publishDate: '2023-03-10',
     metadata: {
       title: 'Sanity Studio v3',
@@ -659,8 +689,7 @@ const blogFrontpageModule: Sanity.Module = {
 const latestArticlesModule: Sanity.Module = {
   _type: 'latest-articles',
   _key: 'la1',
-  pretitle: 'From the Blog',
-  intro: [pt('Latest Updates', 'h2')],
+  intro: [pt('From the Blog', 'h2'), pt('Latest Updates', 'normal')],
   layout: 'grid',
   showFeaturedPostsFirst: true,
   displayFilters: true,
@@ -668,158 +697,159 @@ const latestArticlesModule: Sanity.Module = {
   posts: mockPosts,
 } as any;
 
-// Global Components Mock Data
-const templateFeatures = [
-  {
-    category: 'Core Tech',
-    items: [
-      { title: 'Next.js 16', desc: 'Latest App Router, Server Components, Turbopack' },
-      { title: 'React 19', desc: 'Bleeding edge React features' },
-      { title: 'TypeScript', desc: 'End-to-end type safety' },
-      { title: 'Tailwind CSS 4', desc: 'Modern utility-first styling' },
-    ],
-  },
-  {
-    category: 'Content & Media',
-    items: [
-      { title: 'Sanity CMS', desc: 'Visual editing, real-time collaboration' },
-      { title: 'Mux Video', desc: 'High-performance video streaming' },
-      { title: 'Next-Intl', desc: 'Built-in internationalization' },
-      { title: 'Portable Text', desc: 'Structured content format' },
-    ],
-  },
-  {
-    category: 'UI & UX',
-    items: [
-      { title: 'Framer Motion', desc: 'Production-ready animations' },
-      { title: 'Radix UI', desc: 'Accessible unstyled primitives' },
-      { title: 'Dark Mode', desc: 'System-aware theme switching' },
-      { title: 'Responsive', desc: 'Mobile-first design' },
-    ],
-  },
-  {
-    category: 'Quality & DX',
-    items: [
-      { title: 'Biome', desc: 'Fast linting and formatting' },
-      { title: 'Vitest', desc: 'Unit and integration testing' },
-      { title: 'SEO Ready', desc: 'Dynamic sitemaps, OG images' },
-      { title: 'Accessibility', desc: 'WCAG 2.1 compliant' },
-    ],
-  },
-];
-
 const bannerData: Sanity.Banner & Sanity.Module = {
   _type: 'banner',
   _id: 'ann1',
   content: [pt('New: Next.js 15 Support is here!')],
-  cta: { _type: 'menuItem', label: 'Learn More', external: '#' },
+  cta: menuItem('Learn More', '#'),
 } as any;
 
-const siteSettings: Sanity.Site = {
-  _type: 'site',
-  title: 'NextMedal',
-  tagline: [pt('The ultimate starter kit')],
-  logo: {
-    _type: 'logo',
-    image: {
-      default: image('https://placehold.co/100x40/333333/ffffff?text=Medal', 'Logo'),
-    },
-    name: 'NextMedal',
-  },
-  headerMenu: {
-    items: [
-      { _type: 'menuItem', label: 'Features', external: '#features' },
-      { _type: 'menuItem', label: 'Pricing', external: '#pricing' },
-      { _type: 'menuItem', label: 'Blog', external: '#blog' },
-    ],
-  },
-  footerMenu: {
-    items: [
-      { _type: 'menuItem', label: 'Terms', external: '#' },
-      { _type: 'menuItem', label: 'Privacy', external: '#' },
-    ],
-  },
-  ctas: [{ _type: 'cta', title: 'Get Started', link: { _type: 'menuItem', external: '#' } }],
-  copyright: [pt('© 2024 NextMedal. All rights reserved.')],
-  socialLinks: [
-    { _key: 's1', text: 'Twitter', url: 'https://twitter.com' },
-    { _key: 's2', text: 'GitHub', url: 'https://github.com' },
+const metalSocialModule: Sanity.Module = {
+  _type: 'features',
+  _key: 'metal-social',
+  pretitle: 'Optional Integration',
+  intro: [
+    pt('Supercharge with Metal Social', 'h2'),
+    pt(
+      'NextMedal seamlessly integrates with Metal Social platform, offering enterprise-grade capabilities out of the box. Fully optional, but powerful when you need it.'
+    ),
   ],
-} as any;
-
-const redirectData = {
-  _type: 'redirect',
-  source: '/old-path',
-  destination: '/new-path',
-  permanent: true,
-} as any;
-
-const navigationData = {
-  _type: 'navigation',
-  title: 'Main Navigation',
   items: [
-    { _type: 'menuItem', label: 'Home', external: '/' },
-    { _type: 'menuItem', label: 'About', external: '/about' },
-    { _type: 'menuItem', label: 'Contact', external: '/contact' },
-  ],
-} as any;
-
-const globalModuleData = {
-  _type: 'global-module',
-  path: '/blog/*',
-  before: [
     {
-      _type: 'banner',
-      content: [pt('Global Blog Banner')],
-      cta: { _type: 'menuItem', label: 'Subscribe', external: '#' },
+      _key: 'ms1',
+      summary: 'Dedicated Account Manager',
+      content: [
+        pt('Your personal implementation expert acting as a partner for your business success.'),
+      ],
+      icon: { ic0n: 'UserCheck', _type: 'icon' },
+    },
+    {
+      _key: 'ms2',
+      summary: 'SLA Guarantee',
+      content: [
+        pt('Comprehensive Service Level Agreements to ensure reliability and peace of mind.'),
+      ],
+      icon: { ic0n: 'FileCheck', _type: 'icon' },
+    },
+    {
+      _key: 'ms3',
+      summary: 'Enterprise Security',
+      content: [pt('Top-tier security features including encryption and data sovereignty.')],
+      icon: { ic0n: 'ShieldCheck', _type: 'icon' },
+    },
+    {
+      _key: 'ms4',
+      summary: 'Marketing Automation',
+      content: [pt('Mass emailing and automated workflows for sophisticated user journeys.')],
+      icon: { ic0n: 'Mail', _type: 'icon' },
+    },
+    {
+      _key: 'ms5',
+      summary: 'Deep Analytics',
+      content: [pt('Gain actionable insights with integrated analytics dashboards.')],
+      icon: { ic0n: 'BarChart3', _type: 'icon' },
+    },
+    {
+      _key: 'ms6',
+      summary: 'GDPR Compliance',
+      content: [pt('Built-in tools and features to ensure full GDPR compliance.')],
+      icon: { ic0n: 'Cookie', _type: 'icon' },
+    },
+    {
+      _key: 'ms7',
+      summary: 'Unified Channels',
+      content: [pt('Integrate all your communication channels in one centralized place.')],
+      icon: { ic0n: 'MessagesSquare', _type: 'icon' },
+    },
+    {
+      _key: 'ms8',
+      summary: 'Focus on Growth',
+      content: [
+        pt('Stop buying 10 different tools. Get everything you need to scale in one platform.'),
+      ],
+      icon: { ic0n: 'TrendingUp', _type: 'icon' },
     },
   ],
 } as any;
 
-const pricingData = {
-  _type: 'pricing',
-  title: 'Enterprise Tier',
-  description: 'For large scale applications',
-  price: { base: '999', currency: '$', suffix: '/mo' },
-  ctas: [{ _type: 'cta', title: 'Contact Sales', link: { _type: 'menuItem', external: '#' } }],
-  content: [pt('• Unlimited everything\n• 24/7 Support\n• Custom integrations')],
-} as any;
+const teamModuleGridSanity = {
+  ...teamModuleGrid,
+  people: [
+    { _type: 'reference', _ref: 'person-1', _key: 'p1' },
+    { _type: 'reference', _ref: 'person-2', _key: 'p2' },
+    { _type: 'reference', _ref: 'person-3', _key: 'p3' },
+    { _type: 'reference', _ref: 'person-4', _key: 'p4' },
+  ],
+};
 
-const personData = {
-  _type: 'person',
-  name: 'Jane Doe',
-  title: 'Senior Engineer',
-  image: image(
-    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1000&auto=format&fit=crop',
-    'Jane Doe'
-  ),
-  bio: [pt('Passionate about building scalable web applications.')],
-  socialLinks: [{ _key: 'sl1', platform: 'twitter', url: 'https://twitter.com' }],
-} as any;
+const teamModuleListSanity = {
+  ...teamModuleList,
+  people: [
+    { _type: 'reference', _ref: 'person-1', _key: 'p1' },
+    { _type: 'reference', _ref: 'person-2', _key: 'p2' },
+    { _type: 'reference', _ref: 'person-3', _key: 'p3' },
+    { _type: 'reference', _ref: 'person-4', _key: 'p4' },
+  ],
+};
 
-const logoData = {
-  _type: 'logo',
-  name: 'Acme Corp',
-  image: { default: image('https://placehold.co/200x80/333333/ffffff?text=Acme', 'Acme') },
-} as any;
+const pricingListModuleSanity = {
+  ...pricingListModule,
+  tiers: [
+    { _type: 'reference', _ref: 'pricing-1', _key: 't1' },
+    { _type: 'reference', _ref: 'pricing-2', _key: 't2' },
+    { _type: 'reference', _ref: 'pricing-3', _key: 't3' },
+  ],
+};
+
+const logoCloudModuleSanity = {
+  ...logoCloudModule,
+  logos: [
+    { _type: 'reference', _ref: 'logo-1', _key: 'l1' },
+    { _type: 'reference', _ref: 'logo-2', _key: 'l2' },
+    { _type: 'reference', _ref: 'logo-3', _key: 'l3' },
+    { _type: 'reference', _ref: 'logo-4', _key: 'l4' },
+    { _type: 'reference', _ref: 'logo-5', _key: 'l5' },
+    { _type: 'reference', _ref: 'logo-6', _key: 'l6' },
+  ],
+};
+
+const latestArticlesModuleSanity = {
+  ...latestArticlesModule,
+  posts: undefined,
+};
+
+const blogFrontpageModuleSanity = {
+  ...blogFrontpageModule,
+  posts: undefined,
+};
+
+const breadcrumbsModuleSanity = {
+  ...breadcrumbsModule,
+  crumbs: [
+    { _type: 'menuItem', _key: 'l1', type: 'external', label: 'Home', external: '/' },
+    { _type: 'menuItem', _key: 'l2', type: 'external', label: 'Components', external: '#' },
+    { _type: 'menuItem', _key: 'l3', type: 'external', label: 'Breadcrumbs', external: '#' },
+  ],
+};
 
 const mockModules = [
-  breadcrumbsModule,
-  heroModule,
-  logoCloudModule,
-  featuresModule,
-  productComparisonModule,
-  pricingComparisonModule,
-  teamModuleGrid,
-  teamModuleList,
-  pricingListModule,
-  accordionListModule,
-  videoHeroModule,
-  richtextModule,
-  calloutModule,
-  componentGalleryModule,
-  blogFrontpageModule,
-  latestArticlesModule,
+  { ...breadcrumbsModule, sanityData: breadcrumbsModuleSanity },
+  { ...heroModule, sanityData: heroModule },
+  { ...logoCloudModule, sanityData: logoCloudModuleSanity },
+  { ...featuresModule, sanityData: featuresModule },
+  { ...productComparisonModule, sanityData: productComparisonModule },
+  { ...metalSocialComparisonModule, sanityData: metalSocialComparisonModule },
+  { ...pricingComparisonModule, sanityData: pricingComparisonModule },
+  { ...teamModuleGrid, sanityData: teamModuleGridSanity },
+  { ...teamModuleList, sanityData: teamModuleListSanity },
+  { ...pricingListModule, sanityData: pricingListModuleSanity },
+  { ...accordionListModule, sanityData: accordionListModule },
+  { ...videoHeroModule, sanityData: videoHeroModule },
+  { ...richtextModule, sanityData: richtextModule },
+  { ...calloutModule, sanityData: calloutModule },
+  { ...componentGalleryModule, sanityData: componentGalleryModule },
+  { ...blogFrontpageModule, sanityData: blogFrontpageModuleSanity },
+  { ...latestArticlesModule, sanityData: latestArticlesModuleSanity },
 ];
 
 type Props = {
@@ -852,6 +882,25 @@ export default async function AllComponentsPage({ params }: Props) {
     })
   );
 
+  const featuresSchemaInfo = await getComponentSchema('features');
+
+  const withSchema = (module: any, schemaInfo: any) => ({
+    ...module,
+    schemaCode: schemaInfo.code,
+    schemaHtml: schemaInfo.html,
+    schemaObject: schemaInfo.object,
+  });
+
+  const metalSocialWithSchema = withSchema(metalSocialModule, featuresSchemaInfo);
+
+  const comparisonSchemaInfo = await getComponentSchema('product-comparison');
+  const comparisonWithSchema = withSchema(productComparisonModule, comparisonSchemaInfo);
+  
+  const metalSocialComparisonWithSchema = withSchema(
+    metalSocialComparisonModule,
+    comparisonSchemaInfo
+  );
+
   const bannerSchemaInfo = await getComponentSchema('banner');
   const bannerWithSchema = {
     ...bannerData,
@@ -860,70 +909,6 @@ export default async function AllComponentsPage({ params }: Props) {
     schemaObject: bannerSchemaInfo.object,
   };
 
-  const siteSchemaInfo = await getComponentSchema('site');
-  const siteWithSchema = {
-    ...siteSettings,
-    schemaCode: siteSchemaInfo.code,
-    schemaHtml: siteSchemaInfo.html,
-    schemaObject: siteSchemaInfo.object,
-  };
-
-  const redirectSchemaInfo = await getComponentSchema('redirect');
-  const redirectWithSchema = {
-    ...redirectData,
-    schemaCode: redirectSchemaInfo.code,
-    schemaHtml: redirectSchemaInfo.html,
-    schemaObject: redirectSchemaInfo.object,
-  };
-
-  const navigationSchemaInfo = await getComponentSchema('navigation');
-  const navigationWithSchema = {
-    ...navigationData,
-    schemaCode: navigationSchemaInfo.code,
-    schemaHtml: navigationSchemaInfo.html,
-    schemaObject: navigationSchemaInfo.object,
-  };
-
-  const globalModuleSchemaInfo = await getComponentSchema('global-module');
-  const globalModuleWithSchema = {
-    ...globalModuleData,
-    schemaCode: globalModuleSchemaInfo.code,
-    schemaHtml: globalModuleSchemaInfo.html,
-    schemaObject: globalModuleSchemaInfo.object,
-  };
-
-  const pricingSchemaInfo = await getComponentSchema('pricing');
-  const pricingWithSchema = {
-    ...pricingData,
-    schemaCode: pricingSchemaInfo.code,
-    schemaHtml: pricingSchemaInfo.html,
-    schemaObject: pricingSchemaInfo.object,
-  };
-
-  const personSchemaInfo = await getComponentSchema('person');
-  const personWithSchema = {
-    ...personData,
-    schemaCode: personSchemaInfo.code,
-    schemaHtml: personSchemaInfo.html,
-    schemaObject: personSchemaInfo.object,
-  };
-
-  const logoSchemaInfo = await getComponentSchema('logo');
-  const logoWithSchema = {
-    ...logoData,
-    schemaCode: logoSchemaInfo.code,
-    schemaHtml: logoSchemaInfo.html,
-    schemaObject: logoSchemaInfo.object,
-  };
-
-  // Fetch Blog Post Schema
-  const blogPostSchemaInfo = await getComponentSchema('blog.post');
-  const blogPostWithSchema = {
-    ...robustMockPost,
-    schemaCode: blogPostSchemaInfo.code,
-    schemaHtml: blogPostSchemaInfo.html,
-    schemaObject: blogPostSchemaInfo.object,
-  };
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -935,398 +920,33 @@ export default async function AllComponentsPage({ params }: Props) {
       </div>
 
       <div className="flex flex-col gap-12 max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Page Templates Section */}
+        {/* Metal Social Section */}
         <div className="mb-12 border-b pb-12">
           <div className="mb-8 px-2">
-            <h2 className="text-2xl font-bold mb-2">Page Templates</h2>
+            <h2 className="text-2xl font-bold mb-2">Platform Integration</h2>
             <p className="text-muted-foreground">
-              Full page layouts that combine multiple components and modules.
-              <br />
-              <a href="/blog/example-post" className="text-primary hover:underline font-medium">
-                View standalone page →
-              </a>
+              Demonstrating the optional Metal Social integration capabilities.
             </p>
           </div>
+          <section className="relative border rounded-lg overflow-hidden bg-background shadow-sm mb-12">
+            <ComponentPreview
+              moduleType="features (Metal Social)"
+              schemaObject={metalSocialWithSchema.schemaObject}
+              componentData={metalSocialModule}
+            >
+              <Modules modules={[metalSocialWithSchema]} />
+            </ComponentPreview>
+          </section>
 
-          <div className="flex flex-col gap-12">
-            {/* Blog Post Template */}
-            <section className="relative border rounded-lg overflow-hidden bg-background shadow-sm">
-              <ComponentPreview
-                moduleType="blog.post (Page Template)"
-                schemaCode={blogPostWithSchema.schemaCode}
-                schemaHtml={blogPostWithSchema.schemaHtml}
-                schemaObject={blogPostWithSchema.schemaObject}
-              >
-                <div className="bg-background">
-                  {/* Simulate Page Layout */}
-                  <article className="section space-y-8 md:space-y-12 py-12 md:py-24">
-                    <div className="container max-w-4xl mx-auto px-4 space-y-8">
-                      <Breadcrumbs
-                        crumbs={[
-                          {
-                            label: 'Blog',
-                            internal: {
-                              _type: 'page',
-                              metadata: { slug: { current: 'blog' }, title: 'Blog' },
-                            },
-                          } as any,
-                        ]}
-                        currentPage={robustMockPost as any}
-                      />
-
-                      <div className="space-y-6">
-                        <Categories categories={robustMockPost.categories as any} linked badge />
-
-                        <h1 className="text-4xl md:text-6xl font-bold">
-                          {robustMockPost.metadata.title}
-                        </h1>
-
-                        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
-                          <DateDisplay value={robustMockPost.publishDate} />
-                          {robustMockPost.readTime && <ReadTime value={robustMockPost.readTime} />}
-                        </div>
-
-                        <Authors authors={robustMockPost.authors as any} bio socialLinks />
-                      </div>
-
-                      <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-muted">
-                        <Img
-                          image={robustMockPost.metadata.image}
-                          className="object-cover w-full h-full"
-                          sizes="(max-width: 768px) 100vw, 900px"
-                          priority
-                          alt={robustMockPost.metadata.title || ''}
-                        />
-                      </div>
-
-                      <div className="grid gap-12 lg:grid-cols-[1fr,250px]">
-                        <Content value={robustMockPost.body} />
-
-                        <div className="hidden lg:block space-y-8">
-                          <div className="rounded-lg border p-6 bg-muted/30">
-                            <h4 className="font-bold mb-2">Table of Contents</h4>
-                            <ul className="space-y-2 text-sm text-muted-foreground">
-                              <li>1. Shift to Server Components</li>
-                              <li>Key Benefits</li>
-                              <li>Implementation Strategy</li>
-                              <li>2. Advanced Formatting</li>
-                              <li>3. Integrated Modules</li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Render any modules attached to the post */}
-                      {robustMockPost.modules && <Modules modules={robustMockPost.modules} />}
-                    </div>
-                  </article>
-                </div>
-              </ComponentPreview>
-            </section>
-          </div>
-        </div>
-
-        {/* Template Features Section */}
-        <div className="mb-12 border-b pb-12">
-          <div className="mb-8 px-2">
-            <h2 className="text-2xl font-bold mb-2">Template Features</h2>
-            <p className="text-muted-foreground">
-              A complete list of features included in the NextMedal template.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {templateFeatures.map((group, i) => (
-              <div key={i} className="space-y-4">
-                <h3 className="font-bold text-lg text-primary">{group.category}</h3>
-                <ul className="space-y-3">
-                  {group.items.map((item, j) => (
-                    <li key={j} className="bg-card border rounded-lg p-4 shadow-sm">
-                      <div className="font-semibold mb-1">{item.title}</div>
-                      <div className="text-sm text-muted-foreground">{item.desc}</div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Design System Section */}
-        <div className="mb-12 border-b pb-12">
-          <div className="mb-8 px-2">
-            <h2 className="text-2xl font-bold mb-2">Design System</h2>
-            <p className="text-muted-foreground">
-              The foundational elements of the template's visual language.
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-12">
-            {/* Colors */}
-            <section className="relative border rounded-lg overflow-hidden bg-background shadow-sm p-8">
-              <h3 className="font-bold mb-4">Colors</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                <div className="space-y-2">
-                  <div className="h-20 w-full rounded bg-primary shadow-sm"></div>
-                  <div className="text-xs font-mono">Primary</div>
-                </div>
-                <div className="space-y-2">
-                  <div className="h-20 w-full rounded bg-secondary shadow-sm"></div>
-                  <div className="text-xs font-mono">Secondary</div>
-                </div>
-                <div className="space-y-2">
-                  <div className="h-20 w-full rounded bg-accent shadow-sm"></div>
-                  <div className="text-xs font-mono">Accent</div>
-                </div>
-                <div className="space-y-2">
-                  <div className="h-20 w-full rounded bg-muted shadow-sm"></div>
-                  <div className="text-xs font-mono">Muted</div>
-                </div>
-                <div className="space-y-2">
-                  <div className="h-20 w-full rounded bg-destructive shadow-sm"></div>
-                  <div className="text-xs font-mono">Destructive</div>
-                </div>
-                <div className="space-y-2">
-                  <div className="h-20 w-full rounded bg-background border shadow-sm"></div>
-                  <div className="text-xs font-mono">Background</div>
-                </div>
-              </div>
-            </section>
-
-            {/* Typography */}
-            <section className="relative border rounded-lg overflow-hidden bg-background shadow-sm p-8">
-              <h3 className="font-bold mb-6">Typography</h3>
-              <div className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-baseline">
-                  <span className="text-muted-foreground font-mono text-xs">Heading 1</span>
-                  <h1 className="col-span-2 text-4xl font-bold tracking-tight">
-                    The quick brown fox
-                  </h1>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-baseline">
-                  <span className="text-muted-foreground font-mono text-xs">Heading 2</span>
-                  <h2 className="col-span-2 text-3xl font-bold tracking-tight">
-                    Jumps over the lazy dog
-                  </h2>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-baseline">
-                  <span className="text-muted-foreground font-mono text-xs">Heading 3</span>
-                  <h3 className="col-span-2 text-2xl font-bold tracking-tight">
-                    Pack my box with five dozen liquor jugs
-                  </h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-baseline">
-                  <span className="text-muted-foreground font-mono text-xs">Body</span>
-                  <p className="col-span-2 text-base leading-relaxed text-muted-foreground">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                    nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                  </p>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-baseline">
-                  <span className="text-muted-foreground font-mono text-xs">Small</span>
-                  <p className="col-span-2 text-sm font-medium leading-none">
-                    The quick brown fox jumps over the lazy dog.
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            {/* UI Elements */}
-            <section className="relative border rounded-lg overflow-hidden bg-background shadow-sm p-8">
-              <h3 className="font-bold mb-6">UI Elements</h3>
-              <div className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                  <span className="text-muted-foreground font-mono text-xs">Buttons</span>
-                  <div className="col-span-2 flex flex-wrap gap-4">
-                    <Button>Default</Button>
-                    <Button variant="secondary">Secondary</Button>
-                    <Button variant="outline">Outline</Button>
-                    <Button variant="ghost">Ghost</Button>
-                    <Button variant="destructive">Destructive</Button>
-                    <Button variant="link">Link</Button>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                  <span className="text-muted-foreground font-mono text-xs">Badges</span>
-                  <div className="col-span-2 flex flex-wrap gap-4">
-                    <Badge>Default</Badge>
-                    <Badge variant="secondary">Secondary</Badge>
-                    <Badge variant="outline">Outline</Badge>
-                    <Badge variant="destructive">Destructive</Badge>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                  <span className="text-muted-foreground font-mono text-xs">Forms</span>
-                  <div className="col-span-2 space-y-4 max-w-sm">
-                    <Input placeholder="Input field..." />
-                    <div className="flex items-center gap-2">
-                      <Switch id="demo-switch" />
-                      <label htmlFor="demo-switch" className="text-sm">
-                        Toggle Switch
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Media & Icons */}
-            <section className="relative border rounded-lg overflow-hidden bg-background shadow-sm p-8">
-              <h3 className="font-bold mb-6">Media & Icons</h3>
-              <div className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
-                  <span className="text-muted-foreground font-mono text-xs">Icons (Lucide)</span>
-                  <div className="col-span-2 flex flex-wrap gap-6 text-brand-vibrant">
-                    <Icon icon={{ _type: 'icon', ic0n: 'Home' }} size={24} />
-                    <Icon icon={{ _type: 'icon', ic0n: 'User' }} size={24} />
-                    <Icon icon={{ _type: 'icon', ic0n: 'Settings' }} size={24} />
-                    <Icon icon={{ _type: 'icon', ic0n: 'Search' }} size={24} />
-                    <Icon icon={{ _type: 'icon', ic0n: 'Menu' }} size={24} />
-                    <Icon icon={{ _type: 'icon', ic0n: 'ArrowRight' }} size={24} />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
-                  <span className="text-muted-foreground font-mono text-xs">Image Component</span>
-                  <div className="col-span-2 grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <div className="aspect-video relative rounded-lg overflow-hidden border ring-1 ring-brand-purple/20">
-                        <Img
-                          image={image(
-                            'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=800&auto=format&fit=crop',
-                            'On-brand Purple Gradient'
-                          )}
-                          className="object-cover w-full h-full"
-                          width={400}
-                          height={225}
-                        />
-                      </div>
-                      <div className="text-xs text-muted-foreground">Aspect Video</div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="aspect-square relative rounded-lg overflow-hidden border ring-1 ring-brand-purple/20">
-                        <Img
-                          image={image(
-                            'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop',
-                            'On-brand Abstract Liquid'
-                          )}
-                          className="object-cover w-full h-full"
-                          width={400}
-                          height={400}
-                        />
-                      </div>
-                      <div className="text-xs text-muted-foreground">Aspect Square</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </div>
-        </div>
-
-        {/* Data Visualization Section */}
-        <div className="mb-12 border-b pb-12">
-          <div className="mb-8 px-2">
-            <h2 className="text-2xl font-bold mb-2">Data Visualization</h2>
-            <p className="text-muted-foreground">
-              Examples of data-heavy displays using the Geist Mono font.
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-12">
-            {/* KPI Cards */}
-            <section className="relative border rounded-lg overflow-hidden bg-background shadow-sm p-8">
-              <h3 className="font-bold mb-6">KPI Metrics</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="p-6 border rounded-lg bg-card">
-                  <div className="text-sm text-muted-foreground mb-2">Total Revenue</div>
-                  <div className="text-3xl font-bold font-numeric">$124,592.00</div>
-                  <div className="text-xs text-green-600 mt-1 font-numeric flex items-center">
-                    +12.5%{' '}
-                    <span className="text-muted-foreground ml-1 font-sans">vs last month</span>
-                  </div>
-                </div>
-                <div className="p-6 border rounded-lg bg-card">
-                  <div className="text-sm text-muted-foreground mb-2">Active Users</div>
-                  <div className="text-3xl font-bold font-numeric">8,549</div>
-                  <div className="text-xs text-green-600 mt-1 font-numeric flex items-center">
-                    +5.2%{' '}
-                    <span className="text-muted-foreground ml-1 font-sans">vs last month</span>
-                  </div>
-                </div>
-                <div className="p-6 border rounded-lg bg-card">
-                  <div className="text-sm text-muted-foreground mb-2">Avg. Response Time</div>
-                  <div className="text-3xl font-bold font-numeric">245ms</div>
-                  <div className="text-xs text-red-600 mt-1 font-numeric flex items-center">
-                    -1.4%{' '}
-                    <span className="text-muted-foreground ml-1 font-sans">vs last month</span>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Financial Table */}
-            <section className="relative border rounded-lg overflow-hidden bg-background shadow-sm p-8">
-              <h3 className="font-bold mb-6">Financial Data Table</h3>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
-                  <thead className="text-muted-foreground font-medium border-b">
-                    <tr>
-                      <th className="py-3 px-4">Transaction ID</th>
-                      <th className="py-3 px-4">Date</th>
-                      <th className="py-3 px-4">Category</th>
-                      <th className="py-3 px-4 text-right">Amount</th>
-                      <th className="py-3 px-4 text-right">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
-                    <tr>
-                      <td className="py-3 px-4">#TRX-8859</td>
-                      <td className="py-3 px-4">2023-12-01</td>
-                      <td className="py-3 px-4">Cloud Services</td>
-                      <td className="py-3 px-4 text-right">$1,299.00</td>
-                      <td className="py-3 px-4 text-right">
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                          Paid
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="py-3 px-4">#TRX-8860</td>
-                      <td className="py-3 px-4">2023-12-02</td>
-                      <td className="py-3 px-4">Software License</td>
-                      <td className="py-3 px-4 text-right">$49.99</td>
-                      <td className="py-3 px-4 text-right">
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300">
-                          Pending
-                        </span>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="py-3 px-4">#TRX-8861</td>
-                      <td className="py-3 px-4">2023-12-03</td>
-                      <td className="py-3 px-4">Hosting</td>
-                      <td className="py-3 px-4 text-right">$250.50</td>
-                      <td className="py-3 px-4 text-right">
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                          Paid
-                        </span>
-                      </td>
-                    </tr>
-                  </tbody>
-                  <tfoot className="border-t bg-muted/20 font-medium">
-                    <tr>
-                      <td colSpan={3} className="py-3 px-4">
-                        Total
-                      </td>
-                      <td className="py-3 px-4 text-right">$1,599.49</td>
-                      <td></td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-            </section>
-          </div>
+          <section className="relative border rounded-lg overflow-hidden bg-background shadow-sm">
+            <ComponentPreview
+              moduleType="product-comparison (Metal Social)"
+              schemaObject={metalSocialComparisonWithSchema.schemaObject}
+              componentData={metalSocialComparisonModule}
+            >
+              <Modules modules={[metalSocialComparisonWithSchema]} />
+            </ComponentPreview>
+          </section>
         </div>
 
         {/* Global Components Section */}
@@ -1337,261 +957,17 @@ export default async function AllComponentsPage({ params }: Props) {
               Site-wide configuration including navigation, footer, and banners.
             </p>
           </div>
-
+          
           <div className="flex flex-col gap-12">
             {/* Banner */}
             <section className="relative border rounded-lg overflow-hidden bg-background shadow-sm">
               <ComponentPreview
                 moduleType="banner"
-                schemaCode={bannerWithSchema.schemaCode}
-                schemaHtml={bannerWithSchema.schemaHtml}
                 schemaObject={bannerWithSchema.schemaObject}
+                componentData={bannerData}
               >
                 <div className="p-4 bg-muted/10">
                   <BannerClient banner={bannerData} />
-                </div>
-              </ComponentPreview>
-            </section>
-
-            {/* Header & Footer (using Site settings) */}
-            <section className="relative border rounded-lg overflow-hidden bg-background shadow-sm">
-              <ComponentPreview
-                moduleType="site (Header & Footer)"
-                schemaCode={siteWithSchema.schemaCode}
-                schemaHtml={siteWithSchema.schemaHtml}
-                schemaObject={siteWithSchema.schemaObject}
-              >
-                <div className="flex flex-col min-h-[400px]">
-                  {/* Mock Header */}
-                  <header className="border-b p-4 flex items-center justify-between">
-                    <div className="font-bold text-xl">NextMedal</div>
-                    <nav className="flex gap-4">
-                      {siteSettings.headerMenu?.items?.map((item: any, i: number) => (
-                        <span key={i} className="text-sm font-medium">
-                          {item.label}
-                        </span>
-                      ))}
-                    </nav>
-                    <div className="flex gap-2">
-                      {siteSettings.ctas?.map((cta: any, i: number) => (
-                        <button
-                          type="button"
-                          key={i}
-                          className="bg-primary text-primary-foreground px-4 py-2 rounded text-sm"
-                        >
-                          {cta.title}
-                        </button>
-                      ))}
-                    </div>
-                  </header>
-
-                  <main className="flex-1 p-8 text-center text-muted-foreground flex items-center justify-center bg-muted/5">
-                    <div className="border border-dashed p-8 rounded-lg">
-                      Page Content Placeholder
-                    </div>
-                  </main>
-
-                  {/* Mock Footer */}
-                  <footer className="border-t p-8 bg-muted/5">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                      <div>
-                        <div className="font-bold mb-4">NextMedal</div>
-                        <p className="text-sm text-muted-foreground">The ultimate starter kit</p>
-                      </div>
-                      <div className="md:col-span-2">
-                        <div className="flex gap-4">
-                          {siteSettings.footerMenu?.items?.map((item: any, i: number) => (
-                            <span
-                              key={i}
-                              className="text-sm text-muted-foreground hover:text-foreground cursor-pointer"
-                            >
-                              {item.label}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        © 2024 NextMedal. All rights reserved.
-                      </div>
-                    </div>
-                  </footer>
-                </div>
-              </ComponentPreview>
-            </section>
-          </div>
-        </div>
-
-        {/* System Configuration Section */}
-        <div className="mb-12 border-b pb-12">
-          <div className="mb-8 px-2">
-            <h2 className="text-2xl font-bold mb-2">System Configuration</h2>
-            <p className="text-muted-foreground">
-              Technical settings for routing, navigation structures, and global rules.
-            </p>
-          </div>
-          <div className="flex flex-col gap-12">
-            {/* Redirect */}
-            <section className="relative border rounded-lg overflow-hidden bg-background shadow-sm">
-              <ComponentPreview
-                moduleType="redirect"
-                schemaCode={redirectWithSchema.schemaCode}
-                schemaHtml={redirectWithSchema.schemaHtml}
-                schemaObject={redirectWithSchema.schemaObject}
-              >
-                <div className="p-8 bg-muted/10 flex flex-col items-center justify-center text-center">
-                  <div className="bg-background border p-6 rounded-lg shadow-sm max-w-md w-full">
-                    <div className="font-mono text-sm mb-4 bg-muted p-2 rounded">
-                      {redirectData.source} → {redirectData.destination}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Type: {redirectData.permanent ? 'Permanent (308)' : 'Temporary (307)'}
-                    </div>
-                  </div>
-                </div>
-              </ComponentPreview>
-            </section>
-
-            {/* Navigation */}
-            <section className="relative border rounded-lg overflow-hidden bg-background shadow-sm">
-              <ComponentPreview
-                moduleType="navigation"
-                schemaCode={navigationWithSchema.schemaCode}
-                schemaHtml={navigationWithSchema.schemaHtml}
-                schemaObject={navigationWithSchema.schemaObject}
-              >
-                <div className="p-8 bg-muted/10 flex flex-col items-center justify-center">
-                  <div className="bg-background border p-6 rounded-lg shadow-sm w-full max-w-lg">
-                    <h3 className="font-bold mb-4 border-b pb-2">{navigationData.title}</h3>
-                    <ul className="space-y-2">
-                      {navigationData.items.map((item: any, i: number) => (
-                        <li key={i} className="flex items-center gap-2 text-sm">
-                          <span className="w-2 h-2 rounded-full bg-primary/50"></span>
-                          {item.label}
-                          <span className="text-xs text-muted-foreground ml-auto">
-                            {item.external}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </ComponentPreview>
-            </section>
-
-            {/* Global Module */}
-            <section className="relative border rounded-lg overflow-hidden bg-background shadow-sm">
-              <ComponentPreview
-                moduleType="global-module"
-                schemaCode={globalModuleWithSchema.schemaCode}
-                schemaHtml={globalModuleWithSchema.schemaHtml}
-                schemaObject={globalModuleWithSchema.schemaObject}
-              >
-                <div className="p-8 bg-muted/10">
-                  <div className="bg-background border rounded-lg shadow-sm overflow-hidden">
-                    <div className="bg-muted px-4 py-2 border-b text-xs font-mono flex gap-2">
-                      <span className="font-bold">Rule:</span>
-                      <span>Path matches {globalModuleData.path}</span>
-                    </div>
-                    <div className="p-4 border-b bg-primary/5 text-center text-sm py-2">
-                      (Global Module Injection Point: Before Content)
-                    </div>
-                    <div className="p-8 text-center text-muted-foreground border-b border-dashed">
-                      Page Content...
-                    </div>
-                  </div>
-                </div>
-              </ComponentPreview>
-            </section>
-          </div>
-        </div>
-
-        {/* Content Types Section */}
-        <div className="mb-12 border-b pb-12">
-          <div className="mb-8 px-2">
-            <h2 className="text-2xl font-bold mb-2">Content Assets</h2>
-            <p className="text-muted-foreground">
-              Reusable content items referenced by other modules.
-            </p>
-          </div>
-          <div className="flex flex-col gap-12">
-            {/* Pricing Tier */}
-            <section className="relative border rounded-lg overflow-hidden bg-background shadow-sm">
-              <ComponentPreview
-                moduleType="pricing"
-                schemaCode={pricingWithSchema.schemaCode}
-                schemaHtml={pricingWithSchema.schemaHtml}
-                schemaObject={pricingWithSchema.schemaObject}
-              >
-                <div className="p-8 bg-muted/10 flex justify-center">
-                  <div className="bg-background border rounded-lg shadow-sm p-6 w-full max-w-sm">
-                    <div className="text-xl font-bold mb-2">{pricingData.title}</div>
-                    <div className="text-3xl font-bold mb-4">
-                      {pricingData.price.currency}
-                      {pricingData.price.base}
-                      <span className="text-base font-normal text-muted-foreground">
-                        {pricingData.price.suffix}
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      className="w-full bg-primary text-primary-foreground py-2 rounded mb-4"
-                    >
-                      {pricingData.ctas[0].title}
-                    </button>
-                    <div className="text-sm text-muted-foreground">
-                      {pricingData.content[0].children[0].text}
-                    </div>
-                  </div>
-                </div>
-              </ComponentPreview>
-            </section>
-
-            {/* Person */}
-            <section className="relative border rounded-lg overflow-hidden bg-background shadow-sm">
-              <ComponentPreview
-                moduleType="person"
-                schemaCode={personWithSchema.schemaCode}
-                schemaHtml={personWithSchema.schemaHtml}
-                schemaObject={personWithSchema.schemaObject}
-              >
-                <div className="p-8 bg-muted/10 flex justify-center">
-                  <div className="bg-background border rounded-lg shadow-sm p-6 w-full max-w-xs text-center">
-                    <div className="w-24 h-24 bg-muted rounded-full mx-auto mb-4 overflow-hidden relative">
-                      {/* Using a placeholder since we can't easily render the helper image function output without the helper context, 
-                              but actually we used the helper function in mock data so we can try to render it if we extract the src */}
-                      <Img
-                        image={personData.image}
-                        alt={personData.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <h3 className="font-bold text-lg">{personData.name}</h3>
-                    <p className="text-muted-foreground text-sm mb-4">{personData.title}</p>
-                    <p className="text-sm mb-4">{personData.bio[0].children[0].text}</p>
-                  </div>
-                </div>
-              </ComponentPreview>
-            </section>
-
-            {/* Logo */}
-            <section className="relative border rounded-lg overflow-hidden bg-background shadow-sm">
-              <ComponentPreview
-                moduleType="logo"
-                schemaCode={logoWithSchema.schemaCode}
-                schemaHtml={logoWithSchema.schemaHtml}
-                schemaObject={logoWithSchema.schemaObject}
-              >
-                <div className="p-8 bg-muted/10 flex justify-center">
-                  <div className="bg-background border p-8 rounded-lg shadow-sm">
-                    <Img
-                      image={logoData.image.default}
-                      alt={logoData.name}
-                      className="h-12 w-auto object-contain"
-                    />
-                    <p className="text-center text-xs text-muted-foreground mt-2">
-                      {logoData.name}
-                    </p>
-                  </div>
                 </div>
               </ComponentPreview>
             </section>
@@ -1605,22 +981,24 @@ export default async function AllComponentsPage({ params }: Props) {
             <p className="text-muted-foreground">Visual building blocks used to construct pages.</p>
           </div>
           <div className="flex flex-col gap-12">
-            {modulesWithSchema.map((item) => (
-              <section
-                key={item._key}
-                className="relative border rounded-lg overflow-hidden bg-background shadow-sm"
-              >
-                <ComponentPreview
-                  moduleType={item._type}
-                  schemaCode={item.schemaCode}
-                  schemaHtml={item.schemaHtml}
-                  schemaObject={item.schemaObject}
-                  hasRegistry={true}
+            {modulesWithSchema.map((item) => {
+              const { schemaCode, schemaHtml, schemaObject, sanityData, ...moduleData } = item;
+              return (
+                <section
+                  key={item._key}
+                  className="relative border rounded-lg overflow-hidden bg-background shadow-sm"
                 >
-                  <Modules modules={[item]} />
-                </ComponentPreview>
-              </section>
-            ))}
+                  <ComponentPreview
+                    moduleType={item._type}
+                    schemaObject={item.schemaObject}
+                    componentData={sanityData || moduleData}
+                    hasRegistry={true}
+                  >
+                    <Modules modules={[item]} />
+                  </ComponentPreview>
+                </section>
+              );
+            })}
           </div>
         </div>
       </div>

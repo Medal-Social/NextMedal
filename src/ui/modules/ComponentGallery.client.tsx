@@ -25,7 +25,7 @@ export default function ComponentGalleryClient({
   components: GalleryComponent[];
 }>) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useQueryState('category');
+  const [selectedCategory, setSelectedCategory] = useQueryState('category', { defaultValue: null });
 
   if (!components?.length) return null;
 

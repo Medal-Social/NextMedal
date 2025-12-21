@@ -14,6 +14,8 @@ export default async function Code({ value }: { value: { code: string; language?
       <div className="relative my-6 overflow-hidden rounded-lg group">
         <CopyButton code={value.code} className="absolute top-3 right-3 z-10" />
         <div
+          // biome-ignore lint/a11y/noNoninteractiveTabindex: Scrollable code block needs to be keyboard accessible
+          tabIndex={0}
           className="[&>pre]:!bg-[#0d1117] [&>pre]:!p-4 [&>pre]:!m-0 [&>pre]:overflow-x-auto"
           // biome-ignore lint/security/noDangerouslySetInnerHtml: Shiki generates safe HTML
           dangerouslySetInnerHTML={{ __html: html }}
