@@ -1,8 +1,8 @@
 'use client';
 
+import { ArrowRight, Copy, MoreHorizontal } from 'lucide-react';
 import type * as React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Copy, ArrowRight, MoreHorizontal } from 'lucide-react';
 import SanityCopyButton from './SanityCopyButton';
 
 interface ComponentPreviewProps {
@@ -12,18 +12,23 @@ interface ComponentPreviewProps {
   hasRegistry?: boolean;
 }
 
-export function ComponentPreview({
-  moduleType,
-  componentData,
-  children,
-}: ComponentPreviewProps) {
+export function ComponentPreview({ moduleType, componentData, children }: ComponentPreviewProps) {
   // Prepare raw data for the copy button (stripping keys used for frontend rendering)
   const getRawData = () => {
     if (!componentData) return null;
     return JSON.parse(
       JSON.stringify(componentData, (key, value) => {
         if (
-          ['src', 'width', 'height', 'alt', 'schemaCode', 'schemaHtml', 'schemaObject', 'sanityData'].includes(key)
+          [
+            'src',
+            'width',
+            'height',
+            'alt',
+            'schemaCode',
+            'schemaHtml',
+            'schemaObject',
+            'sanityData',
+          ].includes(key)
         ) {
           return undefined;
         }
@@ -36,9 +41,7 @@ export function ComponentPreview({
     <Tabs defaultValue="preview" className="w-full">
       <div className="flex items-center justify-between px-4 h-14 border-b bg-background">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-muted-foreground px-2">
-            {moduleType}
-          </span>
+          <span className="text-sm font-medium text-muted-foreground px-2">{moduleType}</span>
         </div>
         <div className="flex items-center">
           <TabsList variant="line">
