@@ -34,6 +34,10 @@ const config = {
       },
       {
         protocol: "https",
+        hostname: "api.og",
+      },
+      {
+        protocol: "https",
         hostname: "image.mux.com",
       },
       {
@@ -76,3 +80,4 @@ const config = {
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 export default withNextIntl(config);
+
