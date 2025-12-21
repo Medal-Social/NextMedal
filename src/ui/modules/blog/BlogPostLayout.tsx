@@ -44,7 +44,7 @@ export default function BlogPostLayout({ post }: { post: any }) {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
 
-              {crumbs.map((crumb, _index) => (
+              {crumbs.map((crumb) => (
                 <Fragment key={crumb.label}>
                   <BreadcrumbItem>
                     <BreadcrumbLink href={crumb.href}>{crumb.label}</BreadcrumbLink>

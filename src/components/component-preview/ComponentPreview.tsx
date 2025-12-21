@@ -10,6 +10,9 @@ interface ComponentPreviewProps {
   componentData?: any;
   children: React.ReactNode;
   hasRegistry?: boolean;
+  schemaCode?: string;
+  schemaHtml?: string;
+  schemaObject?: any;
 }
 
 export function ComponentPreview({ moduleType, componentData, children }: ComponentPreviewProps) {

@@ -115,7 +115,7 @@ export default function SanityCopyButton({ data, className }: SanityCopyButtonPr
         toast.error('Partial Copy', {
           description: 'Used fallback copy method. Studio "Paste" might not work as expected.',
         });
-      } catch (fallbackErr) {
+      } catch {
         toast.error('Copy Failed', {
           description: 'Could not write to clipboard.',
         });

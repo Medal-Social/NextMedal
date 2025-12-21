@@ -47,8 +47,6 @@ export function SchemaVisualizer({ schema }: { schema: SchemaObject }) {
 function SchemaFieldRow({ field, depth = 0 }: { field: SchemaField; depth?: number }) {
   const isArray = field.type === 'array';
   const isObject = field.type === 'object';
-  const _hasNestedFields =
-    (isObject && field.fields) || (isArray && field.of?.some((item) => item.fields));
 
   return (
     <>

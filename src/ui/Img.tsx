@@ -31,7 +31,7 @@ export function Img({
   image,
   width: w,
   height: h,
-  loading: _loading,
+  loading: loadingProp,
   ...props
 }: {
   image?:
@@ -73,7 +73,7 @@ export function Img({
   const loadingValue = stegaClean(sanityImage.loading);
   const validLoading = props.priority
     ? undefined
-    : _loading || (loadingValue === 'eager' || loadingValue === 'lazy' ? loadingValue : 'lazy');
+    : loadingProp || (loadingValue === 'eager' || loadingValue === 'lazy' ? loadingValue : 'lazy');
 
   if (validLoading === 'eager') {
     preload(src, { as: 'image' });

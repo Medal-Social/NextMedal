@@ -32,7 +32,7 @@ export default async function BlogFrontpage({
   // Determine Hero Post
   let heroPost: Sanity.BlogPost | undefined;
   if (mainPost === 'featured') {
-    heroPost = posts.find((p) => p.featured === 'featured');
+    heroPost = posts.find((p) => p.featured === true);
   }
   if (!heroPost) {
     heroPost = posts[0];
@@ -46,8 +46,7 @@ export default async function BlogFrontpage({
   const recentPost = remainingPosts[0];
 
   // Popular: Next featured post, or just next post
-  const popularPost =
-    remainingPosts.slice(1).find((p) => p.featured === 'featured') || remainingPosts[1];
+  const popularPost = remainingPosts.slice(1).find((p) => p.featured === true) || remainingPosts[1];
 
   // Grid Posts: All remaining posts excluding hero, recent, and popular
   const gridPosts = remainingPosts.filter(
