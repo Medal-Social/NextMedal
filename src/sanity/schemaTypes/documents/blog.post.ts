@@ -33,7 +33,21 @@ export default defineType({
       title: 'Content',
       description: 'The main content of the blog post.',
       type: 'array',
-      of: [{ type: 'block' }, imageBlock, { type: 'code' }, { type: 'video' }],
+      of: [
+        {
+          type: 'block',
+          styles: [
+            { title: 'Normal', value: 'normal' },
+            { title: 'Heading 2', value: 'h2' },
+            { title: 'Heading 3', value: 'h3' },
+            { title: 'Heading 4', value: 'h4' },
+            { title: 'Quote', value: 'blockquote' },
+          ],
+        },
+        imageBlock,
+        { type: 'code' },
+        { type: 'video' },
+      ],
       group: 'content',
     }),
     defineField({

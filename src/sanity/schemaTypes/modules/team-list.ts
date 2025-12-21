@@ -18,11 +18,6 @@ export default defineType({
       fields: [createUidField()],
     }),
     defineField({
-      name: 'pretitle',
-      type: 'string',
-      group: 'content',
-    }),
-    defineField({
       name: 'intro',
       type: 'array',
       of: [{ type: 'block' }],

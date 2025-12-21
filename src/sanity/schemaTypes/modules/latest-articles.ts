@@ -19,13 +19,6 @@ export default defineType({
   groups: [{ name: 'content', default: true }, { name: 'filtering' }, { name: 'options' }],
   fields: [
     defineField({
-      name: 'pretitle',
-      title: 'Pretitle',
-      description: 'Small text above the main title.',
-      type: 'string',
-      group: 'content',
-    }),
-    defineField({
       name: 'intro',
       title: 'Intro',
       description: 'Introduction text/title for the blog list.',

@@ -81,6 +81,7 @@ export async function getSite() {
 				},
 				ctas[]{ ${CTA_QUERY} },
 				headerMenu->{ ${NAVIGATION_QUERY} },
+				enableSearch,
 				footerMenu->{ ${NAVIGATION_QUERY} },
 				footerLinks[]{ ${LINK_QUERY} },
 				systemStatus,

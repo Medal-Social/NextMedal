@@ -27,13 +27,6 @@ export default defineType({
       fields: [createUidField()],
     }),
     defineField({
-      name: 'pretitle',
-      title: 'Pretitle',
-      description: 'Small text above the main title.',
-      type: 'string',
-      group: 'content',
-    }),
-    defineField({
       name: 'intro',
       title: 'Intro',
       description: 'Introduction text/title for the team section.',
