@@ -191,7 +191,7 @@ importers:
         version: 1.4.7
       fast-check:
         specifier: ^4.5.0
-        version: 4.5.0
+        version: 4.5.2
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -4501,8 +4501,8 @@ packages:
     resolution: {integrity: sha512-knvyeauYhqjOYvQ66MznSMs83wmHrCycNEN6Ao+2AeYEfxUIkuiVxdEa1qlGEPK+We3n0THiDciYSsCcgW/DoA==}
     engines: {node: '>=12.0.0'}
 
-  fast-check@4.5.0:
-    resolution: {integrity: sha512-xFXcerDrzB+c+s4xT6LT2hhYzSbuYgIvXTV5k0w9y4RoiREFw73XuHAeYncI7mo5Ik+hvInRXrlkJUm+bLl18Q==}
+  fast-check@4.5.2:
+    resolution: {integrity: sha512-tOzL01LMrDIWPLfvMiGUMH0AjqnOelHQPmgvYkW/aRO4Yaw+pBQqWmyebNzAEbKOigoCN8HkRWUZXFkjmiaXMQ==}
     engines: {node: '>=12.17.0'}
 
   fast-deep-equal@3.1.3:
@@ -12020,7 +12020,7 @@ snapshots:
 
   expect-type@1.3.0: {}
 
-  fast-check@4.5.0:
+  fast-check@4.5.2:
     dependencies:
       pure-rand: 7.0.1
 
