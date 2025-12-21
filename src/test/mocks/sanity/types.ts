@@ -355,18 +355,6 @@ export interface MockVideoHeroModule {
   thumbnail: MockImage;
 }
 
-export interface MockBlogListModule {
-  _type: 'blog-list';
-  _key: string;
-  pretitle?: string;
-  intro?: MockPortableTextBlock[];
-  layout?: 'grid' | 'carousel';
-  showFeaturedPostsFirst?: boolean;
-  displayFilters?: boolean;
-  limit?: number;
-  filteredCategory?: { _ref: string; _type: 'reference' };
-}
-
 export interface MockComponentGalleryModule {
   _type: 'component-gallery';
   _key: string;
@@ -376,16 +364,6 @@ export interface MockComponentGalleryModule {
     title: string;
     items: MockModule[];
   }>;
-}
-
-export interface MockTeamListModule {
-  _type: 'team-list';
-  _key: string;
-  options?: MockModuleOptions;
-  pretitle?: string;
-  intro?: MockPortableTextBlock[];
-  people?: Array<{ _ref: string; _type: 'reference' }>;
-  layout?: 'grid' | 'carousel';
 }
 
 // Union type for all modules
@@ -404,6 +382,4 @@ export type MockModule =
   | MockProductComparisonModule
   | MockRichtextModule
   | MockVideoHeroModule
-  | MockBlogListModule
-  | MockComponentGalleryModule
-  | MockTeamListModule;
+  | MockComponentGalleryModule;

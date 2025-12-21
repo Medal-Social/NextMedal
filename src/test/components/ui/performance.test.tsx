@@ -45,7 +45,6 @@ vi.mock('@sanity/asset-utils', () => ({
 
 // Import components after mocks
 import { Img, ResponsiveImg } from '@/ui/Img';
-import Asset from '@/ui/modules/Asset';
 
 // Helper to create mock Sanity image - using 'as unknown as' to bypass strict type checking
 // since we're mocking the Sanity image structure for testing purposes
@@ -140,31 +139,6 @@ describe('Performance Tests', () => {
 
       it('returns null when no img is provided', () => {
         const { container } = render(<ResponsiveImg img={undefined} />);
-        expect(container.firstChild).toBeNull();
-      });
-    });
-
-    describe('Asset.tsx Component', () => {
-      it('renders images using ResponsiveImg with next/image', () => {
-        const mockAsset = createMockSanityImg();
-        render(<Asset asset={mockAsset} />);
-
-        const img = screen.getByTestId('next-image');
-        expect(img).toBeInTheDocument();
-        expect(img).toHaveAttribute('data-next-image', 'true');
-      });
-
-      it('includes width attribute for Asset images', () => {
-        const mockAsset = createMockSanityImg();
-        render(<Asset asset={mockAsset} />);
-
-        const img = screen.getByTestId('next-image');
-        // Asset component passes width={1200}
-        expect(img).toHaveAttribute('width');
-      });
-
-      it('returns null when no asset is provided', () => {
-        const { container } = render(<Asset asset={undefined} />);
         expect(container.firstChild).toBeNull();
       });
     });

@@ -12,7 +12,6 @@ import { schemaTypes } from '@/sanity/schemaTypes';
 import {
   createMockAccordionListModule,
   createMockBlogFrontpageModule,
-  createMockBlogListModule,
   createMockBlogPost,
   createMockBreadcrumbsModule,
   createMockCalloutModule,
@@ -28,7 +27,6 @@ import {
   createMockProductComparisonModule,
   createMockRichtextModule,
   createMockSite,
-  createMockTeamListModule,
   createMockTeamModule,
   createMockVideoHeroModule,
   MODULE_TYPES,
@@ -210,7 +208,6 @@ describe('Module Schema Validation', () => {
       schemaName: 'blog-frontpage',
       createMock: createMockBlogFrontpageModule,
     },
-    { moduleType: 'blog-list', schemaName: 'blog-list', createMock: createMockBlogListModule },
     {
       moduleType: 'latest-articles',
       schemaName: 'latest-articles',
@@ -238,11 +235,6 @@ describe('Module Schema Validation', () => {
       createMock: createMockTeamModule,
     },
     {
-      moduleType: 'team-list',
-      schemaName: 'team-list',
-      createMock: createMockTeamListModule,
-    },
-    {
       moduleType: 'pricing-comparison',
       schemaName: 'pricing-comparison',
       createMock: createMockPricingComparisonModule,
@@ -265,9 +257,9 @@ describe('Module Schema Validation', () => {
     { moduleType: 'videoHero', schemaName: 'videoHero', createMock: createMockVideoHeroModule },
   ];
 
-  it('all 18 module types have corresponding schemas', () => {
-    expect(MODULE_TYPES).toHaveLength(17);
-    expect(moduleConfigs).toHaveLength(17);
+  it('all 15 module types have corresponding schemas', () => {
+    expect(MODULE_TYPES).toHaveLength(15);
+    expect(moduleConfigs).toHaveLength(15);
   });
 
   describe.each(moduleConfigs)('$schemaName module', ({ moduleType, schemaName, createMock }) => {

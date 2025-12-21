@@ -9,10 +9,6 @@ interface ComponentPreviewProps {
   moduleType: string;
   componentData?: any;
   children: React.ReactNode;
-  hasRegistry?: boolean;
-  schemaCode?: string;
-  schemaHtml?: string;
-  schemaObject?: any;
 }
 
 export function ComponentPreview({ moduleType, componentData, children }: ComponentPreviewProps) {
@@ -27,9 +23,6 @@ export function ComponentPreview({ moduleType, componentData, children }: Compon
             'width',
             'height',
             'alt',
-            'schemaCode',
-            'schemaHtml',
-            'schemaObject',
             'sanityData',
           ].includes(key)
         ) {

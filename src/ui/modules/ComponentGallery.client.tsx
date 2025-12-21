@@ -4,7 +4,7 @@ import { Search } from 'lucide-react';
 import { PortableText } from 'next-sanity';
 import { useQueryState } from 'nuqs';
 import { useState } from 'react';
-import { ConnectedComponentPreview } from '@/components/component-preview/ConnectedComponentPreview';
+import { ComponentPreview } from '@/components/component-preview/ComponentPreview';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -115,13 +115,13 @@ export default function ComponentGalleryClient({
               </div>
 
               <div className="rounded-xl border border-border bg-background shadow-sm overflow-hidden ring-1 ring-border/50 relative">
-                <ConnectedComponentPreview
+                <ComponentPreview
                   moduleType={item.moduleType}
                   componentData={item.componentData}
                 >
                   <div className="bg-checkered absolute inset-0 opacity-[0.03] pointer-events-none" />
                   <div className="relative">{item.children}</div>
-                </ConnectedComponentPreview>
+                </ComponentPreview>
               </div>
             </div>
           ))}

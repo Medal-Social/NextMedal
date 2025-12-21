@@ -15,7 +15,6 @@ import {
 import type {
   MockAccordionListModule,
   MockBlogFrontpageModule,
-  MockBlogListModule,
   MockBreadcrumbsModule,
   MockCalloutModule,
   MockComponentGalleryModule,
@@ -28,7 +27,6 @@ import type {
   MockPricingListModule,
   MockProductComparisonModule,
   MockRichtextModule,
-  MockTeamListModule,
   MockTeamModule,
   MockVideoHeroModule,
 } from './types';
@@ -307,22 +305,6 @@ export function createMockRichtextModule(
   };
 }
 
-export function createMockBlogListModule(
-  overrides?: Partial<MockBlogListModule>
-): MockBlogListModule {
-  return {
-    _type: 'blog-list',
-    _key: generateKey(),
-    pretitle: 'Blog',
-    intro: createMockPortableText(['Blog List']),
-    layout: 'grid',
-    showFeaturedPostsFirst: true,
-    displayFilters: false,
-    limit: 6,
-    ...overrides,
-  };
-}
-
 export function createMockComponentGalleryModule(
   overrides?: Partial<MockComponentGalleryModule>
 ): MockComponentGalleryModule {
@@ -331,21 +313,6 @@ export function createMockComponentGalleryModule(
     _key: generateKey(),
     intro: createMockPortableText(['Component Gallery']),
     groups: [],
-    ...overrides,
-  };
-}
-
-export function createMockTeamListModule(
-  overrides?: Partial<MockTeamListModule>
-): MockTeamListModule {
-  return {
-    _type: 'team-list',
-    _key: generateKey(),
-    options: { uid: 'team-list' },
-    pretitle: 'Team',
-    intro: createMockPortableText(['Our Team']),
-    people: [],
-    layout: 'carousel',
     ...overrides,
   };
 }
@@ -399,12 +366,8 @@ export function createMockModule(type: string, overrides?: Partial<MockModule>):
       return createMockRichtextModule(overrides as Partial<MockRichtextModule>);
     case 'videoHero':
       return createMockVideoHeroModule(overrides as Partial<MockVideoHeroModule>);
-    case 'blog-list':
-      return createMockBlogListModule(overrides as Partial<MockBlogListModule>);
     case 'component-gallery':
       return createMockComponentGalleryModule(overrides as Partial<MockComponentGalleryModule>);
-    case 'team-list':
-      return createMockTeamListModule(overrides as Partial<MockTeamListModule>);
     default:
       throw new Error(`Unknown module type: ${type}`);
   }
@@ -429,9 +392,7 @@ export const MODULE_TYPES = [
   'product-comparison',
   'richtext',
   'videoHero',
-  'blog-list',
   'component-gallery',
-  'team-list',
 ] as const;
 
 export type ModuleType = (typeof MODULE_TYPES)[number];
