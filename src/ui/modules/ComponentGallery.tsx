@@ -1,3 +1,5 @@
+import { Suspense } from 'react';
+import Loading from '@/ui/Loading';
 import Modules from '@/ui/modules';
 import ComponentGalleryClient, { type GalleryComponent } from './ComponentGallery.client';
 
@@ -48,8 +50,6 @@ export default function ComponentGallery({
             // @ts-expect-error - dynamic access
             item.summary ||
             // @ts-expect-error - dynamic access
-            item.pretitle ||
-            // @ts-expect-error - dynamic access
             getContentTitle(item.content) ||
             item._type;
 
@@ -65,5 +65,15 @@ export default function ComponentGallery({
         }) || []
     ) || [];
 
-  return <ComponentGalleryClient intro={intro} components={components} />;
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <Loading />
+        </div>
+      }
+    >
+      <ComponentGalleryClient intro={intro} components={components} />
+    </Suspense>
+  );
 }

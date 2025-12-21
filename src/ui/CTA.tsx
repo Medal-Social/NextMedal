@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { stegaClean } from 'next-sanity';
 import type { ComponentProps } from 'react';
@@ -5,8 +7,8 @@ import { Button } from '@/components/ui/button';
 import resolveUrl from '@/lib/resolveUrl';
 import { validateExternalUrl } from '@/lib/validateExternalUrl';
 
-// Define the allowed button variants
-type ButtonVariant = 'default' | 'ghost' | 'link';
+// Define the allowed button variants matching the Button component
+type ButtonVariant = 'default' | 'outline' | 'secondary' | 'ghost' | 'link' | 'destructive';
 
 // Convert Link to CTA props
 function _linkToCta(link: Sanity.MenuItem | null | undefined): Sanity.CTA {
@@ -42,15 +44,30 @@ export default function CTA({
   ...rest
 }: Sanity.CTA &
   ComponentProps<typeof Button> & {
-    // Add optional types for the props we want to exclude
-    internalLink?: any;
-    externalLink?: any;
-    linkType?: any;
-    text?: any;
+    // Add optional types for the props we want to exclude/use as fallback
+    internalLink?: Sanity.MenuItem['internal'];
+    externalLink?: string;
+    linkType?: 'internal' | 'external';
+    text?: string;
   }) {
-  if (!link) return null;
+  // Construct a fallback link object if the main link prop is missing
+  // This handles the flat structure used in some modules (like Hero)
+  const effectiveLink =
+    link ||
+    (text && (linkType === 'internal' || linkType === 'external')
+      ? {
+          label: text,
+          type: linkType,
+          internal: internalLink,
+          external: externalLink,
+          params: undefined,
+          newTab: undefined,
+        }
+      : null);
 
-  const { label, type, internal, external, params, newTab } = link;
+  if (!effectiveLink) return null;
+
+  const { label, type, internal, external, params, newTab } = effectiveLink;
   const cleanStyle = stegaClean(style);
   // Map 'primary' to 'default' for shadcn Button
   const variant = (cleanStyle === 'primary' ? 'default' : cleanStyle) as ButtonVariant;
@@ -58,6 +75,11 @@ export default function CTA({
 
   // For internal links
   if (type === 'internal' && internal) {
+    const href = resolveUrl(internal, {
+      base: false,
+      params: params,
+    });
+
     return (
       <Button
         variant={variant}
@@ -65,12 +87,26 @@ export default function CTA({
         nativeButton={false}
         render={
           <Link
-            href={resolveUrl(internal, {
-              base: false,
-              params: params,
-            })}
+            href={href}
             target={newTab ? '_blank' : undefined}
             rel={newTab ? 'noopener noreferrer' : undefined}
+            onClick={(_e) => {
+              if (href.includes('#')) {
+                const [path, hash] = href.split('#');
+                const currentPath = window.location.pathname;
+
+                // If target is on the same page
+                if (
+                  (!path || path === currentPath || (path === '/' && currentPath === '/')) &&
+                  hash
+                ) {
+                  const element = document.getElementById(hash);
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }
+              }
+            }}
           >
             {buttonContent}
           </Link>

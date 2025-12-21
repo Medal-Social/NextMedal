@@ -2,6 +2,7 @@
 
 import { Search } from 'lucide-react';
 import { PortableText } from 'next-sanity';
+import { useQueryState } from 'nuqs';
 import { useState } from 'react';
 import { ConnectedComponentPreview } from '@/components/component-preview/ConnectedComponentPreview';
 import { Button } from '@/components/ui/button';
@@ -24,7 +25,7 @@ export default function ComponentGalleryClient({
   components: GalleryComponent[];
 }>) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useQueryState('category');
 
   if (!components?.length) return null;
 
@@ -54,10 +55,10 @@ export default function ComponentGalleryClient({
               <button
                 type="button"
                 onClick={() => setSelectedCategory(null)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
+                className={`px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-all ${
                   selectedCategory === null
-                    ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'bg-transparent text-muted-foreground hover:text-foreground hover:bg-accent'
+                    ? 'bg-primary/5 text-primary'
+                    : 'bg-transparent text-muted-foreground hover:bg-primary/5 hover:text-primary'
                 }`}
               >
                 All
@@ -67,10 +68,10 @@ export default function ComponentGalleryClient({
                   type="button"
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
+                  className={`px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-all ${
                     selectedCategory === category
-                      ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'bg-transparent text-muted-foreground hover:text-foreground hover:bg-accent'
+                      ? 'bg-primary/5 text-primary'
+                      : 'bg-transparent text-muted-foreground hover:bg-primary/5 hover:text-primary'
                   }`}
                 >
                   {category}

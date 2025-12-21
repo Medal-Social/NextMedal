@@ -1,18 +1,40 @@
-import { PortableText } from 'next-sanity';
-import { Card, CardDescription, CardTitle } from '@/components/ui/card';
+'use client';
+
+import { motion } from 'framer-motion';
+import { PortableText, type PortableTextComponents } from 'next-sanity';
 import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
 import Icon from '@/ui/Icon';
-import Pretitle from '@/ui/Pretitle';
+
+const introComponents: PortableTextComponents = {
+  block: {
+    h2: ({ children }) => (
+      <h2 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] text-foreground mb-6">
+        {children}
+      </h2>
+    ),
+    h3: ({ children }) => (
+      <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-4 mt-8">
+        {children}
+      </h3>
+    ),
+    normal: ({ children }) => (
+      <p className="text-lg md:text-xl text-muted-foreground font-normal max-w-2xl mx-auto">
+        {children}
+      </p>
+    ),
+  },
+  marks: {
+    em: ({ children }) => <span className="text-primary font-bold">{children}</span>,
+  },
+};
 
 export default function Features({
-  pretitle,
   intro,
   items,
   ...props
 }: Partial<{
-  pretitle: string;
   intro: any;
   items: {
     summary: string;
@@ -22,55 +44,71 @@ export default function Features({
   }[];
 }> &
   Sanity.Module) {
+  // Distribute items into 3 columns for desktop layout
+  const columns: NonNullable<typeof items>[] = [[], [], []];
+  items?.forEach((item, i) => {
+    columns[i % 3].push(item);
+  });
+
   return (
-    <Section {...moduleProps(props)}>
-      {(pretitle || intro) && (
-        <div className="section-intro text-center items-center flex flex-col mb-12 gap-4">
-          {pretitle && <Pretitle>{pretitle}</Pretitle>}
-          {intro && (
-            <>
-              <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-center">
-                <PortableText value={[intro[0]]} />
+    <Section {...moduleProps(props)} className="py-24 overflow-hidden">
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-16 lg:mb-20 gap-8 border-b border-border/50 pb-10">
+          <div className="max-w-3xl">
+            {intro && (
+              <div className="text-center text-balance">
+                <PortableText value={intro} components={introComponents} />
               </div>
-              {intro[1] && (
-                <div className="text-lg md:text-xl text-center font-normal mx-auto max-w-2xl">
-                  <PortableText value={[intro[1]]} />
-                </div>
-              )}
-              <PortableText value={intro.slice(2)} />
-            </>
-          )}
-        </div>
-      )}
-      <div className={cn('grid gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-12')}>
-        {items?.map((item, index) => (
-          <Card
-            key={item._key || index}
-            className={cn(
-              'h-full relative overflow-hidden shadow-none !border-none',
-              'dark:bg-card/80 dark:backdrop-blur-sm'
             )}
-          >
-            {/* Accent line at the top */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-muted-foreground" />
-            <div className="p-6">
-              <div className="flex flex-col h-full gap-4">
-                {/* Header with icon and title */}
-                <div className="flex items-center gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-md flex items-center justify-center bg-muted text-foreground">
-                    {item.icon && <Icon icon={item.icon} className="w-6 h-6" />}
-                  </div>
-                  <CardTitle>{item.summary}</CardTitle>
-                </div>
-                {/* Description */}
-                <CardDescription>
-                  <PortableText value={item.content} />
-                </CardDescription>
-              </div>
+          </div>
+        </div>
+
+        {/* Desktop Staggered Grid */}
+        <div className="hidden lg:grid grid-cols-3 gap-8 items-start">
+          {columns.map((colItems, colIndex) => (
+            <div
+              key={colIndex}
+              className={cn('space-y-8', colIndex === 0 && 'mt-12', colIndex === 2 && 'mt-24')}
+            >
+              {colItems?.map((item, index) => (
+                <FeatureCard key={item._key || index} item={item} index={index} />
+              ))}
             </div>
-          </Card>
-        ))}
+          ))}
+        </div>
+
+        {/* Mobile/Tablet Simple Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:hidden">
+          {items?.map((item, index) => (
+            <FeatureCard key={item._key || index} item={item} index={index} />
+          ))}
+        </div>
       </div>
     </Section>
+  );
+}
+
+function FeatureCard({ item, index }: { item: any; index: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      className="group h-full bg-card p-8 rounded-3xl border border-border shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden"
+    >
+      <div className="flex items-start gap-5 mb-5">
+        <div className="relative w-14 h-14 flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-purple-600/10 rounded-tr-2xl rounded-bl-2xl rounded-tl-md rounded-br-md rotate-3 group-hover:rotate-6 transition-transform duration-300"></div>
+          <div className="absolute inset-0 flex items-center justify-center text-primary">
+            {item.icon && <Icon icon={item.icon} className="w-8 h-8" />}
+          </div>
+        </div>
+        <h3 className="text-xl font-bold pt-1.5 leading-tight text-foreground">{item.summary}</h3>
+      </div>
+      <div className="text-[17px] text-muted-foreground leading-relaxed font-medium opacity-90">
+        <PortableText value={item.content} />
+      </div>
+    </motion.div>
   );
 }

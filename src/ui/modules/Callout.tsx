@@ -1,5 +1,25 @@
-import { PortableText, stegaClean } from 'next-sanity';
+import { PortableText, type PortableTextComponents, stegaClean } from 'next-sanity';
 import CTAListCallout from '../CTAListCallout';
+
+const components: PortableTextComponents = {
+  block: {
+    normal: ({ children }) => (
+      <p className="text-lg text-gray-300 leading-relaxed max-w-2xl mx-auto mb-6 last:mb-0">
+        {children}
+      </p>
+    ),
+    h2: ({ children }) => (
+      <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white max-w-3xl mx-auto mb-6">
+        {children}
+      </h2>
+    ),
+    h3: ({ children }) => (
+      <h3 className="text-xl sm:text-2xl font-semibold text-white max-w-3xl mx-auto mb-4 mt-8 first:mt-0">
+        {children}
+      </h3>
+    ),
+  },
+};
 
 export default function Callout({
   content,
@@ -13,9 +33,8 @@ export default function Callout({
     <section className="w-full py-24 sm:py-32">
       <div className="w-full ">
         <div className="relative isolate overflow-hidden bg-gray-900 text-white px-6 py-24 text-center shadow-2xl  sm:px-16">
-          <div className="emailsignup">
-            <PortableText value={stegaClean(content)} />
-          </div>
+          <PortableText value={stegaClean(content)} components={components} />
+
           <CTAListCallout className="!mt-8 justify-center" ctas={stegaClean(ctas)} />
           <svg
             viewBox="0 0 1024 1024"

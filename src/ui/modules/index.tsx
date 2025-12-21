@@ -4,6 +4,7 @@ import BlogFrontpage from './blog/BlogFrontpage';
 import LatestArticles from './blog/LatestArticles';
 import Callout from './Callout';
 import ComponentGallery from './ComponentGallery';
+import EmptyState from './EmptyState';
 import Features from './Features';
 import Hero from './hero/Hero';
 import LogoCloud from './LogoCloud';
@@ -23,6 +24,10 @@ export default function Modules({
   page?: Sanity.Page | Sanity.ComponentLibrary;
   post?: Sanity.BlogPost;
 }) {
+  if (!modules?.length) {
+    return <EmptyState />;
+  }
+
   return (
     <>
       {modules?.map((module) => {

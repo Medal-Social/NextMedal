@@ -8,7 +8,6 @@ import { Section } from '@/components/ui/section';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import moduleProps from '@/lib/moduleProps';
 import CTAList from '@/ui/CTAList';
-import Pretitle from '@/ui/Pretitle';
 
 const components: PortableTextComponents = {
   list: {
@@ -27,12 +26,10 @@ const components: PortableTextComponents = {
 };
 
 export default function PricingList({
-  pretitle,
   intro,
   tiers,
   ...props
 }: Partial<{
-  pretitle: string;
   intro: any;
   tiers: Sanity.Pricing[];
 }> &
@@ -40,9 +37,8 @@ export default function PricingList({
   const [isYearly, setIsYearly] = useState(false);
   return (
     <Section className="space-y-8" {...moduleProps(props)}>
-      {(pretitle || intro) && (
+      {intro && (
         <header className="section-intro text-center items-center flex flex-col gap-4">
-          <Pretitle>{pretitle}</Pretitle>
           <PortableText value={intro} />
         </header>
       )}

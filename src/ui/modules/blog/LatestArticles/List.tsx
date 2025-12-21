@@ -29,9 +29,17 @@ export default function List({
 }
 
 export function filterPosts(posts: Sanity.BlogPost[]) {
-  const { category, author } = useBlogFilters();
+  const { category, author, search } = useBlogFilters();
 
   return posts.filter((post) => {
+    // Search filter
+    if (search) {
+      const searchLower = search.toLowerCase();
+      const titleMatch = post.metadata?.title?.toLowerCase().includes(searchLower);
+      const descMatch = post.metadata?.description?.toLowerCase().includes(searchLower);
+      if (!titleMatch && !descMatch) return false;
+    }
+
     if (category !== 'All' && author)
       return (
         post.authors?.some(({ slug }) => slug?.current === author) &&

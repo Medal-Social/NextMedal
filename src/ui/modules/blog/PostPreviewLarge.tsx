@@ -8,7 +8,18 @@ import Categories from './Categories';
 export default function PostPreviewLarge({ post }: { post: Sanity.BlogPost }) {
   if (!post || !post.metadata) return null;
 
-  const href = resolveUrl({ ...post, metadata: post.metadata });
+  const href = resolveUrl({ ...post, metadata: post.metadata }, { base: false });
+
+  const fallbackImage = !post.metadata.image
+    ? {
+        src: `/api/og/blog-fallback?title=${encodeURIComponent(post.metadata.title)}&category=${encodeURIComponent(
+          post.categories?.[0]?.title || ''
+        )}`,
+        alt: post.metadata.title,
+        width: 1200,
+        height: 630,
+      }
+    : undefined;
 
   return (
     <article className="group relative isolate flex flex-col gap-8 lg:flex-row">
@@ -16,8 +27,9 @@ export default function PostPreviewLarge({ post }: { post: Sanity.BlogPost }) {
         <Link href={href}>
           <Img
             className="absolute inset-0 h-full w-full rounded-2xl bg-muted object-cover transition-transform duration-300 group-hover:scale-105 group-hover:brightness-110"
-            image={post.metadata.image}
+            image={post.metadata.image || fallbackImage}
             sizes="(min-width: 1024px) 16rem, 100vw"
+            width={800}
             priority
             alt={post.metadata.title}
           />

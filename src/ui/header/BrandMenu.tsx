@@ -48,7 +48,9 @@ export default function BrandMenu({ children, logoData, hasBrandPage }: BrandMen
 
   return (
     <ContextMenu>
-      <ContextMenuTrigger render={<div className="cursor-pointer">{children}</div>} />
+      <ContextMenuTrigger
+        render={<div className="cursor-pointer flex items-center">{children}</div>}
+      />
       <ContextMenuContent className="w-56 p-2 z-[200]">
         <ContextMenuItem
           render={

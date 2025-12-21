@@ -10,16 +10,13 @@ import {
 import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
 import { Img } from '@/ui/Img';
-import Pretitle from '@/ui/Pretitle';
 
 export default function TeamList({
-  pretitle,
   intro,
   people,
   layout,
   ...props
 }: Partial<{
-  pretitle: string;
   intro: any;
   people: Sanity.Person[];
   layout: 'grid' | 'carousel';
@@ -30,7 +27,6 @@ export default function TeamList({
     <Section className="bg-card" {...moduleProps(props)}>
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-20 xl:grid-cols-5">
         <div className="max-w-2xl xl:col-span-2">
-          {pretitle && <Pretitle>{pretitle}</Pretitle>}
           <div className="prose dark:prose-invert">
             <PortableText value={intro} />
           </div>

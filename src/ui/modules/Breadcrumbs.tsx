@@ -36,7 +36,7 @@ export default async function Breadcrumbs({
               <BreadcrumbLink
                 href={
                   crumb.internal
-                    ? resolveUrl(crumb.internal, { base: false })
+                    ? resolveUrl(crumb.internal as Sanity.PageBase, { base: false })
                     : crumb.external
                       ? stegaClean(crumb.external)
                       : '/'

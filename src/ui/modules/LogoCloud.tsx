@@ -46,7 +46,7 @@ export default async function LogoCloud({
         <div className="relative w-full overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]">
           <div className="flex animate-marquee items-center gap-12 whitespace-nowrap pause-on-hover">
             {[...allLogos, ...allLogos].map((logo, i) => (
-              <div key={`${logo._key || logo.name}-${i}`} className="mx-6">
+              <div key={`${logo._key || logo.name}-${i}`} className="mx-6 shrink-0">
                 <LogoItem logo={logo} />
               </div>
             ))}
@@ -54,8 +54,8 @@ export default async function LogoCloud({
         </div>
       ) : (
         <figure className="mx-auto flex flex-wrap items-center justify-center gap-x-12 gap-y-8">
-          {allLogos.map((logo) => (
-            <div key={logo._key || logo.name}>
+          {allLogos.map((logo, index) => (
+            <div key={logo._id || logo._key || logo.name || index}>
               <LogoItem logo={logo} />
             </div>
           ))}
@@ -77,17 +77,15 @@ function LogoItem({ logo }: { logo: Sanity.Logo }) {
       return (
         <>
           <Img
-            className="h-12 w-auto md:h-16 shrink-0 object-contain dark:hidden"
+            className="h-16 w-auto md:h-20 shrink-0 object-contain dark:hidden"
             image={lightLogo}
-            height={100}
-            width={400}
+            height={200}
             alt={logo.name}
           />
           <Img
-            className="hidden h-12 w-auto md:h-16 shrink-0 object-contain dark:block"
+            className="hidden h-16 w-auto md:h-20 shrink-0 object-contain dark:block"
             image={darkLogo}
-            height={100}
-            width={400}
+            height={200}
             alt={logo.name}
           />
         </>
@@ -96,10 +94,9 @@ function LogoItem({ logo }: { logo: Sanity.Logo }) {
 
     return (
       <Img
-        className="h-12 w-auto md:h-16 shrink-0 object-contain"
+        className="h-16 w-auto md:h-20 shrink-0 object-contain"
         image={defaultLogo || lightLogo || darkLogo}
-        height={100}
-        width={400}
+        height={200}
         alt={logo.name}
       />
     );
