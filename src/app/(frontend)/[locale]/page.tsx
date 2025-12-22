@@ -12,7 +12,7 @@ import {
 import { Section } from '@/components/ui/section';
 import { PageProvider } from '@/contexts/PageContext';
 import processMetadata from '@/lib/processMetadata';
-import { fetchSanityLive } from '@/sanity/lib/live';
+import { fetchSanity } from '@/sanity/lib/fetch';
 import { MODULES_QUERY, TRANSLATIONS_QUERY } from '@/sanity/lib/queries';
 import Modules from '@/ui/modules';
 
@@ -65,7 +65,7 @@ export async function generateMetadata() {
 }
 
 async function getPage() {
-  const page = await fetchSanityLive<Sanity.Page>({
+  const page = await fetchSanity<Sanity.Page>({
     query: groq`*[_type == 'page' && metadata.slug.current == 'index'][0]{
 			...,
 			'modules': (

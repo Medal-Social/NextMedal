@@ -36,6 +36,8 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
+  --color-highlight-foreground: var(--highlight-foreground);
+
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -157,6 +159,7 @@
   --border: oklch(0.88 0.01 285.82);
   --input: oklch(0.88 0.01 285.82);
   --ring: oklch(0.319 0.132 282.82);
+  --highlight-foreground: var(--primary);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -180,7 +183,7 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.19 0.013 285.82);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.669 0.132 282.82);
+  --primary: var(--color-brand-500);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.269 0.02 285.82);
   --secondary-foreground: oklch(0.985 0 0);
@@ -193,6 +196,7 @@
   --border: oklch(0.269 0.02 285.82);
   --input: oklch(0.269 0.02 285.82);
   --ring: oklch(0.669 0.132 282.82);
+  --highlight-foreground: var(--color-brand-300);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);

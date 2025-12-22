@@ -20,33 +20,26 @@ export async function fetchSanity<T = any>({
 }) {
   const preview = dev || (await draftMode()).isEnabled;
 
+  if (preview) {
+    return fetchSanityLive<T>({ query, params });
+  }
+
   return client.fetch<T>(
     query,
     params,
-    preview
-      ? {
-          stega: true,
-          perspective: 'drafts',
-          useCdn: false,
-          token,
-          next: {
-            revalidate: 0,
-            ...next,
-          },
-        }
-      : {
-          perspective: 'published',
-          useCdn: true,
-          next: {
-            revalidate: 3600, // every hour
-            ...next,
-          },
-        }
+    {
+      perspective: 'published',
+      useCdn: true,
+      next: {
+        revalidate: 3600, // every hour
+        ...next,
+      },
+    }
   );
 }
 
 export async function getSite() {
-  const site = await fetchSanityLive<Sanity.Site>({
+  const site = await fetchSanity<Sanity.Site>({
     query: groq`
 			*[_type == 'site' && _id == 'site'][0]{
 				...,
