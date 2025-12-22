@@ -16,6 +16,11 @@ const config = {
   reactStrictMode: true,
   poweredByHeader: false,
   output: "standalone",
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
   // Configure image handling
   images: {
     dangerouslyAllowSVG: true,
@@ -23,18 +28,6 @@ const config = {
       {
         protocol: "https",
         hostname: "cdn.sanity.io",
-      },
-      { 
-        protocol: "https",
-        hostname: "unsplash.com",
-      },
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-      },
-      {
-        protocol: "https",
-        hostname: "api.og",
       },
       {
         protocol: "https",
@@ -44,10 +37,7 @@ const config = {
         protocol: "https",
         hostname: "img.youtube.com",
       },
-      {
-        protocol: "https",
-        hostname: "placehold.co",
-      },
+ 
     ],
   },
   compiler: {

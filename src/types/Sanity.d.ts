@@ -2,73 +2,6 @@ import type { SanityAssetDocument, SanityDocument } from 'next-sanity';
 
 declare global {
   namespace Sanity {
-    // color value type for reuse
-    interface ColorValue {
-      hex: string;
-      alpha?: number;
-      hsl?: {
-        h: number;
-        s: number;
-        l: number;
-        a?: number;
-      };
-      hsv?: {
-        h: number;
-        s: number;
-        v: number;
-        a?: number;
-      };
-      rgb?: {
-        r: number;
-        g: number;
-        b: number;
-        a?: number;
-      };
-    }
-
-    interface ThemeColors {
-      background?: ColorValue;
-      foreground?: ColorValue;
-      primary?: ColorValue;
-      secondary?: ColorValue;
-      accent?: ColorValue;
-      muted?: ColorValue;
-      destructive?: ColorValue;
-      primaryForeground?: ColorValue;
-      secondaryForeground?: ColorValue;
-      accentForeground?: ColorValue;
-      mutedForeground?: ColorValue;
-      destructiveForeground?: ColorValue;
-      border?: ColorValue;
-      input?: ColorValue;
-      ring?: ColorValue;
-      chart1?: ColorValue;
-      chart2?: ColorValue;
-      chart3?: ColorValue;
-      chart4?: ColorValue;
-      chart5?: ColorValue;
-      sidebarBackground?: ColorValue;
-      sidebarForeground?: ColorValue;
-      sidebarPrimary?: ColorValue;
-      sidebarPrimaryForeground?: ColorValue;
-      sidebarAccent?: ColorValue;
-      sidebarAccentForeground?: ColorValue;
-      sidebarBorder?: ColorValue;
-      sidebarRing?: ColorValue;
-      card?: ColorValue;
-      cardForeground?: ColorValue;
-      popover?: ColorValue;
-      popoverForeground?: ColorValue;
-    }
-
-    // Stat interface for Hero stats component
-    interface Stat {
-      _key: string;
-      value: string;
-      label: string;
-      icon?: Icon;
-    }
-
     // documents
 
     interface Site extends SanityDocument {
@@ -92,11 +25,12 @@ declare global {
       social?: Navigation;
       socialLinks?: {
         _key: string;
-        platform: string;
+        text: string;
         url: string;
       }[];
       // custom
       brandPage?: string;
+      enableSearch?: boolean;
     }
 
     interface Navigation extends SanityDocument {
@@ -110,7 +44,7 @@ declare global {
       _type: string;
       title?: string;
       parent?: Page[];
-      metadata: Metadata;
+      metadata?: Metadata;
       language?: string;
       translations?: Array<{
         slug: string;
@@ -138,12 +72,12 @@ declare global {
     interface BlogPost extends SanityDocument {
       _type: 'blog.post';
       body: any[];
-      categories: SanityReference[];
-      authors: SanityReference[];
+      categories: BlogCategory[]; // Usually dereferenced in UI
+      authors: Person[]; // Usually dereferenced in UI
       publishDate: string;
       featured?: boolean;
       metadata?: Metadata;
-      relatedPosts?: SanityReference[];
+      relatedPosts?: BlogPost[]; // Usually dereferenced in UI
     }
 
     interface BlogCategory extends SanityDocument {
@@ -174,6 +108,7 @@ declare global {
     }
 
     interface Person extends SanityDocument {
+      _key?: string; // added for list rendering
       name: string;
       title?: string;
       bio?: any;
@@ -187,6 +122,7 @@ declare global {
 
     interface Pricing extends SanityDocument {
       title: string;
+      description?: string; // added
       highlight?: string;
       price: {
         base?: string;
@@ -225,16 +161,24 @@ declare global {
       url?: string;
     }
 
-    interface Image extends SanityAssetDocument {
-      alt: string;
-      loading: 'lazy' | 'eager';
+    interface Image extends Partial<SanityAssetDocument> {
+      alt?: string;
+      altText?: string;
+      loading?: 'lazy' | 'eager';
+      asset?: {
+        _ref: string;
+        _type: 'reference';
+        altText?: string;
+        url?: string; // added
+      };
+      url?: string; // added for direct access
     }
 
     interface MenuItem {
       readonly _type: 'menuItem';
       label: string;
       type: 'internal' | 'external';
-      internal?: Page | BlogPost | Changelog;
+      internal?: Page | BlogPost;
       external?: string;
       params?: string;
       newTab?: boolean;
@@ -266,6 +210,7 @@ declare global {
     }
 
     interface PricingComparisonTier {
+      _key: string;
       name: string;
       price: string;
       description: string;
@@ -281,6 +226,12 @@ declare global {
       };
     }
 
+    interface SanityReference<_T = any> {
+      _type: 'reference';
+      _ref: string;
+      _weak?: boolean;
+    }
+
     interface Video {
       type: 'mux' | 'youtube';
       videoId?: string;
@@ -293,36 +244,143 @@ declare global {
         };
         playbackId?: string;
       };
-      thumbnail: Sanity.Image;
+      thumbnail?: Sanity.Image; // made optional
       title?: string;
     }
 
-    export interface VideoHeroSanity {
-      _type: 'videoHero';
-      type: 'mux' | 'youtube';
-      videoId: string;
-      thumbnail: SanityImage;
+    // Module Interfaces
+
+    interface AccordionList extends Module<'accordion-list'> {
+      content?: any[];
+      items?: {
+        _key: string;
+        summary: string;
+        content: any[];
+        open?: boolean;
+      }[];
+      generateSchema?: boolean;
+    }
+
+    interface BlogFrontpage extends Module<'blog-frontpage'> {
+      mainPost?: 'recent' | 'featured';
+      showFeaturedPostsFirst?: boolean;
+      itemsPerPage?: number;
+      posts?: BlogPost[]; // Extended for UI usage
+    }
+
+    interface Breadcrumbs extends Module<'breadcrumbs'> {
+      crumbs?: MenuItem[];
+      hideCurrent?: boolean;
+      currentPage?: Page | BlogPost | ComponentLibrary;
+    }
+
+    interface Callout extends Module<'callout'> {
+      content?: any[];
+      ctas?: CTA[];
+    }
+
+    interface ComponentGallery extends Module<'component-gallery'> {
+      intro?: any[];
+      groups?: {
+        _key: string;
+        title: string;
+        items?: Module[];
+      }[];
+    }
+
+    interface Features extends Module<'features'> {
+      intro?: any[];
+      items?: {
+        _key: string;
+        icon?: Icon;
+        summary: string;
+        content: any[];
+      }[];
+    }
+
+    interface Hero extends Module<'hero'> {
+      highlightedTitle?: string;
+      content?: any[]; // renamed from description to match schema
+      ctas?: CTA[];
+      image?: Img;
+    }
+
+    interface LatestArticles extends Module<'latest-articles'> {
+      intro?: any[];
+      layout?: 'grid' | 'carousel';
+      showFeaturedPostsFirst?: boolean;
+      displayFilters?: boolean;
+      limit?: number;
+      filteredCategory?: BlogCategory; // Resolved
+    }
+
+    interface LogoCloud extends Module<'logo-cloud'> {
+      content?: any[];
+      logos?: Logo[]; // Resolved
+    }
+
+    interface PricingComparison extends Module<'pricing-comparison'> {
       title?: string;
+      description?: string;
+      tiers?: PricingComparisonTier[];
+      featureCategories?: {
+        _key: string;
+        category: string;
+        items?: {
+          _key: string;
+          name: string;
+          tooltip?: string;
+          tiers?: (string | boolean)[];
+          subItems?: {
+            _key: string;
+            name: string;
+            tooltip?: string;
+            tiers?: (string | boolean)[];
+          }[];
+        }[];
+      }[];
+    }
+
+    interface PricingList extends Module<'pricing-list'> {
+      intro?: any[];
+      tiers?: Pricing[]; // Resolved
+    }
+
+    interface ProductComparison extends Module<'product-comparison'> {
+      intro?: any[];
+      products?: {
+        _key: string;
+        name: string;
+        highlight?: boolean;
+      }[];
+      features?: {
+        _key: string;
+        name: string;
+        featureDetails?: string[];
+      }[];
+    }
+
+    interface Team extends Module<'team'> {
+      intro?: any[];
+      people?: Person[]; // Resolved
+      layout?: 'grid' | 'split';
+    }
+
+    interface Richtext extends Module<'richtext'> {
+      content?: any[];
     }
 
     interface VideoHero extends Module<'videoHero'> {
       type: 'mux' | 'youtube';
-      videoId: string;
-      thumbnail: SanityImage;
+      videoId?: string;
+      muxVideo?: {
+        asset?: {
+          playbackId?: string;
+        };
+        playbackId?: string; // added
+      };
+      thumbnail?: Image;
       title?: string;
-    }
-
-    interface ModuleOptions {
-      isFullWidth?: boolean;
-    }
-
-    // Add Hero module interface
-    interface Hero extends Module<'hero'> {
-      highlightedTitle?: string;
-      title: string;
-      description: string;
-      ctas?: CTA[];
-      image?: Img;
     }
   }
 }

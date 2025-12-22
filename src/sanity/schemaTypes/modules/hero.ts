@@ -99,8 +99,9 @@ export default defineType({
       description: 'Add up to 2 buttons (one primary, one secondary)',
       type: 'array',
       of: [defineArrayMember({ type: 'cta' })],
-      validation: (Rule) =>
-        Rule.max(2).custom((ctas) => {
+      validation: (Rule) => [
+        Rule.max(2).warning('More than 2 buttons may clutter the Hero layout'),
+        Rule.custom((ctas) => {
           if (!ctas || ctas.length === 0) return true;
 
           const styles = ctas.map((cta: any) => cta?.style || 'primary');
@@ -114,6 +115,7 @@ export default defineType({
 
           return true;
         }),
+      ],
       group: 'content',
     }),
     defineField({
@@ -171,16 +173,15 @@ export default defineType({
   ],
   preview: {
     select: {
-      title: 'title',
       media: 'image',
       videoType: 'videoType',
       description: 'content',
     },
-    prepare: ({ title, media, videoType, description }) => {
+    prepare: ({ media, videoType, description }) => {
       const mediaLabel =
         videoType === 'mux' ? 'Mux Video' : videoType === 'url' ? 'Video URL' : 'Image';
       return {
-        title: title || getBlockText(description) || 'Hero',
+        title: getBlockText(description) || 'Hero',
         subtitle: `Hero • ${mediaLabel}`,
         media: media?.image || BlockContentIcon,
       };

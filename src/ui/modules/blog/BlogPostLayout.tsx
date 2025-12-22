@@ -44,7 +44,7 @@ export default function BlogPostLayout({ post }: { post: any }) {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
 
-              {crumbs.map((crumb, _index) => (
+              {crumbs.map((crumb) => (
                 <Fragment key={crumb.label}>
                   <BreadcrumbItem>
                     <BreadcrumbLink href={crumb.href}>{crumb.label}</BreadcrumbLink>
@@ -108,6 +108,7 @@ export default function BlogPostLayout({ post }: { post: any }) {
                   className="w-full h-full object-cover"
                   sizes="(max-width: 768px) 100vw, 900px"
                   priority
+                  fetchPriority="high"
                   alt={post.metadata.title || ''}
                   unoptimized={!post.metadata?.image}
                 />

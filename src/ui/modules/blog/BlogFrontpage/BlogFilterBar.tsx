@@ -1,5 +1,5 @@
 import { groq } from 'next-sanity';
-import { fetchSanityLive } from '@/sanity/lib/fetch';
+import { fetchSanityLive } from '@/sanity/lib/live';
 import BlogFilterBarClient from './BlogFilterBarClient';
 
 export default async function BlogFilterBar() {

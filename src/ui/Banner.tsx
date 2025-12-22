@@ -1,5 +1,5 @@
 import { groq } from 'next-sanity';
-import { fetchSanityLive } from '@/sanity/lib/fetch';
+import { fetchSanityLive } from '@/sanity/lib/live';
 import { LINK_QUERY } from '@/sanity/lib/queries';
 import BannerClient from './Banner-client';
 

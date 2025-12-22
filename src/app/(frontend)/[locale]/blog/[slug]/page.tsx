@@ -4,8 +4,8 @@ import { mockPost } from '@/lib/mock-blog-post';
 import processMetadata from '@/lib/processMetadata';
 import resolveUrl from '@/lib/resolveUrl';
 import { client } from '@/sanity/lib/client';
-import { fetchSanityLive } from '@/sanity/lib/fetch';
-import { MODULES_QUERY } from '@/sanity/lib/queries';
+import { fetchSanityLive } from '@/sanity/lib/live';
+import { IMAGE_QUERY, MODULES_QUERY } from '@/sanity/lib/queries';
 import JsonLd from '@/ui/JsonLd';
 import Modules from '@/ui/modules';
 import BlogPostLayout from '@/ui/modules/blog/BlogPostLayout';
@@ -69,7 +69,7 @@ async function getPost(params: { slug?: string }) {
 			...,
 			body[]{
 				...,
-				_type == 'image' => { asset-> }
+				_type == 'image' => { ${IMAGE_QUERY} }
 			},
 			'readTime': length(string::split(pt::text(body), ' ')) / 200,
 			'headings': body[style in ['h2', 'h3']]{
@@ -80,6 +80,7 @@ async function getPost(params: { slug?: string }) {
 			authors[]->,
 			metadata {
 				...,
+				image { ${IMAGE_QUERY} },
 				'ogimage': image.asset->url + '?w=1200'
 			},
 			'modules': (

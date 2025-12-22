@@ -7,51 +7,13 @@ import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
 
 // Define types based on schema
-type Tier = {
-  _key: string;
-  name: string;
-  price?: string;
-  description?: string;
-  popular?: boolean;
-  cta?: any; // Sanity CTA type
-};
-
-type FeatureTier =
-  | {
-      type: 'string' | 'boolean';
-      title: string | boolean;
-    }
-  | string
-  | boolean;
-
-type FeatureItem = {
-  _key: string;
-  name: string;
-  tooltip?: string;
-  tiers: FeatureTier[];
-  subItems?: FeatureItem[];
-};
-
-type FeatureCategory = {
-  _key: string;
-  category: string;
-  items: FeatureItem[];
-};
-
-type PricingComparisonProps = {
-  title?: string;
-  description?: string;
-  tiers?: Tier[];
-  featureCategories?: FeatureCategory[];
-} & Sanity.Module;
-
 export default function PricingComparison({
   title,
   description,
   tiers,
   featureCategories,
   ...props
-}: PricingComparisonProps) {
+}: Sanity.PricingComparison) {
   return (
     <Section className="space-y-12" width="wide" {...moduleProps(props)}>
       <div className="text-center space-y-4">
@@ -101,7 +63,7 @@ export default function PricingComparison({
                     {category.category}
                   </td>
                 </tr>
-                {category.items.map((feature) => (
+                {category.items?.map((feature) => (
                   <FeatureRow
                     key={feature._key}
                     feature={feature}
@@ -122,7 +84,9 @@ function FeatureRow({
   tiersCount,
   level = 0,
 }: {
-  feature: FeatureItem;
+  feature: NonNullable<
+    NonNullable<Sanity.PricingComparison['featureCategories']>[number]['items']
+  >[number];
   tiersCount: number;
   level?: number;
 }) {
@@ -175,15 +139,16 @@ function FeatureRow({
   );
 }
 
-function renderValue(value: FeatureTier | null | undefined) {
-  // Resolve the value to a primitive (string, boolean, or null/undefined)
-  let resolved: string | boolean | null | undefined = value as any;
+function renderValue(value: string | boolean | null | undefined) {
+  // Normalize value
+  let resolved: string | boolean | null | undefined = value;
 
+  // Handle case where value might be an object (though types say otherwise, Sanity sometimes provides them)
   if (typeof value === 'object' && value !== null) {
-    if ('title' in value) {
-      resolved = value.title;
+    const valObj = value as any;
+    if ('title' in valObj) {
+      resolved = valObj.title;
     } else {
-      // If we receive an unknown object, treating it as empty/dash is safer than crashing or printing [object Object]
       resolved = null;
     }
   }

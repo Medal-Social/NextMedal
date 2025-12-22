@@ -1,6 +1,8 @@
 import { groq } from 'next-sanity';
 import { Suspense } from 'react';
-import { fetchSanityLive } from '@/sanity/lib/fetch';
+import moduleProps from '@/lib/moduleProps';
+import { fetchSanityLive } from '@/sanity/lib/live';
+import { IMAGE_QUERY } from '@/sanity/lib/queries';
 import PostPreview from '../PostPreview';
 import BlogFilterBar from './BlogFilterBar';
 import BlogHero from './BlogHero';
@@ -10,11 +12,8 @@ export default async function BlogFrontpage({
   mainPost,
   itemsPerPage,
   posts: postsProp,
-}: Partial<{
-  mainPost: 'recent' | 'featured';
-  itemsPerPage: number;
-  posts?: Sanity.BlogPost[];
-}>) {
+  ...props
+}: Sanity.BlogFrontpage) {
   const posts =
     postsProp ||
     (await fetchSanityLive<Sanity.BlogPost[]>({
@@ -22,7 +21,10 @@ export default async function BlogFrontpage({
 			_type,
 			_id,
 			featured,
-			metadata,
+			metadata {
+				...,
+				image { ${IMAGE_QUERY} }
+			},
 			categories[]->,
 			authors[]->,
 			publishDate,
@@ -32,7 +34,7 @@ export default async function BlogFrontpage({
   // Determine Hero Post
   let heroPost: Sanity.BlogPost | undefined;
   if (mainPost === 'featured') {
-    heroPost = posts.find((p) => p.featured === 'featured');
+    heroPost = posts.find((p) => p.featured === true);
   }
   if (!heroPost) {
     heroPost = posts[0];
@@ -46,8 +48,7 @@ export default async function BlogFrontpage({
   const recentPost = remainingPosts[0];
 
   // Popular: Next featured post, or just next post
-  const popularPost =
-    remainingPosts.slice(1).find((p) => p.featured === 'featured') || remainingPosts[1];
+  const popularPost = remainingPosts.slice(1).find((p) => p.featured === true) || remainingPosts[1];
 
   // Grid Posts: All remaining posts excluding hero, recent, and popular
   const gridPosts = remainingPosts.filter(
@@ -55,7 +56,7 @@ export default async function BlogFrontpage({
   );
 
   return (
-    <>
+    <div {...moduleProps(props)}>
       <BlogHero featuredPost={heroPost} recentPost={recentPost} popularPost={popularPost} />
 
       <BlogFilterBar />
@@ -77,6 +78,6 @@ export default async function BlogFrontpage({
           </Suspense>
         </div>
       </section>
-    </>
+    </div>
   );
 }

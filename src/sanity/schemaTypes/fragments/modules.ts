@@ -35,10 +35,9 @@ export default defineField({
           of: ['videoHero', 'hero'],
         },
         {
-          name: 'Content Blocks',
+          name: 'Content Sections',
           of: [
             'richtext',
-            'callout',
             'accordion-list',
             'features',
             'logo-cloud',
@@ -48,12 +47,12 @@ export default defineField({
           ],
         },
         {
-          name: 'Blog',
-          of: ['blog-frontpage', 'latest-articles'],
+          name: 'Marketing & Leads',
+          of: ['callout'],
         },
         {
           name: 'Utility',
-          of: ['breadcrumbs', 'component-gallery'],
+          of: ['breadcrumbs', 'component-gallery', 'blog-frontpage', 'latest-articles'],
         },
       ],
     },

@@ -15,7 +15,6 @@ import Footer from '@/ui/footer';
 import Header from '@/ui/header';
 import SiteJsonLd from '@/ui/SiteJsonLd';
 import SkipToContent from '@/ui/SkipToContent';
-import ThemeColorSetter from '@/ui/ThemeColorSetter';
 import VisualEditingControls from '@/ui/VisualEditingControls';
 
 type Props = {
@@ -37,10 +36,7 @@ export default async function RootLayout({ children, params }: Props) {
   setRequestLocale(locale);
 
   // Static generation is now possible since we're not using the connection() API
-  const site = await getSite();
-  const themeSettings = site.themeSettings || {
-    defaultTheme: 'light',
-  };
+  await getSite();
 
   return (
     <html
@@ -52,14 +48,10 @@ export default async function RootLayout({ children, params }: Props) {
         <SiteJsonLd />
         <ThemeProvider
           attribute="class"
-          defaultTheme={themeSettings.defaultTheme || 'light'}
+          defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <ThemeColorSetter
-            lightTheme={themeSettings.lightMode}
-            darkTheme={themeSettings.darkMode}
-          />
           <NuqsAdapter>
             <NextIntlClientProvider locale={locale}>
               <SkipToContent />

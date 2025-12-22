@@ -1,9 +1,11 @@
-import { groq, PortableText, stegaClean } from 'next-sanity';
+import { groq, stegaClean } from 'next-sanity';
 import { Suspense } from 'react';
 import { Section } from '@/components/ui/section';
+import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
-import { fetchSanityLive } from '@/sanity/lib/fetch';
+import { fetchSanityLive } from '@/sanity/lib/live';
 import FilterList from '@/ui/modules/blog/LatestArticles/FilterList';
+import SharedPortableText from '@/ui/modules/SharedPortableText';
 import PostPreview from '../PostPreview';
 import List from './List';
 
@@ -15,15 +17,8 @@ export default async function LatestArticles({
   displayFilters,
   filteredCategory,
   posts: postsProp,
-}: Partial<{
-  intro: any;
-  layout: 'grid' | 'carousel';
-  limit: number;
-  showFeaturedPostsFirst: boolean;
-  displayFilters: boolean;
-  filteredCategory: Sanity.BlogCategory;
-  posts?: Sanity.BlogPost[];
-}>) {
+  ...props
+}: Sanity.LatestArticles & { posts?: Sanity.BlogPost[] }) {
   const posts =
     postsProp ||
     (await fetchSanityLive<Sanity.BlogPost[]>({
@@ -61,10 +56,10 @@ export default async function LatestArticles({
       : '320px';
 
   return (
-    <Section className="space-y-8">
+    <Section className="space-y-8" {...moduleProps(props)}>
       {intro && (
         <header className="richtext">
-          <PortableText value={intro} />
+          <SharedPortableText value={intro} />
         </header>
       )}
 

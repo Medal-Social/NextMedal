@@ -30,7 +30,7 @@ export default defineType({
       content: 'content',
     },
     prepare: ({ content }) => ({
-      title: getBlockText(content),
+      title: getBlockText(content) || 'Text',
       subtitle: 'Text',
     }),
   },

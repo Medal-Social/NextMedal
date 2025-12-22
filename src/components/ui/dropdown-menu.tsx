@@ -29,7 +29,7 @@ function DropdownMenuContent({
   return (
     <MenuPrimitive.Portal>
       <MenuPrimitive.Positioner
-        className="isolate z-50 outline-none"
+        className="isolate z-[150] outline-none"
         align={align}
         alignOffset={alignOffset}
         side={side}
@@ -221,7 +221,7 @@ function DropdownMenuShortcut({ className, ...props }: React.ComponentProps<'spa
         'text-muted-foreground group-focus/dropdown-menu-item:text-accent-foreground ml-auto text-xs tracking-widest',
         className
       )}
-      {...props}
+      {...(props as any)}
     />
   );
 }

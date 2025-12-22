@@ -1,54 +1,20 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { PortableText, type PortableTextComponents } from 'next-sanity';
 import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
 import Icon from '@/ui/Icon';
+import SharedPortableText from '@/ui/modules/SharedPortableText';
 
-const introComponents: PortableTextComponents = {
-  block: {
-    h2: ({ children }) => (
-      <h2 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] text-foreground mb-6">
-        {children}
-      </h2>
-    ),
-    h3: ({ children }) => (
-      <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-4 mt-8">
-        {children}
-      </h3>
-    ),
-    normal: ({ children }) => (
-      <p className="text-lg md:text-xl text-muted-foreground font-normal max-w-2xl mx-auto">
-        {children}
-      </p>
-    ),
-  },
-  marks: {
-    em: ({ children }) => <span className="text-primary font-bold">{children}</span>,
-  },
-};
-
-export default function Features({
-  intro,
-  items,
-  ...props
-}: Partial<{
-  intro: any;
-  items: {
-    summary: string;
-    content: any;
-    icon?: Sanity.Icon;
-    _key: string;
-  }[];
-}> &
-  Sanity.Module) {
+export default function Features({ intro, items, ...props }: Sanity.Features) {
   // Distribute items into 3 columns for desktop layout
-  const columns: NonNullable<typeof items>[] = [[], [], []];
-  items?.forEach((item, i) => {
-    columns[i % 3].push(item);
-  });
+  const columns: Sanity.Features['items'][] = [[], [], []];
+  if (items) {
+    items.forEach((item, i) => {
+      columns[i % 3]?.push(item);
+    });
+  }
 
   return (
     <Section {...moduleProps(props)} className="py-24 overflow-hidden">
@@ -57,7 +23,7 @@ export default function Features({
           <div className="max-w-3xl">
             {intro && (
               <div className="text-center text-balance">
-                <PortableText value={intro} components={introComponents} />
+                <SharedPortableText value={intro} variant="intro" />
               </div>
             )}
           </div>
@@ -88,7 +54,13 @@ export default function Features({
   );
 }
 
-function FeatureCard({ item, index }: { item: any; index: number }) {
+function FeatureCard({
+  item,
+  index,
+}: {
+  item: NonNullable<Sanity.Features['items']>[number];
+  index: number;
+}) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -107,7 +79,7 @@ function FeatureCard({ item, index }: { item: any; index: number }) {
         <h3 className="text-xl font-bold pt-1.5 leading-tight text-foreground">{item.summary}</h3>
       </div>
       <div className="text-[17px] text-muted-foreground leading-relaxed font-medium opacity-90">
-        <PortableText value={item.content} />
+        <SharedPortableText value={item.content} />
       </div>
     </motion.div>
   );

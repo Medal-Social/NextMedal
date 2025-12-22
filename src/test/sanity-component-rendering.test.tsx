@@ -11,7 +11,7 @@ import * as fc from 'fast-check';
 import { describe, expect, it, vi } from 'vitest';
 
 // Mock the Sanity fetch module to avoid server-only errors
-vi.mock('@/sanity/lib/fetch', () => ({
+vi.mock('@/sanity/lib/live', () => ({
   fetchSanity: vi.fn().mockResolvedValue(null),
   fetchSanityLive: vi.fn().mockResolvedValue(null),
   sanityFetch: vi.fn().mockResolvedValue({ data: null }),
@@ -38,7 +38,6 @@ import Modules from '@/ui/modules';
 import {
   createMockAccordionListModule,
   createMockBlogFrontpageModule,
-  createMockBlogListModule,
   createMockBreadcrumbsModule,
   createMockCalloutModule,
   createMockComponentGalleryModule,
@@ -51,7 +50,6 @@ import {
   createMockPricingListModule,
   createMockProductComparisonModule,
   createMockRichtextModule,
-  createMockTeamListModule,
   createMockTeamModule,
   createMockVideoHeroModule,
   MODULE_TYPES,
@@ -64,14 +62,12 @@ const moduleFactories = {
   callout: createMockCalloutModule,
   'accordion-list': createMockAccordionListModule,
   'blog-frontpage': createMockBlogFrontpageModule,
-  'blog-list': createMockBlogListModule,
   'latest-articles': createMockLatestArticlesModule,
   breadcrumbs: createMockBreadcrumbsModule,
   'component-gallery': createMockComponentGalleryModule,
   features: createMockFeaturesModule,
   'logo-cloud': createMockLogoCloudModule,
   team: createMockTeamModule,
-  'team-list': createMockTeamListModule,
   'pricing-comparison': createMockPricingComparisonModule,
   'pricing-list': createMockPricingListModule,
   'product-comparison': createMockProductComparisonModule,
@@ -84,13 +80,11 @@ const SYNC_MODULE_TYPES = [
   'hero',
   'callout',
   'accordion-list',
-  'blog-list',
   'latest-articles',
   'component-gallery',
   'features',
   'logo-cloud',
   'team',
-  'team-list',
   'pricing-list',
   'product-comparison',
   'richtext',

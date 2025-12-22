@@ -16,7 +16,7 @@ export default function BlogHero({
   if (!featuredPost) return null;
 
   const featuredHref = resolveUrl(
-    { ...featuredPost, metadata: featuredPost.metadata },
+    { ...featuredPost, metadata: featuredPost.metadata } as Sanity.PageBase,
     { base: false }
   );
 
@@ -111,7 +111,7 @@ function SidebarCard({
   hoverColor: string;
   borderColor?: string;
 }) {
-  const href = resolveUrl({ ...post, metadata: post.metadata }, { base: false });
+  const href = resolveUrl({ ...post, metadata: post.metadata } as Sanity.PageBase, { base: false });
 
   return (
     <Link

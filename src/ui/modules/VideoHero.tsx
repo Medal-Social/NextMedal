@@ -4,40 +4,12 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { Section } from '@/components/ui/section';
+import moduleProps from '@/lib/moduleProps';
 import { urlFor } from '@/sanity/lib/image';
 import '@mux/mux-player/themes/classic';
-// Define the structure of the Sanity data we receive
-type SanityImage = {
-  _type: 'image';
-  asset: {
-    _ref: string;
-    _type: 'reference';
-  };
-  hotspot?: any;
-  crop?: any;
-};
-
-// Define the VideoHero data structure
-type VideoHero = {
-  _type: 'videoHero';
-  _key: string;
-  type: 'mux' | 'youtube';
-  videoId?: string;
-  muxVideo?: {
-    asset?: {
-      playbackId?: string;
-      data?: {
-        playback_ids?: Array<{ id: string }>;
-      };
-    };
-    playbackId?: string;
-  };
-  thumbnail?: SanityImage;
-  title?: string;
-};
 
 // Use regular dynamic imports for video players
-const MuxPlayer = dynamic(() => import('@mux/mux-player-react'), {
+const MuxPlayerReact = dynamic(() => import('@mux/mux-player-react'), {
   loading: () => (
     <div className="w-full h-full bg-muted flex flex-col items-center justify-center">
       <div className="w-16 h-16 rounded-full border-4 border-transparent border-t-primary animate-spin mb-4" />
@@ -47,10 +19,6 @@ const MuxPlayer = dynamic(() => import('@mux/mux-player-react'), {
   ),
   ssr: false,
 });
-
-interface VideoHeroProps {
-  data: VideoHero;
-}
 
 // -------------- Modular YouTube Utilities --------------
 
@@ -128,17 +96,13 @@ const useYouTubeVideo = (videoIdOrUrl?: string) => {
 };
 
 // Mux video hook for managing Mux video state
-const useMuxVideo = (data: VideoHero) => {
+const useMuxVideo = (data: Sanity.VideoHero) => {
   const [videoId, setVideoId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Try to get the Mux ID from all possible locations in order of priority
-    const muxId =
-      data.muxVideo?.asset?.playbackId ||
-      data.muxVideo?.asset?.data?.playback_ids?.[0]?.id ||
-      data.muxVideo?.playbackId ||
-      null;
+    const muxId = data.muxVideo?.asset?.playbackId || data.muxVideo?.playbackId || null;
 
     if (muxId) {
       setVideoId(muxId);
@@ -178,7 +142,7 @@ const MuxVideoPlayer = ({
   onError: (err: any) => void;
 }) => {
   return (
-    <MuxPlayer
+    <MuxPlayerReact
       playbackId={playbackId}
       metadata={{
         video_title: title || 'Video',
@@ -224,7 +188,8 @@ const VideoError = ({
   );
 };
 
-export default function VideoHero({ data }: VideoHeroProps) {
+export default function VideoHero({ ...props }: { data: Sanity.VideoHero }) {
+  const data = props.data;
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -262,7 +227,12 @@ export default function VideoHero({ data }: VideoHeroProps) {
     (data?.type === 'mux' ? mux.error : null);
 
   return (
-    <Section width="full" spacing="none" className="relative w-full h-[80dvh] bg-muted">
+    <Section
+      width="full"
+      spacing="none"
+      className="relative w-full h-[80dvh] bg-muted"
+      {...moduleProps(data)}
+    >
       {/* SEO-friendly metadata */}
       <div className="hidden">
         <h1>{data?.title || 'Video'}</h1>
@@ -288,6 +258,7 @@ export default function VideoHero({ data }: VideoHeroProps) {
               alt={data?.title || 'Video thumbnail'}
               fill
               priority
+              fetchPriority="high"
               className="object-cover"
             />
           ) : (

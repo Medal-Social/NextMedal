@@ -1,53 +1,11 @@
 'use client';
 
-import { urlFor } from '@/sanity/lib/image';
-import '@mux/mux-player/themes/classic';
-import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-
-// Define the structure of the Sanity data we receive
-
-// Define the VideoHero data structure
-type Video = {
-  type: 'mux' | 'youtube';
-  videoId?: string;
-  muxVideo?: {
-    asset?: {
-      playbackId?: string;
-      data?: {
-        playback_ids?: Array<{ id: string }>;
-      };
-    };
-    playbackId?: string;
-  };
-  thumbnail: Sanity.Image;
-  title?: string;
-};
-
-// Use regular dynamic imports for video players
-const MuxPlayer = dynamic(() => import('@mux/mux-player-react'), {
-  loading: () => (
-    <div className="w-full h-full bg-muted flex flex-col items-center justify-center">
-      <div className="w-16 h-16 rounded-full border-4 border-transparent border-t-primary animate-spin mb-4" />
-      <p className="text-foreground font-medium text-lg">Preparing your video...</p>
-      <p className="text-muted-foreground text-sm mt-1">High quality experience loading</p>
-    </div>
-  ),
-  ssr: false,
-});
-
-// Import regular ReactPlayer instead of YouTube specific
-const ReactPlayer = dynamic(() => import('react-player'), {
-  loading: () => (
-    <div className="w-full h-full bg-muted flex flex-col items-center justify-center">
-      <div className="w-16 h-16 rounded-full border-4 border-transparent border-t-primary animate-spin mb-4" />
-      <p className="text-foreground font-medium text-lg">Loading your content...</p>
-      <p className="text-muted-foreground text-sm mt-1">YouTube player is being prepared</p>
-    </div>
-  ),
-  ssr: false,
-}) as any;
+import { urlFor } from '@/sanity/lib/image';
+import { MuxVideoPlayer } from './video/MuxPlayer';
+import { VideoError } from './video/VideoError';
+import { YouTubePlayer } from './video/YouTubePlayer';
 
 // -------------- Modular YouTube Utilities --------------
 
@@ -111,7 +69,7 @@ const useYouTubeVideo = (videoIdOrUrl?: string) => {
 };
 
 // Mux video hook for managing Mux video state
-const useMuxVideo = (data: Video) => {
+const useMuxVideo = (data: Sanity.Video) => {
   const [videoId, setVideoId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -131,72 +89,6 @@ const useMuxVideo = (data: Video) => {
   }, [data]);
 
   return { videoId, error };
-};
-
-// YouTube Player Component
-const YouTubePlayer = ({ url, onError }: { url: string; onError: (err: any) => void }) => {
-  return (
-    <div className="w-full h-full">
-      <ReactPlayer url={url} width="100%" height="100%" playing controls onError={onError} />
-    </div>
-  );
-};
-
-// Mux Player Component
-const MuxVideoPlayer = ({
-  playbackId,
-  title,
-  onError,
-}: {
-  playbackId: string;
-  title?: string;
-  onError: (err: any) => void;
-}) => {
-  return (
-    <MuxPlayer
-      playbackId={playbackId}
-      metadata={{
-        video_title: title || 'Video',
-        player_name: 'Medal Socials Player',
-      }}
-      theme="classic"
-      accentColor="hsl(var(--primary))"
-      autoPlay
-      style={{
-        height: '100%',
-        width: '100%',
-        borderRadius: 'var(--radius)',
-      }}
-      onError={onError}
-    />
-  );
-};
-
-// Error Component
-const VideoError = ({
-  error,
-  type,
-  onBackClick,
-}: {
-  error: string | null;
-  type?: string;
-  onBackClick: () => void;
-}) => {
-  return (
-    <div className="flex items-center justify-center h-full bg-muted text-foreground text-center p-4">
-      <div>
-        <p className="text-xl font-semibold mb-2">Video Error</p>
-        <p>{error || `Could not find a valid video ID for this ${type || ''} video.`}</p>
-        <button
-          onClick={onBackClick}
-          type="button"
-          className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded"
-        >
-          Back to Thumbnail
-        </button>
-      </div>
-    </div>
-  );
 };
 
 export default function Video({ data, onClick }: { data: Sanity.Video; onClick?: () => void }) {
@@ -255,17 +147,13 @@ export default function Video({ data, onClick }: { data: Sanity.Video; onClick?:
             </div>
           )}
           <div className="absolute inset-0 bg-background/30 flex items-center justify-center">
-            <button
-              type="button"
-              className="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center"
-              aria-label="Play video"
-            >
+            <div className="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
               {/* Play icon */}
               <svg className="w-8 h-8" viewBox="0 0 24 24">
                 <title>Play video</title>
                 <path d="M8 5v14l11-7z" fill="currentColor" />
               </svg>
-            </button>
+            </div>
           </div>
         </button>
       ) : (

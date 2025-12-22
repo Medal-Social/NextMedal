@@ -9,12 +9,12 @@
     "ignoreUnknown": true,
     "includes": [
       "**",
+      "!src/styles/globals.css",
       "!**/node_modules/",
       "!**/.next/",
       "!**/public/",
       "!**/*.config.js",
-      "!**/*.config.ts",
-      "!src/styles/globals.css"
+      "!**/*.config.ts"
     ]
   },
   "formatter": {

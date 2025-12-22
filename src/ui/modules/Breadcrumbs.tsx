@@ -9,6 +9,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Section } from '@/components/ui/section';
+import moduleProps from '@/lib/moduleProps';
 import resolveUrl from '@/lib/resolveUrl';
 
 export default async function Breadcrumbs({
@@ -16,14 +17,9 @@ export default async function Breadcrumbs({
   hideCurrent,
   currentPage,
   ...props
-}: Partial<{
-  crumbs: Sanity.Link[];
-  hideCurrent?: boolean;
-  currentPage: Sanity.Page | Sanity.BlogPost | Sanity.ComponentLibrary;
-}> &
-  React.ComponentProps<typeof Section>) {
+}: Sanity.Breadcrumbs) {
   return (
-    <Section as={Breadcrumb} className="py-4 text-sm" spacing="none" {...props}>
+    <Section as={Breadcrumb} className="py-4 text-sm" spacing="none" {...moduleProps(props)}>
       <BreadcrumbList itemScope itemType="https://schema.org/BreadcrumbList">
         {crumbs?.map((crumb, index) => (
           <Fragment key={(crumb as any)._key || index}>

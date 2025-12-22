@@ -1,20 +1,21 @@
 'use client';
+
 import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
 import { CircleCheckBig } from 'lucide-react';
-import { PortableText, type PortableTextComponents } from 'next-sanity';
 import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Section } from '@/components/ui/section';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import moduleProps from '@/lib/moduleProps';
 import CTAList from '@/ui/CTAList';
+import SharedPortableText from '@/ui/modules/SharedPortableText';
 
-const components: PortableTextComponents = {
+const components = {
   list: {
-    bullet: ({ children }) => <ul className="space-y-2 my-4">{children}</ul>,
+    bullet: ({ children }: any) => <ul className="space-y-2 my-4">{children}</ul>,
   },
   listItem: {
-    bullet: ({ children }) => (
+    bullet: ({ children }: any) => (
       <li className="flex items-start gap-2">
         <div className="h-5 w-5 mr-4 mt-1.5">
           <CircleCheckBig className="h-5 w-5 text-primary " />
@@ -25,21 +26,13 @@ const components: PortableTextComponents = {
   },
 };
 
-export default function PricingList({
-  intro,
-  tiers,
-  ...props
-}: Partial<{
-  intro: any;
-  tiers: Sanity.Pricing[];
-}> &
-  Sanity.Module) {
+export default function PricingList({ intro, tiers, ...props }: Sanity.PricingList) {
   const [isYearly, setIsYearly] = useState(false);
   return (
     <Section className="space-y-8" {...moduleProps(props)}>
       {intro && (
         <header className="section-intro text-center items-center flex flex-col gap-4">
-          <PortableText value={intro} />
+          <SharedPortableText value={intro} />
         </header>
       )}
       {tiers?.find((tier) => tier.price?.yearly !== undefined) && (
@@ -123,7 +116,7 @@ export default function PricingList({
 
                 <CTAList className="grid" ctas={tier.ctas} />
                 <div className="prose prose-slate dark:prose-invert max-w-none">
-                  <PortableText components={components} value={tier.content} />
+                  <SharedPortableText components={components} value={tier.content} />
                 </div>
               </article>
             )

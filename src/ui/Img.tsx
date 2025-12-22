@@ -18,9 +18,9 @@ export function ResponsiveImg({
   if (!img) return null;
 
   return (
-    <picture {...pictureProps}>
+    <picture {...(pictureProps as any)}>
       {img.responsive?.map((r) => (
-        <Source {...r} key={r.image.url || r.media} />
+        <Source {...r} key={(r.image as any).url || r.media} />
       ))}
       <Img image={img.image} {...props} />
     </picture>
@@ -31,23 +31,20 @@ export function Img({
   image,
   width: w,
   height: h,
-  loading: _loading,
+  loading: loadingProp,
   ...props
 }: {
-  image?:
-    | Sanity.Image
-    | { src?: string; url?: string; alt?: string; width?: number; height?: number };
+  image?: any;
 } & ImgProps) {
   if (!image) return null;
 
   // Handle direct URL (mock/external)
-  if (('src' in image && image.src) || ('url' in image && image.url)) {
-    const src = (image as any).src || (image as any).url;
-    const w_orig = (image as any).width || 800;
-    const h_orig = (image as any).height || 600;
+  if (image.src || image.url) {
+    const src = image.src || image.url || '';
+    const w_orig = image.width || 800;
+    const h_orig = image.height || 600;
 
     const w_calc = w ? Number(w) : !!h && Math.floor((Number(h) * w_orig) / h_orig);
-
     const h_calc = h ? Number(h) : !!w && Math.floor((Number(w) * h_orig) / w_orig);
 
     return (
@@ -61,19 +58,18 @@ export function Img({
     );
   }
 
-  const sanityImage = image as Sanity.Image;
-  const generatedSrc = generateSrc(sanityImage, w, h);
-  const isGif = generatedSrc?.src?.includes('.gif');
-  const isSvg = generatedSrc?.src?.toLowerCase().endsWith('.svg');
+  const generatedSrc = generateSrc(image, w, h);
   if (!generatedSrc) return null;
 
   const { src, width, height } = generatedSrc;
+  const isGif = src.includes('.gif');
+  const isSvg = src.toLowerCase().endsWith('.svg');
 
   // Get loading value and ensure it's valid
-  const loadingValue = stegaClean(sanityImage.loading);
+  const loadingValue = stegaClean(image.loading);
   const validLoading = props.priority
     ? undefined
-    : _loading || (loadingValue === 'eager' || loadingValue === 'lazy' ? loadingValue : 'lazy');
+    : loadingProp || (loadingValue === 'eager' || loadingValue === 'lazy' ? loadingValue : 'lazy');
 
   if (validLoading === 'eager') {
     preload(src, { as: 'image' });
@@ -84,7 +80,7 @@ export function Img({
       src={isGif ? src.split('?')[0] : src}
       width={width}
       height={height}
-      alt={props.alt || sanityImage.alt || sanityImage.altText || sanityImage.asset?.altText || ''}
+      alt={props.alt || image.alt || image.altText || image.asset?.altText || ''}
       unoptimized={isGif || isSvg}
       {...props}
       loading={validLoading}
@@ -116,7 +112,7 @@ export function Source({
     preload(src, { as: 'image' });
   }
 
-  return <source srcSet={src} width={width} height={height} media={media} {...props} />;
+  return <source srcSet={src} width={width} height={height} media={media} {...(props as any)} />;
 }
 
 function generateSrc(
@@ -125,28 +121,21 @@ function generateSrc(
   h?: number | `${number}` | string
 ) {
   try {
-    const { width: w_orig, height: h_orig } = getImageDimensions(image);
+    const { width: w_orig, height: h_orig } = getImageDimensions(image as any);
 
-    const w_calc = w // if width is provided
-      ? Number(w)
-      : // if height is provided, calculate width
-        !!h && Math.floor((Number(h) * w_orig) / h_orig);
-
-    const h_calc = h // if height is provided
-      ? Number(h)
-      : // if width is provided, calculate height
-        !!w && Math.floor((Number(w) * h_orig) / w_orig);
+    const w_calc = w ? Number(w) : !!h && Math.floor((Number(h) * w_orig) / h_orig);
+    const h_calc = h ? Number(h) : !!w && Math.floor((Number(w) * h_orig) / w_orig);
 
     return {
-      src: urlFor(image)
+      src: urlFor(image as any)
         .withOptions({
           width: w ? Number(w) : undefined,
           height: h ? Number(h) : undefined,
           auto: 'format',
         })
         .url(),
-      width: w_calc || w_orig,
-      height: h_calc || h_orig,
+      width: (w_calc || w_orig) as number,
+      height: (h_calc || h_orig) as number,
     };
   } catch (error) {
     console.error('Error generating src', error, image);

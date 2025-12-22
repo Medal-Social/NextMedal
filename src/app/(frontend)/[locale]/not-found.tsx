@@ -11,7 +11,7 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 import { Section } from '@/components/ui/section';
-import { fetchSanityLive } from '@/sanity/lib/fetch';
+import { fetchSanityLive } from '@/sanity/lib/live';
 import { MODULES_QUERY } from '@/sanity/lib/queries';
 import Modules from '@/ui/modules';
 

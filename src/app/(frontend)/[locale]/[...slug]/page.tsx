@@ -3,7 +3,7 @@ import { groq } from 'next-sanity';
 import { PageProvider } from '@/contexts/PageContext';
 import processMetadata from '@/lib/processMetadata';
 import { client } from '@/sanity/lib/client';
-import { fetchSanityLive } from '@/sanity/lib/fetch';
+import { fetchSanityLive } from '@/sanity/lib/live';
 import {
   GLOBAL_MODULE_QUERY,
   MODULES_QUERY,

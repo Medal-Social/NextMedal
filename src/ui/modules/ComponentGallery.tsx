@@ -1,25 +1,10 @@
 import { Suspense } from 'react';
+import moduleProps from '@/lib/moduleProps';
 import Loading from '@/ui/Loading';
 import Modules from '@/ui/modules';
 import ComponentGalleryClient, { type GalleryComponent } from './ComponentGallery.client';
 
-type GalleryItem = Sanity.Module & {
-  _key: string;
-};
-
-type Group = {
-  _key: string;
-  title: string;
-  items: GalleryItem[];
-};
-
-export default function ComponentGallery({
-  intro,
-  groups,
-}: Partial<{
-  intro: any[];
-  groups: Group[];
-}>) {
+export default function ComponentGallery({ intro, groups, ...props }: Sanity.ComponentGallery) {
   if (!groups?.length) return null;
 
   // Helper to extract title from portable text content
@@ -45,21 +30,18 @@ export default function ComponentGallery({
 
           // Infer title/name from module data
           const title =
-            // @ts-expect-error - dynamic access
-            item.title ||
-            // @ts-expect-error - dynamic access
-            item.summary ||
-            // @ts-expect-error - dynamic access
-            getContentTitle(item.content) ||
+            (item as any).title ||
+            (item as any).summary ||
+            getContentTitle((item as any).content) ||
             item._type;
 
           return {
             id: item._key,
             name: title || 'Untitled',
-            // @ts-expect-error - dynamic access
-            description: item.description || item.subtitle || '',
+            description: (item as any).description || (item as any).subtitle || '',
             category: group.title,
             moduleType: item._type,
+            componentData: item,
             children: <Modules modules={[item]} />,
           };
         }) || []
@@ -73,7 +55,7 @@ export default function ComponentGallery({
         </div>
       }
     >
-      <ComponentGalleryClient intro={intro} components={components} />
+      <ComponentGalleryClient intro={intro} components={components} {...moduleProps(props)} />
     </Suspense>
   );
 }
