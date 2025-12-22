@@ -8,13 +8,13 @@ import MobileNavigation from './mobile-navigation';
 import Toggle from './Toggle';
 
 interface HeaderClientProps extends React.ComponentProps<'header'> {
-  logo: ReactNode;
+  // logo prop removed as it was unused
   ctas: any;
   menu: any;
   children: ReactNode;
 }
 
-export default function HeaderClient({ className, logo, ctas, menu, children }: HeaderClientProps) {
+export default function HeaderClient({ className, ctas, menu, children }: HeaderClientProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDarkHero, setIsDarkHero] = useState(false);
@@ -48,6 +48,7 @@ export default function HeaderClient({ className, logo, ctas, menu, children }: 
     }
 
     return () => observer.disconnect();
+    // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is used to trigger re-check on navigation
   }, [pathname]);
 
   // Handle scroll state with throttling
@@ -90,6 +91,7 @@ export default function HeaderClient({ className, logo, ctas, menu, children }: 
   // Close mobile menu on route change
   useEffect(() => {
     setIsOpen(false);
+    // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is used to trigger closing on navigation
   }, [pathname]);
 
   // Close mobile menu on resize to desktop
@@ -109,7 +111,7 @@ export default function HeaderClient({ className, logo, ctas, menu, children }: 
       const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.paddingRight = `${scrollbarWidth}px`;
       document.body.style.overflow = 'hidden';
-      
+
       // Compensate fixed header as well
       if (ref.current) {
         ref.current.style.paddingRight = `${scrollbarWidth}px`;
@@ -117,7 +119,7 @@ export default function HeaderClient({ className, logo, ctas, menu, children }: 
     } else {
       document.body.style.overflow = '';
       document.body.style.paddingRight = '';
-      
+
       if (ref.current) {
         ref.current.style.paddingRight = '';
       }
@@ -153,14 +155,7 @@ export default function HeaderClient({ className, logo, ctas, menu, children }: 
         </div>
       </header>
 
-      <AnimatePresence>
-        {isOpen && (
-          <MobileNavigation
-            menu={menu}
-            ctas={ctas}
-          />
-        )}
-      </AnimatePresence>
+      <AnimatePresence>{isOpen && <MobileNavigation menu={menu} ctas={ctas} />}</AnimatePresence>
     </>
   );
 }

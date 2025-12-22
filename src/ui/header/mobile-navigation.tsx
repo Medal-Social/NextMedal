@@ -1,15 +1,16 @@
 'use client';
 
-import { type Variants, motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { stegaClean } from 'next-sanity';
-import { type ReactNode, useEffect } from 'react';
+import { type ReactNode } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import resolveUrl from '@/lib/resolveUrl';
 import CTAList from '@/ui/CTAList';
 import LocaleSwitcher from '@/ui/language-switcher';
 import ThemeToggleWrapper from './ThemeToggleWrapper';
+
 // Toggle import removed as it's no longer used
 
 interface MobileNavigationProps {

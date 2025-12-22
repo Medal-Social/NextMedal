@@ -25,7 +25,7 @@ export default function Toggle({ isOpen, setIsOpen }: ToggleProps) {
       aria-controls="mobile-menu"
       aria-label={isOpen ? 'Close menu' : 'Open menu'}
     >
-      <svg width="23" height="23" viewBox="0 0 23 23">
+      <svg width="23" height="23" viewBox="0 0 23 23" aria-hidden="true">
         <Path
           variants={{
             closed: { d: 'M 2 2.5 L 20 2.5' },
