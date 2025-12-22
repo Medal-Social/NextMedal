@@ -5,7 +5,6 @@ import type { QueryOptions, QueryParams } from 'next-sanity';
 import { groq } from 'next-sanity';
 import { dev } from '@/lib/env';
 import { client } from '@/sanity/lib/client';
-import { token } from '@/sanity/lib/token';
 import { fetchSanityLive } from './live';
 import { CTA_QUERY, IMAGE_QUERY, LINK_QUERY, NAVIGATION_QUERY } from './queries';
 
@@ -24,18 +23,14 @@ export async function fetchSanity<T = any>({
     return fetchSanityLive<T>({ query, params });
   }
 
-  return client.fetch<T>(
-    query,
-    params,
-    {
-      perspective: 'published',
-      useCdn: true,
-      next: {
-        revalidate: 3600, // every hour
-        ...next,
-      },
-    }
-  );
+  return client.fetch<T>(query, params, {
+    perspective: 'published',
+    useCdn: true,
+    next: {
+      revalidate: 3600, // every hour
+      ...next,
+    },
+  });
 }
 
 export async function getSite() {
