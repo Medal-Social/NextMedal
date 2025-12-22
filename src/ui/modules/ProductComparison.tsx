@@ -1,21 +1,9 @@
 'use client';
-import { PortableText } from 'next-sanity';
-import { Section } from '@/components/ui/section';
-import { cn } from '@/lib/utils';
 
-type ProductComparisonProps = {
-  intro?: any[];
-  products?: Array<{
-    name: string;
-    highlight: boolean;
-    _key?: string;
-  }>;
-  features?: Array<{
-    name: string;
-    featureDetails: string[];
-    _key?: string;
-  }>;
-} & Sanity.Module;
+import { Section } from '@/components/ui/section';
+import moduleProps from '@/lib/moduleProps';
+import { cn } from '@/lib/utils';
+import SharedPortableText from '@/ui/modules/SharedPortableText';
 
 /**
  * Renders the appropriate content for a feature detail cell
@@ -36,8 +24,8 @@ export default function ProductComparison({
   intro,
   products,
   features,
-  options,
-}: ProductComparisonProps) {
+  ...props
+}: Sanity.ProductComparison) {
   const sortedProducts = products
     ? [...products]
         .map((product, index) => ({ ...product, originalIndex: index }))
@@ -45,19 +33,19 @@ export default function ProductComparison({
     : [];
 
   return (
-    <Section className="space-y-8" width="wide" id={options?.uid}>
+    <Section className="space-y-8" width="wide" {...moduleProps(props)}>
       <div className="section-intro text-center items-center flex flex-col gap-4">
         {intro && (
           <>
             <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-center ">
-              <PortableText value={[intro[0]]} />
+              <SharedPortableText value={[intro[0]]} />
             </div>
             {intro[1] && (
               <div className="text-lg md:text-xl text-center font-normal mx-auto max-w-2xl">
-                <PortableText value={[intro[1]]} />
+                <SharedPortableText value={[intro[1]]} />
               </div>
             )}
-            <PortableText value={intro.slice(2)} />
+            <SharedPortableText value={intro.slice(2)} />
           </>
         )}
       </div>

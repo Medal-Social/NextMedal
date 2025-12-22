@@ -1,17 +1,12 @@
 import Link from 'next/link';
-import { groq, PortableText } from 'next-sanity';
+import { groq } from 'next-sanity';
 import { Section } from '@/components/ui/section';
-import { fetchSanityLive } from '@/sanity/lib/fetch';
+import moduleProps from '@/lib/moduleProps';
+import { fetchSanityLive } from '@/sanity/lib/live';
 import { Img } from '@/ui/Img';
+import SharedPortableText from '@/ui/modules/SharedPortableText';
 
-export default async function LogoCloud({
-  content,
-  logos,
-}: Partial<{
-  content: any;
-  logos: Sanity.Logo[];
-}> &
-  Sanity.Module) {
+export default async function LogoCloud({ content, logos, ...props }: Sanity.LogoCloud) {
   const allLogos =
     logos ||
     (await fetchSanityLive<Sanity.Logo[]>({
@@ -19,23 +14,25 @@ export default async function LogoCloud({
     }));
 
   return (
-    <Section className="space-y-8 text-center">
+    <Section className="space-y-8 text-center" {...moduleProps(props)}>
       {content && (
-        <div className="prose prose-slate dark:prose-invert mx-auto text-muted-foreground">
-          <PortableText
+        <div className="mx-auto text-muted-foreground text-left">
+          <SharedPortableText
             value={content}
             components={{
               block: {
                 normal: ({ children }) => (
-                  <p className="text-muted-foreground text-lg">{children}</p>
+                  <p className="text-muted-foreground text-lg text-center">{children}</p>
                 ),
                 h2: ({ children }) => (
-                  <h2 className="text-2xl font-bold md:text-3xl mb-3">{children}</h2>
+                  <h2 className="text-2xl font-bold md:text-3xl mb-3 text-center">{children}</h2>
                 ),
                 h3: ({ children }) => (
-                  <h3 className="text-xl font-semibold md:text-2xl mb-3">{children}</h3>
+                  <h3 className="text-xl font-semibold md:text-2xl mb-3 text-center">{children}</h3>
                 ),
-                h4: ({ children }) => <h4 className="text-lg font-semibold mb-2">{children}</h4>,
+                h4: ({ children }) => (
+                  <h4 className="text-lg font-semibold mb-2 text-center">{children}</h4>
+                ),
               },
             }}
           />

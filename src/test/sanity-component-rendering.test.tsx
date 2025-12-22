@@ -11,7 +11,7 @@ import * as fc from 'fast-check';
 import { describe, expect, it, vi } from 'vitest';
 
 // Mock the Sanity fetch module to avoid server-only errors
-vi.mock('@/sanity/lib/fetch', () => ({
+vi.mock('@/sanity/lib/live', () => ({
   fetchSanity: vi.fn().mockResolvedValue(null),
   fetchSanityLive: vi.fn().mockResolvedValue(null),
   sanityFetch: vi.fn().mockResolvedValue({ data: null }),

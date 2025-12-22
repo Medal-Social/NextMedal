@@ -38,16 +38,9 @@ export const CTA_QUERY = groq`
 const BASE_MODULES_QUERY = groq`
 	...,
 	ctas[]{${CTA_QUERY}},
-	_type == 'blog-list' => { filteredCategory-> },
 	_type == 'breadcrumbs' => { crumbs[]{ ${LINK_QUERY} } },
 	_type == 'callout' => {
 		"copy": content,
-	},
-	_type == 'hero.saas' => {
-		content[]
-	},
-	_type == 'hero.split' => {
-		content[]
 	},
 	_type == 'logo-cloud' => { logos[]-> },
 	_type == 'team' => { 

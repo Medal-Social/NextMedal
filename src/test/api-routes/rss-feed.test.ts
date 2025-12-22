@@ -2,7 +2,7 @@ import fc from 'fast-check';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the fetchSanityLive function
-vi.mock('@/sanity/lib/fetch', () => ({
+vi.mock('@/sanity/lib/live', () => ({
   fetchSanityLive: vi.fn(),
 }));
 
@@ -19,7 +19,7 @@ vi.mock('@/sanity/lib/image', () => ({
 }));
 
 import { GET } from '@/app/(frontend)/[locale]/blog/rss.xml/route';
-import { fetchSanityLive } from '@/sanity/lib/fetch';
+import { fetchSanityLive } from '@/sanity/lib/live';
 
 const mockFetchSanityLive = vi.mocked(fetchSanityLive);
 

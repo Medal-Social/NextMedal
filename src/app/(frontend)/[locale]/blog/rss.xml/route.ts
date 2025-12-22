@@ -2,8 +2,8 @@ import { escapeHTML, toHTML } from '@portabletext/to-html';
 import { Feed } from 'feed';
 import { groq } from 'next-sanity';
 import resolveUrl from '@/lib/resolveUrl';
-import { fetchSanityLive } from '@/sanity/lib/fetch';
 import { urlFor } from '@/sanity/lib/image';
+import { fetchSanityLive } from '@/sanity/lib/live';
 
 // Next.js Route Handler for RSS feed
 export async function GET() {
@@ -41,8 +41,8 @@ export async function GET() {
     const url = resolveUrl(blog);
 
     const feed = new Feed({
-      title: blog?.title || blog.metadata.title,
-      description: blog.metadata.description,
+      title: blog?.title || blog.metadata?.title || 'Blog',
+      description: blog.metadata?.description || '',
       link: url,
       id: url,
       copyright,

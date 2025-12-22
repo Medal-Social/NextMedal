@@ -10,6 +10,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_SANITY_PROJECT_ID: z.string().min(1),
   NEXT_PUBLIC_SANITY_DATASET: z.string().min(1),
   NEXT_PUBLIC_SANITY_API_VERSION: z.string().optional().default('2024-12-01'),
+  SANITY_REVALIDATE_SECRET: z.string().optional(),
 });
 
 // Validate env vars at runtime
@@ -20,6 +21,7 @@ const parsedEnv = envSchema.safeParse({
   NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
   NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET,
   NEXT_PUBLIC_SANITY_API_VERSION: process.env.NEXT_PUBLIC_SANITY_API_VERSION,
+  SANITY_REVALIDATE_SECRET: process.env.SANITY_REVALIDATE_SECRET,
 });
 
 if (!parsedEnv.success) {

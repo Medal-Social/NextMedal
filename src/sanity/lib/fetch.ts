@@ -1,11 +1,12 @@
 'use server';
 
 import { draftMode } from 'next/headers';
-import { groq, type QueryOptions, type QueryParams } from 'next-sanity';
-import { defineLive } from 'next-sanity/live';
+import type { QueryOptions, QueryParams } from 'next-sanity';
+import { groq } from 'next-sanity';
 import { dev } from '@/lib/env';
 import { client } from '@/sanity/lib/client';
 import { token } from '@/sanity/lib/token';
+import { fetchSanityLive } from './live';
 import { CTA_QUERY, LINK_QUERY, NAVIGATION_QUERY } from './queries';
 
 export async function fetchSanity<T = any>({
@@ -42,23 +43,6 @@ export async function fetchSanity<T = any>({
           },
         }
   );
-}
-
-export const { sanityFetch, SanityLive } = defineLive({
-  client,
-  serverToken: token,
-  browserToken: token,
-});
-
-export async function fetchSanityLive<T = any>(args: Parameters<typeof sanityFetch>[0]) {
-  const preview = dev || (await draftMode()).isEnabled;
-
-  const { data } = await sanityFetch({
-    ...args,
-    perspective: preview ? 'drafts' : 'published',
-  });
-
-  return data as T;
 }
 
 export async function getSite() {

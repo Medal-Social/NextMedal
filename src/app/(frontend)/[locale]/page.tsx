@@ -12,7 +12,7 @@ import {
 import { Section } from '@/components/ui/section';
 import { PageProvider } from '@/contexts/PageContext';
 import processMetadata from '@/lib/processMetadata';
-import { fetchSanityLive } from '@/sanity/lib/fetch';
+import { fetchSanityLive } from '@/sanity/lib/live';
 import { MODULES_QUERY, TRANSLATIONS_QUERY } from '@/sanity/lib/queries';
 import Modules from '@/ui/modules';
 

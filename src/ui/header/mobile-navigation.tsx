@@ -10,46 +10,15 @@ import CTAList from '@/ui/CTAList';
 import LocaleSwitcher from '@/ui/language-switcher';
 import ThemeToggleWrapper from './ThemeToggleWrapper';
 
-type SanityReference = { _ref: string; _type: 'reference'; _weak?: boolean };
-interface InternalLink {
-  _type: string;
-  title: string;
-  slug?: {
-    current: string;
-  };
-  metadata: any;
-  _id: string;
-  _rev: string;
-  _createdAt: string;
-  _updatedAt: string;
-}
-
-export interface MobileNavLink {
-  label: string;
-  internal?: InternalLink | SanityReference;
-  external?: string;
-  params?: string | Record<string, string>;
-}
-
-interface MenuItem {
-  _type: 'menuItem' | 'dropdownMenu';
-  label?: string;
-  title?: string;
-  internal?: InternalLink | SanityReference;
-  external?: string;
-  params?: string | Record<string, string>;
-  links?: MobileNavLink[];
-}
-
 interface MobileNavigationProps {
   menu: {
-    items?: MenuItem[];
+    items?: (Sanity.MenuItem | Sanity.DropdownMenu)[];
   };
   ctas: any;
   headerLogo?: ReactNode;
 }
 
-export const NavLink = ({ link }: { link: MobileNavLink }) => (
+export const NavLink = ({ link }: { link: Sanity.MenuItem | Sanity.Link }) => (
   <Link
     href={
       link.internal && (link.internal as any)._type !== 'reference'
@@ -95,12 +64,11 @@ export default function MobileNavigation({ menu, ctas, headerLogo }: MobileNavig
         <nav className="flex-1 overflow-y-auto pb-safe" aria-label="Mobile navigation">
           <div className="mx-auto max-w-screen-xl px-4 py-6 space-y-8">
             <ul className="space-y-2">
-              {menu?.items?.map((item: MenuItem, index: number) => {
-                // ... (rest of the list mapping)
+              {menu?.items?.map((item, index: number) => {
                 if (item._type === 'menuItem') {
                   return (
                     <li key={`mobile-${item.label}-${index}`}>
-                      <NavLink link={item as MobileNavLink} />
+                      <NavLink link={item} />
                     </li>
                   );
                 }
@@ -121,7 +89,7 @@ export default function MobileNavigation({ menu, ctas, headerLogo }: MobileNavig
                         </CollapsibleTrigger>
                         <CollapsibleContent>
                           <ul className="ml-4 mt-2 space-y-2 border-l-2 border-border pl-4">
-                            {item.links?.map((link: MobileNavLink, linkIndex: number) => (
+                            {item.links?.map((link, linkIndex: number) => (
                               <li key={`mobile-${link.label}-${index}-${linkIndex}`}>
                                 <NavLink link={link} />
                               </li>

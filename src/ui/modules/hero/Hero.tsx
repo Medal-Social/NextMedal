@@ -1,36 +1,39 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { PortableText, type PortableTextComponents, stegaClean } from 'next-sanity';
+import { stegaClean } from 'next-sanity';
 import { Section } from '@/components/ui/section';
+import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
-
 import CTAList from '@/ui/CTAList';
 import { Img } from '@/ui/Img';
+import SharedPortableText from '@/ui/modules/SharedPortableText';
 
-const components: PortableTextComponents = {
+const components = {
   block: {
-    h1: ({ children }) => (
+    h1: ({ children }: any) => (
       <h1 className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl mb-6">{children}</h1>
     ),
-    normal: ({ children }) => (
+    normal: ({ children }: any) => (
       <p className="mt-6 text-xl text-muted-foreground leading-relaxed">{children}</p>
     ),
   },
   marks: {
-    gradient: ({ children }) => (
+    gradient: ({ children }: any) => (
       <span className="inline-block bg-gradient-to-r from-brand-vibrant to-brand-purple bg-clip-text text-transparent dark:text-brand-400 font-extrabold">
         {children}
       </span>
     ),
-    primary: ({ children }) => <span className="text-primary">{children}</span>,
+    primary: ({ children }: any) => <span className="text-primary">{children}</span>,
   },
 };
 
-export default function Hero(props: any) {
+export default function Hero(props: Sanity.Hero & { className?: string }) {
   const { className, content, ctas, image, options } = props;
 
+  // @ts-expect-error - dynamic access
   const bgFrom = options?.bgFrom || 'brand-vibrant';
+  // @ts-expect-error - dynamic access
   const bgTo = options?.bgTo || 'brand-purple';
 
   return (
@@ -42,6 +45,7 @@ export default function Hero(props: any) {
           '--hero-to': `var(--color-${bgTo})`,
         } as React.CSSProperties
       }
+      {...moduleProps(props)}
     >
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
@@ -63,7 +67,7 @@ export default function Hero(props: any) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.4 }}
               >
-                {content && <PortableText value={content} components={components} />}
+                {content && <SharedPortableText value={content} components={components} />}
               </motion.div>
 
               {/* Call-to-actions section */}

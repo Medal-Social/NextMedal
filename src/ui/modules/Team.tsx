@@ -1,22 +1,12 @@
-import { PortableText } from 'next-sanity';
 import { FaFacebook, FaInstagram, FaLinkedin, FaUser, FaYoutube } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
 import { Img } from '@/ui/Img';
+import SharedPortableText from '@/ui/modules/SharedPortableText';
 
-export default function Team({
-  intro,
-  people,
-  layout = 'grid',
-  ...props
-}: Partial<{
-  intro: any;
-  people: Sanity.Person[];
-  layout: 'grid' | 'split';
-}> &
-  Sanity.Module) {
+export default function Team({ intro, people, layout = 'grid', ...props }: Sanity.Team) {
   return (
     <Section className="bg-card" {...moduleProps(props)}>
       {layout === 'grid' && (
@@ -25,7 +15,7 @@ export default function Team({
             <div className="section-intro mb-12 flex flex-col items-center gap-4 text-center">
               {intro && (
                 <div className="text-center font-bold">
-                  <PortableText value={intro} />
+                  <SharedPortableText value={intro} />
                 </div>
               )}
             </div>
@@ -44,7 +34,7 @@ export default function Team({
           <div className="max-w-2xl xl:col-span-2 xl:sticky xl:top-24">
             {intro && (
               <div className="prose dark:prose-invert [&>:first-child]:mt-0">
-                <PortableText value={intro} />
+                <SharedPortableText value={intro} />
               </div>
             )}
           </div>
@@ -93,7 +83,7 @@ function TeamMember({
 
           {person.bio && (
             <div className="mt-2 sm:mt-6 text-sm sm:text-base/7 text-muted-foreground">
-              <PortableText value={person.bio} />
+              <SharedPortableText value={person.bio} />
             </div>
           )}
 
@@ -124,7 +114,7 @@ function TeamMember({
 
         {person.bio && (
           <div className="text-base text-muted-foreground line-clamp-4">
-            <PortableText value={person.bio} />
+            <SharedPortableText value={person.bio} />
           </div>
         )}
 

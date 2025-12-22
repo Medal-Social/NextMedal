@@ -35,39 +35,49 @@ export default function Modules({
 
         switch (module._type) {
           case 'accordion-list':
-            return <AccordionList {...module} key={module._key} />;
+            return <AccordionList {...(module as Sanity.AccordionList)} key={module._key} />;
           case 'blog-frontpage':
-            return <BlogFrontpage {...module} key={module._key} />;
+            return <BlogFrontpage {...(module as Sanity.BlogFrontpage)} key={module._key} />;
           case 'latest-articles':
-            return <LatestArticles {...module} key={module._key} />;
+            return <LatestArticles {...(module as Sanity.LatestArticles)} key={module._key} />;
           case 'breadcrumbs':
-            return <Breadcrumbs {...module} currentPage={post || page} key={module._key} />;
+            return (
+              <Breadcrumbs
+                {...(module as Sanity.Breadcrumbs)}
+                currentPage={post || page}
+                key={module._key}
+              />
+            );
           case 'callout':
-            return <Callout {...module} key={module._key} />;
+            return <Callout {...(module as Sanity.Callout)} key={module._key} />;
 
           case 'component-gallery':
-            return <ComponentGallery {...module} key={module._key} />;
+            return <ComponentGallery {...(module as Sanity.ComponentGallery)} key={module._key} />;
 
           case 'features':
-            return <Features {...module} key={module._key} />;
+            return <Features {...(module as Sanity.Features)} key={module._key} />;
           case 'hero':
             return <Hero {...(module as Sanity.Hero)} key={module._key} />;
 
           case 'logo-cloud':
-            return <LogoCloud {...module} key={module._key} />;
+            return <LogoCloud {...(module as Sanity.LogoCloud)} key={module._key} />;
           case 'team':
-            return <Team {...module} key={module._key} />;
+            return <Team {...(module as Sanity.Team)} key={module._key} />;
           case 'pricing-list':
-            return <PricingList {...module} key={module._key} />;
+            return <PricingList {...(module as Sanity.PricingList)} key={module._key} />;
 
           case 'pricing-comparison':
-            return <PricingComparison {...module} key={module._key} />;
+            return (
+              <PricingComparison {...(module as Sanity.PricingComparison)} key={module._key} />
+            );
 
           case 'product-comparison':
-            return <ProductComparison {...module} key={module._key} />;
+            return (
+              <ProductComparison {...(module as Sanity.ProductComparison)} key={module._key} />
+            );
 
           case 'richtext':
-            return <RichtextModule {...module} key={module._key} />;
+            return <RichtextModule {...(module as Sanity.Richtext)} key={module._key} />;
 
           case 'videoHero':
             return <VideoHero data={module as any} key={module._key} />;

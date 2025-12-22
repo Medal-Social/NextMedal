@@ -1,6 +1,7 @@
 import { groq } from 'next-sanity';
 import { Suspense } from 'react';
-import { fetchSanityLive } from '@/sanity/lib/fetch';
+import moduleProps from '@/lib/moduleProps';
+import { fetchSanityLive } from '@/sanity/lib/live';
 import PostPreview from '../PostPreview';
 import BlogFilterBar from './BlogFilterBar';
 import BlogHero from './BlogHero';
@@ -10,11 +11,8 @@ export default async function BlogFrontpage({
   mainPost,
   itemsPerPage,
   posts: postsProp,
-}: Partial<{
-  mainPost: 'recent' | 'featured';
-  itemsPerPage: number;
-  posts?: Sanity.BlogPost[];
-}>) {
+  ...props
+}: Sanity.BlogFrontpage) {
   const posts =
     postsProp ||
     (await fetchSanityLive<Sanity.BlogPost[]>({
@@ -54,7 +52,7 @@ export default async function BlogFrontpage({
   );
 
   return (
-    <>
+    <div {...moduleProps(props)}>
       <BlogHero featuredPost={heroPost} recentPost={recentPost} popularPost={popularPost} />
 
       <BlogFilterBar />
@@ -76,6 +74,6 @@ export default async function BlogFrontpage({
           </Suspense>
         </div>
       </section>
-    </>
+    </div>
   );
 }

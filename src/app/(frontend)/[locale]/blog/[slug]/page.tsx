@@ -4,7 +4,7 @@ import { mockPost } from '@/lib/mock-blog-post';
 import processMetadata from '@/lib/processMetadata';
 import resolveUrl from '@/lib/resolveUrl';
 import { client } from '@/sanity/lib/client';
-import { fetchSanityLive } from '@/sanity/lib/fetch';
+import { fetchSanityLive } from '@/sanity/lib/live';
 import { MODULES_QUERY } from '@/sanity/lib/queries';
 import JsonLd from '@/ui/JsonLd';
 import Modules from '@/ui/modules';
