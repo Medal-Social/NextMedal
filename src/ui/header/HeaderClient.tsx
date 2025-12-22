@@ -1,8 +1,8 @@
 'use client';
 
+import { AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import MobileNavigation from './mobile-navigation';
 import Toggle from './Toggle';
@@ -103,6 +103,34 @@ export default function HeaderClient({ className, logo, ctas, menu, children }: 
     return () => window.removeEventListener('resize', handleResize);
   }, [isOpen]);
 
+  // Prevent body scroll when menu is open and compensate for scrollbar width
+  useEffect(() => {
+    if (isOpen) {
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+      document.body.style.overflow = 'hidden';
+      
+      // Compensate fixed header as well
+      if (ref.current) {
+        ref.current.style.paddingRight = `${scrollbarWidth}px`;
+      }
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+      
+      if (ref.current) {
+        ref.current.style.paddingRight = '';
+      }
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+      if (ref.current) {
+        ref.current.style.paddingRight = '';
+      }
+    };
+  }, [isOpen]);
+
   return (
     <>
       <header
@@ -113,13 +141,13 @@ export default function HeaderClient({ className, logo, ctas, menu, children }: 
           isScrolled
             ? 'bg-background border-b border-border/40 shadow-sm'
             : 'bg-transparent border-transparent',
-          !isScrolled && isDarkHero && 'dark text-white'
+          !isScrolled && isDarkHero && !isOpen && 'dark text-white'
         )}
       >
         <div className="mx-auto flex h-[var(--header-height)] max-w-7xl items-center gap-x-6 p-4 px-4 sm:px-6 lg:px-8">
           {children}
 
-          <div className="flex items-center gap-2 lg:hidden">
+          <div className="flex items-center gap-2 lg:hidden relative z-[101]">
             <Toggle isOpen={isOpen} setIsOpen={setIsOpen} />
           </div>
         </div>
@@ -130,9 +158,6 @@ export default function HeaderClient({ className, logo, ctas, menu, children }: 
           <MobileNavigation
             menu={menu}
             ctas={ctas}
-            headerLogo={logo}
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
           />
         )}
       </AnimatePresence>
