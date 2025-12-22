@@ -14,6 +14,15 @@ export const LINK_QUERY = groq`
 	}
 `;
 
+export const IMAGE_QUERY = groq`
+	...,
+	asset->{
+		...,
+		altText,
+		metadata
+	}
+`;
+
 export const NAVIGATION_QUERY = groq`
 	title,
 	items[]{
@@ -42,10 +51,21 @@ const BASE_MODULES_QUERY = groq`
 	_type == 'callout' => {
 		"copy": content,
 	},
-	_type == 'logo-cloud' => { logos[]-> },
+	_type == 'logo-cloud' => { 
+		logos[]->{
+			...,
+			image {
+				default { ${IMAGE_QUERY} },
+				dark { ${IMAGE_QUERY} }
+			}
+		} 
+	},
 	_type == 'team' => { 
 		...,
-		people[]->{...,  "image": image.asset->, altText, loading},
+		people[]->{
+			...,
+			image { ${IMAGE_QUERY} }
+		},
 	},
 	_type == 'pricing-list' => {
 		tiers[]->{
@@ -54,6 +74,12 @@ const BASE_MODULES_QUERY = groq`
 		}
 	},
 	_type == 'richtext' => {
+		content[]{
+			...,
+			_type == 'image' => {
+				${IMAGE_QUERY}
+			}
+		},
 		'headings': select(
 			tableOfContents => content[style in ['h2', 'h3', 'h4', 'h5', 'h6']]{
 				style,
@@ -67,6 +93,14 @@ const BASE_MODULES_QUERY = groq`
 			...
 		}
 	},
+	_type == 'hero' => {
+		...,
+		image {
+			image {
+				${IMAGE_QUERY}
+			}
+		}
+	},
 	_type == 'videoHero' => {
 		_type,
 		type,
@@ -78,7 +112,9 @@ const BASE_MODULES_QUERY = groq`
 				"playbackId": playback_ids[0].id
 			}
 		},
-		thumbnail,
+		thumbnail {
+			${IMAGE_QUERY}
+		},
 		title
 	},
 `;

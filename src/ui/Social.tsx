@@ -18,7 +18,7 @@ export default async function Social({ className }: React.ComponentProps<'div'>)
 
   if (!socialLinks?.length) return null;
 
-  type SocialLink = { _key: string; platform: string; url: string };
+  type SocialLink = { _key: string; text: string; url: string };
 
   return (
     <nav className={cn('flex flex-wrap items-center gap-1', className)}>
@@ -30,7 +30,7 @@ export default async function Social({ className }: React.ComponentProps<'div'>)
           className="h-9 w-9 rounded-full"
           nativeButton={false}
           render={
-            <a href={item.url} target="_blank" rel="noopener noreferrer" aria-label={item.platform}>
+            <a href={item.url} target="_blank" rel="noopener noreferrer" aria-label={item.text}>
               <Icon url={item.url} aria-hidden="true" className="h-4 w-4" />
             </a>
           }

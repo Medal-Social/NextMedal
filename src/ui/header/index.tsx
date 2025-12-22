@@ -15,7 +15,6 @@ export default async function Header() {
       className="@container fixed top-0 w-full z-50"
       role="banner"
       aria-label="Site header"
-      logo={logoNode}
       ctas={ctas}
       menu={{ items: headerMenu?.items }}
     >

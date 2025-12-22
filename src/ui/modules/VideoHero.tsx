@@ -258,6 +258,7 @@ export default function VideoHero({ ...props }: { data: Sanity.VideoHero }) {
               alt={data?.title || 'Video thumbnail'}
               fill
               priority
+              fetchPriority="high"
               className="object-cover"
             />
           ) : (

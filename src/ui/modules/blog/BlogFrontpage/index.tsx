@@ -2,6 +2,7 @@ import { groq } from 'next-sanity';
 import { Suspense } from 'react';
 import moduleProps from '@/lib/moduleProps';
 import { fetchSanityLive } from '@/sanity/lib/live';
+import { IMAGE_QUERY } from '@/sanity/lib/queries';
 import PostPreview from '../PostPreview';
 import BlogFilterBar from './BlogFilterBar';
 import BlogHero from './BlogHero';
@@ -20,7 +21,10 @@ export default async function BlogFrontpage({
 			_type,
 			_id,
 			featured,
-			metadata,
+			metadata {
+				...,
+				image { ${IMAGE_QUERY} }
+			},
 			categories[]->,
 			authors[]->,
 			publishDate,

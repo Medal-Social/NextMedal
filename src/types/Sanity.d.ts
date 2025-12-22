@@ -25,7 +25,7 @@ declare global {
       social?: Navigation;
       socialLinks?: {
         _key: string;
-        platform: string;
+        text: string;
         url: string;
       }[];
       // custom

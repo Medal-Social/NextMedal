@@ -4,7 +4,7 @@ import { motion, type Variants } from 'framer-motion';
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { stegaClean } from 'next-sanity';
-import { type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import resolveUrl from '@/lib/resolveUrl';
 import CTAList from '@/ui/CTAList';
@@ -61,6 +61,7 @@ export default function MobileNavigation({
 }: Omit<MobileNavigationProps, 'headerLogo' | 'isOpen' | 'setIsOpen'>) {
   const containerVariants: Variants = {
     closed: {
+      opacity: 0,
       y: '-100%',
       transition: {
         type: 'tween',
@@ -69,6 +70,7 @@ export default function MobileNavigation({
       },
     },
     open: {
+      opacity: 1,
       y: 0,
       transition: {
         type: 'tween',

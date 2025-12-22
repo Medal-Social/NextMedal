@@ -30,7 +30,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Revalidate the specific document type
-    revalidateTag(body._type);
+    // Next.js 16 (or this canary version) requires a second argument for revalidateTag
+    revalidateTag(body._type, 'default');
     console.log(`Revalidated tag: ${body._type}`);
 
     // If it's a page or post with a slug, we might want to be more specific,

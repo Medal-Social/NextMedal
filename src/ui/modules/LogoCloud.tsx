@@ -3,6 +3,7 @@ import { groq } from 'next-sanity';
 import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
 import { fetchSanityLive } from '@/sanity/lib/live';
+import { IMAGE_QUERY } from '@/sanity/lib/queries';
 import { Img } from '@/ui/Img';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
 
@@ -10,7 +11,14 @@ export default async function LogoCloud({ content, logos, ...props }: Sanity.Log
   const allLogos =
     logos ||
     (await fetchSanityLive<Sanity.Logo[]>({
-      query: groq`*[_type == 'logo']|order(name)`,
+      query: groq`*[_type == 'logo']|order(title){
+        ...,
+        image {
+          default { ${IMAGE_QUERY} },
+          light { ${IMAGE_QUERY} },
+          dark { ${IMAGE_QUERY} }
+        }
+      }`,
     }));
 
   return (
@@ -43,7 +51,7 @@ export default async function LogoCloud({ content, logos, ...props }: Sanity.Log
         <div className="relative w-full overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]">
           <div className="flex animate-marquee items-center gap-12 whitespace-nowrap pause-on-hover">
             {[...allLogos, ...allLogos].map((logo, i) => (
-              <div key={`${logo._key || logo.name}-${i}`} className="mx-6 shrink-0">
+              <div key={`${logo._key || logo.title}-${i}`} className="mx-6 shrink-0">
                 <LogoItem logo={logo} />
               </div>
             ))}
@@ -52,7 +60,7 @@ export default async function LogoCloud({ content, logos, ...props }: Sanity.Log
       ) : (
         <figure className="mx-auto flex flex-wrap items-center justify-center gap-x-12 gap-y-8">
           {allLogos.map((logo, index) => (
-            <div key={logo._id || logo._key || logo.name || index}>
+            <div key={logo._id || logo._key || logo.title || index}>
               <LogoItem logo={logo} />
             </div>
           ))}
@@ -77,13 +85,13 @@ function LogoItem({ logo }: { logo: Sanity.Logo }) {
             className="h-16 w-auto md:h-20 shrink-0 object-contain dark:hidden"
             image={lightLogo}
             height={200}
-            alt={logo.name}
+            alt={logo.title || logo.name}
           />
           <Img
             className="hidden h-16 w-auto md:h-20 shrink-0 object-contain dark:block"
             image={darkLogo}
             height={200}
-            alt={logo.name}
+            alt={logo.title || logo.name}
           />
         </>
       );
@@ -94,7 +102,7 @@ function LogoItem({ logo }: { logo: Sanity.Logo }) {
         className="h-16 w-auto md:h-20 shrink-0 object-contain"
         image={defaultLogo || lightLogo || darkLogo}
         height={200}
-        alt={logo.name}
+        alt={logo.title || logo.name}
       />
     );
   };

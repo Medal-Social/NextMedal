@@ -7,7 +7,7 @@ import { dev } from '@/lib/env';
 import { client } from '@/sanity/lib/client';
 import { token } from '@/sanity/lib/token';
 import { fetchSanityLive } from './live';
-import { CTA_QUERY, LINK_QUERY, NAVIGATION_QUERY } from './queries';
+import { CTA_QUERY, IMAGE_QUERY, LINK_QUERY, NAVIGATION_QUERY } from './queries';
 
 export async function fetchSanity<T = any>({
   query,
@@ -54,12 +54,10 @@ export async function getSite() {
 					...,
 					image {
 						default {
-							...,
-							asset->
+							${IMAGE_QUERY}
 						},
 						dark {
-							...,
-							asset->
+							${IMAGE_QUERY}
 						}
 					}
 				},

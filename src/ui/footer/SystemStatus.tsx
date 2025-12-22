@@ -20,7 +20,7 @@ export default function SystemStatus({ status, className }: SystemStatusProps) {
         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75" />
         <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-500" />
       </span>
-      <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground group-hover:text-primary transition-colors">
+      <span className="text-xs font-medium uppercase tracking-wider text-foreground group-hover:text-primary transition-colors">
         {status.title}
       </span>
     </>

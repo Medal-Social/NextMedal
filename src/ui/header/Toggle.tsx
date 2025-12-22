@@ -28,9 +28,10 @@ export default function Toggle({ isOpen, setIsOpen }: ToggleProps) {
       <svg width="23" height="23" viewBox="0 0 23 23" aria-hidden="true">
         <Path
           variants={{
-            closed: { d: 'M 2 2.5 L 20 2.5' },
-            open: { d: 'M 3 16.5 L 17 2.5' },
+            closed: { d: 'M 2 2.5 L 20 2.5', opacity: 1 },
+            open: { d: 'M 3 16.5 L 17 2.5', opacity: 1 },
           }}
+          initial="closed"
           animate={isOpen ? 'open' : 'closed'}
         />
         <Path
@@ -39,14 +40,16 @@ export default function Toggle({ isOpen, setIsOpen }: ToggleProps) {
             closed: { opacity: 1 },
             open: { opacity: 0 },
           }}
+          initial="closed"
           transition={{ duration: 0.1 }}
           animate={isOpen ? 'open' : 'closed'}
         />
         <Path
           variants={{
-            closed: { d: 'M 2 16.346 L 20 16.346' },
-            open: { d: 'M 3 2.5 L 17 16.346' },
+            closed: { d: 'M 2 16.346 L 20 16.346', opacity: 1 },
+            open: { d: 'M 3 2.5 L 17 16.346', opacity: 1 },
           }}
+          initial="closed"
           animate={isOpen ? 'open' : 'closed'}
         />
       </svg>

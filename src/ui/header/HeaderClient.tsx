@@ -22,6 +22,7 @@ export default function HeaderClient({ className, ctas, menu, children }: Header
   const pathname = usePathname();
 
   // Check for dark theme on first content element
+  // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is used to trigger re-check on navigation
   useEffect(() => {
     const checkDarkTheme = () => {
       const main = document.querySelector('main');
@@ -48,7 +49,6 @@ export default function HeaderClient({ className, ctas, menu, children }: Header
     }
 
     return () => observer.disconnect();
-    // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is used to trigger re-check on navigation
   }, [pathname]);
 
   // Handle scroll state with throttling
@@ -89,9 +89,9 @@ export default function HeaderClient({ className, ctas, menu, children }: Header
   }, []);
 
   // Close mobile menu on route change
+  // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is used to trigger closing on navigation
   useEffect(() => {
     setIsOpen(false);
-    // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is used to trigger closing on navigation
   }, [pathname]);
 
   // Close mobile menu on resize to desktop
