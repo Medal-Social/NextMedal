@@ -7,7 +7,7 @@ import { structure } from "./src/sanity/structure";
 import resolveUrl from "@/lib/resolveUrl";
 import { codeInput } from "@sanity/code-input";
 import { documentInternationalization } from "@sanity/document-internationalization";
-import { media } from "sanity-plugin-media";
+import { media, mediaAssetSource } from "sanity-plugin-media";
 import { muxInput } from "sanity-plugin-mux-input";
 import { schemaTypes } from "./src/sanity/schemaTypes";
 
@@ -22,6 +22,12 @@ export default defineConfig({
 
   tasks: { enabled: false },
   scheduledPublishing: { enabled: false },
+
+  form: {
+    image: {
+      assetSources: () => [mediaAssetSource],
+    },
+  },
 
   plugins: [
     structure,
