@@ -26,17 +26,13 @@ export default function HeaderClient({
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
-  // check for dark theme on first content element
-  // biome-ignore lint/correctness/useExhaustiveDependencies: re-run check when route changes
+  // Check for dark theme on first content element
   useEffect(() => {
     const checkDarkTheme = () => {
-      // Find the main content area
       const main = document.querySelector('main');
       if (!main) return;
 
-      // Check the first child of main, or specific known containers
       const firstChild = main.firstElementChild;
-
       if (firstChild && firstChild.getAttribute('data-theme') === 'dark') {
         setIsDarkHero(true);
       } else {
@@ -44,10 +40,8 @@ export default function HeaderClient({
       }
     };
 
-    // Run initially
     checkDarkTheme();
 
-    // Setup observer for dynamic content changes (optional but good for hydration)
     const observer = new MutationObserver(checkDarkTheme);
     const main = document.querySelector('main');
     if (main) {
@@ -61,19 +55,27 @@ export default function HeaderClient({
     return () => observer.disconnect();
   }, [pathname]);
 
-  // handle scroll state
+  // Handle scroll state with throttling
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 10);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // set --header-height
+  // Set --header-height
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -85,25 +87,26 @@ export default function HeaderClient({
       );
     }
     setHeight();
-    window.addEventListener('resize', setHeight);
+    window.addEventListener('resize', setHeight, { passive: true });
 
     return () => window.removeEventListener('resize', setHeight);
   }, []);
 
-  // close mobile menu after navigation or on desktop resize
+  // Close mobile menu on route change
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
 
+  // Close mobile menu on resize to desktop
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 1024) {
+      if (window.innerWidth >= 1024 && isOpen) {
         setIsOpen(false);
       }
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [isOpen]);
 
   return (
     <>
@@ -111,34 +114,37 @@ export default function HeaderClient({
         ref={ref}
         className={cn(
           className,
-          'transition-colors duration-150',
+          'transition-colors duration-200 ease-in-out',
           isScrolled
             ? 'bg-background border-b border-border/40 shadow-sm'
             : 'bg-transparent border-transparent',
           !isScrolled && isDarkHero && 'dark text-white',
         )}
       >
-        <div className="header-grid mx-auto grid max-w-7xl items-center gap-x-6 p-4 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex h-[var(--header-height)] max-w-7xl items-center gap-x-6 p-4 px-4 sm:px-6 lg:px-8">
           {children}
 
-          <div className="flex items-center gap-2 ml-auto [grid-area:toggle-area] lg:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
             <Toggle isOpen={isOpen} setIsOpen={setIsOpen} />
           </div>
         </div>
       </header>
 
-      {isOpen && (
-        <div className="lg:hidden">
-          <MobileNavigation
-            menu={menu}
-            ctas={ctas}
-            headerLogo={logo}
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-          />
-        </div>
-      )}
+      <div
+        className={cn(
+          'fixed inset-0 top-0 z-[100] h-screen w-full bg-background text-foreground transition-all duration-300 ease-in-out lg:hidden',
+          isOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2 pointer-events-none'
+        )}
+        aria-hidden={!isOpen}
+      >
+        <MobileNavigation
+          menu={menu}
+          ctas={ctas}
+          headerLogo={logo}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+        />
+      </div>
     </>
   );
 }
-

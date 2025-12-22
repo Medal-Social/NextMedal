@@ -19,16 +19,13 @@ export default async function Header() {
       ctas={ctas}
       menu={{ items: headerMenu?.items }}
     >
-      <div className="[grid-area:logo] flex items-center">{logoNode}</div>
+      <div className="flex items-center">{logoNode}</div>
 
-      <nav
-        className="max-lg:hidden [grid-area:nav] flex items-center"
-        aria-label="Main navigation"
-      >
+      <nav className="max-lg:hidden flex items-center" aria-label="Main navigation">
         <Navigation />
       </nav>
 
-      <div className="[grid-area:ctas] flex items-center justify-end gap-4 lg:ml-4">
+      <div className="flex items-center justify-end gap-4 ml-auto">
         {enableSearch && (
           <div className="hidden lg:block">
             <CommandMenu />
