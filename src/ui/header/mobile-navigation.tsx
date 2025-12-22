@@ -3,7 +3,7 @@
 import { ChevronDown, ExternalLink, X } from 'lucide-react';
 import Link from 'next/link';
 import { stegaClean } from 'next-sanity';
-import type { ReactNode } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import resolveUrl from '@/lib/resolveUrl';
 import CTAList from '@/ui/CTAList';
@@ -16,9 +16,11 @@ interface MobileNavigationProps {
   };
   ctas: any;
   headerLogo?: ReactNode;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 }
 
-export const NavLink = ({ link }: { link: Sanity.MenuItem | Sanity.Link }) => (
+export const NavLink = ({ link, onClick }: { link: Sanity.MenuItem | Sanity.Link; onClick?: () => void }) => (
   <Link
     href={
       link.internal && (link.internal as any)._type !== 'reference'
@@ -33,6 +35,7 @@ export const NavLink = ({ link }: { link: Sanity.MenuItem | Sanity.Link }) => (
     className="flex items-center gap-4 rounded-lg p-4 text-lg font-medium hover:bg-accent hover:text-primary text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
     target={link.external ? '_blank' : undefined}
     aria-label={link.external ? `${link.label} (opens in new tab)` : undefined}
+    onClick={onClick}
   >
     <div className="flex-1">
       <div className="flex items-center gap-2">
@@ -43,22 +46,40 @@ export const NavLink = ({ link }: { link: Sanity.MenuItem | Sanity.Link }) => (
   </Link>
 );
 
-export default function MobileNavigation({ menu, ctas, headerLogo }: MobileNavigationProps) {
+export default function MobileNavigation({ menu, ctas, headerLogo, isOpen, setIsOpen }: MobileNavigationProps) {
+  // Prevent body scroll when menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
   return (
-    <dialog
-      open
+    <div
       className="fixed inset-0 top-0 z-[100] h-screen w-full overflow-hidden bg-background text-foreground animate-in fade-in slide-in-from-top-2 duration-200"
       aria-modal="true"
       aria-label="Mobile navigation menu"
+      role="dialog"
     >
       <div className="flex h-full flex-col">
         {/* Mobile Header Bar */}
         <div className="flex items-center justify-between p-4 border-b border-border/10 min-h-[var(--header-height)]">
           <div className="flex items-center">{headerLogo}</div>
-          <label htmlFor="header-toggle" className="p-2 -mr-2 cursor-pointer">
+          <button
+            type="button"
+            className="p-2 -mr-2 cursor-pointer rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+            onClick={() => setIsOpen(false)}
+            aria-label="Close menu"
+          >
             <X className="h-6 w-6" />
-            <span className="sr-only">Close menu</span>
-          </label>
+          </button>
         </div>
 
         <nav className="flex-1 overflow-y-auto pb-safe" aria-label="Mobile navigation">
@@ -68,7 +89,7 @@ export default function MobileNavigation({ menu, ctas, headerLogo }: MobileNavig
                 if (item._type === 'menuItem') {
                   return (
                     <li key={`mobile-${item.label}-${index}`}>
-                      <NavLink link={item} />
+                      <NavLink link={item} onClick={() => setIsOpen(false)} />
                     </li>
                   );
                 }
@@ -91,7 +112,7 @@ export default function MobileNavigation({ menu, ctas, headerLogo }: MobileNavig
                           <ul className="ml-4 mt-2 space-y-2 border-l-2 border-border pl-4">
                             {item.links?.map((link, linkIndex: number) => (
                               <li key={`mobile-${link.label}-${index}-${linkIndex}`}>
-                                <NavLink link={link} />
+                                <NavLink link={link} onClick={() => setIsOpen(false)} />
                               </li>
                             ))}
                           </ul>
@@ -121,6 +142,6 @@ export default function MobileNavigation({ menu, ctas, headerLogo }: MobileNavig
           </div>
         </nav>
       </div>
-    </dialog>
+    </div>
   );
 }

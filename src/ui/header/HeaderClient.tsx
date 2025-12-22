@@ -1,13 +1,29 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
+import MobileNavigation from './mobile-navigation';
+import Toggle from './Toggle';
 
-export default function Wrapper({ className, children }: React.ComponentProps<'header'>) {
+interface HeaderClientProps extends React.ComponentProps<'header'> {
+  logo: ReactNode;
+  ctas: any;
+  menu: any;
+  children: ReactNode;
+}
+
+export default function HeaderClient({
+  className,
+  logo,
+  ctas,
+  menu,
+  children,
+}: HeaderClientProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDarkHero, setIsDarkHero] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
   // check for dark theme on first content element
@@ -65,7 +81,7 @@ export default function Wrapper({ className, children }: React.ComponentProps<'h
       if (!ref.current) return;
       document.documentElement.style.setProperty(
         '--header-height',
-        `${ref.current.offsetHeight ?? 0}px`
+        `${ref.current.offsetHeight ?? 0}px`,
       );
     }
     setHeight();
@@ -74,26 +90,55 @@ export default function Wrapper({ className, children }: React.ComponentProps<'h
     return () => window.removeEventListener('resize', setHeight);
   }, []);
 
-  // close mobile menu after navigation
+  // close mobile menu after navigation or on desktop resize
   useEffect(() => {
-    if (typeof document === 'undefined') return;
-    const toggle = document.querySelector('#header-toggle') as HTMLInputElement;
-    if (toggle) toggle.checked = false;
+    setIsOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   return (
-    <header
-      ref={ref}
-      className={cn(
-        className,
-        'transition-colors duration-150',
-        isScrolled
-          ? 'bg-background border-b border-border/40 shadow-sm'
-          : 'bg-transparent border-transparent',
-        !isScrolled && isDarkHero && 'dark text-white'
+    <>
+      <header
+        ref={ref}
+        className={cn(
+          className,
+          'transition-colors duration-150',
+          isScrolled
+            ? 'bg-background border-b border-border/40 shadow-sm'
+            : 'bg-transparent border-transparent',
+          !isScrolled && isDarkHero && 'dark text-white',
+        )}
+      >
+        <div className="header-grid mx-auto grid max-w-7xl items-center gap-x-6 p-4 px-4 sm:px-6 lg:px-8">
+          {children}
+
+          <div className="flex items-center gap-2 ml-auto [grid-area:toggle-area] lg:hidden">
+            <Toggle isOpen={isOpen} setIsOpen={setIsOpen} />
+          </div>
+        </div>
+      </header>
+
+      {isOpen && (
+        <div className="lg:hidden">
+          <MobileNavigation
+            menu={menu}
+            ctas={ctas}
+            headerLogo={logo}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+          />
+        </div>
       )}
-    >
-      {children}
-    </header>
+    </>
   );
 }
+

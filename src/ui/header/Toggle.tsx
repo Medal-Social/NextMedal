@@ -1,12 +1,21 @@
 import { Menu, X } from 'lucide-react';
 
-export default function Toggle() {
-  return (
-    <label className="[grid-area:toggle] lg:hidden">
-      <input id="header-toggle" type="checkbox" hidden />
+interface ToggleProps {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}
 
-      <Menu className="h-6 w-6 header-open:hidden" />
-      <X className="h-6 w-6 header-closed:hidden" />
-    </label>
+export default function Toggle({ isOpen, setIsOpen }: ToggleProps) {
+  return (
+    <button
+      type="button"
+      className="[grid-area:toggle] lg:hidden p-1 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+      onClick={() => setIsOpen(!isOpen)}
+      aria-expanded={isOpen}
+      aria-controls="mobile-menu"
+      aria-label={isOpen ? 'Close menu' : 'Open menu'}
+    >
+      {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+    </button>
   );
 }
