@@ -13,13 +13,7 @@ interface HeaderClientProps extends React.ComponentProps<'header'> {
   children: ReactNode;
 }
 
-export default function HeaderClient({
-  className,
-  logo,
-  ctas,
-  menu,
-  children,
-}: HeaderClientProps) {
+export default function HeaderClient({ className, logo, ctas, menu, children }: HeaderClientProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDarkHero, setIsDarkHero] = useState(false);
@@ -83,7 +77,7 @@ export default function HeaderClient({
       if (!ref.current) return;
       document.documentElement.style.setProperty(
         '--header-height',
-        `${ref.current.offsetHeight ?? 0}px`,
+        `${ref.current.offsetHeight ?? 0}px`
       );
     }
     setHeight();
@@ -118,7 +112,7 @@ export default function HeaderClient({
           isScrolled
             ? 'bg-background border-b border-border/40 shadow-sm'
             : 'bg-transparent border-transparent',
-          !isScrolled && isDarkHero && 'dark text-white',
+          !isScrolled && isDarkHero && 'dark text-white'
         )}
       >
         <div className="mx-auto flex h-[var(--header-height)] max-w-7xl items-center gap-x-6 p-4 px-4 sm:px-6 lg:px-8">
@@ -133,7 +127,9 @@ export default function HeaderClient({
       <div
         className={cn(
           'fixed inset-0 top-0 z-[100] h-screen w-full bg-background text-foreground transition-all duration-300 ease-in-out lg:hidden',
-          isOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2 pointer-events-none'
+          isOpen
+            ? 'opacity-100 visible translate-y-0'
+            : 'opacity-0 invisible -translate-y-2 pointer-events-none'
         )}
         aria-hidden={!isOpen}
       >

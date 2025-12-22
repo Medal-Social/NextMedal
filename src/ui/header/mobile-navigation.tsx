@@ -73,7 +73,7 @@ export default function MobileNavigation({
 
   // Render content conditionally inside the persistent container handled by HeaderClient
   // or keep render but use CSS to hide interaction
-  
+
   return (
     <div className="flex h-full flex-col overflow-hidden">
       {/* Mobile Header Bar */}
