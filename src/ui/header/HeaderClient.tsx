@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import MobileNavigation from './mobile-navigation';
 import Toggle from './Toggle';
@@ -124,23 +125,17 @@ export default function HeaderClient({ className, logo, ctas, menu, children }: 
         </div>
       </header>
 
-      <div
-        className={cn(
-          'fixed inset-0 top-0 z-[100] h-screen w-full bg-background text-foreground transition-all duration-300 ease-in-out lg:hidden',
-          isOpen
-            ? 'opacity-100 visible translate-y-0'
-            : 'opacity-0 invisible -translate-y-2 pointer-events-none'
+      <AnimatePresence>
+        {isOpen && (
+          <MobileNavigation
+            menu={menu}
+            ctas={ctas}
+            headerLogo={logo}
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+          />
         )}
-        aria-hidden={!isOpen}
-      >
-        <MobileNavigation
-          menu={menu}
-          ctas={ctas}
-          headerLogo={logo}
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-        />
-      </div>
+      </AnimatePresence>
     </>
   );
 }

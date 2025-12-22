@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import { ChevronDown, ExternalLink, X } from 'lucide-react';
 import Link from 'next/link';
 import { stegaClean } from 'next-sanity';
@@ -71,22 +72,27 @@ export default function MobileNavigation({
     };
   }, [isOpen]);
 
-  // Render content conditionally inside the persistent container handled by HeaderClient
-  // or keep render but use CSS to hide interaction
-
   return (
-    <div className="flex h-full flex-col overflow-hidden">
+    <motion.div
+      initial={{ x: '100%' }}
+      animate={{ x: 0 }}
+      exit={{ x: '100%' }}
+      transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+      className="fixed inset-0 z-[100] flex h-[100dvh] w-full flex-col overflow-hidden bg-background text-foreground lg:hidden"
+    >
       {/* Mobile Header Bar */}
-      <div className="flex items-center justify-between p-4 border-b border-border/10 min-h-[var(--header-height)]">
+      <div className="mx-auto flex h-[var(--header-height)] w-full max-w-7xl items-center justify-between gap-x-6 p-4 px-4 sm:px-6 lg:px-8 border-b border-border/10">
         <div className="flex items-center">{headerLogo}</div>
-        <button
-          type="button"
-          className="p-2 -mr-2 cursor-pointer rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-          onClick={() => setIsOpen(false)}
-          aria-label="Close menu"
-        >
-          <X className="h-6 w-6" />
-        </button>
+        <div className="flex items-center gap-2 lg:hidden">
+          <button
+            type="button"
+            className="p-2.5 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+            onClick={() => setIsOpen(false)}
+            aria-label="Close menu"
+          >
+            <X className="h-6 w-6" />
+          </button>
+        </div>
       </div>
 
       <nav className="flex-1 overflow-y-auto pb-safe" aria-label="Mobile navigation">
@@ -148,6 +154,6 @@ export default function MobileNavigation({
           </div>
         </div>
       </nav>
-    </div>
+    </motion.div>
   );
 }

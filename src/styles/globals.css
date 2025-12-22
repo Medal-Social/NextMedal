@@ -80,40 +80,12 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   
-  --animate-accordion-down: accordion-down 0.2s cubic-bezier(0.87, 0, 0.13, 1);
-  --animate-accordion-up: accordion-up 0.2s cubic-bezier(0.87, 0, 0.13, 1);
   --animate-marquee: marquee var(--marquee-duration, 30s) linear infinite;
   --animate-fade: anim-fade-to var(--default-transition-duration, 0.2s) ease-in-out forwards;
   --animate-fade-to-l: anim-fade-to-l var(--default-transition-duration, 0.2s) ease-in-out forwards;
   --animate-fade-to-r: anim-fade-to-r var(--default-transition-duration, 0.2s) ease-in-out forwards;
   --animate-fade-to-t: anim-fade-to-t var(--default-transition-duration, 0.2s) ease-in-out forwards;
   --animate-fade-to-b: anim-fade-to-b var(--default-transition-duration, 0.2s) ease-in-out forwards;
-
-  @keyframes accordion-down {
-    from {
-      height: 0;
-      opacity: 0;
-      transform: translateY(-0.5rem);
-    }
-    to {
-      height: var(--radix-accordion-content-height);
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes accordion-up {
-    from {
-      height: var(--radix-accordion-content-height);
-      opacity: 1;
-      transform: translateY(0);
-    }
-    to {
-      height: 0;
-      opacity: 0;
-      transform: translateY(-0.5rem);
-    }
-  }
 
   @keyframes marquee {
     to {

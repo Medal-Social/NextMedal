@@ -9,7 +9,7 @@ export default function Toggle({ isOpen, setIsOpen }: ToggleProps) {
   return (
     <button
       type="button"
-      className="lg:hidden p-1 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+      className="lg:hidden p-2.5 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
       onClick={() => setIsOpen(!isOpen)}
       aria-expanded={isOpen}
       aria-controls="mobile-menu"
