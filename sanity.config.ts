@@ -9,10 +9,10 @@ import { codeInput } from "@sanity/code-input";
 import { documentInternationalization } from "@sanity/document-internationalization";
 import { media, mediaAssetSource } from "sanity-plugin-media";
 import { muxInput } from "sanity-plugin-mux-input";
+import { table } from "@sanity/table";
 import { schemaTypes } from "./src/sanity/schemaTypes";
 
 import { routing } from "@/i18n/routing";
-import { table } from "@sanity/table";
 
 export default defineConfig({
   title: "Medal Social Enterprise",
