@@ -1,16 +1,18 @@
 import { createClient, groq } from "next-sanity";
-import { projectId, dataset, apiVersion } from "@/sanity/lib/env";
+import { projectId, dataset, apiVersion } from "./src/sanity/lib/project";
 // import { token } from '@/lib/sanity/token'
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
-const client = createClient({
-  projectId,
-  dataset,
-  // token, // for private datasets
-  apiVersion,
-  useCdn: true,
-});
+const client = projectId
+  ? createClient({
+      projectId,
+      dataset,
+      // token, // for private datasets
+      apiVersion,
+      useCdn: true,
+    })
+  : null;
 
 const config = {
   reactStrictMode: true,
@@ -42,6 +44,9 @@ const config = {
   },
 
   async redirects() {
+    if (!client) {
+      return [];
+    }
     return await client.fetch(groq`*[_type == 'redirect']{
 			'source': select(source match "/*" => source, "/" + source),
 			'destination': select(
