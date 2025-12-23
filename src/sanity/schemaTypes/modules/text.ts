@@ -1,3 +1,13 @@
+/**
+ * Rich Text Module Schema
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
+ * @description A standard rich text module for long-form content.
+ * @changelog
+ * - 1.0.1: Added header documentation
+ * - 1.0.0: Initial version
+ */
+
 import { VscSymbolKeyword } from 'react-icons/vsc';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';

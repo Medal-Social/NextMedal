@@ -1,9 +1,10 @@
 /**
  * Drop Down Menu Schema
- * @version 1.0.0
- * @lastUpdated 2024-03-22
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
  * @description A list of links with a category title, used for dropdown menus.
  * @changelog
+ * - 1.0.1: Updated header documentation
  * - 1.0.0: Renamed from Link List to Drop Down Menu
  */
 

@@ -1,9 +1,10 @@
 /**
  * Blog Post Schema
- * @version 1.0.0
- * @lastUpdated 2024-03-21
+ * @version 1.1.0
+ * @lastUpdated 2025-12-23
  * @description Defines the structure for blog posts, including content, categories, authors, and metadata.
  * @changelog
+ * - 1.1.0: Updated to latest UX standards (standardized icons, radio buttons for featured status)
  * - 1.0.0: Initial version with core blog post functionality
  */
 
@@ -47,6 +48,8 @@ export default defineType({
         imageBlock,
         { type: 'code' },
         { type: 'video' },
+        { type: 'lead-magnet' },
+        { type: 'callout' },
       ],
       group: 'content',
     }),

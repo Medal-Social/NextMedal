@@ -6,6 +6,8 @@ import { groq } from 'next-sanity';
 import { dev } from '@/lib/env';
 import { client } from '@/sanity/lib/client';
 import { fetchSanityLive } from './live';
+export { fetchSanityLive };
+
 import { CTA_QUERY, IMAGE_QUERY, LINK_QUERY, NAVIGATION_QUERY } from './queries';
 
 export async function fetchSanity<T = any>({
@@ -56,6 +58,12 @@ export async function getSite() {
 				footerLinks[]{ ${LINK_QUERY} },
 				systemStatus,
 				socialLinks,
+				cookieConsent {
+					...,
+					privacyPolicy->{
+						"slug": metadata.slug.current
+					}
+				},
 				'ogimage': ogimage.asset->url,
 				'brandPage': *[_type == "page" && metadata.slug.current == "brand"][0]._id
 			}

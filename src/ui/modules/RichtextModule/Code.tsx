@@ -1,4 +1,5 @@
 import { codeToHtml } from 'shiki';
+import { logger } from '@/lib/logger';
 import CopyButton from './CopyButton';
 
 export default async function Code({ value }: { value: { code: string; language?: string } }) {
@@ -23,7 +24,7 @@ export default async function Code({ value }: { value: { code: string; language?
       </div>
     );
   } catch (error) {
-    console.error('Code highlighting failed:', error);
+    logger.error({ err: error }, 'Code highlighting failed');
     return (
       <div className="relative my-6 overflow-hidden rounded-lg group bg-[#0d1117] p-4">
         <CopyButton code={value.code} className="absolute top-3 right-3 z-10" />

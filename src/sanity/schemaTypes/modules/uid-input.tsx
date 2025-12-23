@@ -1,3 +1,13 @@
+/**
+ * UID Input Schema Helper
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
+ * @description Helper function to create a standardized unique identifier field for modules.
+ * @changelog
+ * - 1.0.1: Added header documentation
+ * - 1.0.0: Initial version
+ */
+
 import { defineField } from 'sanity';
 import { UidInputComponent } from './UidInputComponent';
 

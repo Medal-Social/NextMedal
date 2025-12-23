@@ -1,7 +1,18 @@
+/**
+ * UidInputComponent
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
+ * @description A custom Sanity Studio input component for unique identifiers (anchor links).
+ * @changelog
+ * - 1.0.1: Added header documentation
+ * - 1.0.0: Initial version
+ */
+
 'use client';
 
 import { Box, Button, Flex, Text, TextInput, useToast } from '@sanity/ui';
 import { VscCopy } from 'react-icons/vsc';
+import { logger } from '@/lib/logger';
 
 export const UidInputComponent = ({ elementProps, path }: any) => {
   const toast = useToast();
@@ -38,7 +49,7 @@ export const UidInputComponent = ({ elementProps, path }: any) => {
               });
             })
             .catch((err) => {
-              console.error('Failed to copy:', err);
+              logger.error({ err }, 'Failed to copy:');
               toast.push({
                 status: 'error',
                 title: 'Failed to copy',

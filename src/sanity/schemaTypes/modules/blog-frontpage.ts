@@ -1,3 +1,13 @@
+/**
+ * Blog Frontpage Module Schema
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
+ * @description Configuration for the main blog landing page.
+ * @changelog
+ * - 1.0.1: Added header documentation
+ * - 1.0.0: Initial version
+ */
+
 import { ImNewspaper } from 'react-icons/im';
 import { defineField, defineType } from 'sanity';
 

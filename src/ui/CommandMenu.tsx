@@ -12,6 +12,7 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command';
+import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
 
 export function CommandMenu() {
@@ -41,7 +42,7 @@ export function CommandMenu() {
         if (error instanceof Error && error.name === 'AbortError') {
           return;
         }
-        console.error('Search fetch error:', error);
+        logger.error({ err: error }, 'Search fetch error:');
         setItems([]);
       }
     }

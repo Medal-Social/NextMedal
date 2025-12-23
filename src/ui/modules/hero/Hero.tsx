@@ -32,9 +32,9 @@ export default function Hero(props: Sanity.Hero & { className?: string }) {
   const { className, content, ctas, image, options } = props;
 
   // @ts-expect-error - dynamic access
-  const bgFrom = options?.bgFrom || 'brand-vibrant';
+  const bgFrom = stegaClean(options?.bgFrom) || 'brand-vibrant';
   // @ts-expect-error - dynamic access
-  const bgTo = options?.bgTo || 'brand-purple';
+  const bgTo = stegaClean(options?.bgTo) || 'brand-purple';
 
   return (
     <section
@@ -78,7 +78,7 @@ export default function Hero(props: Sanity.Hero & { className?: string }) {
                   transition={{ delay: 0.3, duration: 0.4 }}
                   className="mt-8 flex gap-4"
                 >
-                  <CTAList className="max-sm:min-w-full" ctas={stegaClean(ctas)} />
+                  <CTAList className="max-sm:min-w-full" ctas={ctas} />
                 </motion.div>
               )}
             </div>

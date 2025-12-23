@@ -9,7 +9,6 @@ import { codeInput } from "@sanity/code-input";
 import { documentInternationalization } from "@sanity/document-internationalization";
 import { media, mediaAssetSource } from "sanity-plugin-media";
 import { muxInput } from "sanity-plugin-mux-input";
-import { table } from "@sanity/table";
 import { schemaTypes } from "./src/sanity/schemaTypes";
 
 import { routing } from "@/i18n/routing";
@@ -40,7 +39,6 @@ export default defineConfig({
     visionTool({
       defaultApiVersion: apiVersion,
     }),
-    table(),
     documentInternationalization({
       supportedLanguages: routing.locales.map((locale) => ({
         id: locale,

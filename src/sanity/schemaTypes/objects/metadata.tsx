@@ -1,8 +1,10 @@
 /**
  * Metadata Schema
- * @version 1.1.0
- * @lastUpdated 2024-03-13
+ * @version 1.1.1
+ * @lastUpdated 2025-12-23
+ * @description Search engine optimization settings (SEO).
  * @changelog
+ * - 1.1.1: Updated header documentation
  * - 1.1.0: Updated to use schema factory function
  * - 1.0.0: Initial version
  */

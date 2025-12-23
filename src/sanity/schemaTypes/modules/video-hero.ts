@@ -1,3 +1,13 @@
+/**
+ * Video Hero Module Schema
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
+ * @description A high-impact hero section featuring a background video (Mux or YouTube).
+ * @changelog
+ * - 1.0.1: Added header documentation
+ * - 1.0.0: Initial version
+ */
+
 import { VscDeviceCameraVideo } from 'react-icons/vsc';
 import { defineField } from 'sanity';
 import { createUidField } from './uid-input';

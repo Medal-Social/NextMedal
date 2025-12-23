@@ -26,7 +26,10 @@ export default async function BlogFrontpage({
 				image { ${IMAGE_QUERY} }
 			},
 			categories[]->,
-			authors[]->,
+			authors[]->{
+				...,
+				image { ${IMAGE_QUERY} }
+			},
 			publishDate,
 		}`,
     }));

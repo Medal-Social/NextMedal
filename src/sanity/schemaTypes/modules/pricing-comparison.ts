@@ -1,9 +1,10 @@
 /**
  * Pricing Comparison Module Schema
- * @version 1.0.0
- * @lastUpdated 2024-03-21
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
  * @description A module for displaying and comparing pricing plans with features and tiers.
  * @changelog
+ * - 1.0.1: Updated header documentation
  * - 1.0.0: Initial version with pricing plan comparison functionality
  */
 

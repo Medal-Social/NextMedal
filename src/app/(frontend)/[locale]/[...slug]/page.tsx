@@ -1,12 +1,13 @@
 import { notFound } from 'next/navigation';
 import { groq } from 'next-sanity';
 import { PageProvider } from '@/contexts/PageContext';
+import { groupPlacements, type Placement } from '@/lib/placement';
 import processMetadata from '@/lib/processMetadata';
 import { client } from '@/sanity/lib/client';
 import { fetchSanityLive } from '@/sanity/lib/live';
 import {
-  GLOBAL_MODULE_QUERY,
   MODULES_QUERY,
+  placementQuery,
   SLUG_QUERY,
   TRANSLATIONS_QUERY,
 } from '@/sanity/lib/queries';
@@ -16,9 +17,14 @@ export default async function Page({ params }: Props) {
   const resolvedParams = await params;
   const page = await getPage(resolvedParams);
   if (!page) notFound();
+
+  const placements = groupPlacements(page.placements);
+
   return (
     <PageProvider page={page}>
-      <Modules modules={page.modules} page={page} />
+      {placements.top && <Modules modules={placements.top} />}
+      {page.modules && page.modules.length > 0 && <Modules modules={page.modules} page={page} />}
+      {placements.bottom && <Modules modules={placements.bottom} />}
     </PageProvider>
   );
 }
@@ -47,25 +53,17 @@ export async function generateStaticParams() {
 async function getPage(params: { slug?: string[] }) {
   const slug = params.slug?.join('/');
 
-  return await fetchSanityLive<Sanity.Page | Sanity.ComponentLibrary>({
+  return await fetchSanityLive<
+    Sanity.Page | (Sanity.ComponentLibrary & { placements?: Placement[] })
+  >({
     query: groq`*[
 			_type in ['page', 'component.library'] &&
 			${SLUG_QUERY} == $slug &&
 			!(metadata.slug.current in ['index'])
 		][0]{
 			...,
-			'modules': (
-				// global modules (before)
-				*[_type == 'global-module' && path == '*'].before[]{ ${MODULES_QUERY} }
-				// path modules (before)
-				+ *[_type == 'global-module' && path != '*' && ${GLOBAL_MODULE_QUERY}].before[]{ ${MODULES_QUERY} }
-				// page modules
-				+ modules[]{ ${MODULES_QUERY} }
-				// path modules (after)
-				+ *[_type == 'global-module' && path != '*' && ${GLOBAL_MODULE_QUERY}].after[]{ ${MODULES_QUERY} }
-				// global modules (after)
-				+ *[_type == 'global-module' && path == '*'].after[]{ ${MODULES_QUERY} }
-			),
+			'modules': modules[]{ ${MODULES_QUERY} },
+			'placements': ${placementQuery("scope == 'page'")},
 			parent[]->{ metadata { slug } },
 			metadata {
 				...,

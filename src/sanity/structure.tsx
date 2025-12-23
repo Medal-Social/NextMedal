@@ -10,30 +10,22 @@ export const structure = structureTool({
         // S.documentTypeListItem('component.library').title('Components'),
         S.divider(),
 
-        S.listItem()
-          .title('Blog')
-          .icon(EditIcon)
-          .child(
-            S.list()
-              .title('Blog')
-              .items([
-                S.documentTypeListItem('blog.post').title('Posts'),
-                S.documentTypeListItem('blog.category').title('Categories'),
-              ])
-          ),
+        S.documentTypeListItem('blog.post').title('Blog').icon(EditIcon),
         S.divider(),
 
-        singleton(S, 'site', 'Site settings').icon(ControlsIcon),
+        singleton(S, 'site', 'Site Settings').icon(ControlsIcon),
         S.divider(),
 
-        group(S, 'Site Elements', [
+        group(S, 'Shared Content', [
           S.documentTypeListItem('banner').title('Banners'),
+          S.documentTypeListItem('form').title('Forms'),
+          S.documentTypeListItem('placement').title('Placement Rules'),
           S.documentTypeListItem('logo').title('Logos'),
           S.documentTypeListItem('person').title('Team Members'),
-          S.documentTypeListItem('pricing').title('Pricing tiers'),
-          S.documentTypeListItem('global-module').title('Global modules'),
           S.documentTypeListItem('navigation'),
           S.documentTypeListItem('redirect').title('Redirects'),
+          S.documentTypeListItem('pricing').title('Pricing tiers'),
+          S.documentTypeListItem('blog.category').title('Blog categories'),
         ]).icon(DatabaseIcon),
       ]),
 });

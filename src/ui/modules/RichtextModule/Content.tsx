@@ -1,4 +1,6 @@
 import { cn } from '@/lib/utils';
+import Callout from '@/ui/modules/Callout';
+import LeadMagnet from '@/ui/modules/LeadMagnet';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
 import Video from '@/ui/Video';
 import Code from './Code';
@@ -9,6 +11,8 @@ const components = {
     image: Image,
     video: ({ value }: { value: any }) => <Video data={value} />,
     code: Code,
+    'lead-magnet': ({ value }: { value: any }) => <LeadMagnet {...value} />,
+    callout: ({ value }: { value: any }) => <Callout {...value} />,
   },
 };
 

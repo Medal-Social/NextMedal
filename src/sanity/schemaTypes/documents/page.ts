@@ -1,9 +1,10 @@
 /**
  * Page Schema
- * @version 1.1.0
- * @lastUpdated 2024-03-13
+ * @version 1.2.0
+ * @lastUpdated 2025-12-23
  * @description Defines the structure for content pages with modular sections and metadata.
  * @changelog
+ * - 1.2.0: Updated to latest standards and standardized icons
  * - 1.1.0: Added improved validation, documentation, and organization
  * - 1.0.0: Initial version
  */

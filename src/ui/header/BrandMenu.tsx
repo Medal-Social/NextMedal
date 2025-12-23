@@ -11,6 +11,7 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
+import { logger } from '@/lib/logger';
 import { urlFor } from '@/sanity/lib/image';
 
 interface BrandMenuProps {
@@ -41,7 +42,7 @@ export default function BrandMenu({ children, logoData, hasBrandPage }: BrandMen
         throw new Error('Could not generate logo URL');
       }
     } catch (err) {
-      console.error(err);
+      logger.error(err);
       toast.error('Failed to copy logo');
     }
   };

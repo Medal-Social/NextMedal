@@ -1,3 +1,13 @@
+/**
+ * Modules Fragment
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
+ * @description A registry of all available content modules for the page builder.
+ * @changelog
+ * - 1.0.1: Added header documentation
+ * - 1.0.0: Initial version
+ */
+
 import { defineField } from 'sanity';
 
 export default defineField({
@@ -10,7 +20,9 @@ export default defineField({
     { type: 'hero' },
     { type: 'accordion-list' },
     { type: 'features' },
+    { type: 'lead-magnet' },
     { type: 'callout' },
+    { type: 'contact' },
     { type: 'richtext' },
     { type: 'logo-cloud' },
     { type: 'team' },
@@ -48,7 +60,7 @@ export default defineField({
         },
         {
           name: 'Marketing & Leads',
-          of: ['callout'],
+          of: ['callout', 'contact', 'lead-magnet'],
         },
         {
           name: 'Utility',

@@ -1,14 +1,12 @@
 /**
  * Menu Item Schema
- * @version 1.5.0
- * @lastUpdated 2024-03-22
+ * @version 1.5.1
+ * @lastUpdated 2025-12-23
+ * @description Internal or external link with optional icon and label.
  * @changelog
+ * - 1.5.1: Updated header documentation
  * - 1.5.0: Renamed from Link to Menu Item
  * - 1.4.0: Grouped destination fields, renamed label to Text, improved helper text
- * - 1.3.0: Removed description, renamed params to Jump to Section, removed advanced group
- * - 1.2.0: Improved usability with streamlined layout and reorganized fields
- * - 1.1.0: Added improved validation and documentation
- * - 1.0.0: Initial version
  */
 
 import { VscLink } from 'react-icons/vsc';

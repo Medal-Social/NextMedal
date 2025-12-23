@@ -1,11 +1,12 @@
 import { notFound } from 'next/navigation';
 import { groq } from 'next-sanity';
 import { mockPost } from '@/lib/mock-blog-post';
+import { groupPlacements, type Placement } from '@/lib/placement';
 import processMetadata from '@/lib/processMetadata';
 import resolveUrl from '@/lib/resolveUrl';
 import { client } from '@/sanity/lib/client';
 import { fetchSanityLive } from '@/sanity/lib/live';
-import { IMAGE_QUERY, MODULES_QUERY } from '@/sanity/lib/queries';
+import { IMAGE_QUERY, MODULES_QUERY, placementQuery } from '@/sanity/lib/queries';
 import JsonLd from '@/ui/JsonLd';
 import Modules from '@/ui/modules';
 import BlogPostLayout from '@/ui/modules/blog/BlogPostLayout';
@@ -15,6 +16,8 @@ export default async function Page({ params }: Props) {
   const post = await getPost(resolvedParams);
 
   if (!post) notFound();
+
+  const placements = groupPlacements(post.placements);
 
   return (
     <>
@@ -39,7 +42,7 @@ export default async function Page({ params }: Props) {
         }}
       />
       {post.modules && post.modules.length > 0 && <Modules modules={post.modules} post={post} />}
-      <BlogPostLayout post={post} />
+      <BlogPostLayout post={post} placements={placements} />
     </>
   );
 }
@@ -60,13 +63,24 @@ export async function generateStaticParams() {
 }
 
 async function getPost(params: { slug?: string }) {
+  const placementsQuery = placementQuery(
+    "scope == 'blog.post' || scope match 'blog*' || scope == 'all-blog-posts'"
+  );
+
   if (params.slug === 'example-post') {
-    return mockPost as any;
+    const placements = await fetchSanityLive<Placement[]>({
+      query: placementsQuery,
+      params: {},
+    });
+    return { ...mockPost, placements } as any;
   }
 
-  return await fetchSanityLive<Sanity.BlogPost & { modules: Sanity.Module[] }>({
+  return await fetchSanityLive<
+    Sanity.BlogPost & { modules?: Sanity.Module[]; placements: Placement[] }
+  >({
     query: groq`*[_type == 'blog.post' && metadata.slug.current == $slug][0]{
 			...,
+			'modules': modules[]{ ${MODULES_QUERY} },
 			body[]{
 				...,
 				_type == 'image' => { ${IMAGE_QUERY} }
@@ -83,16 +97,7 @@ async function getPost(params: { slug?: string }) {
 				image { ${IMAGE_QUERY} },
 				'ogimage': image.asset->url + '?w=1200'
 			},
-			'modules': (
-				// global modules (before)
-				*[_type == 'global-module' && path == '*'].before[]{ ${MODULES_QUERY} }
-				// path modules (before)
-				+ *[_type == 'global-module' && path == 'blog/'].before[]{ ${MODULES_QUERY} }
-				// path modules (after)
-				+ *[_type == 'global-module' && path == 'blog/'].after[]{ ${MODULES_QUERY} }
-				// global modules (after)
-				+ *[_type == 'global-module' && path == '*'].after[]{ ${MODULES_QUERY} }
-			)
+			'placements': ${placementsQuery}
 		}`,
     params: { ...params, slug: params.slug },
   });

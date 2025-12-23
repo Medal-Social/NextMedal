@@ -8,7 +8,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install pnpm via corepack
-RUN corepack enable && corepack prepare pnpm@10.26.1 --activate
+RUN corepack enable && corepack prepare pnpm@10.26.2 --activate
 
 # Copy only dependency files
 COPY package.json pnpm-lock.yaml ./
@@ -21,7 +21,7 @@ FROM base AS builder
 WORKDIR /app
 
 # Install pnpm via corepack
-RUN corepack enable && corepack prepare pnpm@10.26.1 --activate
+RUN corepack enable && corepack prepare pnpm@10.26.2 --activate
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -31,12 +31,18 @@ ARG NEXT_PUBLIC_SANITY_PROJECT_ID
 ARG NEXT_PUBLIC_SANITY_DATASET
 ARG NEXT_PUBLIC_BASE_URL
 ARG SANITY_API_READ_TOKEN
+ARG NEXT_PUBLIC_UMAMI_SCRIPT_URL
+ARG NEXT_PUBLIC_UMAMI_WEBSITE_ID
+ARG NEXT_PUBLIC_APP_ENV
 
 # Set environment variables for build stage
 ENV NEXT_PUBLIC_SANITY_PROJECT_ID=$NEXT_PUBLIC_SANITY_PROJECT_ID \
     NEXT_PUBLIC_SANITY_DATASET=$NEXT_PUBLIC_SANITY_DATASET \
     NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL \
     SANITY_API_READ_TOKEN=$SANITY_API_READ_TOKEN \
+    NEXT_PUBLIC_UMAMI_SCRIPT_URL=$NEXT_PUBLIC_UMAMI_SCRIPT_URL \
+    NEXT_PUBLIC_UMAMI_WEBSITE_ID=$NEXT_PUBLIC_UMAMI_WEBSITE_ID \
+    NEXT_PUBLIC_APP_ENV=$NEXT_PUBLIC_APP_ENV \
     NEXT_TELEMETRY_DISABLED=1 \
     NODE_ENV=production
 

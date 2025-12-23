@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { PortableText } from 'next-sanity';
+import CookiePreferencesTrigger from '@/components/CookiePreferencesTrigger';
 import { Section } from '@/components/ui/section';
 import resolveUrl from '@/lib/resolveUrl';
 import { cn } from '@/lib/utils';
@@ -92,6 +93,7 @@ export default async function Footer() {
                   </Link>
                 );
               })}
+              <CookiePreferencesTrigger className="hover:text-foreground transition-colors" />
             </div>
           </div>
 
