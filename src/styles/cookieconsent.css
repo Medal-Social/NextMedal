@@ -1,0 +1,96 @@
+@layer components {
+  /* 
+    Cookie Consent Brand Overrides 
+    Mapping brand CSS variables to vanilla-cookieconsent variables
+  */
+
+  :root {
+    /* Light Mode Variables */
+    --cc-bg: var(--card);
+    --cc-text: var(--card-foreground);
+    --cc-btn-primary-bg: var(--primary);
+    --cc-btn-primary-text: var(--primary-foreground);
+    --cc-btn-primary-hover-bg: var(--color-brand-600);
+    --cc-btn-secondary-bg: var(--muted);
+    --cc-btn-secondary-text: var(--foreground);
+    --cc-btn-secondary-hover-bg: var(--color-brand-100);
+    --cc-toggle-bg-on: var(--primary);
+    --cc-toggle-bg-off: var(--muted-foreground);
+    --cc-toggle-knob-bg: var(--background);
+    --cc-cookie-category-block-bg: var(--muted);
+    --cc-cookie-category-block-bg-hover: var(--color-brand-50);
+    --cc-section-border: var(--border);
+    --cc-cookie-table-border: var(--border);
+    --cc-overlay-bg: rgba(0, 0, 0, 0.4);
+    --cc-webkit-scrollbar-bg: var(--muted);
+    --cc-webkit-scrollbar-bg-hover: var(--muted-foreground);
+
+    /* Font and Radius */
+    /* biome-ignore lint/complexity/noImportantStyles: required for library override */
+    --cc-font-family: var(--font-geist-sans, ui-sans-serif, system-ui, sans-serif) !important;
+    --cc-btn-border-radius: var(--radius);
+    --cc-modal-border-radius: var(--radius);
+  }
+
+  .cc--darkmode {
+    /* Dark Mode Variables */
+    --cc-bg: var(--card);
+    --cc-text: var(--card-foreground);
+    --cc-btn-primary-bg: var(--primary);
+    --cc-btn-primary-text: var(--primary-foreground);
+    --cc-btn-primary-hover-bg: var(--color-brand-400);
+    --cc-btn-secondary-bg: var(--muted);
+    --cc-btn-secondary-text: var(--foreground);
+    --cc-btn-secondary-hover-bg: var(--color-brand-800);
+    --cc-toggle-bg-on: var(--primary);
+    --cc-toggle-bg-off: var(--muted-foreground);
+    --cc-toggle-knob-bg: var(--foreground);
+    --cc-cookie-category-block-bg: var(--muted);
+    --cc-cookie-category-block-bg-hover: var(--color-brand-900);
+    --cc-section-border: var(--border);
+    --cc-cookie-table-border: var(--border);
+    --cc-overlay-bg: rgba(0, 0, 0, 0.7);
+  }
+
+  /* Custom overrides for finer control */
+  #cc-main .cm {
+    border: 1px solid var(--border);
+    box-shadow:
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
+    max-width: 24em; /* Slightly wider but cleaner */
+  }
+
+  #cc-main .pm {
+    border-left: 1px solid var(--border);
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Make buttons look like brand buttons */
+  #cc-main .cm__btn,
+  #cc-main .pm__btn {
+    font-weight: 500;
+    transition: all 0.2s ease;
+    font-size: 0.875rem; /* text-sm */
+    padding: 0.6em 1.2em;
+  }
+
+  /* Soften link color in footer */
+  #cc-main .cm__footer a,
+  #cc-main .pm__footer a {
+    color: var(--muted-foreground);
+    text-decoration: underline;
+    transition: color 0.2s;
+  }
+
+  #cc-main .cm__footer a:hover,
+  #cc-main .pm__footer a:hover {
+    color: var(--foreground);
+  }
+
+  /* Primary button hover effect */
+  #cc-main .cc__btn--primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Slightly softer shadow */
+  }
+}
