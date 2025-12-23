@@ -2,6 +2,7 @@ import { revalidateTag } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { parseBody } from 'next-sanity/webhook';
 import { env } from '@/lib/env';
+import { logger } from '@/lib/logger';
 
 type WebhookPayload = {
   _type: string;
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
     // Revalidate the specific document type
     // Next.js 16 (or this canary version) requires a second argument for revalidateTag
     revalidateTag(body._type, 'default');
-    console.log(`Revalidated tag: ${body._type}`);
+    logger.info({ msg: 'Revalidated tag', type: body._type });
 
     // If it's a page or post with a slug, we might want to be more specific,
     // but revalidating the type is usually safe and sufficient for lists.
@@ -46,7 +47,7 @@ export async function POST(req: NextRequest) {
       body,
     });
   } catch (err: any) {
-    console.error(err);
+    logger.error({ err }, 'Revalidation error');
     return new Response(err.message, { status: 500 });
   }
 }

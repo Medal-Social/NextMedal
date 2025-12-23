@@ -1,6 +1,7 @@
 import { escapeHTML, toHTML } from '@portabletext/to-html';
 import { Feed } from 'feed';
 import { groq } from 'next-sanity';
+import { logger } from '@/lib/logger';
 import resolveUrl from '@/lib/resolveUrl';
 import { urlFor } from '@/sanity/lib/image';
 import { fetchSanityLive } from '@/sanity/lib/live';
@@ -88,7 +89,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error('Error generating RSS feed:', error);
+    logger.error({ err: error }, 'Error generating RSS feed');
     return new Response('Error generating RSS feed', { status: 500 });
   }
 }
