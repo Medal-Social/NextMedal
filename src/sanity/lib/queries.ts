@@ -93,6 +93,33 @@ const BASE_MODULES_QUERY = groq`
 			...
 		}
 	},
+	_type == 'contact' => {
+		...,
+		form->{
+			...,
+			redirect { ${LINK_QUERY} }
+		},
+		contactPerson {
+			...,
+			image {
+				image {
+					${IMAGE_QUERY}
+				}
+			}
+		}
+	},
+	_type == 'lead-magnet' => {
+		...,
+		form->{
+			...,
+			redirect { ${LINK_QUERY} }
+		},
+		image {
+			image {
+				${IMAGE_QUERY}
+			}
+		}
+	},
 	_type == 'hero' => {
 		...,
 		image {
@@ -132,13 +159,19 @@ export const MODULES_QUERY = groq`
 	},
 `;
 
-export const GLOBAL_MODULE_QUERY = groq`
-	string::startsWith($slug, path)
-	&& select(
-		defined(excludePaths) => count(excludePaths[string::startsWith($slug, @)]) == 0,
-		true
-	)
+export const PLACEMENT_QUERY = groq`
+	_type == 'placement' && scope == $scope
 `;
+
+export function placementQuery(scopeFilter: string) {
+  return groq`*[_type == 'placement' && (${scopeFilter})]{
+		_id,
+		scope,
+		location,
+		injectionConfig,
+		modules[]{ ${MODULES_QUERY} }
+	}`;
+}
 
 export const TRANSLATIONS_QUERY = groq`
 	'translations': *[_type == 'translation.metadata' && references(^._id)].translations[].value->{
