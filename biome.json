@@ -42,6 +42,7 @@
         "useExhaustiveDependencies": "warn"
       },
       "suspicious": {
+        "noConsole": "warn",
         "noExplicitAny": "off",
         "noArrayIndexKey": "off"
       },
