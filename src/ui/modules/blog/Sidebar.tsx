@@ -20,13 +20,13 @@ export default function Sidebar({
       <div className="space-y-8">
         {/* Table of Contents */}
         {headings && headings.length > 0 && (
-          <div className="bg-card rounded-lg p-6 border shadow-sm">
+          <div className="bg-card rounded-2xl p-6 border shadow-sm">
             <TableOfContents headings={headings} />
           </div>
         )}
 
         {/* Share Article */}
-        <div className="bg-card rounded-lg p-6 border shadow-sm">
+        <div className="bg-card rounded-2xl p-6 border shadow-sm">
           <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4">
             Share Article
           </h4>
