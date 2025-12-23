@@ -16,11 +16,6 @@ const config = {
   reactStrictMode: true,
   poweredByHeader: false,
   output: "standalone",
-  logging: {
-    fetches: {
-      fullUrl: true,
-    },
-  },
   // Configure image handling
   images: {
     dangerouslyAllowSVG: true,
@@ -61,6 +56,14 @@ const config = {
 		}`);
   },
 
+  experimental: {
+    optimizePackageImports: [
+      "@sanity/ui",
+      "@sanity/icons",
+      "framer-motion",
+      "@base-ui/react",
+    ],
+  },
   env: {
     SC_DISABLE_SPEEDY: "false", // makes styled-components as fast in dev mode as it is in production mode
   },
