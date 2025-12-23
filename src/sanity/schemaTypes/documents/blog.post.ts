@@ -7,7 +7,7 @@
  * - 1.0.0: Initial version with core blog post functionality
  */
 
-import { EditIcon, EyeClosedIcon } from '@sanity/icons';
+import { ControlsIcon, EditIcon, EyeClosedIcon, SearchIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import { imageBlock } from '../fragments';
 
@@ -17,9 +17,9 @@ export default defineType({
   icon: EditIcon,
   type: 'document',
   groups: [
-    { name: 'content', default: true },
-    { name: 'options' },
-    { name: 'metadata', title: 'SEO & Metadata' },
+    { name: 'content', title: 'Content', icon: EditIcon, default: true },
+    { name: 'metadata', title: 'SEO & Metadata', icon: SearchIcon },
+    { name: 'advanced', title: 'Advanced Options', icon: ControlsIcon },
   ],
   fields: [
     defineField({
@@ -97,7 +97,7 @@ export default defineType({
         layout: 'radio',
       },
       initialValue: 'standard',
-      group: 'options',
+      group: 'advanced',
     }),
     defineField({
       name: 'metadata',

@@ -26,8 +26,8 @@ export default defineType({
   icon: DocumentIcon,
   description: 'Standard page with modules for building content',
   groups: [
-    { name: 'content', title: 'Content', default: true },
-    { name: 'metadata', title: 'SEO & Metadata' },
+    { name: 'content', title: 'Content', icon: EditIcon, default: true },
+    { name: 'metadata', title: 'SEO & Metadata', icon: SearchIcon },
   ],
   fields: [
     defineField({
