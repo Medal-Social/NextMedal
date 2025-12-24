@@ -3,6 +3,7 @@ import { projectId, dataset, apiVersion } from "./src/sanity/lib/project";
 // import { token } from '@/lib/sanity/token'
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const client = projectId
   ? createClient({
@@ -77,5 +78,35 @@ const config = {
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
-export default withNextIntl(config);
+const sentryConfig = withSentryConfig(withNextIntl(config), {
+  // For all available options, see:
+  // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#configure-vercel-project-settings
+
+  // Suppresses source map uploading logs during bundling
+  silent: true,
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+
+  // Upload a larger set of source maps for prettier stack traces (increases build time)
+  widenClientFileUpload: true,
+
+  // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
+  tunnelRoute: "/monitoring",
+
+  // Hides source maps from visitors
+  sourcemaps: {
+    deleteSourcemapsAfterUpload: true,
+  },
+
+  // Automatically tree-shake Sentry logger statements to reduce bundle size
+  // and enables automatic instrumentation of Vercel Cron Monitors.
+  webpack: {
+    treeshake: {
+      removeDebugLogging: true,
+    },
+    automaticVercelMonitors: true,
+  },
+});
+
+export default sentryConfig;
 
