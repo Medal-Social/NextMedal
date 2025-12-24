@@ -36,8 +36,7 @@ declare global {
       cookieConsent?: {
         enabled: boolean;
         privacyPolicy?: {
-          _type: 'reference';
-          _ref: string;
+          slug: string;
         };
       };
     }
