@@ -37,7 +37,8 @@ export default function GlobalError({
           <div className="space-y-3">
             <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Something went wrong</h1>
             <p className="text-muted-foreground text-lg leading-relaxed px-2">
-              We encountered an unexpected error. Our team has been notified and we're working on a fix.
+              We encountered an unexpected error. Our team has been notified and we're working on a
+              fix.
             </p>
           </div>
 
