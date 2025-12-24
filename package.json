@@ -93,7 +93,8 @@
   },
   "pnpm": {
     "overrides": {
-      "immer": "^11.1.0"
+      "immer": "^11.1.0",
+      "prismjs": "^1.30.0"
     }
   },
   "packageManager": "pnpm@10.26.2"
