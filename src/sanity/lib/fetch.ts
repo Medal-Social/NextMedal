@@ -13,29 +13,18 @@ import { CTA_QUERY, IMAGE_QUERY, LINK_QUERY, NAVIGATION_QUERY } from './queries'
 export async function fetchSanity<T = any>({
   query,
   params = {},
-  next,
+  tags,
+  stega,
 }: {
   query: string;
   params?: Partial<QueryParams>;
-  next?: QueryOptions['next'];
+  tags?: string[];
+  stega?: boolean;
 }) {
-  const preview = dev || (await draftMode()).isEnabled;
-
-  if (preview) {
-    return fetchSanityLive<T>({ query, params });
-  }
-
-  return client.fetch<T>(query, params, {
-    perspective: 'published',
-    useCdn: true,
-    next: {
-      revalidate: 3600, // every hour
-      ...next,
-    },
-  });
+  return fetchSanityLive<T>({ query, params, tags, stega });
 }
 
-export async function getSite() {
+export async function getSite(stega?: boolean) {
   const site = await fetchSanity<Sanity.Site>({
     query: groq`
 			*[_type == 'site' && _id == 'site'][0]{
@@ -66,6 +55,7 @@ export async function getSite() {
 				'brandPage': *[_type == "page" && metadata.slug.current == "brand"][0]._id
 			}
 		`,
+    stega,
   });
 
   if (!site)

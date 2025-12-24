@@ -64,12 +64,12 @@ export default async function Page() {
 }
 
 export async function generateMetadata() {
-  const page = await getPage();
+  const page = await getPage(false);
   if (!page) return {};
   return processMetadata(page);
 }
 
-async function getPage() {
+async function getPage(stega?: boolean) {
   const page = await fetchSanity<Sanity.Page & { placements?: Placement[] }>({
     query: groq`*[_type == 'page' && metadata.slug.current == 'index'][0]{
 			...,
@@ -81,6 +81,7 @@ async function getPage() {
 			},
 			${TRANSLATIONS_QUERY}
 		}`,
+    stega,
   });
 
   return page;

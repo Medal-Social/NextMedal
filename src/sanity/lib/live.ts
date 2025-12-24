@@ -7,15 +7,17 @@ import { token } from '@/sanity/lib/token';
 export const { sanityFetch, SanityLive } = defineLive({
   client,
   serverToken: token,
-  browserToken: token,
 });
 
-export async function fetchSanityLive<T = any>(args: Parameters<typeof sanityFetch>[0]) {
+export async function fetchSanityLive<T = any>(
+  args: Parameters<typeof sanityFetch>[0] & { stega?: boolean }
+) {
   const preview = dev || (await draftMode()).isEnabled;
 
   const { data } = await sanityFetch({
     ...args,
-    perspective: preview ? 'drafts' : 'published',
+    perspective: args.perspective || (preview ? 'drafts' : 'published'),
+    stega: args.stega ?? undefined,
   });
 
   return data as T;

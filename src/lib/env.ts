@@ -13,7 +13,6 @@ const envSchema = z.object({
   NEXT_PUBLIC_SANITY_DATASET: z.string().min(1),
   NEXT_PUBLIC_SANITY_API_VERSION: z.string().optional().default('2025-12-23'),
   SANITY_API_READ_TOKEN: z.string().optional(),
-  SANITY_REVALIDATE_SECRET: z.string().optional(),
 
   // Analytics
   NEXT_PUBLIC_UMAMI_SCRIPT_URL: z.string().url().optional(),
@@ -30,7 +29,6 @@ const parsedEnv = envSchema.safeParse({
   NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET,
   NEXT_PUBLIC_SANITY_API_VERSION: process.env.NEXT_PUBLIC_SANITY_API_VERSION,
   SANITY_API_READ_TOKEN: process.env.SANITY_API_READ_TOKEN,
-  SANITY_REVALIDATE_SECRET: process.env.SANITY_REVALIDATE_SECRET,
   NEXT_PUBLIC_UMAMI_SCRIPT_URL: process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL,
   NEXT_PUBLIC_UMAMI_WEBSITE_ID: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID,
 });
