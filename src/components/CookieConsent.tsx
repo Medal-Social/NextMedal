@@ -5,6 +5,7 @@ import * as CookieConsent from 'vanilla-cookieconsent';
 import 'vanilla-cookieconsent/dist/cookieconsent.css';
 import '@/styles/cookieconsent.css';
 import { useTheme } from 'next-themes';
+import resolveUrl from '@/lib/resolveUrl';
 
 interface CookieConsentProps {
   config: Sanity.Site['cookieConsent'];
@@ -13,6 +14,16 @@ interface CookieConsentProps {
 
 export default function CookieConsentComponent({ config, locale = 'en' }: CookieConsentProps) {
   const { resolvedTheme } = useTheme();
+
+  const privacyPolicy =
+    config?.privacyPolicy &&
+    typeof config.privacyPolicy === 'object' &&
+    '_type' in config.privacyPolicy &&
+    config.privacyPolicy._type === 'page'
+      ? (config.privacyPolicy as Sanity.Page)
+      : null;
+
+  const privacyPolicyUrl = privacyPolicy ? resolveUrl(privacyPolicy, { base: false }) : undefined;
 
   useEffect(() => {
     if (!config?.enabled) return;
@@ -66,9 +77,9 @@ export default function CookieConsentComponent({ config, locale = 'en' }: Cookie
               acceptAllBtn: 'Accept all',
               acceptNecessaryBtn: 'Reject all',
               showPreferencesBtn: 'Manage preferences',
-              footer: config.privacyPolicy?.slug
+              footer: privacyPolicyUrl
                 ? `
-                  <a href="/${config.privacyPolicy.slug}">Privacy Policy</a>
+                  <a href="${privacyPolicyUrl}">Privacy Policy</a>
                 `
                 : undefined,
             },
@@ -145,9 +156,9 @@ export default function CookieConsentComponent({ config, locale = 'en' }: Cookie
               acceptAllBtn: 'Godta alle',
               acceptNecessaryBtn: 'Avvis alle',
               showPreferencesBtn: 'Administrer innstillinger',
-              footer: config.privacyPolicy?.slug
+              footer: privacyPolicyUrl
                 ? `
-                  <a href="/nb/${config.privacyPolicy.slug}">Personvernerklæring</a>
+                  <a href="${privacyPolicyUrl}">Personvernerklæring</a>
                 `
                 : undefined,
             },

@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation';
 import { groq } from 'next-sanity';
-import { mockPost } from '@/lib/mock-blog-post';
 import { groupPlacements, type Placement } from '@/lib/placement';
 import processMetadata from '@/lib/processMetadata';
 import resolveUrl from '@/lib/resolveUrl';
@@ -66,14 +65,6 @@ async function getPost(params: { slug?: string }) {
   const placementsQuery = placementQuery(
     "scope == 'blog.post' || scope match 'blog*' || scope == 'all-blog-posts'"
   );
-
-  if (params.slug === 'example-post') {
-    const placements = await fetchSanityLive<Placement[]>({
-      query: placementsQuery,
-      params: {},
-    });
-    return { ...mockPost, placements } as any;
-  }
 
   return await fetchSanityLive<
     Sanity.BlogPost & { modules?: Sanity.Module[]; placements: Placement[] }

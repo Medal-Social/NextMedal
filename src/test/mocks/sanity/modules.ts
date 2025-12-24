@@ -45,20 +45,22 @@ export function createMockHeroModule(overrides?: Partial<MockHeroModule>): MockH
       'Build amazing products with our cutting-edge tools.',
     ]),
     ctas: [
-      {
-        _key: generateKey(),
-        text: 'Get Started',
-        linkType: 'external',
-        externalLink: 'https://example.com/signup',
-        style: 'default',
-      },
-      {
-        _key: generateKey(),
-        text: 'Learn More',
-        linkType: 'external',
-        externalLink: 'https://example.com/about',
-        style: 'outline',
-      },
+      createMockCta({
+        link: createMockMenuItem({
+          label: 'Get Started',
+          type: 'external',
+          externalLink: 'https://example.com/signup',
+        }),
+        style: 'primary',
+      }),
+      createMockCta({
+        link: createMockMenuItem({
+          label: 'Learn More',
+          type: 'external',
+          externalLink: 'https://example.com/about',
+        }),
+        style: 'ghost',
+      }),
     ],
     videoType: 'image',
     image: createMockImg(),
@@ -75,7 +77,11 @@ export function createMockCalloutModule(overrides?: Partial<MockCalloutModule>):
       'Ready to get started?',
       'Join thousands of satisfied customers today.',
     ]),
-    ctas: [createMockCta({ text: 'Sign Up Now' })],
+    ctas: [
+      createMockCta({
+        link: createMockMenuItem({ label: 'Sign Up Now' }),
+      }),
+    ],
     ...overrides,
   };
 }
@@ -223,7 +229,9 @@ export function createMockPricingComparisonModule(
         name: 'Starter',
         price: '$9/mo',
         description: 'Perfect for individuals',
-        cta: createMockCta({ text: 'Start Free' }),
+        cta: createMockCta({
+          link: createMockMenuItem({ label: 'Start Free' }),
+        }),
         popular: false,
       },
       {
@@ -231,7 +239,9 @@ export function createMockPricingComparisonModule(
         name: 'Pro',
         price: '$29/mo',
         description: 'Best for growing teams',
-        cta: createMockCta({ text: 'Get Pro' }),
+        cta: createMockCta({
+          link: createMockMenuItem({ label: 'Get Pro' }),
+        }),
         popular: true,
       },
     ],

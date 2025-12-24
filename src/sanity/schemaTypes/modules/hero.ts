@@ -99,23 +99,23 @@ export default defineType({
       description: 'Add up to 2 buttons (one primary, one secondary)',
       type: 'array',
       of: [defineArrayMember({ type: 'cta' })],
-      validation: (Rule) => [
-        Rule.max(2).warning('More than 2 buttons may clutter the Hero layout'),
-        Rule.custom((ctas) => {
-          if (!ctas || ctas.length === 0) return true;
+      validation: (Rule) =>
+        Rule.max(2)
+          .warning('More than 2 buttons may clutter the Hero layout')
+          .custom((ctas) => {
+            if (!ctas || ctas.length === 0) return true;
 
-          const styles = ctas.map((cta: any) => cta?.style || 'primary');
+            const styles = ctas.map((cta: any) => cta?.style || 'primary');
 
-          // Check for duplicates
-          const primaryCount = styles.filter((s: string) => s === 'primary').length;
+            // Check for duplicates
+            const primaryCount = styles.filter((s: string) => s === 'primary').length;
 
-          if (primaryCount > 1) {
-            return 'Only one Primary button is allowed';
-          }
+            if (primaryCount > 1) {
+              return 'Only one Primary button is allowed';
+            }
 
-          return true;
-        }),
-      ],
+            return true;
+          }),
       group: 'content',
     }),
     defineField({

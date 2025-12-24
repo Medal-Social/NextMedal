@@ -6,6 +6,7 @@
 import {
   createMockCta,
   createMockImage,
+  createMockMenuItem,
   createMockMetadata,
   createMockPortableText,
   createMockSlug,
@@ -124,7 +125,11 @@ export function createMockSite(overrides?: Partial<MockSite>): MockSite {
     language: 'en',
     title: 'Test Site',
     tagline: createMockPortableText(['Building the future of web development']),
-    ctas: [createMockCta({ text: 'Get Started' })],
+    ctas: [
+      createMockCta({
+        link: createMockMenuItem({ label: 'Get Started' }),
+      }),
+    ],
     copyright: createMockPortableText(['© 2024 Test Site. All rights reserved.']),
     socialLinks: [
       { text: 'Twitter', url: 'https://twitter.com/example' },

@@ -125,12 +125,12 @@ export function createMockCta(overrides?: Partial<MockCta>): MockCta {
   return {
     _type: 'cta',
     _key: generateKey(),
-    text: 'Learn More',
-    linkType: 'external',
-    externalLink: 'https://example.com',
-    style: 'default',
-    size: 'default',
-    newTab: false,
+    link: createMockMenuItem({
+      label: 'Learn More',
+      type: 'external',
+      externalLink: 'https://example.com',
+    }),
+    style: 'primary',
     ...overrides,
   };
 }
