@@ -79,12 +79,20 @@ describe('Draft mode routes', () => {
       expect(response.status).toBe(307);
     });
 
-    it('redirects to the root URL', async () => {
+    it('redirects to the root URL when no slug is provided', async () => {
       const request = new NextRequest('https://example.com/api/draft-mode/disable');
       const response = await disableGET(request);
 
       const location = response.headers.get('Location');
-      expect(location).toContain('/');
+      expect(location).toBe('https://example.com/');
+    });
+
+    it('redirects to the provided slug', async () => {
+      const request = new NextRequest('https://example.com/api/draft-mode/disable?slug=/test-page');
+      const response = await disableGET(request);
+
+      const location = response.headers.get('Location');
+      expect(location).toBe('https://example.com/test-page');
     });
   });
 
