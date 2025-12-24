@@ -32,6 +32,7 @@ export async function GET() {
 				},
 				'copyright': pt::text(*[_type == 'site'][0].copyright)
 			}`,
+      stega: false,
     });
 
     if (!blog || !posts) {

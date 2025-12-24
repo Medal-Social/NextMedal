@@ -48,20 +48,24 @@ export default async function Page({ params }: Props) {
 
 export async function generateMetadata({ params }: Props) {
   const resolvedParams = await params;
-  const post = await getPost(resolvedParams);
+  const post = await getPost(resolvedParams, false);
   if (!post) notFound();
   return processMetadata(post);
 }
 
 export async function generateStaticParams() {
-  const slugs = await client.fetch<string[]>(
-    groq`*[_type == 'blog.post' && defined(metadata.slug.current)].metadata.slug.current`
-  );
+  const slugs = await client
+    .withConfig({ stega: false })
+    .fetch<string[]>(
+      groq`*[_type == 'blog.post' && defined(metadata.slug.current)].metadata.slug.current`,
+      {},
+      { perspective: 'published' }
+    );
 
   return slugs.map((slug) => ({ slug }));
 }
 
-async function getPost(params: { slug?: string }) {
+async function getPost(params: { slug?: string }, stega?: boolean) {
   const placementsQuery = placementQuery(
     "scope == 'blog.post' || scope match 'blog*' || scope == 'all-blog-posts'"
   );
@@ -91,6 +95,7 @@ async function getPost(params: { slug?: string }) {
 			'placements': ${placementsQuery}
 		}`,
     params: { ...params, slug: params.slug },
+    stega,
   });
 }
 

@@ -41,14 +41,15 @@ export default async function NotFound() {
 }
 
 export async function generateMetadata() {
-  return (await get404())?.metadata;
+  return (await get404(false))?.metadata;
 }
 
-async function get404() {
+async function get404(stega?: boolean) {
   return await fetchSanityLive<Sanity.Page>({
     query: groq`*[_type == 'page' && metadata.slug.current == '404'][0]{
 			...,
 			modules[]{ ${MODULES_QUERY} }
 		}`,
+    stega,
   });
 }

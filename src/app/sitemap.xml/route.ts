@@ -29,6 +29,7 @@ export async function GET(_req: NextRequest) {
         },
       }`,
       params: { baseUrl: `${baseUrl}/` },
+      stega: false,
     });
   } catch (error) {
     logger.error({ err: error }, 'Error fetching sitemap data from Sanity');

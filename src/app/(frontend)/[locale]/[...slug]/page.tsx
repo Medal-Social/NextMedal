@@ -31,26 +31,28 @@ export default async function Page({ params }: Props) {
 
 export async function generateMetadata({ params }: Props) {
   const resolvedParams = await params;
-  const page = await getPage(resolvedParams);
+  const page = await getPage(resolvedParams, false);
   if (!page) notFound();
   return processMetadata(page);
 }
 
 export async function generateStaticParams() {
-  const slugs = await client.fetch<{ slug: string }[]>(
+  const slugs = await client.withConfig({ stega: false }).fetch<{ slug: string }[]>(
     groq`*[
 			_type in ['page', 'component.library'] &&
 			defined(metadata.slug.current) &&
 			!(metadata.slug.current in ['index'])
 		]{
 			'slug': metadata.slug.current
-		}`
+		}`,
+    {},
+    { perspective: 'published' }
   );
 
   return slugs.map(({ slug }) => ({ slug: slug.split('/') }));
 }
 
-async function getPage(params: { slug?: string[] }) {
+async function getPage(params: { slug?: string[] }, stega?: boolean) {
   const slug = params.slug?.join('/');
 
   return await fetchSanityLive<
@@ -72,6 +74,7 @@ async function getPage(params: { slug?: string[] }) {
 			${TRANSLATIONS_QUERY}
 		}`,
     params: { slug },
+    stega,
   });
 }
 
