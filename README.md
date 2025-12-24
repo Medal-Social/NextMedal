@@ -113,6 +113,19 @@ pnpm start
 
 ### Deployment
 
+NextMedal is configured for `output: "standalone"`, making it compatible with Vercel, Coolify, and any Docker-based deployment.
+
+#### Sentry Error Monitoring
+
+NextMedal includes built-in support for [Sentry](https://sentry.io/). Monitoring is **completely optional** and only active if configured.
+
+To enable Sentry:
+1. Set `NEXT_PUBLIC_SENTRY_DSN` in your environment variables.
+2. Set `SENTRY_ORG` and `SENTRY_PROJECT` to match your Sentry project configuration.
+3. (Optional) Set `SENTRY_AUTH_TOKEN` during build-time to upload source maps for better stack traces.
+
+The integration utilizes the latest Next.js 16+ patterns, including `instrumentation.ts` for deep server-side error capturing, and is seamlessly integrated with the structured Pino logger.
+
 Deploy to Vercel with one click:
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FMedal-Social%2FNextMedal.git)
