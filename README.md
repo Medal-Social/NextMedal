@@ -117,6 +117,20 @@ Deploy to Vercel with one click:
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FMedal-Social%2FNextMedal.git)
 
+### Docker Support
+
+You can build a production-ready Docker image using the provided script:
+
+```bash
+pnpm docker:build
+```
+
+This script automatically pulls required build-time variables from your `.env` and creates an image named `nextmedal`. You can specify a custom image name as an argument:
+
+```bash
+./scripts/docker-build.sh my-custom-image-name
+```
+
 ## Why Medal Social? 🏆
 
 NextMedal is crafted by Medal Social, a marketing powerhouse that knows how to elevate brands. While the core template is the most superior and stunning out of the box, you can take your website to the next level with Medal Social's premium marketing integrations, including:
