@@ -259,6 +259,14 @@ export default defineType({
           to: [{ type: 'page' }], // Assuming 'page' exists, need to verify or use url
           description: 'Link to the privacy policy page.',
           hidden: ({ parent }) => !parent?.enabled,
+          validation: (Rule) =>
+            Rule.custom((value, context) => {
+              const parent = context.parent as any;
+              if (parent?.enabled && !value) {
+                return 'Privacy Policy is required when Cookie Consent is enabled';
+              }
+              return true;
+            }),
         }),
       ],
     }),

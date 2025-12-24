@@ -35,9 +35,7 @@ declare global {
       // cookie consent
       cookieConsent?: {
         enabled: boolean;
-        privacyPolicy?: {
-          slug: string;
-        };
+        privacyPolicy?: SanityReference<Page> | Page;
       };
     }
 

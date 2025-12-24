@@ -59,13 +59,8 @@ export interface MockPortableTextBlock {
 export interface MockCta {
   _type: 'cta';
   _key: string;
-  text: string;
-  linkType: 'internal' | 'external';
-  internalLink?: { _ref: string; _type: 'reference' };
-  externalLink?: string;
-  style?: 'default' | 'secondary' | 'outline' | 'ghost' | 'link' | 'destructive';
-  size?: 'default' | 'sm' | 'lg';
-  newTab?: boolean;
+  link: MockMenuItem;
+  style?: 'primary' | 'ghost' | 'link';
 }
 
 export interface MockIcon {
@@ -181,14 +176,7 @@ export interface MockHeroModule {
   _key: string;
   options?: { uid?: string };
   content?: MockPortableTextBlock[];
-  ctas?: Array<{
-    _key: string;
-    text: string;
-    linkType: 'internal' | 'external';
-    internalLink?: { _ref: string; _type: 'reference' };
-    externalLink?: string;
-    style?: 'default' | 'outline';
-  }>;
+  ctas?: MockCta[];
   videoType?: 'image' | 'mux' | 'youtube';
   image?: MockImg;
   videoUrl?: string;

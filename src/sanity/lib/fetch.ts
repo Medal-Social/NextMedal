@@ -60,9 +60,7 @@ export async function getSite() {
 				socialLinks,
 				cookieConsent {
 					...,
-					privacyPolicy->{
-						"slug": metadata.slug.current
-					}
+					privacyPolicy->
 				},
 				'ogimage': ogimage.asset->url,
 				'brandPage': *[_type == "page" && metadata.slug.current == "brand"][0]._id

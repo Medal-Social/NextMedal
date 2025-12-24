@@ -96,7 +96,6 @@ export default defineType({
                       {
                         title: 'Highlight',
                         value: 'highlight',
-                        icon: () => '✨',
                       },
                     ],
                   },
