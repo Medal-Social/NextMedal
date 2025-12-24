@@ -1,10 +1,11 @@
 import type { NextRequest } from 'next/server';
 import { groq } from 'next-sanity';
+import { BASE_URL } from '@/lib/env';
 import { logger } from '@/lib/logger';
 import { fetchSanityLive } from '@/sanity/lib/live';
 
 export async function GET(_req: NextRequest) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
+  const baseUrl = BASE_URL;
   let data: Record<string, any>;
   try {
     data = await fetchSanityLive<Record<string, any>>({
