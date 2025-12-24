@@ -1,11 +1,26 @@
 #!/bin/bash
 
 # NextMedal Docker Build Script
-# Automatically injects .env variables as build arguments
+# ----------------------------
+# Usage:
+#   ./scripts/docker-build.sh [image-name]
+#
+# Examples:
+#   ./scripts/docker-build.sh              # Builds with default name 'nextmedal'
+#   ./scripts/docker-build.sh my-app       # Builds with name 'my-app'
+#
+# Requirements:
+#   - Docker installed and running
+#   - A .env file in the root directory with required variables
 
 IMAGE_NAME=${1:-nextmedal}
 
 echo "🚀 Starting Docker build for $IMAGE_NAME..."
+
+# Check if .env exists
+if [ ! -f .env ]; then
+  echo "⚠️  Warning: .env file not found. Build may fail if required arguments are missing."
+fi
 
 # Build arguments for Next.js (only those needed at build time)
 # We specifically pick only the variables the Dockerfile expects to avoid leaking other secrets
@@ -28,13 +43,13 @@ for ARG in "${REQUIRED_ARGS[@]}"; do
   fi
 done
 
-echo "🛠️ Build arguments prepared (filtered from .env)"
+echo "🛠️  Build arguments prepared (filtered from .env)"
 
 # Execute build
 docker build $BUILD_ARGS -t "$IMAGE_NAME" .
 
 if [ $? -eq 0 ]; then
-  echo "✅ Build successful!"
+  echo "✅ Build successful! Image created: $IMAGE_NAME"
 else
   echo "❌ Build failed."
   exit 1

@@ -1,6 +1,7 @@
 import { escapeHTML, toHTML } from '@portabletext/to-html';
 import { Feed } from 'feed';
 import { groq } from 'next-sanity';
+import { BASE_URL } from '@/lib/env';
 import { logger } from '@/lib/logger';
 import resolveUrl from '@/lib/resolveUrl';
 import { urlFor } from '@/sanity/lib/image';
@@ -47,7 +48,7 @@ export async function GET() {
       link: url,
       id: url,
       copyright,
-      favicon: `${process.env.NEXT_PUBLIC_BASE_URL}/favicon.ico`,
+      favicon: `${BASE_URL}/favicon.ico`,
       language: 'en',
       generator: 'https://www.medalsocial.com',
     });

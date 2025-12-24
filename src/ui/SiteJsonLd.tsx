@@ -1,3 +1,4 @@
+import { BASE_URL } from '@/lib/env';
 import { getSite } from '@/sanity/lib/fetch';
 import JsonLd from '@/ui/JsonLd';
 
@@ -12,7 +13,7 @@ export default async function SiteJsonLd() {
           {
             '@type': 'Organization',
             name: site.title,
-            url: process.env.NEXT_PUBLIC_BASE_URL,
+            url: BASE_URL,
             logo: {
               '@type': 'ImageObject',
               url: site.logo?.asset?.url,
@@ -22,7 +23,7 @@ export default async function SiteJsonLd() {
           {
             '@type': 'WebSite',
             name: site.title,
-            url: process.env.NEXT_PUBLIC_BASE_URL,
+            url: BASE_URL,
           },
         ],
       }}
