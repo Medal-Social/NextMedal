@@ -28,10 +28,14 @@ REQUIRED_ARGS=(
   "NEXT_PUBLIC_SANITY_PROJECT_ID"
   "NEXT_PUBLIC_SANITY_DATASET"
   "NEXT_PUBLIC_BASE_URL"
-  "SANITY_API_READ_TOKEN"
   "NEXT_PUBLIC_UMAMI_SCRIPT_URL"
   "NEXT_PUBLIC_UMAMI_WEBSITE_ID"
   "NEXT_PUBLIC_APP_ENV"
+)
+
+# Secrets that should be passed via --secret to avoid leaking them in image layers
+SECRET_ARGS=(
+  "SANITY_API_READ_TOKEN"
 )
 
 BUILD_ARGS=""
@@ -43,10 +47,25 @@ for ARG in "${REQUIRED_ARGS[@]}"; do
   fi
 done
 
-echo "🛠️  Build arguments prepared (filtered from .env)"
+# Create a temporary directory for secrets to ensure cleanup
+SECRET_DIR=$(mktemp -d)
+trap 'rm -rf "$SECRET_DIR"' EXIT
+
+for ARG in "${SECRET_ARGS[@]}"; do
+  # Extract value from .env if it exists
+  VALUE=$(grep "^$ARG=" .env | cut -d'=' -f2- | sed 's/^"//;s/"$//;s/^\x27//;s/\x27$//')
+  if [ ! -z "$VALUE" ]; then
+    SECRET_FILE="$SECRET_DIR/$ARG"
+    echo "$VALUE" > "$SECRET_FILE"
+    BUILD_ARGS="$BUILD_ARGS --secret id=$ARG,src=$SECRET_FILE"
+  fi
+done
+
+echo "🛠️  Build arguments and secrets prepared (filtered from .env)"
 
 # Execute build
-docker build $BUILD_ARGS -t "$IMAGE_NAME" .
+# Note: DOCKER_BUILDKIT=1 might be required for older docker versions
+DOCKER_BUILDKIT=1 docker build $BUILD_ARGS -t "$IMAGE_NAME" .
 
 if [ $? -eq 0 ]; then
   echo "✅ Build successful! Image created: $IMAGE_NAME"
