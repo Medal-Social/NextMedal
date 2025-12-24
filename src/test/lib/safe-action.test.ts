@@ -86,4 +86,3 @@ describe('withSecurity', () => {
     expect(result.success).toBe(true);
   });
 });
-

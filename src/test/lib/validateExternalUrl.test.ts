@@ -53,4 +53,3 @@ describe('validateExternalUrl', () => {
     expect(validateExternalUrl('')).toBeNull();
   });
 });
-
