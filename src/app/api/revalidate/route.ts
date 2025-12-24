@@ -31,15 +31,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Revalidate the specific document type
-    // Next.js 16 (or this canary version) requires a second argument for revalidateTag,
-    // but we use a try/catch to handle both signatures for cross-version compatibility.
-    try {
-      // @ts-ignore - Handle possible two-argument signature in Next.js 16
-      revalidateTag(body._type, 'default');
-    } catch (e) {
-      // Fallback to standard single-argument signature
-      revalidateTag(body._type);
-    }
+    revalidateTag(body._type, 'max');
     logger.info({ msg: 'Revalidated tag', type: body._type });
 
     // If it's a page or post with a slug, we might want to be more specific,
