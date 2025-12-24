@@ -7,7 +7,6 @@ import { token } from '@/sanity/lib/token';
 export const { sanityFetch, SanityLive } = defineLive({
   client,
   serverToken: token,
-  browserToken: token,
 });
 
 export async function fetchSanityLive<T = any>(

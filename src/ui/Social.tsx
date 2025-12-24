@@ -43,21 +43,31 @@ export default async function Social({ className }: React.ComponentProps<'div'>)
 function Icon({ url, ...props }: { url?: string } & React.ComponentProps<'svg'>) {
   if (!url) return null;
 
-  return url?.includes('bsky.app') ? (
+  let hostname = '';
+  try {
+    const urlObj = new URL(url.startsWith('http') ? url : `https://${url}`);
+    hostname = urlObj.hostname.toLowerCase();
+  } catch (_e) {
+    return <IoIosLink {...props} />;
+  }
+
+  const matches = (domain: string) => hostname === domain || hostname.endsWith(`.${domain}`);
+
+  return matches('bsky.app') ? (
     <FaBluesky {...props} />
-  ) : url?.includes('facebook.com') ? (
+  ) : matches('facebook.com') ? (
     <FaFacebookF {...props} />
-  ) : url?.includes('github.com') ? (
+  ) : matches('github.com') ? (
     <FaGithub {...props} />
-  ) : url?.includes('instagram.com') ? (
+  ) : matches('instagram.com') ? (
     <FaInstagram {...props} />
-  ) : url?.includes('linkedin.com') ? (
+  ) : matches('linkedin.com') ? (
     <FaLinkedinIn {...props} />
-  ) : url?.includes('tiktok.com') ? (
+  ) : matches('tiktok.com') ? (
     <FaTiktok {...props} />
-  ) : url?.includes('twitter.com') || url?.includes('x.com') ? (
+  ) : matches('twitter.com') || matches('x.com') ? (
     <FaXTwitter {...props} />
-  ) : url?.includes('youtube.com') ? (
+  ) : matches('youtube.com') || matches('youtu.be') ? (
     <FaYoutube {...props} />
   ) : (
     <IoIosLink {...props} />
