@@ -17,7 +17,7 @@ If you discover a security vulnerability within this project, please report it p
 
 ### Preferred Reporting Method
 
-Please send an email to security@medalsocial.com or use GitHub's private vulnerability reporting feature if enabled for this repository.
+Please send an email to support@medalsocial.com or use GitHub's private vulnerability reporting feature if enabled for this repository.
 
 ### What to include in your report
 
