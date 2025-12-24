@@ -2,9 +2,10 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { ImageResponse } from 'next/og';
 import type { NextRequest } from 'next/server';
+import { BASE_URL } from '@/lib/env';
 import { getSite } from '@/sanity/lib/fetch';
 
-const domain = process.env.NEXT_PUBLIC_BASE_URL?.replace(/https?:\/\//, '');
+const domain = BASE_URL.replace(/https?:\/\//, '');
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
