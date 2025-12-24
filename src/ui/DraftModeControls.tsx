@@ -2,21 +2,19 @@
 
 import { Loader2 } from 'lucide-react';
 // import { useDraftModeEnvironment } from 'next-sanity/hooks'
-import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useTransition } from 'react';
 import { VscBeakerStop } from 'react-icons/vsc';
-import { disableDraftMode } from './actions/disableDraftMode';
 
 export default function DraftModeControls() {
-  const router = useRouter();
+  const pathname = usePathname();
   const [pending, startTransition] = useTransition();
   // const environment = useDraftModeEnvironment()
   // if (!['live', 'unknown'].includes(environment)) return null
 
   const disable = () =>
-    startTransition(async () => {
-      await disableDraftMode();
-      router.refresh();
+    startTransition(() => {
+      window.location.href = `/api/draft-mode/disable?slug=${pathname}`;
     });
 
   return (

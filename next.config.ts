@@ -49,17 +49,17 @@ const config = {
       return [];
     }
     return await client.fetch(groq`*[_type == 'redirect']{
-			'source': select(source match "/*" => source, "/" + source),
-			'destination': select(
-				destination.type == 'internal' =>
-					select(
-						destination.internal->._type == 'blog.post' => '/blog/',
-						'/'
-					) + destination.internal->.metadata.slug.current,
-				destination.external
-			),
-			permanent
-		}`);
+            'source': select(source match "/*" => source, "/" + source),
+            'destination': select(
+                destination.type == 'internal' =>
+                    select(
+                        destination.internal->._type == 'blog.post' => '/blog/',
+                        '/'
+                    ) + destination.internal->.metadata.slug.current,
+                destination.external
+            ),
+            permanent
+        }`);
   },
 
   experimental: {
@@ -109,4 +109,3 @@ const sentryConfig = withSentryConfig(withNextIntl(config), {
 });
 
 export default sentryConfig;
-

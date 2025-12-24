@@ -17,6 +17,9 @@ const envSchema = z.object({
   // Analytics
   NEXT_PUBLIC_UMAMI_SCRIPT_URL: z.string().url().optional(),
   NEXT_PUBLIC_UMAMI_WEBSITE_ID: z.string().optional(),
+  NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
+  SENTRY_ORG: z.string().optional(),
+  SENTRY_PROJECT: z.string().optional(),
 });
 
 // Validate env vars at runtime
@@ -31,6 +34,9 @@ const parsedEnv = envSchema.safeParse({
   SANITY_API_READ_TOKEN: process.env.SANITY_API_READ_TOKEN,
   NEXT_PUBLIC_UMAMI_SCRIPT_URL: process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL,
   NEXT_PUBLIC_UMAMI_WEBSITE_ID: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID,
+  NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
+  SENTRY_ORG: process.env.SENTRY_ORG,
+  SENTRY_PROJECT: process.env.SENTRY_PROJECT,
 });
 
 const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build';
