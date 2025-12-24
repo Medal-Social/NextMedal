@@ -79,12 +79,24 @@ const useYouTubeVideo = (videoIdOrUrl?: string) => {
 
     if (extractedId) {
       setVideoId(extractedId);
-      // If the input looks like a URL, use it directly to be safe, otherwise construct it
-      const isUrl = videoIdOrUrl.includes('youtube.com') || videoIdOrUrl.includes('youtu.be');
+      // If the input looks like a URL, validate it strictly before using it
+      let isUrl = false;
+      try {
+        const urlObj = new URL(
+          videoIdOrUrl.startsWith('http') ? videoIdOrUrl : `https://${videoIdOrUrl}`
+        );
+        const hostname = urlObj.hostname.toLowerCase();
+        isUrl =
+          hostname === 'youtube.com' ||
+          hostname.endsWith('.youtube.com') ||
+          hostname === 'youtu.be';
+      } catch (_e) {
+        isUrl = false;
+      }
       setYoutubeUrl(isUrl ? videoIdOrUrl : `https://www.youtube.com/watch?v=${extractedId}`);
     } else {
-      // If extraction fails but it looks like a URL, try using it anyway
-      if (videoIdOrUrl.includes('http')) {
+      // If extraction fails but it looks like a URL, try using it anyway if it starts with http
+      if (videoIdOrUrl.startsWith('http')) {
         setYoutubeUrl(videoIdOrUrl);
       } else {
         setError('Could not extract YouTube video ID from URL');
