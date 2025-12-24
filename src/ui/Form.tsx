@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { validateExternalUrl } from '@/lib/validateExternalUrl';
 import resolveSlug from '@/sanity/lib/resolveSlug';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
 import { submitForm } from './actions/submitForm';
@@ -113,12 +114,19 @@ export default function Form({ form, className }: FormProps) {
       setSubmitted(true);
 
       if (form.redirect) {
-        const url = resolveSlug({
+        let url = resolveSlug({
           _type: form.redirect.internal?._type,
           internal: form.redirect.internal?.metadata?.slug?.current,
           external: form.redirect.external,
           params: form.redirect.params,
         });
+
+        if (url && form.redirect.type === 'external') {
+          // If it's an external URL, validate it
+          const validatedUrl = validateExternalUrl(url);
+          // If invalid, clear the URL so we don't redirect to it
+          url = validatedUrl || undefined;
+        }
 
         if (url) {
           if (form.redirect.type === 'external') {

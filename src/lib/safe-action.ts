@@ -1,5 +1,20 @@
 import { createSafeActionClient } from 'next-safe-action';
 import { z } from 'zod';
+import { PublicError } from './errors';
+import { logger } from './logger';
+
+export const errorHandler = (e: any) => {
+  // Always log the full error server-side
+  logger.error(e, 'Server action error');
+
+  // Only expose messages for trusted errors
+  if (e instanceof PublicError) {
+    return e.message;
+  }
+
+  // Generic error for everything else
+  return 'Internal server error';
+};
 
 /**
  * Base client for all secure server actions.
@@ -7,12 +22,7 @@ import { z } from 'zod';
  */
 export const actionClient = createSafeActionClient({
   // You can add more global middleware here (e.g., auth, rate limiting)
-  handleServerError(e) {
-    if (e instanceof Error) {
-      return e.message;
-    }
-    return 'Internal server error';
-  },
+  handleServerError: errorHandler,
 });
 
 /**
@@ -30,11 +40,12 @@ export const withSecurity = <T extends z.ZodRawShape>(schema: z.ZodObject<T>) =>
         if (!data._submissionTimestamp) return true;
 
         const start = new Date(data._submissionTimestamp).getTime();
-        const end = Date.now();
-        const duration = end - start;
+
+        // Allow if timestamp is invalid
+        if (Number.isNaN(start)) return true;
 
         // Reject if submission took less than 3 seconds
-        return duration >= 3000;
+        return Date.now() - start >= 3000;
       },
       {
         message: 'Submission too fast. Please wait a moment and try again.',

@@ -208,11 +208,7 @@ export default function BlogPostLayout({
             )}
 
             {/* Mobile Sidebar (Top: TOC + Share) */}
-            <MobileSidebar
-              headings={post.headings}
-              title={post.metadata?.title || ''}
-              slug={post.metadata?.slug?.current || ''}
-            />
+            <MobileSidebar headings={post.headings} />
 
             <Content
               value={bodyContent}

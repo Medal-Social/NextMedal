@@ -56,6 +56,4 @@ export const env = (parsedEnv.success ? parsedEnv.data : (parsedEnv as any).data
 
 export const dev = env.NODE_ENV === 'development';
 export const vercelPreview = env.VERCEL_ENV === 'preview';
-export const BASE_URL = dev
-  ? 'http://localhost:3000'
-  : env.NEXT_PUBLIC_BASE_URL || 'https://localhost:3000'; // Fallback for build time if missing
+export const BASE_URL = dev ? 'http://localhost:3000' : env.NEXT_PUBLIC_BASE_URL;
