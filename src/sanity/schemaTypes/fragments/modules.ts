@@ -1,3 +1,13 @@
+/**
+ * Modules Fragment
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
+ * @description A registry of all available content modules for the page builder.
+ * @changelog
+ * - 1.0.1: Added header documentation
+ * - 1.0.0: Initial version
+ */
+
 import { defineField } from 'sanity';
 
 export default defineField({
@@ -6,21 +16,20 @@ export default defineField({
   type: 'array',
   of: [
     { type: 'videoHero' },
-    { type: 'galleryHero' },
-    { type: 'featuredHero' },
+    { type: 'component-gallery' },
     { type: 'hero' },
     { type: 'accordion-list' },
-    { type: 'feature-grid' },
+    { type: 'features' },
+    { type: 'lead-magnet' },
     { type: 'callout' },
-    { type: 'tabbedContent' },
-    { type: 'richtext-module' },
-    { type: 'logo-list' },
-    { type: 'person-list' },
+    { type: 'contact' },
+    { type: 'richtext' },
+    { type: 'logo-cloud' },
+    { type: 'team' },
     { type: 'pricing-list' },
     { type: 'product-comparison' },
     { type: 'blog-frontpage' },
-    { type: 'blog-list' },
-    { type: 'blog-post-content' },
+    { type: 'latest-articles' },
     { type: 'breadcrumbs' },
   ],
   options: {
@@ -28,30 +37,34 @@ export default defineField({
       views: [
         {
           name: 'grid',
-          previewImageUrl: (schemaType) => `/admin/thumbnails/${schemaType}.webp`,
+          previewImageUrl: (schemaType) => `/block-previews/${schemaType}.png`,
         },
         { name: 'list' },
       ],
       groups: [
         {
           name: 'Hero Sections',
-          of: ['featuredHero', 'videoHero', 'galleryHero', 'hero'],
+          of: ['videoHero', 'hero'],
         },
         {
-          name: 'Content Blocks',
-          of: ['richtext-module', 'callout', 'tabbedContent', 'accordion-list'],
+          name: 'Content Sections',
+          of: [
+            'richtext',
+            'accordion-list',
+            'features',
+            'logo-cloud',
+            'team',
+            'pricing-list',
+            'product-comparison',
+          ],
         },
         {
-          name: 'Feature Displays',
-          of: ['feature-grid', 'logo-list', 'person-list', 'pricing-list', 'product-comparison'],
+          name: 'Marketing & Leads',
+          of: ['callout', 'contact', 'lead-magnet'],
         },
         {
-          name: 'Blog',
-          of: ['blog-frontpage', 'blog-list', 'blog-post-content'],
-        },
-        {
-          name: 'Navigation',
-          of: ['breadcrumbs'],
+          name: 'Utility',
+          of: ['breadcrumbs', 'component-gallery', 'blog-frontpage', 'latest-articles'],
         },
       ],
     },

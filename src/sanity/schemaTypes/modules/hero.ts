@@ -11,7 +11,7 @@
  * - 1.0.0: Initial version
  */
 
-import { TfiLayoutCtaCenter } from 'react-icons/tfi';
+import { BlockContentIcon } from '@sanity/icons';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 import { createUidField } from './uid-input';
@@ -19,7 +19,7 @@ import { createUidField } from './uid-input';
 export default defineType({
   name: 'hero',
   title: 'Hero',
-  icon: TfiLayoutCtaCenter,
+  icon: BlockContentIcon,
   type: 'object',
   groups: [
     { name: 'content', title: 'Content', default: true },
@@ -39,10 +39,46 @@ export default defineType({
       type: 'object',
       title: 'Advanced Options',
       group: 'options',
-      fields: [createUidField()],
+      fields: [
+        createUidField(),
+        defineField({
+          name: 'bgFrom',
+          title: 'Background Gradient Start',
+          type: 'string',
+          options: {
+            list: [
+              { title: 'Vibrant', value: 'brand-vibrant' },
+              { title: 'Purple', value: 'brand-purple' },
+              { title: 'Cyan', value: 'brand-cyan' },
+              { title: 'Rich', value: 'brand-rich' },
+              { title: 'Lavender', value: 'brand-lavender' },
+              { title: 'Navy', value: 'brand-navy' },
+            ],
+          },
+          initialValue: 'brand-vibrant',
+        }),
+        defineField({
+          name: 'bgTo',
+          title: 'Background Gradient End',
+          type: 'string',
+          options: {
+            list: [
+              { title: 'Vibrant', value: 'brand-vibrant' },
+              { title: 'Purple', value: 'brand-purple' },
+              { title: 'Cyan', value: 'brand-cyan' },
+              { title: 'Rich', value: 'brand-rich' },
+              { title: 'Lavender', value: 'brand-lavender' },
+              { title: 'Navy', value: 'brand-navy' },
+            ],
+          },
+          initialValue: 'brand-purple',
+        }),
+      ],
     }),
     defineField({
       name: 'content',
+      title: 'Content',
+      description: 'Main text content (H1 for title, Normal for description)',
       type: 'array',
       of: [
         defineArrayMember({
@@ -51,15 +87,6 @@ export default defineType({
             decorators: [
               { title: 'Strong', value: 'strong' },
               { title: 'Emphasis', value: 'em' },
-              { title: 'Code', value: 'code' },
-              {
-                title: 'Gradient (Purple)',
-                value: 'gradient',
-              },
-              {
-                title: 'Primary Color',
-                value: 'primary',
-              },
             ],
           },
         }),
@@ -71,136 +98,24 @@ export default defineType({
       title: 'Call-to-actions',
       description: 'Add up to 2 buttons (one primary, one secondary)',
       type: 'array',
-      of: [
-        defineArrayMember({
-          name: 'heroCta',
-          type: 'object',
-          title: 'Hero Button',
-          fields: [
-            defineField({
-              name: 'text',
-              title: 'Button Text',
-              description: 'The text displayed on the button',
-              type: 'string',
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'linkType',
-              title: 'Link Type',
-              description: 'Choose where this button should link to',
-              type: 'string',
-              options: {
-                layout: 'radio',
-                list: [
-                  { title: 'Internal Page', value: 'internal' },
-                  { title: 'External Website', value: 'external' },
-                ],
-              },
-              validation: (Rule) => Rule.required(),
-              initialValue: 'internal',
-            }),
-            defineField({
-              name: 'internalLink',
-              title: 'Internal Page',
-              description: 'Select a page within this website',
-              type: 'reference',
-              to: [
-                { type: 'page' },
-                { type: 'blog.post' },
-                // { type: "help" }, // Commented out as help might not exist in NextMedal yet
-                // { type: "changelog" }, // Commented out as changelog might not exist in NextMedal yet
-              ],
-              validation: (Rule) =>
-                Rule.custom((value, context: any) => {
-                  if (context.parent?.linkType === 'internal' && !value) {
-                    return 'Please select a page';
-                  }
-                  return true;
-                }),
-              hidden: ({ parent }) => parent?.linkType !== 'internal',
-            }),
-            defineField({
-              name: 'externalLink',
-              title: 'External URL',
-              description: 'Enter a link to an external website',
-              placeholder: 'https://example.com',
-              type: 'url',
-              validation: (Rule) =>
-                Rule.uri({
-                  scheme: ['http', 'https', 'mailto', 'tel'],
-                  allowRelative: true,
-                }).custom((value, context: any) => {
-                  if (context.parent?.linkType === 'external' && !value) {
-                    return 'Please enter a URL';
-                  }
-                  return true;
-                }),
-              hidden: ({ parent }) => parent?.linkType !== 'external',
-            }),
-            defineField({
-              name: 'style',
-              title: 'Button Style',
-              description: 'Choose the visual style of the button',
-              type: 'string',
-              options: {
-                list: [
-                  {
-                    title: '→ Primary',
-                    value: 'default',
-                  },
-                  {
-                    title: '⇢ Secondary',
-                    value: 'outline',
-                  },
-                ],
-              },
-              initialValue: 'default',
-            }),
-          ],
-          preview: {
-            select: {
-              text: 'text',
-              style: 'style',
-              internalTitle: 'internalLink.title',
-              externalLink: 'externalLink',
-            },
-            prepare: ({ text, style, internalTitle, externalLink }) => {
-              const styleDisplay = style === 'outline' ? 'Secondary' : 'Primary';
-              const destination = internalTitle || externalLink || 'No link';
-              return {
-                title: text || 'Untitled Button',
-                subtitle: `${styleDisplay} → ${destination}`,
-              };
-            },
-          },
-        }),
-      ],
+      of: [defineArrayMember({ type: 'cta' })],
       validation: (Rule) =>
-        Rule.max(2).custom((ctas) => {
-          if (!ctas || ctas.length === 0) return true;
+        Rule.max(2)
+          .warning('More than 2 buttons may clutter the Hero layout')
+          .custom((ctas) => {
+            if (!ctas || ctas.length === 0) return true;
 
-          const styles = ctas.map((cta: any) => cta?.style || 'default');
+            const styles = ctas.map((cta: any) => cta?.style || 'primary');
 
-          // Check for invalid styles
-          const invalidStyles = styles.filter(
-            (style: string) => style !== 'default' && style !== 'outline'
-          );
-          if (invalidStyles.length > 0) {
-            return 'Only Primary (default) and Secondary (outline) styles are allowed';
-          }
+            // Check for duplicates
+            const primaryCount = styles.filter((s: string) => s === 'primary').length;
 
-          // Check for duplicates
-          const defaultCount = styles.filter((s: string) => s === 'default').length;
-          const outlineCount = styles.filter((s: string) => s === 'outline').length;
-          if (defaultCount > 1) {
-            return 'Only one Primary button is allowed';
-          }
-          if (outlineCount > 1) {
-            return 'Only one Secondary button is allowed';
-          }
+            if (primaryCount > 1) {
+              return 'Only one Primary button is allowed';
+            }
 
-          return true;
-        }),
+            return true;
+          }),
       group: 'content',
     }),
     defineField({
@@ -258,18 +173,17 @@ export default defineType({
   ],
   preview: {
     select: {
-      title: 'title',
       media: 'image',
       videoType: 'videoType',
       description: 'content',
     },
-    prepare: ({ title, media, videoType, description }) => {
+    prepare: ({ media, videoType, description }) => {
       const mediaLabel =
         videoType === 'mux' ? 'Mux Video' : videoType === 'url' ? 'Video URL' : 'Image';
       return {
-        title: title || getBlockText(description) || 'Hero',
+        title: getBlockText(description) || 'Hero',
         subtitle: `Hero • ${mediaLabel}`,
-        media: media?.image || TfiLayoutCtaCenter,
+        media: media?.image || BlockContentIcon,
       };
     },
   },

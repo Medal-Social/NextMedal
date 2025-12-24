@@ -1,3 +1,13 @@
+/**
+ * Module Options Schema
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
+ * @description Common options for modules, such as custom anchors/IDs.
+ * @changelog
+ * - 1.0.1: Updated header documentation
+ * - 1.0.0: Initial version
+ */
+
 'use client';
 
 import { Box, Button, Flex, Text, TextInput } from '@sanity/ui';
@@ -10,12 +20,6 @@ export default defineType({
   title: 'Module options',
   type: 'object',
   fields: [
-    defineField({
-      name: 'hidden',
-      type: 'boolean',
-      description: 'Hide the module from the page',
-      initialValue: false,
-    }),
     defineField({
       name: 'uid',
       title: 'Unique identifier',

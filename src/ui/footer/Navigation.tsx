@@ -26,7 +26,7 @@ export default async function Menu() {
 
   return (
     <nav
-      className="flex flex-wrap items-start gap-x-12 gap-y-6 max-sm:flex-col"
+      className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
       aria-label="Footer navigation"
     >
       {footerMenu?.items?.map((item, key) => {
@@ -34,24 +34,22 @@ export default async function Menu() {
         if ('_key' in item && typeof item._key === 'string') itemKey = item._key;
         else if ('label' in item && typeof item.label === 'string') itemKey = item.label;
         switch (item._type) {
-          case 'link':
+          case 'menuItem':
             if (item.external) {
               return (
                 <nav className="flex flex-col gap-2" key={itemKey}>
-                  <h2 className="text-base font-medium">
-                    <Link
-                      href={item.external}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="focus:outline-none focus:ring-2 focus:ring-primary"
-                      aria-label={`${item.label} (opens in new tab)`}
-                    >
-                      <div className="flex items-center gap-2">
-                        {item.label}
-                        <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                      </div>
-                    </Link>
-                  </h2>
+                  <Link
+                    href={item.external}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+                    aria-label={`${item.label} (opens in new tab)`}
+                  >
+                    <div className="flex items-center gap-2">
+                      {item.label}
+                      <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                    </div>
+                  </Link>
                 </nav>
               );
             }
@@ -61,40 +59,31 @@ export default async function Menu() {
               });
               return (
                 <nav className="flex flex-col gap-2" key={itemKey}>
-                  <h2 className="text-base font-medium">
-                    <Link href={url} className="focus:outline-none focus:ring-2 focus:ring-primary">
-                      {item.label || item.internal.title}
-                    </Link>
-                  </h2>
+                  <Link
+                    href={url}
+                    className="text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    {item.label || item.internal.title}
+                  </Link>
                 </nav>
               );
             }
             return (
               <nav className="flex flex-col gap-2" key={itemKey}>
-                <h2 className="text-base font-medium">
-                  <CTA
-                    className="focus:outline-none focus:ring-2 focus:ring-primary"
-                    link={item}
-                    style="link"
-                  />
-                </h2>
+                <CTA
+                  className="text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+                  link={item}
+                  style="link"
+                />
               </nav>
             );
 
-          case 'link.list':
+          case 'dropdownMenu':
             return (
               <nav className="flex flex-col gap-2" key={itemKey}>
-                {item.link?.external ? (
-                  <h2 className="text-sm font-medium">{item.link.label}</h2>
-                ) : item.link?.internal ? (
-                  <h2 className="text-sm font-medium">
-                    {stegaClean(item.link?.label) || item.link?.internal?.title}
-                  </h2>
-                ) : item.link ? (
-                  <h2 className="text-sm font-medium">
-                    {stegaClean(item.link?.label) || item.link?.internal?.title}
-                  </h2>
-                ) : null}
+                <div className="font-semibold text-muted-foreground text-xs uppercase tracking-wider mb-1">
+                  {item.title}
+                </div>
 
                 {item.links && item.links.length > 0 && (
                   <ul className="flex flex-col gap-2">

@@ -1,3 +1,13 @@
+/**
+ * Callout Module Schema
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
+ * @description A highlighted section with content and call-to-actions.
+ * @changelog
+ * - 1.0.1: Updated header documentation
+ * - 1.0.0: Initial version
+ */
+
 import { VscInspect } from 'react-icons/vsc';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
@@ -8,19 +18,48 @@ export default defineType({
   title: 'Callout',
   icon: VscInspect,
   type: 'object',
+  fieldsets: [
+    {
+      name: 'advanced',
+      title: 'Advanced Options',
+      options: { collapsible: true, collapsed: true },
+    },
+  ],
   fields: [
-    createUidField(),
     defineField({
       name: 'content',
+      title: 'Content',
+      description: 'The main text of the callout.',
       type: 'array',
-      of: [{ type: 'block' }],
+      of: [
+        {
+          type: 'block',
+          styles: [
+            { title: 'Normal', value: 'normal' },
+            { title: 'Heading 2', value: 'h2' },
+            { title: 'Heading 3', value: 'h3' },
+          ],
+          lists: [],
+          marks: {
+            decorators: [
+              { title: 'Strong', value: 'strong' },
+              { title: 'Emphasis', value: 'em' },
+            ],
+          },
+        },
+      ],
     }),
     defineField({
       name: 'ctas',
       title: 'Call-to-actions',
+      description: 'Buttons to display in the callout.',
       type: 'array',
       of: [{ type: 'cta' }],
     }),
+    {
+      ...createUidField(),
+      fieldset: 'advanced',
+    },
   ],
   preview: {
     select: {

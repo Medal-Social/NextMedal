@@ -7,14 +7,17 @@ import type { Locale } from 'next-intl';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import { Analytics } from '@/components/Analytics';
+import CookieConsent from '@/components/CookieConsent';
 import { Toaster } from '@/components/ui/sonner';
 import { routing } from '@/i18n/routing';
 import { getSite } from '@/sanity/lib/fetch';
-import Announcement from '@/ui/Announcement';
+import { SanityLive } from '@/sanity/lib/live';
+import Banner from '@/ui/Banner';
 import Footer from '@/ui/footer';
 import Header from '@/ui/header';
+import SiteJsonLd from '@/ui/SiteJsonLd';
 import SkipToContent from '@/ui/SkipToContent';
-import ThemeColorSetter from '@/ui/ThemeColorSetter';
 import VisualEditingControls from '@/ui/VisualEditingControls';
 
 type Props = {
@@ -37,9 +40,6 @@ export default async function RootLayout({ children, params }: Props) {
 
   // Static generation is now possible since we're not using the connection() API
   const site = await getSite();
-  const themeSettings = site.themeSettings || {
-    defaultTheme: 'light',
-  };
 
   return (
     <html
@@ -48,24 +48,21 @@ export default async function RootLayout({ children, params }: Props) {
       suppressHydrationWarning
     >
       <body className="bg-background text-foreground font-sans flex flex-col min-h-screen">
+        <SiteJsonLd />
         <ThemeProvider
           attribute="class"
-          defaultTheme={themeSettings.defaultTheme || 'light'}
+          defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <ThemeColorSetter
-            lightTheme={themeSettings.lightMode}
-            darkTheme={themeSettings.darkMode}
-          />
           <NuqsAdapter>
             <NextIntlClientProvider locale={locale}>
               <SkipToContent />
-              <Announcement />
+              <Banner />
               <Header />
               <main
                 id="main-content"
-                className="flex-1 min-h-[calc(100dvh-var(--header-height)-var(--footer-height))]"
+                className="flex-1 w-full min-h-[calc(100dvh-var(--header-height)-var(--footer-height))]"
                 tabIndex={-1}
               >
                 {children}
@@ -73,6 +70,9 @@ export default async function RootLayout({ children, params }: Props) {
               <Footer />
               <VisualEditingControls />
               <Toaster />
+              <Analytics />
+              <CookieConsent config={site.cookieConsent} locale={locale} />
+              <SanityLive />
             </NextIntlClientProvider>
           </NuqsAdapter>
         </ThemeProvider>

@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { stegaClean } from 'next-sanity';
 import type { ComponentProps } from 'react';
@@ -5,145 +7,147 @@ import { Button } from '@/components/ui/button';
 import resolveUrl from '@/lib/resolveUrl';
 import { validateExternalUrl } from '@/lib/validateExternalUrl';
 
-// Define the allowed button variants and sizes from shadcn
-type ButtonVariant = 'default' | 'secondary' | 'outline' | 'ghost' | 'link' | 'destructive';
-
-type ButtonSize = 'default' | 'sm' | 'lg';
+// Define the allowed button variants matching the Button component
+type ButtonVariant = 'default' | 'outline' | 'secondary' | 'ghost' | 'link' | 'destructive';
 
 // Convert Link to CTA props
-function linkToCta(link: Sanity.Link | null | undefined): Sanity.CTA {
+function _linkToCta(link: Sanity.MenuItem | null | undefined): Sanity.CTA {
   if (!link) {
-    // Return default/fallback CTA properties if link is null or undefined
     return {
       _type: 'cta',
-      text: 'Button',
-      linkType: 'internal',
-      style: 'default',
+      link: {
+        _type: 'menuItem',
+        label: 'Button',
+        type: 'internal',
+      },
+      style: 'primary',
     };
   }
 
-  // In a Link object, "type" contains "internal" or "external"
-  // In a CTA object, this is called "linkType"
   return {
     _type: 'cta',
-    text: link.label || link.internal?.title || 'Button',
-    linkType: link.type,
-    internalLink: link.type === 'internal' ? link.internal : undefined,
-    externalLink: link.type === 'external' ? link.external : undefined,
-    params: typeof link.params === 'string' ? link.params : undefined,
-    style: 'link', // Default style for converted links
+    link: link,
+    style: 'primary',
   };
 }
 
-type CTADirectProps = Sanity.CTA &
-  Omit<ComponentProps<'a'>, 'ref'> & {
-    size?: ButtonSize;
-  };
-type CTALinkProps = Omit<ComponentProps<'a'>, 'ref'> & {
-  link?: Sanity.Link | null;
-  style?: string;
-  size?: ButtonSize;
-};
+export default function CTA({
+  link,
+  style = 'primary',
+  className,
+  children,
+  // Destructure Sanity-specific props to remove them from 'rest'
+  internalLink,
+  externalLink,
+  linkType,
+  text,
+  ...rest
+}: Sanity.CTA &
+  ComponentProps<typeof Button> & {
+    // Add optional types for the props we want to exclude/use as fallback
+    internalLink?: Sanity.MenuItem['internal'];
+    externalLink?: string;
+    linkType?: 'internal' | 'external';
+    text?: string;
+  }) {
+  // Construct a fallback link object if the main link prop is missing
+  // This handles the flat structure used in some modules (like Hero)
+  const effectiveLink =
+    link ||
+    (text && (linkType === 'internal' || linkType === 'external')
+      ? {
+          label: text,
+          type: linkType,
+          internal: internalLink,
+          external: externalLink,
+          params: undefined,
+          newTab: undefined,
+        }
+      : null);
 
-type CTAProps = CTADirectProps | CTALinkProps;
+  if (!effectiveLink) return null;
 
-export default function CTA(props: CTAProps) {
-  // Determine if this is a link-based CTA or a direct CTA
-  const hasLink = 'link' in props && props.link;
-
-  // If it's a link-based CTA, extract the label and children
-  const linkLabel = hasLink ? props.link?.label : undefined;
-  const extractedChildren = hasLink && !props.children ? linkLabel : props.children;
-
-  // Create converted props with the right structure
-  const convertedProps: CTADirectProps = hasLink
-    ? {
-        ...props,
-        ...linkToCta(props.link),
-        // Preserve children if they exist, otherwise use link label
-        children: extractedChildren,
-      }
-    : (props as CTADirectProps);
-
-  // Now we can safely destructure
-  const {
-    _type,
-    _key,
-    text,
-    linkType,
-    internalLink,
-    externalLink,
-    style,
-    // biome-ignore lint/correctness/noUnusedVariables: reserved for future use
-    icon,
-    newTab,
-    params,
-    className,
-    children,
-    size,
-    ...rest
-  } = convertedProps;
-
-  // Cast the style to ButtonVariant with fallback
+  const { label, type, internal, external, params, newTab } = effectiveLink;
   const cleanStyle = stegaClean(style);
-  const variant = (cleanStyle as ButtonVariant) || 'default';
-
-  // Add fullWidth to className if it's true
-  const buttonClassName = `${className || ''}`.trim();
-
-  // Prioritize explicit children, then text from props, then title from internalLink
-  const buttonContent = children || text || internalLink?.title || 'Button';
-  const shouldOpenNewTab = newTab === true;
-  const linkProps = shouldOpenNewTab ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+  // Map 'primary' to 'default' for shadcn Button
+  const variant = (cleanStyle === 'primary' ? 'default' : cleanStyle) as ButtonVariant;
+  const buttonContent = children || label || 'Button';
 
   // For internal links
-  if (linkType === 'internal' && internalLink) {
+  if (type === 'internal' && internal) {
+    const href = resolveUrl(internal, {
+      base: false,
+      params: params,
+    });
+
     return (
-      <Button variant={variant} className={buttonClassName} size={size || 'default'} asChild>
-        <Link
-          href={resolveUrl(internalLink as any, {
-            base: false,
-            params: params,
-          })}
-          {...linkProps}
-          {...rest}
-        >
-          {buttonContent}
-        </Link>
-      </Button>
+      <Button
+        variant={variant}
+        className={className}
+        nativeButton={false}
+        render={
+          <Link
+            href={href}
+            target={newTab ? '_blank' : undefined}
+            rel={newTab ? 'noopener noreferrer' : undefined}
+            onClick={(e) => {
+              if (href.includes('#')) {
+                const [path, hash] = href.split('#');
+                const currentPath = window.location.pathname;
+
+                // If target is on the same page
+                if (
+                  (!path || path === currentPath || (path === '/' && currentPath === '/')) &&
+                  hash
+                ) {
+                  e.preventDefault();
+                  const element = document.getElementById(hash);
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }
+              }
+            }}
+          >
+            {buttonContent}
+          </Link>
+        }
+        {...rest}
+      />
     );
   }
 
   // For external links
-  if (linkType === 'external' && externalLink) {
-    const cleanUrl = stegaClean(externalLink);
+  if (type === 'external' && external) {
+    const cleanUrl = stegaClean(external);
     const validatedUrl = validateExternalUrl(cleanUrl);
 
     if (!validatedUrl) {
-      console.warn(`Invalid external URL detected and blocked: ${cleanUrl}`);
       return (
-        <Button variant={variant} className={buttonClassName} size={size || 'default'} disabled>
+        <Button variant={variant} className={className} disabled {...rest}>
           {buttonContent}
         </Button>
       );
     }
 
     return (
-      <Button variant={variant} className={buttonClassName} size={size || 'default'} asChild>
-        <Link href={validatedUrl} {...linkProps} {...rest}>
-          {buttonContent}
-        </Link>
-      </Button>
+      <Button
+        variant={variant}
+        className={className}
+        nativeButton={false}
+        render={
+          <Link
+            href={validatedUrl}
+            target={newTab !== false ? '_blank' : undefined}
+            rel={newTab !== false ? 'noopener noreferrer' : undefined}
+          >
+            {buttonContent}
+          </Link>
+        }
+        {...rest}
+      />
     );
   }
 
-  // Omit anchor-specific props when rendering as Button
-  // biome-ignore lint/correctness/noUnusedVariables: intentionally omitted
-  const { href, target, rel, ...buttonProps } = rest as any;
-
-  return (
-    <Button variant={variant} className={buttonClassName} size={size || 'default'} {...buttonProps}>
-      {buttonContent}
-    </Button>
-  );
+  return null;
 }

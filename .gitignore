@@ -42,3 +42,14 @@ public/admin/static
 .source
 
 .env.backup
+.env.backup.kiro
+.kiro
+
+# Sanity Functions
+functions/**/.env*
+functions/**/.build/
+functions/**/node_modules/
+
+openspec
+
+dist

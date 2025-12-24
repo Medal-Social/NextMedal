@@ -1,22 +1,22 @@
 /**
  * Page Schema
- * @version 1.1.0
- * @lastUpdated 2024-03-13
+ * @version 1.2.0
+ * @lastUpdated 2025-12-23
  * @description Defines the structure for content pages with modular sections and metadata.
  * @changelog
+ * - 1.2.0: Updated to latest standards and standardized icons
  * - 1.1.0: Added improved validation, documentation, and organization
  * - 1.0.0: Initial version
  */
 
 import {
-  VscEdit,
-  VscEyeClosed,
-  VscFile,
-  VscHome,
-  VscMortarBoard,
-  VscQuestion,
-  VscSearch,
-} from 'react-icons/vsc';
+  DocumentIcon,
+  EditIcon,
+  EyeClosedIcon,
+  HelpCircleIcon,
+  HomeIcon,
+  SearchIcon,
+} from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import modules from '../fragments/modules';
 
@@ -24,11 +24,11 @@ export default defineType({
   name: 'page',
   title: 'Page',
   type: 'document',
-  icon: VscFile,
+  icon: DocumentIcon,
   description: 'Standard page with modules for building content',
   groups: [
-    { name: 'content', title: 'Content', default: true },
-    { name: 'metadata', title: 'SEO & Metadata' },
+    { name: 'content', title: 'Content', icon: EditIcon, default: true },
+    { name: 'metadata', title: 'SEO & Metadata', icon: SearchIcon },
   ],
   fields: [
     defineField({
@@ -71,13 +71,12 @@ export default defineType({
       // Choose an appropriate icon based on the page type
       const icon =
         media ||
-        (slug === 'index' && VscHome) ||
-        (slug === '404' && VscQuestion) ||
-        (slug === 'search' && VscSearch) ||
-        (slug === 'blog' && VscEdit) ||
-        (slug?.startsWith('docs') && VscMortarBoard) ||
-        (noindex && VscEyeClosed) ||
-        VscFile;
+        (slug === 'index' && HomeIcon) ||
+        (slug === '404' && HelpCircleIcon) ||
+        (slug === 'search' && SearchIcon) ||
+        (slug === 'blog' && EditIcon) ||
+        (noindex && EyeClosedIcon) ||
+        DocumentIcon;
 
       // Format language display
       const languageLabel =

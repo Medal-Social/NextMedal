@@ -1,20 +1,21 @@
 'use client';
+
 import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
 import { CircleCheckBig } from 'lucide-react';
-import { PortableText, type PortableTextComponents } from 'next-sanity';
 import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
+import { Section } from '@/components/ui/section';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import moduleProps from '@/lib/moduleProps';
 import CTAList from '@/ui/CTAList';
-import Pretitle from '@/ui/Pretitle';
+import SharedPortableText from '@/ui/modules/SharedPortableText';
 
-const components: PortableTextComponents = {
+const components = {
   list: {
-    bullet: ({ children }) => <ul className="space-y-2 my-4">{children}</ul>,
+    bullet: ({ children }: any) => <ul className="space-y-2 my-4">{children}</ul>,
   },
   listItem: {
-    bullet: ({ children }) => (
+    bullet: ({ children }: any) => (
       <li className="flex items-start gap-2">
         <div className="h-5 w-5 mr-4 mt-1.5">
           <CircleCheckBig className="h-5 w-5 text-primary " />
@@ -25,32 +26,17 @@ const components: PortableTextComponents = {
   },
 };
 
-export default function PricingList({
-  pretitle,
-  intro,
-  tiers,
-  ...props
-}: Partial<{
-  pretitle: string;
-  intro: any;
-  tiers: Sanity.Pricing[];
-  isTabbedModule?: boolean;
-}> &
-  Sanity.Module) {
+export default function PricingList({ intro, tiers, ...props }: Sanity.PricingList) {
   const [isYearly, setIsYearly] = useState(false);
   return (
-    <section
-      className="section [&:first-child]:mt-8 md:[&:first-child]:mt-16 space-y-8"
-      {...moduleProps(props)}
-    >
-      {(pretitle || intro) && (
-        <header className="section-intro text-center items-center flex flex-col">
-          <Pretitle className="mb-4">{pretitle}</Pretitle>
-          <PortableText value={intro} />
+    <Section className="space-y-8" {...moduleProps(props)}>
+      {intro && (
+        <header className="section-intro text-center items-center flex flex-col gap-4">
+          <SharedPortableText value={intro} />
         </header>
       )}
       {tiers?.find((tier) => tier.price?.yearly !== undefined) && (
-        <div className="flex justify-center items-center space-x-4  rounded-full ">
+        <div className="flex justify-center items-center space-x-4 rounded-full">
           <Tabs
             onValueChange={(value) => setIsYearly(value === 'yearly')}
             defaultValue="monthly"
@@ -84,23 +70,25 @@ export default function PricingList({
           (tier) =>
             !!tier && (
               <article
-                className="backdrop-blur-sm bg-card/30 p-8 rounded-lg border border-primary/10 hover:border-primary/20 transition-all duration-300 flex flex-col"
+                className="backdrop-blur-sm bg-card/30 p-8 rounded-lg border border-primary/10 hover:border-primary/20 transition-colors duration-300 flex flex-col gap-6"
                 key={tier._id}
               >
-                <div className="text-2xl mb-4 flex items-center justify-between">
-                  {tier.title}
-                  {tier.highlight && (
-                    <Badge className="text-xs text-primary-foreground ">{tier.highlight}</Badge>
+                <div className="flex flex-col gap-2">
+                  <div className="text-2xl flex items-center justify-between">
+                    {tier.title}
+                    {tier.highlight && (
+                      <Badge className="text-xs text-primary-foreground ">{tier.highlight}</Badge>
+                    )}
+                  </div>
+                  {tier.description && (
+                    <p className="text-sm text-muted-foreground">{tier.description}</p>
                   )}
                 </div>
-                {tier.description && (
-                  <p className="text-sm text-muted-foreground mb-4">{tier.description}</p>
-                )}
 
                 {tier.price?.base !== undefined && (
-                  <div className="flex flex-wrap items-end gap-x-1 mb-6">
+                  <div className="flex flex-wrap items-end gap-x-1">
                     {tier.price.base !== undefined && tier.price.base && (
-                      <span className="text-4xl text-foreground font-semibold">
+                      <span className="text-4xl text-foreground font-semibold font-numeric">
                         {tier.price.currency}{' '}
                         {!Number.isNaN(Number.parseInt(tier.price.base, 10)) &&
                         Number.parseInt(tier.price.base, 10) > 0 &&
@@ -126,15 +114,15 @@ export default function PricingList({
                   </div>
                 )}
 
-                <CTAList className="grid mb-6" ctas={tier.ctas} />
-                <div className="hero">
-                  <PortableText components={components} value={tier.content} />
+                <CTAList className="grid" ctas={tier.ctas} />
+                <div className="prose prose-slate dark:prose-invert max-w-none">
+                  <SharedPortableText components={components} value={tier.content} />
                 </div>
               </article>
             )
         )}
       </div>
-    </section>
+    </Section>
   );
 }
 

@@ -1,105 +1,172 @@
-import TabbedContentModule from '@/ui/modules/TabbedContentModule';
 import AccordionList from './AccordionList';
 import Breadcrumbs from './Breadcrumbs';
 import BlogFrontpage from './blog/BlogFrontpage';
-import BlogList from './blog/BlogList';
-import BlogPostContent from './blog/PostContent';
+import LatestArticles from './blog/LatestArticles';
 import Callout from './Callout';
-import FeaturedHero from './FeaturedHero';
-import FeatureGrid from './FeatureGrid';
-import { HeroImageGallery } from './HeroImageGallery';
+import ComponentGallery from './ComponentGallery';
+import Contact from './Contact';
+import Features from './Features';
 import Hero from './hero/Hero';
-import LogoList from './LogoList';
-import PersonList from './PersonList';
+import LeadMagnet from './LeadMagnet';
+import LogoCloud from './LogoCloud';
+import PricingComparison from './PricingComparison';
 import PricingList from './PricingList';
 import ProductComparison from './ProductComparison';
 import RichtextModule from './RichtextModule';
+import Team from './Team';
 import VideoHero from './VideoHero';
 
 export default function Modules({
   modules,
   page,
   post,
-  isTabbedModule = false,
+  isSidebar = false,
 }: {
   modules?: Sanity.Module[];
-  page?: Sanity.Page;
+  page?: Sanity.Page | Sanity.ComponentLibrary;
   post?: Sanity.BlogPost;
-  isTabbedModule?: boolean;
+  isSidebar?: boolean;
 }) {
+  if (!modules?.length) {
+    return null;
+  }
+
   return (
     <>
       {modules?.map((module) => {
         if (!module) return null;
 
+        const sidebarProps = isSidebar ? { spacing: 'none', width: 'full' } : {};
+
         switch (module._type) {
           case 'accordion-list':
-            return <AccordionList {...module} key={module._key} isTabbedModule={isTabbedModule} />;
-          case 'blog-frontpage':
-            return <BlogFrontpage {...module} key={module._key} isTabbedModule={isTabbedModule} />;
-          case 'blog-list':
-            return <BlogList {...module} key={module._key} isTabbedModule={isTabbedModule} />;
-          case 'blog-post-content':
             return (
-              <BlogPostContent
-                {...module}
-                post={post}
+              <AccordionList
+                {...(module as Sanity.AccordionList)}
                 key={module._key}
-                isTabbedModule={isTabbedModule}
+                {...(sidebarProps as any)}
+              />
+            );
+          case 'blog-frontpage':
+            return (
+              <BlogFrontpage
+                {...(module as Sanity.BlogFrontpage)}
+                key={module._key}
+                {...(sidebarProps as any)}
+              />
+            );
+          case 'latest-articles':
+            return (
+              <LatestArticles
+                {...(module as Sanity.LatestArticles)}
+                key={module._key}
+                {...(sidebarProps as any)}
               />
             );
           case 'breadcrumbs':
             return (
               <Breadcrumbs
-                {...module}
+                {...(module as Sanity.Breadcrumbs)}
                 currentPage={post || page}
                 key={module._key}
-                isTabbedModule={isTabbedModule}
+                {...(sidebarProps as any)}
               />
             );
           case 'callout':
-            return <Callout {...module} key={module._key} isTabbedModule={isTabbedModule} />;
+            return (
+              <Callout
+                {...(module as Sanity.Callout)}
+                key={module._key}
+                {...(sidebarProps as any)}
+              />
+            );
 
-          case 'feature-grid':
-            return <FeatureGrid {...module} key={module._key} />;
-          case 'featuredHero':
-            return <FeaturedHero {...module} key={module._key} isTabbedModule={isTabbedModule} />;
-          case 'galleryHero':
-            return <HeroImageGallery {...module} key={module._key} />;
+          case 'contact':
+            return <Contact {...(module as any)} key={module._key} {...(sidebarProps as any)} />;
+
+          case 'component-gallery':
+            return (
+              <ComponentGallery
+                {...(module as Sanity.ComponentGallery)}
+                key={module._key}
+                {...(sidebarProps as any)}
+              />
+            );
+
+          case 'features':
+            return (
+              <Features
+                {...(module as Sanity.Features)}
+                key={module._key}
+                {...(sidebarProps as any)}
+              />
+            );
+          case 'lead-magnet':
+          case 'leadMagnet':
+          case 'leadmagnet':
+            return (
+              <LeadMagnet
+                {...(module as any)}
+                key={module._key}
+                style={isSidebar ? 'sidebar' : undefined}
+                {...(sidebarProps as any)}
+              />
+            );
           case 'hero':
             return (
-              <Hero
-                {...(module as Sanity.Hero)}
+              <Hero {...(module as Sanity.Hero)} key={module._key} {...(sidebarProps as any)} />
+            );
+
+          case 'logo-cloud':
+            return (
+              <LogoCloud
+                {...(module as Sanity.LogoCloud)}
                 key={module._key}
-                isTabbedModule={isTabbedModule}
+                {...(sidebarProps as any)}
+              />
+            );
+          case 'team':
+            return (
+              <Team {...(module as Sanity.Team)} key={module._key} {...(sidebarProps as any)} />
+            );
+          case 'pricing-list':
+            return (
+              <PricingList
+                {...(module as Sanity.PricingList)}
+                key={module._key}
+                {...(sidebarProps as any)}
               />
             );
 
-          case 'logo-list':
-            return <LogoList {...module} key={module._key} isTabbedModule={isTabbedModule} />;
-          case 'person-list':
-            return <PersonList {...module} key={module._key} isTabbedModule={isTabbedModule} />;
-          case 'pricing-list':
-            return <PricingList {...module} key={module._key} isTabbedModule={isTabbedModule} />;
+          case 'pricing-comparison':
+            return (
+              <PricingComparison
+                {...(module as Sanity.PricingComparison)}
+                key={module._key}
+                {...(sidebarProps as any)}
+              />
+            );
 
           case 'product-comparison':
-            return <ProductComparison {...module} key={module._key} />;
-
-          case 'richtext-module':
-            return <RichtextModule {...module} key={module._key} isTabbedModule={isTabbedModule} />;
-
-          case 'tabbedContent':
             return (
-              <TabbedContentModule
-                data={module as any}
+              <ProductComparison
+                {...(module as Sanity.ProductComparison)}
                 key={module._key}
-                isTabbedModule={isTabbedModule}
+                {...(sidebarProps as any)}
               />
             );
-          case 'videoHero':
+
+          case 'richtext':
             return (
-              <VideoHero data={module as any} key={module._key} isTabbedModule={isTabbedModule} />
+              <RichtextModule
+                {...(module as Sanity.Richtext)}
+                key={module._key}
+                {...(sidebarProps as any)}
+              />
             );
+
+          case 'videoHero':
+            return <VideoHero data={module as any} key={module._key} {...(sidebarProps as any)} />;
 
           default:
             return <div data-type={module._type} key={module._key} />;

@@ -5,8 +5,12 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function count(arr: Array<any> | number, singular = 'item', plural?: string) {
-  const n = typeof arr === 'number' ? arr : arr.length;
+export function count(
+  arr: Array<any> | number | null | undefined,
+  singular = 'item',
+  plural?: string
+) {
+  const n = typeof arr === 'number' ? arr : arr?.length || 0;
   return `${n} ${n === 1 ? singular : plural || `${singular}s`}`;
 }
 

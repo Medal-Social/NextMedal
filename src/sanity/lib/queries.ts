@@ -14,11 +14,19 @@ export const LINK_QUERY = groq`
 	}
 `;
 
+export const IMAGE_QUERY = groq`
+	...,
+	asset->{
+		...,
+		altText,
+		metadata
+	}
+`;
+
 export const NAVIGATION_QUERY = groq`
 	title,
 	items[]{
 		${LINK_QUERY},
-		link{ ${LINK_QUERY} },
 		links[]{ ${LINK_QUERY} },
 		categories[]{
 		...,
@@ -35,29 +43,29 @@ export const CTA_QUERY = groq`
 	}
 `;
 
-export const MODULES_QUERY = groq`
+// Base modules query for non-recursive parts
+const BASE_MODULES_QUERY = groq`
 	...,
 	ctas[]{${CTA_QUERY}},
-	_type == 'blog-list' => { filteredCategory-> },
 	_type == 'breadcrumbs' => { crumbs[]{ ${LINK_QUERY} } },
 	_type == 'callout' => {
 		"copy": content,
 	},
-	_type == 'hero.saas' => {
-		content[]
+	_type == 'logo-cloud' => { 
+		logos[]->{
+			...,
+			image {
+				default { ${IMAGE_QUERY} },
+				dark { ${IMAGE_QUERY} }
+			}
+		} 
 	},
-	_type == 'hero.split' => {
-		content[]
-	},
-	_type== 'galleryHero' => {
+	_type == 'team' => { 
 		...,
-		content[],
-		assets[]{..., "image": image.asset->, alt, loading}
-	},
-	_type == 'logo-list' => { logos[]-> },
-	_type == 'person-list' => { 
-		...,
-		people[]->{...,  "image": image.asset->, altText, loading},
+		people[]->{
+			...,
+			image { ${IMAGE_QUERY} }
+		},
 	},
 	_type == 'pricing-list' => {
 		tiers[]->{
@@ -65,7 +73,13 @@ export const MODULES_QUERY = groq`
 			ctas[]{${CTA_QUERY}}
 		}
 	},
-	_type == 'richtext-module' => {
+	_type == 'richtext' => {
+		content[]{
+			...,
+			_type == 'image' => {
+				${IMAGE_QUERY}
+			}
+		},
 		'headings': select(
 			tableOfContents => content[style in ['h2', 'h3', 'h4', 'h5', 'h6']]{
 				style,
@@ -73,32 +87,45 @@ export const MODULES_QUERY = groq`
 			}
 		),
 	},
-	_type == 'tabbedContent' => {
-		tabs[]{
+	_type == 'features' => {
+		...,
+		items[]{
+			...
+		}
+	},
+	_type == 'contact' => {
+		...,
+		form->{
 			...,
-			ctas[]{ ${CTA_QUERY} },
-			content[]{
-				...,
-				_type == 'featuredHero' => {
-					...,
-					ctas[]{ ${CTA_QUERY} },
-					content[],
-					image{..., "image": image.asset->, altText, loading}
-
-				},
+			redirect { ${LINK_QUERY} }
+		},
+		contactPerson {
+			...,
+			image {
+				image {
+					${IMAGE_QUERY}
+				}
 			}
 		}
 	},
-	_type == 'featuredHero' => {
-		ctas[]{ ${CTA_QUERY} },
-		content[],
-		image{..., "image": image.asset->, altText, loading}
-	},
-	_type == 'feature-grid' => {
+	_type == 'lead-magnet' => {
 		...,
-		items[]{
+		form->{
 			...,
-			link{ ${LINK_QUERY} }
+			redirect { ${LINK_QUERY} }
+		},
+		image {
+			image {
+				${IMAGE_QUERY}
+			}
+		}
+	},
+	_type == 'hero' => {
+		...,
+		image {
+			image {
+				${IMAGE_QUERY}
+			}
 		}
 	},
 	_type == 'videoHero' => {
@@ -112,18 +139,39 @@ export const MODULES_QUERY = groq`
 				"playbackId": playback_ids[0].id
 			}
 		},
-		thumbnail,
+		thumbnail {
+			${IMAGE_QUERY}
+		},
 		title
 	},
 `;
 
-export const GLOBAL_MODULE_QUERY = groq`
-	string::startsWith($slug, path)
-	&& select(
-		defined(excludePaths) => count(excludePaths[string::startsWith($slug, @)]) == 0,
-		true
-	)
+export const MODULES_QUERY = groq`
+	${BASE_MODULES_QUERY}
+	_type == 'component-gallery' => {
+		...,
+		groups[]{
+			...,
+			items[]{
+				${BASE_MODULES_QUERY}
+			}
+		}
+	},
 `;
+
+export const PLACEMENT_QUERY = groq`
+	_type == 'placement' && scope == $scope
+`;
+
+export function placementQuery(scopeFilter: string) {
+  return groq`*[_type == 'placement' && (${scopeFilter})]{
+		_id,
+		scope,
+		location,
+		injectionConfig,
+		modules[]{ ${MODULES_QUERY} }
+	}`;
+}
 
 export const TRANSLATIONS_QUERY = groq`
 	'translations': *[_type == 'translation.metadata' && references(^._id)].translations[].value->{

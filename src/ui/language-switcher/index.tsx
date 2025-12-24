@@ -1,11 +1,17 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { routing } from '@/i18n/routing';
 import { usePage } from '@/contexts/PageContext';
+import { routing } from '@/i18n/routing';
 import LocaleSwitcherSelect from './LocaleSwitcherSelect';
 
-export default function LocaleSwitcher() {
+export default function LocaleSwitcher({
+  className,
+  dropdownAlign,
+}: {
+  className?: string;
+  dropdownAlign?: 'start' | 'end' | 'center';
+}) {
   const t = useTranslations('LocaleSwitcher');
   const locale = useLocale();
   const { page } = usePage();
@@ -55,6 +61,8 @@ export default function LocaleSwitcher() {
       selectLanguageLabel={t('selectLanguage')}
       languageText={t('language')}
       translationUrls={translationUrls}
+      className={className}
+      dropdownAlign={dropdownAlign}
     >
       {routing.locales.map((cur) => (
         <option key={cur} value={cur}>

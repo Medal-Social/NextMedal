@@ -1,3 +1,13 @@
+/**
+ * Icon Schema
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
+ * @description Icon selection field using Lucide icons.
+ * @changelog
+ * - 1.0.1: Updated header documentation
+ * - 1.0.0: Initial version
+ */
+
 import * as Lucide from 'lucide-react';
 import { VscSymbolMisc } from 'react-icons/vsc';
 import { defineField, defineType } from 'sanity';

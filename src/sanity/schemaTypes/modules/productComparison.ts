@@ -1,9 +1,10 @@
 /**
  * Product Comparison Module Schema
- * @version 1.3.0
- * @lastUpdated 2024-07-10
- * @description A comparison table for products/features with customizable details for each cell
+ * @version 1.3.1
+ * @lastUpdated 2025-12-23
+ * @description A comparison table for products/features with customizable details for each cell.
  * @changelog
+ * - 1.3.1: Updated header documentation
  * - 1.3.0: Fixed validation logic to properly access parent module
  * - 1.2.0: Updated field descriptions for improved UX and clarity
  * - 1.1.0: Removed options field and options group for simplified schema
@@ -20,21 +21,48 @@ export default defineType({
   type: 'object',
   description:
     'Create a side-by-side comparison table to highlight differences between products or service tiers',
-  groups: [{ name: 'content', default: true, title: 'Content' }],
+  groups: [
+    { name: 'content', default: true, title: 'Content' },
+    { name: 'options', title: 'Advanced Options' },
+  ],
   fields: [
     defineField({
-      name: 'pretitle',
-      title: 'Pre-title',
-      description: 'Optional badge text that appears above the main heading',
-      type: 'string',
-      group: 'content',
+      name: 'options',
+      type: 'module-options',
+      title: 'Advanced Options',
+      group: 'options',
     }),
     defineField({
       name: 'intro',
       title: 'Introduction',
       description: 'Brief text explaining the comparison (will appear centered above the table)',
       type: 'array',
-      of: [{ type: 'block' }],
+      of: [
+        {
+          type: 'block',
+          styles: [
+            { title: 'Normal', value: 'normal' },
+            { title: 'H2', value: 'h2' },
+            { title: 'H3', value: 'h3' },
+            { title: 'H4', value: 'h4' },
+            { title: 'H5', value: 'h5' },
+            { title: 'H6', value: 'h6' },
+            { title: 'Quote', value: 'blockquote' },
+          ],
+          lists: [
+            { title: 'Bullet', value: 'bullet' },
+            { title: 'Numbered', value: 'number' },
+          ],
+          marks: {
+            decorators: [
+              { title: 'Strong', value: 'strong' },
+              { title: 'Emphasis', value: 'em' },
+              { title: 'Underline', value: 'underline' },
+              { title: 'Strike', value: 'strike-through' },
+            ],
+          },
+        },
+      ],
       group: 'content',
     }),
     defineField({

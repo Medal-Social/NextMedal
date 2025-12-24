@@ -1,9 +1,10 @@
 import { escapeHTML, toHTML } from '@portabletext/to-html';
 import { Feed } from 'feed';
 import { groq } from 'next-sanity';
+import { logger } from '@/lib/logger';
 import resolveUrl from '@/lib/resolveUrl';
-import { fetchSanityLive } from '@/sanity/lib/fetch';
 import { urlFor } from '@/sanity/lib/image';
+import { fetchSanityLive } from '@/sanity/lib/live';
 
 // Next.js Route Handler for RSS feed
 export async function GET() {
@@ -41,8 +42,8 @@ export async function GET() {
     const url = resolveUrl(blog);
 
     const feed = new Feed({
-      title: blog?.title || blog.metadata.title,
-      description: blog.metadata.description,
+      title: blog?.title || blog.metadata?.title || 'Blog',
+      description: blog.metadata?.description || '',
       link: url,
       id: url,
       copyright,
@@ -74,8 +75,6 @@ export async function GET() {
 
                 return `<figure>${[img, figcaption, aSource].filter(Boolean).join(' ')}</figure>`;
               },
-              admonition: ({ value: { title, content } }) =>
-                `<dl><dt>${title}</dt><dd>${escapeHTML(content)}</dd></dl>`,
               code: ({ value }) => `<pre><code>${escapeHTML(value.code)}</code></pre>`,
             },
           },
@@ -90,7 +89,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error('Error generating RSS feed:', error);
+    logger.error({ err: error }, 'Error generating RSS feed');
     return new Response('Error generating RSS feed', { status: 500 });
   }
 }

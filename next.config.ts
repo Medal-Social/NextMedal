@@ -1,16 +1,18 @@
 import { createClient, groq } from "next-sanity";
-import { projectId, dataset, apiVersion } from "@/sanity/lib/env";
+import { projectId, dataset, apiVersion } from "./src/sanity/lib/project";
 // import { token } from '@/lib/sanity/token'
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
-const client = createClient({
-  projectId,
-  dataset,
-  // token, // for private datasets
-  apiVersion,
-  useCdn: true,
-});
+const client = projectId
+  ? createClient({
+      projectId,
+      dataset,
+      // token, // for private datasets
+      apiVersion,
+      useCdn: true,
+    })
+  : null;
 
 const config = {
   reactStrictMode: true,
@@ -24,6 +26,15 @@ const config = {
         protocol: "https",
         hostname: "cdn.sanity.io",
       },
+      {
+        protocol: "https",
+        hostname: "image.mux.com",
+      },
+      {
+        protocol: "https",
+        hostname: "img.youtube.com",
+      },
+ 
     ],
   },
   compiler: {
@@ -33,8 +44,11 @@ const config = {
   },
 
   async redirects() {
+    if (!client) {
+      return [];
+    }
     return await client.fetch(groq`*[_type == 'redirect']{
-			source,
+			'source': select(source match "/*" => source, "/" + source),
 			'destination': select(
 				destination.type == 'internal' =>
 					select(
@@ -47,19 +61,14 @@ const config = {
 		}`);
   },
 
-  async rewrites() {
-    return [
-      {
-        source: '/docs',
-        destination: '/docs',
-      },
-      {
-        source: '/docs/:path*',
-        destination: '/docs/:path*',
-      }
-    ];
+  experimental: {
+    optimizePackageImports: [
+      "@sanity/ui",
+      "@sanity/icons",
+      "framer-motion",
+      "@base-ui/react",
+    ],
   },
-
   env: {
     SC_DISABLE_SPEEDY: "false", // makes styled-components as fast in dev mode as it is in production mode
   },
@@ -69,3 +78,4 @@ const config = {
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 export default withNextIntl(config);
+

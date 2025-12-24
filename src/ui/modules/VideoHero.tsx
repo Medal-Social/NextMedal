@@ -3,66 +3,22 @@
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { Section } from '@/components/ui/section';
+import moduleProps from '@/lib/moduleProps';
 import { urlFor } from '@/sanity/lib/image';
 import '@mux/mux-player/themes/classic';
-// Define the structure of the Sanity data we receive
-type SanityImage = {
-  _type: 'image';
-  asset: {
-    _ref: string;
-    _type: 'reference';
-  };
-  hotspot?: any;
-  crop?: any;
-};
-
-// Define the VideoHero data structure
-type VideoHero = {
-  _type: 'videoHero';
-  _key: string;
-  type: 'mux' | 'youtube';
-  videoId?: string;
-  muxVideo?: {
-    asset?: {
-      playbackId?: string;
-      data?: {
-        playback_ids?: Array<{ id: string }>;
-      };
-    };
-    playbackId?: string;
-  };
-  thumbnail: SanityImage;
-  title: string;
-};
 
 // Use regular dynamic imports for video players
-const MuxPlayer = dynamic(() => import('@mux/mux-player-react'), {
+const MuxPlayerReact = dynamic(() => import('@mux/mux-player-react'), {
   loading: () => (
-    <div className="w-full h-full bg-black flex flex-col items-center justify-center">
+    <div className="w-full h-full bg-muted flex flex-col items-center justify-center">
       <div className="w-16 h-16 rounded-full border-4 border-transparent border-t-primary animate-spin mb-4" />
-      <p className="text-white font-medium text-lg">Preparing your video...</p>
-      <p className="text-white/70 text-sm mt-1">High quality experience loading</p>
+      <p className="text-foreground font-medium text-lg">Preparing your video...</p>
+      <p className="text-muted-foreground text-sm mt-1">High quality experience loading</p>
     </div>
   ),
   ssr: false,
 });
-
-// Import regular ReactPlayer instead of YouTube specific
-const ReactPlayer = dynamic(() => import('react-player'), {
-  loading: () => (
-    <div className="w-full h-full bg-black flex flex-col items-center justify-center">
-      <div className="w-16 h-16 rounded-full border-4 border-transparent border-t-primary animate-spin mb-4" />
-      <p className="text-white font-medium text-lg">Loading your content...</p>
-      <p className="text-white/70 text-sm mt-1">YouTube player is being prepared</p>
-    </div>
-  ),
-  ssr: false,
-}) as any;
-
-interface VideoHeroProps {
-  data: VideoHero;
-  isTabbedModule?: boolean;
-}
 
 // -------------- Modular YouTube Utilities --------------
 
@@ -70,31 +26,38 @@ interface VideoHeroProps {
 const getYouTubeVideoId = (url: string): string => {
   if (!url) return '';
 
-  // Handle youtu.be format
-  if (url.includes('youtu.be/')) {
-    const id = url.split('youtu.be/')[1];
-    return id.split('?')[0];
-  }
-
-  // Handle youtube.com/watch?v= format
-  if (url.includes('youtube.com/watch')) {
-    try {
-      const urlParams = new URLSearchParams(url.split('?')[1]);
-      return urlParams.get('v') || '';
-    } catch (_) {
-      return '';
-    }
-  }
-
-  // Handle youtube.com/embed/ format
-  if (url.includes('youtube.com/embed/')) {
-    const id = url.split('youtube.com/embed/')[1];
-    return id.split('?')[0];
-  }
-
   // If it's already just an ID (no slashes or dots)
   if (!url.includes('/') && !url.includes('.')) {
     return url;
+  }
+
+  try {
+    const urlObj = new URL(url.startsWith('http') ? url : `https://${url}`);
+    const hostname = urlObj.hostname.toLowerCase();
+    const allowedDomains = ['youtube.com', 'www.youtube.com', 'm.youtube.com', 'youtu.be'];
+
+    if (!allowedDomains.includes(hostname)) {
+      return '';
+    }
+
+    let videoId = '';
+    if (hostname === 'youtu.be') {
+      videoId = urlObj.pathname.slice(1);
+    } else if (urlObj.pathname.includes('/watch')) {
+      videoId = urlObj.searchParams.get('v') || '';
+    } else if (urlObj.pathname.includes('/embed/')) {
+      videoId = urlObj.pathname.split('/embed/')[1];
+    } else if (urlObj.pathname.includes('/shorts/')) {
+      videoId = urlObj.pathname.split('/shorts/')[1];
+    }
+
+    // Validate video ID to prevent open redirect
+    if (videoId && /^[a-zA-Z0-9_-]{11}$/.test(videoId.split('?')[0])) {
+      return videoId;
+    }
+  } catch (_e) {
+    // Fallback to empty string if URL parsing fails
+    return '';
   }
 
   return '';
@@ -116,9 +79,16 @@ const useYouTubeVideo = (videoIdOrUrl?: string) => {
 
     if (extractedId) {
       setVideoId(extractedId);
-      setYoutubeUrl(`https://www.youtube.com/watch?v=${extractedId}`);
+      // If the input looks like a URL, use it directly to be safe, otherwise construct it
+      const isUrl = videoIdOrUrl.includes('youtube.com') || videoIdOrUrl.includes('youtu.be');
+      setYoutubeUrl(isUrl ? videoIdOrUrl : `https://www.youtube.com/watch?v=${extractedId}`);
     } else {
-      setError('Could not extract YouTube video ID from URL');
+      // If extraction fails but it looks like a URL, try using it anyway
+      if (videoIdOrUrl.includes('http')) {
+        setYoutubeUrl(videoIdOrUrl);
+      } else {
+        setError('Could not extract YouTube video ID from URL');
+      }
     }
   }, [videoIdOrUrl]);
 
@@ -126,17 +96,13 @@ const useYouTubeVideo = (videoIdOrUrl?: string) => {
 };
 
 // Mux video hook for managing Mux video state
-const useMuxVideo = (data: VideoHero) => {
+const useMuxVideo = (data: Sanity.VideoHero) => {
   const [videoId, setVideoId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Try to get the Mux ID from all possible locations in order of priority
-    const muxId =
-      data.muxVideo?.asset?.playbackId ||
-      data.muxVideo?.asset?.data?.playback_ids?.[0]?.id ||
-      data.muxVideo?.playbackId ||
-      null;
+    const muxId = data.muxVideo?.asset?.playbackId || data.muxVideo?.playbackId || null;
 
     if (muxId) {
       setVideoId(muxId);
@@ -149,10 +115,18 @@ const useMuxVideo = (data: VideoHero) => {
 };
 
 // YouTube Player Component
-const YouTubePlayer = ({ url, onError }: { url: string; onError: (err: any) => void }) => {
+const YouTubePlayer = ({ videoId, title }: { videoId: string; title?: string }) => {
+  const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+
   return (
     <div className="w-full h-full">
-      <ReactPlayer url={url} width="100%" height="100%" playing controls onError={onError} />
+      <iframe
+        src={embedUrl}
+        title={title || 'YouTube video player'}
+        className="w-full h-full border-0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowFullScreen
+      />
     </div>
   );
 };
@@ -164,18 +138,18 @@ const MuxVideoPlayer = ({
   onError,
 }: {
   playbackId: string;
-  title: string;
+  title?: string;
   onError: (err: any) => void;
 }) => {
   return (
-    <MuxPlayer
+    <MuxPlayerReact
       playbackId={playbackId}
       metadata={{
-        video_title: title,
+        video_title: title || 'Video',
         player_name: 'Medal Socials Player',
       }}
       theme="classic"
-      accentColor="hsl(var(--primary))"
+      accentColor="var(--color-brand-vibrant)"
       autoPlay
       style={{
         height: '100%',
@@ -198,14 +172,14 @@ const VideoError = ({
   onBackClick: () => void;
 }) => {
   return (
-    <div className="flex items-center justify-center h-full bg-black text-white text-center p-4">
+    <div className="flex items-center justify-center h-full bg-muted text-foreground text-center p-4">
       <div>
         <p className="text-xl font-semibold mb-2">Video Error</p>
         <p>{error || `Could not find a valid video ID for this ${type || ''} video.`}</p>
         <button
           type="button"
           onClick={onBackClick}
-          className="mt-4 px-4 py-2 bg-white text-black rounded"
+          className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded"
         >
           Back to Thumbnail
         </button>
@@ -214,7 +188,8 @@ const VideoError = ({
   );
 };
 
-export default function VideoHero({ data }: VideoHeroProps) {
+export default function VideoHero({ ...props }: { data: Sanity.VideoHero }) {
+  const data = props.data;
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -223,7 +198,19 @@ export default function VideoHero({ data }: VideoHeroProps) {
   const mux = useMuxVideo(data);
 
   // Generate thumbnail URL
-  const thumbnailUrl = data?.thumbnail ? urlFor(data.thumbnail as any).url() : null;
+  let thumbnailUrl =
+    (data?.thumbnail as any)?.src ||
+    (data?.thumbnail as any)?.url ||
+    (data?.thumbnail ? urlFor(data.thumbnail as any).url() : null);
+
+  // Fallback to automatic thumbnails if manual one is missing
+  if (!thumbnailUrl) {
+    if (data?.type === 'mux' && mux.videoId) {
+      thumbnailUrl = `https://image.mux.com/${mux.videoId}/thumbnail.jpg?width=1920&height=1080&fit_mode=preserve`;
+    } else if (data?.type === 'youtube' && youtube.videoId) {
+      thumbnailUrl = `https://img.youtube.com/vi/${youtube.videoId}/maxresdefault.jpg`;
+    }
+  }
 
   const handlePlayClick = () => {
     setIsPlaying(true);
@@ -240,7 +227,12 @@ export default function VideoHero({ data }: VideoHeroProps) {
     (data?.type === 'mux' ? mux.error : null);
 
   return (
-    <section className="relative w-full h-[80vh] bg-gray-900">
+    <Section
+      width="full"
+      spacing="none"
+      className="relative w-full h-[80dvh] bg-muted"
+      {...moduleProps(data)}
+    >
       {/* SEO-friendly metadata */}
       <div className="hidden">
         <h1>{data?.title || 'Video'}</h1>
@@ -250,7 +242,7 @@ export default function VideoHero({ data }: VideoHeroProps) {
         // Thumbnail view
         <button
           type="button"
-          className="relative w-full h-full cursor-pointer bg-black"
+          className="relative w-full h-full cursor-pointer bg-muted"
           onClick={handlePlayClick}
           aria-label="Play video"
           onKeyDown={(e) => {
@@ -266,15 +258,16 @@ export default function VideoHero({ data }: VideoHeroProps) {
               alt={data?.title || 'Video thumbnail'}
               fill
               priority
+              fetchPriority="high"
               className="object-cover"
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-white">
+            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
               <p>No thumbnail available</p>
             </div>
           )}
-          <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-            <span className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
+          <div className="absolute inset-0 bg-brand-navy/30 flex items-center justify-center">
+            <span className="w-16 h-16 bg-brand-vibrant text-white rounded-full flex items-center justify-center transition-transform hover:scale-110">
               {/* Play icon */}
               <svg className="w-8 h-8" viewBox="0 0 24 24">
                 <title>Play video icon</title>
@@ -285,7 +278,7 @@ export default function VideoHero({ data }: VideoHeroProps) {
         </button>
       ) : (
         // Video player
-        <div className="relative w-full h-full overflow-hidden bg-black">
+        <div className="relative w-full h-full overflow-hidden bg-muted">
           {videoError ? (
             <VideoError
               error={videoError}
@@ -294,13 +287,13 @@ export default function VideoHero({ data }: VideoHeroProps) {
             />
           ) : data?.type === 'mux' && mux.videoId ? (
             <MuxVideoPlayer playbackId={mux.videoId} title={data.title} onError={handleError} />
-          ) : data?.type === 'youtube' && youtube.youtubeUrl ? (
-            <YouTubePlayer url={youtube.youtubeUrl} onError={handleError} />
+          ) : data?.type === 'youtube' && youtube.videoId ? (
+            <YouTubePlayer videoId={youtube.videoId} title={data.title} />
           ) : (
             <VideoError error={null} type={data?.type} onBackClick={() => setIsPlaying(false)} />
           )}
         </div>
       )}
-    </section>
+    </Section>
   );
 }

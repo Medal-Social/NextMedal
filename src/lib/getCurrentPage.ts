@@ -1,5 +1,6 @@
 import { headers } from 'next/headers';
 import { groq } from 'next-sanity';
+import { logger } from '@/lib/logger';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
 import { TRANSLATIONS_QUERY } from '@/sanity/lib/queries';
 
@@ -36,7 +37,7 @@ export async function getCurrentPage(): Promise<Sanity.PageBase | undefined> {
 
     return page;
   } catch (error) {
-    console.error('Error fetching current page for translations:', error);
+    logger.error({ err: error }, 'Error fetching current page for translations');
     return undefined;
   }
 }

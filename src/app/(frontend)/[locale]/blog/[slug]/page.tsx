@@ -1,19 +1,54 @@
 import { notFound } from 'next/navigation';
 import { groq } from 'next-sanity';
+import { groupPlacements, type Placement } from '@/lib/placement';
 import processMetadata from '@/lib/processMetadata';
+import resolveUrl from '@/lib/resolveUrl';
 import { client } from '@/sanity/lib/client';
-import { fetchSanityLive } from '@/sanity/lib/fetch';
-import { MODULES_QUERY } from '@/sanity/lib/queries';
+import { fetchSanityLive } from '@/sanity/lib/live';
+import { IMAGE_QUERY, MODULES_QUERY, placementQuery } from '@/sanity/lib/queries';
+import JsonLd from '@/ui/JsonLd';
 import Modules from '@/ui/modules';
+import BlogPostLayout from '@/ui/modules/blog/BlogPostLayout';
 
 export default async function Page({ params }: Props) {
-  const post = await getPost(await params);
+  const resolvedParams = await params;
+  const post = await getPost(resolvedParams);
+
   if (!post) notFound();
-  return <Modules modules={post.modules} post={post} />;
+
+  const placements = groupPlacements(post.placements);
+
+  return (
+    <>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'BlogPosting',
+          headline: post.metadata?.title,
+          description: post.metadata?.description,
+          image: post.metadata?.ogimage,
+          datePublished: post.publishDate,
+          dateModified: post._updatedAt,
+          author: post.authors?.map((author: any) => ({
+            '@type': 'Person',
+            name: author.name,
+            url: resolveUrl(author, { base: true }),
+          })),
+          mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': resolveUrl(post, { base: true }),
+          },
+        }}
+      />
+      {post.modules && post.modules.length > 0 && <Modules modules={post.modules} post={post} />}
+      <BlogPostLayout post={post} placements={placements} />
+    </>
+  );
 }
 
 export async function generateMetadata({ params }: Props) {
-  const post = await getPost(await params);
+  const resolvedParams = await params;
+  const post = await getPost(resolvedParams);
   if (!post) notFound();
   return processMetadata(post);
 }
@@ -27,24 +62,19 @@ export async function generateStaticParams() {
 }
 
 async function getPost(params: { slug?: string }) {
-  const blogTemplateExists = await fetchSanityLive<boolean>({
-    query: groq`count(*[_type == 'global-module' && path == 'blog/']) > 0`,
-  });
+  const placementsQuery = placementQuery(
+    "scope == 'blog.post' || scope match 'blog*' || scope == 'all-blog-posts'"
+  );
 
-  if (!blogTemplateExists)
-    throw new Error(
-      'Missing blog template: 👻 Oof, your blog posts are ghosting...\n\n' +
-        'Solution: Add a new Global module document in your Medal Social Studio with the path "blog/".\n' +
-        'Also add the Blog post content module to display blog post content.\n\n' +
-        '💁‍♂️ https://www.medalsocial.com'
-    );
-
-  return await fetchSanityLive<Sanity.BlogPost & { modules: Sanity.Module[] }>({
+  return await fetchSanityLive<
+    Sanity.BlogPost & { modules?: Sanity.Module[]; placements: Placement[] }
+  >({
     query: groq`*[_type == 'blog.post' && metadata.slug.current == $slug][0]{
 			...,
+			'modules': modules[]{ ${MODULES_QUERY} },
 			body[]{
 				...,
-				_type == 'image' => { asset-> }
+				_type == 'image' => { ${IMAGE_QUERY} }
 			},
 			'readTime': length(string::split(pt::text(body), ' ')) / 200,
 			'headings': body[style in ['h2', 'h3']]{
@@ -55,20 +85,12 @@ async function getPost(params: { slug?: string }) {
 			authors[]->,
 			metadata {
 				...,
+				image { ${IMAGE_QUERY} },
 				'ogimage': image.asset->url + '?w=1200'
 			},
-			'modules': (
-				// global modules (before)
-				*[_type == 'global-module' && path == '*'].before[]{ ${MODULES_QUERY} }
-				// path modules (before)
-				+ *[_type == 'global-module' && path == 'blog/'].before[]{ ${MODULES_QUERY} }
-				// path modules (after)
-				+ *[_type == 'global-module' && path == 'blog/'].after[]{ ${MODULES_QUERY} }
-				// global modules (after)
-				+ *[_type == 'global-module' && path == '*'].after[]{ ${MODULES_QUERY} }
-			)
+			'placements': ${placementsQuery}
 		}`,
-    params,
+    params: { ...params, slug: params.slug },
   });
 }
 

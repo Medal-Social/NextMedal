@@ -1,15 +1,26 @@
+/**
+ * Person Schema
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
+ * @description Defines a team member profile with bio and social links.
+ * @changelog
+ * - 1.0.1: Updated header documentation
+ * - 1.0.0: Initial version
+ */
+
 import { GoPerson } from 'react-icons/go';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'person',
-  title: 'Person',
+  title: 'Team Member',
   type: 'document',
   icon: GoPerson,
   fields: [
     defineField({
       name: 'name',
       title: 'Name',
+      description: 'Full name of the team member.',
       type: 'string',
       validation: (Rule) => Rule.required(),
     }),
@@ -20,15 +31,9 @@ export default defineType({
       description: 'Professional title or role that appears under the name',
     }),
     defineField({
-      name: 'bio',
-      title: 'Biography',
-      type: 'text',
-      description: 'A short biography or description of the person',
-      rows: 3,
-    }),
-    defineField({
       name: 'slug',
       title: 'Slug',
+      description: 'URL-friendly version of the name.',
       type: 'slug',
       options: {
         source: 'name',
@@ -36,39 +41,98 @@ export default defineType({
     }),
     defineField({
       name: 'image',
+      title: 'Profile Picture',
+      description: 'Image of the person.',
       type: 'image',
       options: {
         hotspot: true,
       },
     }),
     defineField({
+      name: 'bio',
+      title: 'Biography',
+      type: 'array',
+      of: [
+        {
+          type: 'block',
+          styles: [{ title: 'Normal', value: 'normal' }],
+          lists: [],
+          marks: {
+            decorators: [
+              { title: 'Strong', value: 'strong' },
+              { title: 'Emphasis', value: 'em' },
+            ],
+            annotations: [
+              {
+                title: 'Link',
+                name: 'link',
+                type: 'object',
+                fields: [
+                  {
+                    title: 'URL',
+                    name: 'href',
+                    type: 'url',
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+      description: 'A short biography or description of the person',
+    }),
+    defineField({
       name: 'socialLinks',
-      title: 'Social Media Links',
-      type: 'object',
-      fields: [
+      title: 'Social Media',
+      description: 'Add social media profiles',
+      type: 'array',
+      of: [
         defineField({
-          name: 'linkedIn',
-          title: 'LinkedIn URL',
-          type: 'url',
-          description: 'Full LinkedIn profile URL',
-        }),
-        defineField({
-          name: 'twitter',
-          title: 'X/Twitter URL',
-          type: 'url',
-          description: 'Full X/Twitter profile URL',
-        }),
-        defineField({
-          name: 'instagram',
-          title: 'Instagram URL',
-          type: 'url',
-          description: 'Full Instagram profile URL',
-        }),
-        defineField({
-          name: 'youtube',
-          title: 'YouTube URL',
-          type: 'url',
-          description: 'Full YouTube channel or video URL',
+          name: 'socialLink',
+          title: 'Profile',
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'platform',
+              title: 'Platform',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'LinkedIn', value: 'linkedin' },
+                  { title: 'X (Twitter)', value: 'twitter' },
+                  { title: 'Instagram', value: 'instagram' },
+                  { title: 'YouTube', value: 'youtube' },
+                  { title: 'Facebook', value: 'facebook' },
+                ],
+              },
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'url',
+              title: 'Profile Link',
+              type: 'url',
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+          preview: {
+            select: {
+              title: 'platform',
+              subtitle: 'url',
+            },
+            prepare({ title, subtitle }) {
+              const platforms = {
+                linkedin: 'LinkedIn',
+                twitter: 'X (Twitter)',
+                instagram: 'Instagram',
+                youtube: 'YouTube',
+                facebook: 'Facebook',
+              };
+              return {
+                title: platforms[title as keyof typeof platforms] || title,
+                subtitle: subtitle,
+              };
+            },
+          },
         }),
       ],
     }),

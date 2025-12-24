@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.7/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -9,12 +9,12 @@
     "ignoreUnknown": true,
     "includes": [
       "**",
+      "!src/styles/globals.css",
       "!**/node_modules/",
       "!**/.next/",
       "!**/public/",
       "!**/*.config.js",
-      "!**/*.config.ts",
-      "!src/styles/globals.css"
+      "!**/*.config.ts"
     ]
   },
   "formatter": {
@@ -31,7 +31,7 @@
     "rules": {
       "recommended": true,
       "a11y": {
-        "useAltText": "off"
+        "useAltText": "error"
       },
       "complexity": {
         "noBannedTypes": "off",
@@ -42,6 +42,7 @@
         "useExhaustiveDependencies": "warn"
       },
       "suspicious": {
+        "noConsole": "warn",
         "noExplicitAny": "off",
         "noArrayIndexKey": "off"
       },

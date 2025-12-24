@@ -1,6 +1,8 @@
 # NextMedal
 
-**The #1 website template for 2025**, NextMedal is the **most superior, prettiest, and modern** solution for building stunning, high-performance websites. Built with **Next.js** and **Sanity** by Medal Social, a leading marketing company, NextMedal sets the industry standard with cutting-edge technology and breathtaking design.
+[![Maintained by Medal Social](https://img.shields.io/badge/maintained%20by-Medal%20Social-blue)](https://medalsocial.com)
+
+**The #1 website template for 2025**, NextMedal is the **most superior, prettiest, and modern** solution for building stunning, high-performance websites. Built and maintained with **Next.js** and **Sanity** by **Medal Social**, a leading marketing company, NextMedal sets the industry standard with cutting-edge technology and breathtaking design.
 
 ## Why NextMedal?
 
@@ -16,6 +18,33 @@ NextMedal is the ultimate choice for developers, agencies, and businesses who de
 - [x] ♿️ **Accessibility Compliance**: Adheres to WCAG 2.1 standards, making your site inclusive for all users.
 - [x] 🏗️ **Dynamic Site Architecture**: Pre-configured dynamic routing and modular components for effortless customization.
 - [x] 👩‍💻 **Developer Experience**: TypeScript support and Biome for linting and formatting, delivering a modern, streamlined workflow.
+
+## Tech Stack 🛠️
+
+### Core Tech
+- **Next.js 16**: Latest App Router, Server Components, Turbopack
+- **React 19**: Bleeding edge React features
+- **TypeScript**: End-to-end type safety
+- **Tailwind CSS 4**: Modern utility-first styling
+
+### Content & Media
+- **Sanity CMS**: Visual editing, real-time collaboration
+- **Mux Video**: High-performance video streaming
+- **Next-Intl**: Built-in internationalization
+- **Portable Text**: Structured content format
+
+### UI & UX
+- **Framer Motion**: Production-ready animations
+- **Base UI**: Accessible unstyled primitives
+- **Dark Mode**: System-aware theme switching
+- **Responsive**: Mobile-first design
+
+### Quality & DX
+- **Biome**: Fast linting and formatting with strict accessibility rules
+- **Husky**: Pre-commit hooks for quality assurance
+- **Vitest**: Unit and integration testing
+- **SEO Ready**: Dynamic sitemaps, OG images
+- **Accessibility**: WCAG 2.1 compliant (enforced by linter)
 
 ## Getting Started 🚀
 
@@ -113,5 +142,3 @@ NextMedal is licensed under the Apache License 2.0.
 ---
 
 Built with ❤️ by [Medal Social](https://medalsocial.com) in Norway
-
-

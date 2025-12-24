@@ -1,13 +1,16 @@
 /**
  * Site Settings Schema
- * @version 1.0.0
- * @lastUpdated 2024-03-21
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
  * @description Defines global site settings including branding, SEO defaults, and social media links.
  * @changelog
+ * - 1.0.1: Updated header documentation
  * - 1.0.0: Initial version with core site configuration options
  */
 
 import { defineField, defineType } from 'sanity';
+import { getBlockText } from '@/sanity/lib/utils';
+// import modules from '../fragments/modules';
 
 export default defineType({
   name: 'site',
@@ -15,13 +18,12 @@ export default defineType({
   type: 'document',
   groups: [
     { name: 'general', title: 'General', default: true },
-    { name: 'appearance', title: 'Site Logo' },
     { name: 'navigation', title: 'Navigation' },
-    { name: 'compliance', title: 'Compliance' },
+    { name: 'advanced', title: 'Advanced Options' },
   ],
   fieldsets: [
-    { name: 'branding', title: 'Branding', options: { collapsible: true, collapsed: false } },
-    { name: 'footer', title: 'Footer', options: { collapsible: false } },
+    { name: 'header', title: 'Header', options: { collapsible: true, collapsed: false } },
+    { name: 'footer', title: 'Footer', options: { collapsible: true, collapsed: false } },
     {
       name: 'cookies',
       title: 'Cookie Settings',
@@ -29,12 +31,21 @@ export default defineType({
     },
   ],
   fields: [
-    // General Group - Basic site information and content
+    // General Group
     defineField({
       name: 'language',
       type: 'string',
       readOnly: true,
       hidden: true,
+    }),
+    defineField({
+      name: 'banners',
+      title: 'Site Banners',
+      description: 'Special banners shown across the site. Useful for promotions or urgent news.',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'banner' }] }],
+      group: 'general',
+      initialValue: [],
     }),
     defineField({
       name: 'title',
@@ -45,33 +56,42 @@ export default defineType({
       group: 'general',
     }),
     defineField({
+      name: 'logo',
+      title: 'Site Logo',
+      description: "Upload your site's logo. Used in the header and for social sharing.",
+      type: 'reference',
+      to: [{ type: 'logo' }],
+      group: 'general',
+    }),
+    defineField({
       name: 'tagline',
       title: 'Site Tagline',
       description: 'A short slogan or motto for your site. Shown in meta tags and some layouts.',
       type: 'array',
-      of: [{ type: 'block' }],
+      of: [
+        {
+          type: 'block',
+          styles: [],
+          lists: [],
+          marks: {
+            decorators: [
+              { title: 'Strong', value: 'strong' },
+              { title: 'Emphasis', value: 'em' },
+            ],
+          },
+        },
+      ],
       group: 'general',
+      validation: (Rule) =>
+        Rule.custom((blocks: any) => {
+          const text = getBlockText(blocks, ' ');
+          return text.length > 200
+            ? 'Tagline should be concise (recommended max 200 characters)'
+            : true;
+        }).warning(),
     }),
-    defineField({
-      name: 'announcements',
-      title: 'Site Announcements',
-      description:
-        'Special announcements shown across the site. Useful for promotions or urgent news.',
-      type: 'array',
-      of: [{ type: 'reference', to: [{ type: 'announcement' }] }],
-      group: 'general',
-      initialValue: [],
-    }),
-    // Appearance & Branding Group - Visual elements
-    defineField({
-      name: 'logo',
-      title: 'Site Logo',
-      description: "Upload your site's logo. Used in the header and for social sharing.",
-      type: 'logo',
-      group: 'appearance',
-      fieldset: 'branding',
-    }),
-    // Navigation Group - Header first, then footer, then rest
+
+    // Navigation Group
     defineField({
       name: 'headerMenu',
       title: 'Header Menu',
@@ -79,17 +99,29 @@ export default defineType({
       type: 'reference',
       to: [{ type: 'navigation' }],
       group: 'navigation',
+      fieldset: 'header',
+    }),
+    defineField({
+      name: 'enableSearch',
+      title: 'Enable Search',
+      description: 'Show the search bar in the header.',
+      type: 'boolean',
+      initialValue: true,
+      group: 'navigation',
+      fieldset: 'header',
     }),
     defineField({
       name: 'ctas',
-      title: 'Header Call-to-Actions',
-      description: 'Call to action buttons that appear in the header.',
+      title: 'Action Buttons',
+      description:
+        'Primary action buttons displayed in the header (e.g., "Get Started", "Contact").',
       type: 'array',
       of: [{ type: 'cta' }],
       group: 'navigation',
+      fieldset: 'header',
       initialValue: [],
-      validation: (Rule) => Rule.min(1).error('Add at least one CTA.'),
     }),
+
     defineField({
       name: 'footerMenu',
       title: 'Footer Menu',
@@ -101,17 +133,63 @@ export default defineType({
     }),
     defineField({
       name: 'copyright',
-      title: 'Copyright Text',
-      description: 'Copyright notice displayed in the footer.',
+      title: 'Footer Text',
+      description: 'Copyright notice and credits displayed in the footer.',
       type: 'array',
       of: [
         {
           type: 'block',
-          styles: [{ title: 'Normal', value: 'normal' }],
+          styles: [],
+          lists: [],
+          marks: {
+            decorators: [
+              { title: 'Strong', value: 'strong' },
+              { title: 'Emphasis', value: 'em' },
+            ],
+          },
         },
       ],
-      group: 'general',
+      group: 'navigation',
       fieldset: 'footer',
+      validation: (Rule) =>
+        Rule.custom((blocks: any) => {
+          const text = getBlockText(blocks, ' ');
+          return text.length > 500
+            ? 'Footer text should be concise (recommended max 500 characters)'
+            : true;
+        }).warning(),
+    }),
+    defineField({
+      name: 'footerLinks',
+      title: 'Additional Links',
+      description: 'Additional links to display in the footer (e.g. Locations, Legal)',
+      type: 'array',
+      of: [{ type: 'menuItem' }],
+      group: 'navigation',
+      fieldset: 'footer',
+    }),
+    defineField({
+      name: 'systemStatus',
+      title: 'System Status',
+      description: 'System status indicator link',
+      type: 'object',
+      group: 'navigation',
+      fieldset: 'footer',
+      fields: [
+        defineField({
+          name: 'title',
+          title: 'Title',
+          type: 'string',
+          initialValue: 'All Systems Normal',
+          validation: (Rule) => Rule.required(),
+        }),
+        defineField({
+          name: 'url',
+          title: 'URL',
+          type: 'url',
+          validation: (Rule) => Rule.required().uri({ scheme: ['http', 'https'] }),
+        }),
+      ],
     }),
     defineField({
       name: 'socialLinks',
@@ -124,9 +202,19 @@ export default defineType({
           fields: [
             {
               name: 'text',
-              title: 'Label',
+              title: 'Platform',
               type: 'string',
-              description: 'Label for the social channel (e.g., LinkedIn, Twitter)',
+              options: {
+                list: [
+                  'Facebook',
+                  'Instagram',
+                  'LinkedIn',
+                  'X (Twitter)',
+                  'YouTube',
+                  'TikTok',
+                  'GitHub',
+                ],
+              },
               validation: (Rule) => Rule.required(),
             },
             {
@@ -137,175 +225,53 @@ export default defineType({
               validation: (Rule) => Rule.required().uri({ scheme: ['http', 'https'] }),
             },
           ],
+          preview: {
+            select: {
+              title: 'text',
+              subtitle: 'url',
+            },
+          },
         },
       ],
       group: 'navigation',
+      fieldset: 'footer',
       initialValue: [],
-      validation: (Rule) => Rule.min(1).error('Add at least one social link.'),
     }),
+
+    // Cookie Consent Group
     defineField({
       name: 'cookieConsent',
-      title: 'Cookie Consent Settings',
-      description: 'Configure cookie consent banner and preferences',
+      title: 'Cookie Consent',
       type: 'object',
-      group: 'compliance',
+      group: 'advanced',
       fieldset: 'cookies',
       fields: [
-        {
+        defineField({
           name: 'enabled',
           title: 'Enable Cookie Consent',
           type: 'boolean',
-          description: 'Show cookie consent banner to visitors',
           initialValue: true,
-        },
-        {
-          name: 'bannerTitle',
-          title: 'Banner Title',
-          type: 'string',
-          description: 'Title shown in the cookie consent banner',
-          initialValue: 'We use cookies',
-        },
-        {
-          name: 'bannerText',
-          title: 'Banner Description',
-          type: 'array',
-          of: [{ type: 'block' }],
-          description: 'Main text shown in the cookie consent banner',
-        },
-        {
-          name: 'acceptButtonText',
-          title: 'Accept Button Text',
-          type: 'string',
-          description: 'Text for the accept all cookies button',
-          initialValue: 'Accept All',
-        },
-        {
-          name: 'rejectButtonText',
-          title: 'Reject Button Text',
-          type: 'string',
-          description: 'Text for the reject non-essential cookies button',
-          initialValue: 'Reject Non-Essential',
-        },
-        {
-          name: 'preferencesButtonText',
-          title: 'Preferences Button Text',
-          type: 'string',
-          description: 'Text for the cookie preferences button',
-          initialValue: 'Cookie Preferences',
-        },
-        {
-          name: 'cookieCategories',
-          title: 'Cookie Categories',
-          type: 'array',
-          of: [
-            {
-              type: 'object',
-              fields: [
-                {
-                  name: 'category',
-                  title: 'Category',
-                  type: 'string',
-                  options: {
-                    list: [
-                      { title: 'Necessary', value: 'necessary' },
-                      { title: 'Functional', value: 'functional' },
-                      { title: 'Analytics', value: 'analytics' },
-                      { title: 'Marketing', value: 'marketing' },
-                    ],
-                  },
-                  validation: (Rule: any) => Rule.required(),
-                },
-                {
-                  name: 'categoryTitle',
-                  title: 'Category Title',
-                  type: 'string',
-                  validation: (Rule: any) => Rule.required(),
-                },
-                {
-                  name: 'description',
-                  title: 'Description',
-                  type: 'text',
-                  rows: 3,
-                  validation: (Rule: any) => Rule.required(),
-                },
-                {
-                  name: 'required',
-                  title: 'Required',
-                  type: 'boolean',
-                  initialValue: false,
-                  validation: (Rule: any) => Rule.required(),
-                },
-                {
-                  name: 'cookies',
-                  title: 'Cookies',
-                  type: 'array',
-                  of: [
-                    {
-                      type: 'object',
-                      fields: [
-                        {
-                          name: 'name',
-                          title: 'Name',
-                          type: 'string',
-                          validation: (Rule: any) => Rule.required(),
-                        },
-                        {
-                          name: 'type',
-                          title: 'Type',
-                          type: 'string',
-                          options: {
-                            list: [
-                              { title: 'HTTP Cookie', value: 'http' },
-                              { title: 'Local Storage', value: 'local' },
-                            ],
-                          },
-                          validation: (Rule: any) => Rule.required(),
-                        },
-                        {
-                          name: 'description',
-                          title: 'Description',
-                          type: 'text',
-                          rows: 2,
-                          validation: (Rule: any) => Rule.required(),
-                        },
-                        {
-                          name: 'duration',
-                          title: 'Duration',
-                          type: 'string',
-                          validation: (Rule: any) => Rule.required(),
-                        },
-                        {
-                          name: 'vendor',
-                          title: 'Vendor',
-                          type: 'string',
-                          description: 'The company or service that provides this cookie',
-                          validation: (Rule: any) => Rule.required(),
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-              preview: {
-                select: {
-                  title: 'categoryTitle',
-                  category: 'category',
-                  required: 'required',
-                },
-                prepare(value: Record<string, any>) {
-                  return {
-                    title: value.title,
-                    subtitle: `${value.category}${value.required ? ' (Required)' : ''}`,
-                  };
-                },
-              },
-            },
-          ],
-          validation: (Rule: any) => Rule.required().min(1),
-        },
+        }),
+        defineField({
+          name: 'privacyPolicy',
+          title: 'Privacy Policy Link',
+          type: 'reference',
+          to: [{ type: 'page' }], // Assuming 'page' exists, need to verify or use url
+          description: 'Link to the privacy policy page.',
+          hidden: ({ parent }) => !parent?.enabled,
+          validation: (Rule) =>
+            Rule.custom((value, context) => {
+              const parent = context.parent as any;
+              if (parent?.enabled && !value) {
+                return 'Privacy Policy is required when Cookie Consent is enabled';
+              }
+              return true;
+            }),
+        }),
       ],
     }),
   ],
+
   preview: {
     select: {
       title: 'title',

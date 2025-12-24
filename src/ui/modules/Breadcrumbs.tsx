@@ -8,25 +8,21 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import { Section } from '@/components/ui/section';
+import moduleProps from '@/lib/moduleProps';
 import resolveUrl from '@/lib/resolveUrl';
 
 export default async function Breadcrumbs({
   crumbs,
   hideCurrent,
   currentPage,
-}: Partial<{
-  crumbs: Sanity.Link[];
-  hideCurrent?: boolean;
-  currentPage: Sanity.Page | Sanity.BlogPost;
-  isTabbedModule?: boolean;
-}>) {
+  ...props
+}: Sanity.Breadcrumbs) {
   return (
-    <Breadcrumb className="section py-4  text-sm">
+    <Section as={Breadcrumb} className="py-4 text-sm" spacing="none" {...moduleProps(props)}>
       <BreadcrumbList itemScope itemType="https://schema.org/BreadcrumbList">
-        {crumbs?.map((crumb) => (
-          <Fragment
-            key={crumb.external || (crumb.internal && resolveUrl(crumb.internal, { base: false }))}
-          >
+        {crumbs?.map((crumb, index) => (
+          <Fragment key={(crumb as any)._key || index}>
             <BreadcrumbItem
               itemProp="itemListElement"
               itemScope
@@ -36,7 +32,7 @@ export default async function Breadcrumbs({
               <BreadcrumbLink
                 href={
                   crumb.internal
-                    ? resolveUrl(crumb.internal, { base: false })
+                    ? resolveUrl(crumb.internal as Sanity.PageBase, { base: false })
                     : crumb.external
                       ? stegaClean(crumb.external)
                       : '/'
@@ -45,7 +41,7 @@ export default async function Breadcrumbs({
                 itemProp="item"
               >
                 <span itemProp="name">
-                  {stegaClean(crumb.label || crumb.internal?.title || crumb.external)}
+                  {crumb.label || crumb.internal?.title || crumb.external}
                 </span>
                 <meta itemProp="position" content={(crumbs?.indexOf(crumb) + 1).toString()} />
               </BreadcrumbLink>
@@ -71,6 +67,6 @@ export default async function Breadcrumbs({
           </BreadcrumbItem>
         )}
       </BreadcrumbList>
-    </Breadcrumb>
+    </Section>
   );
 }

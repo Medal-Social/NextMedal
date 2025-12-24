@@ -3,6 +3,8 @@ import Image, { type ImageProps } from 'next/image';
 import { stegaClean } from 'next-sanity';
 import type { ComponentProps } from 'react';
 import { preload } from 'react-dom';
+import { logger } from '@/lib/logger';
+import { cn } from '@/lib/utils';
 import { urlFor } from '@/sanity/lib/image';
 
 type ImgProps = { alt?: string } & Omit<ImageProps, 'src' | 'alt'>;
@@ -18,9 +20,9 @@ export function ResponsiveImg({
   if (!img) return null;
 
   return (
-    <picture {...pictureProps}>
+    <picture {...(pictureProps as any)}>
       {img.responsive?.map((r) => (
-        <Source {...r} key={r.image.url || r.media} />
+        <Source {...r} key={(r.image as any).url || r.media} />
       ))}
       <Img image={img.image} {...props} />
     </picture>
@@ -31,32 +33,64 @@ export function Img({
   image,
   width: w,
   height: h,
-  loading: _loading,
+  loading: loadingProp,
   ...props
-}: { image?: Sanity.Image } & ImgProps) {
+}: {
+  image?: any;
+} & ImgProps & { 'data-sanity'?: string }) {
   if (!image) return null;
 
+  // Handle direct URL (mock/external)
+  if (image.src || image.url) {
+    const src = image.src || image.url || '';
+    const w_orig = image.width || 800;
+    const h_orig = image.height || 600;
+
+    const w_calc = w ? Number(w) : !!h && Math.floor((Number(h) * w_orig) / h_orig);
+    const h_calc = h ? Number(h) : !!w && Math.floor((Number(w) * h_orig) / w_orig);
+
+    const imageElement = (
+      <Image
+        src={src}
+        width={w_calc || w_orig}
+        height={h_calc || h_orig}
+        alt={props.alt || image.alt || ''}
+        {...props}
+      />
+    );
+
+    if (props['data-sanity']) {
+      return (
+        <div
+          data-sanity={props['data-sanity']}
+          className={cn('relative h-full w-full', props.className)}
+        >
+          {imageElement}
+        </div>
+      );
+    }
+
+    return imageElement;
+  }
+
   const generatedSrc = generateSrc(image, w, h);
-  const isGif = generatedSrc?.src?.includes('.gif');
-  const isSvg = generatedSrc?.src?.toLowerCase().endsWith('.svg');
   if (!generatedSrc) return null;
 
   const { src, width, height } = generatedSrc;
+  const isGif = src.includes('.gif');
+  const isSvg = src.toLowerCase().endsWith('.svg');
 
-  // Get loading value and ensure it's valid
   // Get loading value and ensure it's valid
   const loadingValue = stegaClean(image.loading);
   const validLoading = props.priority
     ? undefined
-    : loadingValue === 'eager' || loadingValue === 'lazy'
-      ? loadingValue
-      : 'lazy';
+    : loadingProp || (loadingValue === 'eager' || loadingValue === 'lazy' ? loadingValue : 'lazy');
 
   if (validLoading === 'eager') {
     preload(src, { as: 'image' });
   }
 
-  return (
+  const imageElement = (
     <Image
       src={isGif ? src.split('?')[0] : src}
       width={width}
@@ -67,6 +101,19 @@ export function Img({
       loading={validLoading}
     />
   );
+
+  if (props['data-sanity']) {
+    return (
+      <div
+        data-sanity={props['data-sanity']}
+        className={cn('relative h-full w-full', props.className)}
+      >
+        {imageElement}
+      </div>
+    );
+  }
+
+  return imageElement;
 }
 
 export function Source({
@@ -93,7 +140,7 @@ export function Source({
     preload(src, { as: 'image' });
   }
 
-  return <source srcSet={src} width={width} height={height} media={media} {...props} />;
+  return <source srcSet={src} width={width} height={height} media={media} {...(props as any)} />;
 }
 
 function generateSrc(
@@ -102,31 +149,24 @@ function generateSrc(
   h?: number | `${number}` | string
 ) {
   try {
-    const { width: w_orig, height: h_orig } = getImageDimensions(image);
+    const { width: w_orig, height: h_orig } = getImageDimensions(image as any);
 
-    const w_calc = w // if width is provided
-      ? Number(w)
-      : // if height is provided, calculate width
-        !!h && Math.floor((Number(h) * w_orig) / h_orig);
-
-    const h_calc = h // if height is provided
-      ? Number(h)
-      : // if width is provided, calculate height
-        !!w && Math.floor((Number(w) * h_orig) / w_orig);
+    const w_calc = w ? Number(w) : !!h && Math.floor((Number(h) * w_orig) / h_orig);
+    const h_calc = h ? Number(h) : !!w && Math.floor((Number(w) * h_orig) / w_orig);
 
     return {
-      src: urlFor(image)
+      src: urlFor(image as any)
         .withOptions({
           width: w ? Number(w) : undefined,
           height: h ? Number(h) : undefined,
           auto: 'format',
         })
         .url(),
-      width: w_calc || w_orig,
-      height: h_calc || h_orig,
+      width: (w_calc || w_orig) as number,
+      height: (h_calc || h_orig) as number,
     };
   } catch (error) {
-    console.error('Error generating src', error, image);
+    logger.error({ error, image }, 'Error generating src');
     return null;
   }
 }

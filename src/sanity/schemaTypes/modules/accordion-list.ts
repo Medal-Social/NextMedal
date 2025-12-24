@@ -1,3 +1,13 @@
+/**
+ * Accordion List Module Schema
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
+ * @description A list of collapsible content items (e.g. FAQs).
+ * @changelog
+ * - 1.0.1: Updated header documentation
+ * - 1.0.0: Initial version
+ */
+
 import { TfiLayoutAccordionMerged } from 'react-icons/tfi';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
@@ -15,27 +25,35 @@ export default defineType({
       group: 'options',
     }),
     defineField({
-      name: 'isFullWidth',
-      description:
-        'If true, the accordion list will be full width. If false, the accordion list will be styled typical FAQ style.',
-      type: 'boolean',
-      initialValue: false,
-      group: 'options',
-    }),
-    defineField({
-      name: 'pretitle',
-      type: 'string',
-      group: 'content',
-    }),
-    defineField({
-      name: 'intro',
+      name: 'content',
       type: 'array',
-      of: [{ type: 'block' }],
+      title: 'Content',
+      description: 'Optional introductory text before the accordion list.',
+      of: [
+        {
+          type: 'block',
+          styles: [
+            { title: 'Normal', value: 'normal' },
+            { title: 'Heading 2', value: 'h2' },
+            { title: 'Heading 3', value: 'h3' },
+            { title: 'Heading 4', value: 'h4' },
+          ],
+          lists: [],
+          marks: {
+            decorators: [
+              { title: 'Strong', value: 'strong' },
+              { title: 'Emphasis', value: 'em' },
+            ],
+          },
+        },
+      ],
       group: 'content',
     }),
     defineField({
       name: 'items',
       type: 'array',
+      title: 'Accordion Items',
+      description: 'List of collapsible items.',
       of: [
         defineArrayMember({
           type: 'object',
@@ -43,15 +61,41 @@ export default defineType({
           fields: [
             defineField({
               name: 'summary',
+              title: 'Title',
+              description: 'The heading text that is always visible',
               type: 'string',
+              validation: (Rule) => Rule.required(),
             }),
             defineField({
               name: 'content',
+              title: 'Content',
+              description: 'The hidden content that is revealed when opened.',
               type: 'array',
-              of: [{ type: 'block' }],
+              of: [
+                {
+                  type: 'block',
+                  styles: [
+                    { title: 'Normal', value: 'normal' },
+                    { title: 'Heading 3', value: 'h3' },
+                    { title: 'Heading 4', value: 'h4' },
+                    { title: 'Heading 5', value: 'h5' },
+                  ],
+                  lists: [
+                    { title: 'Bullet', value: 'bullet' },
+                    { title: 'Numbered', value: 'number' },
+                  ],
+                  marks: {
+                    decorators: [
+                      { title: 'Strong', value: 'strong' },
+                      { title: 'Emphasis', value: 'em' },
+                    ],
+                  },
+                },
+              ],
             }),
             defineField({
               name: 'open',
+              title: 'Open by default',
               type: 'boolean',
               initialValue: false,
             }),
@@ -71,16 +115,6 @@ export default defineType({
       group: 'content',
     }),
     defineField({
-      name: 'layout',
-      type: 'string',
-      options: {
-        layout: 'radio',
-        list: ['vertical', 'horizontal'],
-      },
-      initialValue: 'vertical',
-      group: 'options',
-    }),
-    defineField({
       name: 'generateSchema',
       title: 'Generate schema.org schema',
       type: 'boolean',
@@ -91,10 +125,10 @@ export default defineType({
   ],
   preview: {
     select: {
-      intro: 'intro',
+      content: 'content',
     },
-    prepare: ({ intro }) => ({
-      title: getBlockText(intro),
+    prepare: ({ content }) => ({
+      title: getBlockText(content),
       subtitle: 'Accordion list',
     }),
   },

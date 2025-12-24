@@ -1,6 +1,7 @@
 import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { stegaClean } from 'next-sanity';
+import type * as React from 'react';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -12,8 +13,7 @@ import {
 } from '@/components/ui/navigation-menu';
 import resolveUrl from '@/lib/resolveUrl';
 import { getSite } from '@/sanity/lib/fetch';
-import type { Link as LinkType, Metadata } from '@/sanity/lib/types';
-import { type MobileNavLink, NavLink } from './mobile-navigation';
+import type { Metadata } from '@/sanity/lib/types';
 
 interface InternalLink {
   _type: string;
@@ -29,43 +29,54 @@ interface InternalLink {
 }
 
 export interface MenuItem {
-  _type: 'link' | 'link.list';
+  _type: 'menuItem' | 'dropdownMenu';
   label?: string;
   title?: string;
   internal?: InternalLink;
   external?: string;
   params?: string;
-  link?: LinkType;
-  links?: LinkType[];
+  links?: MenuItem[];
 }
 
 interface HeaderMenu {
   items?: MenuItem[];
 }
 
-// Helper to parse params string to Record<string, string>
-function _parseParams(params?: string): Record<string, string> | undefined {
-  if (!params) return undefined;
-  try {
-    const searchParams = new URLSearchParams(params);
-    const result: Record<string, string> = {};
-    for (const [key, value] of searchParams.entries()) {
-      result[key] = value;
-    }
-    return result;
-  } catch {
-    return undefined;
-  }
+function getLinkHref(item: MenuItem) {
+  return item.internal?.metadata?.slug?.current
+    ? resolveUrl(item.internal as unknown as Sanity.PageBase, {
+        base: false,
+        params: item.params,
+      })
+    : item.external
+      ? stegaClean(item.external)
+      : '/';
 }
 
-function mapToMobileNavLink(link: LinkType): MobileNavLink {
-  return {
-    label: link.label ?? '',
-    description: undefined,
-    internal: link.internal,
-    external: link.external,
-    params: link.params,
-  };
+function ListItem({
+  title,
+  children,
+  href,
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<'li'> & { href: string; title: string }) {
+  return (
+    <li {...props} className={className}>
+      <NavigationMenuLink
+        render={
+          <Link
+            href={href}
+            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+          >
+            <div className="text-sm font-medium leading-none">{title}</div>
+            {children && (
+              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{children}</p>
+            )}
+          </Link>
+        }
+      />
+    </li>
+  );
 }
 
 export default async function Navigation() {
@@ -77,48 +88,45 @@ export default async function Navigation() {
         {(headerMenu as HeaderMenu)?.items?.map((item) => {
           const itemKey = `${item._type}-${item.label || ''}-${item.title || ''}`;
           switch (item._type) {
-            case 'link':
+            case 'menuItem':
               return (
                 <NavigationMenuItem key={itemKey}>
-                  <NavigationMenuLink asChild>
-                    <Link
-                      href={
-                        item.internal?.metadata?.slug?.current
-                          ? resolveUrl(item.internal as Sanity.PageBase, {
-                              base: false,
-                              params: item.params,
-                            })
-                          : item.external
-                            ? stegaClean(item.external)
-                            : '/'
-                      }
-                      className={navigationMenuTriggerStyle()}
-                      target={item.external ? '_blank' : undefined}
-                      aria-label={item.external ? `${item.label} (opens in new tab)` : undefined}
-                    >
-                      {item.external ? (
-                        <p className="flex items-center gap-2">
-                          {item.label} <ExternalLink className="w-3 h-3" aria-hidden="true" />
-                        </p>
-                      ) : (
-                        item.label
-                      )}
-                    </Link>
-                  </NavigationMenuLink>
+                  <NavigationMenuLink
+                    render={
+                      <Link
+                        href={getLinkHref(item)}
+                        className={navigationMenuTriggerStyle()}
+                        target={item.external ? '_blank' : undefined}
+                        aria-label={item.external ? `${item.label} (opens in new tab)` : undefined}
+                      >
+                        {item.external ? (
+                          <p className="flex items-center gap-2">
+                            {item.label} <ExternalLink className="w-3 h-3" aria-hidden="true" />
+                          </p>
+                        ) : (
+                          item.label
+                        )}
+                      </Link>
+                    }
+                  />
                 </NavigationMenuItem>
               );
-            case 'link.list':
+            case 'dropdownMenu':
               return (
                 <NavigationMenuItem key={itemKey}>
-                  <NavigationMenuTrigger aria-label={`${item.link?.label} menu`}>
-                    {item.link?.label}
+                  <NavigationMenuTrigger aria-label={`${item.title} menu`}>
+                    {item.title}
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="bg-background">
-                    <ul className="grid w-[600px] gap-3 p-4 grid-cols-2">
+                    <ul className="grid w-64 gap-2 p-4">
                       {item.links?.map((link) => (
-                        <NavigationMenuLink asChild key={link.label}>
-                          <NavLink link={mapToMobileNavLink(link)} />
-                        </NavigationMenuLink>
+                        <ListItem
+                          key={link.label}
+                          title={link.label || ''}
+                          href={getLinkHref(link)}
+                        >
+                          {/* Description would go here if available */}
+                        </ListItem>
                       ))}
                     </ul>
                   </NavigationMenuContent>

@@ -1,6 +1,15 @@
+/**
+ * Breadcrumbs Module Schema
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
+ * @description Automatically generated breadcrumbs based on page structure.
+ * @changelog
+ * - 1.0.1: Added header documentation
+ * - 1.0.0: Initial version
+ */
+
 import { BsBarChartSteps } from 'react-icons/bs';
 import { defineField, defineType } from 'sanity';
-import { count } from '@/lib/utils';
 
 export default defineType({
   name: 'breadcrumbs',
@@ -11,7 +20,7 @@ export default defineType({
     defineField({
       name: 'crumbs',
       type: 'array',
-      of: [{ type: 'link', initialValue: { type: 'internal' } }],
+      of: [{ type: 'menuItem', initialValue: { type: 'internal' } }],
       description: 'Current page is automatically included',
     }),
     defineField({
@@ -25,9 +34,15 @@ export default defineType({
     select: {
       crumbs: 'crumbs',
     },
-    prepare: ({ crumbs }) => ({
-      title: `${count(crumbs, 'crumb')} + Current page`,
-      subtitle: 'Breadcrumbs',
-    }),
+    prepare: ({ crumbs }) => {
+      const crumbCount = Array.isArray(crumbs) ? crumbs.length : 0;
+      return {
+        title:
+          crumbCount === 0
+            ? 'Current page'
+            : `${crumbCount} crumb${crumbCount === 1 ? '' : 's'} + Current page`,
+        subtitle: 'Breadcrumbs',
+      };
+    },
   },
 });

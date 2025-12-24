@@ -1,4 +1,10 @@
-export const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!;
-export const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET!;
+import { env } from '../../lib/env';
+import {
+  apiVersion as projectApiVersion,
+  dataset as projectDataset,
+  projectId as projectProjectId,
+} from './project';
 
-export const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2024-12-01';
+export const apiVersion = env.NEXT_PUBLIC_SANITY_API_VERSION || projectApiVersion;
+export const dataset = env.NEXT_PUBLIC_SANITY_DATASET || projectDataset;
+export const projectId = env.NEXT_PUBLIC_SANITY_PROJECT_ID || projectProjectId;

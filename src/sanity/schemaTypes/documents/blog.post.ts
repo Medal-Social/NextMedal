@@ -1,22 +1,27 @@
 /**
  * Blog Post Schema
- * @version 1.0.0
- * @lastUpdated 2024-03-21
+ * @version 1.1.0
+ * @lastUpdated 2025-12-23
  * @description Defines the structure for blog posts, including content, categories, authors, and metadata.
  * @changelog
+ * - 1.1.0: Updated to latest UX standards (standardized icons, radio buttons for featured status)
  * - 1.0.0: Initial version with core blog post functionality
  */
 
-import { VscEdit } from 'react-icons/vsc';
+import { ControlsIcon, EditIcon, EyeClosedIcon, SearchIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import { imageBlock } from '../fragments';
 
 export default defineType({
   name: 'blog.post',
   title: 'Blog post',
-  icon: VscEdit,
+  icon: EditIcon,
   type: 'document',
-  groups: [{ name: 'content', default: true }, { name: 'options' }, { name: 'seo', title: 'SEO' }],
+  groups: [
+    { name: 'content', title: 'Content', icon: EditIcon, default: true },
+    { name: 'metadata', title: 'SEO & Metadata', icon: SearchIcon },
+    { name: 'advanced', title: 'Advanced Options', icon: ControlsIcon },
+  ],
   fields: [
     defineField({
       name: 'language',
@@ -26,12 +31,32 @@ export default defineType({
     }),
     defineField({
       name: 'body',
+      title: 'Content',
+      description: 'The main content of the blog post.',
       type: 'array',
-      of: [{ type: 'block' }, imageBlock],
+      of: [
+        {
+          type: 'block',
+          styles: [
+            { title: 'Normal', value: 'normal' },
+            { title: 'Heading 2', value: 'h2' },
+            { title: 'Heading 3', value: 'h3' },
+            { title: 'Heading 4', value: 'h4' },
+            { title: 'Quote', value: 'blockquote' },
+          ],
+        },
+        imageBlock,
+        { type: 'code' },
+        { type: 'video' },
+        { type: 'lead-magnet' },
+        { type: 'callout' },
+      ],
       group: 'content',
     }),
     defineField({
       name: 'categories',
+      title: 'Categories',
+      description: 'Categories this post belongs to.',
       type: 'array',
       of: [
         {
@@ -43,6 +68,8 @@ export default defineType({
     }),
     defineField({
       name: 'authors',
+      title: 'Authors',
+      description: 'People who contributed to this post.',
       type: 'array',
       of: [
         {
@@ -54,40 +81,57 @@ export default defineType({
     }),
     defineField({
       name: 'publishDate',
+      title: 'Publish Date',
+      description: 'Date when the post is published.',
       type: 'date',
       validation: (Rule) => Rule.required(),
       group: 'content',
     }),
     defineField({
       name: 'featured',
-      type: 'boolean',
-      group: 'options',
-      initialValue: false,
-    }),
-    defineField({
-      name: 'hideTableOfContents',
-      type: 'boolean',
-      group: 'options',
-      initialValue: false,
+      title: 'Featured',
+      description: 'Highlight this post on the blog homepage.',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Standard', value: 'standard' },
+          { title: 'Featured', value: 'featured' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'standard',
+      group: 'advanced',
     }),
     defineField({
       name: 'metadata',
+      title: 'SEO & Metadata',
+      description: 'Search engine optimization settings.',
       type: 'metadata',
-      group: 'seo',
+      group: 'metadata',
     }),
   ],
   preview: {
     select: {
       featured: 'featured',
       title: 'metadata.title',
+      slug: 'metadata.slug.current',
       publishDate: 'publishDate',
       media: 'metadata.image',
+      language: 'language',
+      noindex: 'metadata.noIndex',
     },
-    prepare: ({ title, publishDate, media, featured }) => ({
-      title: [featured && '★', title].filter(Boolean).join(' '),
-      subtitle: publishDate,
-      media,
-    }),
+    prepare: ({ title, slug, publishDate, media, featured, language, noindex }) => {
+      const languageLabel =
+        language === 'en' ? '🇺🇸 EN' : language === 'nb' ? '🇳🇴 NO' : language?.toUpperCase();
+
+      const subtitle = [languageLabel, publishDate, slug && `/${slug}`].filter(Boolean).join(' • ');
+
+      return {
+        title: [featured === 'featured' && '★', title].filter(Boolean).join(' '),
+        subtitle,
+        media: media || (noindex ? EyeClosedIcon : EditIcon),
+      };
+    },
   },
   orderings: [
     {

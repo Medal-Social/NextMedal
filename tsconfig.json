@@ -20,8 +20,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "$/*": ["./*"],
-      "react": ["./node_modules/@types/react"]
+      "$/*": ["./*"]
     }
   },
   "include": [
@@ -29,8 +28,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "docs/index.mdx",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "vitest.config.ts"]
 }

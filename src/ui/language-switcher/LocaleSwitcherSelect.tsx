@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
@@ -24,6 +25,7 @@ type Props = {
   selectLanguageLabel: string;
   languageText: string;
   translationUrls?: Record<string, string>;
+  className?: string;
 };
 
 interface LocaleOption {
@@ -44,7 +46,9 @@ export default function LocaleSwitcherSelect({
   selectLanguageLabel,
   languageText,
   translationUrls = {},
-}: Props) {
+  className,
+  dropdownAlign = 'end',
+}: Props & { dropdownAlign?: 'start' | 'end' | 'center' }) {
   const nextRouter = useNextRouter();
   const [isPending, startTransition] = useTransition();
   const t = useTranslations('LocaleSwitcher');
@@ -80,31 +84,35 @@ export default function LocaleSwitcherSelect({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          aria-label={label}
-          className={cn('h-8 px-2 gap-2', isPending && 'opacity-50')}
-          disabled={isPending}
-        >
-          <Languages className="h-4 w-4" />
-          <span className="hidden sm:inline-block text-sm font-medium">{languageText}</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-48" align="end">
-        <DropdownMenuLabel>{selectLanguageLabel}</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup value={defaultValue} onValueChange={onSelectLocale}>
-          {options.map((option) => (
-            <DropdownMenuRadioItem key={option.value} value={option.value}>
-              <span className="flex items-center gap-2">
-                <span>{FLAGS[option.value] || '🏳️'}</span>
-                <span>{option.label}</span>
-              </span>
-            </DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="ghost"
+            size="sm"
+            aria-label={label}
+            className={cn('h-8 px-2 gap-2', isPending && 'opacity-50', className)}
+            disabled={isPending}
+          >
+            <Languages className="h-4 w-4" />
+            <span className="hidden sm:inline-block text-sm font-medium">{languageText}</span>
+          </Button>
+        }
+      />
+      <DropdownMenuContent className="w-48 z-[200]" align={dropdownAlign}>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>{selectLanguageLabel}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuRadioGroup value={defaultValue} onValueChange={onSelectLocale}>
+            {options.map((option) => (
+              <DropdownMenuRadioItem key={option.value} value={option.value}>
+                <span className="flex items-center gap-2">
+                  <span>{FLAGS[option.value] || '🏳️'}</span>
+                  <span>{option.label}</span>
+                </span>
+              </DropdownMenuRadioItem>
+            ))}
+          </DropdownMenuRadioGroup>
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

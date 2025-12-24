@@ -1,3 +1,13 @@
+/**
+ * Pricing Tier Schema
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
+ * @description Defines a pricing tier or plan (e.g., Free, Pro, Enterprise).
+ * @changelog
+ * - 1.0.1: Updated header documentation
+ * - 1.0.0: Initial version
+ */
+
 import { LuDollarSign } from 'react-icons/lu';
 import { defineField, defineType } from 'sanity';
 
@@ -9,10 +19,14 @@ export default defineType({
   fields: [
     defineField({
       name: 'title',
+      title: 'Tier Name',
+      description: 'Name of the pricing tier (e.g. "Free", "Pro").',
       type: 'string',
     }),
     defineField({
       name: 'description',
+      title: 'Description',
+      description: 'Brief summary of what this tier offers.',
       type: 'text',
     }),
     defineField({
@@ -22,6 +36,8 @@ export default defineType({
     }),
     defineField({
       name: 'price',
+      title: 'Price',
+      description: 'Pricing details.',
       type: 'object',
       options: {
         columns: 2,
@@ -52,11 +68,14 @@ export default defineType({
     defineField({
       name: 'ctas',
       title: 'Call-to-actions',
+      description: 'Buttons for this pricing tier.',
       type: 'array',
       of: [{ type: 'cta' }],
     }),
     defineField({
       name: 'content',
+      title: 'Features',
+      description: 'List of features included in this tier.',
       type: 'array',
       of: [{ type: 'block' }],
     }),
