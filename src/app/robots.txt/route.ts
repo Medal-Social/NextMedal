@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
+import { BASE_URL } from '@/lib/env';
 
 export async function GET() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.nextmedal.com';
+  const siteUrl = BASE_URL;
 
   const content = [
     '# ___  ___         _       _   _____            _       _ ',

@@ -1,3 +1,13 @@
+/**
+ * Component Gallery Module Schema
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
+ * @description A visual gallery of all available UI components for demonstration and testing.
+ * @changelog
+ * - 1.0.1: Added header documentation
+ * - 1.0.0: Initial version
+ */
+
 import { TfiGallery } from 'react-icons/tfi';
 import { defineField, defineType } from 'sanity';
 

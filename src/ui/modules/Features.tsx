@@ -8,6 +8,7 @@ import Icon from '@/ui/Icon';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
 
 export default function Features({ intro, items, ...props }: Sanity.Features) {
+  const isSidebar = (props as any).spacing === 'none';
   // Distribute items into 3 columns for desktop layout
   const columns: Sanity.Features['items'][] = [[], [], []];
   if (items) {
@@ -17,12 +18,17 @@ export default function Features({ intro, items, ...props }: Sanity.Features) {
   }
 
   return (
-    <Section {...moduleProps(props)} className="py-24 overflow-hidden">
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-16 lg:mb-20 gap-8 border-b border-border/50 pb-10">
+    <Section {...moduleProps(props)} className={cn(!isSidebar && 'py-24', 'overflow-hidden')}>
+      <div className={cn('mx-auto px-4 relative z-10', !isSidebar && 'container')}>
+        <div
+          className={cn(
+            'flex flex-col gap-8 border-b border-border/50 pb-10',
+            isSidebar ? 'mb-8' : 'lg:flex-row lg:items-end justify-between mb-16 lg:mb-20'
+          )}
+        >
           <div className="max-w-3xl">
             {intro && (
-              <div className="text-center text-balance">
+              <div className={cn(!isSidebar && 'text-center text-balance')}>
                 <SharedPortableText value={intro} variant="intro" />
               </div>
             )}
@@ -30,21 +36,30 @@ export default function Features({ intro, items, ...props }: Sanity.Features) {
         </div>
 
         {/* Desktop Staggered Grid */}
-        <div className="hidden lg:grid grid-cols-3 gap-8 items-start">
-          {columns.map((colItems, colIndex) => (
-            <div
-              key={colIndex}
-              className={cn('space-y-8', colIndex === 0 && 'mt-12', colIndex === 2 && 'mt-24')}
-            >
-              {colItems?.map((item, index) => (
+        <div
+          className={cn(
+            'hidden lg:grid items-start',
+            isSidebar ? 'grid-cols-1 gap-6' : 'grid-cols-3 gap-8'
+          )}
+        >
+          {isSidebar
+            ? items?.map((item, index) => (
                 <FeatureCard key={item._key || index} item={item} index={index} />
+              ))
+            : columns.map((colItems, colIndex) => (
+                <div
+                  key={colIndex}
+                  className={cn('space-y-8', colIndex === 0 && 'mt-12', colIndex === 2 && 'mt-24')}
+                >
+                  {colItems?.map((item, index) => (
+                    <FeatureCard key={item._key || index} item={item} index={index} />
+                  ))}
+                </div>
               ))}
-            </div>
-          ))}
         </div>
 
         {/* Mobile/Tablet Simple Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:hidden">
+        <div className={cn('grid grid-cols-1 md:grid-cols-2 gap-6', !isSidebar && 'lg:hidden')}>
           {items?.map((item, index) => (
             <FeatureCard key={item._key || index} item={item} index={index} />
           ))}

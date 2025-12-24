@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { createDataAttribute } from 'next-sanity';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
@@ -13,8 +14,17 @@ export default function Category({
   linked?: boolean;
   badge?: boolean;
 }) {
+  const stega = value?._id
+    ? createDataAttribute({
+        id: value._id,
+        type: value._type,
+        path: 'title',
+      })
+    : undefined;
+
   const props = {
     className: cn('before:text-current/50 hover:*:underline', !linked && 'pointer-events-none'),
+    'data-sanity': stega?.toString(),
     children: badge ? (
       <Badge
         variant="secondary"

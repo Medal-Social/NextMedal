@@ -1,5 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { groq } from 'next-sanity';
+import { logger } from '@/lib/logger';
 import { fetchSanityLive } from '@/sanity/lib/live';
 
 export async function GET(_req: NextRequest) {
@@ -29,7 +30,7 @@ export async function GET(_req: NextRequest) {
       params: { baseUrl: `${baseUrl}/` },
     });
   } catch (error) {
-    console.error('Error fetching sitemap data from Sanity:', error);
+    logger.error({ err: error }, 'Error fetching sitemap data from Sanity');
     return new Response('Failed to fetch sitemap data from CMS.', {
       status: 503,
       headers: { 'Content-Type': 'text/plain' },

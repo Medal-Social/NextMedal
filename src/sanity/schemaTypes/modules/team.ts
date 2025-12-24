@@ -1,9 +1,11 @@
 /**
  * Team Module Schema
- * @version 1.0.0
- * @lastUpdated 2024-03-22
+ * @version 1.1.1
+ * @lastUpdated 2025-12-23
  * @description Displays a list of team members in a grid or list layout.
  * @changelog
+ * - 1.1.1: Updated header documentation
+ * - 1.1.0: Added professional visual style selector
  * - 1.0.0: Initial version
  */
 
@@ -19,6 +21,20 @@ export default defineType({
   icon: GoPerson,
   groups: [{ name: 'content', default: true }, { name: 'options' }],
   fields: [
+    defineField({
+      name: 'layout',
+      title: 'Visual Style',
+      type: 'string',
+      description: 'Choose how team members are displayed',
+      options: {
+        list: [
+          { title: 'Grid (Cards)', value: 'grid' },
+          { title: 'Split (List)', value: 'split' },
+        ],
+      },
+      initialValue: 'grid',
+      group: 'content',
+    }),
     defineField({
       name: 'options',
       type: 'object',
@@ -57,21 +73,6 @@ export default defineType({
       type: 'array',
       of: [{ type: 'reference', to: [{ type: 'person' }] }],
       group: 'content',
-    }),
-    defineField({
-      name: 'layout',
-      title: 'Layout',
-      type: 'string',
-      description: 'Choose how team members are displayed',
-      options: {
-        list: [
-          { title: 'Grid (Cards)', value: 'grid' },
-          { title: 'Split (List)', value: 'split' },
-        ],
-        layout: 'radio',
-      },
-      group: 'options',
-      initialValue: 'grid',
     }),
   ],
   preview: {

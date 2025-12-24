@@ -3,6 +3,8 @@ import Image, { type ImageProps } from 'next/image';
 import { stegaClean } from 'next-sanity';
 import type { ComponentProps } from 'react';
 import { preload } from 'react-dom';
+import { logger } from '@/lib/logger';
+import { cn } from '@/lib/utils';
 import { urlFor } from '@/sanity/lib/image';
 
 type ImgProps = { alt?: string } & Omit<ImageProps, 'src' | 'alt'>;
@@ -35,7 +37,7 @@ export function Img({
   ...props
 }: {
   image?: any;
-} & ImgProps) {
+} & ImgProps & { 'data-sanity'?: string }) {
   if (!image) return null;
 
   // Handle direct URL (mock/external)
@@ -47,7 +49,7 @@ export function Img({
     const w_calc = w ? Number(w) : !!h && Math.floor((Number(h) * w_orig) / h_orig);
     const h_calc = h ? Number(h) : !!w && Math.floor((Number(w) * h_orig) / w_orig);
 
-    return (
+    const imageElement = (
       <Image
         src={src}
         width={w_calc || w_orig}
@@ -56,6 +58,19 @@ export function Img({
         {...props}
       />
     );
+
+    if (props['data-sanity']) {
+      return (
+        <div
+          data-sanity={props['data-sanity']}
+          className={cn('relative h-full w-full', props.className)}
+        >
+          {imageElement}
+        </div>
+      );
+    }
+
+    return imageElement;
   }
 
   const generatedSrc = generateSrc(image, w, h);
@@ -75,7 +90,7 @@ export function Img({
     preload(src, { as: 'image' });
   }
 
-  return (
+  const imageElement = (
     <Image
       src={isGif ? src.split('?')[0] : src}
       width={width}
@@ -86,6 +101,19 @@ export function Img({
       loading={validLoading}
     />
   );
+
+  if (props['data-sanity']) {
+    return (
+      <div
+        data-sanity={props['data-sanity']}
+        className={cn('relative h-full w-full', props.className)}
+      >
+        {imageElement}
+      </div>
+    );
+  }
+
+  return imageElement;
 }
 
 export function Source({
@@ -138,7 +166,7 @@ function generateSrc(
       height: (h_calc || h_orig) as number,
     };
   } catch (error) {
-    console.error('Error generating src', error, image);
+    logger.error({ error, image }, 'Error generating src');
     return null;
   }
 }

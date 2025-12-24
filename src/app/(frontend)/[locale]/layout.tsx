@@ -7,9 +7,12 @@ import type { Locale } from 'next-intl';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import { Analytics } from '@/components/Analytics';
+import CookieConsent from '@/components/CookieConsent';
 import { Toaster } from '@/components/ui/sonner';
 import { routing } from '@/i18n/routing';
 import { getSite } from '@/sanity/lib/fetch';
+import { SanityLive } from '@/sanity/lib/live';
 import Banner from '@/ui/Banner';
 import Footer from '@/ui/footer';
 import Header from '@/ui/header';
@@ -36,7 +39,7 @@ export default async function RootLayout({ children, params }: Props) {
   setRequestLocale(locale);
 
   // Static generation is now possible since we're not using the connection() API
-  await getSite();
+  const site = await getSite();
 
   return (
     <html
@@ -67,6 +70,9 @@ export default async function RootLayout({ children, params }: Props) {
               <Footer />
               <VisualEditingControls />
               <Toaster />
+              <Analytics />
+              <CookieConsent config={site.cookieConsent} locale={locale} />
+              <SanityLive />
             </NextIntlClientProvider>
           </NuqsAdapter>
         </ThemeProvider>

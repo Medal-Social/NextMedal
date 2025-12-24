@@ -1,8 +1,10 @@
 /**
  * Feature Grid Module Schema
- * @version 1.1.0
- * @lastUpdated 2024-03-13
+ * @version 1.1.1
+ * @lastUpdated 2025-12-23
+ * @description Grid layout of features with icons and descriptions.
  * @changelog
+ * - 1.1.1: Updated header documentation
  * - 1.1.0: Added alignment options and improved validation
  * - 1.0.0: Initial version
  */

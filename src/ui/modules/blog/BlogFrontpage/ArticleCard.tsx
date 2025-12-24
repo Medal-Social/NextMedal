@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { createDataAttribute } from 'next-sanity';
 import resolveUrl from '@/lib/resolveUrl';
 import { cn } from '@/lib/utils';
 import DateDisplay from '@/ui/Date';
@@ -13,6 +14,11 @@ interface ArticleCardProps {
 export default function ArticleCard({ post, variant = 'standard', className }: ArticleCardProps) {
   const href = resolveUrl({ ...post, metadata: post.metadata } as Sanity.PageBase, { base: false });
   const category = post.categories?.[0];
+
+  const stega = createDataAttribute({
+    id: post._id,
+    type: post._type,
+  });
 
   const imageClass = cn(
     'relative overflow-hidden',
@@ -34,7 +40,7 @@ export default function ArticleCard({ post, variant = 'standard', className }: A
       )}
     >
       {/* Image Section */}
-      <div className={imageClass}>
+      <div className={imageClass} data-sanity={stega.scope('metadata.image').toString()}>
         {post.metadata?.image && (
           <Img
             image={post.metadata.image}
@@ -59,13 +65,14 @@ export default function ArticleCard({ post, variant = 'standard', className }: A
             'mb-3 font-serif font-bold leading-snug text-slate-900 transition-colors group-hover:text-[#f59e0b] dark:text-white',
             variant === 'large' ? 'text-2xl' : 'text-xl'
           )}
+          data-sanity={stega.scope('metadata.title').toString()}
         >
-          <Link href={href}>
-            <span className="absolute inset-0" />
-            {post.metadata?.title}
-          </Link>
+          <Link href={href}>{post.metadata?.title}</Link>
         </h3>
-        <p className="mb-4 flex-1 text-base leading-relaxed text-slate-600 line-clamp-3 dark:text-slate-400">
+        <p
+          className="mb-4 flex-1 text-base leading-relaxed text-slate-600 line-clamp-3 dark:text-slate-400"
+          data-sanity={stega.scope('metadata.description').toString()}
+        >
           {post.metadata?.description}
         </p>
 
@@ -78,16 +85,33 @@ export default function ArticleCard({ post, variant = 'standard', className }: A
                 width={32}
                 height={32}
                 alt={post.authors[0].name}
+                data-sanity={createDataAttribute({
+                  id: post.authors[0]._id,
+                  type: post.authors[0]._type,
+                })
+                  .scope('image')
+                  .toString()}
               />
             )}
             {post.authors?.[0]?.name && (
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              <span
+                className="text-sm font-medium text-slate-700 dark:text-slate-300"
+                data-sanity={createDataAttribute({
+                  id: post.authors[0]._id,
+                  type: post.authors[0]._type,
+                })
+                  .scope('name')
+                  .toString()}
+              >
                 {post.authors[0].name}
               </span>
             )}
           </div>
           <span className="text-xs font-medium tracking-wide text-slate-400 uppercase">
-            <DateDisplay value={post.publishDate} />
+            <DateDisplay
+              value={post.publishDate}
+              data-sanity={stega.scope('publishDate').toString()}
+            />
           </span>
         </div>
       </div>

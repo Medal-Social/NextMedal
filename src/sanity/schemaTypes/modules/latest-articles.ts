@@ -1,9 +1,10 @@
 /**
- * Blog List Module Schema
- * @version 1.0.0
- * @lastUpdated 2024-03-21
- * @description A module for displaying a list of blog posts with filtering and layout options.
+ * Latest Articles Module Schema
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
+ * @description Displays a list of recent blog posts with filtering options.
  * @changelog
+ * - 1.0.1: Updated header documentation
  * - 1.0.0: Initial version with grid/carousel layouts and category filtering
  */
 

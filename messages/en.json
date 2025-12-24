@@ -14,5 +14,15 @@
     "light": "Light",
     "dark": "Dark",
     "system": "System"
+  },
+  "contact-form": {
+    "email": "Email",
+    "phone": "Phone",
+    "privacy-link": "privacy policy",
+    "address": "Address",
+    "opening-hours": "Opening hours",
+    "success-title": "Thank you!",
+    "success-message": "We have received your message.",
+    "submitting": "Submitting..."
   }
 }

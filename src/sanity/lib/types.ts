@@ -10,6 +10,7 @@ import type { SanityDocument } from 'next-sanity';
 export interface SanityBase {
   _type: string;
   _id?: string;
+  _key: string;
   _rev?: string;
   _createdAt?: string;
   _updatedAt?: string;
@@ -127,4 +128,7 @@ export interface ModuleOptions {
   _type: 'module-options';
   background?: string;
   isFullWidth?: boolean;
+  uid?: string;
 }
+
+export type Module = Hero;

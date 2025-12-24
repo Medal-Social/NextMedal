@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { createDataAttribute } from 'next-sanity';
 import resolveUrl from '@/lib/resolveUrl';
 import { cn } from '@/lib/utils';
 import DateDisplay from '@/ui/Date';
@@ -20,6 +21,11 @@ export default function BlogHero({
     { base: false }
   );
 
+  const stega = createDataAttribute({
+    id: featuredPost._id,
+    type: featuredPost._type,
+  });
+
   return (
     <section
       className="relative overflow-hidden bg-[#1a0b2e] pb-12 pt-28 text-white lg:pb-16 lg:pt-32"
@@ -38,12 +44,18 @@ export default function BlogHero({
             <span className="inline-block rounded-full border border-white/10 bg-white/10 px-2.5 py-1 text-[10px] font-bold tracking-widest text-purple-200 uppercase backdrop-blur-sm">
               Featured Insight
             </span>
-            <h1 className="font-serif text-3xl font-bold leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
+            <h1
+              className="font-serif text-3xl font-bold leading-tight tracking-tight text-white md:text-4xl lg:text-5xl"
+              data-sanity={stega.scope('metadata.title').toString()}
+            >
               <Link href={featuredHref} className="hover:text-purple-200 transition-colors">
                 {featuredPost.metadata?.title}
               </Link>
             </h1>
-            <p className="max-w-lg text-base leading-relaxed text-slate-300 md:text-lg">
+            <p
+              className="max-w-lg text-base leading-relaxed text-slate-300 md:text-lg"
+              data-sanity={stega.scope('metadata.description').toString()}
+            >
               {featuredPost.metadata?.description}
             </p>
             <div className="flex items-center gap-3 pt-2">
@@ -55,13 +67,30 @@ export default function BlogHero({
                     width={32}
                     height={32}
                     alt={featuredPost.authors[0].name}
+                    data-sanity={createDataAttribute({
+                      id: featuredPost.authors[0]._id,
+                      type: featuredPost.authors[0]._type,
+                    })
+                      .scope('image')
+                      .toString()}
                   />
                   <div className="flex flex-col">
-                    <span className="text-sm font-medium text-white">
+                    <span
+                      className="text-sm font-medium text-white"
+                      data-sanity={createDataAttribute({
+                        id: featuredPost.authors[0]._id,
+                        type: featuredPost.authors[0]._type,
+                      })
+                        .scope('name')
+                        .toString()}
+                    >
                       {featuredPost.authors[0].name}
                     </span>
                     <span className="text-[10px] tracking-wide text-slate-400 uppercase">
-                      <DateDisplay value={featuredPost.publishDate} />
+                      <DateDisplay
+                        value={featuredPost.publishDate}
+                        data-sanity={stega.scope('publishDate').toString()}
+                      />
                     </span>
                   </div>
                 </>
@@ -113,6 +142,11 @@ function SidebarCard({
 }) {
   const href = resolveUrl({ ...post, metadata: post.metadata } as Sanity.PageBase, { base: false });
 
+  const stega = createDataAttribute({
+    id: post._id,
+    type: post._type,
+  });
+
   return (
     <Link
       href={href}
@@ -120,6 +154,7 @@ function SidebarCard({
         'group block rounded-xl border border-white/5 bg-white/5 p-4 transition-all duration-300 hover:bg-white/10',
         borderColor
       )}
+      data-sanity={stega.scope('metadata.title').toString()}
     >
       <span className={cn('mb-2 block text-xs font-semibold tracking-wider uppercase', labelColor)}>
         {label}
@@ -132,7 +167,12 @@ function SidebarCard({
       >
         {post.metadata?.title}
       </h3>
-      <p className="mt-2 text-sm text-slate-400 line-clamp-2">{post.metadata?.description}</p>
+      <p
+        className="mt-2 text-sm text-slate-400 line-clamp-2"
+        data-sanity={stega.scope('metadata.description').toString()}
+      >
+        {post.metadata?.description}
+      </p>
     </Link>
   );
 }

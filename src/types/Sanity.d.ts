@@ -31,6 +31,14 @@ declare global {
       // custom
       brandPage?: string;
       enableSearch?: boolean;
+
+      // cookie consent
+      cookieConsent?: {
+        enabled: boolean;
+        privacyPolicy?: {
+          slug: string;
+        };
+      };
     }
 
     interface Navigation extends SanityDocument {
@@ -63,9 +71,19 @@ declare global {
       modules?: Module[];
     }
 
-    interface GlobalModule extends SanityDocument {
-      path: string;
-      excludePaths?: string[];
+    // interface GlobalModule extends SanityDocument {
+    //   path: string;
+    //   excludePaths?: string[];
+    //   modules?: Module[];
+    // }
+
+    interface Placement extends SanityDocument {
+      _type: 'placement';
+      scope: 'blog.post' | 'page';
+      location: 'top' | 'bottom' | 'sidebar' | 'injection';
+      injectionConfig?: {
+        afterParagraph?: number;
+      };
       modules?: Module[];
     }
 

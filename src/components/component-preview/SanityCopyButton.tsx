@@ -5,6 +5,7 @@ import * as React from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
 
 interface SanityCopyButtonProps {
@@ -107,7 +108,7 @@ export default function SanityCopyButton({ data, className }: SanityCopyButtonPr
         description: 'You can now "Paste" directly into a Sanity Studio array field.',
       });
     } catch (err) {
-      console.error('Failed to copy to Sanity clipboard:', err);
+      logger.error({ err }, 'Failed to copy to Sanity clipboard:');
       // Fallback to simple text copy if ClipboardItem fails (some browsers)
       try {
         await navigator.clipboard.writeText(JSON.stringify(data, null, 2));

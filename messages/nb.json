@@ -14,5 +14,15 @@
     "light": "Lys",
     "dark": "Mørk",
     "system": "System"
+  },
+  "contact-form": {
+    "email": "E-post",
+    "phone": "Telefon",
+    "privacy-link": "personvernerklæring",
+    "address": "Adresse",
+    "opening-hours": "Åpningstider",
+    "success-title": "Takk!",
+    "success-message": "Vi har mottatt din melding.",
+    "submitting": "Sender inn..."
   }
 }

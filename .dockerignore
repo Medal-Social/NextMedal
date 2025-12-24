@@ -1,0 +1,16 @@
+.git
+.gitignore
+.dockerignore
+.next
+coverage
+node_modules
+npm-debug.log
+README.md
+openspec
+docs
+test
+vitest.config.ts
+.env
+.env.local
+.DS_Store
+

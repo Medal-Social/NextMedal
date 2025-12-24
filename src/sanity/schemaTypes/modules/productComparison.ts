@@ -1,9 +1,10 @@
 /**
  * Product Comparison Module Schema
- * @version 1.3.0
- * @lastUpdated 2024-07-10
- * @description A comparison table for products/features with customizable details for each cell
+ * @version 1.3.1
+ * @lastUpdated 2025-12-23
+ * @description A comparison table for products/features with customizable details for each cell.
  * @changelog
+ * - 1.3.1: Updated header documentation
  * - 1.3.0: Fixed validation logic to properly access parent module
  * - 1.2.0: Updated field descriptions for improved UX and clarity
  * - 1.1.0: Removed options field and options group for simplified schema

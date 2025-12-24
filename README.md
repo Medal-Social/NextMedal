@@ -35,7 +35,7 @@ NextMedal is the ultimate choice for developers, agencies, and businesses who de
 
 ### UI & UX
 - **Framer Motion**: Production-ready animations
-- **Radix UI**: Accessible unstyled primitives
+- **Base UI**: Accessible unstyled primitives
 - **Dark Mode**: System-aware theme switching
 - **Responsive**: Mobile-first design
 

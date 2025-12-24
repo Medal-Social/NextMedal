@@ -10,7 +10,7 @@ const sectionVariants = cva(
         default: 'max-w-7xl', // Standard page width
         narrow: 'max-w-3xl', // Blog posts, legal pages
         wide: 'max-w-screen-2xl', // Galleries, large tables
-        full: 'max-w-none p-0', // Full-bleed backgrounds (Hero)
+        full: 'max-w-none p-0 sm:px-0 lg:px-0', // Full-bleed backgrounds (Hero)
       },
       spacing: {
         default: 'py-12 md:py-20', // Standard vertical rhythm

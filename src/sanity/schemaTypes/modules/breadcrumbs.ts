@@ -1,3 +1,13 @@
+/**
+ * Breadcrumbs Module Schema
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
+ * @description Automatically generated breadcrumbs based on page structure.
+ * @changelog
+ * - 1.0.1: Added header documentation
+ * - 1.0.0: Initial version
+ */
+
 import { BsBarChartSteps } from 'react-icons/bs';
 import { defineField, defineType } from 'sanity';
 

@@ -41,7 +41,7 @@ export default async function Breadcrumbs({
                 itemProp="item"
               >
                 <span itemProp="name">
-                  {stegaClean(crumb.label || crumb.internal?.title || crumb.external)}
+                  {crumb.label || crumb.internal?.title || crumb.external}
                 </span>
                 <meta itemProp="position" content={(crumbs?.indexOf(crumb) + 1).toString()} />
               </BreadcrumbLink>

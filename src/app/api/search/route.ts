@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { groq } from 'next-sanity';
+import { logger } from '@/lib/logger';
 import { client } from '@/sanity/lib/client';
 
 export async function GET() {
@@ -43,7 +44,7 @@ export async function GET() {
 
     return NextResponse.json(results);
   } catch (error) {
-    console.error('Search API Error:', error);
+    logger.error({ err: error }, 'Search API Error');
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

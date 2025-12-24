@@ -1,3 +1,13 @@
+/**
+ * Video Schema
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
+ * @description Standardized video object supporting Mux and YouTube.
+ * @changelog
+ * - 1.0.1: Added header documentation
+ * - 1.0.0: Initial version
+ */
+
 import { VscDeviceCameraVideo } from 'react-icons/vsc';
 import { defineField } from 'sanity';
 

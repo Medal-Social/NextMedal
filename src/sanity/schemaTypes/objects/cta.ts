@@ -1,13 +1,12 @@
 /**
  * Call-to-Action Schema
- * @version 1.4.0
- * @lastUpdated 2024-12-17
+ * @version 1.4.1
+ * @lastUpdated 2025-12-23
+ * @description Button or link with customizable style and destination.
  * @changelog
+ * - 1.4.1: Updated header documentation
  * - 1.4.0: Simplified schema - removed icon, reduced styles to primary/ghost, removed advanced group
  * - 1.3.0: Removed size field as it's not being used
- * - 1.2.0: Improved usability with flattened structure and better organization
- * - 1.1.0: Added improved validation, documentation, and organization
- * - 1.0.0: Initial version
  */
 
 import { VscInspect } from 'react-icons/vsc';

@@ -12,7 +12,6 @@ import { muxInput } from "sanity-plugin-mux-input";
 import { schemaTypes } from "./src/sanity/schemaTypes";
 
 import { routing } from "@/i18n/routing";
-import { table } from "@sanity/table";
 
 export default defineConfig({
   title: "Medal Social Enterprise",
@@ -40,7 +39,6 @@ export default defineConfig({
     visionTool({
       defaultApiVersion: apiVersion,
     }),
-    table(),
     documentInternationalization({
       supportedLanguages: routing.locales.map((locale) => ({
         id: locale,

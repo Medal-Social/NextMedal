@@ -8,8 +8,6 @@
 
 // Document factories
 export * from './documents';
-// Pre-built fixtures
-export * from './fixtures';
 // Helpers
 export * from './helpers';
 

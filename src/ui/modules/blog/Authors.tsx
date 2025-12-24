@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { createDataAttribute } from 'next-sanity';
 import { FaFacebook, FaInstagram, FaLinkedin, FaXTwitter, FaYoutube } from 'react-icons/fa6';
 import { GoPerson } from 'react-icons/go';
 import { cn } from '@/lib/utils';
@@ -48,13 +49,21 @@ function Author({
   socialLinks?: boolean;
   bio?: boolean;
 }) {
+  const stega = author?._id
+    ? createDataAttribute({
+        id: author._id,
+        type: author._type,
+      })
+    : undefined;
+
   return (
     <div
       className={cn(
         'relative flex items-center gap-[.5ch]',
         linked && 'group',
-        !linked && !socialLinks && 'pointer-events-none'
+        !linked && !socialLinks && !stega && 'pointer-events-none'
       )}
+      data-sanity={stega?.scope('name').toString()}
     >
       {linked && author?.slug?.current && (
         <Link href={`/blog?author=${author.slug.current}`} className="absolute inset-0 z-0">
@@ -69,6 +78,7 @@ function Author({
             image={author.image}
             width={80}
             alt={author.name}
+            data-sanity={stega?.scope('image').toString()}
           />
         ) : (
           <GoPerson className="text-primary/20 text-xl relative z-0" />
@@ -78,7 +88,10 @@ function Author({
             {author?.name}
           </div>
           {bio && author?.title && (
-            <div className="text-muted-foreground">{`${author?.title}`}</div>
+            <div
+              className="text-muted-foreground"
+              data-sanity={stega?.scope('title').toString()}
+            >{`${author?.title}`}</div>
           )}
           {socialLinks && Array.isArray(author?.socialLinks) ? (
             <ul className="mt-1 flex items-center gap-x-6 relative z-10">

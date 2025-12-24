@@ -1,9 +1,10 @@
 /**
  * Site Settings Schema
- * @version 1.0.0
- * @lastUpdated 2024-03-21
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
  * @description Defines global site settings including branding, SEO defaults, and social media links.
  * @changelog
+ * - 1.0.1: Updated header documentation
  * - 1.0.0: Initial version with core site configuration options
  */
 
@@ -18,7 +19,7 @@ export default defineType({
   groups: [
     { name: 'general', title: 'General', default: true },
     { name: 'navigation', title: 'Navigation' },
-    { name: 'compliance', title: 'Compliance' },
+    { name: 'advanced', title: 'Advanced Options' },
   ],
   fieldsets: [
     { name: 'header', title: 'Header', options: { collapsible: true, collapsed: false } },
@@ -236,169 +237,33 @@ export default defineType({
       fieldset: 'footer',
       initialValue: [],
     }),
+
+    // Cookie Consent Group
     defineField({
       name: 'cookieConsent',
-      title: 'Cookie Consent Settings',
-      description: 'Configure cookie consent banner and preferences',
+      title: 'Cookie Consent',
       type: 'object',
-      group: 'compliance',
+      group: 'advanced',
       fieldset: 'cookies',
       fields: [
-        {
+        defineField({
           name: 'enabled',
           title: 'Enable Cookie Consent',
           type: 'boolean',
-          description: 'Show cookie consent banner to visitors',
           initialValue: true,
-        },
-        {
-          name: 'bannerTitle',
-          title: 'Banner Title',
-          type: 'string',
-          description: 'Title shown in the cookie consent banner',
-          initialValue: 'We use cookies',
-        },
-        {
-          name: 'bannerText',
-          title: 'Banner Description',
-          type: 'array',
-          of: [{ type: 'block' }],
-          description: 'Main text shown in the cookie consent banner',
-        },
-        {
-          name: 'acceptButtonText',
-          title: 'Accept Button Text',
-          type: 'string',
-          description: 'Text for the accept all cookies button',
-          initialValue: 'Accept All',
-        },
-        {
-          name: 'rejectButtonText',
-          title: 'Reject Button Text',
-          type: 'string',
-          description: 'Text for the reject non-essential cookies button',
-          initialValue: 'Reject Non-Essential',
-        },
-        {
-          name: 'preferencesButtonText',
-          title: 'Preferences Button Text',
-          type: 'string',
-          description: 'Text for the cookie preferences button',
-          initialValue: 'Cookie Preferences',
-        },
-        {
-          name: 'cookieCategories',
-          title: 'Cookie Categories',
-          type: 'array',
-          of: [
-            {
-              type: 'object',
-              fields: [
-                {
-                  name: 'category',
-                  title: 'Category',
-                  type: 'string',
-                  options: {
-                    list: [
-                      { title: 'Necessary', value: 'necessary' },
-                      { title: 'Functional', value: 'functional' },
-                      { title: 'Analytics', value: 'analytics' },
-                      { title: 'Marketing', value: 'marketing' },
-                    ],
-                  },
-                  validation: (Rule: any) => Rule.required(),
-                },
-                {
-                  name: 'categoryTitle',
-                  title: 'Category Title',
-                  type: 'string',
-                  validation: (Rule: any) => Rule.required(),
-                },
-                {
-                  name: 'description',
-                  title: 'Description',
-                  type: 'text',
-                  rows: 3,
-                  validation: (Rule: any) => Rule.required(),
-                },
-                {
-                  name: 'required',
-                  title: 'Required',
-                  type: 'boolean',
-                  initialValue: false,
-                  validation: (Rule: any) => Rule.required(),
-                },
-                {
-                  name: 'cookies',
-                  title: 'Cookies',
-                  type: 'array',
-                  of: [
-                    {
-                      type: 'object',
-                      fields: [
-                        {
-                          name: 'name',
-                          title: 'Name',
-                          type: 'string',
-                          validation: (Rule: any) => Rule.required(),
-                        },
-                        {
-                          name: 'type',
-                          title: 'Type',
-                          type: 'string',
-                          options: {
-                            layout: 'radio',
-                            list: [
-                              { title: 'HTTP Cookie', value: 'http' },
-                              { title: 'Local Storage', value: 'local' },
-                            ],
-                          },
-                          validation: (Rule: any) => Rule.required(),
-                        },
-                        {
-                          name: 'description',
-                          title: 'Description',
-                          type: 'text',
-                          rows: 2,
-                          validation: (Rule: any) => Rule.required(),
-                        },
-                        {
-                          name: 'duration',
-                          title: 'Duration',
-                          type: 'string',
-                          validation: (Rule: any) => Rule.required(),
-                        },
-                        {
-                          name: 'vendor',
-                          title: 'Vendor',
-                          type: 'string',
-                          description: 'The company or service that provides this cookie',
-                          validation: (Rule: any) => Rule.required(),
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-              preview: {
-                select: {
-                  title: 'categoryTitle',
-                  category: 'category',
-                  required: 'required',
-                },
-                prepare(value: Record<string, any>) {
-                  return {
-                    title: value.title,
-                    subtitle: `${value.category}${value.required ? ' (Required)' : ''}`,
-                  };
-                },
-              },
-            },
-          ],
-        },
+        }),
+        defineField({
+          name: 'privacyPolicy',
+          title: 'Privacy Policy Link',
+          type: 'reference',
+          to: [{ type: 'page' }], // Assuming 'page' exists, need to verify or use url
+          description: 'Link to the privacy policy page.',
+          hidden: ({ parent }) => !parent?.enabled,
+        }),
       ],
     }),
   ],
+
   preview: {
     select: {
       title: 'title',

@@ -1,5 +1,15 @@
+/**
+ * Image Block Fragment
+ * @version 1.0.1
+ * @lastUpdated 2025-12-23
+ * @description A reusable image block for Portable Text arrays.
+ * @changelog
+ * - 1.0.1: Added header documentation
+ * - 1.0.0: Initial version
+ */
+
 import { IoIosImage } from 'react-icons/io';
-import { defineArrayMember, defineField } from 'sanity';
+import { defineArrayMember } from 'sanity';
 
 export default defineArrayMember({
   type: 'image',
@@ -7,40 +17,19 @@ export default defineArrayMember({
   options: {
     hotspot: true,
   },
-  fieldsets: [{ name: 'attributes', options: { columns: 2 } }, { name: 'options' }],
-  fields: [
-    defineField({
-      name: 'alt',
-      type: 'string',
-      fieldset: 'attributes',
-    }),
-    defineField({
-      name: 'loading',
-      type: 'string',
-      options: {
-        list: ['lazy', 'eager'],
-        layout: 'radio',
-      },
-      initialValue: 'lazy',
-      fieldset: 'attributes',
-    }),
-    defineField({
-      name: 'caption',
-      type: 'text',
-      rows: 2,
-      fieldset: 'options',
-    }),
-    defineField({
-      name: 'source',
-      type: 'url',
-      fieldset: 'options',
-    }),
-  ],
+  fields: [],
   preview: {
     select: {
-      title: 'caption',
-      subtitle: 'alt',
+      title: 'asset.altText',
+      filename: 'asset.originalFilename',
       media: 'asset',
+    },
+    prepare({ title, filename, media }) {
+      return {
+        title: title || filename || 'Untitled',
+        subtitle: title ? filename : undefined,
+        media,
+      };
     },
   },
 });

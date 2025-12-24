@@ -1,4 +1,5 @@
 import { stegaClean } from 'next-sanity';
+import { BASE_URL } from './env';
 
 // Helper function to detect if a URL is relative (starts with / or doesn't have a protocol)
 export function isRelativeUrl(url: string): boolean {
@@ -18,7 +19,7 @@ export function resolveAnyUrl(url: string, base = false): string {
 
   // If it's a relative URL, return it as-is (or with base URL if requested)
   if (isRelativeUrl(cleanUrl)) {
-    return base ? `${process.env.NEXT_PUBLIC_BASE_URL || ''}${cleanUrl}` : cleanUrl;
+    return base ? `${BASE_URL}${cleanUrl}` : cleanUrl;
   }
 
   // If it's an external URL, return it as-is
@@ -53,7 +54,7 @@ export default function resolveUrl(
   }
 
   return [
-    base && process.env.NEXT_PUBLIC_BASE_URL,
+    base && BASE_URL,
     !page.language ? '' : page.language === 'en' ? '' : `/${page.language}`,
     segment,
     page.parent

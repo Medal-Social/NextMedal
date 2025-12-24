@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { logger } from '@/lib/logger';
 
 export default function Scheduler({
   start,
@@ -54,7 +55,7 @@ export default function Scheduler({
         }
       } catch (error) {
         // Handle any errors (usually just aborted signal)
-        console.error('Scheduler error:', error);
+        logger.error({ err: error }, 'Scheduler error:');
       }
     };
 

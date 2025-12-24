@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { logger } from '@/lib/logger';
 
 interface WrapperProps extends React.ComponentProps<'footer'> {
   className?: string;
@@ -21,7 +22,7 @@ export default function Wrapper({ className, children }: WrapperProps) {
           document.documentElement.style.setProperty('--footer-height', `${height}px`);
         }
       } catch (error) {
-        console.error('Error setting footer height:', error);
+        logger.error({ err: error }, 'Error setting footer height:');
       }
     }
 
@@ -32,7 +33,7 @@ export default function Wrapper({ className, children }: WrapperProps) {
       try {
         window.removeEventListener('resize', setHeight);
       } catch (error) {
-        console.error('Error removing resize listener:', error);
+        logger.error({ err: error }, 'Error removing resize listener:');
       }
     };
   }, []);

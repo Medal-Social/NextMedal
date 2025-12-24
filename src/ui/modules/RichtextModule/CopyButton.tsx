@@ -4,6 +4,7 @@ import { Check, Copy } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
 
 export default function CopyButton({ code, className }: { code: string; className?: string }) {
@@ -16,7 +17,7 @@ export default function CopyButton({ code, className }: { code: string; classNam
       toast.success('Copied to clipboard');
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy code:', err);
+      logger.error({ err }, 'Failed to copy code:');
       toast.error('Failed to copy code');
     }
   };
