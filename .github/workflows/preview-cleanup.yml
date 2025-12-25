@@ -41,10 +41,10 @@ jobs:
           # List revisions with this label (Azure CLI filtering might be needed)
           # Logic: Get the revision name that has this label
           
-          REV_NAME=$(az containerapp revision list \
+          REV_NAME=$(az containerapp revision label list \
             --name ${{ secrets.CONTAINER_APP_NAME }} \
             --resource-group ${{ secrets.RESOURCE_GROUP }} \
-            --query "[?trafficWeight[0].label=='$LABEL'].name" -o tsv)
+            --query "[?label=='$LABEL'].revision" -o tsv)
             
           if [ -z "$REV_NAME" ]; then
             echo "No active revision found for label $LABEL. It might have already been deleted."
