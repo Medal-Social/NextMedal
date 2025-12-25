@@ -11,10 +11,17 @@ WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@10.26.2 --activate
 
 # Copy only dependency files
-COPY package.json pnpm-lock.yaml ./
+COPY pnpm-lock.yaml ./
+
+# Fetch dependencies (cached)
+RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store \
+    pnpm fetch
+
+COPY package.json ./
 
 # Install dependencies (including devDependencies for the build)
-RUN pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store \
+    pnpm install --frozen-lockfile --offline
 
 # --- Build stage ---
 FROM base AS builder
@@ -54,6 +61,7 @@ ENV NEXT_PUBLIC_SANITY_PROJECT_ID=$NEXT_PUBLIC_SANITY_PROJECT_ID \
 # We mount sensitive tokens as secrets to avoid leaking them in the image layers
 RUN --mount=type=secret,id=SANITY_API_READ_TOKEN \
     --mount=type=secret,id=SENTRY_AUTH_TOKEN \
+    --mount=type=cache,target=/app/.next/cache \
     export SANITY_API_READ_TOKEN=$(cat /run/secrets/SANITY_API_READ_TOKEN) && \
     export SENTRY_AUTH_TOKEN=$(cat /run/secrets/SENTRY_AUTH_TOKEN) && \
     pnpm build
