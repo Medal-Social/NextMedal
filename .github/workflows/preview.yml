@@ -75,52 +75,43 @@ jobs:
           LABEL="pr-${PR_NUMBER}"
           IMAGE="${{ secrets.REGISTRY_URL }}/${{ secrets.CONTAINER_APP_NAME }}:pr-${PR_NUMBER}"
           
+          # 1. Fetch the base FQDN to predict the label URL
+          APP_FQDN=$(az containerapp show \
+            --name ${{ secrets.CONTAINER_APP_NAME }} \
+            --resource-group ${{ secrets.RESOURCE_GROUP }} \
+            --query properties.configuration.ingress.fqdn -o tsv)
+          
+          BASE_HOST=$(echo $APP_FQDN | cut -d'.' -f1)
+          REST_DOMAIN=$(echo $APP_FQDN | cut -d'.' -f2-)
+          PREVIEW_URL="https://${BASE_HOST}---${LABEL}.${REST_DOMAIN}"
+          
+          echo "🚀 Predicted Preview URL: $PREVIEW_URL"
           echo "Deploying revision with label: $LABEL"
           
-          # Update the container app to create a new revision with the label
-          # We force 0 traffic to this label (it's only accessible via the label URL)
+          # 2. Update the container app with the PREVIEW_URL as BASE_URL
           az containerapp update \
             --name ${{ secrets.CONTAINER_APP_NAME }} \
             --resource-group ${{ secrets.RESOURCE_GROUP }} \
             --image $IMAGE \
             --revision-suffix $LABEL \
-            --set-env-vars NEXT_PUBLIC_APP_ENV=preview \
+            --set-env-vars \
+              NEXT_PUBLIC_APP_ENV=preview \
+              NEXT_PUBLIC_BASE_URL=$PREVIEW_URL \
+              NEXT_PUBLIC_SANITY_PROJECT_ID=${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }} \
+              NEXT_PUBLIC_SANITY_DATASET=${{ secrets.NEXT_PUBLIC_SANITY_DATASET }} \
+              SANITY_API_READ_TOKEN=${{ secrets.SANITY_API_READ_TOKEN }} \
             --min-replicas 0 \
             --max-replicas 1
             
-          # Explicitly set the label for the latest revision we just created
-          # Note: The revision name is usually app-name--suffix, but we need to find it dynamically or trust the suffix
-          # A safer way to apply the label to the LATEST revision is:
+          LATEST_REV_NAME="${{ secrets.CONTAINER_APP_NAME }}--$LABEL"
           
-          LATEST_REV_NAME=$(az containerapp revision list \
-            --name ${{ secrets.CONTAINER_APP_NAME }} \
-            --resource-group ${{ secrets.RESOURCE_GROUP }} \
-            --query "[0].name" -o tsv)
-            
-          echo "Latest revision: $LATEST_REV_NAME"
-          
-          # Add label to the revision (if not automatically handled by update, though update usually handles active revisions)
-          # 'az containerapp update' doesn't have a direct --traffic-label arg in all versions, 
-          # so we use 'revision label add' to be precise.
-          
+          # 3. Explicitly add label to the revision
           az containerapp revision label add \
             --resource-group ${{ secrets.RESOURCE_GROUP }} \
             --name ${{ secrets.CONTAINER_APP_NAME }} \
             --label $LABEL \
-            --revision $LATEST_REV_NAME
-
-          # Construct the URL
-          # Azure Container App Label URL format: https://<app-name>---<label>.<region>.azurecontainerapps.io
-          # We need to fetch the FQDN to be sure or construct it.
-          
-          APP_FQDN=$(az containerapp show --name ${{ secrets.CONTAINER_APP_NAME }} --resource-group ${{ secrets.RESOURCE_GROUP }} --query properties.configuration.ingress.fqdn -o tsv)
-          # FQDN is typically app.region.azurecontainerapps.io
-          # Label URL is app---label.region.azurecontainerapps.io
-          
-          # Split FQDN to insert label
-          BASE_HOST=$(echo $APP_FQDN | cut -d'.' -f1)
-          REST_DOMAIN=$(echo $APP_FQDN | cut -d'.' -f2-)
-          PREVIEW_URL="https://${BASE_HOST}---${LABEL}.${REST_DOMAIN}"
+            --revision $LATEST_REV_NAME \
+            --yes
           
           echo "preview_url=$PREVIEW_URL" >> $GITHUB_OUTPUT
 
