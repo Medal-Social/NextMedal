@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Create GitHub Deployment
-        uses: bobheadxi/deployments@88ce5600046c82542f8246ac287d0a5e846cc1c1 # v1
+        uses: bobheadxi/deployments@648679e8e4915b27893bd7dbc35cb504dc915bc8 # v1
         id: deployment
         with:
           step: start
@@ -125,7 +125,7 @@ jobs:
           echo "preview_url=$PREVIEW_URL" >> $GITHUB_OUTPUT
 
       - name: Update GitHub Deployment Status (Success)
-        uses: bobheadxi/deployments@88ce5600046c82542f8246ac287d0a5e846cc1c1 # v1
+        uses: bobheadxi/deployments@648679e8e4915b27893bd7dbc35cb504dc915bc8 # v1
         if: success()
         with:
           step: finish
@@ -136,7 +136,7 @@ jobs:
           env_url: ${{ steps.deploy-revision.outputs.preview_url }}
 
       - name: Update GitHub Deployment Status (Failure)
-        uses: bobheadxi/deployments@88ce5600046c82542f8246ac287d0a5e846cc1c1 # v1
+        uses: bobheadxi/deployments@648679e8e4915b27893bd7dbc35cb504dc915bc8 # v1
         if: failure()
         with:
           step: finish
