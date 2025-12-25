@@ -6,8 +6,6 @@ import { fetchSanity } from '@/sanity/lib/fetch';
 import { PAGE_QUERY } from '@/sanity/lib/queries';
 import Modules from '@/ui/modules';
 
-export const dynamic = 'force-static';
-
 type Props = {
   params: Promise<{ locale: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;

@@ -90,6 +90,6 @@ describe('isUniqueAcrossLocale', () => {
 
     await isUniqueAcrossLocale('my-slug', contextNoLanguage);
 
-    expect(contextNoLanguage.defaultUnique).toHaveBeenCalled();
+    expect(contextNoLanguage.defaultIsUnique).toHaveBeenCalled();
   });
 });

@@ -68,7 +68,7 @@ jobs:
           echo "Cleanup complete."
 
       - name: Update GitHub Deployment Status (Inactive)
-        uses: bobheadxi/deployments@88ce5600046c82542f8246ac287d0a5e846cc1c1 # v1
+        uses: bobheadxi/deployments@648679e8e4915b27893bd7dbc35cb504dc915bc8 # v1
         if: always()
         with:
           step: deactivate-env

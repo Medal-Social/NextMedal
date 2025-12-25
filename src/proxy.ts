@@ -4,9 +4,9 @@ import { routing } from './i18n/routing';
 
 const intlMiddleware = createMiddleware(routing);
 
-export default async function proxy(request: NextRequest) {
+export function proxy(request: NextRequest) {
   // Run i18n middleware to handle redirects/rewrites
-  return await intlMiddleware(request);
+  return intlMiddleware(request);
 }
 
 export const config = {
