@@ -29,11 +29,12 @@ export default async function Page({ params }: Props) {
   );
 }
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata({ params, searchParams }: Props) {
   const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
   const page = await getPage(resolvedParams, false);
   if (!page) notFound();
-  return processMetadata(page);
+  return processMetadata(page, resolvedSearchParams);
 }
 
 export async function generateStaticParams() {
@@ -80,4 +81,5 @@ async function getPage(params: { slug?: string[] }, stega?: boolean) {
 
 type Props = {
   params: Promise<{ slug?: string[] }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };

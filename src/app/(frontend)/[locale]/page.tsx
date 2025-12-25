@@ -19,6 +19,11 @@ import Modules from '@/ui/modules';
 
 export const dynamic = 'force-static';
 
+type Props = {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
 export default async function Page() {
   const page = await getPage();
 
@@ -63,10 +68,11 @@ export default async function Page() {
   );
 }
 
-export async function generateMetadata() {
+export async function generateMetadata(props: Props) {
+  const searchParams = await props.searchParams;
   const page = await getPage(false);
   if (!page) return {};
-  return processMetadata(page);
+  return processMetadata(page, searchParams);
 }
 
 async function getPage(stega?: boolean) {

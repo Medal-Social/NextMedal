@@ -1,16 +1,20 @@
 import type { Metadata } from 'next';
 import { stegaClean } from 'next-sanity';
-import { BASE_URL, vercelPreview } from './env';
+import { BASE_URL, isPreview, isStaging, vercelPreview } from './env';
 import resolveUrl from './resolveUrl';
 
 export default async function processMetadata(
-  page: Sanity.Page | Sanity.BlogPost | Sanity.ComponentLibrary
+  page: Sanity.Page | Sanity.BlogPost | Sanity.ComponentLibrary,
+  searchParams?: Record<string, string | string[] | undefined>
 ): Promise<Metadata> {
   if (!page.metadata) {
     throw new Error('Page metadata is required');
   }
 
-  const url = resolveUrl(page as Sanity.PageBase);
+  const url = resolveUrl(page as Sanity.PageBase, {
+    params: searchParams,
+    allowList: ['page', 'category'],
+  });
   const { title, description, ogimage: uploadedOg, noIndex } = page.metadata;
 
   // Clean metadata values for SEO and browser display
@@ -41,13 +45,16 @@ export default async function processMetadata(
       }),
     },
     robots: {
-      index: noIndex || vercelPreview ? false : undefined,
+      index: noIndex || vercelPreview || isStaging || isPreview ? false : undefined,
     },
     alternates: {
       canonical: url,
       types: {
         'application/rss+xml': '/blog/rss.xml',
       },
+    },
+    twitter: {
+      card: 'summary_large_image',
     },
   };
 }

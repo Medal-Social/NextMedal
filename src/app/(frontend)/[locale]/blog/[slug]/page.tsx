@@ -5,7 +5,8 @@ import processMetadata from '@/lib/processMetadata';
 import resolveUrl from '@/lib/resolveUrl';
 import { client } from '@/sanity/lib/client';
 import { fetchSanityLive } from '@/sanity/lib/live';
-import { IMAGE_QUERY, MODULES_QUERY, placementQuery } from '@/sanity/lib/queries';
+import { IMAGE_QUERY, MODULES_QUERY, PT_BLOCK_QUERY, placementQuery } from '@/sanity/lib/queries';
+import BreadcrumbJsonLd from '@/ui/BreadcrumbJsonLd';
 import JsonLd from '@/ui/JsonLd';
 import Modules from '@/ui/modules';
 import BlogPostLayout from '@/ui/modules/blog/BlogPostLayout';
@@ -18,8 +19,26 @@ export default async function Page({ params }: Props) {
 
   const placements = groupPlacements(post.placements);
 
+  const breadcrumbs = [
+    { name: 'Home', path: '/' },
+    { name: 'Blog', path: '/blog' },
+    ...(post.categories?.[0]
+      ? [
+          {
+            name: post.categories[0].title || 'Category',
+            path: `/blog?category=${post.categories[0].slug?.current}`,
+          },
+        ]
+      : []),
+    {
+      name: post.metadata?.title || post.title || 'Post',
+      path: `/blog/${post.metadata?.slug?.current}`,
+    },
+  ];
+
   return (
     <>
+      <BreadcrumbJsonLd items={breadcrumbs} />
       <JsonLd
         data={{
           '@context': 'https://schema.org',
@@ -46,11 +65,12 @@ export default async function Page({ params }: Props) {
   );
 }
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata({ params, searchParams }: Props) {
   const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
   const post = await getPost(resolvedParams, false);
   if (!post) notFound();
-  return processMetadata(post);
+  return processMetadata(post, resolvedSearchParams);
 }
 
 export async function generateStaticParams() {
@@ -77,7 +97,7 @@ async function getPost(params: { slug?: string }, stega?: boolean) {
 			...,
 			'modules': modules[]{ ${MODULES_QUERY} },
 			body[]{
-				...,
+				${PT_BLOCK_QUERY},
 				_type == 'image' => { ${IMAGE_QUERY} }
 			},
 			'readTime': length(string::split(pt::text(body), ' ')) / 200,
@@ -101,4 +121,5 @@ async function getPost(params: { slug?: string }, stega?: boolean) {
 
 type Props = {
   params: Promise<{ slug?: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
