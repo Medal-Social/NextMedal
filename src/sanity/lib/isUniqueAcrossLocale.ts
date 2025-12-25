@@ -1,4 +1,41 @@
-import type { SlugValidationContext } from 'sanity';
+import type { PathSegment, SlugValidationContext } from 'sanity';
+import { logger } from '@/lib/logger';
+
+/**
+ * Converts a Sanity path to a safe GROQ path string.
+ * This prevents GROQ injection by ensuring each segment is properly formatted or sanitized.
+ *
+ * @param path - The Sanity path array
+ * @returns A safe GROQ path string (e.g., "metadata.slug")
+ */
+export function toSafeGroqPath(path: PathSegment[]): string {
+  return path.reduce<string>((acc, segment) => {
+    if (typeof segment === 'string') {
+      // Strict whitelist for field names: only alphanumeric and underscores, must start with letter/underscore
+      if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(segment)) {
+        throw new Error(`Invalid GROQ path segment: "${segment}"`);
+      }
+      return acc ? `${acc}.${segment}` : segment;
+    }
+
+    if (typeof segment === 'number') {
+      return `${acc}[${segment}]`;
+    }
+
+    if (typeof segment === 'object' && '_key' in segment) {
+      // Sanitize the key: it must not contain quotes that could break out of the string
+      const safeKey = segment._key.replace(/['"\\]/g, '');
+      return `${acc}[_key == "${safeKey}"]`;
+    }
+
+    throw new Error(`Unsupported GROQ path segment type: ${typeof segment}`);
+  }, '');
+}
+
+type ExtendedSlugValidationContext = SlugValidationContext & {
+  defaultUnique: (slug: string, context: SlugValidationContext) => Promise<boolean>;
+  path: PathSegment[];
+};
 
 /**
  * Custom slug uniqueness validator that checks uniqueness per locale.
@@ -13,7 +50,7 @@ export async function isUniqueAcrossLocale(
   slug: string,
   context: SlugValidationContext
 ): Promise<boolean> {
-  const { document, getClient, defaultUnique, path } = context;
+  const { document, getClient, defaultUnique, path } = context as ExtendedSlugValidationContext;
 
   // Fallback to default behavior if no language is present on the document
   if (!document?.language) {
@@ -27,21 +64,23 @@ export async function isUniqueAcrossLocale(
     published: id,
     slug,
     language: document.language,
-    type: document._type,
   };
 
-  // Construct the field path dynamically (e.g. "metadata.slug.current")
-  // We append .current because the validator receives the string value, but the field is an object
-  // Note: This simple join assumes path segments are strings. Complex array paths with keys are not supported yet.
-  const fieldPath = path.map((segment) => segment.toString()).join('.');
-  const slugField = `${fieldPath}.current`;
+  try {
+    // Construct the field path safely to prevent GROQ injection
+    const fieldPath = toSafeGroqPath(path || []);
+    const slugField = `${fieldPath}.current`;
 
-  const query = `!defined(*[
-    _type == $type &&
-    language == $language &&
-    ${slugField} == $slug &&
-    !(_id in [$draft, $published])
-  ][0]._id)`;
+    const query = `!defined(*[
+      language == $language &&
+      ${slugField} == $slug &&
+      !(_id in [$draft, $published])
+    ][0]._id)`;
 
-  return client.fetch(query, params);
+    return await client.fetch(query, params);
+  } catch (error) {
+    // Fail safe: if path construction fails, reject the slug
+    logger.error({ err: error }, 'GROQ path safety check failed');
+    return false;
+  }
 }

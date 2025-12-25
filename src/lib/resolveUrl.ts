@@ -40,11 +40,8 @@ export default function resolveUrl(
 ) {
   if (!page) return '/';
 
-  // Handle blog posts
-  const segment = page._type === 'blog.post' ? '/blog/' : '/';
-
   const slug = page.metadata?.slug?.current;
-  const path = slug === 'index' ? null : slug;
+  const path = slug === 'index' ? null : `/${slug}`;
 
   // Convert params to string if it's a record
   let paramsStr: string | undefined;
@@ -66,15 +63,19 @@ export default function resolveUrl(
     paramsStr = params;
   }
 
-  return [
+  const result = [
     base && BASE_URL,
     !page.language ? '' : page.language === 'en' ? '' : `/${page.language}`,
-    segment,
-    page.parent
-      ? [...page.parent.map((p) => p?.metadata?.slug?.current), path].filter(Boolean).join('/')
-      : path,
+    path,
     stegaClean(paramsStr),
   ]
     .filter(Boolean)
     .join('');
+
+  // Ensure root URL has a trailing slash if base URL is present
+  if (base && BASE_URL && result === BASE_URL) {
+    return `${BASE_URL}/`;
+  }
+
+  return result || '/';
 }

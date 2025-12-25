@@ -190,3 +190,16 @@ export const TRANSLATIONS_QUERY = groq`
 		_type
 	}
 `;
+
+export const PAGE_QUERY = groq`
+	*[_type == 'page' && metadata.slug.current == $slug][0]{
+		...,
+		'modules': modules[]{ ${MODULES_QUERY} },
+		'placements': ${placementQuery("scope == 'page'")},
+		metadata {
+			...,
+			'ogimage': image.asset->url + '?w=1200',
+		},
+		${TRANSLATIONS_QUERY}
+	}
+`;

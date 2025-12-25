@@ -47,9 +47,9 @@ describe('resolveUrl', () => {
     expect(url).toBe('https://example.com/');
   });
 
-  it('should handle blog post path', () => {
+  it('should handle blog post path (flat structure)', () => {
     const blogPost = { ...mockPage, _type: 'blog.post', metadata: { slug: { current: 'post-1' } } };
     const url = resolveUrl(blogPost);
-    expect(url).toBe('https://example.com/blog/post-1');
+    expect(url).toBe('https://example.com/post-1');
   });
 });

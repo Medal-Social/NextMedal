@@ -40,8 +40,8 @@ export default defineType({
       },
       validation: (Rule) =>
         Rule.required().custom((slug) => {
-          if (slug?.current && slug.current.includes('/')) {
-            return "Slugs cannot contain slashes. Use a flat structure (e.g., 'about' instead of 'company/about').";
+          if (slug?.current?.includes('/')) {
+            return "Slugs cannot contain slashes. All pages and posts must use a flat structure (e.g., 'about' or 'my-post').";
           }
           return true;
         }),

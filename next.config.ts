@@ -48,18 +48,23 @@ const config = {
     if (!client) {
       return [];
     }
-    return await client.fetch(groq`*[_type == 'redirect']{
+    const cmsRedirects = await client.fetch(groq`*[_type == 'redirect']{
             'source': select(source match "/*" => source, "/" + source),
             'destination': select(
-                destination.type == 'internal' =>
-                    select(
-                        destination.internal->._type == 'blog.post' => '/blog/',
-                        '/'
-                    ) + destination.internal->.metadata.slug.current,
+                destination.type == 'internal' => '/' + destination.internal->.metadata.slug.current,
                 destination.external
             ),
             permanent
         }`);
+
+    return [
+      ...cmsRedirects,
+      {
+        source: '/blog/:slug',
+        destination: '/:slug',
+        permanent: true,
+      },
+    ];
   },
 
   experimental: {
