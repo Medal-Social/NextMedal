@@ -7,7 +7,8 @@
     "locale": "{locale, select, en {English} nb {Norsk} other {Ukjent}}",
     "selectLanguage": "Velg språk",
     "language": "Språk",
-    "translationNotAvailable": "Denne siden er kun tilgjengelig på det nåværende språket"
+    "translationNotAvailable": "Ikke tilgjengelig på {locale}",
+    "goToHome": "Gå til forsiden"
   },
   "ThemeSelector": {
     "theme": "Tema",
