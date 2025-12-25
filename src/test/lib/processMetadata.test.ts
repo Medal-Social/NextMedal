@@ -1,20 +1,32 @@
 import { describe, expect, it, vi } from 'vitest';
 import processMetadata from '@/lib/processMetadata';
+import resolveUrl from '@/lib/resolveUrl';
 
 // Mock the env module
 vi.mock('@/lib/env', () => ({
   BASE_URL: 'https://example.com',
   vercelPreview: false,
+  isStaging: false,
 }));
 
 // Mock resolveUrl
 vi.mock('@/lib/resolveUrl', () => ({
-  default: vi.fn((page) => {
+  default: vi.fn((page, options) => {
     const slug = page?.metadata?.slug?.current;
+    let url = '';
     if (page?._type === 'blog.post') {
-      return `https://example.com/blog/${slug}`;
+      url = `https://example.com/blog/${slug}`;
+    } else {
+      url = slug === 'index' ? 'https://example.com/' : `https://example.com/${slug}`;
     }
-    return slug === 'index' ? 'https://example.com/' : `https://example.com/${slug}`;
+
+    // Simple mock behavior for params if passed
+    if (options?.params) {
+      // Just appending for verification, strict logic is in resolveUrl unit tests
+      // This mock just ensures we can verify the flow
+      return url;
+    }
+    return url;
   }),
 }));
 
@@ -226,6 +238,20 @@ describe('processMetadata', () => {
 
       expect(result.alternates?.types).toBeDefined();
       expect(result.alternates?.types?.['application/rss+xml']).toBe('/blog/rss.xml');
+    });
+
+    it('should pass searchParams and allowList to resolveUrl', async () => {
+      const page = createMockPage();
+      const searchParams = { page: '2', category: 'news', ignored: 'value' };
+      await processMetadata(page, searchParams);
+
+      expect(resolveUrl).toHaveBeenCalledWith(
+        expect.objectContaining({ _id: page._id }),
+        expect.objectContaining({
+          params: searchParams,
+          allowList: ['page', 'category'],
+        })
+      );
     });
   });
 
