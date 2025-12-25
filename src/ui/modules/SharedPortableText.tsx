@@ -1,5 +1,7 @@
+import Link from 'next/link';
 import { PortableText, type PortableTextComponents, stegaClean } from 'next-sanity';
 import { cn, slug } from '@/lib/utils';
+import resolveSlug from '@/sanity/lib/resolveSlug';
 
 interface SharedPortableTextProps {
   value: any;
@@ -11,6 +13,36 @@ interface SharedPortableTextProps {
 const defaultComponents: PortableTextComponents = {
   marks: {
     em: ({ children }) => <span className="text-primary font-bold">{children}</span>,
+    link: ({ children, value }) => {
+      const { type, internal, external, params, newTab } = value || {};
+      const href = resolveSlug({
+        _type: internal?._type,
+        internal: internal?.metadata?.slug?.current,
+        external,
+        params,
+      });
+
+      if (!href) return <>{children}</>;
+
+      if (type === 'external' || external) {
+        return (
+          <a
+            href={href}
+            target={newTab ? '_blank' : undefined}
+            rel={newTab ? 'noopener noreferrer' : undefined}
+            className="text-primary hover:underline font-medium"
+          >
+            {children}
+          </a>
+        );
+      }
+
+      return (
+        <Link href={href} className="text-primary hover:underline font-medium">
+          {children}
+        </Link>
+      );
+    },
   },
 };
 
