@@ -77,7 +77,14 @@ export default function LocaleSwitcherSelect({
       } else {
         // Show toast notification that translation doesn't exist
         const localeLabel = options.find((opt) => opt.value === nextLocale)?.label || nextLocale;
-        toast.info(t('translationNotAvailable', { locale: localeLabel }));
+        const homeUrl = nextLocale === 'en' ? '/' : `/${nextLocale}`;
+
+        toast.info(t('translationNotAvailable', { locale: localeLabel }), {
+          action: {
+            label: t('goToHome', { locale: localeLabel }),
+            onClick: () => nextRouter.push(homeUrl),
+          },
+        });
       }
     });
   }

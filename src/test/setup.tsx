@@ -19,6 +19,41 @@ declare module 'vitest' {
   }
 }
 
+// Mock ResizeObserver
+global.ResizeObserver = class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
+
+// Mock PointerEvent
+if (!global.PointerEvent) {
+  class PointerEvent extends Event {
+    button: number;
+    ctrlKey: boolean;
+    metaKey: boolean;
+    shiftKey: boolean;
+    view: Window;
+
+    constructor(type: string, props: PointerEventInit = {}) {
+      super(type, props);
+      this.button = props.button || 0;
+      this.ctrlKey = props.ctrlKey || false;
+      this.metaKey = props.metaKey || false;
+      this.shiftKey = props.shiftKey || false;
+      this.view = window;
+    }
+  }
+  // @ts-expect-error - PointerEvent is not defined in the global scope
+  global.PointerEvent = PointerEvent;
+}
+
+// Mock scrollIntoView
+window.HTMLElement.prototype.scrollIntoView = () => {};
+window.HTMLElement.prototype.hasPointerCapture = () => false;
+window.HTMLElement.prototype.setPointerCapture = () => {};
+window.HTMLElement.prototype.releasePointerCapture = () => {};
+
 /**
  * Custom render function that wraps components with necessary providers.
  * Use this instead of the default render from @testing-library/react
