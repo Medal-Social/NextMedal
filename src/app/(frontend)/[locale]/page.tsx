@@ -11,7 +11,7 @@ type Props = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export default async function Page(props: Props) {
+export default async function Page(_props: Props) {
   const page = await getPage();
 
   if (!page) return <EmptyPage />;
