@@ -22,6 +22,12 @@ const config = {
   // Configure image handling
   images: {
     dangerouslyAllowSVG: true,
+    ...(process.env.NEXT_PUBLIC_IMAGE_PROXY_URL
+      ? {
+          loader: 'custom',
+          loaderFile: './src/lib/image-loader.ts',
+        }
+      : {}),
     remotePatterns: [
       {
         protocol: "https",

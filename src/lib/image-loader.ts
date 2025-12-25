@@ -32,10 +32,7 @@ export default function imageLoader({
   // Use btoa with TextEncoder to handle UTF-8 characters correctly across environments
   const utf8Bytes = new TextEncoder().encode(sourceUrl);
   const binaryStr = Array.from(utf8Bytes, (byte) => String.fromCharCode(byte)).join('');
-  const encodedUrl = btoa(binaryStr)
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
+  const encodedUrl = btoa(binaryStr).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 
   // Imgproxy processing options
   const resizingType = 'fit';
