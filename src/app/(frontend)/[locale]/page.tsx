@@ -1,56 +1,20 @@
-import { LayoutTemplate } from 'lucide-react';
-import { groq } from 'next-sanity';
-import { Button } from '@/components/ui/button';
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from '@/components/ui/empty';
-import { Section } from '@/components/ui/section';
+import { EmptyPage } from '@/components/EmptyPage';
 import { PageProvider } from '@/contexts/PageContext';
 import { groupPlacements, type Placement } from '@/lib/placement';
 import processMetadata from '@/lib/processMetadata';
 import { fetchSanity } from '@/sanity/lib/fetch';
-import { MODULES_QUERY, placementQuery, TRANSLATIONS_QUERY } from '@/sanity/lib/queries';
+import { PAGE_QUERY } from '@/sanity/lib/queries';
 import Modules from '@/ui/modules';
 
-export const dynamic = 'force-static';
+type Props = {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
 
-export default async function Page() {
+export default async function Page(_props: Props) {
   const page = await getPage();
 
-  if (!page)
-    return (
-      <Section className="min-h-[50vh] flex items-center justify-center">
-        <Empty className="border-none max-w-lg mx-auto">
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <LayoutTemplate />
-            </EmptyMedia>
-            <EmptyTitle>No Index Page Found</EmptyTitle>
-            <EmptyDescription>
-              There's no place like... index?
-              <br className="mb-2" />
-              Add a new Page document in your Medal Social Studio with the slug "index".
-            </EmptyDescription>
-          </EmptyHeader>
-          <EmptyContent>
-            <Button
-              nativeButton={false}
-              render={
-                <a href="https://www.medalsocial.com" target="_blank" rel="noopener noreferrer">
-                  Visit Medal Social
-                </a>
-              }
-              variant="outline"
-            />
-          </EmptyContent>
-        </Empty>
-      </Section>
-    );
+  if (!page) return <EmptyPage />;
 
   const placements = groupPlacements(page.placements || []);
 
@@ -63,26 +27,19 @@ export default async function Page() {
   );
 }
 
-export async function generateMetadata() {
+export async function generateMetadata(props: Props) {
+  const searchParams = await props.searchParams;
   const page = await getPage(false);
+
   if (!page) return {};
-  return processMetadata(page);
+
+  return processMetadata(page, searchParams);
 }
 
 async function getPage(stega?: boolean) {
-  const page = await fetchSanity<Sanity.Page & { placements?: Placement[] }>({
-    query: groq`*[_type == 'page' && metadata.slug.current == 'index'][0]{
-			...,
-			'modules': modules[]{ ${MODULES_QUERY} },
-			'placements': ${placementQuery("scope == 'page'")},
-			metadata {
-				...,
-				'ogimage': image.asset->url + '?w=1200',
-			},
-			${TRANSLATIONS_QUERY}
-		}`,
+  return await fetchSanity<Sanity.Page & { placements?: Placement[] }>({
+    query: PAGE_QUERY,
+    params: { slug: 'index' },
     stega,
   });
-
-  return page;
 }

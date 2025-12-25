@@ -49,6 +49,7 @@ import cta from './objects/cta';
 import dropdownMenu from './objects/dropdown-menu';
 import icon from './objects/icon';
 import img from './objects/img';
+import link from './objects/link';
 import menuItem from './objects/menu-item';
 import metadata from './objects/metadata';
 import moduleOptions from './objects/module-options';
@@ -76,6 +77,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   cta,
   icon,
   img,
+  link,
   menuItem,
   dropdownMenu,
   metadata,

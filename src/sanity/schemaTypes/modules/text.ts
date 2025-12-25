@@ -31,7 +31,20 @@ export default defineType({
     defineField({
       name: 'content',
       type: 'array',
-      of: [{ type: 'block' }, imageBlock],
+      of: [
+        {
+          type: 'block',
+          marks: {
+            annotations: [
+              {
+                name: 'link',
+                type: 'link',
+              },
+            ],
+          },
+        },
+        imageBlock,
+      ],
       group: 'content',
     }),
   ],

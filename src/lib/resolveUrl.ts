@@ -31,37 +31,51 @@ export default function resolveUrl(
   {
     base = true,
     params,
+    allowList,
   }: {
     base?: boolean;
-    params?: string | Record<string, string>;
+    params?: string | Record<string, string | string[] | undefined>;
+    allowList?: string[];
   } = {}
 ) {
   if (!page) return '/';
 
-  // Handle blog posts
-  const segment = page._type === 'blog.post' ? '/blog/' : '/';
-
   const slug = page.metadata?.slug?.current;
-  const path = slug === 'index' ? null : slug;
+  const path = slug === 'index' ? null : `/${slug}`;
 
   // Convert params to string if it's a record
   let paramsStr: string | undefined;
   if (typeof params === 'object' && params !== null) {
-    const usp = new URLSearchParams(params as Record<string, string>);
+    const usp = new URLSearchParams();
+    for (const [key, value] of Object.entries(params)) {
+      if (allowList && !allowList.includes(key)) continue;
+      if (value === undefined || value === null) continue;
+      if (Array.isArray(value)) {
+        for (const v of value) {
+          usp.append(key, v);
+        }
+      } else {
+        usp.append(key, value);
+      }
+    }
     paramsStr = usp.toString() ? `?${usp.toString()}` : undefined;
   } else {
     paramsStr = params;
   }
 
-  return [
+  const result = [
     base && BASE_URL,
     !page.language ? '' : page.language === 'en' ? '' : `/${page.language}`,
-    segment,
-    page.parent
-      ? [...page.parent.map((p) => p?.metadata?.slug?.current), path].filter(Boolean).join('/')
-      : path,
+    path,
     stegaClean(paramsStr),
   ]
     .filter(Boolean)
     .join('');
+
+  // Ensure root URL has a trailing slash if base URL is present
+  if (base && BASE_URL && result === BASE_URL) {
+    return `${BASE_URL}/`;
+  }
+
+  return result || '/';
 }

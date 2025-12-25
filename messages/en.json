@@ -7,7 +7,8 @@
     "locale": "{locale, select, en {English} nb {Norsk} other {Unknown}}",
     "selectLanguage": "Select Language",
     "language": "Language",
-    "translationNotAvailable": "This page is only available in the current language"
+    "translationNotAvailable": "Not available in {locale}",
+    "goToHome": "Go to Home"
   },
   "ThemeSelector": {
     "theme": "Theme",

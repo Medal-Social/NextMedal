@@ -1,10 +1,7 @@
 'use server';
 
-import { draftMode } from 'next/headers';
-import type { QueryOptions, QueryParams } from 'next-sanity';
+import type { QueryParams } from 'next-sanity';
 import { groq } from 'next-sanity';
-import { dev } from '@/lib/env';
-import { client } from '@/sanity/lib/client';
 import { fetchSanityLive } from './live';
 export { fetchSanityLive };
 

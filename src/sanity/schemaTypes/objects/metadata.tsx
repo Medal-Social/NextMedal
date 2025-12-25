@@ -10,6 +10,7 @@
  */
 
 import { defineField, defineType } from 'sanity';
+import { isUniqueAcrossLocale } from '@/sanity/lib/isUniqueAcrossLocale';
 import { createMetadataSchema } from '@/sanity/lib/schema-factory';
 import CharacterCount from '@/sanity/ui/CharacterCount';
 import PreviewOG from '@/sanity/ui/PreviewOG';
@@ -35,8 +36,15 @@ export default defineType({
       description: 'URL path or permalink',
       options: {
         source: (doc: any) => (doc.issue ? `issue-${doc.issue}` : doc.title || doc.metadata?.title),
+        isUnique: isUniqueAcrossLocale,
       },
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) =>
+        Rule.required().custom((slug) => {
+          if (slug?.current?.includes('/')) {
+            return "Slugs cannot contain slashes. All pages and posts must use a flat structure (e.g., 'about' or 'my-post').";
+          }
+          return true;
+        }),
     }),
     // Override the title field to add character count and preview
     defineField({

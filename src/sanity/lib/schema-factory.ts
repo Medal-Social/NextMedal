@@ -5,6 +5,7 @@
  */
 
 import { defineField } from 'sanity';
+import { isUniqueAcrossLocale } from './isUniqueAcrossLocale';
 
 interface MetadataSchemaOptions {
   group?: string;
@@ -46,6 +47,8 @@ export const createMetadataSchema = (options: MetadataSchemaOptions = {}) => {
       defineField({
         name: 'noIndex',
         title: 'Hide from search engines',
+        description:
+          'Prevents this page from appearing in search results and removes it from the sitemap.',
         type: 'boolean',
         initialValue: false,
       }),
@@ -54,6 +57,7 @@ export const createMetadataSchema = (options: MetadataSchemaOptions = {}) => {
         type: 'slug',
         options: {
           source: (doc: any) => doc.title || doc.metadata?.title,
+          isUnique: isUniqueAcrossLocale,
         },
       }),
     ],
