@@ -33,7 +33,7 @@ export function toSafeGroqPath(path: PathSegment[]): string {
 }
 
 type ExtendedSlugValidationContext = SlugValidationContext & {
-  defaultUnique: (slug: string, context: SlugValidationContext) => Promise<boolean>;
+  defaultIsUnique: (slug: string, context: SlugValidationContext) => Promise<boolean>;
   path: PathSegment[];
 };
 
@@ -50,11 +50,11 @@ export async function isUniqueAcrossLocale(
   slug: string,
   context: SlugValidationContext
 ): Promise<boolean> {
-  const { document, getClient, defaultUnique, path } = context as ExtendedSlugValidationContext;
+  const { document, getClient, defaultIsUnique, path } = context as ExtendedSlugValidationContext;
 
   // Fallback to default behavior if no language is present on the document
   if (!document?.language) {
-    return defaultUnique(slug, context);
+    return defaultIsUnique(slug, context);
   }
 
   const client = getClient({ apiVersion: '2025-12-23' });

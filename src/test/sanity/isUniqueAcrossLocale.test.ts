@@ -48,7 +48,7 @@ describe('isUniqueAcrossLocale', () => {
   const mockContext = {
     document: { _id: 'doc123', _type: 'post', language: 'en' },
     getClient: vi.fn(),
-    defaultUnique: vi.fn(),
+    defaultIsUnique: vi.fn(),
     path: ['slug'],
   } as unknown as SlugValidationContext;
 
@@ -82,7 +82,7 @@ describe('isUniqueAcrossLocale', () => {
     expect(result).toBe(false);
   });
 
-  it('should fallback to defaultUnique if no language is present', async () => {
+  it('should fallback to defaultIsUnique if no language is present', async () => {
     const contextNoLanguage = {
       ...mockContext,
       document: { _id: 'doc123', _type: 'post' },

@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@/test/setup';
 import LocaleSwitcherSelect from '@/ui/language-switcher/LocaleSwitcherSelect';
 

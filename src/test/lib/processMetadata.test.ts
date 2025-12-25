@@ -7,6 +7,7 @@ vi.mock('@/lib/env', () => ({
   BASE_URL: 'https://example.com',
   vercelPreview: false,
   isStaging: false,
+  isPreview: false,
 }));
 
 // Mock resolveUrl
