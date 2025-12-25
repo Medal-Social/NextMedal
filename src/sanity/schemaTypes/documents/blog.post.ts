@@ -11,6 +11,7 @@
 import { ControlsIcon, EditIcon, EyeClosedIcon, SearchIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import { imageBlock } from '../fragments';
+import link from '../objects/link';
 
 export default defineType({
   name: 'blog.post',
@@ -44,12 +45,27 @@ export default defineType({
             { title: 'Heading 4', value: 'h4' },
             { title: 'Quote', value: 'blockquote' },
           ],
+          marks: {
+            decorators: [
+              { title: 'Strong', value: 'strong' },
+              { title: 'Emphasis', value: 'em' },
+              { title: 'Underline', value: 'underline' },
+              { title: 'Strike', value: 'strike-through' },
+            ],
+            annotations: [
+              {
+                name: 'link',
+                type: 'object',
+                title: 'Link',
+                fields: link.fields,
+                icon: link.icon,
+              },
+            ],
+          },
         },
         imageBlock,
         { type: 'code' },
         { type: 'video' },
-        { type: 'lead-magnet' },
-        { type: 'callout' },
       ],
       group: 'content',
     }),

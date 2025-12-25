@@ -233,7 +233,7 @@ export default function CookieConsentComponent({ config, locale = 'en' }: Cookie
       // The library adds 'cc--darkmode' class to body or container based on detection or manual setting.
       // We can sync it with next-themes.
     });
-  }, [config, locale]);
+  }, [config, locale, privacyPolicyUrl]);
 
   // Sync theme
   useEffect(() => {

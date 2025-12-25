@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { BASE_URL } from '@/lib/env';
+import { BASE_URL, isPreview, isStaging, vercelPreview } from '@/lib/env';
 
 export async function GET() {
   const siteUrl = BASE_URL;
@@ -15,11 +15,9 @@ export async function GET() {
     '# Created by  https://www.medalsocial.com/about',
     '#',
     '',
-    'User-agent: *',
-    'Allow: /',
-    '',
-    'User-agent: Twitterbot',
-    'Allow: /',
+    ...(isStaging || isPreview || vercelPreview
+      ? ['User-agent: *', 'Disallow: /']
+      : ['User-agent: *', 'Allow: /', '', 'User-agent: Twitterbot', 'Allow: /']),
     '',
     `Sitemap: ${siteUrl}/sitemap.xml`,
     '# RSS feed for blog content',

@@ -33,6 +33,14 @@ vi.mock('next-sanity/draft-mode', () => ({
   })),
 }));
 
+// Mock the env module
+vi.mock('@/lib/env', () => ({
+  BASE_URL: 'https://example.com',
+  vercelPreview: false,
+  isStaging: false,
+  isPreview: false,
+}));
+
 import { GET as disableGET } from '@/app/api/draft-mode/disable/route';
 import { GET as enableGET } from '@/app/api/draft-mode/enable/route';
 
@@ -126,6 +134,8 @@ describe('Draft mode noIndex behavior', () => {
       vi.doMock('@/lib/env', () => ({
         BASE_URL: 'https://example.com',
         vercelPreview: true,
+        isStaging: false,
+        isPreview: false,
       }));
 
       // Mock resolveUrl
@@ -159,6 +169,8 @@ describe('Draft mode noIndex behavior', () => {
       vi.doMock('@/lib/env', () => ({
         BASE_URL: 'https://example.com',
         vercelPreview: false,
+        isStaging: false,
+        isPreview: false,
       }));
 
       vi.doMock('@/lib/resolveUrl', () => ({

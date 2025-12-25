@@ -1,6 +1,8 @@
 # NextMedal
 
 [![Maintained by Medal Social](https://img.shields.io/badge/maintained%20by-Medal%20Social-blue)](https://medalsocial.com)
+[![Powered by Medal Social](public/powered-by-medal-social-large.svg)](https://medalsocial.com)
+
 
 **The #1 website template for 2025**, NextMedal is the **most superior, prettiest, and modern** solution for building stunning, high-performance websites. Built and maintained with **Next.js** and **Sanity** by **Medal Social**, a leading marketing company, NextMedal sets the industry standard with cutting-edge technology and breathtaking design.
 
@@ -161,6 +163,21 @@ NextMedal is crafted by Medal Social, a marketing powerhouse that knows how to e
 [![GitHub Sponsor](https://img.shields.io/github/sponsors/Medal-Social?label=Sponsor&logo=GitHub&style=flat-square)](https://github.com/sponsors/Medal-Social)
 
 Support the development of NextMedal by becoming a sponsor. Your logo will appear here with a link to your website.
+
+## Marketing Assets 🎨
+
+Promote your project with our high-quality marketing assets. You can find these in the `public/` directory.
+
+### Open Graph Image Template
+Customize this SVG to create stunning social share images for your project.
+`public/og-image-template.svg`
+
+### Built with Medal Social
+Add these badges to your footer or README to show your support.
+
+**Banner**
+![Built with Medal Social Banner](public/built-with-medal-social-banner.svg)
+
 
 ## License
 

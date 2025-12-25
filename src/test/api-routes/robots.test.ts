@@ -1,4 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+// Mock the env module
+vi.mock('@/lib/env', () => ({
+  BASE_URL: 'https://test.example.com',
+  isStaging: false,
+  isPreview: false,
+  vercelPreview: false,
+}));
+
 import { GET } from '@/app/robots.txt/route';
 
 describe('robots.txt route', () => {
@@ -7,6 +16,7 @@ describe('robots.txt route', () => {
   beforeEach(() => {
     vi.resetModules();
     process.env = { ...originalEnv };
+    vi.clearAllMocks();
   });
 
   afterEach(() => {
@@ -47,18 +57,10 @@ describe('robots.txt route', () => {
   });
 
   describe('Site URL configuration', () => {
-    it('uses NEXT_PUBLIC_SITE_URL environment variable when set', async () => {
-      process.env.NEXT_PUBLIC_SITE_URL = 'https://custom-site.com';
+    it('uses BASE_URL from env', async () => {
       const response = await GET();
       const text = await response.text();
-      expect(text).toContain('https://custom-site.com');
-    });
-
-    it('uses default URL when NEXT_PUBLIC_SITE_URL is not set', async () => {
-      delete process.env.NEXT_PUBLIC_SITE_URL;
-      const response = await GET();
-      const text = await response.text();
-      expect(text).toContain('https://www.nextmedal.com');
+      expect(text).toContain('https://test.example.com');
     });
   });
 });

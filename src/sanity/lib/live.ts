@@ -1,12 +1,13 @@
 import { draftMode } from 'next/headers';
 import { defineLive } from 'next-sanity/live';
-import { dev } from '@/lib/env';
+import { dev, env } from '@/lib/env';
 import { client } from '@/sanity/lib/client';
 import { token } from '@/sanity/lib/token';
 
 export const { sanityFetch, SanityLive } = defineLive({
   client,
   serverToken: token,
+  browserToken: env.SANITY_API_BROWSER_TOKEN,
 });
 
 export async function fetchSanityLive<T = any>(

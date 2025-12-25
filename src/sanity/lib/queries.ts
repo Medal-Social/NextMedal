@@ -1,7 +1,7 @@
 import { groq } from 'next-sanity';
 
 export const SLUG_QUERY = groq`
-	array::join([...parent[]->metadata.slug.current, metadata.slug.current], '/')
+	metadata.slug.current
 `;
 
 export const LINK_QUERY = groq`
@@ -20,6 +20,16 @@ export const IMAGE_QUERY = groq`
 		...,
 		altText,
 		metadata
+	}
+`;
+
+export const PT_BLOCK_QUERY = groq`
+	...,
+	markDefs[]{
+		...,
+		_type == 'link' => {
+			${LINK_QUERY}
+		}
 	}
 `;
 
@@ -75,7 +85,7 @@ const BASE_MODULES_QUERY = groq`
 	},
 	_type == 'richtext' => {
 		content[]{
-			...,
+			${PT_BLOCK_QUERY},
 			_type == 'image' => {
 				${IMAGE_QUERY}
 			}
@@ -178,5 +188,18 @@ export const TRANSLATIONS_QUERY = groq`
 		'slug': metadata.slug.current,
 		language,
 		_type
+	}
+`;
+
+export const PAGE_QUERY = groq`
+	*[_type == 'page' && metadata.slug.current == $slug][0]{
+		...,
+		'modules': modules[]{ ${MODULES_QUERY} },
+		'placements': ${placementQuery("scope == 'page'")},
+		metadata {
+			...,
+			'ogimage': image.asset->url + '?w=1200',
+		},
+		${TRANSLATIONS_QUERY}
 	}
 `;

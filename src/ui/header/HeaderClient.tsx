@@ -146,7 +146,7 @@ export default function HeaderClient({ className, ctas, menu, children }: Header
           !isScrolled && isDarkHero && !isOpen && 'dark text-white'
         )}
       >
-        <div className="mx-auto flex h-[var(--header-height)] max-w-7xl items-center gap-x-6 p-4 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex min-h-16 max-w-7xl items-center gap-x-6 p-4 px-4 sm:px-6 lg:px-8">
           {children}
 
           <div className="flex items-center gap-2 lg:hidden relative z-[101]">
