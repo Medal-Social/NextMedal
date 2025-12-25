@@ -4,4 +4,3 @@ export class PublicError extends Error {
     this.name = 'PublicError';
   }
 }
-

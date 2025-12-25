@@ -1,9 +1,9 @@
 'use client';
 
-import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
 
 /**
  * A minimalistic "Back to Top" button.
@@ -47,11 +47,11 @@ export default function ScrollToTop() {
             'fixed bottom-8 right-8 z-[60] flex h-12 w-12 items-center justify-center rounded-full',
             'bg-brand-vibrant text-white shadow-lg shadow-brand-vibrant/20',
             'transition-colors hover:bg-brand-rich',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-vibrant focus-visible:ring-offset-2',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-vibrant focus-visible:ring-offset-2'
           )}
-          aria-label='Scroll to top'
+          aria-label="Scroll to top"
         >
-          <ArrowUp className='size-5' />
+          <ArrowUp className="size-5" />
         </motion.button>
       )}
     </AnimatePresence>
