@@ -267,7 +267,7 @@ export default function Form({ form, className }: FormProps) {
             <input
               type="checkbox"
               id="form-acceptance"
-              required={form.acceptance.required}
+              required={form.acceptance?.required}
               className="h-5 w-5 rounded-lg border-input text-primary focus:ring-primary/20 transition-all mt-0.5 cursor-pointer"
               checked={accepted}
               onChange={(e) => setAccepted(e.target.checked)}
@@ -276,8 +276,8 @@ export default function Form({ form, className }: FormProps) {
               htmlFor="form-acceptance"
               className="text-sm font-medium leading-tight text-foreground/70 cursor-pointer select-none"
             >
-              {form.acceptance.text}{' '}
-              {form.acceptance.required && <span className="text-destructive">*</span>}
+              {form.acceptance?.text}{' '}
+              {form.acceptance?.required && <span className="text-destructive">*</span>}
               {acceptanceUrl && (
                 <a
                   href={acceptanceUrl}

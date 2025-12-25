@@ -16,6 +16,7 @@ import { SanityLive } from '@/sanity/lib/live';
 import Banner from '@/ui/Banner';
 import Footer from '@/ui/footer';
 import Header from '@/ui/header';
+import ScrollToTop from '@/ui/ScrollToTop';
 import SiteJsonLd from '@/ui/SiteJsonLd';
 import SkipToContent from '@/ui/SkipToContent';
 import VisualEditingControls from '@/ui/VisualEditingControls';
@@ -72,6 +73,7 @@ export default async function RootLayout({ children, params }: Props) {
               <Toaster />
               <Analytics />
               <CookieConsent config={site.cookieConsent} locale={locale} />
+              <ScrollToTop />
               <SanityLive />
             </NextIntlClientProvider>
           </NuqsAdapter>
