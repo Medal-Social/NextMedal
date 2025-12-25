@@ -1,14 +1,23 @@
 import type { MetadataRoute } from 'next';
+import { logger } from '@/lib/logger';
 import { getSite } from '@/sanity/lib/fetch';
 import { getBlockText } from '@/sanity/lib/utils';
 
 export default async function manifest(): Promise<MetadataRoute.Manifest> {
-  const site = await getSite();
-  const description = site?.tagline ? getBlockText(site.tagline, ' ') : undefined;
-
   // Colors from globals.css
   const THEME_COLOR = '#5B2D8C'; // --color-brand-600
   const BACKGROUND_COLOR = '#ffffff';
+
+  let site: Sanity.Site | null = null;
+  let description: string | undefined;
+
+  try {
+    site = await getSite();
+    description = site?.tagline ? getBlockText(site.tagline, ' ') : undefined;
+  } catch (error: any) {
+    // Fallback if CMS is unreachable or Site document is missing
+    logger.warn({ err: error }, 'Failed to fetch site settings for manifest, using fallbacks.');
+  }
 
   return {
     name: site?.title || 'NextMedal',
