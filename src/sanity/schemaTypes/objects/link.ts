@@ -62,6 +62,5 @@ export default defineType({
         }),
       hidden: ({ parent }) => parent?.type !== 'external',
     }),
-
   ],
 });
