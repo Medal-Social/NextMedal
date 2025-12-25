@@ -6,7 +6,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_BASE_URL: z.string().url().min(1),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   VERCEL_ENV: z.enum(['production', 'preview', 'development']).optional(),
-  NEXT_PUBLIC_APP_ENV: z.enum(['production', 'development', 'test', 'staging']).optional(),
+  NEXT_PUBLIC_APP_ENV: z.enum(['production', 'development', 'staging', 'preview']).optional(),
 
   // Sanity
   NEXT_PUBLIC_SANITY_PROJECT_ID: z.string().min(1),
@@ -14,7 +14,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_SANITY_API_VERSION: z.string().optional().default('2025-12-23'),
   SANITY_API_READ_TOKEN: z.string().optional(),
 
-  // Analytics
+  // Optional: Analytics
   NEXT_PUBLIC_UMAMI_SCRIPT_URL: z.string().url().optional(),
   NEXT_PUBLIC_UMAMI_WEBSITE_ID: z.string().optional(),
   NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
