@@ -16,7 +16,7 @@ import { urlFor } from '@/sanity/lib/image';
 
 interface BrandMenuProps {
   children: React.ReactNode;
-  logoData?: any;
+  logoData?: Sanity.Logo;
   hasBrandPage?: boolean;
 }
 
