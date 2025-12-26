@@ -25,5 +25,16 @@
     "success-title": "Takk!",
     "success-message": "Vi har mottatt din melding.",
     "submitting": "Sender inn..."
+  },
+  "modules": {
+    "pricing": {
+      "monthly": "Månedlig",
+      "yearly": "Årlig",
+      "yearlyDiscount": "Årlig (-{discount}%)"
+    },
+    "leadMagnet": {
+      "defaultButtonText": "Få tilgang nå",
+      "defaultFormTitle": "Registrer deg"
+    }
   }
 }

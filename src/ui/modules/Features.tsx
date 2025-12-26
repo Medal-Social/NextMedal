@@ -1,14 +1,16 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
 import Icon from '@/ui/Icon';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
 
+const MAX_ANIMATION_DELAY = 0.3;
+
 export default function Features({ intro, items, ...props }: Sanity.Features) {
-  const isSidebar = (props as any).spacing === 'none';
+  const isSidebar = props.spacing === 'none';
   // Distribute items into 3 columns for desktop layout
   const columns: Sanity.Features['items'][] = [[], [], []];
   if (items) {
@@ -76,12 +78,15 @@ function FeatureCard({
   item: NonNullable<Sanity.Features['items']>[number];
   index: number;
 }) {
+  const prefersReducedMotion = useReducedMotion();
+  const animationDelay = Math.min(index * 0.1, MAX_ANIMATION_DELAY);
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
+      transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.5, delay: animationDelay }}
       className="group h-full bg-card p-8 rounded-3xl border border-border shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative overflow-hidden"
     >
       <div className="flex items-start gap-5 mb-5">
