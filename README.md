@@ -1,6 +1,4 @@
 # NextMedal
-
-[![Maintained by Medal Social](https://img.shields.io/badge/maintained%20by-Medal%20Social-blue)](https://medalsocial.com)
 [![Powered by Medal Social](public/powered-by-medal-social-large.svg)](https://medalsocial.com)
 
 
