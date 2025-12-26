@@ -5,7 +5,12 @@
   "author": "Medal Social <hi@medalsocial.com> (https://www.medalsocial.com)",
   "license": "Apache-2.0",
   "private": true,
+  "engines": {
+    "npm": "use pnpm instead - see packageManager field",
+    "yarn": "use pnpm instead - see packageManager field"
+  },
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "clean": "rimraf .next ",
     "dev": "next dev --turbopack",
     "build": "next build",
