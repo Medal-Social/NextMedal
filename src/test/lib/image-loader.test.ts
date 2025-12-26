@@ -2,8 +2,6 @@ import { describe, expect, it, vi } from 'vitest';
 import imageLoader from '@/lib/image-loader';
 
 describe('imageLoader', () => {
-  const originalEnv = process.env;
-
   it('returns original src if NEXT_PUBLIC_IMAGE_PROXY_URL is not set', () => {
     vi.stubEnv('NEXT_PUBLIC_IMAGE_PROXY_URL', '');
     const result = imageLoader({ src: '/test.jpg', width: 100 });
