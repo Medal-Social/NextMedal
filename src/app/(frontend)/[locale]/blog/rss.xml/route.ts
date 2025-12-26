@@ -30,7 +30,7 @@ export async function GET() {
 					metadata {
 						title,
 						description,
-						"slug": slug.current
+						"slug": { "current": slug.current }
 					},
 					'image': metadata.image.asset->url
 				},

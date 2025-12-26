@@ -40,7 +40,7 @@ export default async function LatestArticles({
 				metadata {
 					title,
 					description,
-					"slug": slug.current,
+					"slug": { "current": slug.current },
 					image { ${IMAGE_QUERY} }
 				},
 				categories[]->${CATEGORY_PREVIEW_QUERY},
