@@ -3,6 +3,7 @@
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { Component, type ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
+import { logger } from '@/lib/logger';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -46,7 +47,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // Log to error reporting service in production
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    logger.error({ err: error, errorInfo }, 'ErrorBoundary caught an error');
   }
 
   handleRetry = () => {
