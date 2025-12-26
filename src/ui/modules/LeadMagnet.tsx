@@ -1,6 +1,7 @@
 'use client';
 
 import { CheckCircle2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { stegaClean } from 'next-sanity';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -17,14 +18,6 @@ import { cn } from '@/lib/utils';
 import Form from '@/ui/Form';
 import { Img } from '@/ui/Img';
 import SharedPortableText from './SharedPortableText';
-
-interface LeadMagnetProps extends Sanity.Module {
-  content: any;
-  buttonText: string;
-  image?: any;
-  form: any;
-  style?: 'sidebar' | 'featured';
-}
 
 const portableTextComponents = (style: 'sidebar' | 'featured') => ({
   list: {
@@ -99,7 +92,8 @@ export default function LeadMagnet({
   form,
   style: styleProp = 'featured',
   ...props
-}: LeadMagnetProps) {
+}: Sanity.LeadMagnet) {
+  const t = useTranslations('modules.leadMagnet');
   const style = stegaClean(styleProp);
   const [isModalOpen, setIsOpen] = useState(false);
 
@@ -152,7 +146,7 @@ export default function LeadMagnet({
                           : 'h-12 w-full text-base bg-white text-[#1a0b2e] hover:bg-white/95 border-none shadow-xl rounded-lg'
                       )}
                     >
-                      {buttonText || 'Get access now'}
+                      {buttonText || t('defaultButtonText')}
                     </Button>
                   }
                 />
@@ -160,7 +154,7 @@ export default function LeadMagnet({
                   <div className="bg-primary px-8 py-6 text-primary-foreground">
                     <DialogHeader>
                       <DialogTitle className="text-2xl font-bold">
-                        {form?.formTitle || 'Sign up'}
+                        {form?.formTitle || t('defaultFormTitle')}
                       </DialogTitle>
                     </DialogHeader>
                   </div>

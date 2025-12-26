@@ -27,7 +27,7 @@ export default async function Social({ className }: React.ComponentProps<'div'>)
           key={item.url || idx}
           variant="ghost"
           size="icon"
-          className="h-9 w-9 rounded-full"
+          className="h-9 w-9 rounded-full motion-safe:transition-all motion-safe:duration-200 motion-safe:hover:scale-110 hover:bg-primary/10"
           nativeButton={false}
           render={
             <a href={item.url} target="_blank" rel="noopener noreferrer" aria-label={item.text}>

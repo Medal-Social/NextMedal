@@ -33,7 +33,7 @@ type SidebarContextProps = {
   setOpen: (open: boolean) => void;
   openMobile: boolean;
   setOpenMobile: (open: boolean) => void;
-  isMobile: boolean;
+  isMobile: boolean | undefined;
   toggleSidebar: () => void;
 };
 
@@ -85,8 +85,9 @@ function SidebarProvider({
   );
 
   // Helper to toggle the sidebar.
+  // When isMobile is undefined (during hydration), default to desktop behavior.
   const toggleSidebar = React.useCallback(() => {
-    return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open);
+    return isMobile === true ? setOpenMobile((open) => !open) : setOpen((open) => !open);
   }, [isMobile, setOpen]);
 
   // Adds a keyboard shortcut to toggle the sidebar.
@@ -169,6 +170,12 @@ function Sidebar({
         {children}
       </div>
     );
+  }
+
+  // During SSR/hydration, isMobile is undefined. Return null to prevent
+  // hydration mismatch between server and client renders.
+  if (isMobile === undefined) {
+    return null;
   }
 
   if (isMobile) {

@@ -220,6 +220,8 @@ declare global {
     interface Module<T = string> {
       _type: T;
       _key: string;
+      spacing?: 'default' | 'compact' | 'relaxed' | 'none';
+      width?: 'default' | 'narrow' | 'wide' | 'full';
       options?: {
         uid?: string;
       };
@@ -262,6 +264,78 @@ declare global {
       };
       thumbnail?: Sanity.Image; // made optional
       title?: string;
+    }
+
+    interface FormField {
+      _key: string;
+      label: string;
+      name: { current: string };
+      type: 'text' | 'email' | 'tel' | 'textarea' | 'checkbox';
+      placeholder?: string;
+      required?: boolean;
+    }
+
+    interface Form {
+      intent: string;
+      formTitle?: string;
+      fields: FormField[];
+      submitButtonText: string;
+      successMessage?: any[];
+      acceptance?: {
+        required: boolean;
+        text: string;
+        link?: {
+          type: 'internal' | 'external';
+          internal?: {
+            _type: string;
+            metadata?: { slug?: { current: string } };
+          };
+          external?: string;
+          params?: string;
+        };
+      };
+      redirect?: {
+        type: 'internal' | 'external';
+        internal?: {
+          _type: string;
+          metadata?: { slug?: { current: string } };
+        };
+        external?: string;
+        params?: string;
+      };
+    }
+
+    interface Contact extends Module<'contact'> {
+      intro?: any[];
+      form: Form;
+      officeInfo?: {
+        title: string;
+        address: {
+          street: string;
+          city: string;
+          country: string;
+        };
+        email?: string;
+        phone?: string;
+        openingHours?: string;
+      };
+      contactPerson?: {
+        title: string;
+        name: string;
+        position: string;
+        description?: string;
+        image?: Image;
+        email?: string;
+        phone?: string;
+      };
+    }
+
+    interface LeadMagnet extends Module<'lead-magnet'> {
+      content: any[];
+      buttonText: string;
+      image?: Img;
+      form: Form;
+      style?: 'sidebar' | 'featured';
     }
 
     // Module Interfaces
@@ -319,6 +393,11 @@ declare global {
       content?: any[]; // renamed from description to match schema
       ctas?: CTA[];
       image?: Img;
+      options?: {
+        uid?: string;
+        bgFrom?: string;
+        bgTo?: string;
+      };
     }
 
     interface LatestArticles extends Module<'latest-articles'> {

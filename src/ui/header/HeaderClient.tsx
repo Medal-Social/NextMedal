@@ -2,24 +2,29 @@
 
 import { AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
-import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { DESKTOP_BREAKPOINT, SCROLL_THRESHOLD } from './constants';
 import MobileNavigation from './mobile-navigation';
 import Toggle from './Toggle';
+import type { HeaderClientProps } from './types';
 
-interface HeaderClientProps extends React.ComponentProps<'header'> {
-  // logo prop removed as it was unused
-  ctas: any;
-  menu: any;
-  children: ReactNode;
-}
-
-export default function HeaderClient({ className, ctas, menu, children }: HeaderClientProps) {
+export default function HeaderClient({
+  className,
+  ctas,
+  menu,
+  enableSearch,
+  children,
+}: HeaderClientProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const isOpenRef = useRef(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDarkHero, setIsDarkHero] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+
+  // Keep ref in sync with state for resize handler
+  isOpenRef.current = isOpen;
 
   // Check for dark theme on first content element
   // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is used to trigger re-check on navigation
@@ -29,11 +34,7 @@ export default function HeaderClient({ className, ctas, menu, children }: Header
       if (!main) return;
 
       const firstChild = main.firstElementChild;
-      if (firstChild && firstChild.getAttribute('data-theme') === 'dark') {
-        setIsDarkHero(true);
-      } else {
-        setIsDarkHero(false);
-      }
+      setIsDarkHero(firstChild?.getAttribute('data-theme') === 'dark');
     };
 
     checkDarkTheme();
@@ -58,7 +59,7 @@ export default function HeaderClient({ className, ctas, menu, children }: Header
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          setIsScrolled(window.scrollY > 10);
+          setIsScrolled(window.scrollY > SCROLL_THRESHOLD);
           ticking = false;
         });
         ticking = true;
@@ -97,13 +98,13 @@ export default function HeaderClient({ className, ctas, menu, children }: Header
   // Close mobile menu on resize to desktop
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 1024 && isOpen) {
+      if (window.innerWidth >= DESKTOP_BREAKPOINT && isOpenRef.current) {
         setIsOpen(false);
       }
     };
     window.addEventListener('resize', handleResize, { passive: true });
     return () => window.removeEventListener('resize', handleResize);
-  }, [isOpen]);
+  }, []);
 
   // Prevent body scroll when menu is open and compensate for scrollbar width
   useEffect(() => {
@@ -155,7 +156,9 @@ export default function HeaderClient({ className, ctas, menu, children }: Header
         </div>
       </header>
 
-      <AnimatePresence>{isOpen && <MobileNavigation menu={menu} ctas={ctas} />}</AnimatePresence>
+      <AnimatePresence>
+        {isOpen && <MobileNavigation menu={menu} ctas={ctas} enableSearch={enableSearch} />}
+      </AnimatePresence>
     </>
   );
 }

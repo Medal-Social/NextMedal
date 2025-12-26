@@ -1,11 +1,13 @@
-import { motion } from 'framer-motion';
+import { motion, type SVGMotionProps } from 'framer-motion';
 
 interface ToggleProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 }
 
-const Path = (props: any) => (
+type PathProps = SVGMotionProps<SVGPathElement>;
+
+const Path = (props: PathProps) => (
   <motion.path
     fill="transparent"
     strokeWidth="3"

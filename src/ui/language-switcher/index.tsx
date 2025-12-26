@@ -19,37 +19,35 @@ export default function LocaleSwitcher({
   // Build translation map: locale -> URL
   const translationUrls: Record<string, string> = {};
 
+  // Helper to build locale-prefixed URL (English has no prefix)
+  const buildUrl = (lang: string, slug: string, type: string) => {
+    const prefix = lang === 'en' ? '' : `/${lang}`;
+    if (slug === 'index') {
+      return lang === 'en' ? '/' : `/${lang}`;
+    }
+    if (type === 'blog.post') {
+      return `${prefix}/blog/${slug}`;
+    }
+    return `${prefix}/${slug}`;
+  };
+
   // Only build URLs if we have page data
   if (page) {
     const currentSlug = page.metadata?.slug?.current;
-    const isIndex = currentSlug === 'index';
-    const isBlogPost = page._type === 'blog.post';
 
     // Current page URL
     if (currentSlug) {
-      if (isIndex) {
-        translationUrls[locale] = locale === 'en' ? '/' : `/${locale}`;
-      } else if (isBlogPost) {
-        translationUrls[locale] = `/${locale}/blog/${currentSlug}`;
-      } else {
-        translationUrls[locale] = `/${locale}/${currentSlug}`;
-      }
+      translationUrls[locale] = buildUrl(locale, currentSlug, page._type);
     }
 
     // Add translations
     if (page.translations) {
       for (const translation of page.translations) {
-        const transSlug = translation.slug;
-        const transLang = translation.language;
-        const transType = translation._type;
-
-        if (transSlug === 'index') {
-          translationUrls[transLang] = transLang === 'en' ? '/' : `/${transLang}`;
-        } else if (transType === 'blog.post') {
-          translationUrls[transLang] = `/${transLang}/blog/${transSlug}`;
-        } else {
-          translationUrls[transLang] = `/${transLang}/${transSlug}`;
-        }
+        translationUrls[translation.language] = buildUrl(
+          translation.language,
+          translation.slug,
+          translation._type
+        );
       }
     }
   }

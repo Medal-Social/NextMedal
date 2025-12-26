@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { stegaClean } from 'next-sanity';
 import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
@@ -30,10 +30,9 @@ const components = {
 
 export default function Hero(props: Sanity.Hero & { className?: string }) {
   const { className, content, ctas, image, options } = props;
+  const prefersReducedMotion = useReducedMotion();
 
-  // @ts-expect-error - dynamic access
   const bgFrom = stegaClean(options?.bgFrom) || 'brand-vibrant';
-  // @ts-expect-error - dynamic access
   const bgTo = stegaClean(options?.bgTo) || 'brand-purple';
 
   return (
@@ -56,16 +55,16 @@ export default function Hero(props: Sanity.Hero & { className?: string }) {
       <Section spacing="relaxed" className="relative z-10">
         <div className="grid grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:grid-cols-2">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
+            transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.5, ease: 'easeOut' }}
             className="lg:pt-4 lg:pr-4"
           >
             <div className="lg:max-w-lg mb-10">
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.4 }}
+                transition={prefersReducedMotion ? { duration: 0 } : { delay: 0.2, duration: 0.4 }}
               >
                 {content && <SharedPortableText value={content} components={components} />}
               </motion.div>
@@ -73,9 +72,11 @@ export default function Hero(props: Sanity.Hero & { className?: string }) {
               {/* Call-to-actions section */}
               {ctas && ctas.length > 0 && (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.4 }}
+                  transition={
+                    prefersReducedMotion ? { duration: 0 } : { delay: 0.3, duration: 0.4 }
+                  }
                   className="mt-8 flex gap-4"
                 >
                   <CTAList className="max-sm:min-w-full" ctas={ctas} />
