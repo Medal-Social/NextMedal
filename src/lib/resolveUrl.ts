@@ -41,7 +41,8 @@ export default function resolveUrl(
   if (!page) return '/';
 
   const slug = page.metadata?.slug?.current;
-  const path = slug === 'index' ? null : `/${slug}`;
+  const segment = page._type === 'blog.post' ? '/blog' : '';
+  const path = slug === 'index' ? null : `${segment}/${slug}`;
 
   // Convert params to string if it's a record
   let paramsStr: string | undefined;

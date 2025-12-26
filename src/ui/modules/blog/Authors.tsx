@@ -49,12 +49,13 @@ function Author({
   socialLinks?: boolean;
   bio?: boolean;
 }) {
-  const stega = author?._id
-    ? createDataAttribute({
-        id: author._id,
-        type: author._type,
-      })
-    : undefined;
+  const stega =
+    author?._id && author?._type
+      ? createDataAttribute({
+          id: author._id,
+          type: author._type,
+        })
+      : undefined;
 
   return (
     <div

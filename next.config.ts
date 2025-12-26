@@ -28,6 +28,11 @@ const config = {
           loaderFile: './src/lib/image-loader.ts',
         }
       : {}),
+    localPatterns: [
+      {
+        pathname: '/api/og/**',
+      },
+    ],
     remotePatterns: [
       {
         protocol: "https",
