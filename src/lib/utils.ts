@@ -78,7 +78,13 @@ export function slug(str: string) {
  */
 export function base64url(str: string): string {
   if (typeof Buffer !== 'undefined') {
-    return Buffer.from(str).toString('base64url');
+    // Use standard base64 and convert to base64url format
+    // ('base64url' encoding is not available in all runtimes like Edge)
+    return Buffer.from(str)
+      .toString('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
   }
 
   // Browser fallback

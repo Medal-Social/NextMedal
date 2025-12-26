@@ -19,48 +19,55 @@ export function MobileSearch({ className }: MobileSearchProps) {
   const [query, setQuery] = useState('');
   const [items, setItems] = useState<SearchResultItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  // Fetch search items on mount
+  // Fetch search items when dialog opens
   useEffect(() => {
+    if (!open) {
+      return;
+    }
+
     const controller = new AbortController();
     const { signal } = controller;
 
     async function fetchItems() {
       setIsLoading(true);
+      setError(null);
       try {
         const res = await fetch('/api/search', { signal });
         if (!res.ok) throw new Error('Failed to fetch search items');
         const data = await res.json();
         setItems(data);
-      } catch (error) {
-        if (error instanceof Error && error.name === 'AbortError') {
+      } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') {
           return;
         }
-        logger.error({ err: error }, 'Search fetch error:');
+        logger.error({ err }, 'Search fetch error:');
+        setError('Failed to load search results. Please try again.');
         setItems([]);
       } finally {
         setIsLoading(false);
       }
     }
 
-    if (open) {
-      fetchItems();
-    }
+    fetchItems();
 
     return () => controller.abort();
   }, [open]);
 
   // Focus input when dialog opens
   useEffect(() => {
-    if (open && inputRef.current) {
-      setTimeout(() => inputRef.current?.focus(), 100);
-    }
+    if (!open) return;
+
+    const timer = setTimeout(() => inputRef.current?.focus(), 100);
+    return () => clearTimeout(timer);
   }, [open]);
 
+  const lowerQuery = query.toLowerCase();
   const filteredItems = items.filter(
-    (item) => query.length === 0 || item.title.toLowerCase().includes(query.toLowerCase())
+    (item) => query.length === 0 || item.title.toLowerCase().includes(lowerQuery)
   );
 
   const handleSelect = useCallback(
@@ -119,6 +126,8 @@ export function MobileSearch({ className }: MobileSearchProps) {
           <div className="max-h-[60vh] overflow-y-auto p-2">
             {isLoading ? (
               <div className="py-8 text-center text-muted-foreground">Loading...</div>
+            ) : error ? (
+              <div className="py-8 text-center text-destructive">{error}</div>
             ) : filteredItems.length === 0 ? (
               <div className="py-8 text-center text-muted-foreground">No results found.</div>
             ) : (

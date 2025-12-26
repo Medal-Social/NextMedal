@@ -25,7 +25,7 @@ export default function BrandMenu({ children, logoData, hasBrandPage }: BrandMen
   const extension = image?.asset?.extension || 'svg';
   const label = extension === 'png' ? 'Copy Logo PNG' : 'Copy Logo SVG';
 
-  const handleCopyLogo = async (_e: React.MouseEvent) => {
+  const handleCopyLogo = async () => {
     // Context Menu items don't need preventDefault usually, but logic remains same
     try {
       // Logic to get logo URL

@@ -17,6 +17,7 @@ export default async function Header() {
       aria-label="Site header"
       ctas={ctas ?? []}
       menu={{ items: headerMenu?.items }}
+      enableSearch={enableSearch}
     >
       <div className="flex items-center">{logoNode}</div>
 

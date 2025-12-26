@@ -14,6 +14,19 @@ import { MobileSearch } from './MobileSearch';
 import ThemeToggleWrapper from './ThemeToggleWrapper';
 import type { MobileNavigationProps } from './types';
 
+function getNavLinkHref(link: Sanity.MenuItem | Sanity.Link): string {
+  if (link.internal && '_type' in link.internal && link.internal._type !== 'reference') {
+    return resolveUrl(link.internal as Sanity.PageBase, {
+      base: false,
+      params: link.params,
+    });
+  }
+  if (link.external) {
+    return stegaClean(link.external);
+  }
+  return '/';
+}
+
 export const NavLink = ({
   link,
   onClick,
@@ -22,17 +35,8 @@ export const NavLink = ({
   onClick?: () => void;
 }) => (
   <Link
-    href={
-      link.internal && (link.internal as any)._type !== 'reference'
-        ? resolveUrl(link.internal as any, {
-            base: false,
-            params: link.params,
-          })
-        : link.external
-          ? stegaClean(link.external)
-          : '/'
-    }
-    className="flex items-center gap-4 rounded-lg p-4 text-lg font-medium hover:bg-accent hover:text-primary text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+    href={getNavLinkHref(link)}
+    className="flex items-center gap-4 rounded-lg p-4 min-h-11 text-lg font-medium hover:bg-accent hover:text-primary text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
     target={link.external ? '_blank' : undefined}
     aria-label={link.external ? `${link.label} (opens in new tab)` : undefined}
     onClick={onClick}
@@ -46,7 +50,7 @@ export const NavLink = ({
   </Link>
 );
 
-export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) {
+export default function MobileNavigation({ menu, ctas, enableSearch }: MobileNavigationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Focus trap implementation
@@ -126,6 +130,7 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
 
   return (
     <motion.div
+      id="mobile-menu"
       ref={containerRef}
       initial="closed"
       animate="open"
@@ -153,7 +158,7 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
                   <motion.li key={`mobile-${item.title}-${index}`} variants={itemVariants}>
                     <Collapsible>
                       <CollapsibleTrigger
-                        className="flex w-full items-center justify-between rounded-lg p-4 text-lg font-medium hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+                        className="flex w-full items-center justify-between rounded-lg p-4 min-h-11 text-lg font-medium hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
                         aria-label={`${item.title} submenu`}
                       >
                         <span className="font-medium">{item.title}</span>
@@ -183,7 +188,7 @@ export default function MobileNavigation({ menu, ctas }: MobileNavigationProps) 
             <CTAList ctas={ctas} className="grid gap-4 *:w-full *:text-lg *:py-6" />
 
             <div className="flex flex-col gap-4 px-4 pb-6">
-              <MobileSearch className="w-full justify-start text-lg" />
+              {enableSearch && <MobileSearch className="w-full justify-start text-lg" />}
               <LocaleSwitcher
                 dropdownAlign="start"
                 className="w-full justify-start h-14 px-4 text-lg [&>span]:inline-block [&>span]:text-lg"

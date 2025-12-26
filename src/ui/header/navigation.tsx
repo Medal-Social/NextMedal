@@ -42,15 +42,17 @@ interface HeaderMenu {
   items?: MenuItem[];
 }
 
-function getLinkHref(item: MenuItem) {
-  return item.internal?.metadata?.slug?.current
-    ? resolveUrl(item.internal as unknown as Sanity.PageBase, {
-        base: false,
-        params: item.params,
-      })
-    : item.external
-      ? stegaClean(item.external)
-      : '/';
+function getLinkHref(item: MenuItem): string {
+  if (item.internal?.metadata?.slug?.current) {
+    return resolveUrl(item.internal as Sanity.PageBase, {
+      base: false,
+      params: item.params,
+    });
+  }
+  if (item.external) {
+    return stegaClean(item.external);
+  }
+  return '/';
 }
 
 function ListItem({
@@ -66,7 +68,7 @@ function ListItem({
         render={
           <Link
             href={href}
-            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
             <div className="text-sm font-medium leading-none">{title}</div>
             {children && (

@@ -40,6 +40,8 @@ export interface HeaderClientProps extends React.ComponentProps<'header'> {
   ctas: HeaderCTA[];
   /** Navigation menu configuration */
   menu: HeaderMenu;
+  /** Whether search is enabled */
+  enableSearch?: boolean;
   /** Children to render inside the header */
   children: ReactNode;
 }
@@ -52,6 +54,8 @@ export interface MobileNavigationProps {
   menu: HeaderMenu;
   /** Call-to-action buttons */
   ctas: HeaderCTA[];
+  /** Whether search is enabled */
+  enableSearch?: boolean;
 }
 
 /**
