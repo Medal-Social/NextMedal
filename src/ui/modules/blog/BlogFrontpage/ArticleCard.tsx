@@ -1,3 +1,4 @@
+import { Clock } from 'lucide-react';
 import Link from 'next/link';
 import { createDataAttribute } from 'next-sanity';
 import resolveUrl from '@/lib/resolveUrl';
@@ -124,12 +125,21 @@ export default function ArticleCard({ post, variant = 'standard', className }: A
               </span>
             )}
           </div>
-          <span className="text-xs font-medium tracking-wide text-slate-400 uppercase">
+          <div className="flex items-center gap-2 text-xs font-medium tracking-wide text-slate-400">
             <DateDisplay
               value={post.publishDate}
               data-sanity={stega.scope('publishDate').toString()}
             />
-          </span>
+            {post.readTime && (
+              <>
+                <span>·</span>
+                <span className="inline-flex items-center gap-1">
+                  <Clock className="h-3 w-3" />
+                  {post.readTime} min
+                </span>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </article>

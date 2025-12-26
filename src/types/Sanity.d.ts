@@ -94,6 +94,7 @@ declare global {
       featured?: boolean;
       metadata?: Metadata;
       relatedPosts?: BlogPost[]; // Usually dereferenced in UI
+      readTime?: number; // Calculated from word count
     }
 
     interface BlogCategory extends SanityDocument {

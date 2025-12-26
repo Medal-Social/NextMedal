@@ -253,7 +253,7 @@ h1 {
 
 h2 {
   font-size: 1.8rem;
-  margin-top: 2rem;
+  margin-top: 2.5rem;
   margin-bottom: 1rem;
 }
 
@@ -264,8 +264,8 @@ h3 {
 }
 
 p {
-  margin-bottom: 1rem;
-  line-height: 1.7;
+  margin-bottom: 1.25rem;
+  line-height: 1.8;
 }
 
 li {
@@ -330,6 +330,19 @@ samp,
   background: transparent;
   color: inherit;
   padding: 0;
+}
+
+/* Better spacing between headings and code blocks */
+.prose h2 + pre,
+.prose h3 + pre,
+.prose h4 + pre {
+  margin-top: 1rem;
+}
+
+.prose pre + h2,
+.prose pre + h3,
+.prose pre + h4 {
+  margin-top: 2.5rem;
 }
 
 @layer base {

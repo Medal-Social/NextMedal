@@ -100,7 +100,7 @@ async function getPost(params: { slug?: string }, stega?: boolean) {
 				${PT_BLOCK_QUERY},
 				_type == 'image' => { ${IMAGE_QUERY} }
 			},
-			'readTime': length(string::split(pt::text(body), ' ')) / 200,
+			'readTime': math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
 			'headings': body[style in ['h2', 'h3']]{
 				style,
 				'text': pt::text(@)

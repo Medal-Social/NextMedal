@@ -22,6 +22,7 @@ export default async function BlogFrontpage({
 			_id,
 			featured,
 			publishDate,
+			"readTime": math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
 			metadata {
 				title,
 				description,
