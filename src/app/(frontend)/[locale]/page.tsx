@@ -11,8 +11,9 @@ type Props = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export default async function Page(_props: Props) {
-  const page = await getPage();
+export default async function Page(props: Props) {
+  const { locale } = await props.params;
+  const page = await getPage(locale);
 
   if (!page) return <EmptyPage />;
 
@@ -28,18 +29,19 @@ export default async function Page(_props: Props) {
 }
 
 export async function generateMetadata(props: Props) {
+  const { locale } = await props.params;
   const searchParams = await props.searchParams;
-  const page = await getPage(false);
+  const page = await getPage(locale, false);
 
   if (!page) return {};
 
   return processMetadata(page, searchParams);
 }
 
-async function getPage(stega?: boolean) {
+async function getPage(locale: string, stega?: boolean) {
   return await fetchSanity<Sanity.Page & { placements?: Placement[] }>({
     query: PAGE_QUERY,
-    params: { slug: 'index' },
+    params: { slug: 'index', locale },
     stega,
   });
 }

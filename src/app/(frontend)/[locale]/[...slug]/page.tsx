@@ -14,8 +14,8 @@ import {
 import Modules from '@/ui/modules';
 
 export default async function Page({ params }: Props) {
-  const resolvedParams = await params;
-  const page = await getPage(resolvedParams);
+  const { slug, locale } = await params;
+  const page = await getPage(slug, locale);
   if (!page) notFound();
 
   const placements = groupPlacements(page.placements);
@@ -30,9 +30,9 @@ export default async function Page({ params }: Props) {
 }
 
 export async function generateMetadata({ params, searchParams }: Props) {
-  const resolvedParams = await params;
+  const { slug, locale } = await params;
   const resolvedSearchParams = await searchParams;
-  const page = await getPage(resolvedParams, false);
+  const page = await getPage(slug, locale, false);
   if (!page) notFound();
   return processMetadata(page, resolvedSearchParams);
 }
@@ -53,8 +53,8 @@ export async function generateStaticParams() {
   return slugs.map(({ slug }) => ({ slug: slug.split('/') }));
 }
 
-async function getPage(params: { slug?: string[] }, stega?: boolean) {
-  const slug = params.slug?.join('/');
+async function getPage(slugParts: string[] | undefined, locale: string, stega?: boolean) {
+  const slug = slugParts?.join('/');
 
   return await fetchSanityLive<
     Sanity.Page | (Sanity.ComponentLibrary & { placements?: Placement[] })
@@ -62,6 +62,7 @@ async function getPage(params: { slug?: string[] }, stega?: boolean) {
     query: groq`*[
 			_type in ['page', 'component.library'] &&
 			${SLUG_QUERY} == $slug &&
+			language == $locale &&
 			!(metadata.slug.current in ['index'])
 		][0]{
 			...,
@@ -74,12 +75,12 @@ async function getPage(params: { slug?: string[] }, stega?: boolean) {
 			},
 			${TRANSLATIONS_QUERY}
 		}`,
-    params: { slug },
+    params: { slug, locale },
     stega,
   });
 }
 
 type Props = {
-  params: Promise<{ slug?: string[] }>;
+  params: Promise<{ slug?: string[]; locale: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
