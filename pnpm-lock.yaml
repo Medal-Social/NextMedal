@@ -96,9 +96,6 @@ importers:
       pino:
         specifier: ^10.1.0
         version: 10.1.0
-      prismjs:
-        specifier: ^1.30.0
-        version: 1.30.0
       react:
         specifier: ^19.2.3
         version: 19.2.3
