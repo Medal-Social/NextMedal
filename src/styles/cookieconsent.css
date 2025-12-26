@@ -122,7 +122,7 @@
 
   /* Brand gradient accent at top */
   #cc-main .cm::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -203,7 +203,7 @@
 
   /* Gradient separator line */
   #cc-main .cm__footer::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 1rem;
@@ -238,7 +238,7 @@
   }
 
   #cc-main .pm::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;

@@ -7,10 +7,10 @@ import { stegaClean } from 'next-sanity';
 import { useCallback, useEffect, useRef } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import resolveUrl from '@/lib/resolveUrl';
+import { CommandMenu } from '@/ui/CommandMenu';
 import CTAList from '@/ui/CTAList';
 import LocaleSwitcher from '@/ui/language-switcher';
 import { ANIMATION_DURATION, ANIMATION_EASING } from './constants';
-import { MobileSearch } from './MobileSearch';
 import ThemeToggleWrapper from './ThemeToggleWrapper';
 import type { MobileNavigationProps } from './types';
 
@@ -188,7 +188,7 @@ export default function MobileNavigation({ menu, ctas, enableSearch }: MobileNav
             <CTAList ctas={ctas} className="grid gap-4 *:w-full *:text-lg *:py-6" />
 
             <div className="flex flex-col gap-4 px-4 pb-6">
-              {enableSearch && <MobileSearch className="w-full justify-start text-lg" />}
+              {enableSearch && <CommandMenu variant="mobile" className="w-full justify-start" />}
               <LocaleSwitcher
                 dropdownAlign="start"
                 className="w-full justify-start h-14 px-4 text-lg [&>span]:inline-block [&>span]:text-lg"
