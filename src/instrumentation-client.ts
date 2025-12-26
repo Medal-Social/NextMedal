@@ -5,7 +5,8 @@
 import * as Sentry from '@sentry/nextjs';
 import { env } from './lib/env';
 
-const IS_PRODUCTION = process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production';
+const IS_PRODUCTION =
+  process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production';
 
 if (env.NEXT_PUBLIC_SENTRY_DSN && IS_PRODUCTION) {
   Sentry.init({

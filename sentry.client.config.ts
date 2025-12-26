@@ -5,8 +5,9 @@
 import * as Sentry from '@sentry/nextjs';
 
 const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN;
+const IS_PRODUCTION = process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production';
 
-if (SENTRY_DSN) {
+if (SENTRY_DSN && IS_PRODUCTION) {
   Sentry.init({
     dsn: SENTRY_DSN,
 

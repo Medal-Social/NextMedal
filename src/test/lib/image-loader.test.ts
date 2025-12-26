@@ -51,7 +51,7 @@ describe('imageLoader', () => {
 
     // Temporarily mock global Buffer as undefined
     const realBuffer = global.Buffer;
-    // @ts-ignore
+    // @ts-expect-error
     delete global.Buffer;
 
     try {
