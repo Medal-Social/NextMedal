@@ -65,25 +65,29 @@ export default async function Footer() {
         <Navigation />
       </Section>
 
-      <div className="border-t border-border/40">
+      <div className="relative">
+        {/* Gradient separator */}
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+
         <Section
-          className="flex flex-wrap justify-between items-end md:items-center py-4 gap-4"
+          className="flex flex-wrap justify-between items-center py-4 gap-4"
           spacing="none"
         >
-          <div className="flex flex-col md:flex-row gap-4 md:gap-8 md:items-start text-sm text-muted-foreground">
+          {/* Left: Copyright + Links */}
+          <div className="flex flex-col md:flex-row gap-4 md:gap-8 md:items-center text-sm text-muted-foreground">
             <div>
               {copyright ? (
-                <div className="text-sm [&_p]:m-0 [&_a]:underline hover:[&_a]:text-foreground">
+                <div className="text-sm [&_p]:m-0 [&_a]:underline hover:[&_a]:text-foreground [&_a]:transition-colors">
                   <PortableText value={copyright} />
                 </div>
               ) : (
-                <p>
+                <p className="m-0">
                   © {new Date().getFullYear()} {title}. All rights reserved.
                 </p>
               )}
             </div>
 
-            <div className="flex flex-wrap gap-x-8 gap-y-2">
+            <div className="flex flex-wrap gap-x-6 gap-y-2">
               {footerLinks?.map((link) => {
                 const url =
                   link.external || (link.internal && resolveUrl(link.internal, { base: false }));
@@ -93,7 +97,7 @@ export default async function Footer() {
                   <Link
                     key={link.label}
                     href={url}
-                    className="hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="relative hover:text-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-current after:transition-all after:duration-200 hover:after:w-full"
                     target={isExternal ? '_blank' : undefined}
                     rel={isExternal ? 'noopener noreferrer' : undefined}
                     aria-label={isExternal ? `${link.label} (opens in new tab)` : undefined}
@@ -105,21 +109,22 @@ export default async function Footer() {
                   </Link>
                 );
               })}
-              <CookiePreferencesTrigger className="hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary" />
+              <CookiePreferencesTrigger className="relative hover:text-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-current after:transition-all after:duration-200 hover:after:w-full" />
             </div>
           </div>
 
+          {/* Right: Utilities */}
           <div className="flex items-center gap-4">
             <div className="hidden lg:block">
               <LocaleSwitcher
                 dropdownAlign="end"
-                className="[&>span]:inline-block text-muted-foreground hover:text-foreground hover:bg-transparent h-auto p-0 font-normal"
+                className="[&>span]:inline-block text-muted-foreground hover:text-foreground hover:bg-transparent h-auto p-0 font-normal transition-colors duration-200"
               />
             </div>
             <div className="hidden lg:block">
               <ThemeToggleWrapper
                 dropdownAlign="end"
-                className="[&>span]:inline-block text-muted-foreground hover:text-foreground hover:bg-transparent h-auto p-0 font-normal"
+                className="[&>span]:inline-block text-muted-foreground hover:text-foreground hover:bg-transparent h-auto p-0 font-normal transition-colors duration-200"
               />
             </div>
             {systemStatus && <SystemStatus status={systemStatus} />}

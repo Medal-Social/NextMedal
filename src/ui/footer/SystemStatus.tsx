@@ -40,11 +40,16 @@ export default function SystemStatus({ status, className }: SystemStatusProps) {
         rel="noopener noreferrer"
         className={containerClasses}
         aria-label={`System status: ${status.title}`}
+        data-footer-status=""
       >
         {content}
       </Link>
     );
   }
 
-  return <div className={containerClasses}>{content}</div>;
+  return (
+    <div className={containerClasses} data-footer-status="">
+      {content}
+    </div>
+  );
 }
