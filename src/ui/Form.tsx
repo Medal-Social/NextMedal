@@ -139,6 +139,14 @@ export default function Form({ form, className }: FormProps) {
     } else {
       const serverError = result?.serverError;
       const validationErrors = result?.validationErrors;
+
+      // Handle deployment drift specifically if serverError contains the specific message
+      if (typeof serverError === 'string' && serverError.includes('Action not found')) {
+        setError(serverError);
+        setLoading(false);
+        return;
+      }
+
       const errorMessage =
         serverError || (validationErrors ? 'Validation failed' : 'Something went wrong');
       setError(result?.data?.error || errorMessage);

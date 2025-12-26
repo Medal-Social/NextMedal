@@ -7,6 +7,11 @@ export const errorHandler = (e: any) => {
   // Always log the full error server-side
   logger.error(e, 'Server action error');
 
+  // Special handling for Next.js internal errors if they leak here
+  if (e instanceof Error && e.message.includes('Failed to find Server Action')) {
+    return 'Action not found. This may happen during a deployment. Please refresh the page.';
+  }
+
   // Only expose messages for trusted errors
   if (e instanceof PublicError) {
     return e.message;
