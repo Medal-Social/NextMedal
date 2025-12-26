@@ -63,14 +63,7 @@ const config = {
             permanent
         }`);
 
-    return [
-      ...cmsRedirects,
-      {
-        source: '/blog/:slug',
-        destination: '/:slug',
-        permanent: true,
-      },
-    ];
+    return [...cmsRedirects];
   },
 
   experimental: {
