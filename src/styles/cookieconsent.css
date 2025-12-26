@@ -1,96 +1,302 @@
 @layer components {
-  /* 
-    Cookie Consent Brand Overrides 
-    Mapping brand CSS variables to vanilla-cookieconsent variables
+  /*
+    Cookie Consent Brand Overrides
+    NextMedal Purple Brand Theme
   */
 
   :root {
     /* Light Mode Variables */
     --cc-bg: var(--card);
     --cc-text: var(--card-foreground);
-    --cc-btn-primary-bg: var(--primary);
-    --cc-btn-primary-text: var(--primary-foreground);
-    --cc-btn-primary-hover-bg: var(--color-brand-600);
-    --cc-btn-secondary-bg: var(--muted);
-    --cc-btn-secondary-text: var(--foreground);
-    --cc-btn-secondary-hover-bg: var(--color-brand-100);
-    --cc-toggle-bg-on: var(--primary);
-    --cc-toggle-bg-off: var(--muted-foreground);
+    --cc-primary-color: var(--color-brand-900);
+    --cc-secondary-color: var(--muted-foreground);
+
+    /* Primary Button - Brand Purple */
+    --cc-btn-primary-bg: var(--color-brand-700);
+    --cc-btn-primary-text: oklch(0.985 0 0);
+    --cc-btn-primary-border-color: var(--color-brand-700);
+    --cc-btn-primary-hover-bg: var(--color-brand-500);
+    --cc-btn-primary-hover-border-color: var(--color-brand-500);
+
+    /* Secondary Button - Light Lavender */
+    --cc-btn-secondary-bg: var(--color-brand-100);
+    --cc-btn-secondary-text: var(--color-brand-800);
+    --cc-btn-secondary-border-color: var(--color-brand-200);
+    --cc-btn-secondary-hover-bg: var(--color-brand-200);
+    --cc-btn-secondary-hover-border-color: var(--color-brand-300);
+
+    /* Toggle */
+    --cc-toggle-bg-on: var(--color-brand-500);
+    --cc-toggle-bg-off: var(--color-brand-300);
     --cc-toggle-knob-bg: var(--background);
-    --cc-cookie-category-block-bg: var(--muted);
-    --cc-cookie-category-block-bg-hover: var(--color-brand-50);
-    --cc-section-border: var(--border);
-    --cc-cookie-table-border: var(--border);
-    --cc-overlay-bg: rgba(0, 0, 0, 0.4);
-    --cc-webkit-scrollbar-bg: var(--muted);
-    --cc-webkit-scrollbar-bg-hover: var(--muted-foreground);
+
+    /* Category Blocks */
+    --cc-cookie-category-block-bg: var(--color-brand-50);
+    --cc-cookie-category-block-bg-hover: var(--color-brand-100);
+
+    /* Separators and Borders */
+    --cc-section-border: var(--color-brand-100);
+    --cc-cookie-table-border: var(--color-brand-100);
+
+    /* Footer */
+    --cc-footer-bg: var(--color-brand-50);
+    --cc-footer-border-color: var(--color-brand-100);
+
+    /* Links */
+    --cc-link-color: var(--color-brand-500);
+
+    /* Overlay */
+    --cc-overlay-bg: rgba(26, 16, 53, 0.5);
+
+    /* Scrollbar */
+    --cc-webkit-scrollbar-bg: var(--color-brand-100);
+    --cc-webkit-scrollbar-bg-hover: var(--color-brand-300);
 
     /* Font and Radius */
     /* biome-ignore lint/complexity/noImportantStyles: required for library override */
     --cc-font-family: var(--font-geist-sans, ui-sans-serif, system-ui, sans-serif) !important;
-    --cc-btn-border-radius: var(--radius);
-    --cc-modal-border-radius: var(--radius);
+    --cc-btn-border-radius: calc(var(--radius) - 2px);
+    --cc-modal-border-radius: 0.75rem;
   }
 
   .cc--darkmode {
     /* Dark Mode Variables */
-    --cc-bg: var(--card);
-    --cc-text: var(--card-foreground);
-    --cc-btn-primary-bg: var(--primary);
-    --cc-btn-primary-text: var(--primary-foreground);
+    --cc-bg: var(--color-brand-900);
+    --cc-text: oklch(0.985 0 0);
+    --cc-primary-color: var(--color-brand-100);
+    --cc-secondary-color: var(--color-brand-200);
+
+    /* Primary Button */
+    --cc-btn-primary-bg: var(--color-brand-500);
+    --cc-btn-primary-text: oklch(0.985 0 0);
+    --cc-btn-primary-border-color: var(--color-brand-500);
     --cc-btn-primary-hover-bg: var(--color-brand-400);
-    --cc-btn-secondary-bg: var(--muted);
-    --cc-btn-secondary-text: var(--foreground);
-    --cc-btn-secondary-hover-bg: var(--color-brand-800);
-    --cc-toggle-bg-on: var(--primary);
-    --cc-toggle-bg-off: var(--muted-foreground);
-    --cc-toggle-knob-bg: var(--foreground);
-    --cc-cookie-category-block-bg: var(--muted);
-    --cc-cookie-category-block-bg-hover: var(--color-brand-900);
-    --cc-section-border: var(--border);
-    --cc-cookie-table-border: var(--border);
-    --cc-overlay-bg: rgba(0, 0, 0, 0.7);
+    --cc-btn-primary-hover-border-color: var(--color-brand-400);
+
+    /* Secondary Button */
+    --cc-btn-secondary-bg: var(--color-brand-800);
+    --cc-btn-secondary-text: var(--color-brand-100);
+    --cc-btn-secondary-border-color: var(--color-brand-700);
+    --cc-btn-secondary-hover-bg: var(--color-brand-700);
+    --cc-btn-secondary-hover-border-color: var(--color-brand-600);
+
+    /* Toggle */
+    --cc-toggle-bg-on: var(--color-brand-400);
+    --cc-toggle-bg-off: var(--color-brand-700);
+    --cc-toggle-knob-bg: oklch(0.985 0 0);
+
+    /* Category Blocks */
+    --cc-cookie-category-block-bg: var(--color-brand-800);
+    --cc-cookie-category-block-bg-hover: var(--color-brand-700);
+
+    /* Separators */
+    --cc-section-border: var(--color-brand-700);
+    --cc-cookie-table-border: var(--color-brand-700);
+
+    /* Footer */
+    --cc-footer-bg: transparent;
+    --cc-footer-border-color: var(--color-brand-800);
+
+    /* Links */
+    --cc-link-color: var(--color-brand-400);
+
+    /* Overlay */
+    --cc-overlay-bg: rgba(26, 16, 53, 0.85);
   }
 
-  /* Custom overrides for finer control */
+  /* ============================================
+     CONSENT MODAL (.cm) OVERRIDES
+     ============================================ */
+
   #cc-main .cm {
-    border: 1px solid var(--border);
+    /* Card-like styling matching card.tsx */
+    border: none;
+    border-radius: 0.75rem;
     box-shadow:
-      0 10px 15px -3px rgb(0 0 0 / 0.1),
-      0 4px 6px -4px rgb(0 0 0 / 0.1);
-    max-width: 24em; /* Slightly wider but cleaner */
+      0 1px 2px 0 rgb(0 0 0 / 0.05),
+      0 0 0 1px rgb(0 0 0 / 0.1);
+    max-width: 26em;
+    overflow: visible;
+    position: relative;
   }
 
-  #cc-main .pm {
-    border-left: 1px solid var(--border);
-    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.1);
+  /* Brand gradient accent at top */
+  #cc-main .cm::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--color-brand-500), var(--color-brand-700));
+    border-radius: 0.75rem 0.75rem 0 0;
+    z-index: 1;
   }
 
-  /* Make buttons look like brand buttons */
+  .cc--darkmode #cc-main .cm {
+    box-shadow:
+      0 10px 25px -3px rgba(0, 0, 0, 0.4),
+      0 4px 6px -4px rgba(0, 0, 0, 0.3),
+      0 0 0 1px var(--color-brand-700);
+  }
+
+  .cc--darkmode #cc-main .cm::before {
+    background: linear-gradient(to right, var(--color-brand-400), var(--color-brand-600));
+  }
+
+  /* Title styling */
+  #cc-main .cm__title {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    font-size: 1.1em;
+    color: var(--color-brand-900);
+  }
+
+  .cc--darkmode #cc-main .cm__title {
+    color: var(--color-brand-100);
+  }
+
+  /* Description styling */
+  #cc-main .cm__desc {
+    line-height: 1.7;
+  }
+
+  /* ============================================
+     BUTTON OVERRIDES
+     ============================================ */
+
   #cc-main .cm__btn,
   #cc-main .pm__btn {
+    /* Match button.tsx sizing */
+    height: 2.25rem;
+    min-height: 2.25rem;
+    padding: 0.5em 1em;
     font-weight: 500;
+    font-size: 0.875rem;
     transition: all 0.2s ease;
-    font-size: 0.875rem; /* text-sm */
-    padding: 0.6em 1.2em;
+    border-radius: calc(var(--radius) - 2px);
   }
 
-  /* Soften link color in footer */
+  /* Focus states */
+  #cc-main .cm__btn:focus-visible,
+  #cc-main .pm__btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-brand-500) 40%, transparent);
+  }
+
+  /* Primary button hover enhancement */
+  #cc-main .cm__btn:not(.cm__btn--secondary):hover,
+  #cc-main .pm__btn:not(.pm__btn--secondary):hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(126, 63, 172, 0.3);
+  }
+
+  /* ============================================
+     FOOTER OVERRIDES
+     ============================================ */
+
+  #cc-main .cm__footer {
+    position: relative;
+    background: var(--cc-footer-bg);
+    border-top: none;
+  }
+
+  /* Gradient separator line */
+  #cc-main .cm__footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 1rem;
+    right: 1rem;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--cc-section-border), transparent);
+  }
+
   #cc-main .cm__footer a,
   #cc-main .pm__footer a {
     color: var(--muted-foreground);
     text-decoration: underline;
-    transition: color 0.2s;
+    text-underline-offset: 2px;
+    transition: color 0.2s ease;
   }
 
   #cc-main .cm__footer a:hover,
   #cc-main .pm__footer a:hover {
-    color: var(--foreground);
+    color: var(--cc-link-color);
   }
 
-  /* Primary button hover effect */
-  #cc-main .cc__btn--primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Slightly softer shadow */
+  /* ============================================
+     PREFERENCES MODAL (.pm) OVERRIDES
+     ============================================ */
+
+  #cc-main .pm {
+    border-radius: 0.75rem;
+    border-left: 1px solid var(--cc-section-border);
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: visible;
+  }
+
+  #cc-main .pm::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--color-brand-500), var(--color-brand-700));
+    border-radius: 0.75rem 0.75rem 0 0;
+    z-index: 1;
+  }
+
+  .cc--darkmode #cc-main .pm {
+    border-left-color: var(--color-brand-700);
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .cc--darkmode #cc-main .pm::before {
+    background: linear-gradient(to right, var(--color-brand-400), var(--color-brand-600));
+  }
+
+  /* Preferences modal title */
+  #cc-main .pm__title {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-brand-900);
+  }
+
+  .cc--darkmode #cc-main .pm__title {
+    color: var(--color-brand-100);
+  }
+
+  /* Section toggle category blocks */
+  #cc-main .pm__section--toggle .pm__section-title {
+    border-radius: calc(var(--radius) - 2px);
+  }
+
+  /* Toggle switch gradient */
+  #cc-main .section__toggle:checked ~ .toggle__icon {
+    background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-600));
+    box-shadow: 0 0 0 1px var(--color-brand-500);
+  }
+
+  /* ============================================
+     CLOSE BUTTON OVERRIDE
+     ============================================ */
+
+  #cc-main .cm__btn--close,
+  #cc-main .pm__close-btn {
+    border-radius: 50%;
+    transition: all 0.2s ease;
+  }
+
+  #cc-main .cm__btn--close:hover,
+  #cc-main .pm__close-btn:hover {
+    background: var(--color-brand-100);
+  }
+
+  .cc--darkmode #cc-main .cm__btn--close:hover,
+  .cc--darkmode #cc-main .pm__close-btn:hover {
+    background: var(--color-brand-700);
   }
 }
