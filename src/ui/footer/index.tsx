@@ -69,10 +69,7 @@ export default async function Footer() {
         {/* Gradient separator */}
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
 
-        <Section
-          className="flex flex-wrap justify-between items-center py-4 gap-4"
-          spacing="none"
-        >
+        <Section className="flex flex-wrap justify-between items-center py-4 gap-4" spacing="none">
           {/* Left: Copyright + Links */}
           <div className="flex flex-col md:flex-row gap-4 md:gap-8 md:items-center text-sm text-muted-foreground">
             <div>

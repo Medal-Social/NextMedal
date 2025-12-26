@@ -19,6 +19,7 @@ const BASE_BOTTOM_OFFSET = 32; // 8 * 4 = 32px (bottom-8)
 
 // Collision detection selectors for common overlapping elements
 const COLLISION_SELECTORS = [
+  '[data-footer-status]', // Footer system status
   '#cc-main .cm', // Cookie consent (vanilla-cookieconsent)
   '[data-chat-widget]', // Generic chat widget
   '.intercom-lightweight-app-launcher', // Intercom
@@ -217,7 +218,7 @@ export default function ScrollToTop() {
     <AnimatePresence mode="wait">
       {isVisible && (
         <motion.div
-          className="fixed right-8 z-[60]"
+          className="fixed right-4 md:right-8 z-[60]"
           animate={{ bottom: bottomOffset }}
           transition={prefersReducedMotion ? { duration: 0 } : positionSpring}
         >
