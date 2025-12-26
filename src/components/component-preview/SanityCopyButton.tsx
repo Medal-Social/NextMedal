@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { logger } from '@/lib/logger';
-import { cn } from '@/lib/utils';
+import { base64, cn } from '@/lib/utils';
 
 interface SanityCopyButtonProps {
   data: any;
@@ -90,10 +90,10 @@ export default function SanityCopyButton({ data, className }: SanityCopyButtonPr
 
       // 3. Encode to Base64
       const jsonString = JSON.stringify(payload);
-      const base64 = btoa(unescape(encodeURIComponent(jsonString)));
+      const encodedBase64 = base64(jsonString);
 
       // 4. Create the HTML snippet Sanity expects
-      const htmlSnippet = `<div data-sanity-clipboard-base64="${base64}">Sanity Studio Data</div>`;
+      const htmlSnippet = `<div data-sanity-clipboard-base64="${encodedBase64}">Sanity Studio Data</div>`;
 
       // 5. Use ClipboardItem API to write both text and HTML
       const clipboardItem = new ClipboardItem({

@@ -5,17 +5,28 @@
 import * as Sentry from '@sentry/nextjs';
 import { env } from './lib/env';
 
-Sentry.init({
-  dsn: env.NEXT_PUBLIC_SENTRY_DSN,
+const IS_PRODUCTION = process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production';
 
-  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: 1,
-  // Enable logs to be sent to Sentry
-  enableLogs: true,
+if (env.NEXT_PUBLIC_SENTRY_DSN && IS_PRODUCTION) {
+  Sentry.init({
+    dsn: env.NEXT_PUBLIC_SENTRY_DSN,
 
-  // Enable sending user PII (Personally Identifiable Information)
-  // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
-  sendDefaultPii: true,
-});
+    // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
+    tracesSampleRate: 1,
+    // Enable logs to be sent to Sentry
+    enableLogs: true,
 
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
+    // Enable sending user PII (Personally Identifiable Information)
+    // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
+    sendDefaultPii: true,
+  });
+}
+
+export const onRouterTransitionStart = (
+  href: string,
+  navigationType: 'push' | 'replace' | 'back' | 'forward' | string
+) => {
+  if (IS_PRODUCTION) {
+    return Sentry.captureRouterTransitionStart(href, navigationType);
+  }
+};
