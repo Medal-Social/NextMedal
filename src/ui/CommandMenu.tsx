@@ -109,12 +109,7 @@ export function CommandMenu() {
                       key={item._id}
                       value={item._id}
                       keywords={[item.title]}
-                      onSelect={() => runCommand(() => router.push(item.href))}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        runCommand(() => router.push(item.href));
-                      }}
+                      onClick={() => runCommand(() => router.push(item.href))}
                     >
                       <FileText className="mr-2 h-4 w-4" />
                       <span>{item.title}</span>
@@ -132,12 +127,7 @@ export function CommandMenu() {
                       key={item._id}
                       value={item._id}
                       keywords={[item.title]}
-                      onSelect={() => runCommand(() => router.push(item.href))}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        runCommand(() => router.push(item.href));
-                      }}
+                      onClick={() => runCommand(() => router.push(item.href))}
                     >
                       <FileText className="mr-2 h-4 w-4" />
                       <span>{item.title}</span>

@@ -27,7 +27,7 @@ export default async function Footer() {
           <Link
             className={cn(
               'h3 md:h2 max-w-max',
-              'transition-colors hover:text-primary',
+              'motion-safe:transition-all motion-safe:duration-200 hover:text-primary motion-safe:hover:scale-105 origin-left',
               'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm'
             )}
             href="/"
@@ -94,7 +94,7 @@ export default async function Footer() {
                   <Link
                     key={link.label}
                     href={url}
-                    className="relative hover:text-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-current after:transition-all after:duration-200 hover:after:w-full"
+                    className="relative hover:text-foreground motion-safe:transition-all motion-safe:duration-200 focus:outline-none focus:ring-2 focus:ring-primary after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-current motion-safe:after:transition-all motion-safe:after:duration-200 motion-safe:hover:after:w-full"
                     target={isExternal ? '_blank' : undefined}
                     rel={isExternal ? 'noopener noreferrer' : undefined}
                     aria-label={isExternal ? `${link.label} (opens in new tab)` : undefined}
@@ -106,7 +106,7 @@ export default async function Footer() {
                   </Link>
                 );
               })}
-              <CookiePreferencesTrigger className="relative hover:text-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-current after:transition-all after:duration-200 hover:after:w-full" />
+              <CookiePreferencesTrigger className="relative hover:text-foreground motion-safe:transition-all motion-safe:duration-200 focus:outline-none focus:ring-2 focus:ring-primary after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-current motion-safe:after:transition-all motion-safe:after:duration-200 motion-safe:hover:after:w-full" />
             </div>
           </div>
 

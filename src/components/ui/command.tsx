@@ -145,9 +145,9 @@ function CommandItem({
   className,
   children,
   keywords,
-  onSelect,
+  onClick,
   ...props
-}: Combobox.Item.Props & { keywords?: string[]; onSelect?: (value: string) => void }) {
+}: Combobox.Item.Props & { keywords?: string[]; onClick?: React.MouseEventHandler<HTMLElement> }) {
   return (
     <Combobox.Item
       data-slot="command-item"
@@ -155,8 +155,8 @@ function CommandItem({
         "data-highlighted:bg-muted data-highlighted:text-foreground data-highlighted:**:[svg]:text-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none [&_svg:not([class*='size-'])]:size-4 [[data-slot=dialog-content]_&]:rounded-lg! group/command-item data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
         className
       )}
+      onClick={onClick}
       {...props}
-      onSelect={onSelect as any}
     >
       {children}
       <CheckIcon className="ml-auto opacity-0 group-has-[[data-slot=command-shortcut]]/command-item:hidden group-data-[checked=true]/command-item:opacity-100" />

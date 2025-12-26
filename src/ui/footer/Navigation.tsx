@@ -99,7 +99,7 @@ export default async function Menu() {
                               href={stegaClean(link.external)}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-muted-foreground text-sm hover:text-foreground transition-all duration-200 hover:translate-x-1 focus:outline-none focus:ring-2 focus:ring-primary"
+                              className="text-muted-foreground text-sm hover:text-foreground motion-safe:transition-all motion-safe:duration-200 motion-safe:hover:translate-x-1 focus:outline-none focus:ring-2 focus:ring-primary"
                               aria-label={`${link.label} (opens in new tab)`}
                             >
                               <div className="flex items-center gap-1">
@@ -112,13 +112,13 @@ export default async function Menu() {
                               href={resolveUrl(link.internal as InternalLink, {
                                 base: false,
                               })}
-                              className="text-muted-foreground text-sm hover:text-foreground transition-all duration-200 hover:translate-x-1 focus:outline-none focus:ring-2 focus:ring-primary"
+                              className="text-muted-foreground text-sm hover:text-foreground motion-safe:transition-all motion-safe:duration-200 motion-safe:hover:translate-x-1 focus:outline-none focus:ring-2 focus:ring-primary"
                             >
                               {link.label || link.internal.title}
                             </Link>
                           ) : link ? (
                             <CTA
-                              className="text-muted-foreground text-sm hover:text-foreground transition-all duration-200 hover:translate-x-1 focus:outline-none focus:ring-2 focus:ring-primary"
+                              className="text-muted-foreground text-sm hover:text-foreground motion-safe:transition-all motion-safe:duration-200 motion-safe:hover:translate-x-1 focus:outline-none focus:ring-2 focus:ring-primary"
                               link={link}
                               style="link"
                             />
