@@ -77,10 +77,21 @@ export function slug(str: string) {
  * Works in both Node.js and browser environments.
  */
 export function base64url(str: string): string {
-  // Use standard base64 and convert to base64url format
-  // This works consistently across Node.js, Edge runtime, and browsers
-  return base64(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-}
+  if (typeof Buffer !== 'undefined') {
+    // Use standard base64 and convert to base64url format
+    // ('base64url' encoding is not available in all runtimes like Edge)
+    return Buffer.from(str)
+      .toString('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+  }
+
+  // Browser fallback
+  const utf8Bytes = new TextEncoder().encode(str);
+  const binaryStr = Array.from(utf8Bytes, (byte) => String.fromCharCode(byte)).join('');
+  return btoa(binaryStr).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
 
 /**
  * Encodes a string to a standard Base64 string.

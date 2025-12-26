@@ -1,17 +1,16 @@
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { Img } from '@/ui/Img';
+import { Img, Source } from '@/ui/Img';
 import BrandMenu from './BrandMenu';
-
-interface LogoProps {
-  title: string;
-  logo: Sanity.Logo | undefined;
-  brandPage: string | undefined;
-}
+import type { LogoProps } from './types';
 
 export default function Logo({ title, logo, brandPage }: LogoProps) {
   const logoImageDark = logo?.image?.dark || logo?.image?.default || logo?.image?.light;
   const logoImageLight = logo?.image?.light || logo?.image?.default || logo?.image?.dark;
+  const hasLogoImages = logoImageDark || logoImageLight;
+
+  // If both images are the same, just render one image
+  const isSameImage = logoImageDark === logoImageLight;
 
   return (
     <BrandMenu logoData={logo} hasBrandPage={!!brandPage}>
@@ -23,23 +22,29 @@ export default function Logo({ title, logo, brandPage }: LogoProps) {
         href="/"
         aria-label={`Return to ${title} homepage`}
       >
-        {logoImageDark ? (
-          <Img
-            className="hidden dark:inline-block max-h-[1.2em] w-auto filter brightness-150 drop-shadow-md"
-            image={logoImageDark}
-            alt={`${logo?.name || title} logo - dark version`}
-          />
+        {hasLogoImages ? (
+          <picture>
+            {/* Dark mode source - uses prefers-color-scheme media query */}
+            {logoImageDark && !isSameImage && (
+              <Source image={logoImageDark} media="(prefers-color-scheme: dark)" />
+            )}
+            {/* Light mode / default image */}
+            {logoImageLight ? (
+              <Img
+                className="max-h-[1.2em] w-auto filter brightness-150 drop-shadow-md"
+                image={logoImageLight}
+                alt={`${logo?.name || title} logo`}
+              />
+            ) : logoImageDark ? (
+              <Img
+                className="max-h-[1.2em] w-auto filter brightness-150 drop-shadow-md"
+                image={logoImageDark}
+                alt={`${logo?.name || title} logo`}
+              />
+            ) : null}
+          </picture>
         ) : (
-          <span className="hidden dark:inline-block">{title}</span>
-        )}
-        {logoImageLight ? (
-          <Img
-            className="inline-block dark:hidden max-h-[1.2em] w-auto filter brightness-150 drop-shadow-md"
-            image={logoImageLight}
-            alt={`${logo?.name || title} logo - light version`}
-          />
-        ) : (
-          <span className="inline-block dark:hidden">{title}</span>
+          <span>{title}</span>
         )}
       </Link>
     </BrandMenu>

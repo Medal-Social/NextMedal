@@ -1,3 +1,4 @@
+import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { PortableText } from 'next-sanity';
 import CookiePreferencesTrigger from '@/components/CookiePreferencesTrigger';
@@ -11,6 +12,7 @@ import LocaleSwitcher from '@/ui/language-switcher';
 import Social from '@/ui/Social';
 import Navigation from './Navigation';
 import SystemStatus from './SystemStatus';
+import Wrapper from './wrapper';
 
 export default async function Footer() {
   const { title, tagline, logo, copyright, footerLinks, systemStatus } = await getSite();
@@ -19,11 +21,15 @@ export default async function Footer() {
   const logoImageLight = logo?.image?.light || logo?.image?.default || logo?.image?.dark;
 
   return (
-    <footer className="bg-background text-foreground">
+    <Wrapper className="bg-background text-foreground">
       <Section className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-x-12 gap-y-6 pb-8">
         <div className="flex flex-col gap-6">
           <Link
-            className={cn('h3 md:h2 max-w-max', 'transition-colors hover:text-primary')}
+            className={cn(
+              'h3 md:h2 max-w-max',
+              'motion-safe:transition-all motion-safe:duration-200 hover:text-primary motion-safe:hover:scale-105 origin-left',
+              'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm'
+            )}
             href="/"
             aria-label={`Return to ${title} homepage`}
           >
@@ -59,61 +65,69 @@ export default async function Footer() {
         <Navigation />
       </Section>
 
-      <div className="border-t border-border/40">
-        <Section
-          className="flex flex-wrap justify-between items-end md:items-center py-4 gap-4"
-          spacing="none"
-        >
-          <div className="flex flex-col md:flex-row gap-4 md:gap-8 md:items-start text-sm text-muted-foreground">
+      <div className="relative">
+        {/* Gradient separator */}
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+
+        <Section className="flex flex-wrap justify-between items-center py-4 gap-4" spacing="none">
+          {/* Left: Copyright + Links */}
+          <div className="flex flex-col md:flex-row gap-4 md:gap-8 md:items-center text-sm text-muted-foreground">
             <div>
               {copyright ? (
-                <div className="text-sm [&_p]:m-0 [&_a]:underline hover:[&_a]:text-foreground">
+                <div className="text-sm [&_p]:m-0 [&_a]:underline hover:[&_a]:text-foreground [&_a]:transition-colors">
                   <PortableText value={copyright} />
                 </div>
               ) : (
-                <p>
+                <p className="m-0">
                   © {new Date().getFullYear()} {title}. All rights reserved.
                 </p>
               )}
             </div>
 
-            <div className="flex flex-wrap gap-x-8 gap-y-2">
-              {footerLinks?.map((link, i) => {
+            <div className="flex flex-wrap gap-x-6 gap-y-2">
+              {footerLinks?.map((link) => {
                 const url =
                   link.external || (link.internal && resolveUrl(link.internal, { base: false }));
                 if (!url) return null;
+                const isExternal = link.newTab || !!link.external;
                 return (
                   <Link
-                    key={i}
+                    key={link.label}
                     href={url}
-                    className="hover:text-foreground transition-colors"
-                    target={link.newTab ? '_blank' : undefined}
+                    className="relative hover:text-foreground motion-safe:transition-all motion-safe:duration-200 focus:outline-none focus:ring-2 focus:ring-primary after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-current motion-safe:after:transition-all motion-safe:after:duration-200 motion-safe:hover:after:w-full"
+                    target={isExternal ? '_blank' : undefined}
+                    rel={isExternal ? 'noopener noreferrer' : undefined}
+                    aria-label={isExternal ? `${link.label} (opens in new tab)` : undefined}
                   >
-                    {link.label}
+                    <span className="inline-flex items-center gap-1">
+                      {link.label}
+                      {isExternal && <ExternalLink className="h-3 w-3" aria-hidden="true" />}
+                    </span>
                   </Link>
                 );
               })}
-              <CookiePreferencesTrigger className="hover:text-foreground transition-colors" />
+              <CookiePreferencesTrigger className="relative hover:text-foreground motion-safe:transition-all motion-safe:duration-200 focus:outline-none focus:ring-2 focus:ring-primary after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-current motion-safe:after:transition-all motion-safe:after:duration-200 motion-safe:hover:after:w-full" />
             </div>
           </div>
 
+          {/* Right: Utilities */}
           <div className="flex items-center gap-4">
             <div className="hidden lg:block">
               <LocaleSwitcher
                 dropdownAlign="end"
-                className="[&>span]:inline-block text-muted-foreground hover:text-foreground hover:bg-transparent h-auto p-0 font-normal"
+                className="[&>span]:inline-block text-muted-foreground hover:text-foreground hover:bg-transparent h-auto p-0 font-normal transition-colors duration-200"
               />
             </div>
             <div className="hidden lg:block">
               <ThemeToggleWrapper
                 dropdownAlign="end"
-                className="[&>span]:inline-block text-muted-foreground hover:text-foreground hover:bg-transparent h-auto p-0 font-normal"
+                className="[&>span]:inline-block text-muted-foreground hover:text-foreground hover:bg-transparent h-auto p-0 font-normal transition-colors duration-200"
               />
             </div>
             {systemStatus && <SystemStatus status={systemStatus} />}
           </div>
         </Section>
       </div>
-    </footer>
+    </Wrapper>
   );
 }

@@ -17,7 +17,7 @@ export default function SystemStatus({ status, className }: SystemStatusProps) {
   const content = (
     <>
       <span className="relative flex h-2 w-2 shrink-0">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75" />
+        <span className="motion-safe:animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75" />
         <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-500" />
       </span>
       <span className="text-xs font-medium uppercase tracking-wider text-foreground group-hover:text-primary transition-colors">
@@ -28,6 +28,7 @@ export default function SystemStatus({ status, className }: SystemStatusProps) {
 
   const containerClasses = cn(
     'group flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/30 hover:bg-muted/50 transition-colors border border-border/40',
+    'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
     className
   );
 
@@ -39,11 +40,16 @@ export default function SystemStatus({ status, className }: SystemStatusProps) {
         rel="noopener noreferrer"
         className={containerClasses}
         aria-label={`System status: ${status.title}`}
+        data-footer-status=""
       >
         {content}
       </Link>
     );
   }
 
-  return <div className={containerClasses}>{content}</div>;
+  return (
+    <div className={containerClasses} data-footer-status="">
+      {content}
+    </div>
+  );
 }

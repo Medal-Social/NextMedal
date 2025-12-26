@@ -4,23 +4,27 @@ import { motion, type Variants } from 'framer-motion';
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { stegaClean } from 'next-sanity';
-import type { ReactNode } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import resolveUrl from '@/lib/resolveUrl';
+import { CommandMenu } from '@/ui/CommandMenu';
 import CTAList from '@/ui/CTAList';
 import LocaleSwitcher from '@/ui/language-switcher';
+import { ANIMATION_DURATION, ANIMATION_EASING } from './constants';
 import ThemeToggleWrapper from './ThemeToggleWrapper';
+import type { MobileNavigationProps } from './types';
 
-// Toggle import removed as it's no longer used
-
-interface MobileNavigationProps {
-  menu: {
-    items?: (Sanity.MenuItem | Sanity.DropdownMenu)[];
-  };
-  ctas: any;
-  headerLogo?: ReactNode;
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+function getNavLinkHref(link: Sanity.MenuItem | Sanity.Link): string {
+  if (link.internal && '_type' in link.internal && link.internal._type !== 'reference') {
+    return resolveUrl(link.internal as Sanity.PageBase, {
+      base: false,
+      params: link.params,
+    });
+  }
+  if (link.external) {
+    return stegaClean(link.external);
+  }
+  return '/';
 }
 
 export const NavLink = ({
@@ -31,17 +35,8 @@ export const NavLink = ({
   onClick?: () => void;
 }) => (
   <Link
-    href={
-      link.internal && (link.internal as any)._type !== 'reference'
-        ? resolveUrl(link.internal as any, {
-            base: false,
-            params: link.params,
-          })
-        : link.external
-          ? stegaClean(link.external)
-          : '/'
-    }
-    className="flex items-center gap-4 rounded-lg p-4 text-lg font-medium hover:bg-accent hover:text-primary text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+    href={getNavLinkHref(link)}
+    className="flex items-center gap-4 rounded-lg p-4 min-h-11 text-lg font-medium hover:bg-accent hover:text-primary text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
     target={link.external ? '_blank' : undefined}
     aria-label={link.external ? `${link.label} (opens in new tab)` : undefined}
     onClick={onClick}
@@ -55,18 +50,59 @@ export const NavLink = ({
   </Link>
 );
 
-export default function MobileNavigation({
-  menu,
-  ctas,
-}: Omit<MobileNavigationProps, 'headerLogo' | 'isOpen' | 'setIsOpen'>) {
+export default function MobileNavigation({ menu, ctas, enableSearch }: MobileNavigationProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Focus trap implementation
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key !== 'Tab') return;
+
+    const focusableElements = containerRef.current?.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+
+    if (!focusableElements || focusableElements.length === 0) return;
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    if (e.shiftKey && document.activeElement === firstElement) {
+      e.preventDefault();
+      lastElement.focus();
+    } else if (!e.shiftKey && document.activeElement === lastElement) {
+      e.preventDefault();
+      firstElement.focus();
+    }
+  }, []);
+
+  // Set up focus trap on mount
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+
+    // Focus first focusable element on mount
+    const timer = setTimeout(() => {
+      const focusableElements = containerRef.current?.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled])'
+      );
+      if (focusableElements && focusableElements.length > 0) {
+        focusableElements[0].focus();
+      }
+    }, ANIMATION_DURATION.menuItemsDelay);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      clearTimeout(timer);
+    };
+  }, [handleKeyDown]);
+
   const containerVariants: Variants = {
     closed: {
       opacity: 0,
       y: '-100%',
       transition: {
         type: 'tween',
-        ease: [0.32, 0.72, 0, 1],
-        duration: 0.5,
+        ease: ANIMATION_EASING.mobileMenu,
+        duration: ANIMATION_DURATION.mobileMenuSlide / 1000,
       },
     },
     open: {
@@ -74,27 +110,36 @@ export default function MobileNavigation({
       y: 0,
       transition: {
         type: 'tween',
-        ease: [0.32, 0.72, 0, 1],
-        duration: 0.5,
-        delay: 0.1, // Wait for icon animation
-        staggerChildren: 0.05,
-        delayChildren: 0.2,
+        ease: ANIMATION_EASING.mobileMenu,
+        duration: ANIMATION_DURATION.mobileMenuSlide / 1000,
+        delay: 0.1,
+        staggerChildren: ANIMATION_DURATION.menuItemStagger / 1000,
+        delayChildren: ANIMATION_DURATION.menuItemsDelay / 1000,
       },
     },
   };
 
   const itemVariants = {
     closed: { opacity: 0, y: -10 },
-    open: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+    open: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: ANIMATION_DURATION.menuItemAnimation / 1000 },
+    },
   };
 
   return (
     <motion.div
+      id="mobile-menu"
+      ref={containerRef}
       initial="closed"
       animate="open"
       exit="closed"
       variants={containerVariants}
       className="fixed inset-0 z-[40] flex h-[100dvh] w-full flex-col overflow-hidden bg-background text-foreground lg:hidden pt-[var(--header-height)]"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Mobile navigation menu"
     >
       <nav className="flex-1 overflow-y-auto pb-safe" aria-label="Mobile navigation">
         <div className="mx-auto max-w-screen-xl px-4 py-6 space-y-8">
@@ -113,12 +158,12 @@ export default function MobileNavigation({
                   <motion.li key={`mobile-${item.title}-${index}`} variants={itemVariants}>
                     <Collapsible>
                       <CollapsibleTrigger
-                        className="flex w-full items-center justify-between rounded-lg p-4 text-lg font-medium hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+                        className="flex w-full items-center justify-between rounded-lg p-4 min-h-11 text-lg font-medium hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
                         aria-label={`${item.title} submenu`}
                       >
                         <span className="font-medium">{item.title}</span>
                         <ChevronDown
-                          className="h-5 w-5 transition-transform duration-200 group-data-[state=open]:rotate-180"
+                          className="h-5 w-5 transition-transform duration-200 [[data-state=open]>&]:rotate-180"
                           aria-hidden="true"
                         />
                       </CollapsibleTrigger>
@@ -143,6 +188,7 @@ export default function MobileNavigation({
             <CTAList ctas={ctas} className="grid gap-4 *:w-full *:text-lg *:py-6" />
 
             <div className="flex flex-col gap-4 px-4 pb-6">
+              {enableSearch && <CommandMenu variant="mobile" className="w-full justify-start" />}
               <LocaleSwitcher
                 dropdownAlign="start"
                 className="w-full justify-start h-14 px-4 text-lg [&>span]:inline-block [&>span]:text-lg"
