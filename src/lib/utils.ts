@@ -91,7 +91,7 @@ export function base64url(str: string): string {
   const utf8Bytes = new TextEncoder().encode(str);
   const binaryStr = Array.from(utf8Bytes, (byte) => String.fromCharCode(byte)).join('');
   return btoa(binaryStr).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-
+}
 
 /**
  * Encodes a string to a standard Base64 string.
