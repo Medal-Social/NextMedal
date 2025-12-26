@@ -1,3 +1,5 @@
+import { base64url } from './utils';
+
 export default function imageLoader({
   src,
   width,
@@ -28,11 +30,8 @@ export default function imageLoader({
     sourceUrl = `${baseUrl.replace(/\/$/, '')}/${src.replace(/^\//, '')}`;
   }
 
-  // Encode the URL for imgproxy
-  // Use btoa with TextEncoder to handle UTF-8 characters correctly across environments
-  const utf8Bytes = new TextEncoder().encode(sourceUrl);
-  const binaryStr = Array.from(utf8Bytes, (byte) => String.fromCharCode(byte)).join('');
-  const encodedUrl = btoa(binaryStr).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  // Encode the URL for imgproxy using cross-platform base64url
+  const encodedUrl = base64url(sourceUrl);
 
   // Imgproxy processing options
   const resizingType = 'fit';
