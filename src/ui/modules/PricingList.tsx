@@ -2,6 +2,7 @@
 
 import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
 import { CircleCheckBig } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Section } from '@/components/ui/section';
@@ -27,6 +28,7 @@ const components = {
 };
 
 export default function PricingList({ intro, tiers, ...props }: Sanity.PricingList) {
+  const t = useTranslations('modules.pricing');
   const [isYearly, setIsYearly] = useState(false);
   return (
     <Section className="space-y-8" {...moduleProps(props)}>
@@ -44,18 +46,16 @@ export default function PricingList({ intro, tiers, ...props }: Sanity.PricingLi
           >
             <TabsList className="bg-background rounded-full">
               <TabsTrigger
-                aria-controls={undefined}
                 className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full"
                 value="monthly"
               >
-                Monthly
+                {t('monthly')}
               </TabsTrigger>
               <TabsTrigger
-                aria-controls={undefined}
                 className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full"
                 value="yearly"
               >
-                Yearly (-20%)
+                {t('yearlyDiscount', { discount: 20 })}
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -86,7 +86,7 @@ export default function PricingList({ intro, tiers, ...props }: Sanity.PricingLi
                 </div>
 
                 {tier.price?.base !== undefined && (
-                  <div className="flex flex-wrap items-end gap-x-1">
+                  <div className="flex flex-wrap items-end gap-x-1" aria-live="polite">
                     {tier.price.base !== undefined && tier.price.base && (
                       <span className="text-4xl text-foreground font-semibold font-numeric">
                         {tier.price.currency}{' '}

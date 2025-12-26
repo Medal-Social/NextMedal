@@ -1,5 +1,6 @@
 'use client';
 
+import { Clock, Mail, MapPin, Phone, Smartphone } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { Section } from '@/components/ui/section';
@@ -9,45 +10,16 @@ import Form from '@/ui/Form';
 import { Img } from '@/ui/Img';
 import SharedPortableText from './SharedPortableText';
 
-interface OfficeInfo {
-  title: string;
-  address: {
-    street: string;
-    city: string;
-    country: string;
-  };
-  email?: string;
-  phone?: string;
-  openingHours?: string;
-}
-
-interface ContactPerson {
-  title: string;
-  name: string;
-  position: string;
-  description?: string;
-  image?: any;
-  email?: string;
-  phone?: string;
-}
-
-interface ContactProps extends Sanity.Module {
-  intro?: any[];
-  form: any;
-  officeInfo?: OfficeInfo;
-  contactPerson?: ContactPerson;
-}
-
 export default function Contact({
   intro,
   form,
   officeInfo,
   contactPerson,
   ...props
-}: ContactProps) {
+}: Sanity.Contact) {
   const t = useTranslations('contact-form');
   const [mounted, setMounted] = useState(false);
-  const isSidebar = (props as any).spacing === 'none';
+  const isSidebar = props.spacing === 'none';
 
   // Handle hydration
   useEffect(() => {
@@ -70,7 +42,7 @@ export default function Contact({
         <div
           className={cn(
             'grid items-start max-w-6xl mx-auto',
-            isSidebar ? 'grid-cols-1 gap-8' : 'grid-gap-16 lg:grid-cols-2'
+            isSidebar ? 'grid-cols-1 gap-8' : 'gap-16 lg:grid-cols-2'
           )}
         >
           {/* Left: Form */}
@@ -88,7 +60,7 @@ export default function Contact({
                   <div className="space-y-6">
                     <div className="flex items-start">
                       <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4 mt-0.5">
-                        📍
+                        <MapPin className="w-5 h-5" aria-hidden="true" />
                       </div>
                       <div>
                         <p className="font-bold text-foreground mb-1">{t('address')}</p>
@@ -103,7 +75,7 @@ export default function Contact({
                     {officeInfo.email && (
                       <div className="flex items-start">
                         <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4 mt-0.5">
-                          📧
+                          <Mail className="w-5 h-5" aria-hidden="true" />
                         </div>
                         <div>
                           <p className="font-bold text-foreground mb-1">{t('email')}</p>
@@ -115,7 +87,7 @@ export default function Contact({
                     {officeInfo.phone && (
                       <div className="flex items-start">
                         <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4 mt-0.5">
-                          📞
+                          <Phone className="w-5 h-5" aria-hidden="true" />
                         </div>
                         <div>
                           <p className="font-bold text-foreground mb-1">{t('phone')}</p>
@@ -127,7 +99,7 @@ export default function Contact({
                     {officeInfo.openingHours && (
                       <div className="flex items-start">
                         <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4 mt-0.5">
-                          🕐
+                          <Clock className="w-5 h-5" aria-hidden="true" />
                         </div>
                         <div>
                           <p className="font-bold text-foreground mb-1">{t('opening-hours')}</p>
@@ -173,7 +145,8 @@ export default function Contact({
                             href={`mailto:${contactPerson.email}`}
                             className="flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
                           >
-                            <span className="mr-2">✉️</span> {contactPerson.email}
+                            <Mail className="w-4 h-4 mr-2" aria-hidden="true" />
+                            {contactPerson.email}
                           </a>
                         )}
                         {contactPerson.phone && (
@@ -181,7 +154,8 @@ export default function Contact({
                             href={`tel:${contactPerson.phone}`}
                             className="flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
                           >
-                            <span className="mr-2">📱</span> {contactPerson.phone}
+                            <Smartphone className="w-4 h-4 mr-2" aria-hidden="true" />
+                            {contactPerson.phone}
                           </a>
                         )}
                       </div>
