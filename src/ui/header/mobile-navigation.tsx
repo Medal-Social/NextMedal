@@ -9,7 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import resolveUrl from '@/lib/resolveUrl';
 import { CommandMenu } from '@/ui/CommandMenu';
 import CTAList from '@/ui/CTAList';
-import LocaleSwitcher from '@/ui/language-switcher';
+import LocaleSwitcherClient from '@/ui/language-switcher/LocaleSwitcherClient';
 import { ANIMATION_DURATION, ANIMATION_EASING } from './constants';
 import ThemeToggleWrapper from './ThemeToggleWrapper';
 import type { MobileNavigationProps } from './types';
@@ -50,7 +50,12 @@ export const NavLink = ({
   </Link>
 );
 
-export default function MobileNavigation({ menu, ctas, enableSearch }: MobileNavigationProps) {
+export default function MobileNavigation({
+  menu,
+  ctas,
+  enableSearch,
+  serverPage,
+}: MobileNavigationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Focus trap implementation
@@ -189,9 +194,10 @@ export default function MobileNavigation({ menu, ctas, enableSearch }: MobileNav
 
             <div className="flex flex-col gap-4 px-4 pb-6">
               {enableSearch && <CommandMenu variant="mobile" className="w-full justify-start" />}
-              <LocaleSwitcher
+              <LocaleSwitcherClient
                 dropdownAlign="start"
                 className="w-full justify-start h-14 px-4 text-lg [&>span]:inline-block [&>span]:text-lg"
+                serverPage={serverPage}
               />
               <ThemeToggleWrapper
                 dropdownAlign="start"

@@ -16,6 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { routing } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
 
 type Props = {
@@ -77,7 +78,7 @@ export default function LocaleSwitcherSelect({
       } else {
         // Show toast notification that translation doesn't exist
         const localeLabel = options.find((opt) => opt.value === nextLocale)?.label || nextLocale;
-        const homeUrl = nextLocale === 'en' ? '/' : `/${nextLocale}`;
+        const homeUrl = nextLocale === routing.defaultLocale ? '/' : `/${nextLocale}`;
 
         toast.info(t('translationNotAvailable', { locale: localeLabel }), {
           action: {

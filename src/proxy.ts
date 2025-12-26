@@ -5,8 +5,12 @@ import { routing } from './i18n/routing';
 const intlMiddleware = createMiddleware(routing);
 
 export function proxy(request: NextRequest) {
-  // Run i18n middleware to handle redirects/rewrites
-  return intlMiddleware(request);
+  const response = intlMiddleware(request);
+
+  // Add pathname header for getCurrentPage() to reliably detect current path
+  response.headers.set('x-pathname', request.nextUrl.pathname);
+
+  return response;
 }
 
 export const config = {

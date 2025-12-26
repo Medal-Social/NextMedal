@@ -2,11 +2,7 @@ import { groq } from 'next-sanity';
 import { Suspense } from 'react';
 import moduleProps from '@/lib/moduleProps';
 import { fetchSanityLive } from '@/sanity/lib/live';
-import {
-  AUTHOR_PREVIEW_QUERY,
-  CATEGORY_PREVIEW_QUERY,
-  IMAGE_QUERY,
-} from '@/sanity/lib/queries';
+import { AUTHOR_PREVIEW_QUERY, CATEGORY_PREVIEW_QUERY, IMAGE_QUERY } from '@/sanity/lib/queries';
 import PostPreview from '../PostPreview';
 import BlogFilterBar from './BlogFilterBar';
 import BlogHero from './BlogHero';

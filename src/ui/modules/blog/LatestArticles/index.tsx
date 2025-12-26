@@ -4,11 +4,7 @@ import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
 import { fetchSanityLive } from '@/sanity/lib/live';
-import {
-  AUTHOR_PREVIEW_QUERY,
-  CATEGORY_PREVIEW_QUERY,
-  IMAGE_QUERY,
-} from '@/sanity/lib/queries';
+import { AUTHOR_PREVIEW_QUERY, CATEGORY_PREVIEW_QUERY, IMAGE_QUERY } from '@/sanity/lib/queries';
 import FilterList from '@/ui/modules/blog/LatestArticles/FilterList';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
 import PostPreview from '../PostPreview';
