@@ -63,7 +63,7 @@ export default async function RootLayout({ children, params }: Props) {
               <Header />
               <main
                 id="main-content"
-                className="flex-1 w-full min-h-[calc(100dvh-var(--header-height)-var(--footer-height))]"
+                className="flex-1 w-full pt-[var(--header-height)] min-h-[calc(100dvh-var(--header-height)-var(--footer-height))]"
                 tabIndex={-1}
               >
                 {children}
