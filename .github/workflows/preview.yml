@@ -3,6 +3,8 @@ name: Preview Deployment
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    branches:
+      - dev  # Only create previews for PRs targeting dev, not prod
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -10,6 +12,14 @@ concurrency:
 
 jobs:
   preview-deploy:
+    # Skip preview builds for automated PRs (Renovate, Dependabot, Claude, etc.)
+    if: >-
+      github.actor != 'renovate[bot]' &&
+      github.actor != 'dependabot[bot]' &&
+      github.actor != 'github-actions[bot]' &&
+      !startsWith(github.head_ref, 'renovate/') &&
+      !startsWith(github.head_ref, 'dependabot/') &&
+      !startsWith(github.head_ref, 'claude/')
     runs-on: blacksmith-4vcpu-ubuntu-2404
     environment: Staging
     permissions:
