@@ -6,14 +6,14 @@ import { client } from '@/sanity/lib/client';
 export async function GET() {
   try {
     const query = groq`{
-    "posts": *[_type == "blog.post" && defined(metadata.slug.current)] {
+    "posts": *[_type == "blog.post" && defined(metadata.slug.current) && metadata.noIndex != true] {
       _id,
       _type,
       "title": metadata.title,
       "slug": metadata.slug.current,
       "description": metadata.description
     },
-    "pages": *[_type == "page" && defined(metadata.slug.current) && metadata.slug.current != "index"] {
+    "pages": *[_type == "page" && defined(metadata.slug.current) && metadata.slug.current != "index" && metadata.noIndex != true] {
       _id,
       _type,
       "title": metadata.title,

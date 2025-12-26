@@ -1,5 +1,6 @@
 import { groq } from 'next-sanity';
 import { Suspense } from 'react';
+import { logger } from '@/lib/logger';
 import moduleProps from '@/lib/moduleProps';
 import { fetchSanityLive } from '@/sanity/lib/live';
 import { AUTHOR_PREVIEW_QUERY, CATEGORY_PREVIEW_QUERY, IMAGE_QUERY } from '@/sanity/lib/queries';
@@ -14,10 +15,12 @@ export default async function BlogFrontpage({
   posts: postsProp,
   ...props
 }: Sanity.BlogFrontpage) {
-  const posts =
-    postsProp ||
-    (await fetchSanityLive<Sanity.BlogPost[]>({
-      query: groq`*[_type == 'blog.post']|order(publishDate desc)[0...50]{
+  let posts: Sanity.BlogPost[] = postsProp || [];
+
+  if (!postsProp) {
+    try {
+      posts = await fetchSanityLive<Sanity.BlogPost[]>({
+        query: groq`*[_type == 'blog.post']|order(publishDate desc)[0...50]{
 			_type,
 			_id,
 			featured,
@@ -32,12 +35,17 @@ export default async function BlogFrontpage({
 			categories[]->${CATEGORY_PREVIEW_QUERY},
 			authors[]->${AUTHOR_PREVIEW_QUERY}
 		}`,
-    }));
+      });
+    } catch (error) {
+      logger.error(error, 'Failed to fetch blog posts');
+      posts = [];
+    }
+  }
 
   // Determine Hero Post
   let heroPost: Sanity.BlogPost | undefined;
   if (mainPost === 'featured') {
-    heroPost = posts.find((p) => p.featured === true);
+    heroPost = posts.find((p) => p.featured === 'featured');
   }
   if (!heroPost) {
     heroPost = posts[0];
@@ -51,7 +59,8 @@ export default async function BlogFrontpage({
   const recentPost = remainingPosts[0];
 
   // Popular: Next featured post, or just next post
-  const popularPost = remainingPosts.slice(1).find((p) => p.featured === true) || remainingPosts[1];
+  const popularPost =
+    remainingPosts.slice(1).find((p) => p.featured === 'featured') || remainingPosts[1];
 
   // Grid Posts: All remaining posts excluding hero, recent, and popular
   const gridPosts = remainingPosts.filter(

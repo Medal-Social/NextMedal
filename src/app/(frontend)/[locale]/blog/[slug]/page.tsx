@@ -19,20 +19,23 @@ export default async function Page({ params }: Props) {
 
   const placements = groupPlacements(post.placements);
 
+  // Build locale-aware breadcrumb paths
+  const localePath = resolvedParams.locale ? `/${resolvedParams.locale}` : '';
+
   const breadcrumbs = [
-    { name: 'Home', path: '/' },
-    { name: 'Blog', path: '/blog' },
+    { name: 'Home', path: `${localePath}/` },
+    { name: 'Blog', path: `${localePath}/blog` },
     ...(post.categories?.[0]
       ? [
           {
             name: post.categories[0].title || 'Category',
-            path: `/blog?category=${post.categories[0].slug?.current}`,
+            path: `${localePath}/blog?category=${post.categories[0].slug?.current}`,
           },
         ]
       : []),
     {
       name: post.metadata?.title || post.title || 'Post',
-      path: `/blog/${post.metadata?.slug?.current}`,
+      path: `${localePath}/blog/${post.metadata?.slug?.current}`,
     },
   ];
 
@@ -120,6 +123,6 @@ async function getPost(params: { slug?: string }, stega?: boolean) {
 }
 
 type Props = {
-  params: Promise<{ slug?: string }>;
+  params: Promise<{ slug?: string; locale?: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };

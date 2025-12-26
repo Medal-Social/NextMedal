@@ -18,9 +18,9 @@ export default function ArticleCard({ post, variant = 'standard', className }: A
 
   const fallbackImage = !post.metadata?.image
     ? {
-        src: `/api/og/blog-fallback?title=${encodeURIComponent(post.metadata?.title || '')}&category=${encodeURIComponent(
-          category?.title || ''
-        )}`,
+        src: `/api/og/blog-fallback?title=${encodeURIComponent(
+          (post.metadata?.title || '').slice(0, 100)
+        )}&category=${encodeURIComponent(category?.title || '')}`,
         alt: post.metadata?.title || '',
         width: 1200,
         height: 630,
@@ -59,7 +59,7 @@ export default function ArticleCard({ post, variant = 'standard', className }: A
           width={variant === 'large' ? 800 : 600}
           alt={post.metadata?.title}
         />
-        {category && (
+        {category?.title && (
           <div className="absolute top-4 left-4">
             <span className="inline-flex items-center rounded-full bg-[#1a0b2e]/90 px-3 py-1 text-xs font-bold tracking-wide text-white uppercase backdrop-blur-md shadow-sm">
               {category.title}
