@@ -91,49 +91,61 @@ export function CommandMenu() {
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
 
-          <CommandGroup heading="Blog Posts">
-            {items
-              .filter((i) => i.type === 'Blog')
-              .map((item) => (
-                <CommandItem
-                  key={item._id}
-                  value={item._id}
-                  keywords={[item.title]}
-                  onSelect={() => runCommand(() => router.push(item.href))}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    runCommand(() => router.push(item.href));
-                  }}
-                >
-                  <FileText className="mr-2 h-4 w-4" />
-                  <span>{item.title}</span>
-                </CommandItem>
-              ))}
-          </CommandGroup>
+          {isLoading ? (
+            <div className="p-4 space-y-3">
+              <div className="h-4 w-20 bg-muted rounded animate-pulse" />
+              <div className="h-8 w-full bg-muted rounded animate-pulse" />
+              <div className="h-8 w-full bg-muted rounded animate-pulse" />
+              <div className="h-4 w-16 bg-muted rounded animate-pulse mt-4" />
+              <div className="h-8 w-full bg-muted rounded animate-pulse" />
+            </div>
+          ) : (
+            <>
+              <CommandGroup heading="Blog Posts">
+                {items
+                  .filter((i) => i.type === 'Blog')
+                  .map((item) => (
+                    <CommandItem
+                      key={item._id}
+                      value={item._id}
+                      keywords={[item.title]}
+                      onSelect={() => runCommand(() => router.push(item.href))}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        runCommand(() => router.push(item.href));
+                      }}
+                    >
+                      <FileText className="mr-2 h-4 w-4" />
+                      <span>{item.title}</span>
+                    </CommandItem>
+                  ))}
+              </CommandGroup>
 
-          <CommandSeparator />
+              <CommandSeparator />
 
-          <CommandGroup heading="Pages">
-            {items
-              .filter((i) => i.type === 'Page')
-              .map((item) => (
-                <CommandItem
-                  key={item._id}
-                  value={item._id}
-                  keywords={[item.title]}
-                  onSelect={() => runCommand(() => router.push(item.href))}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    runCommand(() => router.push(item.href));
-                  }}
-                >
-                  <FileText className="mr-2 h-4 w-4" />
-                  <span>{item.title}</span>
-                </CommandItem>
-              ))}
-          </CommandGroup>
+              <CommandGroup heading="Pages">
+                {items
+                  .filter((i) => i.type === 'Page')
+                  .map((item) => (
+                    <CommandItem
+                      key={item._id}
+                      value={item._id}
+                      keywords={[item.title]}
+                      onSelect={() => runCommand(() => router.push(item.href))}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        runCommand(() => router.push(item.href));
+                      }}
+                    >
+                      <FileText className="mr-2 h-4 w-4" />
+                      <span>{item.title}</span>
+                    </CommandItem>
+                  ))}
+              </CommandGroup>
+            </>
+          )}
         </CommandList>
       </CommandDialog>
     </>
