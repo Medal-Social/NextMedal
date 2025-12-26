@@ -2,17 +2,12 @@
 
 import { AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
-import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { DESKTOP_BREAKPOINT, SCROLL_THRESHOLD } from './constants';
 import MobileNavigation from './mobile-navigation';
 import Toggle from './Toggle';
-
-interface HeaderClientProps extends React.ComponentProps<'header'> {
-  // logo prop removed as it was unused
-  ctas: any;
-  menu: any;
-  children: ReactNode;
-}
+import type { HeaderClientProps } from './types';
 
 export default function HeaderClient({ className, ctas, menu, children }: HeaderClientProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -58,7 +53,7 @@ export default function HeaderClient({ className, ctas, menu, children }: Header
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          setIsScrolled(window.scrollY > 10);
+          setIsScrolled(window.scrollY > SCROLL_THRESHOLD);
           ticking = false;
         });
         ticking = true;
@@ -97,7 +92,7 @@ export default function HeaderClient({ className, ctas, menu, children }: Header
   // Close mobile menu on resize to desktop
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 1024 && isOpen) {
+      if (window.innerWidth >= DESKTOP_BREAKPOINT && isOpen) {
         setIsOpen(false);
       }
     };

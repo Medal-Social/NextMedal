@@ -15,7 +15,7 @@ export default async function Header() {
       className="@container fixed top-0 w-full z-50"
       role="banner"
       aria-label="Site header"
-      ctas={ctas}
+      ctas={ctas ?? []}
       menu={{ items: headerMenu?.items }}
     >
       <div className="flex items-center">{logoNode}</div>
