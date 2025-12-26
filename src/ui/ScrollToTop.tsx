@@ -102,11 +102,7 @@ function ProgressRing({
   progress: ReturnType<typeof useMotionValue<number>>;
   prefersReducedMotion: boolean | null;
 }) {
-  const strokeDashoffset = useTransform(
-    progress,
-    [0, 1],
-    [RING_CIRCUMFERENCE, 0]
-  );
+  const strokeDashoffset = useTransform(progress, [0, 1], [RING_CIRCUMFERENCE, 0]);
 
   return (
     <svg
@@ -159,8 +155,7 @@ export default function ScrollToTop() {
     let ticking = false;
 
     const updateScrollProgress = () => {
-      const scrollHeight =
-        document.documentElement.scrollHeight - window.innerHeight;
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
       const progress = scrollHeight > 0 ? Math.min(window.scrollY / scrollHeight, 1) : 0;
 
       scrollProgress.set(progress);
@@ -212,7 +207,7 @@ export default function ScrollToTop() {
         opacity: 0,
         scale: 0.8,
         y: 10,
-        transition: { duration: prefersReducedMotion ? 0 : 0.2, ease: 'easeOut' },
+        transition: { duration: prefersReducedMotion ? 0 : 0.2, ease: 'easeOut' as const },
       },
     }),
     [prefersReducedMotion]
