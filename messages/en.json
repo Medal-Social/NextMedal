@@ -25,5 +25,16 @@
     "success-title": "Thank you!",
     "success-message": "We have received your message.",
     "submitting": "Submitting..."
+  },
+  "modules": {
+    "pricing": {
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "yearlyDiscount": "Yearly (-{discount}%)"
+    },
+    "leadMagnet": {
+      "defaultButtonText": "Get access now",
+      "defaultFormTitle": "Sign up"
+    }
   }
 }
