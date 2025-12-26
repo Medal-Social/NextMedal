@@ -37,7 +37,7 @@ export default async function Menu() {
           case 'menuItem':
             if (item.external) {
               return (
-                <nav className="flex flex-col gap-2" key={itemKey}>
+                <div className="flex flex-col gap-2" key={itemKey}>
                   <Link
                     href={item.external}
                     target="_blank"
@@ -50,7 +50,7 @@ export default async function Menu() {
                       <ExternalLink className="h-4 w-4" aria-hidden="true" />
                     </div>
                   </Link>
-                </nav>
+                </div>
               );
             }
             if (item.internal) {
@@ -58,29 +58,29 @@ export default async function Menu() {
                 base: false,
               });
               return (
-                <nav className="flex flex-col gap-2" key={itemKey}>
+                <div className="flex flex-col gap-2" key={itemKey}>
                   <Link
                     href={url}
                     className="text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
                   >
                     {item.label || item.internal.title}
                   </Link>
-                </nav>
+                </div>
               );
             }
             return (
-              <nav className="flex flex-col gap-2" key={itemKey}>
+              <div className="flex flex-col gap-2" key={itemKey}>
                 <CTA
                   className="text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
                   link={item}
                   style="link"
                 />
-              </nav>
+              </div>
             );
 
           case 'dropdownMenu':
             return (
-              <nav className="flex flex-col gap-2" key={itemKey}>
+              <div className="flex flex-col gap-2" key={itemKey}>
                 <div className="font-semibold text-muted-foreground text-xs uppercase tracking-wider mb-1">
                   {item.title}
                 </div>
@@ -128,7 +128,7 @@ export default async function Menu() {
                     })}
                   </ul>
                 )}
-              </nav>
+              </div>
             );
 
           default:

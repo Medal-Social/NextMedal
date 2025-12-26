@@ -28,6 +28,7 @@ export default function SystemStatus({ status, className }: SystemStatusProps) {
 
   const containerClasses = cn(
     'group flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/30 hover:bg-muted/50 transition-colors border border-border/40',
+    'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
     className
   );
 

@@ -2,12 +2,12 @@
 
 import { FileText, Search, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { logger } from '@/lib/logger';
-import { cn } from '@/lib/utils';
+import { cn, debounce } from '@/lib/utils';
 import type { SearchResultItem } from './types';
 
 interface MobileSearchProps {
@@ -22,6 +22,9 @@ export function MobileSearch({ className }: MobileSearchProps) {
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+
+  // Debounce search input to reduce filtering operations
+  const debouncedSetQuery = useMemo(() => debounce((value: string) => setQuery(value), 200), []);
 
   // Fetch search items when dialog opens
   useEffect(() => {
@@ -105,7 +108,7 @@ export function MobileSearch({ className }: MobileSearchProps) {
             <Input
               ref={inputRef}
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => debouncedSetQuery(e.target.value)}
               placeholder="Search..."
               className="border-0 shadow-none focus-visible:ring-0 px-0 text-base"
               aria-label="Search input"

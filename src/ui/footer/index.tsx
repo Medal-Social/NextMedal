@@ -1,3 +1,4 @@
+import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { PortableText } from 'next-sanity';
 import CookiePreferencesTrigger from '@/components/CookiePreferencesTrigger';
@@ -11,6 +12,7 @@ import LocaleSwitcher from '@/ui/language-switcher';
 import Social from '@/ui/Social';
 import Navigation from './Navigation';
 import SystemStatus from './SystemStatus';
+import Wrapper from './wrapper';
 
 export default async function Footer() {
   const { title, tagline, logo, copyright, footerLinks, systemStatus } = await getSite();
@@ -19,11 +21,15 @@ export default async function Footer() {
   const logoImageLight = logo?.image?.light || logo?.image?.default || logo?.image?.dark;
 
   return (
-    <footer className="bg-background text-foreground">
+    <Wrapper className="bg-background text-foreground">
       <Section className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-x-12 gap-y-6 pb-8">
         <div className="flex flex-col gap-6">
           <Link
-            className={cn('h3 md:h2 max-w-max', 'transition-colors hover:text-primary')}
+            className={cn(
+              'h3 md:h2 max-w-max',
+              'transition-colors hover:text-primary',
+              'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm'
+            )}
             href="/"
             aria-label={`Return to ${title} homepage`}
           >
@@ -78,22 +84,28 @@ export default async function Footer() {
             </div>
 
             <div className="flex flex-wrap gap-x-8 gap-y-2">
-              {footerLinks?.map((link, i) => {
+              {footerLinks?.map((link) => {
                 const url =
                   link.external || (link.internal && resolveUrl(link.internal, { base: false }));
                 if (!url) return null;
+                const isExternal = link.newTab || !!link.external;
                 return (
                   <Link
-                    key={i}
+                    key={link.label}
                     href={url}
-                    className="hover:text-foreground transition-colors"
-                    target={link.newTab ? '_blank' : undefined}
+                    className="hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+                    target={isExternal ? '_blank' : undefined}
+                    rel={isExternal ? 'noopener noreferrer' : undefined}
+                    aria-label={isExternal ? `${link.label} (opens in new tab)` : undefined}
                   >
-                    {link.label}
+                    <span className="inline-flex items-center gap-1">
+                      {link.label}
+                      {isExternal && <ExternalLink className="h-3 w-3" aria-hidden="true" />}
+                    </span>
                   </Link>
                 );
               })}
-              <CookiePreferencesTrigger className="hover:text-foreground transition-colors" />
+              <CookiePreferencesTrigger className="hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary" />
             </div>
           </div>
 
@@ -114,6 +126,6 @@ export default async function Footer() {
           </div>
         </Section>
       </div>
-    </footer>
+    </Wrapper>
   );
 }

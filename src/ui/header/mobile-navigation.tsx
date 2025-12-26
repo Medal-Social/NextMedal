@@ -163,7 +163,7 @@ export default function MobileNavigation({ menu, ctas, enableSearch }: MobileNav
                       >
                         <span className="font-medium">{item.title}</span>
                         <ChevronDown
-                          className="h-5 w-5 transition-transform duration-200 group-data-[state=open]:rotate-180"
+                          className="h-5 w-5 transition-transform duration-200 [[data-state=open]>&]:rotate-180"
                           aria-hidden="true"
                         />
                       </CollapsibleTrigger>

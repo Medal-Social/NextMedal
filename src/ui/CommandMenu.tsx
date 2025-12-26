@@ -14,10 +14,12 @@ import {
 } from '@/components/ui/command';
 import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
+import type { SearchResultItem } from '@/ui/header/types';
 
 export function CommandMenu() {
   const [open, setOpen] = React.useState(false);
-  const [items, setItems] = React.useState<any[]>([]);
+  const [items, setItems] = React.useState<SearchResultItem[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
   const router = useRouter();
 
   React.useEffect(() => {
@@ -33,6 +35,7 @@ export function CommandMenu() {
     const { signal } = controller;
 
     async function fetchItems() {
+      setIsLoading(true);
       try {
         const res = await fetch('/api/search', { signal });
         if (!res.ok) throw new Error('Failed to fetch search items');
@@ -44,6 +47,8 @@ export function CommandMenu() {
         }
         logger.error({ err: error }, 'Search fetch error:');
         setItems([]);
+      } finally {
+        setIsLoading(false);
       }
     }
 
