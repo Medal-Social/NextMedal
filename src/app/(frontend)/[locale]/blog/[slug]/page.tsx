@@ -105,8 +105,8 @@ async function getPost(params: { slug?: string }, stega?: boolean) {
 				style,
 				'text': pt::text(@)
 			},
-			categories[]->,
-			authors[]->,
+			categories[]->{ _id, title, "slug": slug.current },
+			authors[]->{ _id, name, language, metadata { "slug": slug.current }, image { asset->{ url, metadata { dimensions } } } },
 			metadata {
 				...,
 				image { ${IMAGE_QUERY} },

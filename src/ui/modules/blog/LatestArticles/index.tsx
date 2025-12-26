@@ -4,7 +4,11 @@ import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
 import { fetchSanityLive } from '@/sanity/lib/live';
-import { IMAGE_QUERY } from '@/sanity/lib/queries';
+import {
+  AUTHOR_PREVIEW_QUERY,
+  CATEGORY_PREVIEW_QUERY,
+  IMAGE_QUERY,
+} from '@/sanity/lib/queries';
 import FilterList from '@/ui/modules/blog/LatestArticles/FilterList';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
 import PostPreview from '../PostPreview';
@@ -31,18 +35,20 @@ export default async function LatestArticles({
 				${showFeaturedPostsFirst ? 'featured desc, ' : ''}
 				publishDate desc
 			)
-			${limit ? `[0...${limit}]` : ''}
+			${limit ? `[0...${limit}]` : '[0...20]'}
 			{
-				...,
+				_id,
+				_type,
+				featured,
+				publishDate,
 				metadata {
-					...,
+					title,
+					description,
+					"slug": slug.current,
 					image { ${IMAGE_QUERY} }
 				},
-				categories[]->,
-				authors[]->{
-					...,
-					image { ${IMAGE_QUERY} }
-				}
+				categories[]->${CATEGORY_PREVIEW_QUERY},
+				authors[]->${AUTHOR_PREVIEW_QUERY}
 			}
 		`,
       params: {

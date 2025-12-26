@@ -23,6 +23,20 @@ export const IMAGE_QUERY = groq`
 	}
 `;
 
+// Optimized reference projections for blog listings
+export const AUTHOR_PREVIEW_QUERY = groq`{
+	_id,
+	name,
+	"slug": metadata.slug.current,
+	image { asset->{ url, metadata { dimensions } } }
+}`;
+
+export const CATEGORY_PREVIEW_QUERY = groq`{
+	_id,
+	title,
+	"slug": slug.current
+}`;
+
 export const PT_BLOCK_QUERY = groq`
 	...,
 	markDefs[]{
