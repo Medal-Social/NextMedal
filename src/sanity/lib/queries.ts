@@ -192,7 +192,7 @@ export const TRANSLATIONS_QUERY = groq`
 `;
 
 export const PAGE_QUERY = groq`
-	*[_type == 'page' && metadata.slug.current == $slug][0]{
+	*[_type == 'page' && metadata.slug.current == $slug && language == $locale][0]{
 		...,
 		'modules': modules[]{ ${MODULES_QUERY} },
 		'placements': ${placementQuery("scope == 'page'")},
