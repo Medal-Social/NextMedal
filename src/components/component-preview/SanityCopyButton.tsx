@@ -9,14 +9,14 @@ import { logger } from '@/lib/logger';
 import { base64, cn } from '@/lib/utils';
 
 interface SanityCopyButtonProps {
-  data: any;
+  data: Record<string, unknown> | null;
   className?: string;
 }
 
 /**
  * Regenerates keys and handles Sanity-specific data transformations
  */
-function prepareSanityData(data: any): any {
+function prepareSanityData(data: unknown): unknown {
   if (!data || typeof data !== 'object') return data;
 
   // Handle arrays
@@ -24,21 +24,22 @@ function prepareSanityData(data: any): any {
     return data.map((item) => prepareSanityData(item));
   }
 
-  const result: any = {
+  const obj = data as Record<string, unknown>;
+  const result: Record<string, unknown> = {
     // Every object needs a fresh key for Sanity's array validation
     _key: Math.random().toString(36).substring(2, 11),
   };
 
   // Handle references (Logo, Person, Pricing, etc. often come as full objects from GROQ)
-  if (data._id && !data._type?.startsWith('image')) {
+  if (obj._id && !(obj._type as string)?.startsWith('image')) {
     return {
       _type: 'reference',
-      _ref: data._id,
+      _ref: obj._id,
       _key: result._key,
     };
   }
 
-  for (const [key, value] of Object.entries(data)) {
+  for (const [key, value] of Object.entries(obj)) {
     // Skip internal frontend fields and existing keys (we want fresh ones)
     if (['src', 'width', 'height', 'alt', 'sanityData', '_key', '_rev', '_id'].includes(key))
       continue;
@@ -48,8 +49,8 @@ function prepareSanityData(data: any): any {
   }
 
   // Preserve _type if it exists, otherwise default to 'object'
-  if (data._type) {
-    result._type = data._type;
+  if (obj._type) {
+    result._type = obj._type;
   } else {
     result._type = 'object';
   }
@@ -70,6 +71,8 @@ export default function SanityCopyButton({ data, className }: SanityCopyButtonPr
   }, [hasCopied]);
 
   const handleCopy = async () => {
+    if (!data) return;
+
     try {
       // 1. Prepare and clean the data
       const cleanData = prepareSanityData(data);
