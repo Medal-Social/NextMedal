@@ -64,9 +64,11 @@ if (!parsedEnv.success) {
 }
 
 // During build time we allow partial data, otherwise it's guaranteed by throw above
-export const env = (parsedEnv.success ? parsedEnv.data : (parsedEnv as any).data || {}) as z.infer<
-  typeof envSchema
->;
+export const env = (
+  parsedEnv.success
+    ? parsedEnv.data
+    : (parsedEnv as { data?: z.infer<typeof envSchema> }).data || {}
+) as z.infer<typeof envSchema>;
 
 export const dev = env.NODE_ENV === 'development';
 export const vercelPreview = env.VERCEL_ENV === 'preview';
