@@ -1,17 +1,26 @@
-"use client";
-import { apiVersion, dataset, projectId } from "@/sanity/lib/env";
-import { defineConfig } from "sanity";
-import { presentation } from "./src/sanity/presentation";
-import { visionTool } from "@sanity/vision";
-import { structure } from "./src/sanity/structure";
-import resolveUrl from "@/lib/resolveUrl";
-import { codeInput } from "@sanity/code-input";
-import { documentInternationalization } from "@sanity/document-internationalization";
-import { media, mediaAssetSource } from "sanity-plugin-media";
-import { muxInput } from "sanity-plugin-mux-input";
-import { schemaTypes } from "./src/sanity/schemaTypes";
+'use client';
+import { apiVersion, dataset, projectId } from '@/sanity/lib/env';
+import { defineConfig, isDev } from 'sanity';
+import { presentation } from './src/sanity/presentation';
+import { visionTool } from '@sanity/vision';
+import { structure } from './src/sanity/structure';
+import resolveUrl from '@/lib/resolveUrl';
+import { codeInput } from '@sanity/code-input';
+import { documentInternationalization } from '@sanity/document-internationalization';
+import { media, mediaAssetSource } from 'sanity-plugin-media';
+import { muxInput } from 'sanity-plugin-mux-input';
+import { schemaTypes } from './src/sanity/schemaTypes';
 
-import { routing, localeConfig, type Locale } from "@/i18n/routing";
+import { routing, localeConfig, type Locale } from '@/i18n/routing';
+
+// Dev-only plugins - visionTool is only needed for GROQ debugging in development
+const devOnlyPlugins = isDev
+  ? [
+      visionTool({
+        defaultApiVersion: apiVersion,
+      }),
+    ]
+  : [];
 
 export default defineConfig({
   title: "Nextmedal by Medal Social",
@@ -34,18 +43,16 @@ export default defineConfig({
     codeInput(),
     media(),
     muxInput({
-      mp4_support: "standard",
-    }),
-    visionTool({
-      defaultApiVersion: apiVersion,
+      mp4_support: 'standard',
     }),
     documentInternationalization({
       supportedLanguages: routing.locales.map((locale) => ({
         id: locale,
         title: localeConfig[locale as Locale].title,
       })),
-      schemaTypes: ["page", "blog.post", "site"],
+      schemaTypes: ['page', 'blog.post', 'site'],
     }),
+    ...devOnlyPlugins,
   ],
 
   schema: {

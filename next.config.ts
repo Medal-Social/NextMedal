@@ -79,14 +79,6 @@ const config = {
     return [...cmsRedirects];
   },
 
-  experimental: {
-    optimizePackageImports: [
-      "@sanity/ui",
-      "@sanity/icons",
-      "framer-motion",
-      "@base-ui/react",
-    ],
-  },
   env: {
     SC_DISABLE_SPEEDY: "false", // makes styled-components as fast in dev mode as it is in production mode
   },
