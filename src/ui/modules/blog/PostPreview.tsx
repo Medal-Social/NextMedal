@@ -31,9 +31,9 @@ export default function PostPreview({
   const fallbackImage =
     !skeleton && !metadata?.image
       ? {
-          src: `/api/og/blog-fallback?title=${encodeURIComponent(metadata?.title || '')}&category=${encodeURIComponent(
-            post?.categories?.[0]?.title || ''
-          )}`,
+          src: `/api/og/blog-fallback?title=${encodeURIComponent(
+            (metadata?.title || '').slice(0, 100)
+          )}&category=${encodeURIComponent(post?.categories?.[0]?.title || '')}`,
           alt: metadata?.title || '',
           width: 1200,
           height: 630,

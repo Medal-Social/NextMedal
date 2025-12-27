@@ -11,10 +11,10 @@ import { media, mediaAssetSource } from "sanity-plugin-media";
 import { muxInput } from "sanity-plugin-mux-input";
 import { schemaTypes } from "./src/sanity/schemaTypes";
 
-import { routing } from "@/i18n/routing";
+import { routing, localeConfig, type Locale } from "@/i18n/routing";
 
 export default defineConfig({
-  title: "Medal Social Enterprise",
+  title: "Nextmedal by Medal Social",
   projectId,
   dataset,
   basePath: "/studio",
@@ -42,7 +42,7 @@ export default defineConfig({
     documentInternationalization({
       supportedLanguages: routing.locales.map((locale) => ({
         id: locale,
-        title: locale === "nb" ? "Norsk" : "English",
+        title: localeConfig[locale as Locale].title,
       })),
       schemaTypes: ["page", "blog.post", "site"],
     }),

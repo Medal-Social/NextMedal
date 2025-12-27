@@ -47,6 +47,7 @@ export default function Paginated({
           >
             <button
               type="button"
+              aria-label="Go to previous page"
               onClick={() => {
                 onPrev();
                 scrollToList();
@@ -54,8 +55,7 @@ export default function Paginated({
               disabled={atStart}
               className="relative inline-flex items-center rounded-l-md px-3 py-2 text-slate-400 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:hover:bg-transparent dark:ring-slate-700 dark:hover:bg-slate-800 dark:text-slate-500"
             >
-              <span className="sr-only">Previous</span>
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4" aria-hidden="true" />
             </button>
 
             {/* Simple page info for now, can be expanded to full pagination logic */}
@@ -65,6 +65,7 @@ export default function Paginated({
 
             <button
               type="button"
+              aria-label="Go to next page"
               onClick={() => {
                 onNext();
                 scrollToList();
@@ -72,8 +73,7 @@ export default function Paginated({
               disabled={atEnd}
               className="relative inline-flex items-center rounded-r-md px-3 py-2 text-slate-400 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:hover:bg-transparent dark:ring-slate-700 dark:hover:bg-slate-800 dark:text-slate-500"
             >
-              <span className="sr-only">Next</span>
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4" aria-hidden="true" />
             </button>
           </nav>
         </div>

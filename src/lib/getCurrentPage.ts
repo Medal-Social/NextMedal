@@ -1,5 +1,6 @@
 import { headers } from 'next/headers';
 import { groq } from 'next-sanity';
+import { routing } from '@/i18n/routing';
 import { logger } from '@/lib/logger';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
 import { TRANSLATIONS_QUERY } from '@/sanity/lib/queries';
@@ -44,29 +45,43 @@ export async function getCurrentPage(): Promise<Sanity.PageBase | undefined> {
 
 /**
  * Parse pathname to extract locale and slug
- * Patterns: /, /en, /nb, /en/slug, /nb/slug, /slug
+ * Patterns: /, /en, /nb, /en/slug, /nb/slug, /slug, /blog/slug, /nb/blog/slug
  */
 function parsePathname(pathname: string): { locale: string; slug: string } {
   const urlPath = new URL(pathname, 'http://localhost').pathname;
   const segments = urlPath.split('/').filter(Boolean);
-  const locales = ['en', 'nb'];
+  const locales: readonly string[] = routing.locales;
 
   // Root path /
   if (segments.length === 0) {
-    return { locale: 'en', slug: 'index' };
+    return { locale: routing.defaultLocale, slug: 'index' };
   }
 
-  // Path with locale: /en/slug or /nb/slug
+  let locale = routing.defaultLocale;
+  let remainingSegments = segments;
+
+  // Check if first segment is a locale
   if (locales.includes(segments[0])) {
+    locale = segments[0] as typeof routing.defaultLocale;
+    remainingSegments = segments.slice(1);
+  }
+
+  // No remaining segments means homepage for that locale
+  if (remainingSegments.length === 0) {
+    return { locale, slug: 'index' };
+  }
+
+  // Handle /blog/slug pattern - strip "blog" prefix for blog posts
+  if (remainingSegments[0] === 'blog' && remainingSegments.length > 1) {
     return {
-      locale: segments[0],
-      slug: segments.slice(1).join('/') || 'index',
+      locale,
+      slug: remainingSegments.slice(1).join('/'),
     };
   }
 
-  // Path without locale: /slug (default to en)
+  // Regular page slug
   return {
-    locale: 'en',
-    slug: segments.join('/'),
+    locale,
+    slug: remainingSegments.join('/'),
   };
 }

@@ -27,14 +27,11 @@ export async function getSite(stega?: boolean) {
 			*[_type == 'site' && _id == 'site'][0]{
 				...,
 				logo->{
-					...,
+					_id,
+					title,
 					image {
-						default {
-							${IMAGE_QUERY}
-						},
-						dark {
-							${IMAGE_QUERY}
-						}
+						default { ${IMAGE_QUERY} },
+						dark { ${IMAGE_QUERY} }
 					}
 				},
 				ctas[]{ ${CTA_QUERY} },
@@ -45,8 +42,9 @@ export async function getSite(stega?: boolean) {
 				systemStatus,
 				socialLinks,
 				cookieConsent {
-					...,
-					privacyPolicy->
+					enabled,
+					content,
+					privacyPolicy->{ "slug": metadata.slug.current }
 				},
 				'ogimage': ogimage.asset->url,
 				'brandPage': *[_type == "page" && metadata.slug.current == "brand"][0]._id

@@ -15,11 +15,10 @@ export default defineField({
   description: 'Page content',
   type: 'array',
   of: [
-    { type: 'videoHero' },
-    { type: 'component-gallery' },
     { type: 'hero' },
-    { type: 'accordion-list' },
+    { type: 'videoHero' },
     { type: 'features' },
+    { type: 'accordion-list' },
     { type: 'lead-magnet' },
     { type: 'callout' },
     { type: 'contact' },
@@ -31,6 +30,7 @@ export default defineField({
     { type: 'blog-frontpage' },
     { type: 'latest-articles' },
     { type: 'breadcrumbs' },
+    { type: 'component-gallery' },
   ],
   options: {
     insertMenu: {

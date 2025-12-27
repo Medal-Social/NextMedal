@@ -91,9 +91,10 @@ declare global {
       categories: BlogCategory[]; // Usually dereferenced in UI
       authors: Person[]; // Usually dereferenced in UI
       publishDate: string;
-      featured?: boolean;
+      featured?: 'standard' | 'featured';
       metadata?: Metadata;
       relatedPosts?: BlogPost[]; // Usually dereferenced in UI
+      readTime?: number; // Calculated from word count
     }
 
     interface BlogCategory extends SanityDocument {

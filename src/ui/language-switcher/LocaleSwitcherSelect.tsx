@@ -1,6 +1,6 @@
 'use client';
 
-import { Languages } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useRouter as useNextRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { type ReactNode, useTransition } from 'react';
@@ -16,7 +16,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Spinner } from '@/components/ui/spinner';
+import { routing } from '@/i18n/routing';
 import { cn } from '@/lib/utils';
+import { LocaleBadge } from './locale-badges';
 
 type Props = {
   children: ReactNode;
@@ -33,18 +36,11 @@ interface LocaleOption {
   label: string;
 }
 
-const FLAGS: Record<string, string> = {
-  en: '🇺🇸',
-  nb: '🇳🇴',
-  // Add more flags as needed
-};
-
 export default function LocaleSwitcherSelect({
   children,
   defaultValue,
   label,
   selectLanguageLabel,
-  languageText,
   translationUrls = {},
   className,
   dropdownAlign = 'end',
@@ -77,7 +73,7 @@ export default function LocaleSwitcherSelect({
       } else {
         // Show toast notification that translation doesn't exist
         const localeLabel = options.find((opt) => opt.value === nextLocale)?.label || nextLocale;
-        const homeUrl = nextLocale === 'en' ? '/' : `/${nextLocale}`;
+        const homeUrl = nextLocale === routing.defaultLocale ? '/' : `/${nextLocale}`;
 
         toast.info(t('translationNotAvailable', { locale: localeLabel }), {
           action: {
@@ -94,26 +90,53 @@ export default function LocaleSwitcherSelect({
       <DropdownMenuTrigger
         render={
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             aria-label={label}
-            className={cn('h-8 px-2 gap-2', isPending && 'opacity-50', className)}
+            className={cn(
+              'h-9 px-2.5 gap-1.5 group',
+              'transition-all duration-200',
+              'hover:bg-accent/50 hover:border-accent',
+              isPending && 'opacity-60 pointer-events-none',
+              className
+            )}
             disabled={isPending}
           >
-            <Languages className="h-4 w-4" />
-            <span className="hidden sm:inline-block text-sm font-medium">{languageText}</span>
+            {isPending ? <Spinner className="size-4" /> : <LocaleBadge locale={defaultValue} />}
+            <ChevronDown className="size-3.5 opacity-60 transition-transform duration-200 group-data-[popup-open]:rotate-180" />
           </Button>
         }
       />
-      <DropdownMenuContent className="w-48 z-[200]" align={dropdownAlign}>
+      <DropdownMenuContent
+        className={cn(
+          'w-48 z-[200] p-1.5',
+          'backdrop-blur-xl bg-popover/95',
+          'border-border/50',
+          'shadow-xl shadow-black/10 dark:shadow-black/30',
+          'rounded-xl'
+        )}
+        align={dropdownAlign}
+        sideOffset={8}
+      >
         <DropdownMenuGroup>
-          <DropdownMenuLabel>{selectLanguageLabel}</DropdownMenuLabel>
-          <DropdownMenuSeparator />
+          <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            {selectLanguageLabel}
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator className="mx-1.5" />
           <DropdownMenuRadioGroup value={defaultValue} onValueChange={onSelectLocale}>
             {options.map((option) => (
-              <DropdownMenuRadioItem key={option.value} value={option.value}>
-                <span className="flex items-center gap-2">
-                  <span>{FLAGS[option.value] || '🏳️'}</span>
+              <DropdownMenuRadioItem
+                key={option.value}
+                value={option.value}
+                className={cn(
+                  'py-2.5 px-3 mx-1 rounded-lg cursor-pointer',
+                  'transition-colors duration-150',
+                  'hover:bg-accent/80',
+                  'data-[checked]:bg-primary/10 data-[checked]:font-medium'
+                )}
+              >
+                <span className="flex items-center gap-3">
+                  <LocaleBadge locale={option.value} />
                   <span>{option.label}</span>
                 </span>
               </DropdownMenuRadioItem>

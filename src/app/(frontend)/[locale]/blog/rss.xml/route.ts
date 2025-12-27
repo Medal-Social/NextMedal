@@ -22,12 +22,16 @@ export async function GET() {
 					metadata,
 					'image': metadata.image.asset->url
 				},
-				'posts': *[_type == 'blog.post']{
+				'posts': *[_type == 'blog.post']|order(publishDate desc)[0...100]{
 					_type,
 					body,
 					publishDate,
-					authors[]->,
-					metadata,
+					authors[]->{ name },
+					metadata {
+						title,
+						description,
+						"slug": { "current": slug.current }
+					},
 					'image': metadata.image.asset->url
 				},
 				'copyright': pt::text(*[_type == 'site'][0].copyright)

@@ -5,6 +5,11 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import { withSentryConfig } from "@sentry/nextjs";
 
+// Custom headers for branding
+const customHeaders = [
+  { key: 'X-Powered-By', value: 'Medal Social' },
+];
+
 const client = projectId
   ? createClient({
       projectId,
@@ -28,6 +33,11 @@ const config = {
           loaderFile: './src/lib/image-loader.ts',
         }
       : {}),
+    localPatterns: [
+      {
+        pathname: '/api/og/**',
+      },
+    ],
     remotePatterns: [
       {
         protocol: "https",
@@ -41,13 +51,16 @@ const config = {
         protocol: "https",
         hostname: "img.youtube.com",
       },
- 
     ],
   },
   compiler: {
     removeConsole: {
       exclude: ['error'],
     },
+  },
+
+  async headers() {
+    return [{ source: '/:path*', headers: customHeaders }];
   },
 
   async redirects() {

@@ -70,14 +70,12 @@ export default function AccordionList({
                 itemType: 'https://schema.org/Question',
               })}
             >
-              <AccordionTrigger className="hover:text-primary hover:underline group [&>svg]:group-hover:text-primary text-left">
-                <span
-                  {...(generateSchema && {
-                    itemProp: 'name',
-                  })}
-                >
-                  {summary}
-                </span>
+              <AccordionTrigger
+                {...(generateSchema && {
+                  itemProp: 'name',
+                })}
+              >
+                {summary}
               </AccordionTrigger>
               {generateSchema && (
                 <div

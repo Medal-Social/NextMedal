@@ -63,7 +63,7 @@ export default function BlogFilterBarClient({ categories }: { categories: Sanity
             placeholder="Explore articles..."
             value={search || ''}
             onChange={handleSearchChange}
-            className="block w-full rounded-md border border-slate-200 bg-slate-50 py-1.5 pl-8 pr-3 text-slate-900 placeholder-slate-400 transition-all focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-xs dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 hover:bg-white"
+            className="block w-full rounded-md border border-slate-200 bg-slate-50 py-1.5 pl-8 pr-3 text-slate-900 placeholder-slate-400 transition-all focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary hover:bg-white sm:text-xs dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700"
           />
         </div>
 

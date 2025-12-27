@@ -3,6 +3,8 @@ name: Preview Cleanup
 on:
   pull_request:
     types: [closed]
+    branches:
+      - dev  # Only cleanup previews for PRs targeting dev
 
 jobs:
   cleanup-preview:
