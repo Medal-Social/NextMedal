@@ -4,11 +4,22 @@ import { BASE_URL } from '@/lib/env';
 import { logger } from '@/lib/logger';
 import { fetchSanityLive } from '@/sanity/lib/live';
 
+interface SitemapEntry {
+  url: string;
+  lastModified?: string;
+  priority?: number;
+}
+
+interface SitemapData {
+  pages: SitemapEntry[];
+  blog: SitemapEntry[];
+}
+
 export async function GET(_req: NextRequest) {
   const baseUrl = BASE_URL;
-  let data: Record<string, any>;
+  let data: SitemapData;
   try {
-    data = await fetchSanityLive<Record<string, any>>({
+    data = await fetchSanityLive<SitemapData>({
       query: groq`{
         'pages': *[
           _type == 'page' &&

@@ -29,13 +29,21 @@ export async function GET() {
 
     const data = await client.fetch(query);
 
+    interface SearchItem {
+      _id: string;
+      _type: string;
+      title: string;
+      slug: string | null;
+      description?: string;
+    }
+
     const results = [
-      ...(Array.isArray(data.posts) ? data.posts : []).map((p: any) => ({
+      ...(Array.isArray(data.posts) ? data.posts : []).map((p: SearchItem) => ({
         ...p,
         type: 'Blog',
         href: `/blog/${p.slug}`,
       })),
-      ...(Array.isArray(data.pages) ? data.pages : []).map((p: any) => ({
+      ...(Array.isArray(data.pages) ? data.pages : []).map((p: SearchItem) => ({
         ...p,
         type: 'Page',
         href: `/${p.slug}`,

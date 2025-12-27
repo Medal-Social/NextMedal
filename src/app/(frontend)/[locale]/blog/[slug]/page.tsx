@@ -51,10 +51,9 @@ export default async function Page({ params }: Props) {
           image: post.metadata?.ogimage,
           datePublished: post.publishDate,
           dateModified: post._updatedAt,
-          author: post.authors?.map((author: any) => ({
+          author: post.authors?.map((author: Sanity.Person) => ({
             '@type': 'Person',
             name: author.name,
-            url: resolveUrl(author, { base: true }),
           })),
           mainEntityOfPage: {
             '@type': 'WebPage',
