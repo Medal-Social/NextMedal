@@ -105,10 +105,10 @@ export default defineType({
           .custom((ctas) => {
             if (!ctas || ctas.length === 0) return true;
 
-            const styles = ctas.map((cta: any) => cta?.style || 'primary');
+            const styles = ctas.map((cta) => (cta as { style?: string })?.style || 'primary');
 
             // Check for duplicates
-            const primaryCount = styles.filter((s: string) => s === 'primary').length;
+            const primaryCount = styles.filter((s) => s === 'primary').length;
 
             if (primaryCount > 1) {
               return 'Only one Primary button is allowed';
@@ -157,11 +157,12 @@ export default defineType({
       group: 'media',
       hidden: ({ parent }) => parent?.videoType !== 'youtube',
       validation: (Rule) =>
-        Rule.custom((value, context: any) => {
-          if (context.parent?.videoType === 'youtube' && !value) {
+        Rule.custom((value, context) => {
+          const parent = context.parent as { videoType?: string } | undefined;
+          if (parent?.videoType === 'youtube' && !value) {
             return 'Please enter a YouTube URL';
           }
-          if (value && context.parent?.videoType === 'youtube') {
+          if (value && parent?.videoType === 'youtube') {
             const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/;
             if (!youtubeRegex.test(value)) {
               return 'Please enter a valid YouTube URL';

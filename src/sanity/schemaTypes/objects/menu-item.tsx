@@ -62,9 +62,10 @@ export default defineType({
       type: 'reference',
       to: [{ type: 'page' }, { type: 'blog.post' }],
       validation: (Rule) =>
-        Rule.custom((value, context: any) => {
+        Rule.custom((value, context) => {
           // Only require if this is an internal link
-          if (context.parent?.type === 'internal' && !value) {
+          const parent = context.parent as { type?: string } | undefined;
+          if (parent?.type === 'internal' && !value) {
             return 'Please select a page';
           }
           return true;
@@ -82,9 +83,10 @@ export default defineType({
         Rule.uri({
           scheme: ['http', 'https', 'mailto', 'tel'],
           allowRelative: true,
-        }).custom((value, context: any) => {
+        }).custom((value, context) => {
           // Only require if this is an external link
-          if (context.parent?.type === 'external' && !value) {
+          const parent = context.parent as { type?: string } | undefined;
+          if (parent?.type === 'external' && !value) {
             return 'Please enter a URL';
           }
           return true;

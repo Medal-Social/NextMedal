@@ -83,8 +83,8 @@ export default defineType({
       ],
       group: 'general',
       validation: (Rule) =>
-        Rule.custom((blocks: any) => {
-          const text = getBlockText(blocks, ' ');
+        Rule.custom((blocks) => {
+          const text = getBlockText(blocks as Sanity.BlockContent, ' ');
           return text.length > 200
             ? 'Tagline should be concise (recommended max 200 characters)'
             : true;
@@ -152,8 +152,8 @@ export default defineType({
       group: 'navigation',
       fieldset: 'footer',
       validation: (Rule) =>
-        Rule.custom((blocks: any) => {
-          const text = getBlockText(blocks, ' ');
+        Rule.custom((blocks) => {
+          const text = getBlockText(blocks as Sanity.BlockContent, ' ');
           return text.length > 500
             ? 'Footer text should be concise (recommended max 500 characters)'
             : true;
@@ -261,7 +261,7 @@ export default defineType({
           hidden: ({ parent }) => !parent?.enabled,
           validation: (Rule) =>
             Rule.custom((value, context) => {
-              const parent = context.parent as any;
+              const parent = context.parent as { enabled?: boolean } | undefined;
               if (parent?.enabled && !value) {
                 return 'Privacy Policy is required when Cookie Consent is enabled';
               }
@@ -282,7 +282,12 @@ export default defineType({
       title: [language && `[${language}] `, title || 'Site settings'].filter(Boolean).join(' '),
       subtitle: [
         language && `[${language}] `,
-        tagline?.[0]?.children ? tagline[0]?.children.map((c: any) => c.text).join(' ') : '',
+        tagline?.[0]?.children
+          ? tagline[0]?.children
+              .map((c: { text?: string }) => c.text)
+              .filter(Boolean)
+              .join(' ')
+          : '',
       ]
         .filter(Boolean)
         .join(' '),

@@ -10,7 +10,7 @@ export const { sanityFetch, SanityLive } = defineLive({
   browserToken: env.SANITY_API_BROWSER_TOKEN,
 });
 
-export async function fetchSanityLive<T = any>(
+export async function fetchSanityLive<T = unknown>(
   args: Parameters<typeof sanityFetch>[0] & { stega?: boolean }
 ) {
   const preview = dev || (await draftMode()).isEnabled;

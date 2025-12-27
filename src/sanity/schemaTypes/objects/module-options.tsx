@@ -30,7 +30,9 @@ export default defineType({
       components: {
         input: ({ elementProps, path }) => {
           const indexOfModule = path.indexOf('modules');
-          const moduleKey = (path[indexOfModule + 1] as any)?._key;
+          const moduleItem = path[indexOfModule + 1];
+          const moduleKey =
+            typeof moduleItem === 'object' ? (moduleItem as { _key?: string })?._key : undefined;
           const [checked, setChecked] = useState(false);
 
           return (

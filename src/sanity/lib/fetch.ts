@@ -7,7 +7,7 @@ export { fetchSanityLive };
 
 import { CTA_QUERY, IMAGE_QUERY, LINK_QUERY, NAVIGATION_QUERY } from './queries';
 
-export async function fetchSanity<T = any>({
+export async function fetchSanity<T = unknown>({
   query,
   params = {},
   tags,
