@@ -64,6 +64,8 @@ export default function LocaleSwitcherClient({
     // Add translations
     if (page.translations) {
       for (const translation of page.translations) {
+        // Skip null/undefined translations (can happen with deleted references)
+        if (!translation?.language) continue;
         translationUrls[translation.language] = buildUrl(
           translation.language,
           translation.slug,

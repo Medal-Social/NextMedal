@@ -1,26 +1,20 @@
 import * as React from 'react';
 
-const MOBILE_BREAKPOINT = 768;
+const MOBILE_BREAKPOINT = 768; // Matches Tailwind v4 default `md` breakpoint
 
 /**
  * Hook to detect if the viewport is mobile-sized.
- *
- * Returns `undefined` during SSR and initial hydration to prevent hydration
- * mismatch, then returns the actual boolean value after the effect runs.
- *
- * Components using this hook should handle the `undefined` state to avoid
- * flash of incorrect content.
+ * Returns false during SSR (assumes desktop), then syncs with actual viewport.
  */
-export function useIsMobile(): boolean | undefined {
-  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined);
+export function useIsMobile(): boolean {
+  const [isMobile, setIsMobile] = React.useState(false);
 
   React.useEffect(() => {
     const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
-    const onChange = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
-    };
+    setIsMobile(mql.matches);
+
+    const onChange = (e: MediaQueryListEvent) => setIsMobile(e.matches);
     mql.addEventListener('change', onChange);
-    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
     return () => mql.removeEventListener('change', onChange);
   }, []);
 

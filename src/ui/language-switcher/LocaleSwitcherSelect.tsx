@@ -102,11 +102,7 @@ export default function LocaleSwitcherSelect({
             )}
             disabled={isPending}
           >
-            {isPending ? (
-              <Spinner className="size-4" />
-            ) : (
-              <LocaleBadge locale={defaultValue} />
-            )}
+            {isPending ? <Spinner className="size-4" /> : <LocaleBadge locale={defaultValue} />}
             <ChevronDown className="size-3.5 opacity-60 transition-transform duration-200 group-data-[popup-open]:rotate-180" />
           </Button>
         }

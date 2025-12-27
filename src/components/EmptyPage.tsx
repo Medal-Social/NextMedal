@@ -22,7 +22,7 @@ export function EmptyPage() {
           <EmptyDescription>
             There's no place like... index?
             <br className="mb-2" />
-            Add a new Page document in your Medal Social Studio with the slug "index".
+            Add a new Page document in your Sanity Studio (/studio) with the slug "index".
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>

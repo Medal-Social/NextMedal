@@ -33,7 +33,7 @@ type SidebarContextProps = {
   setOpen: (open: boolean) => void;
   openMobile: boolean;
   setOpenMobile: (open: boolean) => void;
-  isMobile: boolean | undefined;
+  isMobile: boolean;
   toggleSidebar: () => void;
 };
 
@@ -170,12 +170,6 @@ function Sidebar({
         {children}
       </div>
     );
-  }
-
-  // During SSR/hydration, isMobile is undefined. Return null to prevent
-  // hydration mismatch between server and client renders.
-  if (isMobile === undefined) {
-    return null;
   }
 
   if (isMobile) {

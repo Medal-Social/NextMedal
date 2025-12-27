@@ -90,6 +90,10 @@
   --animate-fade-to-t: anim-fade-to-t var(--default-transition-duration, 0.2s) ease-in-out forwards;
   --animate-fade-to-b: anim-fade-to-b var(--default-transition-duration, 0.2s) ease-in-out forwards;
 
+  /* Accordion animations with spring-like easing */
+  --animate-accordion-expand: accordion-expand 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  --animate-accordion-collapse: accordion-collapse 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+
   @keyframes marquee {
     to {
       transform: translateX(-50%);
@@ -128,6 +132,29 @@
     from {
       opacity: 0;
       translate: 0 -1rem;
+    }
+  }
+
+  /* Accordion expand/collapse animations */
+  @keyframes accordion-expand {
+    from {
+      height: 0;
+      opacity: 0;
+    }
+    to {
+      height: var(--accordion-panel-height);
+      opacity: 1;
+    }
+  }
+
+  @keyframes accordion-collapse {
+    from {
+      height: var(--accordion-panel-height);
+      opacity: 1;
+    }
+    to {
+      height: 0;
+      opacity: 0;
     }
   }
 }
