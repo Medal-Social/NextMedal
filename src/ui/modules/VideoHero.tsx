@@ -151,7 +151,7 @@ const MuxVideoPlayer = ({
 }: {
   playbackId: string;
   title?: string;
-  onError: (err: any) => void;
+  onError: (err: unknown) => void;
 }) => {
   return (
     <MuxPlayerReact
@@ -210,10 +210,12 @@ export default function VideoHero({ ...props }: { data: Sanity.VideoHero }) {
   const mux = useMuxVideo(data);
 
   // Generate thumbnail URL
+  type ThumbnailWithUrl = Sanity.Image & { src?: string };
+  const thumbnailData = data?.thumbnail as ThumbnailWithUrl | undefined;
   let thumbnailUrl =
-    (data?.thumbnail as any)?.src ||
-    (data?.thumbnail as any)?.url ||
-    (data?.thumbnail ? urlFor(data.thumbnail as any).url() : null);
+    thumbnailData?.src ||
+    thumbnailData?.url ||
+    (data?.thumbnail ? urlFor(data.thumbnail).url() : null);
 
   // Fallback to automatic thumbnails if manual one is missing
   if (!thumbnailUrl) {
@@ -228,8 +230,9 @@ export default function VideoHero({ ...props }: { data: Sanity.VideoHero }) {
     setIsPlaying(true);
   };
 
-  const handleError = (err: any) => {
-    setError(`Video player error: ${err}`);
+  const handleError = (err: unknown) => {
+    const message = err instanceof Error ? err.message : String(err);
+    setError(`Video player error: ${message}`);
   };
 
   // Combined error state

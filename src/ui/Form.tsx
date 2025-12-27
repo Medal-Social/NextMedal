@@ -27,7 +27,7 @@ interface FormProps {
     formTitle?: string;
     fields: FormField[];
     submitButtonText: string;
-    successMessage?: any[];
+    successMessage?: Sanity.BlockContent;
     acceptance?: {
       required: boolean;
       text: string;
@@ -57,7 +57,7 @@ interface FormProps {
 export default function Form({ form, className }: FormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [formData, setFormData] = useState<Record<string, any>>({});
+  const [formData, setFormData] = useState<Record<string, string | boolean>>({});
   const [accepted, setAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -73,7 +73,7 @@ export default function Form({ form, className }: FormProps) {
   // Pre-fill from URL parameters
   useEffect(() => {
     if (!form || !searchParams) return;
-    const initialData: Record<string, any> = {};
+    const initialData: Record<string, string> = {};
     form.fields.forEach((field) => {
       const value = searchParams.get(field.name.current);
       if (value) {
@@ -87,7 +87,7 @@ export default function Form({ form, className }: FormProps) {
 
   if (!form) return null;
 
-  const handleChange = (name: string, value: any) => {
+  const handleChange = (name: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -203,7 +203,7 @@ export default function Form({ form, className }: FormProps) {
             name="_honeypot"
             tabIndex={-1}
             autoComplete="off"
-            value={formData._honeypot || ''}
+            value={String(formData._honeypot || '')}
             onChange={(e) => handleChange('_honeypot', e.target.value)}
           />
         </div>
@@ -232,7 +232,7 @@ export default function Form({ form, className }: FormProps) {
                   className="flex min-h-[140px] w-full rounded-2xl border border-input bg-background/50 px-4 py-3 text-base ring-offset-background placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all disabled:cursor-not-allowed disabled:opacity-50"
                   placeholder={field.placeholder}
                   required={field.required}
-                  value={formData[field.name.current] || ''}
+                  value={String(formData[field.name.current] || '')}
                   onChange={(e) => handleChange(field.name.current, e.target.value)}
                 />
               ) : field.type === 'checkbox' ? (
@@ -262,7 +262,7 @@ export default function Form({ form, className }: FormProps) {
                     field.type === 'email' ? 'email' : field.type === 'tel' ? 'tel' : 'on'
                   }
                   className="rounded-2xl h-12 bg-background/50 border-input focus:ring-primary/20 transition-all"
-                  value={formData[field.name.current] || ''}
+                  value={String(formData[field.name.current] || '')}
                   onChange={(e) => handleChange(field.name.current, e.target.value)}
                 />
               )}

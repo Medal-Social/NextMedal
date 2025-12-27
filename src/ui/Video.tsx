@@ -100,15 +100,16 @@ export default function Video({ data, onClick }: { data: Sanity.Video; onClick?:
   const mux = useMuxVideo(data);
 
   // Generate thumbnail URL
-  const thumbnailUrl = data?.thumbnail ? urlFor(data.thumbnail as any).url() : null;
+  const thumbnailUrl = data?.thumbnail ? urlFor(data.thumbnail).url() : null;
 
   const handlePlayClick = () => {
     setIsPlaying(true);
     onClick?.();
   };
 
-  const handleError = (err: any) => {
-    setError(`Video player error: ${err}`);
+  const handleError = (err: unknown) => {
+    const message = err instanceof Error ? err.message : String(err);
+    setError(`Video player error: ${message}`);
   };
 
   // Combined error state

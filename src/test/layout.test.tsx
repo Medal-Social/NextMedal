@@ -21,17 +21,18 @@ describe('Layout Components', () => {
       expect(skipLink).toHaveAttribute('href', '#main-content');
     });
 
-    it('has tabIndex 0 for keyboard accessibility', () => {
+    it('is keyboard focusable (anchor elements are focusable by default)', () => {
       render(<SkipToContent />);
       const skipLink = screen.getByRole('link', { name: /skip to content/i });
-      expect(skipLink).toHaveAttribute('tabIndex', '0');
+      // Anchor elements with href are focusable by default, no explicit tabIndex needed
+      expect(skipLink).toHaveAttribute('href', '#main-content');
     });
 
-    it('is positioned for screen reader accessibility', () => {
+    it('uses fixed positioning for modern slide-down animation', () => {
       render(<SkipToContent />);
       const skipLink = screen.getByRole('link', { name: /skip to content/i });
-      // The component uses sr-only class when not focused
-      expect(skipLink).toHaveClass('absolute');
+      // Modern implementation uses fixed positioning with Framer Motion animation
+      expect(skipLink).toHaveClass('fixed');
     });
   });
 
@@ -43,9 +44,9 @@ describe('Layout Components', () => {
     it('SkipToContent should be designed to be first focusable element', () => {
       render(<SkipToContent />);
       const skipLink = screen.getByRole('link', { name: /skip to content/i });
-      // SkipToContent has tabIndex=0 and is positioned at top-left (left-0 top-0)
-      expect(skipLink).toHaveAttribute('tabIndex', '0');
-      expect(skipLink).toHaveClass('left-0', 'top-0');
+      // SkipToContent is an anchor with href (inherently focusable) and positioned fixed at top-center
+      expect(skipLink).toHaveAttribute('href', '#main-content');
+      expect(skipLink).toHaveClass('fixed', 'top-4');
     });
 
     /**

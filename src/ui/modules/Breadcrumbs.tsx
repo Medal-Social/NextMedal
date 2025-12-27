@@ -22,7 +22,7 @@ export default async function Breadcrumbs({
     <Section as={Breadcrumb} className="py-4 text-sm" spacing="none" {...moduleProps(props)}>
       <BreadcrumbList itemScope itemType="https://schema.org/BreadcrumbList">
         {crumbs?.map((crumb, index) => (
-          <Fragment key={(crumb as any)._key || index}>
+          <Fragment key={(crumb as Sanity.MenuItem & { _key?: string })._key || index}>
             <BreadcrumbItem
               itemProp="itemListElement"
               itemScope

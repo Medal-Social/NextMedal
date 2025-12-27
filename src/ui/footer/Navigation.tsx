@@ -12,7 +12,7 @@ type InternalLink = {
   slug?: {
     current: string;
   };
-  metadata: any;
+  metadata: Sanity.Metadata;
   _id: string;
   _rev: string;
   _createdAt: string;

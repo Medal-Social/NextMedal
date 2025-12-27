@@ -145,8 +145,8 @@ function renderValue(value: string | boolean | null | undefined) {
 
   // Handle case where value might be an object (though types say otherwise, Sanity sometimes provides them)
   if (typeof value === 'object' && value !== null) {
-    const valObj = value as any;
-    if ('title' in valObj) {
+    const valObj = value as Record<string, unknown>;
+    if ('title' in valObj && typeof valObj.title === 'string') {
       resolved = valObj.title;
     } else {
       resolved = null;

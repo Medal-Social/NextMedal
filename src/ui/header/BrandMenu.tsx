@@ -22,7 +22,7 @@ interface BrandMenuProps {
 
 export default function BrandMenu({ children, logoData, hasBrandPage }: BrandMenuProps) {
   const image = logoData?.image?.default;
-  const extension = image?.asset?.extension || 'svg';
+  const extension = (image?.asset as { extension?: string } | undefined)?.extension || 'svg';
   const label = extension === 'png' ? 'Copy Logo PNG' : 'Copy Logo SVG';
 
   const handleCopyLogo = async () => {

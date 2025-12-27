@@ -24,7 +24,7 @@ export default function BlogPostLayout({
   post,
   placements,
 }: {
-  post: any;
+  post: Sanity.BlogPost & { headings?: Array<{ style: string; text: string }> };
   placements?: Placements;
 }) {
   const stega = createDataAttribute({

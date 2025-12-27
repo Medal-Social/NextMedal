@@ -20,9 +20,9 @@ export function ResponsiveImg({
   if (!img) return null;
 
   return (
-    <picture {...(pictureProps as any)}>
+    <picture {...pictureProps}>
       {img.responsive?.map((r) => (
-        <Source {...r} key={(r.image as any).url || r.media} />
+        <Source {...r} key={r.image?.url || r.media} />
       ))}
       <Img image={img.image} {...props} />
     </picture>
@@ -36,7 +36,7 @@ export function Img({
   loading: loadingProp,
   ...props
 }: {
-  image?: any;
+  image?: Sanity.Image & { src?: string; width?: number; height?: number };
 } & ImgProps & { 'data-sanity'?: string }) {
   if (!image) return null;
 
@@ -140,7 +140,7 @@ export function Source({
     preload(src, { as: 'image' });
   }
 
-  return <source srcSet={src} width={width} height={height} media={media} {...(props as any)} />;
+  return <source srcSet={src} width={width} height={height} media={media} {...props} />;
 }
 
 function generateSrc(
@@ -149,13 +149,15 @@ function generateSrc(
   h?: number | `${number}` | string
 ) {
   try {
-    const { width: w_orig, height: h_orig } = getImageDimensions(image as any);
+    const { width: w_orig, height: h_orig } = getImageDimensions(
+      image as Parameters<typeof getImageDimensions>[0]
+    );
 
     const w_calc = w ? Number(w) : !!h && Math.floor((Number(h) * w_orig) / h_orig);
     const h_calc = h ? Number(h) : !!w && Math.floor((Number(w) * h_orig) / w_orig);
 
     return {
-      src: urlFor(image as any)
+      src: urlFor(image)
         .withOptions({
           width: w ? Number(w) : undefined,
           height: h ? Number(h) : undefined,
