@@ -123,7 +123,7 @@ export function CommandMenu({ variant = 'default', className }: CommandMenuProps
             <>
               <CommandGroup heading="Blog Posts">
                 {items
-                  .filter((i) => i.type === 'Blog')
+                  .filter((item) => item.type === 'Blog')
                   .map((item) => (
                     <CommandItem
                       key={item._id}
@@ -140,7 +140,7 @@ export function CommandMenu({ variant = 'default', className }: CommandMenuProps
 
               <CommandGroup heading="Pages">
                 {items
-                  .filter((i) => i.type === 'Page')
+                  .filter((item) => item.type === 'Page')
                   .map((item) => (
                     <CommandItem
                       key={item._id}
