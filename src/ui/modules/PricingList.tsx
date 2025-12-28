@@ -1,7 +1,7 @@
 'use client';
 
-import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
 import { CircleCheckBig } from 'lucide-react';
+import { animate, motion, useMotionValue, useTransform } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
