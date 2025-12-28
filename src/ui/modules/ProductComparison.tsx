@@ -68,7 +68,12 @@ export default function ProductComparison({
             )}
 
             <div className="text-center pb-4 border-b border-border/50">
-              <h3 className={cn('text-2xl font-bold', product.highlight ? 'text-primary' : '')}>
+              <h3
+                className={cn(
+                  'text-2xl font-bold',
+                  product.highlight ? 'text-highlight-foreground' : ''
+                )}
+              >
                 {product.name}
               </h3>
             </div>
