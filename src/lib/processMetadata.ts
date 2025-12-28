@@ -1,10 +1,46 @@
 import type { Metadata } from 'next';
 import { stegaClean } from 'next-sanity';
+import { type Locale, routing } from '@/i18n/routing';
 import { BASE_URL, isPreview, isStaging, vercelPreview } from './env';
 import resolveUrl from './resolveUrl';
 
+// Generate hreflang alternate URLs for all supported locales
+function generateAlternateLanguages(
+  page: Sanity.PageBase,
+  translations?: Array<{ slug: string; language: string; _type: string }>
+): Record<string, string> {
+  const alternates: Record<string, string> = {};
+  const defaultLocale = routing.defaultLocale;
+  const locales = routing.locales as Locale[];
+
+  for (const locale of locales) {
+    // Check if there's a translation for this locale (filter out null items)
+    const translation = translations?.filter(Boolean).find((t) => t.language === locale);
+
+    if (translation) {
+      // Use the translation's slug
+      const langPrefix = locale === defaultLocale ? '' : `/${locale}`;
+      const pathSegment = translation._type === 'blog.post' ? '/blog' : '';
+      const slugPath = translation.slug === 'index' ? '' : `/${translation.slug}`;
+      alternates[locale] = `${BASE_URL}${langPrefix}${pathSegment}${slugPath}`;
+    } else if (locale === page.language) {
+      // Current page's locale
+      alternates[locale] = resolveUrl(page, { base: true });
+    }
+  }
+
+  // Add x-default pointing to the default locale version
+  if (alternates[defaultLocale]) {
+    alternates['x-default'] = alternates[defaultLocale];
+  }
+
+  return alternates;
+}
+
 export default async function processMetadata(
-  page: Sanity.Page | Sanity.BlogPost | Sanity.ComponentLibrary,
+  page: (Sanity.Page | Sanity.BlogPost | Sanity.ComponentLibrary) & {
+    translations?: Array<{ slug: string; language: string; _type: string }>;
+  },
   searchParams?: Record<string, string | string[] | undefined>
 ): Promise<Metadata> {
   if (!page.metadata) {
@@ -49,6 +85,7 @@ export default async function processMetadata(
     },
     alternates: {
       canonical: url,
+      languages: generateAlternateLanguages(page, page.translations),
       types: {
         'application/rss+xml': '/blog/rss.xml',
       },

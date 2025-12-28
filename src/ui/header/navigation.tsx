@@ -29,6 +29,7 @@ interface InternalLink {
 }
 
 export interface MenuItem {
+  _key: string;
   _type: 'menuItem' | 'dropdownMenu';
   label?: string;
   title?: string;
@@ -87,8 +88,8 @@ export default async function Navigation() {
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        {(headerMenu as HeaderMenu)?.items?.map((item) => {
-          const itemKey = `${item._type}-${item.label || ''}-${item.title || ''}`;
+        {(headerMenu as HeaderMenu)?.items?.map((item, index) => {
+          const itemKey = item._key || `nav-item-${index}`;
           switch (item._type) {
             case 'menuItem':
               return (
@@ -121,9 +122,9 @@ export default async function Navigation() {
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="bg-background">
                     <ul className="grid w-64 gap-2 p-4">
-                      {item.links?.map((link) => (
+                      {item.links?.map((link, linkIndex) => (
                         <ListItem
-                          key={link.label}
+                          key={link._key || `nav-link-${index}-${linkIndex}`}
                           title={link.label || ''}
                           href={getLinkHref(link)}
                         >

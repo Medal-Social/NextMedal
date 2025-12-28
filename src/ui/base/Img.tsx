@@ -7,7 +7,11 @@ import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
 import { urlFor } from '@/sanity/lib/image';
 
-type ImgProps = { alt?: string } & Omit<ImageProps, 'src' | 'alt'>;
+type ImgProps = {
+  alt?: string;
+  // Next.js 16: use fetchPriority for LCP optimization
+  fetchPriority?: 'high' | 'low' | 'auto';
+} & Omit<ImageProps, 'src' | 'alt'>;
 
 type DirectImage = Sanity.Image & { src?: string; width?: number; height?: number };
 
@@ -129,6 +133,18 @@ export function Img({
     preload(src, { as: 'image' });
   }
 
+  // Use LQIP (Low Quality Image Placeholder) from Sanity metadata for blur-up effect
+  // Asset may have extended metadata from GROQ projection
+  const asset = image.asset as { metadata?: { lqip?: string } } | undefined;
+  const lqip = asset?.metadata?.lqip;
+  const blurProps =
+    lqip && !isGif && !isSvg
+      ? {
+          placeholder: 'blur' as const,
+          blurDataURL: lqip,
+        }
+      : {};
+
   const imageElement = (
     <Image
       src={isGif ? src.split('?')[0] : src}
@@ -136,6 +152,7 @@ export function Img({
       height={height}
       alt={props.alt || image.alt || image.altText || image.asset?.altText || ''}
       unoptimized={isGif || isSvg}
+      {...blurProps}
       {...props}
       loading={validLoading}
     />

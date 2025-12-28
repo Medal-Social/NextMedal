@@ -4,22 +4,39 @@ export const SLUG_QUERY = groq`
 	metadata.slug.current
 `;
 
+// Link query with all required fields
 export const LINK_QUERY = groq`
-	...,
+	_key,
+	_type,
+	type,
+	label,
+	external,
+	newTab,
+	params,
 	internal->{
+		_id,
 		_type,
 		title,
-		parent[]->{ metadata { slug } },
-		metadata
+		metadata { slug }
 	}
 `;
 
+// Optimized image query - only fetch fields needed for rendering
 export const IMAGE_QUERY = groq`
-	...,
+	_key,
+	_type,
+	alt,
+	caption,
+	crop,
+	hotspot,
 	asset->{
-		...,
+		_id,
+		url,
 		altText,
-		metadata
+		metadata {
+			dimensions,
+			lqip
+		}
 	}
 `;
 
@@ -51,20 +68,29 @@ export const PT_BLOCK_QUERY = groq`
 export const NAVIGATION_QUERY = groq`
 	title,
 	items[]{
+		_key,
+		title,
 		${LINK_QUERY},
 		links[]{ ${LINK_QUERY} },
 		categories[]{
-		...,
+			...,
 			links[]{ ${LINK_QUERY} }
 		}
 	}
 `;
 
+// CTA query with all required fields
 export const CTA_QUERY = groq`
-	...,
+	_key,
+	_type,
+	label,
+	style,
 	link{ ${LINK_QUERY} },
-		internalLink-> {
-		...
+	internalLink->{
+		_id,
+		_type,
+		title,
+		metadata { slug }
 	}
 `;
 
