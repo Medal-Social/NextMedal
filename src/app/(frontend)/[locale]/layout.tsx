@@ -7,11 +7,11 @@ import type { Locale } from 'next-intl';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import { Suspense } from 'react';
 import { Analytics } from '@/components/Analytics';
-import CookieConsent from '@/components/CookieConsent';
+import CookieConsentWrapper from '@/components/CookieConsentWrapper';
 import { Toaster } from '@/components/ui/sonner';
 import { routing } from '@/i18n/routing';
-import { getSite } from '@/sanity/lib/fetch';
 import { SanityLive } from '@/sanity/lib/live';
 import Footer from '@/ui/footer';
 import Header from '@/ui/header';
@@ -37,17 +37,21 @@ export default async function RootLayout({ children, params }: Props) {
   // Enable static rendering
   setRequestLocale(locale);
 
-  // Static generation is now possible since we're not using the connection() API
-  const site = await getSite();
-
   return (
     <html
       lang={locale}
       className={`${GeistSans.variable} ${GeistMono.variable}`}
       suppressHydrationWarning
     >
-      <body className="bg-background text-foreground font-sans flex flex-col min-h-screen">
-        <SiteJsonLd />
+      <head>
+        {/* Preconnect to critical external origins for faster resource loading */}
+        <link rel="preconnect" href="https://cdn.sanity.io" />
+        <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+      </head>
+      <body className="bg-background text-foreground dark:bg-background dark:text-foreground font-sans flex flex-col min-h-screen">
+        <Suspense>
+          <SiteJsonLd />
+        </Suspense>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -57,8 +61,12 @@ export default async function RootLayout({ children, params }: Props) {
           <NuqsAdapter>
             <NextIntlClientProvider locale={locale}>
               <SkipToContent />
-              <Banner />
-              <Header site={site} />
+              <Suspense>
+                <Banner />
+              </Suspense>
+              <Suspense>
+                <Header />
+              </Suspense>
               <main
                 id="main-content"
                 className="flex-1 w-full pt-[var(--header-height)] min-h-[calc(100dvh-var(--header-height)-var(--footer-height))]"
@@ -66,11 +74,15 @@ export default async function RootLayout({ children, params }: Props) {
               >
                 {children}
               </main>
-              <Footer site={site} />
+              <Suspense>
+                <Footer />
+              </Suspense>
               <VisualEditingControls />
               <Toaster />
               <Analytics />
-              <CookieConsent config={site.cookieConsent} locale={locale} />
+              <Suspense>
+                <CookieConsentWrapper locale={locale} />
+              </Suspense>
               <ScrollToTop />
               <SanityLive />
             </NextIntlClientProvider>
