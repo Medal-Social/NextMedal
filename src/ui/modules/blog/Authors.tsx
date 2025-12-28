@@ -22,7 +22,7 @@ export default function Authors({
   if (!authors?.length && !skeleton) return null;
 
   return (
-    <div {...(props as any)}>
+    <div {...props}>
       {authors?.map((author, index) => (
         <Author
           author={author}

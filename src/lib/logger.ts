@@ -29,7 +29,8 @@ export const logger = pino({
           }
         }
       }
-      return method.apply(this, inputArgs as [any, ...any[]]);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return method.apply(this, inputArgs as Parameters<typeof method>);
     },
   },
 });

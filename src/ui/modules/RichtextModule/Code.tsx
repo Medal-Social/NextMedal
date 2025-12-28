@@ -23,7 +23,6 @@ export default async function Code({ value }: { value: { code: string; language?
           // biome-ignore lint/a11y/noNoninteractiveTabindex: Scrollable code block needs to be keyboard accessible
           tabIndex={0}
           className={`[&>pre]:!bg-[#0C1117] [&>pre]:!p-4 [&>pre]:!m-0 [&>pre]:overflow-x-auto ${value.language && value.language !== 'text' ? '[&>pre]:!pt-10' : ''}`}
-          // biome-ignore lint/security/noDangerouslySetInnerHtml: Shiki generates safe HTML
           dangerouslySetInnerHTML={{ __html: html }}
         />
       </div>

@@ -138,8 +138,15 @@ export default defineType({
       style: 'style',
     },
     prepare({ content, media, style }) {
-      const block = (content || []).find((b: any) => b._type === 'block');
-      const title = block?.children?.map((c: any) => c.text).join('') || 'Lead Magnet';
+      type BlockItem = { _type: string; children?: Array<{ text?: string }> };
+      const block = (content || []).find((b: BlockItem) => b._type === 'block') as
+        | BlockItem
+        | undefined;
+      const title =
+        block?.children
+          ?.map((child) => child.text)
+          .filter(Boolean)
+          .join('') || 'Lead Magnet';
       return {
         title,
         subtitle: `Lead Magnet • ${style === 'sidebar' ? 'Sidebar' : 'Featured'}`,

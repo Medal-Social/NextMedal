@@ -28,7 +28,6 @@ export default function HeaderClient({
   isOpenRef.current = isOpen;
 
   // Check for dark theme on first content element
-  // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is used to trigger re-check on navigation
   useEffect(() => {
     const checkDarkTheme = () => {
       const main = document.querySelector('main');
@@ -91,7 +90,6 @@ export default function HeaderClient({
   }, []);
 
   // Close mobile menu on route change
-  // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is used to trigger closing on navigation
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);

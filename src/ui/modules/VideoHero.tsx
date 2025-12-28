@@ -8,7 +8,6 @@ import moduleProps from '@/lib/moduleProps';
 import { urlFor } from '@/sanity/lib/image';
 import '@mux/mux-player/themes/classic';
 
-// Use regular dynamic imports for video players
 const MuxPlayerReact = dynamic(() => import('@mux/mux-player-react'), {
   loading: () => (
     <div className="w-full h-full bg-muted flex flex-col items-center justify-center">
@@ -20,10 +19,8 @@ const MuxPlayerReact = dynamic(() => import('@mux/mux-player-react'), {
   ssr: false,
 });
 
-// -------------- Modular YouTube Utilities --------------
-
 // Extract YouTube video ID from various URL formats
-const getYouTubeVideoId = (url: string): string => {
+function getYouTubeVideoId(url: string): string {
   if (!url) return '';
 
   // If it's already just an ID (no slashes or dots)
@@ -51,20 +48,32 @@ const getYouTubeVideoId = (url: string): string => {
       videoId = urlObj.pathname.split('/shorts/')[1];
     }
 
-    // Validate video ID to prevent open redirect
+    // Validate video ID format
     if (videoId && /^[a-zA-Z0-9_-]{11}$/.test(videoId.split('?')[0])) {
       return videoId;
     }
-  } catch (_e) {
-    // Fallback to empty string if URL parsing fails
+  } catch {
     return '';
   }
 
   return '';
-};
+}
 
-// YouTube video hook for managing YouTube video state
-const useYouTubeVideo = (videoIdOrUrl?: string) => {
+// Check if string is a valid URL
+function isValidYouTubeUrl(input: string): boolean {
+  try {
+    const urlObj = new URL(input.startsWith('http') ? input : `https://${input}`);
+    const hostname = urlObj.hostname.toLowerCase();
+    return (
+      hostname === 'youtube.com' || hostname.endsWith('.youtube.com') || hostname === 'youtu.be'
+    );
+  } catch {
+    return false;
+  }
+}
+
+// YouTube video hook
+function useYouTubeVideo(videoIdOrUrl?: string) {
   const [videoId, setVideoId] = useState<string | null>(null);
   const [youtubeUrl, setYoutubeUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -79,41 +88,24 @@ const useYouTubeVideo = (videoIdOrUrl?: string) => {
 
     if (extractedId) {
       setVideoId(extractedId);
-      // If the input looks like a URL, validate it strictly before using it
-      let isUrl = false;
-      try {
-        const urlObj = new URL(
-          videoIdOrUrl.startsWith('http') ? videoIdOrUrl : `https://${videoIdOrUrl}`
-        );
-        const hostname = urlObj.hostname.toLowerCase();
-        isUrl =
-          hostname === 'youtube.com' ||
-          hostname.endsWith('.youtube.com') ||
-          hostname === 'youtu.be';
-      } catch (_e) {
-        isUrl = false;
-      }
+      const isUrl = isValidYouTubeUrl(videoIdOrUrl);
       setYoutubeUrl(isUrl ? videoIdOrUrl : `https://www.youtube.com/watch?v=${extractedId}`);
+    } else if (videoIdOrUrl.startsWith('http')) {
+      setYoutubeUrl(videoIdOrUrl);
     } else {
-      // If extraction fails but it looks like a URL, try using it anyway if it starts with http
-      if (videoIdOrUrl.startsWith('http')) {
-        setYoutubeUrl(videoIdOrUrl);
-      } else {
-        setError('Could not extract YouTube video ID from URL');
-      }
+      setError('Could not extract YouTube video ID from URL');
     }
   }, [videoIdOrUrl]);
 
   return { videoId, youtubeUrl, error };
-};
+}
 
-// Mux video hook for managing Mux video state
-const useMuxVideo = (data: Sanity.VideoHero) => {
+// Mux video hook
+function useMuxVideo(data: Sanity.VideoHero) {
   const [videoId, setVideoId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Try to get the Mux ID from all possible locations in order of priority
     const muxId = data.muxVideo?.asset?.playbackId || data.muxVideo?.playbackId || null;
 
     if (muxId) {
@@ -124,10 +116,39 @@ const useMuxVideo = (data: Sanity.VideoHero) => {
   }, [data]);
 
   return { videoId, error };
-};
+}
+
+// Get thumbnail URL from various sources
+function getThumbnailUrl(
+  data: Sanity.VideoHero,
+  muxVideoId: string | null,
+  youtubeVideoId: string | null
+): string | null {
+  type ThumbnailWithUrl = Sanity.Image & { src?: string };
+  const thumbnailData = data?.thumbnail as ThumbnailWithUrl | undefined;
+
+  // Try manual thumbnail first
+  const manualUrl =
+    thumbnailData?.src ||
+    thumbnailData?.url ||
+    (data?.thumbnail ? urlFor(data.thumbnail).url() : null);
+
+  if (manualUrl) return manualUrl;
+
+  // Fallback to automatic thumbnails
+  if (data?.type === 'mux' && muxVideoId) {
+    return `https://image.mux.com/${muxVideoId}/thumbnail.jpg?width=1920&height=1080&fit_mode=preserve`;
+  }
+
+  if (data?.type === 'youtube' && youtubeVideoId) {
+    return `https://img.youtube.com/vi/${youtubeVideoId}/maxresdefault.jpg`;
+  }
+
+  return null;
+}
 
 // YouTube Player Component
-const YouTubePlayer = ({ videoId, title }: { videoId: string; title?: string }) => {
+function YouTubePlayer({ videoId, title }: { videoId: string; title?: string }) {
   const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
 
   return (
@@ -141,18 +162,18 @@ const YouTubePlayer = ({ videoId, title }: { videoId: string; title?: string }) 
       />
     </div>
   );
-};
+}
 
 // Mux Player Component
-const MuxVideoPlayer = ({
+function MuxVideoPlayer({
   playbackId,
   title,
   onError,
 }: {
   playbackId: string;
   title?: string;
-  onError: (err: any) => void;
-}) => {
+  onError: (err: unknown) => void;
+}) {
   return (
     <MuxPlayerReact
       playbackId={playbackId}
@@ -171,10 +192,10 @@ const MuxVideoPlayer = ({
       onError={onError}
     />
   );
-};
+}
 
 // Error Component
-const VideoError = ({
+function VideoError({
   error,
   type,
   onBackClick,
@@ -182,7 +203,7 @@ const VideoError = ({
   error: string | null;
   type?: string;
   onBackClick: () => void;
-}) => {
+}) {
   return (
     <div className="flex items-center justify-center h-full bg-muted text-foreground text-center p-4">
       <div>
@@ -198,41 +219,111 @@ const VideoError = ({
       </div>
     </div>
   );
-};
+}
 
-export default function VideoHero({ ...props }: { data: Sanity.VideoHero }) {
-  const data = props.data;
+// Play button overlay
+function PlayButtonOverlay() {
+  return (
+    <div className="absolute inset-0 bg-brand-navy/30 flex items-center justify-center">
+      <span className="w-16 h-16 bg-brand-vibrant text-white rounded-full flex items-center justify-center transition-transform hover:scale-110">
+        <svg className="w-8 h-8" viewBox="0 0 24 24">
+          <title>Play video icon</title>
+          <path d="M8 5v14l11-7z" fill="currentColor" />
+        </svg>
+      </span>
+    </div>
+  );
+}
+
+// Thumbnail view component
+function ThumbnailView({
+  thumbnailUrl,
+  title,
+  onPlay,
+}: {
+  thumbnailUrl: string | null;
+  title?: string;
+  onPlay: () => void;
+}) {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onPlay();
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      className="relative w-full h-full cursor-pointer bg-muted"
+      onClick={onPlay}
+      aria-label="Play video"
+      onKeyDown={handleKeyDown}
+    >
+      {thumbnailUrl ? (
+        <Image
+          src={thumbnailUrl}
+          alt={title || 'Video thumbnail'}
+          fill
+          priority
+          fetchPriority="high"
+          className="object-cover"
+        />
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
+          <p>No thumbnail available</p>
+        </div>
+      )}
+      <PlayButtonOverlay />
+    </button>
+  );
+}
+
+// Video player view
+function PlayerView({
+  data,
+  youtube,
+  mux,
+  videoError,
+  onBack,
+  onError,
+}: {
+  data: Sanity.VideoHero;
+  youtube: ReturnType<typeof useYouTubeVideo>;
+  mux: ReturnType<typeof useMuxVideo>;
+  videoError: string | null;
+  onBack: () => void;
+  onError: (err: unknown) => void;
+}) {
+  if (videoError) {
+    return <VideoError error={videoError} type={data?.type} onBackClick={onBack} />;
+  }
+
+  if (data?.type === 'mux' && mux.videoId) {
+    return <MuxVideoPlayer playbackId={mux.videoId} title={data.title} onError={onError} />;
+  }
+
+  if (data?.type === 'youtube' && youtube.videoId) {
+    return <YouTubePlayer videoId={youtube.videoId} title={data.title} />;
+  }
+
+  return <VideoError error={null} type={data?.type} onBackClick={onBack} />;
+}
+
+export default function VideoHero({ data }: { data: Sanity.VideoHero }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Handle different video types with custom hooks
   const youtube = useYouTubeVideo(data?.type === 'youtube' ? data.videoId : undefined);
   const mux = useMuxVideo(data);
 
-  // Generate thumbnail URL
-  let thumbnailUrl =
-    (data?.thumbnail as any)?.src ||
-    (data?.thumbnail as any)?.url ||
-    (data?.thumbnail ? urlFor(data.thumbnail as any).url() : null);
+  const thumbnailUrl = getThumbnailUrl(data, mux.videoId, youtube.videoId);
 
-  // Fallback to automatic thumbnails if manual one is missing
-  if (!thumbnailUrl) {
-    if (data?.type === 'mux' && mux.videoId) {
-      thumbnailUrl = `https://image.mux.com/${mux.videoId}/thumbnail.jpg?width=1920&height=1080&fit_mode=preserve`;
-    } else if (data?.type === 'youtube' && youtube.videoId) {
-      thumbnailUrl = `https://img.youtube.com/vi/${youtube.videoId}/maxresdefault.jpg`;
-    }
-  }
-
-  const handlePlayClick = () => {
-    setIsPlaying(true);
+  const handleError = (err: unknown) => {
+    const message = err instanceof Error ? err.message : String(err);
+    setError(`Video player error: ${message}`);
   };
 
-  const handleError = (err: any) => {
-    setError(`Video player error: ${err}`);
-  };
-
-  // Combined error state
   const videoError =
     error ||
     (data?.type === 'youtube' ? youtube.error : null) ||
@@ -251,59 +342,21 @@ export default function VideoHero({ ...props }: { data: Sanity.VideoHero }) {
       </div>
 
       {!isPlaying ? (
-        // Thumbnail view
-        <button
-          type="button"
-          className="relative w-full h-full cursor-pointer bg-muted"
-          onClick={handlePlayClick}
-          aria-label="Play video"
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              handlePlayClick();
-            }
-          }}
-        >
-          {thumbnailUrl ? (
-            <Image
-              src={thumbnailUrl}
-              alt={data?.title || 'Video thumbnail'}
-              fill
-              priority
-              fetchPriority="high"
-              className="object-cover"
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
-              <p>No thumbnail available</p>
-            </div>
-          )}
-          <div className="absolute inset-0 bg-brand-navy/30 flex items-center justify-center">
-            <span className="w-16 h-16 bg-brand-vibrant text-white rounded-full flex items-center justify-center transition-transform hover:scale-110">
-              {/* Play icon */}
-              <svg className="w-8 h-8" viewBox="0 0 24 24">
-                <title>Play video icon</title>
-                <path d="M8 5v14l11-7z" fill="currentColor" />
-              </svg>
-            </span>
-          </div>
-        </button>
+        <ThumbnailView
+          thumbnailUrl={thumbnailUrl}
+          title={data?.title}
+          onPlay={() => setIsPlaying(true)}
+        />
       ) : (
-        // Video player
         <div className="relative w-full h-full overflow-hidden bg-muted">
-          {videoError ? (
-            <VideoError
-              error={videoError}
-              type={data?.type}
-              onBackClick={() => setIsPlaying(false)}
-            />
-          ) : data?.type === 'mux' && mux.videoId ? (
-            <MuxVideoPlayer playbackId={mux.videoId} title={data.title} onError={handleError} />
-          ) : data?.type === 'youtube' && youtube.videoId ? (
-            <YouTubePlayer videoId={youtube.videoId} title={data.title} />
-          ) : (
-            <VideoError error={null} type={data?.type} onBackClick={() => setIsPlaying(false)} />
-          )}
+          <PlayerView
+            data={data}
+            youtube={youtube}
+            mux={mux}
+            videoError={videoError}
+            onBack={() => setIsPlaying(false)}
+            onError={handleError}
+          />
         </div>
       )}
     </Section>

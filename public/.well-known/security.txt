@@ -1,0 +1,10 @@
+# Security Policy for Medal Social
+# https://securitytxt.org/
+
+Contact: mailto:security@medalsocial.com
+Expires: 2026-12-31T23:59:59.000Z
+Preferred-Languages: en, nb
+Canonical: https://www.medalsocial.com/.well-known/security.txt
+
+# We appreciate responsible disclosure of security vulnerabilities.
+# Please report any security issues to the contact above.

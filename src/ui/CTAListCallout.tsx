@@ -24,9 +24,11 @@ export default function CTAListCallout({
   return (
     <div className={cn('flex flex-wrap items-center justify-center gap-3', className)}>
       {ctas?.map((cta, i) => {
-        const style = (cta.style || 'primary') as Sanity.CTA['style'];
+        const style = (cta.style || 'primary') as NonNullable<Sanity.CTA['style']>;
         const props = { ...cta, style };
-        const calloutStyle = calloutButtonStyles[style] || calloutButtonStyles.primary;
+        const calloutStyle =
+          calloutButtonStyles[style as keyof typeof calloutButtonStyles] ||
+          calloutButtonStyles.primary;
 
         const children =
           'link' in cta && cta.link && !('children' in cta) ? cta.link.label : undefined;

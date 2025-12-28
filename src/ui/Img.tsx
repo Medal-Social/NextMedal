@@ -9,6 +9,76 @@ import { urlFor } from '@/sanity/lib/image';
 
 type ImgProps = { alt?: string } & Omit<ImageProps, 'src' | 'alt'>;
 
+type DirectImage = Sanity.Image & { src?: string; width?: number; height?: number };
+
+// Calculate dimensions maintaining aspect ratio
+function calculateDimensions(
+  originalWidth: number,
+  originalHeight: number,
+  targetWidth?: number | `${number}` | string,
+  targetHeight?: number | `${number}` | string
+) {
+  const w = targetWidth ? Number(targetWidth) : undefined;
+  const h = targetHeight ? Number(targetHeight) : undefined;
+
+  const calcWidth = w || (h ? Math.floor((h * originalWidth) / originalHeight) : originalWidth);
+  const calcHeight = h || (w ? Math.floor((w * originalHeight) / originalWidth) : originalHeight);
+
+  return { width: calcWidth, height: calcHeight };
+}
+
+// Get valid loading value
+function getValidLoading(
+  loadingValue: string | undefined,
+  priority?: boolean,
+  loadingProp?: ImageProps['loading']
+): ImageProps['loading'] | undefined {
+  if (priority) return undefined;
+  if (loadingProp) return loadingProp;
+  if (loadingValue === 'eager' || loadingValue === 'lazy') return loadingValue;
+  return 'lazy';
+}
+
+// Wrap image with data-sanity container if needed
+function wrapWithSanityContainer(
+  imageElement: React.ReactNode,
+  dataSanity?: string,
+  className?: string
+) {
+  if (!dataSanity) return imageElement;
+
+  return (
+    <div data-sanity={dataSanity} className={cn('relative h-full w-full', className)}>
+      {imageElement}
+    </div>
+  );
+}
+
+// Render image from direct URL (mock/external)
+function renderDirectImage(
+  image: DirectImage,
+  props: ImgProps & { 'data-sanity'?: string },
+  targetWidth?: number | `${number}` | string,
+  targetHeight?: number | `${number}` | string
+) {
+  const src = image.src || image.url || '';
+  const originalWidth = image.width || 800;
+  const originalHeight = image.height || 600;
+
+  const { width, height } = calculateDimensions(
+    originalWidth,
+    originalHeight,
+    targetWidth,
+    targetHeight
+  );
+
+  const imageElement = (
+    <Image src={src} width={width} height={height} alt={props.alt || image.alt || ''} {...props} />
+  );
+
+  return wrapWithSanityContainer(imageElement, props['data-sanity'], props.className);
+}
+
 export function ResponsiveImg({
   img,
   pictureProps,
@@ -20,9 +90,9 @@ export function ResponsiveImg({
   if (!img) return null;
 
   return (
-    <picture {...(pictureProps as any)}>
-      {img.responsive?.map((r) => (
-        <Source {...r} key={(r.image as any).url || r.media} />
+    <picture {...pictureProps}>
+      {img.responsive?.map((responsiveImg) => (
+        <Source {...responsiveImg} key={responsiveImg.image?.url || responsiveImg.media} />
       ))}
       <Img image={img.image} {...props} />
     </picture>
@@ -36,41 +106,13 @@ export function Img({
   loading: loadingProp,
   ...props
 }: {
-  image?: any;
+  image?: DirectImage;
 } & ImgProps & { 'data-sanity'?: string }) {
   if (!image) return null;
 
   // Handle direct URL (mock/external)
   if (image.src || image.url) {
-    const src = image.src || image.url || '';
-    const w_orig = image.width || 800;
-    const h_orig = image.height || 600;
-
-    const w_calc = w ? Number(w) : !!h && Math.floor((Number(h) * w_orig) / h_orig);
-    const h_calc = h ? Number(h) : !!w && Math.floor((Number(w) * h_orig) / w_orig);
-
-    const imageElement = (
-      <Image
-        src={src}
-        width={w_calc || w_orig}
-        height={h_calc || h_orig}
-        alt={props.alt || image.alt || ''}
-        {...props}
-      />
-    );
-
-    if (props['data-sanity']) {
-      return (
-        <div
-          data-sanity={props['data-sanity']}
-          className={cn('relative h-full w-full', props.className)}
-        >
-          {imageElement}
-        </div>
-      );
-    }
-
-    return imageElement;
+    return renderDirectImage(image, props, w, h);
   }
 
   const generatedSrc = generateSrc(image, w, h);
@@ -80,11 +122,8 @@ export function Img({
   const isGif = src.includes('.gif');
   const isSvg = src.toLowerCase().endsWith('.svg');
 
-  // Get loading value and ensure it's valid
   const loadingValue = stegaClean(image.loading);
-  const validLoading = props.priority
-    ? undefined
-    : loadingProp || (loadingValue === 'eager' || loadingValue === 'lazy' ? loadingValue : 'lazy');
+  const validLoading = getValidLoading(loadingValue, props.priority, loadingProp);
 
   if (validLoading === 'eager') {
     preload(src, { as: 'image' });
@@ -102,18 +141,7 @@ export function Img({
     />
   );
 
-  if (props['data-sanity']) {
-    return (
-      <div
-        data-sanity={props['data-sanity']}
-        className={cn('relative h-full w-full', props.className)}
-      >
-        {imageElement}
-      </div>
-    );
-  }
-
-  return imageElement;
+  return wrapWithSanityContainer(imageElement, props['data-sanity'], props.className);
 }
 
 export function Source({
@@ -132,7 +160,6 @@ export function Source({
 
   const { src, width, height } = generatedSrc;
 
-  // Get loading value and ensure it's valid
   const loadingValue = stegaClean(image.loading);
   const validLoading = loadingValue === 'eager' || loadingValue === 'lazy' ? loadingValue : 'lazy';
 
@@ -140,7 +167,7 @@ export function Source({
     preload(src, { as: 'image' });
   }
 
-  return <source srcSet={src} width={width} height={height} media={media} {...(props as any)} />;
+  return <source srcSet={src} width={width} height={height} media={media} {...props} />;
 }
 
 function generateSrc(
@@ -149,21 +176,22 @@ function generateSrc(
   h?: number | `${number}` | string
 ) {
   try {
-    const { width: w_orig, height: h_orig } = getImageDimensions(image as any);
+    const { width: originalWidth, height: originalHeight } = getImageDimensions(
+      image as Parameters<typeof getImageDimensions>[0]
+    );
 
-    const w_calc = w ? Number(w) : !!h && Math.floor((Number(h) * w_orig) / h_orig);
-    const h_calc = h ? Number(h) : !!w && Math.floor((Number(w) * h_orig) / w_orig);
+    const { width, height } = calculateDimensions(originalWidth, originalHeight, w, h);
 
     return {
-      src: urlFor(image as any)
+      src: urlFor(image)
         .withOptions({
           width: w ? Number(w) : undefined,
           height: h ? Number(h) : undefined,
           auto: 'format',
         })
         .url(),
-      width: (w_calc || w_orig) as number,
-      height: (h_calc || h_orig) as number,
+      width,
+      height,
     };
   } catch (error) {
     logger.error({ error, image }, 'Error generating src');

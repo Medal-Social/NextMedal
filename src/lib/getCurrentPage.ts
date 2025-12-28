@@ -1,9 +1,8 @@
 import { headers } from 'next/headers';
-import { groq } from 'next-sanity';
 import { routing } from '@/i18n/routing';
 import { logger } from '@/lib/logger';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
-import { TRANSLATIONS_QUERY } from '@/sanity/lib/queries';
+import { CURRENT_PAGE_QUERY } from '@/sanity/lib/queries';
 
 /**
  * Get the current page with translation metadata based on the request URL
@@ -20,19 +19,7 @@ export async function getCurrentPage(): Promise<Sanity.PageBase | undefined> {
 
   try {
     const page = await fetchSanityLive<Sanity.PageBase>({
-      query: groq`*[
-        (_type == 'page' || _type == 'blog.post') &&
-        metadata.slug.current == $slug &&
-        language == $locale
-      ][0]{
-        _type,
-        _id,
-        language,
-        metadata {
-          slug
-        },
-        ${TRANSLATIONS_QUERY}
-      }`,
+      query: CURRENT_PAGE_QUERY,
       params: { slug, locale },
     });
 

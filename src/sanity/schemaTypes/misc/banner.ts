@@ -34,7 +34,8 @@ export default defineType({
       fieldset: 'schedule',
       validation: (Rule) =>
         Rule.custom((end, context) => {
-          const start = (context.document as any)?.start as string | undefined;
+          const doc = context.document as { start?: string } | undefined;
+          const start = doc?.start;
 
           if (end && start && new Date(end) <= new Date(start)) {
             return 'End date must be after start date';
@@ -63,7 +64,7 @@ export default defineType({
       ],
       validation: (Rule) =>
         Rule.custom((blocks) => {
-          const text = getBlockText(blocks as any, ' ');
+          const text = getBlockText(blocks as Sanity.BlockContent, ' ');
           return text.length > 150
             ? 'Banner content should be concise (recommended max 150 characters)'
             : true;

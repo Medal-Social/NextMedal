@@ -4,9 +4,13 @@ import { cn } from '@/lib/utils';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
 import CTAListCallout from '../CTAListCallout';
 
+interface BlockChildrenProps {
+  children?: React.ReactNode;
+}
+
 const components = (isSidebar: boolean) => ({
   block: {
-    normal: ({ children }: any) => (
+    normal: ({ children }: BlockChildrenProps) => (
       <p
         className={cn(
           'leading-relaxed mx-auto last:mb-0 text-balance',
@@ -18,7 +22,7 @@ const components = (isSidebar: boolean) => ({
         {children}
       </p>
     ),
-    h2: ({ children }: any) => (
+    h2: ({ children }: BlockChildrenProps) => (
       <h2
         className={cn(
           'font-bold tracking-tight text-white mx-auto',
@@ -28,7 +32,7 @@ const components = (isSidebar: boolean) => ({
         {children}
       </h2>
     ),
-    h3: ({ children }: any) => (
+    h3: ({ children }: BlockChildrenProps) => (
       <h3
         className={cn(
           'font-semibold text-white mx-auto mt-6 first:mt-0',
@@ -42,7 +46,7 @@ const components = (isSidebar: boolean) => ({
 });
 
 export default function Callout({ content, ctas, ...props }: Sanity.Callout) {
-  const isSidebar = (props as any).spacing === 'none';
+  const isSidebar = props.spacing === 'none';
 
   return (
     <Section

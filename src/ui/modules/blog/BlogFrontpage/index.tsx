@@ -45,14 +45,14 @@ export default async function BlogFrontpage({
   // Determine Hero Post
   let heroPost: Sanity.BlogPost | undefined;
   if (mainPost === 'featured') {
-    heroPost = posts.find((p) => p.featured === 'featured');
+    heroPost = posts.find((post) => post.featured === 'featured');
   }
   if (!heroPost) {
     heroPost = posts[0];
   }
 
   // Filter out hero post
-  const remainingPosts = posts.filter((p) => p._id !== heroPost?._id);
+  const remainingPosts = posts.filter((post) => post._id !== heroPost?._id);
 
   // Determine Sidebar Posts (Recent & Popular)
   // Recent: First remaining post
@@ -60,11 +60,11 @@ export default async function BlogFrontpage({
 
   // Popular: Next featured post, or just next post
   const popularPost =
-    remainingPosts.slice(1).find((p) => p.featured === 'featured') || remainingPosts[1];
+    remainingPosts.slice(1).find((post) => post.featured === 'featured') || remainingPosts[1];
 
   // Grid Posts: All remaining posts excluding hero, recent, and popular
   const gridPosts = remainingPosts.filter(
-    (p) => p._id !== recentPost?._id && p._id !== popularPost?._id
+    (post) => post._id !== recentPost?._id && post._id !== popularPost?._id
   );
 
   return (

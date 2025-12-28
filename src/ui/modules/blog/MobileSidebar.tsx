@@ -8,11 +8,16 @@ import {
 import { cn } from '@/lib/utils';
 import TableOfContents from './TableOfContents';
 
+interface HeadingItem {
+  style: string;
+  text: string;
+}
+
 export default function MobileSidebar({
   headings,
   className,
 }: {
-  headings?: any[];
+  headings?: HeadingItem[];
   className?: string;
 }) {
   return (

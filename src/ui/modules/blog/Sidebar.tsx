@@ -2,6 +2,11 @@ import { cn } from '@/lib/utils';
 import SocialShare from './SocialShare';
 import TableOfContents from './TableOfContents';
 
+interface HeadingItem {
+  style: string;
+  text: string;
+}
+
 export default function Sidebar({
   headings,
   title,
@@ -9,7 +14,7 @@ export default function Sidebar({
   children,
   className,
 }: {
-  headings?: any[];
+  headings?: HeadingItem[];
   title: string;
   slug: string;
   children?: React.ReactNode;

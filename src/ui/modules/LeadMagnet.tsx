@@ -19,14 +19,18 @@ import Form from '@/ui/Form';
 import { Img } from '@/ui/Img';
 import SharedPortableText from './SharedPortableText';
 
+interface BlockChildrenProps {
+  children?: React.ReactNode;
+}
+
 const portableTextComponents = (style: 'sidebar' | 'featured') => ({
   list: {
-    bullet: ({ children }: any) => (
+    bullet: ({ children }: BlockChildrenProps) => (
       <ul className={cn('space-y-3 mb-8', style === 'sidebar' && 'mb-6')}>{children}</ul>
     ),
   },
   listItem: {
-    bullet: ({ children }: any) => (
+    bullet: ({ children }: BlockChildrenProps) => (
       <li className="flex items-start gap-3 group">
         <div className="mt-1 flex-shrink-0">
           <CheckCircle2
@@ -48,7 +52,7 @@ const portableTextComponents = (style: 'sidebar' | 'featured') => ({
     ),
   },
   block: {
-    h2: ({ children }: any) => (
+    h2: ({ children }: BlockChildrenProps) => (
       <h2
         className={cn(
           'font-extrabold tracking-tight mb-4',
@@ -60,7 +64,7 @@ const portableTextComponents = (style: 'sidebar' | 'featured') => ({
         {children}
       </h2>
     ),
-    h3: ({ children }: any) => (
+    h3: ({ children }: BlockChildrenProps) => (
       <h3
         className={cn(
           'font-bold tracking-tight mb-4',
@@ -72,7 +76,7 @@ const portableTextComponents = (style: 'sidebar' | 'featured') => ({
         {children}
       </h3>
     ),
-    normal: ({ children }: any) => (
+    normal: ({ children }: BlockChildrenProps) => (
       <p
         className={cn(
           'mb-6 last:mb-0',

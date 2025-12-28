@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { PublicError } from './errors';
 import { logger } from './logger';
 
-export const errorHandler = (e: any) => {
+export const errorHandler = (e: unknown) => {
   // Always log the full error server-side
   logger.error(e, 'Server action error');
 
@@ -41,10 +41,11 @@ export const withSecurity = <T extends z.ZodRawShape>(schema: z.ZodObject<T>) =>
       _submissionTimestamp: z.string().optional(),
     })
     .refine(
-      (data: any) => {
-        if (!data._submissionTimestamp) return true;
+      (data) => {
+        const timestamp = (data as { _submissionTimestamp?: string })._submissionTimestamp;
+        if (!timestamp) return true;
 
-        const start = new Date(data._submissionTimestamp).getTime();
+        const start = new Date(timestamp).getTime();
 
         // Allow if timestamp is invalid
         if (Number.isNaN(start)) return true;

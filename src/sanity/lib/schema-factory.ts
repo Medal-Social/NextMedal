@@ -56,7 +56,10 @@ export const createMetadataSchema = (options: MetadataSchemaOptions = {}) => {
         name: 'slug',
         type: 'slug',
         options: {
-          source: (doc: any) => doc.title || doc.metadata?.title,
+          source: (doc) => {
+            const d = doc as { title?: string; metadata?: { title?: string } };
+            return d.title || d.metadata?.title || '';
+          },
           isUnique: isUniqueAcrossLocale,
         },
       }),

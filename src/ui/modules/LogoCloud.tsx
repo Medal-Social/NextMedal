@@ -1,9 +1,8 @@
 import Link from 'next/link';
-import { groq } from 'next-sanity';
 import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
 import { fetchSanityLive } from '@/sanity/lib/live';
-import { IMAGE_QUERY } from '@/sanity/lib/queries';
+import { LOGOS_QUERY } from '@/sanity/lib/queries';
 import { Img } from '@/ui/Img';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
 
@@ -11,14 +10,7 @@ export default async function LogoCloud({ content, logos, ...props }: Sanity.Log
   const allLogos =
     logos ||
     (await fetchSanityLive<Sanity.Logo[]>({
-      query: groq`*[_type == 'logo']|order(title){
-        ...,
-        image {
-          default { ${IMAGE_QUERY} },
-          light { ${IMAGE_QUERY} },
-          dark { ${IMAGE_QUERY} }
-        }
-      }`,
+      query: LOGOS_QUERY,
     }));
 
   return (

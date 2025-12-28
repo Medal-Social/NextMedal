@@ -15,7 +15,7 @@ import ThemeToggleWrapper from './ThemeToggleWrapper';
 import type { MobileNavigationProps } from './types';
 
 function getNavLinkHref(link: Sanity.MenuItem | Sanity.Link): string {
-  if (link.internal && '_type' in link.internal && link.internal._type !== 'reference') {
+  if (link.internal && '_type' in link.internal) {
     return resolveUrl(link.internal as Sanity.PageBase, {
       base: false,
       params: link.params,
