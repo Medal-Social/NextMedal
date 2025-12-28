@@ -1,22 +1,23 @@
 /**
  * Icon Schema
- * @version 1.0.1
- * @lastUpdated 2025-12-23
+ * @version 1.0.2
+ * @lastUpdated 2025-12-28
  * @description Icon selection field using Lucide icons.
  * @changelog
+ * - 1.0.2: Use static icon map validation for better tree-shaking
  * - 1.0.1: Updated header documentation
  * - 1.0.0: Initial version
  */
 
-import * as Lucide from 'lucide-react';
-import { VscSymbolMisc } from 'react-icons/vsc';
+import { ComponentIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import { Icon } from '@/ui/base';
+import { isValidIconName } from '@/ui/base/utils/resolveIcon';
 
 export default defineType({
   name: 'icon',
   title: 'Icon',
-  icon: VscSymbolMisc,
+  icon: ComponentIcon,
   type: 'object',
   fields: [
     defineField({
@@ -34,8 +35,8 @@ export default defineType({
       validation: (Rule) =>
         Rule.custom((value) => {
           if (!value) return 'Icon is required';
-          // biome-ignore lint/performance/noDynamicNamespaceImportAccess: needed for icon validation
-          if (!Lucide[value as keyof typeof Lucide]) return 'Invalid icon name';
+          if (!isValidIconName(value))
+            return 'Invalid icon name. Add it to resolveIcon.ts if needed.';
           return true;
         }),
       placeholder: 'i.e. Activity',

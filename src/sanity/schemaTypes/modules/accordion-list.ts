@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version
  */
 
-import { TfiLayoutAccordionMerged } from 'react-icons/tfi';
+import { StackCompactIcon } from '@sanity/icons';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 
@@ -16,7 +16,7 @@ export default defineType({
   name: 'accordion-list',
   title: 'Accordion list',
   type: 'object',
-  icon: TfiLayoutAccordionMerged,
+  icon: StackCompactIcon,
   groups: [{ name: 'content', default: true }, { name: 'options' }],
   fields: [
     defineField({
@@ -57,7 +57,7 @@ export default defineType({
       of: [
         defineArrayMember({
           type: 'object',
-          icon: TfiLayoutAccordionMerged,
+          icon: StackCompactIcon,
           fields: [
             defineField({
               name: 'summary',

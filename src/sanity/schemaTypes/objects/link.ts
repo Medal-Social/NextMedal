@@ -3,13 +3,13 @@
  * @description Internal or external link with destination fields, used for Portable Text annotations.
  */
 
-import { VscLink } from 'react-icons/vsc';
+import { LinkIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'link',
   title: 'Link',
-  icon: VscLink,
+  icon: LinkIcon,
   type: 'object',
   fields: [
     defineField({

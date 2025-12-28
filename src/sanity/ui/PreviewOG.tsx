@@ -1,9 +1,9 @@
 'use client';
 
+import { EyeClosedIcon, EyeOpenIcon } from '@sanity/icons';
 import { Box, Button, Flex, Popover, Spinner, Text } from '@sanity/ui';
 import { useState } from 'react';
-import { VscEye, VscEyeClosed } from 'react-icons/vsc';
-import { BASE_URL } from '@/lib/env';
+import { BASE_URL } from '@/lib/env.client';
 
 export default function PreviewOG({ title }: { title?: string }) {
   const [open, setOpen] = useState(false);
@@ -70,7 +70,7 @@ export default function PreviewOG({ title }: { title?: string }) {
         mode="bleed"
         padding={2}
         style={{ marginTop: -4 }}
-        icon={open ? VscEyeClosed : VscEye}
+        icon={open ? EyeClosedIcon : EyeOpenIcon}
         title="Preview Open Graph image"
         onClick={() => setOpen((prev) => !prev)}
       />

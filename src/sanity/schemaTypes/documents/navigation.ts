@@ -8,15 +8,14 @@
  * - 1.0.0: Initial version with menu structure and link management
  */
 
-import { IoShareSocialOutline } from 'react-icons/io5';
-import { VscLayoutMenubar, VscLayoutPanelLeft, VscMap } from 'react-icons/vsc';
+import { EarthGlobeIcon, MasterDetailIcon, MenuIcon, UsersIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import { count } from '@/lib/utils';
 
 export default defineType({
   name: 'navigation',
   title: 'Navigation',
-  icon: VscMap,
+  icon: EarthGlobeIcon,
   type: 'document',
   fields: [
     defineField({
@@ -42,11 +41,11 @@ export default defineType({
         title,
         subtitle: count(items),
         media: t.includes('social')
-          ? IoShareSocialOutline
+          ? UsersIcon
           : t.includes('header')
-            ? VscLayoutMenubar
+            ? MenuIcon
             : t.includes('footer')
-              ? VscLayoutPanelLeft
+              ? MasterDetailIcon
               : null,
       };
     },

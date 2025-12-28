@@ -8,13 +8,13 @@
  * - 1.0.0: Initial version
  */
 
-import { VscVerified } from 'react-icons/vsc';
+import { CheckmarkCircleIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'logo',
   title: 'Brand',
-  icon: VscVerified,
+  icon: CheckmarkCircleIcon,
   type: 'document',
   fieldsets: [
     {

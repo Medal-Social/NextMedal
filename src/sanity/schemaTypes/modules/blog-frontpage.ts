@@ -8,13 +8,13 @@
  * - 1.0.0: Initial version
  */
 
-import { ImNewspaper } from 'react-icons/im';
+import { DocumentTextIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'blog-frontpage',
   title: 'Blog frontpage',
-  icon: ImNewspaper,
+  icon: DocumentTextIcon,
   type: 'object',
   fields: [
     defineField({

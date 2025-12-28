@@ -27,9 +27,15 @@ const config = {
 
   // Next.js 16 optimizations
   reactCompiler: true,
-  // cacheComponents requires wrapping all data fetching in Suspense or 'use cache'
-  // Enable after migrating all components: Banner, Header, Footer, LocaleSwitcher
-  // cacheComponents: true,
+  cacheComponents: true,
+
+  // Long cache life since SanityLive handles on-demand revalidation
+  // See: https://github.com/sanity-io/next-sanity/blob/main/packages/next-sanity/EXPERIMENTAL-CACHE-COMPONENTS.md
+  cacheLife: {
+    default: {
+      revalidate: 60 * 60 * 24 * 90, // 90 days - SanityLive handles revalidation
+    },
+  },
 
   // Configure image handling
   images: {

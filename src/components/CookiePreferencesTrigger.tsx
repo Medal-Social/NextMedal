@@ -1,11 +1,16 @@
 'use client';
 
-import { useLocale } from 'next-intl';
 import * as CookieConsent from 'vanilla-cookieconsent';
 
-export default function CookiePreferencesTrigger({ className }: { className?: string }) {
-  const locale = useLocale();
+interface CookiePreferencesTriggerProps {
+  className?: string;
+  locale?: string;
+}
 
+export default function CookiePreferencesTrigger({
+  className,
+  locale = 'en',
+}: CookiePreferencesTriggerProps) {
   const label = locale === 'nb' ? 'Informasjonskapsler' : 'Cookie Preferences';
 
   return (

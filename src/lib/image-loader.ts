@@ -43,10 +43,8 @@ export default function imageLoader({
 
   const path = `/${processingOptions}/${encodedUrl}.${extension}`;
 
-  // NOTE: Client-side signing is not implemented for security reasons.
-  // Secrets (KEY/SALT) should not be exposed to the browser via NEXT_PUBLIC_ variables.
-  // If signing is required, consider using a Next.js API route as a proxy
-  // or generating signed URLs on the server.
+  // NOTE: Signing is not implemented. If required in the future, use a
+  // Next.js API route with server-only IMAGE_PROXY_KEY/SALT env vars.
 
   // Use insecure mode (ensure your imgproxy instance allows this or whitelist domains)
   return `${proxyUrl}/insecure${path}`;

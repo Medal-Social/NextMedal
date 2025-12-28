@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version
  */
 
-import { VscDeviceCameraVideo } from 'react-icons/vsc';
+import { VideoIcon } from '@sanity/icons';
 import type { Rule } from 'sanity';
 import { defineField } from 'sanity';
 import { createUidField } from './uid-input';
@@ -47,7 +47,7 @@ export default defineField({
   name: 'videoHero',
   title: 'Video Hero',
   type: 'object',
-  icon: VscDeviceCameraVideo,
+  icon: VideoIcon,
   fieldsets: [
     {
       name: 'videoOptions',
@@ -125,7 +125,7 @@ export default defineField({
         rule.custom((value, context) => {
           const parent = context.parent as { type?: string } | undefined;
           if (parent?.type === 'mux' && !value) {
-            return 'Mux video is required for Mux videos';
+            return 'Mux video is required';
           }
           return true;
         }),

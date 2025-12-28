@@ -9,13 +9,13 @@
  * - 1.3.0: Removed size field as it's not being used
  */
 
-import { VscInspect } from 'react-icons/vsc';
+import { LaunchIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'cta',
-  title: 'Call-to-action',
-  icon: VscInspect,
+  title: 'Call-to-Action',
+  icon: LaunchIcon,
   type: 'object',
   description: 'Button or link with customizable style and destination',
   fields: [

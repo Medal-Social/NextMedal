@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version
  */
 
-import { VscSymbolKeyword } from 'react-icons/vsc';
+import { TextIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 import { imageBlock } from '../fragments';
@@ -16,7 +16,7 @@ import { imageBlock } from '../fragments';
 export default defineType({
   name: 'richtext',
   title: 'Text',
-  icon: VscSymbolKeyword,
+  icon: TextIcon,
   type: 'object',
   groups: [
     { name: 'content', title: 'Content', default: true },

@@ -1,44 +1,46 @@
-import type { IconType } from 'react-icons';
+import type { ComponentType, SVGProps } from 'react';
 import {
-  FaBluesky,
-  FaFacebookF,
-  FaGithub,
-  FaInstagram,
-  FaLinkedinIn,
-  FaTiktok,
-  FaXTwitter,
-  FaYoutube,
-} from 'react-icons/fa6';
-import { IoIosLink } from 'react-icons/io';
+  IconBluesky,
+  IconFacebookF,
+  IconGithub,
+  IconInstagram,
+  IconLink,
+  IconLinkedinIn,
+  IconTiktok,
+  IconTwitterX,
+  IconYoutube,
+} from '@/components/icons/social-icons';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { getSite } from '@/sanity/lib/fetch';
 
+type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
+
 // Domain to icon mapping - each entry can have multiple domains
-const SOCIAL_ICONS: Array<{ domains: string[]; icon: IconType }> = [
-  { domains: ['bsky.app'], icon: FaBluesky },
-  { domains: ['facebook.com'], icon: FaFacebookF },
-  { domains: ['github.com'], icon: FaGithub },
-  { domains: ['instagram.com'], icon: FaInstagram },
-  { domains: ['linkedin.com'], icon: FaLinkedinIn },
-  { domains: ['tiktok.com'], icon: FaTiktok },
-  { domains: ['twitter.com', 'x.com'], icon: FaXTwitter },
-  { domains: ['youtube.com', 'youtu.be'], icon: FaYoutube },
+const SOCIAL_ICONS: Array<{ domains: string[]; icon: IconComponent }> = [
+  { domains: ['bsky.app'], icon: IconBluesky },
+  { domains: ['facebook.com'], icon: IconFacebookF },
+  { domains: ['github.com'], icon: IconGithub },
+  { domains: ['instagram.com'], icon: IconInstagram },
+  { domains: ['linkedin.com'], icon: IconLinkedinIn },
+  { domains: ['tiktok.com'], icon: IconTiktok },
+  { domains: ['twitter.com', 'x.com'], icon: IconTwitterX },
+  { domains: ['youtube.com', 'youtu.be'], icon: IconYoutube },
 ];
 
-function getIconForUrl(url: string): IconType {
+function getIconForUrl(url: string): IconComponent {
   let hostname = '';
   try {
     const urlObj = new URL(url.startsWith('http') ? url : `https://${url}`);
     hostname = urlObj.hostname.toLowerCase();
   } catch {
-    return IoIosLink;
+    return IconLink;
   }
 
   const matches = (domain: string) => hostname === domain || hostname.endsWith(`.${domain}`);
 
   const matchedIcon = SOCIAL_ICONS.find((entry) => entry.domains.some(matches));
-  return matchedIcon?.icon ?? IoIosLink;
+  return matchedIcon?.icon ?? IconLink;
 }
 
 export default async function Social({ className }: React.ComponentProps<'div'>) {

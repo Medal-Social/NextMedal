@@ -74,14 +74,16 @@ function LogoItem({ logo }: { logo: Sanity.Logo }) {
       return (
         <>
           <Img
-            className="h-16 w-auto md:h-20 shrink-0 object-contain dark:hidden"
+            className="h-16 md:h-20 shrink-0 object-contain aspect-square dark:hidden"
             image={lightLogo}
+            width={200}
             height={200}
             alt={logo.title || logo.name}
           />
           <Img
-            className="hidden h-16 w-auto md:h-20 shrink-0 object-contain dark:block"
+            className="hidden h-16 md:h-20 shrink-0 object-contain aspect-square dark:block"
             image={darkLogo}
+            width={200}
             height={200}
             alt={logo.title || logo.name}
           />
@@ -91,8 +93,9 @@ function LogoItem({ logo }: { logo: Sanity.Logo }) {
 
     return (
       <Img
-        className="h-16 w-auto md:h-20 shrink-0 object-contain"
+        className="h-16 md:h-20 shrink-0 object-contain aspect-square"
         image={defaultLogo || lightLogo || darkLogo}
+        width={200}
         height={200}
         alt={logo.title || logo.name}
       />

@@ -8,13 +8,13 @@
  * - 1.0.0: Initial version
  */
 
-import { TfiGallery } from 'react-icons/tfi';
+import { ImagesIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'component-gallery',
   title: 'Component Gallery',
-  icon: TfiGallery,
+  icon: ImagesIcon,
   type: 'object',
   fields: [
     defineField({
@@ -105,7 +105,7 @@ export default defineType({
       return {
         title: 'Component Gallery',
         subtitle: `${groupCount || 0} group${groupCount === 1 ? '' : 's'}`,
-        media: TfiGallery,
+        media: ImagesIcon,
       };
     },
   },

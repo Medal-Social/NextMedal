@@ -8,14 +8,14 @@
  * - 1.0.0: Initial version with grid/carousel layouts and category filtering
  */
 
-import { VscEdit } from 'react-icons/vsc';
+import { EditIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 
 export default defineType({
   name: 'latest-articles',
   title: 'Latest Articles',
-  icon: VscEdit,
+  icon: EditIcon,
   type: 'object',
   groups: [{ name: 'content', default: true }, { name: 'filtering' }, { name: 'options' }],
   fields: [

@@ -11,7 +11,7 @@ import { CTAList } from '@/ui/cta';
 import LocaleSwitcherClient from '@/ui/language-switcher/LocaleSwitcher.client';
 import { CommandMenu } from '@/ui/utility';
 import { ANIMATION_DURATION, ANIMATION_EASING } from './constants';
-import ThemeToggleWrapper from './ThemeToggleWrapper';
+import HeaderThemeToggle from './ThemeToggle';
 import type { MobileNavigationProps } from './types';
 
 function getNavLinkHref(link: Sanity.MenuItem | Sanity.Link): string {
@@ -55,6 +55,9 @@ export default function MobileNavigation({
   ctas,
   enableSearch,
   serverPage,
+  locale,
+  localeLabels,
+  themeLabels,
 }: MobileNavigationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -198,10 +201,13 @@ export default function MobileNavigation({
                 dropdownAlign="start"
                 className="w-full justify-start h-14 px-4 text-lg [&>span]:inline-block [&>span]:text-lg"
                 serverPage={serverPage}
+                locale={locale}
+                labels={localeLabels}
               />
-              <ThemeToggleWrapper
+              <HeaderThemeToggle
                 dropdownAlign="start"
                 className="w-full justify-start h-14 px-4 text-lg [&>span]:inline-block [&>span]:text-lg"
+                labels={themeLabels}
               />
             </div>
           </motion.div>

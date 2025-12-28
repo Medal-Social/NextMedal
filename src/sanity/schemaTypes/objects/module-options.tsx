@@ -10,14 +10,14 @@
 
 'use client';
 
+import { CheckmarkIcon, CopyIcon } from '@sanity/icons';
 import { Box, Button, Flex, Text, TextInput } from '@sanity/ui';
 import { useState } from 'react';
-import { VscCheck, VscCopy } from 'react-icons/vsc';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'module-options',
-  title: 'Module options',
+  title: 'Module Options',
   type: 'object',
   fields: [
     defineField({
@@ -46,7 +46,7 @@ export default defineType({
               <Button
                 title="Click to copy"
                 mode="ghost"
-                icon={checked ? VscCheck : VscCopy}
+                icon={checked ? CheckmarkIcon : CopyIcon}
                 disabled={checked}
                 onClick={() => {
                   navigator.clipboard.writeText(`#${elementProps.value || moduleKey}`);
