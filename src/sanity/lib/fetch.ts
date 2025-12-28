@@ -1,7 +1,7 @@
 'use server';
 
 import type { QueryParams } from 'next-sanity';
-import { fetchSanityLive } from './live';
+import { fetchSanityLive, fetchSanityStatic } from './live';
 import { SITE_QUERY } from './queries';
 export { fetchSanityLive };
 
@@ -19,10 +19,11 @@ export async function fetchSanity<T = unknown>({
   return fetchSanityLive<T>({ query, params, tags, stega });
 }
 
-export async function getSite(stega?: boolean) {
-  const site = await fetchSanity<Sanity.Site>({
+// Site settings are static and should be cached
+export async function getSite() {
+  const site = await fetchSanityStatic<Sanity.Site>({
     query: SITE_QUERY,
-    stega,
+    tags: ['site'],
   });
 
   if (!site)

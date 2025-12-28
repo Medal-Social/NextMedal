@@ -24,6 +24,13 @@ const config = {
   reactStrictMode: true,
   poweredByHeader: false,
   output: "standalone",
+
+  // Next.js 16 optimizations
+  reactCompiler: true,
+  // cacheComponents requires wrapping all data fetching in Suspense or 'use cache'
+  // Enable after migrating all components: Banner, Header, Footer, LocaleSwitcher
+  // cacheComponents: true,
+
   // Configure image handling
   images: {
     dangerouslyAllowSVG: true,
