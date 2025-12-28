@@ -10,25 +10,141 @@ import { validateExternalUrl } from '@/lib/validateExternalUrl';
 // Define the allowed button variants matching the Button component
 type ButtonVariant = 'default' | 'outline' | 'secondary' | 'ghost' | 'link' | 'destructive';
 
-// Convert Link to CTA props
-function _linkToCta(link: Sanity.MenuItem | null | undefined): Sanity.CTA {
-  if (!link) {
+type CTAProps = Sanity.CTA &
+  ComponentProps<typeof Button> & {
+    internalLink?: Sanity.MenuItem['internal'];
+    externalLink?: string;
+    linkType?: 'internal' | 'external';
+    text?: string;
+  };
+
+// Build effective link from props (handles flat structure from some modules)
+function buildEffectiveLink(props: CTAProps): Sanity.MenuItem | null {
+  if (props.link) return props.link;
+
+  const { text, linkType, internalLink, externalLink } = props;
+
+  if (text && (linkType === 'internal' || linkType === 'external')) {
     return {
-      _type: 'cta',
-      link: {
-        _type: 'menuItem',
-        label: 'Button',
-        type: 'internal',
-      },
-      style: 'primary',
+      _type: 'menuItem',
+      label: text,
+      type: linkType,
+      internal: internalLink,
+      external: externalLink,
+      params: undefined,
+      newTab: undefined,
     };
   }
 
-  return {
-    _type: 'cta',
-    link: link,
-    style: 'primary',
-  };
+  return null;
+}
+
+// Get button variant from style
+function getVariant(style?: string): ButtonVariant {
+  const cleanStyle = stegaClean(style);
+  return (cleanStyle === 'primary' ? 'default' : cleanStyle) as ButtonVariant;
+}
+
+// Handle smooth scroll for hash links on same page
+function handleHashLinkClick(href: string, e: React.MouseEvent<HTMLAnchorElement>) {
+  if (!href.includes('#')) return;
+
+  const [path, hash] = href.split('#');
+  const currentPath = window.location.pathname;
+  const isCurrentPage = !path || path === currentPath || (path === '/' && currentPath === '/');
+
+  if (isCurrentPage && hash) {
+    e.preventDefault();
+    document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+// Internal link button
+function InternalLinkButton({
+  internal,
+  params,
+  newTab,
+  variant,
+  className,
+  buttonContent,
+  rest,
+}: {
+  internal: Sanity.MenuItem['internal'];
+  params?: string;
+  newTab?: boolean;
+  variant: ButtonVariant;
+  className?: ComponentProps<typeof Button>['className'];
+  buttonContent: React.ReactNode;
+  rest: Omit<ComponentProps<typeof Button>, 'variant' | 'className'>;
+}) {
+  const href = resolveUrl(internal, { base: false, params });
+
+  return (
+    <Button
+      variant={variant}
+      className={className}
+      nativeButton={false}
+      render={
+        <Link
+          href={href}
+          target={newTab ? '_blank' : undefined}
+          rel={newTab ? 'noopener noreferrer' : undefined}
+          onClick={(e) => handleHashLinkClick(href, e)}
+        >
+          {buttonContent}
+        </Link>
+      }
+      {...rest}
+    />
+  );
+}
+
+// External link button
+function ExternalLinkButton({
+  external,
+  newTab,
+  variant,
+  className,
+  buttonContent,
+  rest,
+}: {
+  external: string;
+  newTab?: boolean;
+  variant: ButtonVariant;
+  className?: ComponentProps<typeof Button>['className'];
+  buttonContent: React.ReactNode;
+  rest: Omit<ComponentProps<typeof Button>, 'variant' | 'className'>;
+}) {
+  const cleanUrl = stegaClean(external);
+  const validatedUrl = validateExternalUrl(cleanUrl);
+
+  if (!validatedUrl) {
+    return (
+      <Button variant={variant} className={className} disabled {...rest}>
+        {buttonContent}
+      </Button>
+    );
+  }
+
+  const shouldOpenNewTab = newTab !== false;
+
+  return (
+    <Button
+      variant={variant}
+      className={className}
+      nativeButton={false}
+      render={
+        <Link
+          href={validatedUrl}
+          target={shouldOpenNewTab ? '_blank' : undefined}
+          rel={shouldOpenNewTab ? 'noopener noreferrer' : undefined}
+        >
+          {buttonContent}
+        </Link>
+      }
+      {...rest}
+    />
+  );
 }
 
 export default function CTA({
@@ -36,115 +152,53 @@ export default function CTA({
   style = 'primary',
   className,
   children,
-  // Destructure Sanity-specific props to remove them from 'rest'
   internalLink,
   externalLink,
   linkType,
   text,
   ...rest
-}: Sanity.CTA &
-  ComponentProps<typeof Button> & {
-    // Add optional types for the props we want to exclude/use as fallback
-    internalLink?: Sanity.MenuItem['internal'];
-    externalLink?: string;
-    linkType?: 'internal' | 'external';
-    text?: string;
-  }) {
-  // Construct a fallback link object if the main link prop is missing
-  // This handles the flat structure used in some modules (like Hero)
-  const effectiveLink =
-    link ||
-    (text && (linkType === 'internal' || linkType === 'external')
-      ? {
-          label: text,
-          type: linkType,
-          internal: internalLink,
-          external: externalLink,
-          params: undefined,
-          newTab: undefined,
-        }
-      : null);
+}: CTAProps) {
+  const effectiveLink = buildEffectiveLink({
+    link,
+    style,
+    className,
+    children,
+    internalLink,
+    externalLink,
+    linkType,
+    text,
+    ...rest,
+  });
 
   if (!effectiveLink) return null;
 
   const { label, type, internal, external, params, newTab } = effectiveLink;
-  const cleanStyle = stegaClean(style);
-  // Map 'primary' to 'default' for shadcn Button
-  const variant = (cleanStyle === 'primary' ? 'default' : cleanStyle) as ButtonVariant;
+  const variant = getVariant(style);
   const buttonContent = children || label || 'Button';
 
-  // For internal links
   if (type === 'internal' && internal) {
-    const href = resolveUrl(internal, {
-      base: false,
-      params: params,
-    });
-
     return (
-      <Button
+      <InternalLinkButton
+        internal={internal}
+        params={params}
+        newTab={newTab}
         variant={variant}
         className={className}
-        nativeButton={false}
-        render={
-          <Link
-            href={href}
-            target={newTab ? '_blank' : undefined}
-            rel={newTab ? 'noopener noreferrer' : undefined}
-            onClick={(e) => {
-              if (href.includes('#')) {
-                const [path, hash] = href.split('#');
-                const currentPath = window.location.pathname;
-
-                // If target is on the same page
-                if (
-                  (!path || path === currentPath || (path === '/' && currentPath === '/')) &&
-                  hash
-                ) {
-                  e.preventDefault();
-                  const element = document.getElementById(hash);
-                  if (element) {
-                    element.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }
-              }
-            }}
-          >
-            {buttonContent}
-          </Link>
-        }
-        {...rest}
+        buttonContent={buttonContent}
+        rest={rest}
       />
     );
   }
 
-  // For external links
   if (type === 'external' && external) {
-    const cleanUrl = stegaClean(external);
-    const validatedUrl = validateExternalUrl(cleanUrl);
-
-    if (!validatedUrl) {
-      return (
-        <Button variant={variant} className={className} disabled {...rest}>
-          {buttonContent}
-        </Button>
-      );
-    }
-
     return (
-      <Button
+      <ExternalLinkButton
+        external={external}
+        newTab={newTab}
         variant={variant}
         className={className}
-        nativeButton={false}
-        render={
-          <Link
-            href={validatedUrl}
-            target={newTab !== false ? '_blank' : undefined}
-            rel={newTab !== false ? 'noopener noreferrer' : undefined}
-          >
-            {buttonContent}
-          </Link>
-        }
-        {...rest}
+        buttonContent={buttonContent}
+        rest={rest}
       />
     );
   }
