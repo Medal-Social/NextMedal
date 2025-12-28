@@ -7,7 +7,7 @@ export const singleton = (S: StructureBuilder, id: string, title?: string): List
       title ||
         id
           .split(/(?=[A-Z])/)
-          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
           .join(' ')
     )
     .child(S.editor().id(id).schemaType(id).documentId(id));
@@ -30,9 +30,9 @@ export function getBlockText(
   lineBreakChar = '↵ '
 ) {
   return (
-    block?.reduce((a, c, i) => {
-      const text = c.children?.flatMap((c) => c.text).join('') || '';
-      return a + text + (i !== block.length - 1 ? lineBreakChar : '');
+    block?.reduce((acc, blockItem, index) => {
+      const text = blockItem.children?.flatMap((child) => child.text).join('') || '';
+      return acc + text + (index !== block.length - 1 ? lineBreakChar : '');
     }, '') || ''
   );
 }
