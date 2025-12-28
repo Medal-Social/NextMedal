@@ -167,7 +167,8 @@ declare global {
 
     interface Icon {
       readonly _type: 'icon';
-      ic0n?: string;
+      icon?: string;
+      ic0n?: string; // Legacy field name - keep for backwards compatibility
     }
 
     interface Img {
@@ -363,6 +364,7 @@ declare global {
       showFeaturedPostsFirst?: boolean;
       itemsPerPage?: number;
       posts?: BlogPost[]; // Extended for UI usage
+      language?: string; // Added for locale filtering
     }
 
     interface Breadcrumbs extends Module<'breadcrumbs'> {

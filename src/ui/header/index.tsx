@@ -1,13 +1,16 @@
 import { getCurrentPage } from '@/lib/getCurrentPage';
-import { getSite } from '@/sanity/lib/fetch';
 import { CTAList } from '@/ui/cta';
-import { CommandMenu } from '@/ui/utility';
+import { CommandMenu } from '@/ui/utility/CommandMenu';
 import HeaderClient from './Header.client';
 import Logo from './Logo';
 import Navigation from './navigation';
 
-export default async function Header() {
-  const [site, page] = await Promise.all([getSite(), getCurrentPage()]);
+interface HeaderProps {
+  site: Sanity.Site;
+}
+
+export default async function Header({ site }: HeaderProps) {
+  const page = await getCurrentPage();
   const { title, logo, ctas, headerMenu, brandPage, enableSearch } = site;
 
   // Transform page data for language switcher

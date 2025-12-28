@@ -1,61 +1,37 @@
-// Import commonly used icon packages - add more as needed
-import * as Lucide from 'lucide-react';
 import { stegaClean } from 'next-sanity';
-import type { ComponentProps } from 'react';
+import { getFallbackIconUrl, resolveIcon } from './utils/resolveIcon';
 
-export default function Icon({
-  icon,
-  size = 24, // Default size of 24px
-  ...props
-}: {
+interface IconProps {
   icon?: Sanity.Icon;
   size?: number;
-} & Omit<ComponentProps<'img'>, 'width' | 'height'>) {
+  className?: string;
+}
+
+export default function Icon({ icon, size = 24, className }: IconProps) {
   if (!icon) return null;
 
-  // For ic0n, use react-icons instead of img
-  if (icon.ic0n) {
-    const iconName = stegaClean(icon.ic0n);
+  // Handle icon field (can be 'icon' or legacy 'ic0n')
+  const iconName = icon.icon || icon.ic0n;
+  if (!iconName) return null;
 
-    // Get the icon library prefix (e.g., 'Fa' from 'FaHome')
-    const name = iconName.includes('/') ? iconName.split('/')[1] : iconName;
-    if (name in Lucide) {
-      //@ts-expect-error - dynamically accessing the icon
-      // biome-ignore lint/performance/noDynamicNamespaceImportAccess: needed for dynamic icon loading
-      const IconComponent = Lucide[name];
-      return <IconComponent size={size} {...props} />;
-    }
-    if (name.substring(0, 2) === 'Lu') {
-      const stippedName = name.substring(2);
-      if (stippedName in Lucide) {
-        // @ts-expect-error - dynamically accessing the icon
-        // biome-ignore lint/performance/noDynamicNamespaceImportAccess: needed for dynamic icon loading
-        const IconComponent = Lucide[stippedName];
-        return <IconComponent size={size} {...props} />;
-      }
-    }
-
-    // Access the correct icon library based on prefix
-
-    // Check if the icon exists in the library
-    // Check if the icon exists in the library
-
-    // Fallback to original img if icon not found in react-icons
-    return (
-      // biome-ignore lint/performance/noImgElement: external icon service
-      <img
-        src={`https://ic0n.dev/${iconName}`}
-        width={size}
-        height={size}
-        alt={iconName}
-        loading="lazy"
-        {...props}
-      />
-    );
+  const IconComponent = resolveIcon(iconName);
+  if (IconComponent) {
+    return <IconComponent size={size} className={className} />;
   }
 
-  // Use Img component for image-based icons
-  return null;
+  // Fallback to external icon service
+  const cleanName = stegaClean(iconName);
+  return (
+    // biome-ignore lint/performance/noImgElement: external icon service
+    <img
+      src={getFallbackIconUrl(cleanName)}
+      width={size}
+      height={size}
+      alt={cleanName}
+      loading="lazy"
+      className={className}
+    />
+  );
 }
 
 // Keep getPixels for backward compatibility with existing data

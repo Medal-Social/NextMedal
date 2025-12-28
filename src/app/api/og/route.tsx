@@ -3,6 +3,7 @@ import path from 'node:path';
 import { ImageResponse } from 'next/og';
 import type { NextRequest } from 'next/server';
 import { BASE_URL } from '@/lib/env';
+import { logger } from '@/lib/logger';
 import { getSite } from '@/sanity/lib/fetch';
 
 const domain = BASE_URL.replace(/https?:\/\//, '');
@@ -139,12 +140,18 @@ export async function GET(request: NextRequest) {
       </div>
     </div>,
     {
-      fonts: [
-        {
-          name: 'serif',
-          data: await fs.readFile(path.join(process.cwd(), 'src/assets/fonts/Inter-SemiBold.ttf')),
-        },
-      ],
+      fonts: await loadFonts(),
     }
   );
+}
+
+async function loadFonts(): Promise<{ name: string; data: Buffer }[]> {
+  try {
+    const fontPath = path.join(process.cwd(), 'src/assets/fonts/Inter-SemiBold.ttf');
+    const fontData = await fs.readFile(fontPath);
+    return [{ name: 'serif', data: fontData }];
+  } catch (error) {
+    logger.error({ err: error }, 'Failed to load OG image font, using system font');
+    return [];
+  }
 }

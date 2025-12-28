@@ -8,7 +8,7 @@ import moduleProps from '@/lib/moduleProps';
 import { urlFor } from '@/sanity/lib/image';
 import '@mux/mux-player/themes/classic';
 
-const MuxPlayerReact = dynamic(() => import('@mux/mux-player-react'), {
+const MuxPlayerReact = dynamic(() => import('@mux/mux-player-react').then((mod) => mod.default), {
   loading: () => (
     <div className="w-full h-full bg-muted flex flex-col items-center justify-center">
       <div className="w-16 h-16 rounded-full border-4 border-transparent border-t-primary animate-spin mb-4" />

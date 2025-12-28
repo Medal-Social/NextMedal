@@ -76,10 +76,10 @@ describe('moduleProps', () => {
       const result = moduleProps({
         _type: 'banner',
         _key: 'key',
-        spacing: { top: 'lg', bottom: 'md' },
+        spacing: 'compact',
       });
 
-      expect(result.spacing).toEqual({ top: 'lg', bottom: 'md' });
+      expect(result.spacing).toBe('compact');
     });
 
     it('does not include spacing when not provided', () => {
@@ -105,10 +105,10 @@ describe('moduleProps', () => {
       const result = moduleProps({
         _type: 'banner',
         _key: 'key',
-        spacing: 'large',
+        spacing: 'relaxed',
       });
 
-      expect(result.spacing).toBe('large');
+      expect(result.spacing).toBe('relaxed');
     });
   });
 
@@ -143,7 +143,7 @@ describe('moduleProps', () => {
     });
 
     it('handles various width values', () => {
-      const widths = ['narrow', 'default', 'wide', 'full'];
+      const widths = ['narrow', 'default', 'wide', 'full'] as const;
 
       for (const width of widths) {
         const result = moduleProps({
@@ -162,14 +162,14 @@ describe('moduleProps', () => {
         _type: 'hero',
         _key: 'hero-1',
         options: { uid: 'main-hero' },
-        spacing: { top: 'xl', bottom: 'lg' },
+        spacing: 'relaxed',
         width: 'wide',
       });
 
       expect(result).toEqual({
         id: 'main-hero',
         'data-module': 'hero',
-        spacing: { top: 'xl', bottom: 'lg' },
+        spacing: 'relaxed',
         width: 'wide',
       });
     });

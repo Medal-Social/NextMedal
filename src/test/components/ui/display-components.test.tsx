@@ -67,7 +67,7 @@ describe('Card Component', () => {
       const card = screen.getByTestId('card');
       expect(card.className).toContain('custom-card');
       expect(card.className).toContain('rounded-xl');
-      expect(card.className).toContain('border');
+      expect(card.className).toContain('ring-1');
     });
 
     it('merges custom className on CardHeader', () => {
@@ -80,7 +80,7 @@ describe('Card Component', () => {
       );
       const header = screen.getByTestId('header');
       expect(header.className).toContain('custom-header');
-      expect(header.className).toContain('flex');
+      expect(header.className).toContain('grid');
     });
 
     it('merges custom className on CardContent', () => {
@@ -93,7 +93,7 @@ describe('Card Component', () => {
       );
       const content = screen.getByTestId('content');
       expect(content.className).toContain('custom-content');
-      expect(content.className).toContain('p-6');
+      expect(content.className).toContain('px-6');
     });
   });
 
@@ -182,7 +182,7 @@ describe('Badge Component', () => {
       const badge = screen.getByTestId('badge');
       expect(badge.className).toContain('custom-badge');
       expect(badge.className).toContain('inline-flex');
-      expect(badge.className).toContain('rounded-md');
+      expect(badge.className).toContain('rounded-4xl');
     });
   });
 
@@ -269,8 +269,8 @@ describe('Separator Component', () => {
     it('renders horizontal by default', () => {
       render(<Separator data-testid="separator" />);
       const separator = screen.getByTestId('separator');
-      expect(separator.className).toContain('h-[1px]');
-      expect(separator.className).toContain('w-full');
+      expect(separator.className).toContain('data-[orientation=horizontal]:h-px');
+      expect(separator.className).toContain('data-[orientation=horizontal]:w-full');
     });
   });
 
@@ -278,8 +278,8 @@ describe('Separator Component', () => {
     it('renders vertical when orientation is vertical', () => {
       render(<Separator orientation="vertical" data-testid="separator" />);
       const separator = screen.getByTestId('separator');
-      expect(separator.className).toContain('h-full');
-      expect(separator.className).toContain('w-[1px]');
+      expect(separator.className).toContain('data-[orientation=vertical]:self-stretch');
+      expect(separator.className).toContain('data-[orientation=vertical]:w-px');
     });
   });
 
@@ -311,8 +311,8 @@ describe('Separator Component', () => {
       expect(results).toHaveNoViolations();
     });
 
-    it('has separator role when not decorative', async () => {
-      const { container } = render(<Separator decorative={false} />);
+    it('has separator role', async () => {
+      const { container } = render(<Separator />);
       expect(screen.getByRole('separator')).toBeInTheDocument();
       const results = await axe(container);
       expect(results).toHaveNoViolations();
@@ -614,7 +614,7 @@ describe('Display Components - Property-Based Tests', () => {
           );
           const card = screen.getByTestId('card');
           expect(card.className).toContain(customClass);
-          expect(card.className).toContain('rounded-xl');
+          expect(card.className).toContain('ring-1');
         }),
         { numRuns: 50 }
       );
@@ -631,7 +631,7 @@ describe('Display Components - Property-Based Tests', () => {
           );
           const badge = screen.getByTestId('badge');
           expect(badge.className).toContain(customClass);
-          expect(badge.className).toContain('inline-flex');
+          expect(badge.className).toContain('items-center');
         }),
         { numRuns: 50 }
       );

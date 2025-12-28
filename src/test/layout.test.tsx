@@ -11,6 +11,14 @@ import { render, screen } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { describe, expect, it, vi } from 'vitest';
 import { routing } from '@/i18n/routing';
+
+// Mock Sanity live module to avoid server-only code
+vi.mock('@/sanity/lib/live', () => ({
+  fetchSanityLive: vi.fn(),
+  sanityFetch: vi.fn(),
+  SanityLive: () => null,
+}));
+
 import { SkipToContent } from '@/ui/layout';
 
 // Mock motion/react to avoid animation-related issues in tests

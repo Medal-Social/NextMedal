@@ -22,6 +22,7 @@ export default defineType({
       title: 'Tier Name',
       description: 'Name of the pricing tier (e.g. "Free", "Pro").',
       type: 'string',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'description',

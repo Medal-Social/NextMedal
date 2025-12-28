@@ -287,13 +287,7 @@ const TeamAndLearning = memo(function TeamAndLearning() {
         <Label size={1} muted>
           Team
         </Label>
-        <Card
-          padding={4}
-          radius={3}
-          border
-          tone="positive"
-          style={{ height: '100%', boxSizing: 'border-box' }}
-        >
+        <Card padding={4} radius={3} border style={{ height: '100%', boxSizing: 'border-box' }}>
           <Flex align="center" justify="space-between" gap={4}>
             <Flex align="center" gap={3}>
               <Text size={2}>
@@ -315,7 +309,6 @@ const TeamAndLearning = memo(function TeamAndLearning() {
               rel="noopener noreferrer"
               text="Manage Team"
               mode="ghost"
-              tone="positive"
               icon={LaunchIcon}
               fontSize={1}
             />
