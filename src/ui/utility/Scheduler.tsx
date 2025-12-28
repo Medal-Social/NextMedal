@@ -1,7 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { logger } from '@/lib/logger';
+import { useCallback, useEffect, useState } from 'react';
 
 export default function Scheduler({
   start,
@@ -18,55 +17,19 @@ export default function Scheduler({
   }, [start, end]);
 
   const [isActive, setIsActive] = useState(checkActive());
-  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    // Initialize AbortController to handle cleanup
-    abortControllerRef.current = new AbortController();
-    const { signal } = abortControllerRef.current;
+    // Set initial state
+    setIsActive(checkActive());
 
-    // Create a polling loop using promises instead of setInterval
-    const pollSchedule = async () => {
-      // Set initial state
+    // Poll every second using setInterval - no event listener accumulation
+    const intervalId = setInterval(() => {
       setIsActive(checkActive());
-
-      try {
-        // Continue polling until signal is aborted
-        while (!signal.aborted) {
-          // Wait one second using a promise
-          await new Promise<void>((resolve) => {
-            const timeoutId = setTimeout(() => resolve(), 1000);
-
-            // Add event listener to abort the timeout if needed
-            signal.addEventListener(
-              'abort',
-              () => {
-                clearTimeout(timeoutId);
-                // Reject is not needed as we check signal.aborted
-              },
-              { once: true }
-            );
-          });
-
-          // Check schedule if not aborted
-          if (!signal.aborted) {
-            setIsActive(checkActive());
-          }
-        }
-      } catch (error) {
-        // Handle any errors (usually just aborted signal)
-        logger.error({ err: error }, 'Scheduler error:');
-      }
-    };
-
-    // Start polling
-    pollSchedule();
+    }, 1000);
 
     // Clean up on unmount
     return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
+      clearInterval(intervalId);
     };
   }, [checkActive]);
 
