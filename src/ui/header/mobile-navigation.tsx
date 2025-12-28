@@ -1,7 +1,7 @@
 'use client';
 
-import { motion, type Variants } from 'framer-motion';
 import { ChevronDown, ExternalLink } from 'lucide-react';
+import { motion, type Variants } from 'motion/react';
 import Link from 'next/link';
 import { stegaClean } from 'next-sanity';
 import { useCallback, useEffect, useRef } from 'react';

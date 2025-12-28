@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'motion/react';
 import { stegaClean } from 'next-sanity';
 import type { ReactNode } from 'react';
 import { Section } from '@/components/ui/section';
