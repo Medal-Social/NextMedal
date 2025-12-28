@@ -35,4 +35,14 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
   ],
+  preview: {
+    select: {
+      title: 'title',
+      slug: 'slug.current',
+    },
+    prepare: ({ title, slug }) => ({
+      title: title || 'Untitled Category',
+      subtitle: slug ? `/${slug}` : 'No slug',
+    }),
+  },
 });

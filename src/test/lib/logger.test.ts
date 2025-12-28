@@ -18,7 +18,7 @@ describe('logger', () => {
   describe('log level configuration', () => {
     it('uses LOG_LEVEL env when set', async () => {
       process.env.LOG_LEVEL = 'debug';
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
 
       const { logger } = await import('@/lib/logger');
 
@@ -27,7 +27,7 @@ describe('logger', () => {
 
     it('uses error level in test environment', async () => {
       delete process.env.LOG_LEVEL;
-      process.env.NODE_ENV = 'test';
+      vi.stubEnv('NODE_ENV', 'test');
 
       const { logger } = await import('@/lib/logger');
 
@@ -36,7 +36,7 @@ describe('logger', () => {
 
     it('uses info level by default in non-test environment', async () => {
       delete process.env.LOG_LEVEL;
-      process.env.NODE_ENV = 'development';
+      vi.stubEnv('NODE_ENV', 'development');
 
       const { logger } = await import('@/lib/logger');
 
@@ -68,7 +68,7 @@ describe('logger', () => {
 
   describe('production vs development', () => {
     it('configures transport for non-production', async () => {
-      process.env.NODE_ENV = 'development';
+      vi.stubEnv('NODE_ENV', 'development');
 
       // In development, pino-pretty transport is configured
       // We can verify the logger is created without errors
@@ -79,7 +79,7 @@ describe('logger', () => {
     });
 
     it('has no transport in production', async () => {
-      process.env.NODE_ENV = 'production';
+      vi.stubEnv('NODE_ENV', 'production');
       delete process.env.LOG_LEVEL;
 
       const { logger } = await import('@/lib/logger');

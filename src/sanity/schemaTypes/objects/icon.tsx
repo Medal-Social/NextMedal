@@ -43,11 +43,11 @@ export default defineType({
   ],
   preview: {
     select: {
-      ic0n: 'ic0n',
+      icon: 'icon',
     },
-    prepare: ({ ic0n }) => ({
-      title: ic0n,
-      media: ic0n ? <Icon icon={{ ic0n, _type: 'icon' }} /> : null,
+    prepare: ({ icon }) => ({
+      title: icon,
+      media: icon ? <Icon icon={{ icon, _type: 'icon' }} /> : null,
     }),
   },
 });

@@ -20,11 +20,12 @@ export default async function BlogFrontpage({
   if (!postsProp) {
     try {
       posts = await fetchSanityLive<Sanity.BlogPost[]>({
-        query: groq`*[_type == 'blog.post']|order(publishDate desc)[0...50]{
+        query: groq`*[_type == 'blog.post' && language == $language]|order(publishDate desc)[0...50]{
 			_type,
 			_id,
 			featured,
 			publishDate,
+			language,
 			"readTime": math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
 			metadata {
 				title,
@@ -35,6 +36,7 @@ export default async function BlogFrontpage({
 			categories[]->${CATEGORY_PREVIEW_QUERY},
 			authors[]->${AUTHOR_PREVIEW_QUERY}
 		}`,
+        params: { language: props.language || 'en' },
       });
     } catch (error) {
       logger.error(error, 'Failed to fetch blog posts');

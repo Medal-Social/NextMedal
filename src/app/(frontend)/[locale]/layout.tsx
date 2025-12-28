@@ -58,7 +58,7 @@ export default async function RootLayout({ children, params }: Props) {
             <NextIntlClientProvider locale={locale}>
               <SkipToContent />
               <Banner />
-              <Header />
+              <Header site={site} />
               <main
                 id="main-content"
                 className="flex-1 w-full pt-[var(--header-height)] min-h-[calc(100dvh-var(--header-height)-var(--footer-height))]"
@@ -66,7 +66,7 @@ export default async function RootLayout({ children, params }: Props) {
               >
                 {children}
               </main>
-              <Footer />
+              <Footer site={site} />
               <VisualEditingControls />
               <Toaster />
               <Analytics />

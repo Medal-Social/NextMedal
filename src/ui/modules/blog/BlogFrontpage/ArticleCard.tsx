@@ -117,6 +117,13 @@ export default function ArticleCard({ post, variant = 'standard', className }: A
           image={image}
           className="h-full w-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
           width={variant === 'large' ? 800 : 600}
+          sizes={
+            variant === 'large'
+              ? '(min-width: 1024px) 66vw, 100vw'
+              : variant === 'wide'
+                ? '(min-width: 1024px) 50vw, 100vw'
+                : '(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 100vw'
+          }
           alt={post.metadata?.title}
         />
         {category?.title && (

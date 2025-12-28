@@ -5,7 +5,6 @@ import CookiePreferencesTrigger from '@/components/CookiePreferencesTrigger';
 import { Section } from '@/components/ui/section';
 import resolveUrl from '@/lib/resolveUrl';
 import { cn } from '@/lib/utils';
-import { getSite } from '@/sanity/lib/fetch';
 import { Img } from '@/ui/base';
 import ThemeToggleWrapper from '@/ui/header/ThemeToggleWrapper';
 import LocaleSwitcher from '@/ui/language-switcher';
@@ -14,8 +13,12 @@ import Navigation from './Navigation';
 import SystemStatus from './SystemStatus';
 import Wrapper from './wrapper';
 
-export default async function Footer() {
-  const { title, tagline, logo, copyright, footerLinks, systemStatus } = await getSite();
+interface FooterProps {
+  site: Sanity.Site;
+}
+
+export default async function Footer({ site }: FooterProps) {
+  const { title, tagline, logo, copyright, footerLinks, systemStatus } = site;
 
   const logoImageDark = logo?.image?.dark || logo?.image?.default || logo?.image?.light;
   const logoImageLight = logo?.image?.light || logo?.image?.default || logo?.image?.dark;
