@@ -12,8 +12,8 @@ if (env.NEXT_PUBLIC_SENTRY_DSN && IS_PRODUCTION) {
   Sentry.init({
     dsn: env.NEXT_PUBLIC_SENTRY_DSN,
 
-    // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-    tracesSampleRate: 1,
+    // Define how likely traces are sampled. 10% sampling in production to manage costs.
+    tracesSampleRate: 0.1,
 
     // Enable logs to be sent to Sentry
     enableLogs: true,
