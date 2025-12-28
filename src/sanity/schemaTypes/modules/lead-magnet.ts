@@ -144,7 +144,7 @@ export default defineType({
         | undefined;
       const title =
         block?.children
-          ?.map((c) => c.text)
+          ?.map((child) => child.text)
           .filter(Boolean)
           .join('') || 'Lead Magnet';
       return {
