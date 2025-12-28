@@ -166,13 +166,7 @@ function PrimaryActions() {
             </Text>
           </Box>
 
-          <Button
-            text="Launch Editor"
-            mode="default"
-            // The tone="primary" combined with custom style might be causing issues depending on theme
-            // Let's use standard mode="default" tone="primary" which usually renders filled primary button
-            tone="primary"
-          />
+          <Button text="Launch Editor" mode="bleed" />
         </Flex>
       </Card>
 
@@ -206,7 +200,7 @@ function PrimaryActions() {
             </Text>
           </Box>
 
-          <Button text="Open Content Desk" mode="ghost" />
+          <Button text="Open Content Desk" mode="bleed" />
         </Flex>
       </Card>
     </Grid>
