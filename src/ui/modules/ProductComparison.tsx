@@ -79,7 +79,12 @@ export default function ProductComparison({
                   key={feature._key || `mobile-feature-${featureIndex}`}
                   className="flex justify-between items-start gap-4 text-sm"
                 >
-                  <span className="text-muted-foreground font-medium shrink-0 max-w-[40%]">
+                  <span
+                    className={cn(
+                      'font-medium shrink-0 max-w-[40%]',
+                      product.highlight ? 'text-foreground/70' : 'text-muted-foreground'
+                    )}
+                  >
                     {feature.name}
                   </span>
                   <span
@@ -100,19 +105,21 @@ export default function ProductComparison({
         ))}
       </div>
 
-      <div className="hidden md:block overflow-x-auto rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm">
+      <div className="hidden md:block overflow-x-auto rounded-xl border border-border dark:border-border/80 bg-card/50 dark:bg-card/80 backdrop-blur-sm">
         <table className="w-full border-collapse min-w-[600px]">
           <thead>
             <tr>
-              <th className="p-6 text-left w-1/4" />
+              <th className="p-6 text-left w-1/4 bg-muted/50 dark:bg-muted/30">
+                <span className="sr-only">Feature</span>
+              </th>
               {products?.map((product, index) => (
                 <th
                   key={product._key || `product-${product.name}-${index}`}
                   className={cn(
                     'p-6 text-center text-lg font-bold',
                     product.highlight
-                      ? 'text-primary bg-primary/5 border-b-2 border-primary'
-                      : 'text-muted-foreground border-b border-border/50'
+                      ? 'text-primary bg-primary/10 dark:bg-primary/20 border-b-2 border-primary'
+                      : 'text-foreground border-b border-border dark:border-border/70 bg-muted/50 dark:bg-muted/30'
                   )}
                 >
                   {product.name}
@@ -126,7 +133,7 @@ export default function ProductComparison({
                 className="border-b border-border/50 last:border-0 hover:bg-muted/30 transition-colors"
                 key={feature._key || `feature-${feature.name}-${index}`}
               >
-                <td className="p-6 font-medium text-muted-foreground">{feature.name}</td>
+                <td className="p-6 font-medium text-foreground">{feature.name}</td>
                 {feature.featureDetails?.map((featureDetail, idx) => {
                   const correspondingProduct = products?.[idx];
                   const isHighlighted = correspondingProduct?.highlight;

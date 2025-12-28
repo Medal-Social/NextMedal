@@ -1,3 +1,5 @@
+import { getLocale, getTranslations } from 'next-intl/server';
+import { routing } from '@/i18n/routing';
 import { getCurrentPage } from '@/lib/getCurrentPage';
 import LocaleSwitcherClient from './LocaleSwitcher.client';
 
@@ -7,8 +9,12 @@ interface LocaleSwitcherProps {
 }
 
 export default async function LocaleSwitcher({ className, dropdownAlign }: LocaleSwitcherProps) {
-  // Fetch the current page with translations on the server
-  const page = await getCurrentPage();
+  // Fetch page, locale, and translations in parallel
+  const [page, locale, t] = await Promise.all([
+    getCurrentPage(),
+    getLocale(),
+    getTranslations('LocaleSwitcher'),
+  ]);
 
   // Transform to the shape expected by the client component
   const serverPage = page
@@ -20,11 +26,28 @@ export default async function LocaleSwitcher({ className, dropdownAlign }: Local
       }
     : undefined;
 
+  // Build locale labels
+  const locales: Record<string, string> = {};
+  for (const loc of routing.locales) {
+    locales[loc] = t('locale', { locale: loc });
+  }
+
+  const labels = {
+    label: t('label'),
+    selectLanguage: t('selectLanguage'),
+    language: t('language'),
+    locales,
+    translationNotAvailable: t('translationNotAvailable', { locale: '{locale}' }),
+    goToHome: t('goToHome', { locale: '{locale}' }),
+  };
+
   return (
     <LocaleSwitcherClient
       className={className}
       dropdownAlign={dropdownAlign}
       serverPage={serverPage}
+      locale={locale}
+      labels={labels}
     />
   );
 }

@@ -1,10 +1,12 @@
 import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
+import { getLocale } from 'next-intl/server';
 import { PortableText } from 'next-sanity';
 import CookiePreferencesTrigger from '@/components/CookiePreferencesTrigger';
 import { Section } from '@/components/ui/section';
 import resolveUrl from '@/lib/resolveUrl';
 import { cn } from '@/lib/utils';
+import { getSite } from '@/sanity/lib/fetch';
 import { Img } from '@/ui/base';
 import ThemeToggleWrapper from '@/ui/header/ThemeToggleWrapper';
 import LocaleSwitcher from '@/ui/language-switcher';
@@ -13,11 +15,8 @@ import Navigation from './Navigation';
 import SystemStatus from './SystemStatus';
 import Wrapper from './wrapper';
 
-interface FooterProps {
-  site: Sanity.Site;
-}
-
-export default async function Footer({ site }: FooterProps) {
+export default async function Footer() {
+  const [site, locale] = await Promise.all([getSite(), getLocale()]);
   const { title, tagline, logo, copyright, footerLinks, systemStatus } = site;
 
   const logoImageDark = logo?.image?.dark || logo?.image?.default || logo?.image?.light;
@@ -109,7 +108,10 @@ export default async function Footer({ site }: FooterProps) {
                   </Link>
                 );
               })}
-              <CookiePreferencesTrigger className="relative hover:text-foreground motion-safe:transition-all motion-safe:duration-200 focus:outline-none focus:ring-2 focus:ring-primary after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-current motion-safe:after:transition-all motion-safe:after:duration-200 motion-safe:hover:after:w-full" />
+              <CookiePreferencesTrigger
+                locale={locale}
+                className="relative hover:text-foreground motion-safe:transition-all motion-safe:duration-200 focus:outline-none focus:ring-2 focus:ring-primary after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-current motion-safe:after:transition-all motion-safe:after:duration-200 motion-safe:hover:after:w-full"
+              />
             </div>
           </div>
 

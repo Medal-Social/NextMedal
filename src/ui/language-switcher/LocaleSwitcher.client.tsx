@@ -1,6 +1,5 @@
 'use client';
 
-import { useLocale, useTranslations } from 'next-intl';
 import { usePage } from '@/contexts/PageContext';
 import { routing } from '@/i18n/routing';
 import LocaleSwitcherSelect from './LocaleSwitcherSelect';
@@ -18,19 +17,30 @@ export interface ServerPageData {
   translations?: Translation[];
 }
 
+export interface LocaleLabels {
+  label: string;
+  selectLanguage: string;
+  language: string;
+  locales: Record<string, string>;
+  translationNotAvailable: string;
+  goToHome: string;
+}
+
 export interface LocaleSwitcherClientProps {
   className?: string;
   dropdownAlign?: 'start' | 'end' | 'center';
   serverPage?: ServerPageData;
+  locale: string;
+  labels: LocaleLabels;
 }
 
 export default function LocaleSwitcherClient({
   className,
   dropdownAlign,
   serverPage,
+  locale,
+  labels,
 }: LocaleSwitcherClientProps) {
-  const t = useTranslations('LocaleSwitcher');
-  const locale = useLocale();
   const { page: contextPage } = usePage();
 
   // Use page from context if available, otherwise use server-provided page
@@ -78,16 +88,18 @@ export default function LocaleSwitcherClient({
   return (
     <LocaleSwitcherSelect
       defaultValue={locale}
-      label={t('label')}
-      selectLanguageLabel={t('selectLanguage')}
-      languageText={t('language')}
+      label={labels.label}
+      selectLanguageLabel={labels.selectLanguage}
+      languageText={labels.language}
       translationUrls={translationUrls}
       className={className}
       dropdownAlign={dropdownAlign}
+      translationNotAvailable={labels.translationNotAvailable}
+      goToHome={labels.goToHome}
     >
       {routing.locales.map((cur) => (
         <option key={cur} value={cur}>
-          {t('locale', { locale: cur })}
+          {labels.locales[cur] || cur}
         </option>
       ))}
     </LocaleSwitcherSelect>
