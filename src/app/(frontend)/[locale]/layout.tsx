@@ -49,7 +49,7 @@ export default async function RootLayout({ children, params }: Props) {
         <link rel="dns-prefetch" href="https://cdn.sanity.io" />
       </head>
       <body className="bg-background text-foreground dark:bg-background dark:text-foreground font-sans flex flex-col min-h-screen">
-        <Suspense>
+        <Suspense fallback={null}>
           <SiteJsonLd />
         </Suspense>
         <ThemeProvider
@@ -61,10 +61,10 @@ export default async function RootLayout({ children, params }: Props) {
           <NuqsAdapter>
             <NextIntlClientProvider locale={locale}>
               <SkipToContent />
-              <Suspense>
+              <Suspense fallback={null}>
                 <Banner />
               </Suspense>
-              <Suspense>
+              <Suspense fallback={null}>
                 <Header />
               </Suspense>
               <main
@@ -74,13 +74,13 @@ export default async function RootLayout({ children, params }: Props) {
               >
                 {children}
               </main>
-              <Suspense>
+              <Suspense fallback={null}>
                 <Footer />
               </Suspense>
               <VisualEditingControls />
               <Toaster />
               <Analytics />
-              <Suspense>
+              <Suspense fallback={null}>
                 <CookieConsentWrapper locale={locale} />
               </Suspense>
               <ScrollToTop />
