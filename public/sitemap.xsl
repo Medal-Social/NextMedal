@@ -236,8 +236,8 @@
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            background: var(--accent);
-            color: #fff;
+            background: var(--fg);
+            color: var(--bg);
             padding: 0.75rem 1.5rem;
             border-radius: 50px;
             font-weight: 600;
@@ -246,7 +246,7 @@
             box-shadow: var(--card-shadow);
           }
           .back-link:hover {
-            background: var(--accent-hover);
+            background: var(--accent);
             transform: translateY(-2px);
             box-shadow: var(--card-shadow-hover);
             text-decoration: none;
@@ -254,7 +254,17 @@
           }
           .copyright {
             font-size: 0.9rem;
-            opacity: 0.8;
+            color: var(--footer-fg);
+          }
+          .medal-link {
+            color: var(--accent);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.15s ease;
+          }
+          .medal-link:hover {
+            color: var(--accent-hover);
+            text-decoration: underline;
           }
           @media (max-width: 768px) {
             .header {
@@ -379,9 +389,9 @@
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M19 12H5M12 19l-7-7 7-7"/>
               </svg>
-              Back to Website
+              Explore NextMedal
             </a>
-            <p class="copyright">© 2025 NextMedal. Built with Medal Social.</p>
+            <p class="copyright">Created by <a href="https://www.medalsocial.com" class="medal-link" target="_blank" rel="noopener noreferrer">Medal Social</a></p>
           </div>
         </footer>
       </body>
