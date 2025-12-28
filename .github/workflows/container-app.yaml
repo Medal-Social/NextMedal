@@ -22,6 +22,8 @@ properties:
         value: "${NEXT_PUBLIC_SANITY_PROJECT_ID}"
       - name: NEXT_PUBLIC_SANITY_DATASET
         value: "${NEXT_PUBLIC_SANITY_DATASET}"
+      - name: NEXT_PUBLIC_SANITY_BROWSER_TOKEN
+        value: "${NEXT_PUBLIC_SANITY_BROWSER_TOKEN}"
       - name: SANITY_API_READ_TOKEN
         value: "${SANITY_API_READ_TOKEN}"
       - name: NEXT_PUBLIC_UMAMI_SCRIPT_URL
@@ -32,6 +34,10 @@ properties:
         value: "${NEXT_PUBLIC_APP_ENV}"
       - name: NEXT_PUBLIC_SENTRY_DSN
         value: "${NEXT_PUBLIC_SENTRY_DSN}"
+      - name: SENTRY_ORG
+        value: "${SENTRY_ORG}"
+      - name: SENTRY_PROJECT
+        value: "${SENTRY_PROJECT}"
       probes:
       - type: liveness
         httpGet:

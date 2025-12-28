@@ -14,8 +14,8 @@ const envSchema = z.object({
   NEXT_PUBLIC_SANITY_API_VERSION: z.string().optional().default('2025-12-23'),
   // Required for server-side data fetching (not available on client)
   SANITY_API_READ_TOKEN: z.string().min(1).optional(),
-  // Optional: enables client-side live preview
-  SANITY_API_BROWSER_TOKEN: z.string().optional(),
+  // Optional: enables client-side live preview (must be NEXT_PUBLIC_ to work in browser)
+  NEXT_PUBLIC_SANITY_BROWSER_TOKEN: z.string().optional(),
 
   // Optional: Analytics
   NEXT_PUBLIC_UMAMI_SCRIPT_URL: z.url().optional(),
@@ -43,7 +43,7 @@ const parsedEnv = envSchema.safeParse({
   NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET,
   NEXT_PUBLIC_SANITY_API_VERSION: process.env.NEXT_PUBLIC_SANITY_API_VERSION,
   SANITY_API_READ_TOKEN: process.env.SANITY_API_READ_TOKEN,
-  SANITY_API_BROWSER_TOKEN: process.env.SANITY_API_BROWSER_TOKEN,
+  NEXT_PUBLIC_SANITY_BROWSER_TOKEN: process.env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN,
   NEXT_PUBLIC_UMAMI_SCRIPT_URL: process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL,
   NEXT_PUBLIC_UMAMI_WEBSITE_ID: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID,
   NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
