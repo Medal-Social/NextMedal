@@ -11,6 +11,7 @@ import { media, mediaAssetSource } from 'sanity-plugin-media';
 import { muxInput } from 'sanity-plugin-mux-input';
 import { schemaTypes } from './src/sanity/schemaTypes';
 import StudioIcon from './src/sanity/ui/StudioIcon';
+import { dashboardTool } from './src/sanity/tools/DashboardTool';
 
 import { routing, localeConfig, type Locale } from '@/i18n/routing';
 
@@ -57,6 +58,8 @@ export default defineConfig({
     }),
     ...devOnlyPlugins,
   ],
+
+  tools: (prev) => [dashboardTool(), ...prev],
 
   schema: {
     types: schemaTypes,
