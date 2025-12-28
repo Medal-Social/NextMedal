@@ -1,14 +1,11 @@
-import { groq } from 'next-sanity';
 import { Suspense } from 'react';
 import { fetchSanityLive } from '@/sanity/lib/live';
+import { BLOG_CATEGORIES_WITH_POSTS_QUERY } from '@/sanity/lib/queries';
 import Filter from './Filter';
 
 export default async function FilterList() {
   const categories = await fetchSanityLive<Sanity.BlogCategory[]>({
-    query: groq`*[
-			_type == 'blog.category' &&
-			count(*[_type == 'blog.post' && references(^._id)]) > 0
-		]|order(title)`,
+    query: BLOG_CATEGORIES_WITH_POSTS_QUERY,
   });
 
   if (!categories) return null;
