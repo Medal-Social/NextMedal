@@ -12,8 +12,8 @@ const envSchema = z.object({
   NEXT_PUBLIC_SANITY_PROJECT_ID: z.string().min(1),
   NEXT_PUBLIC_SANITY_DATASET: z.string().min(1),
   NEXT_PUBLIC_SANITY_API_VERSION: z.string().optional().default('2025-12-23'),
-  // Required for server-side data fetching in production
-  SANITY_API_READ_TOKEN: z.string().min(1, 'SANITY_API_READ_TOKEN is required for production'),
+  // Required for server-side data fetching (not available on client)
+  SANITY_API_READ_TOKEN: z.string().min(1).optional(),
   // Optional: enables client-side live preview
   SANITY_API_BROWSER_TOKEN: z.string().optional(),
 
