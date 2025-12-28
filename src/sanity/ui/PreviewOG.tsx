@@ -72,7 +72,7 @@ export default function PreviewOG({ title }: { title?: string }) {
         style={{ marginTop: -4 }}
         icon={open ? VscEyeClosed : VscEye}
         title="Preview Open Graph image"
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => setOpen((prev) => !prev)}
       />
     </Popover>
   );
