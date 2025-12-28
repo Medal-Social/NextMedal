@@ -1,7 +1,8 @@
 'use client';
 
 import { motion, useReducedMotion } from 'framer-motion';
-import { useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { useCallback, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 // Spring animation config matching codebase conventions
@@ -18,12 +19,26 @@ const springConfig = {
  * Respects user's motion preferences for accessibility.
  */
 export default function SkipToContent() {
+  const t = useTranslations('Accessibility');
   const [isFocused, setIsFocused] = useState(false);
   const prefersReducedMotion = useReducedMotion();
 
+  const handleClick = useCallback(() => {
+    // After native anchor navigation, ensure main content receives focus
+    // Use setTimeout to run after the browser's native scroll
+    setTimeout(() => {
+      const mainContent = document.getElementById('main-content');
+      if (mainContent) {
+        mainContent.focus();
+      }
+    }, 0);
+  }, []);
+
   return (
+    // biome-ignore lint/a11y/useValidAnchor: Skip links with href="#id" are valid page navigation
     <motion.a
       href="#main-content"
+      onClick={handleClick}
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
       initial={false}
@@ -51,7 +66,7 @@ export default function SkipToContent() {
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-600'
       )}
     >
-      Skip to content
+      {t('skipToContent')}
     </motion.a>
   );
 }
