@@ -85,11 +85,13 @@ const BASE_MODULES_QUERY = groq`
 			}
 		} 
 	},
-	_type == 'team' => { 
+	_type == 'team' => {
 		...,
+		intro[]{ ${PT_BLOCK_QUERY} },
 		people[]->{
 			...,
-			image { ${IMAGE_QUERY} }
+			image { ${IMAGE_QUERY} },
+			bio[]{ ${PT_BLOCK_QUERY} }
 		},
 	},
 	_type == 'pricing-list' => {
@@ -114,12 +116,15 @@ const BASE_MODULES_QUERY = groq`
 	},
 	_type == 'features' => {
 		...,
+		intro[]{ ${PT_BLOCK_QUERY} },
 		items[]{
-			...
+			...,
+			content[]{ ${PT_BLOCK_QUERY} }
 		}
 	},
 	_type == 'contact' => {
 		...,
+		intro[]{ ${PT_BLOCK_QUERY} },
 		form->{
 			...,
 			redirect { ${LINK_QUERY} }
@@ -135,6 +140,7 @@ const BASE_MODULES_QUERY = groq`
 	},
 	_type == 'lead-magnet' => {
 		...,
+		content[]{ ${PT_BLOCK_QUERY} },
 		form->{
 			...,
 			redirect { ${LINK_QUERY} }
@@ -147,6 +153,7 @@ const BASE_MODULES_QUERY = groq`
 	},
 	_type == 'hero' => {
 		...,
+		content[]{ ${PT_BLOCK_QUERY} },
 		image {
 			image {
 				${IMAGE_QUERY}
