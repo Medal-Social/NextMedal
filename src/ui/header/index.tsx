@@ -1,16 +1,21 @@
+import { getLocale, getTranslations } from 'next-intl/server';
+import { routing } from '@/i18n/routing';
 import { getCurrentPage } from '@/lib/getCurrentPage';
+import { getSite } from '@/sanity/lib/fetch';
 import { CTAList } from '@/ui/cta';
 import { CommandMenu } from '@/ui/utility/CommandMenu';
 import HeaderClient from './Header.client';
 import Logo from './Logo';
 import Navigation from './navigation';
 
-interface HeaderProps {
-  site: Sanity.Site;
-}
-
-export default async function Header({ site }: HeaderProps) {
-  const page = await getCurrentPage();
+export default async function Header() {
+  const [site, page, locale, localeSwitcherT, themeSelectorT] = await Promise.all([
+    getSite(),
+    getCurrentPage(),
+    getLocale(),
+    getTranslations('LocaleSwitcher'),
+    getTranslations('ThemeSelector'),
+  ]);
   const { title, logo, ctas, headerMenu, brandPage, enableSearch } = site;
 
   // Transform page data for language switcher
@@ -23,6 +28,28 @@ export default async function Header({ site }: HeaderProps) {
       }
     : undefined;
 
+  // Build locale labels
+  const locales: Record<string, string> = {};
+  for (const loc of routing.locales) {
+    locales[loc] = localeSwitcherT('locale', { locale: loc });
+  }
+
+  const localeLabels = {
+    label: localeSwitcherT('label'),
+    selectLanguage: localeSwitcherT('selectLanguage'),
+    language: localeSwitcherT('language'),
+    locales,
+    translationNotAvailable: localeSwitcherT('translationNotAvailable', { locale: '{locale}' }),
+    goToHome: localeSwitcherT('goToHome', { locale: '{locale}' }),
+  };
+
+  const themeLabels = {
+    theme: themeSelectorT('theme'),
+    light: themeSelectorT('light'),
+    dark: themeSelectorT('dark'),
+    system: themeSelectorT('system'),
+  };
+
   const logoNode = <Logo title={title} logo={logo} brandPage={brandPage} />;
 
   return (
@@ -34,6 +61,9 @@ export default async function Header({ site }: HeaderProps) {
       menu={{ items: headerMenu?.items }}
       enableSearch={enableSearch}
       serverPage={serverPage}
+      locale={locale}
+      localeLabels={localeLabels}
+      themeLabels={themeLabels}
     >
       <div className="flex items-center">{logoNode}</div>
 

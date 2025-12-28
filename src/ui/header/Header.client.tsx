@@ -16,6 +16,9 @@ export default function HeaderClient({
   enableSearch,
   children,
   serverPage,
+  locale,
+  localeLabels,
+  themeLabels,
 }: HeaderClientProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isOpenRef = useRef(false);
@@ -162,6 +165,9 @@ export default function HeaderClient({
             ctas={ctas}
             enableSearch={enableSearch}
             serverPage={serverPage}
+            locale={locale}
+            localeLabels={localeLabels}
+            themeLabels={themeLabels}
           />
         )}
       </AnimatePresence>
