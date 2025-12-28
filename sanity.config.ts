@@ -10,6 +10,7 @@ import { documentInternationalization } from '@sanity/document-internationalizat
 import { media, mediaAssetSource } from 'sanity-plugin-media';
 import { muxInput } from 'sanity-plugin-mux-input';
 import { schemaTypes } from './src/sanity/schemaTypes';
+import StudioIcon from './src/sanity/ui/StudioIcon';
 
 import { routing, localeConfig, type Locale } from '@/i18n/routing';
 
@@ -23,11 +24,13 @@ const devOnlyPlugins = isDev
   : [];
 
 export default defineConfig({
-  title: "Nextmedal by Medal Social",
+  title: 'Studio by Medal Social',
+  icon: StudioIcon,
   projectId,
   dataset,
-  basePath: "/studio",
+  basePath: '/studio',
 
+  announcements: { enabled: false },
   tasks: { enabled: false },
   scheduledPublishing: { enabled: false },
 
@@ -38,8 +41,8 @@ export default defineConfig({
   },
 
   plugins: [
-    structure,
     presentation,
+    structure,
     codeInput(),
     media(),
     muxInput({
@@ -58,9 +61,7 @@ export default defineConfig({
   schema: {
     types: schemaTypes,
     templates: (prev) =>
-      prev.filter(
-        (template) => !["page", "blog.post", "site"].includes(template.id)
-      ),
+      prev.filter((template) => !['page', 'blog.post', 'site'].includes(template.id)),
   },
   document: {
     comments: { enabled: false },
@@ -73,12 +74,14 @@ export default defineConfig({
     actions: (prev, context) => {
       // Singleton protection: Prevent delete/duplicate/unpublish for 'site' document
       if (context.schemaType === 'site') {
-        return prev.filter(({ action }) => action && !['delete', 'duplicate', 'unpublish'].includes(action));
+        return prev.filter(
+          ({ action }) => action && !['delete', 'duplicate', 'unpublish'].includes(action)
+        );
       }
       return prev;
     },
     productionUrl: async (prev, { document }) => {
-      if (["page", "blog.post"].includes(document?._type)) {
+      if (['page', 'blog.post'].includes(document?._type)) {
         return resolveUrl(document as Sanity.PageBase, { base: true });
       }
 
