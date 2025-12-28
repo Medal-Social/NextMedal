@@ -4,8 +4,12 @@
  * No Zod validation to keep bundle small.
  */
 
+import { normalizeUrl } from './utils';
+
 export const env = {
   NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL ?? '',
+  VERCEL_URL: process.env.VERCEL_URL,
+  VERCEL_PROJECT_PRODUCTION_URL: process.env.VERCEL_PROJECT_PRODUCTION_URL,
   NEXT_PUBLIC_APP_ENV: process.env.NEXT_PUBLIC_APP_ENV as
     | 'production'
     | 'development'
@@ -29,5 +33,12 @@ export const dev = env.NODE_ENV === 'development';
 export const vercelPreview = env.VERCEL_ENV === 'preview';
 export const isStaging = env.NEXT_PUBLIC_APP_ENV === 'staging';
 export const isPreview = env.NEXT_PUBLIC_APP_ENV === 'preview';
-export const BASE_URL =
-  dev || !env.NEXT_PUBLIC_BASE_URL ? 'http://localhost:3000' : env.NEXT_PUBLIC_BASE_URL;
+
+const LOCALHOST = 'http://localhost:3000';
+
+/** Base URL resolved from env vars (priority: explicit > Vercel production > Vercel preview > localhost) */
+export const BASE_URL = dev
+  ? LOCALHOST
+  : ([env.NEXT_PUBLIC_BASE_URL, env.VERCEL_PROJECT_PRODUCTION_URL, env.VERCEL_URL]
+      .map((url) => normalizeUrl(url, true))
+      .find(Boolean) ?? LOCALHOST);
