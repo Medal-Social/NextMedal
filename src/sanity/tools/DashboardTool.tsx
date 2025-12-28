@@ -15,9 +15,9 @@ import {
 } from '@sanity/icons';
 import { Box, Button, Card, Container, Flex, Grid, Heading, Label, Stack, Text } from '@sanity/ui';
 import { type KeyboardEvent, memo, useCallback, useMemo } from 'react';
-import { FaGithub, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
 import { type Tool, useCurrentUser, useProjectId } from 'sanity';
 import { useRouter } from 'sanity/router';
+import { IconGithub, IconLinkedinIn, IconTwitterX } from '@/components/icons/social-icons';
 
 // ============================================================================
 // Types
@@ -348,9 +348,9 @@ const TeamAndLearning = memo(function TeamAndLearning() {
 });
 
 const SOCIAL_LINKS = [
-  { href: 'https://github.com/Medal-Social', icon: FaGithub, label: 'GitHub' },
-  { href: 'https://x.com/medalsocial', icon: FaXTwitter, label: 'X (Twitter)' },
-  { href: 'https://linkedin.com/company/medalsocial', icon: FaLinkedin, label: 'LinkedIn' },
+  { href: 'https://github.com/Medal-Social', icon: IconGithub, label: 'GitHub' },
+  { href: 'https://x.com/medalsocial', icon: IconTwitterX, label: 'X (Twitter)' },
+  { href: 'https://linkedin.com/company/medalsocial', icon: IconLinkedinIn, label: 'LinkedIn' },
 ] as const;
 
 const FooterSection = memo(function FooterSection() {

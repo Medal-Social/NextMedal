@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version with pricing plan comparison functionality
  */
 
-import { LuFileSymlink } from 'react-icons/lu';
+import { LinkIcon } from '@sanity/icons';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 
 // Define a type for the document structure that we expect
@@ -16,7 +16,7 @@ import { defineArrayMember, defineField, defineType } from 'sanity';
 export default defineType({
   name: 'pricing-comparison',
   title: 'Pricing Comparison',
-  icon: LuFileSymlink,
+  icon: LinkIcon,
   type: 'object',
   groups: [
     { name: 'content', default: true, title: 'Content' },
@@ -276,7 +276,7 @@ export default defineType({
     prepare: ({ title, tiersCount = [], categoriesCount = [] }) => ({
       title: title || 'Pricing Comparison',
       subtitle: `${tiersCount.length} tiers • ${categoriesCount.length} feature categories`,
-      media: LuFileSymlink,
+      media: LinkIcon,
     }),
   },
 });

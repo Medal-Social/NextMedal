@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version
  */
 
-import { VscDeviceCameraVideo } from 'react-icons/vsc';
+import { PlayIcon } from '@sanity/icons';
 import type { Rule } from 'sanity';
 import { defineField } from 'sanity';
 
@@ -50,7 +50,7 @@ export default defineField({
   name: 'video',
   title: 'Video',
   type: 'object',
-  icon: VscDeviceCameraVideo,
+  icon: PlayIcon,
   fieldsets: [
     {
       name: 'videoOptions',
@@ -134,7 +134,7 @@ export default defineField({
         rule.custom((value, context) => {
           const parent = context.parent as { type?: string } | undefined;
           if (parent?.type === 'mux' && !value) {
-            return 'Mux video is required for Mux videos';
+            return 'Mux video is required';
           }
           return true;
         }),

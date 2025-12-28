@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version
  */
 
-import { VscSymbolMisc } from 'react-icons/vsc';
+import { ComponentIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 import { createUidField } from './uid-input';
@@ -16,7 +16,7 @@ import { createUidField } from './uid-input';
 export default defineType({
   name: 'logo-cloud',
   title: 'Logo Cloud',
-  icon: VscSymbolMisc,
+  icon: ComponentIcon,
   type: 'object',
   groups: [{ name: 'content', default: true }, { name: 'options' }],
   fields: [

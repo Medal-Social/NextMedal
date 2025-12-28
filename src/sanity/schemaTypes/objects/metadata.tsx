@@ -26,7 +26,7 @@ const metadataSchema = createMetadataSchema({
 export default defineType({
   name: 'metadata',
   title: 'Metadata',
-  description: 'For search engines',
+  description: 'Search engine optimization settings',
   type: 'object',
   fields: [
     // Override the slug field to add validation

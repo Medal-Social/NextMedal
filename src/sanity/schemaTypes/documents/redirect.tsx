@@ -8,14 +8,14 @@
  * - 1.0.0: Initial version
  */
 
-import { PiFlowArrow } from 'react-icons/pi';
+import { TransferIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import resolveSlug from '@/sanity/lib/resolveSlug';
 
 export default defineType({
   name: 'redirect',
   title: 'Redirect',
-  icon: PiFlowArrow,
+  icon: TransferIcon,
   type: 'document',
   fields: [
     defineField({

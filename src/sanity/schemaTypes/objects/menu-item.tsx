@@ -9,14 +9,14 @@
  * - 1.4.0: Grouped destination fields, renamed label to Text, improved helper text
  */
 
-import { VscLink } from 'react-icons/vsc';
+import { LinkIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import resolveSlug from '@/sanity/lib/resolveSlug';
 
 export default defineType({
   name: 'menuItem',
   title: 'Menu Item',
-  icon: VscLink,
+  icon: LinkIcon,
   type: 'object',
   description: 'Internal or external link with optional icon and label',
   fieldsets: [
@@ -130,7 +130,7 @@ export default defineType({
       return {
         title: label || title || 'Untitled Link',
         subtitle: `${linkType} → ${destination}`,
-        media: VscLink,
+        media: LinkIcon,
       };
     },
   },

@@ -8,14 +8,14 @@
  * - 1.0.0: Initial version with scheduling and content controls
  */
 
-import { VscCalendar, VscPin } from 'react-icons/vsc';
+import { CalendarIcon, PinIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 
 export default defineType({
   name: 'banner',
   title: 'Banner',
-  icon: VscPin,
+  icon: PinIcon,
   type: 'document',
   fieldsets: [{ name: 'schedule', options: { columns: 2 } }],
   fields: [
@@ -87,7 +87,7 @@ export default defineType({
     prepare: ({ content, cta, start, end }) => ({
       title: getBlockText(content),
       subtitle: cta,
-      media: (start || end) && VscCalendar,
+      media: (start || end) && CalendarIcon,
     }),
   },
 });

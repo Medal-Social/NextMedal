@@ -5,14 +5,14 @@
  * @description Defines rules for placing global content modules in specific layout slots based on content scope.
  */
 
-import { VscSymbolField } from 'react-icons/vsc';
+import { InsertAboveIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'placement',
   title: 'Placement Rule',
   type: 'document',
-  icon: VscSymbolField,
+  icon: InsertAboveIcon,
   fields: [
     defineField({
       name: 'scope',
@@ -88,7 +88,7 @@ export default defineType({
       return {
         title: `${scopeMap[scope] || scope} • ${locationMap[location] || location}`,
         subtitle: `${moduleCount} module${moduleCount === 1 ? '' : 's'}`,
-        media: VscSymbolField,
+        media: InsertAboveIcon,
       };
     },
   },
