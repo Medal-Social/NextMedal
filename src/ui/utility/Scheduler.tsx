@@ -16,10 +16,11 @@ export default function Scheduler({
     return (!start || new Date(start) < now) && (!end || new Date(end) > now);
   }, [start, end]);
 
-  const [isActive, setIsActive] = useState(checkActive());
+  // Initialize to null to defer time check to client side (avoids SSR/hydration mismatch)
+  const [isActive, setIsActive] = useState<boolean | null>(null);
 
   useEffect(() => {
-    // Set initial state
+    // Set initial state on client
     setIsActive(checkActive());
 
     // Poll every second using setInterval - no event listener accumulation
@@ -33,9 +34,11 @@ export default function Scheduler({
     };
   }, [checkActive]);
 
+  // No scheduling constraints - always show
   if (!start && !end) return children;
 
-  if (!isActive) return null;
+  // Still hydrating or inactive - don't render
+  if (isActive !== true) return null;
 
   return children;
 }

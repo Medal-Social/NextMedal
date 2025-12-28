@@ -8,14 +8,14 @@
  * - 1.0.0: Renamed from Link List to Drop Down Menu
  */
 
-import { VscFolderOpened } from 'react-icons/vsc';
+import { FolderIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import { count } from '@/lib/utils';
 
 export default defineType({
   name: 'dropdownMenu',
-  title: 'Drop Down Menu',
-  icon: VscFolderOpened,
+  title: 'Dropdown Menu',
+  icon: FolderIcon,
   type: 'object',
   fields: [
     defineField({

@@ -8,14 +8,14 @@
  * - 1.0.0: Initial version
  */
 
-import { GoPerson } from 'react-icons/go';
+import { UserIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'person',
   title: 'Team Member',
   type: 'document',
-  icon: GoPerson,
+  icon: UserIcon,
   fields: [
     defineField({
       name: 'name',
@@ -148,7 +148,7 @@ export default defineType({
     prepare: ({ title, subtitle, media }) => ({
       title: title || 'Untitled',
       subtitle: subtitle || '',
-      media: media || GoPerson,
+      media: media || UserIcon,
     }),
   },
 });

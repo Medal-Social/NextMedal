@@ -9,7 +9,7 @@
  * - 1.0.0: Initial version
  */
 
-import { GoPerson } from 'react-icons/go';
+import { UserIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 import { createUidField } from './uid-input';
@@ -18,7 +18,7 @@ export default defineType({
   name: 'team',
   title: 'Team',
   type: 'object',
-  icon: GoPerson,
+  icon: UserIcon,
   groups: [{ name: 'content', default: true }, { name: 'options' }],
   fields: [
     defineField({

@@ -44,7 +44,7 @@ export default function GlobalError({
 
           {error.digest && (
             <div className="inline-flex items-center gap-2 py-1.5 px-3 bg-muted rounded-full text-[10px] font-mono text-muted-foreground uppercase tracking-wider italic">
-              <span className="opacity-50 font-sans font-semibold not-italic">Error ID:</span>
+              <span className="font-sans font-semibold not-italic">Error ID:</span>
               <span className="select-all">{error.digest}</span>
             </div>
           )}
@@ -71,7 +71,7 @@ export default function GlobalError({
             </a>
           </div>
 
-          <p className="text-xs text-muted-foreground pt-8 opacity-50 italic">
+          <p className="text-xs text-muted-foreground pt-8 italic">
             If the problem persists, please contact support.
           </p>
         </div>

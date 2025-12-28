@@ -8,13 +8,13 @@
  * - 1.0.0: Initial version
  */
 
-import { BsBarChartSteps } from 'react-icons/bs';
+import { MenuIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'breadcrumbs',
   title: 'Breadcrumbs',
-  icon: BsBarChartSteps,
+  icon: MenuIcon,
   type: 'object',
   fields: [
     defineField({

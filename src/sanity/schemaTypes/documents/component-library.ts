@@ -8,14 +8,14 @@
  * - 1.0.0: Initial version
  */
 
-import { VscLibrary } from 'react-icons/vsc';
+import { BookIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'component.library',
   title: 'Component Library',
   type: 'document',
-  icon: VscLibrary,
+  icon: BookIcon,
   fields: [
     defineField({
       name: 'title',
@@ -40,7 +40,7 @@ export default defineType({
       return {
         title,
         subtitle,
-        media: VscLibrary,
+        media: BookIcon,
       };
     },
   },

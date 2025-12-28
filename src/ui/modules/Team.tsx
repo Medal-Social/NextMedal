@@ -1,5 +1,11 @@
-import { FaFacebook, FaInstagram, FaLinkedin, FaUser, FaYoutube } from 'react-icons/fa';
-import { FaXTwitter } from 'react-icons/fa6';
+import {
+  IconFacebook,
+  IconInstagram,
+  IconLinkedin,
+  IconTwitterX,
+  IconUser,
+  IconYoutube,
+} from '@/components/icons/social-icons';
 import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
@@ -71,7 +77,7 @@ function TeamMember({
           />
         ) : (
           <div className="flex aspect-[4/5] w-24 sm:w-52 flex-none items-center justify-center rounded-2xl bg-muted">
-            <FaUser className="h-8 w-8 sm:h-16 sm:w-16 text-muted-foreground" />
+            <IconUser className="h-8 w-8 sm:h-16 sm:w-16 text-muted-foreground" />
           </div>
         )}
 
@@ -104,7 +110,7 @@ function TeamMember({
         />
       ) : (
         <div className="flex aspect-[4/5] w-full items-center justify-center rounded-2xl bg-muted">
-          <FaUser className="h-20 w-20 text-muted-foreground" />
+          <IconUser className="h-20 w-20 text-muted-foreground" />
         </div>
       )}
 
@@ -132,12 +138,12 @@ function SocialLinks({ person, className }: { person: Sanity.Person; className?:
       {person.socialLinks.map((link) => {
         const Icon =
           {
-            linkedin: FaLinkedin,
-            twitter: FaXTwitter,
-            instagram: FaInstagram,
-            youtube: FaYoutube,
-            facebook: FaFacebook,
-          }[link.platform] || FaUser;
+            linkedin: IconLinkedin,
+            twitter: IconTwitterX,
+            instagram: IconInstagram,
+            youtube: IconYoutube,
+            facebook: IconFacebook,
+          }[link.platform] || IconUser;
 
         if (!link.url) return null;
 

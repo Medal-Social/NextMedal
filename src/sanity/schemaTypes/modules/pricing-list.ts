@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version
  */
 
-import { LuDollarSign } from 'react-icons/lu';
+import { BillIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import { count } from '@/lib/utils';
 import { getBlockText } from '@/sanity/lib/utils';
@@ -16,7 +16,7 @@ import { getBlockText } from '@/sanity/lib/utils';
 export default defineType({
   name: 'pricing-list',
   title: 'Pricing list',
-  icon: LuDollarSign,
+  icon: BillIcon,
   type: 'object',
   groups: [{ name: 'content', default: true }, { name: 'options' }],
   fields: [

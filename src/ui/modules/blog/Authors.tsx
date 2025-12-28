@@ -1,7 +1,13 @@
 import Link from 'next/link';
 import { createDataAttribute } from 'next-sanity';
-import { FaFacebook, FaInstagram, FaLinkedin, FaXTwitter, FaYoutube } from 'react-icons/fa6';
-import { GoPerson } from 'react-icons/go';
+import {
+  IconFacebook,
+  IconInstagram,
+  IconLinkedin,
+  IconTwitterX,
+  IconUser,
+  IconYoutube,
+} from '@/components/icons/social-icons';
 import { cn } from '@/lib/utils';
 import { Img } from '@/ui/base';
 
@@ -82,7 +88,7 @@ function Author({
             data-sanity={stega?.scope('image').toString()}
           />
         ) : (
-          <GoPerson className="text-primary/20 text-xl relative z-0" />
+          <IconUser className="text-primary/20 text-xl relative z-0" />
         )}
         <div className="relative z-0">
           <div className={cn('font-semibold', linked && 'group-hover:underline')}>
@@ -99,12 +105,12 @@ function Author({
               {author.socialLinks.map((link, index) => {
                 const Icon =
                   {
-                    linkedin: FaLinkedin,
-                    twitter: FaXTwitter,
-                    instagram: FaInstagram,
-                    youtube: FaYoutube,
-                    facebook: FaFacebook,
-                  }[link.platform] || GoPerson;
+                    linkedin: IconLinkedin,
+                    twitter: IconTwitterX,
+                    instagram: IconInstagram,
+                    youtube: IconYoutube,
+                    facebook: IconFacebook,
+                  }[link.platform] || IconUser;
 
                 if (!link.url) return null;
 

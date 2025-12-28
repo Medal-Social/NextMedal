@@ -8,14 +8,14 @@
  * - 1.0.0: Initial version with basic category structure
  */
 
-import { VscTag } from 'react-icons/vsc';
+import { TagIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'blog.category',
   title: 'Blog category',
   type: 'document',
-  icon: VscTag,
+  icon: TagIcon,
   fields: [
     defineField({
       name: 'title',

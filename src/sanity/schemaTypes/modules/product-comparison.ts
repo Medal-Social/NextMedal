@@ -11,13 +11,13 @@
  * - 1.0.0: Initial version with basic comparison functionality
  */
 
-import { LuFileSymlink } from 'react-icons/lu';
+import { LinkIcon } from '@sanity/icons';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'product-comparison',
   title: 'Product Comparison',
-  icon: LuFileSymlink,
+  icon: LinkIcon,
   type: 'object',
   description:
     'Create a side-by-side comparison table to highlight differences between products or service tiers',
@@ -158,7 +158,7 @@ export default defineType({
     prepare: ({ title, tiersCount = [], categoriesCount = [] }) => ({
       title: title || 'Product Comparison',
       subtitle: `${tiersCount.length} products • ${categoriesCount.length} features`,
-      media: LuFileSymlink,
+      media: LinkIcon,
     }),
   },
 });

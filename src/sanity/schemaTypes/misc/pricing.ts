@@ -8,13 +8,13 @@
  * - 1.0.0: Initial version
  */
 
-import { LuDollarSign } from 'react-icons/lu';
+import { BillIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'pricing',
-  title: 'Pricing tier',
-  icon: LuDollarSign,
+  title: 'Pricing Tier',
+  icon: BillIcon,
   type: 'document',
   fields: [
     defineField({
@@ -32,8 +32,9 @@ export default defineType({
     }),
     defineField({
       name: 'highlight',
+      title: 'Highlight',
       type: 'string',
-      description: 'e.g. Recommended, Most popular, etc.',
+      description: 'e.g. Recommended, Most Popular, etc.',
     }),
     defineField({
       name: 'price',
@@ -47,17 +48,17 @@ export default defineType({
         defineField({
           name: 'base',
           type: 'string',
-          description: '0 for free, empty to hide',
+          description: 'Enter 0 for free tier, leave empty to hide',
         }),
         defineField({
           name: 'yearly',
           type: 'string',
-          description: '0 for free, empty to hide',
+          description: 'Enter 0 for free tier, leave empty to hide',
         }),
         defineField({
           name: 'currency',
           type: 'string',
-          description: 'e.g. $',
+          description: 'Currency symbol (e.g., $, kr)',
         }),
         defineField({
           name: 'suffix',
@@ -68,7 +69,7 @@ export default defineType({
     }),
     defineField({
       name: 'ctas',
-      title: 'Call-to-actions',
+      title: 'Call-to-Actions',
       description: 'Buttons for this pricing tier.',
       type: 'array',
       of: [{ type: 'cta' }],

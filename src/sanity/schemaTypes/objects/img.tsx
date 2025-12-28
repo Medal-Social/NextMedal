@@ -9,14 +9,14 @@
  * - 1.1.0: Added improved validation and documentation
  */
 
-import { VscFileMedia } from 'react-icons/vsc';
+import { ImageIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'img',
   title: 'Image',
   type: 'object',
-  icon: VscFileMedia,
+  icon: ImageIcon,
   description: 'Image for OG and social sharing (optional - will auto-generate if not provided)',
   fields: [
     defineField({

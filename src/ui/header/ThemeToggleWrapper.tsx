@@ -1,15 +1,21 @@
-'use client';
-
+import { getTranslations } from 'next-intl/server';
 import HeaderThemeToggle from './ThemeToggle';
 
-// Import with no SSR since it depends on theme state
-
-export default function ThemeToggleWrapper({
+export default async function ThemeToggleWrapper({
   className,
   dropdownAlign,
 }: {
   className?: string;
   dropdownAlign?: 'start' | 'end' | 'center';
 }) {
-  return <HeaderThemeToggle className={className} dropdownAlign={dropdownAlign} />;
+  const t = await getTranslations('ThemeSelector');
+
+  const labels = {
+    theme: t('theme'),
+    light: t('light'),
+    dark: t('dark'),
+    system: t('system'),
+  };
+
+  return <HeaderThemeToggle className={className} dropdownAlign={dropdownAlign} labels={labels} />;
 }

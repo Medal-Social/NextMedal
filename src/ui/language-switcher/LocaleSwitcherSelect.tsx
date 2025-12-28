@@ -2,7 +2,6 @@
 
 import { ChevronDown } from 'lucide-react';
 import { useRouter as useNextRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
 import { type ReactNode, useTransition } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -29,6 +28,8 @@ type Props = {
   languageText: string;
   translationUrls?: Record<string, string>;
   className?: string;
+  translationNotAvailable?: string;
+  goToHome?: string;
 };
 
 interface LocaleOption {
@@ -44,10 +45,11 @@ export default function LocaleSwitcherSelect({
   translationUrls = {},
   className,
   dropdownAlign = 'end',
+  translationNotAvailable = 'This page is not available in {locale}',
+  goToHome = 'Go to {locale} home',
 }: Props & { dropdownAlign?: 'start' | 'end' | 'center' }) {
   const nextRouter = useNextRouter();
   const [isPending, startTransition] = useTransition();
-  const t = useTranslations('LocaleSwitcher');
 
   // Extract options from children
   const options: LocaleOption[] = [];
@@ -75,9 +77,9 @@ export default function LocaleSwitcherSelect({
         const localeLabel = options.find((opt) => opt.value === nextLocale)?.label || nextLocale;
         const homeUrl = nextLocale === routing.defaultLocale ? '/' : `/${nextLocale}`;
 
-        toast.info(t('translationNotAvailable', { locale: localeLabel }), {
+        toast.info(translationNotAvailable.replace('{locale}', localeLabel), {
           action: {
-            label: t('goToHome', { locale: localeLabel }),
+            label: goToHome.replace('{locale}', localeLabel),
             onClick: () => nextRouter.push(homeUrl),
           },
         });

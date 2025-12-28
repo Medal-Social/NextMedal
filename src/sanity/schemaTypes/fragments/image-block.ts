@@ -8,12 +8,12 @@
  * - 1.0.0: Initial version
  */
 
-import { IoIosImage } from 'react-icons/io';
+import { ImageIcon } from '@sanity/icons';
 import { defineArrayMember } from 'sanity';
 
 export default defineArrayMember({
   type: 'image',
-  icon: IoIosImage,
+  icon: ImageIcon,
   options: {
     hotspot: true,
   },

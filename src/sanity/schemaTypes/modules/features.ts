@@ -9,7 +9,7 @@
  * - 1.0.0: Initial version
  */
 
-import { TfiLayoutGrid2 } from 'react-icons/tfi';
+import { ThLargeIcon } from '@sanity/icons';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 import { createUidField } from './uid-input';
@@ -18,7 +18,7 @@ export default defineType({
   name: 'features',
   title: 'Features',
   type: 'object',
-  icon: TfiLayoutGrid2,
+  icon: ThLargeIcon,
   description: 'Grid layout of features with icons and descriptions',
   groups: [
     { name: 'content', title: 'Content', default: true },
@@ -64,7 +64,7 @@ export default defineType({
       of: [
         defineArrayMember({
           type: 'object',
-          icon: TfiLayoutGrid2,
+          icon: ThLargeIcon,
           fields: [
             defineField({
               name: 'icon',
@@ -130,7 +130,7 @@ export default defineType({
     prepare: ({ intro, items = [] }) => ({
       title: getBlockText(intro) || 'Feature Grid',
       subtitle: `${items.length || 0} feature items`,
-      media: TfiLayoutGrid2,
+      media: ThLargeIcon,
     }),
   },
 });

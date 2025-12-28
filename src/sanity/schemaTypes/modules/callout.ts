@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version
  */
 
-import { VscInspect } from 'react-icons/vsc';
+import { BulbOutlineIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 import { createUidField } from './uid-input';
@@ -16,7 +16,7 @@ import { createUidField } from './uid-input';
 export default defineType({
   name: 'callout',
   title: 'Callout',
-  icon: VscInspect,
+  icon: BulbOutlineIcon,
   type: 'object',
   fieldsets: [
     {

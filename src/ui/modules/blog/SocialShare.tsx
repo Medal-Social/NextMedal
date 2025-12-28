@@ -2,8 +2,8 @@
 
 import { Check, Link } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { FaLinkedin, FaWhatsapp, FaXTwitter } from 'react-icons/fa6';
 import { toast } from 'sonner';
+import { IconLinkedin, IconTwitterX, IconWhatsapp } from '@/components/icons/social-icons';
 import { cn } from '@/lib/utils';
 
 export default function SocialShare({
@@ -34,19 +34,19 @@ export default function SocialShare({
   const shareLinks = [
     {
       name: 'Twitter',
-      icon: FaXTwitter,
+      icon: IconTwitterX,
       url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`,
       hoverColor: 'hover:text-foreground',
     },
     {
       name: 'LinkedIn',
-      icon: FaLinkedin,
+      icon: IconLinkedin,
       url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
       hoverColor: 'hover:text-[#0A66C2]',
     },
     {
       name: 'WhatsApp',
-      icon: FaWhatsapp,
+      icon: IconWhatsapp,
       url: `https://wa.me/?text=${encodeURIComponent(`${title} ${url}`)}`,
       hoverColor: 'hover:text-[#25D366]',
     },

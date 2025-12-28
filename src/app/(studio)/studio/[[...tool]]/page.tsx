@@ -2,8 +2,6 @@ import type { Metadata } from 'next';
 import { NextStudio, viewport as studioViewport } from 'next-sanity/studio';
 import config from '$/sanity.config';
 
-export const dynamic = 'force-static';
-
 export const maxDuration = 60; // sec
 
 export const viewport = studioViewport;
