@@ -1542,10 +1542,10 @@ describe('Keyboard Navigation Tests', () => {
             for (const trigger of triggers) {
               const className = trigger.className;
 
-              // Accordion triggers use flex layout with py-4 (16px top + 16px bottom)
+              // Accordion triggers use flex layout with p-5 (20px padding)
               // and full width, ensuring adequate target size
               expect(className).toContain('flex');
-              expect(className).toContain('py-4');
+              expect(className).toContain('p-5');
             }
 
             unmount();
