@@ -5,14 +5,16 @@ import {
   BookIcon,
   ControlsIcon,
   DocumentsIcon,
-  EarthGlobeIcon,
   EditIcon,
   HelpCircleIcon,
   LaunchIcon,
   MasterDetailIcon,
   PlayIcon,
+  EyeOpenIcon,
+  DatabaseIcon,
 } from '@sanity/icons';
-import { Box, Card, Container, Flex, Grid, Heading, Stack, Text } from '@sanity/ui';
+import { FaGithub, FaXTwitter, FaLinkedin } from 'react-icons/fa6';
+import { Box, Card, Container, Flex, Grid, Heading, Stack, Text, Label, Button } from '@sanity/ui';
 import { type Tool, useCurrentUser, useProjectId } from 'sanity';
 import { useRouter } from 'sanity/router';
 
@@ -30,6 +32,7 @@ interface NavigationCard {
 
 interface ResourceLink {
   title: string;
+  description: string;
   href: string;
   icon: React.ReactNode;
 }
@@ -38,48 +41,59 @@ interface ResourceLink {
 // Constants
 // ============================================================================
 
-const EDITOR_CARD: NavigationCard = {
-  title: 'Content Editor',
-  description: 'Browse and edit all your content in one place',
-  path: '/studio/structure',
-  icon: <MasterDetailIcon />,
+const VISUAL_EDITOR_CARD: NavigationCard = {
+  title: 'Visual Editor',
+  description: 'Edit content visually with live preview',
+  path: '/studio/editor',
+  icon: <EyeOpenIcon />,
   tone: 'primary',
+};
+
+const STRUCTURE_CARD: NavigationCard = {
+  title: 'Content Desk',
+  description: 'Manage content data and structure',
+  path: '/studio/structure',
+  icon: <DatabaseIcon />,
+  tone: 'default',
 };
 
 const QUICK_NAVIGATION: NavigationCard[] = [
   {
     title: 'Pages',
-    description: 'Create and manage your website pages',
+    description: 'Manage website pages',
     path: '/studio/structure/page',
     icon: <DocumentsIcon />,
   },
   {
     title: 'Blog',
-    description: 'Write and publish blog posts',
+    description: 'Write and publish posts',
     path: '/studio/structure/blog.post',
     icon: <EditIcon />,
   },
   {
-    title: 'Site Settings',
-    description: 'Configure logo, navigation, and SEO',
+    title: 'Settings',
+    description: 'Configure site options',
     path: '/studio/structure/site',
     icon: <ControlsIcon />,
   },
 ];
 
-const RESOURCES: ResourceLink[] = [
+const LEARNING_RESOURCES: ResourceLink[] = [
   {
     title: 'Documentation',
+    description: 'Comprehensive guides and references.',
     href: 'https://docs.medalsocial.com/nextmedal',
     icon: <BookIcon />,
   },
   {
     title: 'Video Tutorials',
+    description: 'Step-by-step video guides.',
     href: 'https://docs.medalsocial.com/nextmedal/videos',
     icon: <PlayIcon />,
   },
   {
     title: 'Get Support',
+    description: 'Get help from our team.',
     href: 'https://medalsocial.com/support',
     icon: <HelpCircleIcon />,
   },
@@ -98,11 +112,14 @@ function NavCard({ item }: { item: NavigationCard }) {
       radius={3}
       border
       tone={item.tone}
-      style={{ cursor: 'pointer' }}
+      style={{ cursor: 'pointer', transition: 'all 0.2s' }}
       onClick={() => router.navigateUrl({ path: item.path })}
+      __unstable_focusRing
     >
-      <Stack space={3}>
-        <Text size={3}>{item.icon}</Text>
+      <Flex gap={3} align="center">
+        <Box padding={2} style={{ background: 'var(--card-bg-color)', borderRadius: '50%' }}>
+          <Text size={3}>{item.icon}</Text>
+        </Box>
         <Stack space={2}>
           <Text size={2} weight="semibold">
             {item.title}
@@ -111,7 +128,7 @@ function NavCard({ item }: { item: NavigationCard }) {
             {item.description}
           </Text>
         </Stack>
-      </Stack>
+      </Flex>
     </Card>
   );
 }
@@ -119,141 +136,279 @@ function NavCard({ item }: { item: NavigationCard }) {
 function WelcomeSection() {
   const currentUser = useCurrentUser();
   const firstName = currentUser?.name?.split(' ')[0];
+  const hour = new Date().getHours();
+  
+  let greeting = 'Hello';
+  if (hour < 12) greeting = 'Good morning';
+  else if (hour < 18) greeting = 'Good afternoon';
+  else greeting = 'Good evening';
 
   return (
-    <Stack space={4}>
-      <Heading as="h1" size={4}>
-        {firstName ? `Welcome back, ${firstName}` : 'Welcome to Your Studio'}
-      </Heading>
-      <Text size={2} muted style={{ maxWidth: 500 }}>
-        This is your content management hub. Edit pages, write blog posts, and configure your
-        website.
-      </Text>
-    </Stack>
+    <Box marginBottom={2}>
+      <Stack space={4}>
+        <Heading as="h1" size={4} weight="bold">
+          {firstName ? `${greeting}, ${firstName}` : 'Welcome to Your Studio'}
+        </Heading>
+        <Text size={2} muted>
+          Manage your content, configure your site, and collaborate with your team.
+        </Text>
+      </Stack>
+    </Box>
   );
 }
 
-function EditorHighlight() {
+function HeroSection() {
   const router = useRouter();
 
   return (
-    <Card
-      padding={5}
-      radius={3}
-      border
-      tone="primary"
-      style={{ cursor: 'pointer' }}
-      onClick={() => router.navigateUrl({ path: EDITOR_CARD.path })}
-    >
-      <Flex gap={4} align="center">
-        <Text size={4}>{EDITOR_CARD.icon}</Text>
-        <Stack space={3}>
-          <Text size={3} weight="semibold">
-            {EDITOR_CARD.title}
-          </Text>
-          <Text size={2} muted>
-            {EDITOR_CARD.description}
-          </Text>
-        </Stack>
-      </Flex>
-    </Card>
+    <Grid columns={[1, 2]} gap={4}>
+      <Card
+        padding={5}
+        radius={4}
+        shadow={2}
+        tone="primary"
+        style={{ cursor: 'pointer', position: 'relative', overflow: 'hidden' }}
+        onClick={() => router.navigateUrl({ path: VISUAL_EDITOR_CARD.path })}
+      >
+        <Flex gap={5} align="center" style={{ position: 'relative', zIndex: 1, height: '100%' }}>
+          <Stack space={4} flex={1}>
+            <Box 
+              padding={3} 
+              style={{ 
+                backgroundColor: 'rgba(255,255,255,0.2)', 
+                borderRadius: '8px', 
+                width: 'fit-content' 
+              }}
+            >
+              <Text size={4} style={{ color: 'inherit' }}>{VISUAL_EDITOR_CARD.icon}</Text>
+            </Box>
+            <Stack space={3}>
+              <Heading size={3} style={{ color: 'inherit' }}>
+                {VISUAL_EDITOR_CARD.title}
+              </Heading>
+              <Text size={2} style={{ color: 'inherit', opacity: 0.9 }}>
+                {VISUAL_EDITOR_CARD.description}
+              </Text>
+            </Stack>
+            <Box marginTop={2}>
+              <Button 
+                text="Launch Visual Editor" 
+                mode="default" 
+              />
+            </Box>
+          </Stack>
+        </Flex>
+      </Card>
+
+      <Card
+        padding={5}
+        radius={4}
+        shadow={1}
+        border
+        style={{ cursor: 'pointer', position: 'relative', overflow: 'hidden' }}
+        onClick={() => router.navigateUrl({ path: STRUCTURE_CARD.path })}
+      >
+        <Flex gap={5} align="center" style={{ position: 'relative', zIndex: 1, height: '100%' }}>
+          <Stack space={4} flex={1}>
+            <Box 
+              padding={3} 
+              style={{ 
+                backgroundColor: 'var(--card-bg-color)', 
+                border: '1px solid var(--card-border-color)',
+                borderRadius: '8px', 
+                width: 'fit-content' 
+              }}
+            >
+              <Text size={4}>{STRUCTURE_CARD.icon}</Text>
+            </Box>
+            <Stack space={3}>
+              <Heading size={3}>
+                {STRUCTURE_CARD.title}
+              </Heading>
+              <Text size={2} muted>
+                {STRUCTURE_CARD.description}
+              </Text>
+            </Stack>
+            <Box marginTop={2}>
+              <Button 
+                text="Open Content Desk" 
+                mode="ghost" 
+              />
+            </Box>
+          </Stack>
+        </Flex>
+      </Card>
+    </Grid>
   );
 }
 
-function NavigationSection() {
+function LearningSection() {
   return (
     <Stack space={4}>
-      <EditorHighlight />
-      <Grid columns={[1, 3]} gap={4}>
-        {QUICK_NAVIGATION.map((item) => (
-          <NavCard key={item.title} item={item} />
+      <Label size={1} muted>Documentation & Learning</Label>
+      <Grid columns={[1, 1, 3]} gap={4}>
+        {LEARNING_RESOURCES.map((resource) => (
+          <Card
+            key={resource.title}
+            as="a"
+            href={resource.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            padding={4}
+            radius={3}
+            border
+            style={{ textDecoration: 'none', color: 'inherit', transition: 'border-color 0.2s' }}
+            __unstable_focusRing
+          >
+            <Stack space={3}>
+              <Box padding={2} style={{ background: 'var(--card-bg-color)', borderRadius: '50%', width: 'fit-content' }}>
+                <Text size={3}>{resource.icon}</Text>
+              </Box>
+              <Stack space={2}>
+                <Text size={2} weight="semibold">{resource.title}</Text>
+                <Text size={1} muted>
+                  {resource.description}
+                </Text>
+              </Stack>
+            </Stack>
+          </Card>
         ))}
       </Grid>
     </Stack>
   );
 }
 
-function QuickLinksSection() {
+function MainLayout() {
+  return (
+    <Grid columns={[1, 1, 12]} gap={6}>
+      <Box columnStart={[1, 1, 1]} columnEnd={[1, 1, 9]}>
+        <Stack space={6}>
+          <HeroSection />
+          
+          <Box>
+            <Label size={1} muted style={{ marginBottom: '1rem', display: 'block' }}>Quick Actions</Label>
+            <Grid columns={[1, 3]} gap={4}>
+              {QUICK_NAVIGATION.map((item) => (
+                <NavCard key={item.title} item={item} />
+              ))}
+            </Grid>
+          </Box>
+          
+          <LearningSection />
+        </Stack>
+      </Box>
+
+      <Box columnStart={[1, 1, 9]} columnEnd={[1, 1, 13]}>
+        <Stack space={6}>
+          <InviteCard />
+        </Stack>
+      </Box>
+    </Grid>
+  );
+}
+
+function InviteCard() {
   const projectId = useProjectId();
   const manageUrl = `https://www.sanity.io/manage/project/${projectId}/members`;
 
   return (
-    <Grid columns={[1, 2]} gap={4}>
-      <Card
-        as="a"
-        href={manageUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        padding={4}
-        radius={3}
-        border
-        style={{ textDecoration: 'none', cursor: 'pointer' }}
-      >
-        <Flex gap={3} align="center" justify="space-between">
-          <Flex gap={3} align="center">
-            <Text size={2}>
-              <AddUserIcon />
-            </Text>
-            <Stack space={2}>
-              <Text size={1} weight="semibold">
-                Invite Team Members
-              </Text>
-              <Text size={1} muted>
-                Add collaborators to your Studio
-              </Text>
-            </Stack>
-          </Flex>
-          <Text muted>
-            <LaunchIcon />
-          </Text>
+    <Card
+      padding={4}
+      radius={3}
+      border
+      tone="positive"
+    >
+      <Stack space={4}>
+        <Flex gap={3} align="center">
+          <Box padding={2} style={{ background: 'var(--card-bg-color)', borderRadius: '50%' }}>
+            <Text size={3}><AddUserIcon /></Text>
+          </Box>
+          <Stack space={2}>
+            <Text size={2} weight="semibold">Team Members</Text>
+            <Text size={1} muted>Collaborate in real-time</Text>
+          </Stack>
         </Flex>
-      </Card>
-
-      <Card padding={4} radius={3} border>
-        <Stack space={4}>
-          <Text size={1} weight="semibold">
-            Help & Resources
-          </Text>
-          <Flex gap={5} wrap="wrap">
-            {RESOURCES.map((resource) => (
-              <Text
-                key={resource.title}
-                size={1}
-                as="a"
-                href={resource.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}
-              >
-                {resource.icon}
-                {resource.title}
-              </Text>
-            ))}
-          </Flex>
-        </Stack>
-      </Card>
-    </Grid>
+        
+        <Button
+          as="a"
+          href={manageUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          text="Manage Team"
+          mode="ghost"
+          tone="positive"
+          icon={LaunchIcon}
+        />
+      </Stack>
+    </Card>
   );
 }
 
 function FooterSection() {
   return (
-    <Box paddingTop={5} marginTop={4} style={{ borderTop: '1px solid var(--card-border-color)' }}>
-      <Flex justify="center" align="center" gap={2} paddingY={3}>
-        <Text size={1} muted>
-          Created by
-        </Text>
-        <Text
-          size={1}
-          as="a"
-          href="https://www.medalsocial.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}
+    <Box marginTop={6} paddingBottom={4}>
+      <Flex justify="center">
+        <Card
+          radius={4}
+          border
+          padding={2}
+          shadow={2}
+          style={{ width: 'fit-content' }}
         >
-          Medal Social
-          <EarthGlobeIcon />
-        </Text>
+          <Flex align="center" gap={4} paddingX={3}>
+            <Flex align="center" gap={2}>
+              <Text size={1} weight="bold">
+                NextMedal
+              </Text>
+              <Text size={1} muted>
+                by{' '}
+                <a
+                  href="https://medalsocial.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'inherit', textDecoration: 'none' }}
+                >
+                  Medal Social
+                </a>
+              </Text>
+            </Flex>
+
+            <Box style={{ width: 1, height: 16, backgroundColor: 'var(--card-border-color)' }} />
+
+            <Flex gap={1}>
+              <Button
+                as="a"
+                href="https://github.com/medalsocial"
+                target="_blank"
+                rel="noopener noreferrer"
+                mode="bleed"
+                icon={FaGithub}
+                aria-label="GitHub"
+                title="GitHub"
+              />
+              <Button
+                as="a"
+                href="https://x.com/medalsocial"
+                target="_blank"
+                rel="noopener noreferrer"
+                mode="bleed"
+                icon={FaXTwitter}
+                aria-label="X (Twitter)"
+                title="X (Twitter)"
+              />
+              <Button
+                as="a"
+                href="https://linkedin.com/company/medalsocial"
+                target="_blank"
+                rel="noopener noreferrer"
+                mode="bleed"
+                icon={FaLinkedin}
+                aria-label="LinkedIn"
+                title="LinkedIn"
+              />
+            </Flex>
+          </Flex>
+        </Card>
       </Flex>
     </Box>
   );
@@ -265,16 +420,20 @@ function FooterSection() {
 
 function DashboardComponent() {
   return (
-    <Box padding={5} style={{ minHeight: '100%', overflow: 'auto' }}>
-      <Container width={4}>
-        <Stack space={6} paddingY={5}>
-          <WelcomeSection />
-          <NavigationSection />
-          <QuickLinksSection />
-          <FooterSection />
-        </Stack>
-      </Container>
-    </Box>
+    <Flex
+      direction="column"
+      style={{ minHeight: '100%', backgroundColor: 'var(--card-bg-color)' }}
+    >
+      <Box paddingX={[4, 5, 6]} paddingTop={[4, 5]} paddingBottom={6} flex={1}>
+        <Container width={5}>
+          <Stack space={6}>
+            <WelcomeSection />
+            <MainLayout />
+          </Stack>
+        </Container>
+      </Box>
+      <FooterSection />
+    </Flex>
   );
 }
 
