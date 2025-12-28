@@ -177,7 +177,6 @@ function PrimaryActions() {
         border
         style={{ cursor: 'pointer' }}
         onClick={() => router.navigateUrl({ path: STRUCTURE_CARD.path })}
-        __unstable_focusRing
       >
         <Flex direction="column" align="flex-start" gap={4} style={{ height: '100%' }}>
           <Flex align="center" gap={3}>
@@ -211,28 +210,27 @@ function SecondaryActions() {
   const router = useRouter();
 
   return (
-    <Box>
-      <Label size={1} muted style={{ marginBottom: '1rem', display: 'block' }}>
+    <Stack space={4}>
+      <Label size={1} muted>
         Quick Access
       </Label>
-      <Grid columns={[1, 2, 3]} gap={[3, 4]}>
+      <Grid columns={[1, 2, 3]} gap={4}>
         {QUICK_NAVIGATION.map((item) => (
           <Card
             key={item.title}
-            padding={3}
+            padding={4}
             radius={3}
             border
-            style={{ cursor: 'pointer', transition: 'border-color 0.2s' }}
+            style={{ cursor: 'pointer' }}
             onClick={() => router.navigateUrl({ path: item.path })}
-            __unstable_focusRing
           >
-            <Flex align="center" gap={3}>
+            <Flex align="center" gap={4}>
               <Text size={2}>{item.icon}</Text>
-              <Stack space={2} flex={1} style={{ minWidth: 0 }}>
-                <Text size={2} weight="medium" textOverflow="ellipsis">
+              <Stack space={2}>
+                <Text size={2} weight="medium">
                   {item.title}
                 </Text>
-                <Text size={1} muted textOverflow="ellipsis">
+                <Text size={1} muted>
                   {item.description}
                 </Text>
               </Stack>
@@ -240,7 +238,7 @@ function SecondaryActions() {
           </Card>
         ))}
       </Grid>
-    </Box>
+    </Stack>
   );
 }
 
@@ -249,20 +247,24 @@ function TeamAndLearning() {
   const manageUrl = `https://www.sanity.io/manage/project/${projectId}/members`;
 
   return (
-    <Grid columns={[1, 1, 2]} gap={[5, 6]}>
+    <Grid columns={[1, 1, 2]} gap={5}>
       {/* Team Section */}
       <Stack space={4}>
         <Label size={1} muted>
           Team
         </Label>
-        <Card padding={4} radius={3} border tone="positive">
-          <Flex align="center" justify="space-between" gap={4} wrap="wrap">
+        <Card
+          padding={4}
+          radius={3}
+          border
+          tone="positive"
+          style={{ height: '100%', boxSizing: 'border-box' }}
+        >
+          <Flex align="center" justify="space-between" gap={4}>
             <Flex align="center" gap={3}>
-              <Box padding={2} style={{ background: 'var(--card-bg-color)', borderRadius: '50%' }}>
-                <Text size={2}>
-                  <AddUserIcon />
-                </Text>
-              </Box>
+              <Text size={2}>
+                <AddUserIcon />
+              </Text>
               <Stack space={2}>
                 <Text size={2} weight="semibold">
                   Collaborate
@@ -292,31 +294,28 @@ function TeamAndLearning() {
         <Label size={1} muted>
           Resources
         </Label>
-        <Grid columns={[1, 3]} gap={3}>
-          {LEARNING_RESOURCES.map((resource) => (
-            <Card
-              key={resource.title}
-              as="a"
-              href={resource.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              padding={3}
-              radius={2}
-              border
-              style={{ textDecoration: 'none', color: 'inherit', textAlign: 'center' }}
-              __unstable_focusRing
-            >
-              <Stack space={2} flex={1}>
-                <Flex justify="center">
-                  <Text size={2}>{resource.icon}</Text>
-                </Flex>
-                <Text size={1} weight="medium" textOverflow="ellipsis">
+        <Card padding={4} radius={3} border style={{ height: '100%', boxSizing: 'border-box' }}>
+          <Flex gap={4} justify="space-between">
+            {LEARNING_RESOURCES.map((resource) => (
+              <Flex
+                key={resource.title}
+                as="a"
+                href={resource.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                direction="column"
+                align="center"
+                gap={2}
+                style={{ textDecoration: 'none', color: 'inherit', flex: 1 }}
+              >
+                <Text size={2}>{resource.icon}</Text>
+                <Text size={1} weight="medium">
                   {resource.title}
                 </Text>
-              </Stack>
-            </Card>
-          ))}
-        </Grid>
+              </Flex>
+            ))}
+          </Flex>
+        </Card>
       </Stack>
     </Grid>
   );
