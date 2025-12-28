@@ -84,7 +84,9 @@ export default async function RootLayout({ children, params }: Props) {
                 <CookieConsentWrapper locale={locale} />
               </Suspense>
               <ScrollToTop />
-              <SanityLive />
+              <Suspense fallback={null}>
+                <SanityLive />
+              </Suspense>
             </NextIntlClientProvider>
           </NuqsAdapter>
         </ThemeProvider>
