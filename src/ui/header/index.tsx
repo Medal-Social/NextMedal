@@ -1,8 +1,8 @@
 import { getCurrentPage } from '@/lib/getCurrentPage';
 import { getSite } from '@/sanity/lib/fetch';
-import { CommandMenu } from '@/ui/CommandMenu';
-import CTAList from '@/ui/CTAList';
-import HeaderClient from './HeaderClient';
+import { CTAList } from '@/ui/cta';
+import { CommandMenu } from '@/ui/utility';
+import HeaderClient from './Header.client';
 import Logo from './Logo';
 import Navigation from './navigation';
 

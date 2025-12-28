@@ -3,7 +3,7 @@ import * as Lucide from 'lucide-react';
 import { stegaClean } from 'next-sanity';
 import type { ComponentProps } from 'react';
 
-export default function Icon({
+export default function IconString({
   icon,
   ...props
 }: { icon: string } & Omit<ComponentProps<'img'>, 'width' | 'height'>) {

@@ -6,10 +6,9 @@ import resolveUrl from '@/lib/resolveUrl';
 import { client } from '@/sanity/lib/client';
 import { fetchSanityLive } from '@/sanity/lib/live';
 import { IMAGE_QUERY, MODULES_QUERY, PT_BLOCK_QUERY, placementQuery } from '@/sanity/lib/queries';
-import BreadcrumbJsonLd from '@/ui/BreadcrumbJsonLd';
-import JsonLd from '@/ui/JsonLd';
 import Modules from '@/ui/modules';
 import BlogPostLayout from '@/ui/modules/blog/BlogPostLayout';
+import { BreadcrumbJsonLd, JsonLd } from '@/ui/seo';
 
 export default async function Page({ params }: Props) {
   const resolvedParams = await params;

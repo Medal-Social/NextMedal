@@ -3,7 +3,7 @@ import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
 import { fetchSanityLive } from '@/sanity/lib/live';
 import { LOGOS_QUERY } from '@/sanity/lib/queries';
-import { Img } from '@/ui/Img';
+import { Img } from '@/ui/base';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
 
 export default async function LogoCloud({ content, logos, ...props }: Sanity.LogoCloud) {

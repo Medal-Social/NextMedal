@@ -1,4 +1,4 @@
-import { Img } from '@/ui/Img';
+import { Img } from '@/ui/base';
 
 export default function Image({ value }: { value: Sanity.Image }) {
   return (

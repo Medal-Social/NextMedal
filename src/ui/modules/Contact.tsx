@@ -7,8 +7,8 @@ import { useEffect, useState } from 'react';
 import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
-import Form from '@/ui/Form';
-import { Img } from '@/ui/Img';
+import { Img } from '@/ui/base';
+import { Form } from '@/ui/forms';
 import SharedPortableText from './SharedPortableText';
 
 // Icon wrapper component

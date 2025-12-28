@@ -3,7 +3,7 @@ import { FaXTwitter } from 'react-icons/fa6';
 import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
-import { Img } from '@/ui/Img';
+import { Img } from '@/ui/base';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
 
 export default function Team({ intro, people, layout = 'grid', ...props }: Sanity.Team) {

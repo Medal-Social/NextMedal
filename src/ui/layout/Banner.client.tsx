@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { PortableText } from 'next-sanity';
 import { useState } from 'react';
 import resolveUrl from '@/lib/resolveUrl';
-import Scheduler from './Scheduler';
+import { Scheduler } from '@/ui/utility';
 export default function BannerClient({ banner }: { banner: Sanity.Banner & Sanity.Module }) {
   const { start, end, content, cta } = banner;
   const [isClosed, setIsClosed] = useState(false);

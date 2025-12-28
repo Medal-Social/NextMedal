@@ -1,8 +1,8 @@
 import { cn } from '@/lib/utils';
+import { Video } from '@/ui/base';
 import Callout from '@/ui/modules/Callout';
 import LeadMagnet from '@/ui/modules/LeadMagnet';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
-import Video from '@/ui/Video';
 import Code from './Code';
 import Image from './Image';
 

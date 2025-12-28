@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import moduleProps from '@/lib/moduleProps';
-import Loading from '@/ui/Loading';
+import { Loading } from '@/ui/base';
 import Modules from '@/ui/modules';
 import ComponentGalleryClient, { type GalleryComponent } from './ComponentGallery.client';
 

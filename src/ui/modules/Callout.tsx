@@ -1,8 +1,8 @@
 import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
+import { CTAListCallout } from '@/ui/cta';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
-import CTAListCallout from '../CTAListCallout';
 
 interface BlockChildrenProps {
   children?: React.ReactNode;

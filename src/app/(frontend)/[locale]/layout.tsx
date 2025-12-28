@@ -13,13 +13,11 @@ import { Toaster } from '@/components/ui/sonner';
 import { routing } from '@/i18n/routing';
 import { getSite } from '@/sanity/lib/fetch';
 import { SanityLive } from '@/sanity/lib/live';
-import Banner from '@/ui/Banner';
 import Footer from '@/ui/footer';
 import Header from '@/ui/header';
-import ScrollToTop from '@/ui/ScrollToTop';
-import SiteJsonLd from '@/ui/SiteJsonLd';
-import SkipToContent from '@/ui/SkipToContent';
-import VisualEditingControls from '@/ui/VisualEditingControls';
+import { Banner, ScrollToTop, SkipToContent } from '@/ui/layout';
+import { SiteJsonLd } from '@/ui/seo';
+import VisualEditingControls from '@/ui/utility/VisualEditingControls';
 
 type Props = {
   children: React.ReactNode;

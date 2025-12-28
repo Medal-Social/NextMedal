@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Section } from '@/components/ui/section';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import moduleProps from '@/lib/moduleProps';
-import CTAList from '@/ui/CTAList';
+import { CTAList } from '@/ui/cta';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
 
 interface BlockChildrenProps {

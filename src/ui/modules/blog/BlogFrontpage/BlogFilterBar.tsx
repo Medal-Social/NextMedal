@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { fetchSanityLive } from '@/sanity/lib/live';
 import { BLOG_CATEGORIES_WITH_POSTS_QUERY } from '@/sanity/lib/queries';
-import BlogFilterBarClient from './BlogFilterBarClient';
+import BlogFilterBarClient from './BlogFilterBar.client';
 
 export default async function BlogFilterBar() {
   const categories = await fetchSanityLive<Sanity.BlogCategory[]>({

@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import { createDataAttribute } from 'next-sanity';
 import resolveUrl from '@/lib/resolveUrl';
-import BlogDate from '@/ui/Date';
-import { Img } from '@/ui/Img';
+import { Date as BlogDate, Img } from '@/ui/base';
 import Authors from './Authors';
 import Categories from './Categories';
 
