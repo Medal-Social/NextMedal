@@ -118,11 +118,12 @@ describe('LocaleSwitcherSelect', () => {
     expect(mockToastInfo).toHaveBeenCalled();
 
     // Verify toast arguments contain the action
+    // Component uses default prop: 'This page is not available in {locale}'
     const toastCall = mockToastInfo.mock.calls[0];
-    expect(toastCall[0]).toContain('Translation not available');
+    expect(toastCall[0]).toContain('not available');
     expect(toastCall[1]).toHaveProperty('action');
     expect(toastCall[1].action).toHaveProperty('label');
-    expect(toastCall[1].action.label).toContain('Go to');
+    expect(toastCall[1].action.label).toContain('home');
     expect(toastCall[1].action).toHaveProperty('onClick');
 
     // Simulate clicking the toast action

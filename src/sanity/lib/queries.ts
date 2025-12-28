@@ -356,6 +356,37 @@ export function sitemapQuery(baseUrlParam: string) {
 	}`;
 }
 
+// Sitemap query with translations for hreflang support
+export const SITEMAP_WITH_TRANSLATIONS_QUERY = groq`{
+	'pages': *[
+		_type == 'page' &&
+		!(metadata.slug.current in ['404']) &&
+		metadata.noIndex != true
+	]|order(metadata.slug.current){
+		'slug': metadata.slug.current,
+		'lastModified': _updatedAt,
+		'priority': select(
+			metadata.slug.current == 'index' => 1,
+			0.5
+		),
+		language,
+		'translations': *[_type == 'translation.metadata' && references(^._id)].translations[].value->{
+			'slug': metadata.slug.current,
+			language
+		}
+	},
+	'blog': *[_type == 'blog.post' && metadata.noIndex != true]|order(_updatedAt desc){
+		'slug': metadata.slug.current,
+		'lastModified': _updatedAt,
+		'priority': 0.4,
+		language,
+		'translations': *[_type == 'translation.metadata' && references(^._id)].translations[].value->{
+			'slug': metadata.slug.current,
+			language
+		}
+	}
+}`;
+
 // Site settings query
 export const SITE_QUERY = groq`
 	*[_type == 'site' && _id == 'site'][0]{
