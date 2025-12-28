@@ -28,6 +28,11 @@ const envSchema = z.object({
   NEXT_PUBLIC_IMAGE_PROXY_URL: z.url().optional(),
   NEXT_PUBLIC_IMAGE_PROXY_KEY: z.string().optional(),
   NEXT_PUBLIC_IMAGE_PROXY_SALT: z.string().optional(),
+
+  // Optional: Medal Social API
+  MEDAL_SOCIAL_CLIENT_ID: z.string().min(1).optional(),
+  MEDAL_SOCIAL_CLIENT_SECRET: z.string().min(1).optional(),
+  MEDAL_API_ENDPOINT: z.url().optional(),
 });
 
 // Validate env vars at runtime
@@ -49,6 +54,9 @@ const parsedEnv = envSchema.safeParse({
   NEXT_PUBLIC_IMAGE_PROXY_URL: process.env.NEXT_PUBLIC_IMAGE_PROXY_URL,
   NEXT_PUBLIC_IMAGE_PROXY_KEY: process.env.NEXT_PUBLIC_IMAGE_PROXY_KEY,
   NEXT_PUBLIC_IMAGE_PROXY_SALT: process.env.NEXT_PUBLIC_IMAGE_PROXY_SALT,
+  MEDAL_SOCIAL_CLIENT_ID: process.env.MEDAL_SOCIAL_CLIENT_ID,
+  MEDAL_SOCIAL_CLIENT_SECRET: process.env.MEDAL_SOCIAL_CLIENT_SECRET,
+  MEDAL_API_ENDPOINT: process.env.MEDAL_API_ENDPOINT,
 });
 
 const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build';
@@ -60,7 +68,7 @@ if (!parsedEnv.success) {
       '⚠️ Building with missing or invalid environment variables. Some pre-rendered pages might be affected.'
     );
   } else {
-    logger.error({ err: parsedEnv.error.format() }, '❌ Invalid environment variables');
+    logger.error({ err: z.treeifyError(parsedEnv.error) }, '❌ Invalid environment variables');
     throw new Error('Invalid environment variables');
   }
 }

@@ -38,6 +38,7 @@ export default defineType({
       options: {
         source: 'name',
       },
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'image',
@@ -47,6 +48,7 @@ export default defineType({
       options: {
         hotspot: true,
       },
+      validation: (Rule) => Rule.warning('Profile pictures help readers identify team members.'),
     }),
     defineField({
       name: 'bio',

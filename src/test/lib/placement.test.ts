@@ -3,7 +3,7 @@ import { groupPlacements, type Placement } from '@/lib/placement';
 
 // Helper to create a mock module
 const createModule = (id: string) => ({
-  _type: 'banner' as const,
+  _type: 'hero' as const,
   _key: id,
 });
 

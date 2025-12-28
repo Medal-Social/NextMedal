@@ -1,41 +1,32 @@
-// Import commonly used icon packages - add more as needed
-import * as Lucide from 'lucide-react';
 import { stegaClean } from 'next-sanity';
-import type { ComponentProps } from 'react';
+import { getFallbackIconUrl, resolveIcon } from './utils/resolveIcon';
 
-export default function IconString({
-  icon,
-  ...props
-}: { icon: string } & Omit<ComponentProps<'img'>, 'width' | 'height'>) {
+interface IconStringProps {
+  icon: string;
+  size?: number;
+  className?: string;
+}
+
+export default function IconString({ icon, size = 24, className }: IconStringProps) {
   if (!icon) return null;
 
-  // For ic0n, use react-icons instead of img
-  if (icon) {
-    const iconName = stegaClean(icon);
-
-    // Get the icon library prefix (e.g., 'Fa' from 'FaHome')
-    const name = iconName.includes('/') ? iconName.split('/')[1] : iconName;
-    if (name in Lucide) {
-      //@ts-expect-error - dynamically accessing the icon
-      // biome-ignore lint/performance/noDynamicNamespaceImportAccess: needed for dynamic icon loading
-      const IconComponent = Lucide[name];
-      return <IconComponent {...props} />;
-    }
-    if (name.substring(0, 2) === 'Lu') {
-      const stippedName = name.substring(2);
-      if (stippedName in Lucide) {
-        // @ts-expect-error - dynamically accessing the icon
-        // biome-ignore lint/performance/noDynamicNamespaceImportAccess: needed for dynamic icon loading
-        const IconComponent = Lucide[stippedName];
-        return <IconComponent {...props} />;
-      }
-    }
-
-    // Fallback to original img if icon not found in react-icons
-    // biome-ignore lint/performance/noImgElement: external icon service
-    return <img src={`https://ic0n.dev/${iconName}`} alt="" loading="lazy" {...props} />;
+  const IconComponent = resolveIcon(icon);
+  if (IconComponent) {
+    return <IconComponent size={size} className={className} />;
   }
-  return null;
+
+  // Fallback to external icon service
+  const cleanName = stegaClean(icon);
+  return (
+    <img
+      src={getFallbackIconUrl(cleanName)}
+      width={size}
+      height={size}
+      alt=""
+      loading="lazy"
+      className={className}
+    />
+  );
 }
 
 // ... existing getPixels function
