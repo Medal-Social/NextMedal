@@ -91,8 +91,8 @@ export function ResponsiveImg({
 
   return (
     <picture {...pictureProps}>
-      {img.responsive?.map((r) => (
-        <Source {...r} key={r.image?.url || r.media} />
+      {img.responsive?.map((responsiveImg) => (
+        <Source {...responsiveImg} key={responsiveImg.image?.url || responsiveImg.media} />
       ))}
       <Img image={img.image} {...props} />
     </picture>
