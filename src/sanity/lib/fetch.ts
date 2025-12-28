@@ -1,11 +1,9 @@
 'use server';
 
 import type { QueryParams } from 'next-sanity';
-import { groq } from 'next-sanity';
 import { fetchSanityLive } from './live';
+import { SITE_QUERY } from './queries';
 export { fetchSanityLive };
-
-import { CTA_QUERY, IMAGE_QUERY, LINK_QUERY, NAVIGATION_QUERY } from './queries';
 
 export async function fetchSanity<T = unknown>({
   query,
@@ -23,33 +21,7 @@ export async function fetchSanity<T = unknown>({
 
 export async function getSite(stega?: boolean) {
   const site = await fetchSanity<Sanity.Site>({
-    query: groq`
-			*[_type == 'site' && _id == 'site'][0]{
-				...,
-				logo->{
-					_id,
-					title,
-					image {
-						default { ${IMAGE_QUERY} },
-						dark { ${IMAGE_QUERY} }
-					}
-				},
-				ctas[]{ ${CTA_QUERY} },
-				headerMenu->{ ${NAVIGATION_QUERY} },
-				enableSearch,
-				footerMenu->{ ${NAVIGATION_QUERY} },
-				footerLinks[]{ ${LINK_QUERY} },
-				systemStatus,
-				socialLinks,
-				cookieConsent {
-					enabled,
-					content,
-					privacyPolicy->{ "slug": metadata.slug.current }
-				},
-				'ogimage': ogimage.asset->url,
-				'brandPage': *[_type == "page" && metadata.slug.current == "brand"][0]._id
-			}
-		`,
+    query: SITE_QUERY,
     stega,
   });
 
