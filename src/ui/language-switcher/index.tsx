@@ -1,5 +1,5 @@
 import { getCurrentPage } from '@/lib/getCurrentPage';
-import LocaleSwitcherClient from './LocaleSwitcherClient';
+import LocaleSwitcherClient from './LocaleSwitcher.client';
 
 interface LocaleSwitcherProps {
   className?: string;

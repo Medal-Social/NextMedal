@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { stegaClean } from 'next-sanity';
 import resolveUrl from '@/lib/resolveUrl';
 import { getSite } from '@/sanity/lib/fetch';
-import CTA from '@/ui/CTA';
+import { CTA } from '@/ui/cta';
 
 // Extend the type to match PageBase interface
 type InternalLink = {

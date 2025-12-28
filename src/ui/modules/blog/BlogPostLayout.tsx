@@ -10,8 +10,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import type { Placements } from '@/lib/placement';
-import DateDisplay from '@/ui/Date';
-import { Img } from '@/ui/Img';
+import { Date as DateDisplay, Img } from '@/ui/base';
 import Modules from '@/ui/modules';
 import Authors from '@/ui/modules/blog/Authors';
 import MobileSidebar from '@/ui/modules/blog/MobileSidebar';

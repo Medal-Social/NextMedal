@@ -41,7 +41,7 @@ import leadMagnet from './modules/lead-magnet';
 import logoCloud from './modules/logo-cloud';
 import pricingComparison from './modules/pricing-comparison';
 import pricingList from './modules/pricing-list';
-import productComparison from './modules/productComparison';
+import productComparison from './modules/product-comparison';
 import team from './modules/team';
 import text from './modules/text';
 import videoHero from './modules/video-hero';

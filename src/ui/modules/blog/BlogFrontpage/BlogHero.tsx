@@ -2,8 +2,7 @@ import Link from 'next/link';
 import { createDataAttribute } from 'next-sanity';
 import resolveUrl from '@/lib/resolveUrl';
 import { cn } from '@/lib/utils';
-import DateDisplay from '@/ui/Date';
-import { Img } from '@/ui/Img';
+import { Date as DateDisplay, Img } from '@/ui/base';
 
 export default function BlogHero({
   featuredPost,

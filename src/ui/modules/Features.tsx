@@ -4,7 +4,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
-import Icon from '@/ui/Icon';
+import { Icon } from '@/ui/base';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
 
 const MAX_ANIMATION_DELAY = 0.3;

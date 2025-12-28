@@ -11,7 +11,7 @@ import { render, screen } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { describe, expect, it, vi } from 'vitest';
 import { routing } from '@/i18n/routing';
-import SkipToContent from '@/ui/SkipToContent';
+import { SkipToContent } from '@/ui/layout';
 
 // Mock motion/react to avoid animation-related issues in tests
 vi.mock('motion/react', () => ({
@@ -139,7 +139,7 @@ describe('Layout Components', () => {
      * Verifies SkipToContent is imported and used
      */
     it('layout includes SkipToContent component', () => {
-      expect(layoutSource).toContain('import SkipToContent from');
+      expect(layoutSource).toMatch(/import\s+\{[^}]*SkipToContent[^}]*\}\s+from/);
       expect(layoutSource).toContain('<SkipToContent');
     });
 
