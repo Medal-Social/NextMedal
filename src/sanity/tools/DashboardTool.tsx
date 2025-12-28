@@ -14,6 +14,7 @@ import {
   PlayIcon,
 } from '@sanity/icons';
 import { Box, Button, Card, Container, Flex, Grid, Heading, Label, Stack, Text } from '@sanity/ui';
+import { type KeyboardEvent, memo, useCallback, useMemo } from 'react';
 import { FaGithub, FaLinkedin, FaXTwitter } from 'react-icons/fa6';
 import { type Tool, useCurrentUser, useProjectId } from 'sanity';
 import { useRouter } from 'sanity/router';
@@ -100,18 +101,31 @@ const LEARNING_RESOURCES: ResourceLink[] = [
 ];
 
 // ============================================================================
+// Utilities
+// ============================================================================
+
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 18) return 'Good afternoon';
+  return 'Good evening';
+}
+
+function handleCardKeyDown(event: KeyboardEvent<HTMLDivElement>, onClick: () => void): void {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    onClick();
+  }
+}
+
+// ============================================================================
 // Components
 // ============================================================================
 
-function WelcomeSection() {
+const WelcomeSection = memo(function WelcomeSection() {
   const currentUser = useCurrentUser();
   const firstName = currentUser?.name?.split(' ')[0];
-  const hour = new Date().getHours();
-
-  let greeting = 'Hello';
-  if (hour < 12) greeting = 'Good morning';
-  else if (hour < 18) greeting = 'Good afternoon';
-  else greeting = 'Good evening';
+  const greeting = getGreeting();
 
   return (
     <Box>
@@ -125,21 +139,32 @@ function WelcomeSection() {
       </Stack>
     </Box>
   );
-}
+});
 
-function PrimaryActions() {
+const PrimaryActions = memo(function PrimaryActions() {
   const router = useRouter();
+
+  const navigateToVisualEditor = useCallback(() => {
+    router.navigateUrl({ path: VISUAL_EDITOR_CARD.path });
+  }, [router]);
+
+  const navigateToStructure = useCallback(() => {
+    router.navigateUrl({ path: STRUCTURE_CARD.path });
+  }, [router]);
 
   return (
     <Grid columns={[1, 1, 2]} gap={[4, 5]}>
-      {/* Visual Editor Card - The "Star" */}
       <Card
         padding={[4, 5]}
         radius={4}
         shadow={2}
         tone="primary"
         style={{ cursor: 'pointer', position: 'relative', overflow: 'hidden' }}
-        onClick={() => router.navigateUrl({ path: VISUAL_EDITOR_CARD.path })}
+        onClick={navigateToVisualEditor}
+        onKeyDown={(event) => handleCardKeyDown(event, navigateToVisualEditor)}
+        tabIndex={0}
+        role="button"
+        aria-label={`${VISUAL_EDITOR_CARD.title}: ${VISUAL_EDITOR_CARD.description}`}
       >
         <Flex direction="column" align="flex-start" gap={4} style={{ height: '100%' }}>
           <Flex align="center" gap={3}>
@@ -166,17 +191,20 @@ function PrimaryActions() {
             </Text>
           </Box>
 
-          <Button text="Launch Editor" mode="bleed" />
+          <Button text="Launch Editor" mode="bleed" tabIndex={-1} />
         </Flex>
       </Card>
 
-      {/* Structure Tool Card */}
       <Card
         padding={[4, 5]}
         radius={4}
         border
         style={{ cursor: 'pointer' }}
-        onClick={() => router.navigateUrl({ path: STRUCTURE_CARD.path })}
+        onClick={navigateToStructure}
+        onKeyDown={(event) => handleCardKeyDown(event, navigateToStructure)}
+        tabIndex={0}
+        role="button"
+        aria-label={`${STRUCTURE_CARD.title}: ${STRUCTURE_CARD.description}`}
       >
         <Flex direction="column" align="flex-start" gap={4} style={{ height: '100%' }}>
           <Flex align="center" gap={3}>
@@ -199,15 +227,22 @@ function PrimaryActions() {
             </Text>
           </Box>
 
-          <Button text="Open Library" mode="bleed" />
+          <Button text="Open Library" mode="bleed" tabIndex={-1} />
         </Flex>
       </Card>
     </Grid>
   );
-}
+});
 
-function SecondaryActions() {
+const SecondaryActions = memo(function SecondaryActions() {
   const router = useRouter();
+
+  const handleNavigate = useCallback(
+    (path: string) => {
+      router.navigateUrl({ path });
+    },
+    [router]
+  );
 
   return (
     <Stack space={4}>
@@ -215,40 +250,49 @@ function SecondaryActions() {
         Quick Access
       </Label>
       <Grid columns={[1, 2, 3]} gap={4}>
-        {QUICK_NAVIGATION.map((item) => (
-          <Card
-            key={item.title}
-            padding={4}
-            radius={3}
-            border
-            style={{ cursor: 'pointer' }}
-            onClick={() => router.navigateUrl({ path: item.path })}
-          >
-            <Flex align="center" gap={4}>
-              <Text size={2}>{item.icon}</Text>
-              <Stack space={2}>
-                <Text size={2} weight="medium">
-                  {item.title}
-                </Text>
-                <Text size={1} muted>
-                  {item.description}
-                </Text>
-              </Stack>
-            </Flex>
-          </Card>
-        ))}
+        {QUICK_NAVIGATION.map((item) => {
+          const navigate = () => handleNavigate(item.path);
+          return (
+            <Card
+              key={item.title}
+              padding={4}
+              radius={3}
+              border
+              style={{ cursor: 'pointer' }}
+              onClick={navigate}
+              onKeyDown={(event) => handleCardKeyDown(event, navigate)}
+              tabIndex={0}
+              role="button"
+              aria-label={`${item.title}: ${item.description}`}
+            >
+              <Flex align="center" gap={4}>
+                <Text size={2}>{item.icon}</Text>
+                <Stack space={2}>
+                  <Text size={2} weight="medium">
+                    {item.title}
+                  </Text>
+                  <Text size={1} muted>
+                    {item.description}
+                  </Text>
+                </Stack>
+              </Flex>
+            </Card>
+          );
+        })}
       </Grid>
     </Stack>
   );
-}
+});
 
-function TeamAndLearning() {
+const TeamAndLearning = memo(function TeamAndLearning() {
   const projectId = useProjectId();
-  const manageUrl = `https://www.sanity.io/manage/project/${projectId}/members`;
+  const manageUrl = useMemo(
+    () => `https://www.sanity.io/manage/project/${projectId}/members`,
+    [projectId]
+  );
 
   return (
     <Grid columns={[1, 1, 2]} gap={5}>
-      {/* Team Section */}
       <Stack space={4}>
         <Label size={1} muted>
           Team
@@ -289,7 +333,6 @@ function TeamAndLearning() {
         </Card>
       </Stack>
 
-      {/* Learning Section */}
       <Stack space={4}>
         <Label size={1} muted>
           Resources
@@ -319,9 +362,15 @@ function TeamAndLearning() {
       </Stack>
     </Grid>
   );
-}
+});
 
-function FooterSection() {
+const SOCIAL_LINKS = [
+  { href: 'https://github.com/Medal-Social', icon: FaGithub, label: 'GitHub' },
+  { href: 'https://x.com/medalsocial', icon: FaXTwitter, label: 'X (Twitter)' },
+  { href: 'https://linkedin.com/company/medalsocial', icon: FaLinkedin, label: 'LinkedIn' },
+] as const;
+
+const FooterSection = memo(function FooterSection() {
   return (
     <Box marginTop={6} paddingBottom={4}>
       <Flex justify="center">
@@ -351,64 +400,45 @@ function FooterSection() {
             </Flex>
 
             <Box
+              aria-hidden="true"
               style={{
                 width: 1,
                 height: 16,
                 backgroundColor: 'var(--card-border-color)',
-                display: 'none', // Hide separator on very small screens if needed via media query, but JS style hard
               }}
             />
 
             <Flex gap={1}>
-              <Button
-                as="a"
-                href="https://github.com/medalsocial"
-                target="_blank"
-                rel="noopener noreferrer"
-                mode="bleed"
-                icon={FaGithub}
-                aria-label="GitHub"
-                title="GitHub"
-              />
-              <Button
-                as="a"
-                href="https://x.com/medalsocial"
-                target="_blank"
-                rel="noopener noreferrer"
-                mode="bleed"
-                icon={FaXTwitter}
-                aria-label="X (Twitter)"
-                title="X (Twitter)"
-              />
-              <Button
-                as="a"
-                href="https://linkedin.com/company/medalsocial"
-                target="_blank"
-                rel="noopener noreferrer"
-                mode="bleed"
-                icon={FaLinkedin}
-                aria-label="LinkedIn"
-                title="LinkedIn"
-              />
+              {SOCIAL_LINKS.map((link) => (
+                <Button
+                  key={link.label}
+                  as="a"
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  mode="bleed"
+                  icon={link.icon}
+                  aria-label={link.label}
+                  title={link.label}
+                />
+              ))}
             </Flex>
           </Flex>
         </Card>
       </Flex>
     </Box>
   );
-}
+});
 
 // ============================================================================
 // Main Component
 // ============================================================================
 
-function DashboardComponent() {
+const DashboardComponent = memo(function DashboardComponent() {
   return (
     <Flex direction="column" style={{ minHeight: '100%', backgroundColor: 'var(--card-bg-color)' }}>
       <Box paddingX={[4, 5, 6]} paddingTop={[5, 6]} paddingBottom={6} flex={1}>
         <Container width={4}>
-          {' '}
-          {/* Width 4 is better for readability and scaling than 5 */}
           <Stack space={[5, 6]}>
             <WelcomeSection />
             <PrimaryActions />
@@ -420,7 +450,7 @@ function DashboardComponent() {
       <FooterSection />
     </Flex>
   );
-}
+});
 
 // ============================================================================
 // Tool Definition
