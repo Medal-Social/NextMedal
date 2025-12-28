@@ -178,7 +178,7 @@ const iconMap: Record<string, LucideIcon> = {
   Loader2,
   Lock,
   Mail,
-  Map: MapIcon,
+  MapIcon,
   MapPin,
   Menu,
   MessageCircle,
