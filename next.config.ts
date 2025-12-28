@@ -27,7 +27,7 @@ const config = {
 
   // Next.js 16 optimizations
   reactCompiler: true,
-  cacheComponents: true,
+  // cacheComponents: true, // Disabled until stable - causes "Element type undefined" during prerendering
 
   // Long cache life since SanityLive handles on-demand revalidation
   // See: https://github.com/sanity-io/next-sanity/blob/main/packages/next-sanity/EXPERIMENTAL-CACHE-COMPONENTS.md
