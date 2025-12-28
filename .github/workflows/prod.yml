@@ -78,64 +78,64 @@ jobs:
           NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
           RESOURCE_GROUP: ${{ secrets.RESOURCE_GROUP }}
         run: |
-          cat > /tmp/containerapp.yaml << YAML_EOF
-          properties:
-            configuration:
-              ingress:
-                external: true
-                targetPort: 3000
-                transport: auto
-                allowInsecure: false
-            template:
-              scale:
-                minReplicas: 1
-                maxReplicas: 1
-              containers:
-                - name: ${CONTAINER_APP_NAME}
-                  image: ${REGISTRY_URL}/${CONTAINER_APP_NAME}:${RUN_NUMBER}
-                  resources:
-                    cpu: 0.25
-                    memory: 0.5Gi
-                  env:
-                    - name: NEXT_PUBLIC_BASE_URL
-                      value: "${NEXT_PUBLIC_BASE_URL}"
-                    - name: NEXT_PUBLIC_SANITY_PROJECT_ID
-                      value: "${NEXT_PUBLIC_SANITY_PROJECT_ID}"
-                    - name: NEXT_PUBLIC_SANITY_DATASET
-                      value: "${NEXT_PUBLIC_SANITY_DATASET}"
-                    - name: SANITY_API_READ_TOKEN
-                      value: "${SANITY_API_READ_TOKEN}"
-                    - name: NEXT_PUBLIC_UMAMI_SCRIPT_URL
-                      value: "${NEXT_PUBLIC_UMAMI_SCRIPT_URL}"
-                    - name: NEXT_PUBLIC_UMAMI_WEBSITE_ID
-                      value: "${NEXT_PUBLIC_UMAMI_WEBSITE_ID}"
-                    - name: NEXT_PUBLIC_APP_ENV
-                      value: "${NEXT_PUBLIC_APP_ENV}"
-                    - name: NEXT_PUBLIC_SENTRY_DSN
-                      value: "${NEXT_PUBLIC_SENTRY_DSN}"
-                  probes:
-                    - type: liveness
-                      httpGet:
-                        path: /api/health
-                        port: 3000
-                      initialDelaySeconds: 60
-                      periodSeconds: 30
-                      timeoutSeconds: 10
-                      failureThreshold: 3
-                    - type: readiness
-                      httpGet:
-                        path: /api/health
-                        port: 3000
-                      initialDelaySeconds: 10
-                      periodSeconds: 10
-                      timeoutSeconds: 5
-                      failureThreshold: 3
-          YAML_EOF
+          YAML_FILE=$(mktemp --suffix=.yaml)
+          trap 'rm -f "$YAML_FILE"' EXIT
 
-          # Strip leading whitespace from the YAML file
-          sed -i 's/^          //' /tmp/containerapp.yaml
+          cat > "$YAML_FILE" <<EOF
+properties:
+  configuration:
+    ingress:
+      external: true
+      targetPort: 3000
+      transport: auto
+      allowInsecure: false
+  template:
+    scale:
+      minReplicas: 1
+      maxReplicas: 1
+    containers:
+      - name: ${CONTAINER_APP_NAME}
+        image: ${REGISTRY_URL}/${CONTAINER_APP_NAME}:${RUN_NUMBER}
+        resources:
+          cpu: 0.25
+          memory: 0.5Gi
+        env:
+          - name: NEXT_PUBLIC_BASE_URL
+            value: "${NEXT_PUBLIC_BASE_URL}"
+          - name: NEXT_PUBLIC_SANITY_PROJECT_ID
+            value: "${NEXT_PUBLIC_SANITY_PROJECT_ID}"
+          - name: NEXT_PUBLIC_SANITY_DATASET
+            value: "${NEXT_PUBLIC_SANITY_DATASET}"
+          - name: SANITY_API_READ_TOKEN
+            value: "${SANITY_API_READ_TOKEN}"
+          - name: NEXT_PUBLIC_UMAMI_SCRIPT_URL
+            value: "${NEXT_PUBLIC_UMAMI_SCRIPT_URL}"
+          - name: NEXT_PUBLIC_UMAMI_WEBSITE_ID
+            value: "${NEXT_PUBLIC_UMAMI_WEBSITE_ID}"
+          - name: NEXT_PUBLIC_APP_ENV
+            value: "${NEXT_PUBLIC_APP_ENV}"
+          - name: NEXT_PUBLIC_SENTRY_DSN
+            value: "${NEXT_PUBLIC_SENTRY_DSN}"
+        probes:
+          - type: liveness
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          - type: readiness
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+EOF
 
           az containerapp update \
             --name "${CONTAINER_APP_NAME}" \
             --resource-group "${RESOURCE_GROUP}" \
-            --yaml /tmp/containerapp.yaml
+            --yaml "$YAML_FILE"
