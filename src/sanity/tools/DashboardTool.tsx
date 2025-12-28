@@ -159,39 +159,34 @@ const PrimaryActions = memo(function PrimaryActions() {
         radius={4}
         shadow={2}
         tone="primary"
-        style={{ cursor: 'pointer', position: 'relative', overflow: 'hidden' }}
+        style={{ cursor: 'pointer' }}
         onClick={navigateToVisualEditor}
         onKeyDown={(event) => handleCardKeyDown(event, navigateToVisualEditor)}
         tabIndex={0}
         role="button"
         aria-label={`${VISUAL_EDITOR_CARD.title}: ${VISUAL_EDITOR_CARD.description}`}
       >
-        <Flex direction="column" align="flex-start" gap={4} style={{ height: '100%' }}>
-          <Flex align="center" gap={3}>
-            <Box
-              padding={2}
-              style={{
-                backgroundColor: 'rgba(255,255,255,0.25)',
-                borderRadius: '8px',
-                color: 'inherit',
-              }}
-            >
-              <Text size={3} weight="bold" style={{ color: 'inherit' }}>
-                {VISUAL_EDITOR_CARD.icon}
-              </Text>
-            </Box>
+        <Flex align="center" gap={3}>
+          <Box
+            padding={2}
+            style={{
+              backgroundColor: 'rgba(255,255,255,0.25)',
+              borderRadius: '8px',
+              color: 'inherit',
+            }}
+          >
+            <Text size={3} weight="bold" style={{ color: 'inherit' }}>
+              {VISUAL_EDITOR_CARD.icon}
+            </Text>
+          </Box>
+          <Stack space={2}>
             <Heading size={2} style={{ color: 'inherit' }}>
               {VISUAL_EDITOR_CARD.title}
             </Heading>
-          </Flex>
-
-          <Box flex={1}>
             <Text size={2} style={{ color: 'inherit', opacity: 0.9 }}>
               {VISUAL_EDITOR_CARD.description}
             </Text>
-          </Box>
-
-          <Button text="Launch Editor" mode="bleed" tabIndex={-1} />
+          </Stack>
         </Flex>
       </Card>
 
@@ -206,28 +201,23 @@ const PrimaryActions = memo(function PrimaryActions() {
         role="button"
         aria-label={`${STRUCTURE_CARD.title}: ${STRUCTURE_CARD.description}`}
       >
-        <Flex direction="column" align="flex-start" gap={4} style={{ height: '100%' }}>
-          <Flex align="center" gap={3}>
-            <Box
-              padding={2}
-              style={{
-                backgroundColor: 'var(--card-bg-color)',
-                border: '1px solid var(--card-border-color)',
-                borderRadius: '8px',
-              }}
-            >
-              <Text size={3}>{STRUCTURE_CARD.icon}</Text>
-            </Box>
+        <Flex align="center" gap={3}>
+          <Box
+            padding={2}
+            style={{
+              backgroundColor: 'var(--card-bg-color)',
+              border: '1px solid var(--card-border-color)',
+              borderRadius: '8px',
+            }}
+          >
+            <Text size={3}>{STRUCTURE_CARD.icon}</Text>
+          </Box>
+          <Stack space={2}>
             <Heading size={2}>{STRUCTURE_CARD.title}</Heading>
-          </Flex>
-
-          <Box flex={1}>
             <Text size={2} muted>
               {STRUCTURE_CARD.description}
             </Text>
-          </Box>
-
-          <Button text="Open Library" mode="bleed" tabIndex={-1} />
+          </Stack>
         </Flex>
       </Card>
     </Grid>
