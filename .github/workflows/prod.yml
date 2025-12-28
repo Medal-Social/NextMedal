@@ -81,59 +81,74 @@ jobs:
           YAML_FILE=$(mktemp --suffix=.yaml)
           trap 'rm -f "$YAML_FILE"' EXIT
 
-          cat > "$YAML_FILE" <<EOF
-properties:
-  configuration:
-    ingress:
-      external: true
-      targetPort: 3000
-      transport: auto
-      allowInsecure: false
-  template:
-    scale:
-      minReplicas: 1
-      maxReplicas: 1
-    containers:
-      - name: ${CONTAINER_APP_NAME}
-        image: ${REGISTRY_URL}/${CONTAINER_APP_NAME}:${RUN_NUMBER}
-        resources:
-          cpu: 0.25
-          memory: 0.5Gi
-        env:
-          - name: NEXT_PUBLIC_BASE_URL
-            value: "${NEXT_PUBLIC_BASE_URL}"
-          - name: NEXT_PUBLIC_SANITY_PROJECT_ID
-            value: "${NEXT_PUBLIC_SANITY_PROJECT_ID}"
-          - name: NEXT_PUBLIC_SANITY_DATASET
-            value: "${NEXT_PUBLIC_SANITY_DATASET}"
-          - name: SANITY_API_READ_TOKEN
-            value: "${SANITY_API_READ_TOKEN}"
-          - name: NEXT_PUBLIC_UMAMI_SCRIPT_URL
-            value: "${NEXT_PUBLIC_UMAMI_SCRIPT_URL}"
-          - name: NEXT_PUBLIC_UMAMI_WEBSITE_ID
-            value: "${NEXT_PUBLIC_UMAMI_WEBSITE_ID}"
-          - name: NEXT_PUBLIC_APP_ENV
-            value: "${NEXT_PUBLIC_APP_ENV}"
-          - name: NEXT_PUBLIC_SENTRY_DSN
-            value: "${NEXT_PUBLIC_SENTRY_DSN}"
-        probes:
-          - type: liveness
-            httpGet:
-              path: /api/health
-              port: 3000
-            initialDelaySeconds: 60
-            periodSeconds: 30
-            timeoutSeconds: 10
-            failureThreshold: 3
-          - type: readiness
-            httpGet:
-              path: /api/health
-              port: 3000
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
-EOF
+          cat > "$YAML_FILE" <<'EOF'
+          properties:
+            configuration:
+              ingress:
+                external: true
+                targetPort: 3000
+                transport: auto
+                allowInsecure: false
+            template:
+              scale:
+                minReplicas: 1
+                maxReplicas: 1
+              containers:
+                - name: __CONTAINER_APP_NAME__
+                  image: __IMAGE__
+                  resources:
+                    cpu: 0.25
+                    memory: 0.5Gi
+                  env:
+                    - name: NEXT_PUBLIC_BASE_URL
+                      value: "__NEXT_PUBLIC_BASE_URL__"
+                    - name: NEXT_PUBLIC_SANITY_PROJECT_ID
+                      value: "__NEXT_PUBLIC_SANITY_PROJECT_ID__"
+                    - name: NEXT_PUBLIC_SANITY_DATASET
+                      value: "__NEXT_PUBLIC_SANITY_DATASET__"
+                    - name: SANITY_API_READ_TOKEN
+                      value: "__SANITY_API_READ_TOKEN__"
+                    - name: NEXT_PUBLIC_UMAMI_SCRIPT_URL
+                      value: "__NEXT_PUBLIC_UMAMI_SCRIPT_URL__"
+                    - name: NEXT_PUBLIC_UMAMI_WEBSITE_ID
+                      value: "__NEXT_PUBLIC_UMAMI_WEBSITE_ID__"
+                    - name: NEXT_PUBLIC_APP_ENV
+                      value: "__NEXT_PUBLIC_APP_ENV__"
+                    - name: NEXT_PUBLIC_SENTRY_DSN
+                      value: "__NEXT_PUBLIC_SENTRY_DSN__"
+                  probes:
+                    - type: liveness
+                      httpGet:
+                        path: /api/health
+                        port: 3000
+                      initialDelaySeconds: 60
+                      periodSeconds: 30
+                      timeoutSeconds: 10
+                      failureThreshold: 3
+                    - type: readiness
+                      httpGet:
+                        path: /api/health
+                        port: 3000
+                      initialDelaySeconds: 10
+                      periodSeconds: 10
+                      timeoutSeconds: 5
+                      failureThreshold: 3
+          EOF
+
+          # Replace placeholders with actual values using sed
+          sed -i "s|__CONTAINER_APP_NAME__|${CONTAINER_APP_NAME}|g" "$YAML_FILE"
+          sed -i "s|__IMAGE__|${REGISTRY_URL}/${CONTAINER_APP_NAME}:${RUN_NUMBER}|g" "$YAML_FILE"
+          sed -i "s|__NEXT_PUBLIC_BASE_URL__|${NEXT_PUBLIC_BASE_URL}|g" "$YAML_FILE"
+          sed -i "s|__NEXT_PUBLIC_SANITY_PROJECT_ID__|${NEXT_PUBLIC_SANITY_PROJECT_ID}|g" "$YAML_FILE"
+          sed -i "s|__NEXT_PUBLIC_SANITY_DATASET__|${NEXT_PUBLIC_SANITY_DATASET}|g" "$YAML_FILE"
+          sed -i "s|__SANITY_API_READ_TOKEN__|${SANITY_API_READ_TOKEN}|g" "$YAML_FILE"
+          sed -i "s|__NEXT_PUBLIC_UMAMI_SCRIPT_URL__|${NEXT_PUBLIC_UMAMI_SCRIPT_URL}|g" "$YAML_FILE"
+          sed -i "s|__NEXT_PUBLIC_UMAMI_WEBSITE_ID__|${NEXT_PUBLIC_UMAMI_WEBSITE_ID}|g" "$YAML_FILE"
+          sed -i "s|__NEXT_PUBLIC_APP_ENV__|${NEXT_PUBLIC_APP_ENV}|g" "$YAML_FILE"
+          sed -i "s|__NEXT_PUBLIC_SENTRY_DSN__|${NEXT_PUBLIC_SENTRY_DSN}|g" "$YAML_FILE"
+
+          # Remove leading indentation from YAML file (the indentation was needed for GH Actions parsing)
+          sed -i 's/^          //' "$YAML_FILE"
 
           az containerapp update \
             --name "${CONTAINER_APP_NAME}" \

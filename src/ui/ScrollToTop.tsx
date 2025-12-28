@@ -1,13 +1,13 @@
 'use client';
 
+import { ArrowUp } from 'lucide-react';
 import {
   AnimatePresence,
   motion,
   useMotionValue,
   useReducedMotion,
   useTransform,
-} from 'framer-motion';
-import { ArrowUp } from 'lucide-react';
+} from 'motion/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 

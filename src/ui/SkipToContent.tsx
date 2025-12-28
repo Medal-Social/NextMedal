@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useState } from 'react';
 import { cn } from '@/lib/utils';

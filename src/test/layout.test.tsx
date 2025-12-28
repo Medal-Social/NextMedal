@@ -13,8 +13,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { routing } from '@/i18n/routing';
 import SkipToContent from '@/ui/SkipToContent';
 
-// Mock framer-motion to avoid animation-related issues in tests
-vi.mock('framer-motion', () => ({
+// Mock motion/react to avoid animation-related issues in tests
+vi.mock('motion/react', () => ({
   motion: {
     a: ({
       children,

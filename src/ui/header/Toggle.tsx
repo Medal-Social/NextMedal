@@ -1,4 +1,4 @@
-import { motion, type SVGMotionProps } from 'framer-motion';
+import { motion, type SVGMotionProps } from 'motion/react';
 
 interface ToggleProps {
   isOpen: boolean;
