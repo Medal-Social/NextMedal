@@ -1,57 +1,54 @@
 import type { NextRequest } from 'next/server';
 import { BASE_URL } from '@/lib/env';
-import { logger } from '@/lib/logger';
-import { fetchSanityLive } from '@/sanity/lib/live';
-import { sitemapQuery } from '@/sanity/lib/queries';
+import { routing } from '@/i18n/routing';
 
-interface SitemapEntry {
-  url: string;
-  lastModified?: string;
-  priority?: number;
+/**
+ * Escape XML special characters
+ */
+function escapeXml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
 }
 
-interface SitemapData {
-  pages: SitemapEntry[];
-  blog: SitemapEntry[];
+/**
+ * Get locale display name
+ */
+function getLocaleDisplayName(locale: string): string {
+  const names: Record<string, string> = {
+    en: 'English',
+    nb: 'Norsk',
+  };
+  return names[locale] ?? locale;
 }
 
 export async function GET(_req: NextRequest) {
-  const baseUrl = BASE_URL;
-  let data: SitemapData;
-  try {
-    data = await fetchSanityLive<SitemapData>({
-      query: sitemapQuery('$baseUrl'),
-      params: { baseUrl: `${baseUrl}/` },
-      stega: false,
-    });
-  } catch (error) {
-    logger.error({ err: error }, 'Error fetching sitemap data from Sanity');
-    return new Response('Failed to fetch sitemap data from CMS.', {
-      status: 503,
-      headers: { 'Content-Type': 'text/plain' },
-    });
-  }
+  const now = new Date().toISOString();
 
-  const all = Object.values(data).flat();
-
-  // Build XML
+  // Build sitemap index XML with XSL stylesheet reference
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
-  xml += '<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>\n';
-  xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
-  for (const entry of all) {
-    xml += '  <url>\n';
-    xml += `    <loc>${entry.url}</loc>\n`;
-    if (entry.lastModified)
-      xml += `    <lastmod>${new Date(entry.lastModified).toISOString()}</lastmod>\n`;
-    if (entry.priority != null) xml += `    <priority>${entry.priority}</priority>\n`;
-    xml += '  </url>\n';
+  xml += '<?xml-stylesheet type="text/xsl" href="/sitemap-index.xsl"?>\n';
+  xml += '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+
+  // Add a sitemap entry for each locale
+  for (const locale of routing.locales) {
+    const displayName = getLocaleDisplayName(locale);
+    xml += '  <sitemap>\n';
+    xml += `    <loc>${escapeXml(`${BASE_URL}/sitemap-${locale}.xml`)}</loc>\n`;
+    xml += `    <lastmod>${now}</lastmod>\n`;
+    xml += `    <!-- ${displayName} Sitemap -->\n`;
+    xml += '  </sitemap>\n';
   }
-  xml += '</urlset>';
+
+  xml += '</sitemapindex>';
 
   return new Response(xml, {
     headers: {
       'Content-Type': 'application/xml; charset=UTF-8',
-      'Cache-Control': 'public, max-age=3600',
+      'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
     },
   });
 }
