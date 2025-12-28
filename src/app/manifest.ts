@@ -14,7 +14,7 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
   try {
     site = await getSite();
     description = site?.tagline ? getBlockText(site.tagline, ' ') : undefined;
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Fallback if CMS is unreachable or Site document is missing
     logger.warn({ err: error }, 'Failed to fetch site settings for manifest, using fallbacks.');
   }

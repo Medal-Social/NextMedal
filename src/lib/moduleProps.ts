@@ -5,7 +5,7 @@ export default function ({
   options,
   _key,
   ...rest
-}: Partial<Sanity.Module> & { spacing?: any; width?: any }) {
+}: Partial<Sanity.Module> & { spacing?: string; width?: string }) {
   return {
     id: stegaClean(options?.uid) || `module-${_key}`,
     'data-module': _type,

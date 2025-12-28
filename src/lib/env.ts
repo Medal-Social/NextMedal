@@ -3,7 +3,7 @@ import { logger } from './logger';
 
 const envSchema = z.object({
   // App
-  NEXT_PUBLIC_BASE_URL: z.string().url().min(1),
+  NEXT_PUBLIC_BASE_URL: z.url(),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   VERCEL_ENV: z.enum(['production', 'preview', 'development']).optional(),
   NEXT_PUBLIC_APP_ENV: z.enum(['production', 'development', 'staging', 'preview']).optional(),
@@ -12,18 +12,20 @@ const envSchema = z.object({
   NEXT_PUBLIC_SANITY_PROJECT_ID: z.string().min(1),
   NEXT_PUBLIC_SANITY_DATASET: z.string().min(1),
   NEXT_PUBLIC_SANITY_API_VERSION: z.string().optional().default('2025-12-23'),
-  SANITY_API_READ_TOKEN: z.string().optional(),
+  // Required for server-side data fetching (not available on client)
+  SANITY_API_READ_TOKEN: z.string().min(1).optional(),
+  // Optional: enables client-side live preview
   SANITY_API_BROWSER_TOKEN: z.string().optional(),
 
   // Optional: Analytics
-  NEXT_PUBLIC_UMAMI_SCRIPT_URL: z.string().url().optional(),
+  NEXT_PUBLIC_UMAMI_SCRIPT_URL: z.url().optional(),
   NEXT_PUBLIC_UMAMI_WEBSITE_ID: z.string().optional(),
-  NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
+  NEXT_PUBLIC_SENTRY_DSN: z.url().optional(),
   SENTRY_ORG: z.string().optional(),
   SENTRY_PROJECT: z.string().optional(),
 
   // Optional: Image Optimization
-  NEXT_PUBLIC_IMAGE_PROXY_URL: z.string().url().optional(),
+  NEXT_PUBLIC_IMAGE_PROXY_URL: z.url().optional(),
   NEXT_PUBLIC_IMAGE_PROXY_KEY: z.string().optional(),
   NEXT_PUBLIC_IMAGE_PROXY_SALT: z.string().optional(),
 });
@@ -64,9 +66,11 @@ if (!parsedEnv.success) {
 }
 
 // During build time we allow partial data, otherwise it's guaranteed by throw above
-export const env = (parsedEnv.success ? parsedEnv.data : (parsedEnv as any).data || {}) as z.infer<
-  typeof envSchema
->;
+export const env = (
+  parsedEnv.success
+    ? parsedEnv.data
+    : (parsedEnv as { data?: z.infer<typeof envSchema> }).data || {}
+) as z.infer<typeof envSchema>;
 
 export const dev = env.NODE_ENV === 'development';
 export const vercelPreview = env.VERCEL_ENV === 'preview';

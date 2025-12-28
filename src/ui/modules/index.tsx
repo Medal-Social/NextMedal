@@ -16,6 +16,11 @@ import RichtextModule from './RichtextModule';
 import Team from './Team';
 import VideoHero from './VideoHero';
 
+type SidebarProps = {
+  spacing?: 'default' | 'compact' | 'relaxed' | 'none';
+  width?: 'default' | 'narrow' | 'wide' | 'full';
+};
+
 export default function Modules({
   modules,
   page,
@@ -36,7 +41,7 @@ export default function Modules({
       {modules?.map((module) => {
         if (!module) return null;
 
-        const sidebarProps = isSidebar ? { spacing: 'none', width: 'full' } : {};
+        const sidebarProps: SidebarProps = isSidebar ? { spacing: 'none', width: 'full' } : {};
 
         switch (module._type) {
           case 'accordion-list':
@@ -44,7 +49,7 @@ export default function Modules({
               <AccordionList
                 {...(module as Sanity.AccordionList)}
                 key={module._key}
-                {...(sidebarProps as any)}
+                {...sidebarProps}
               />
             );
           case 'blog-frontpage':
@@ -52,7 +57,7 @@ export default function Modules({
               <BlogFrontpage
                 {...(module as Sanity.BlogFrontpage)}
                 key={module._key}
-                {...(sidebarProps as any)}
+                {...sidebarProps}
               />
             );
           case 'latest-articles':
@@ -60,7 +65,7 @@ export default function Modules({
               <LatestArticles
                 {...(module as Sanity.LatestArticles)}
                 key={module._key}
-                {...(sidebarProps as any)}
+                {...sidebarProps}
               />
             );
           case 'breadcrumbs':
@@ -69,72 +74,54 @@ export default function Modules({
                 {...(module as Sanity.Breadcrumbs)}
                 currentPage={post || page}
                 key={module._key}
-                {...(sidebarProps as any)}
+                {...sidebarProps}
               />
             );
           case 'callout':
-            return (
-              <Callout
-                {...(module as Sanity.Callout)}
-                key={module._key}
-                {...(sidebarProps as any)}
-              />
-            );
+            return <Callout {...(module as Sanity.Callout)} key={module._key} {...sidebarProps} />;
 
           case 'contact':
-            return <Contact {...(module as any)} key={module._key} {...(sidebarProps as any)} />;
+            return <Contact {...(module as Sanity.Contact)} key={module._key} {...sidebarProps} />;
 
           case 'component-gallery':
             return (
               <ComponentGallery
                 {...(module as Sanity.ComponentGallery)}
                 key={module._key}
-                {...(sidebarProps as any)}
+                {...sidebarProps}
               />
             );
 
           case 'features':
             return (
-              <Features
-                {...(module as Sanity.Features)}
-                key={module._key}
-                {...(sidebarProps as any)}
-              />
+              <Features {...(module as Sanity.Features)} key={module._key} {...sidebarProps} />
             );
           case 'lead-magnet':
           case 'leadMagnet':
           case 'leadmagnet':
             return (
               <LeadMagnet
-                {...(module as any)}
+                {...(module as Sanity.LeadMagnet)}
                 key={module._key}
                 style={isSidebar ? 'sidebar' : undefined}
-                {...(sidebarProps as any)}
+                {...sidebarProps}
               />
             );
           case 'hero':
-            return (
-              <Hero {...(module as Sanity.Hero)} key={module._key} {...(sidebarProps as any)} />
-            );
+            return <Hero {...(module as Sanity.Hero)} key={module._key} {...sidebarProps} />;
 
           case 'logo-cloud':
             return (
-              <LogoCloud
-                {...(module as Sanity.LogoCloud)}
-                key={module._key}
-                {...(sidebarProps as any)}
-              />
+              <LogoCloud {...(module as Sanity.LogoCloud)} key={module._key} {...sidebarProps} />
             );
           case 'team':
-            return (
-              <Team {...(module as Sanity.Team)} key={module._key} {...(sidebarProps as any)} />
-            );
+            return <Team {...(module as Sanity.Team)} key={module._key} {...sidebarProps} />;
           case 'pricing-list':
             return (
               <PricingList
                 {...(module as Sanity.PricingList)}
                 key={module._key}
-                {...(sidebarProps as any)}
+                {...sidebarProps}
               />
             );
 
@@ -143,7 +130,7 @@ export default function Modules({
               <PricingComparison
                 {...(module as Sanity.PricingComparison)}
                 key={module._key}
-                {...(sidebarProps as any)}
+                {...sidebarProps}
               />
             );
 
@@ -152,7 +139,7 @@ export default function Modules({
               <ProductComparison
                 {...(module as Sanity.ProductComparison)}
                 key={module._key}
-                {...(sidebarProps as any)}
+                {...sidebarProps}
               />
             );
 
@@ -161,12 +148,14 @@ export default function Modules({
               <RichtextModule
                 {...(module as Sanity.Richtext)}
                 key={module._key}
-                {...(sidebarProps as any)}
+                {...sidebarProps}
               />
             );
 
           case 'videoHero':
-            return <VideoHero data={module as any} key={module._key} {...(sidebarProps as any)} />;
+            return (
+              <VideoHero data={module as Sanity.VideoHero} key={module._key} {...sidebarProps} />
+            );
 
           default:
             return <div data-type={module._type} key={module._key} />;

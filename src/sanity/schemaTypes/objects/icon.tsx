@@ -20,8 +20,8 @@ export default defineType({
   type: 'object',
   fields: [
     defineField({
-      name: 'ic0n',
-      title: 'ic0n',
+      name: 'icon',
+      title: 'Icon',
       description: (
         <span>
           Search for icons at{' '}

@@ -2,6 +2,7 @@
 
 import * as Sentry from '@sentry/nextjs';
 import { AlertCircle, RefreshCcw } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 
@@ -12,6 +13,8 @@ export default function ErrorComponent({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const t = useTranslations('Error');
+
   useEffect(() => {
     Sentry.captureException(error);
   }, [error]);
@@ -26,15 +29,13 @@ export default function ErrorComponent({
         </div>
 
         <div className="space-y-3">
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Something went wrong</h1>
-          <p className="text-muted-foreground text-lg leading-relaxed px-2">
-            We encountered an unexpected error while loading this page.
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('title')}</h1>
+          <p className="text-muted-foreground text-lg leading-relaxed px-2">{t('description')}</p>
         </div>
 
         {error.digest && (
           <div className="inline-flex items-center gap-2 py-1.5 px-3 bg-muted rounded-full text-[10px] font-mono text-muted-foreground uppercase tracking-wider italic">
-            <span className="opacity-50 font-sans font-semibold not-italic">Error ID:</span>
+            <span className="opacity-50 font-sans font-semibold not-italic">{t('errorId')}</span>
             <span className="select-all">{error.digest}</span>
           </div>
         )}
@@ -47,13 +48,11 @@ export default function ErrorComponent({
             className="h-12 px-8 text-base font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
             <RefreshCcw className="w-4 h-4 mr-2" />
-            Try again
+            {t('tryAgain')}
           </Button>
         </div>
 
-        <p className="text-xs text-muted-foreground pt-8 opacity-50 italic">
-          If the problem persists, please try refreshing the page.
-        </p>
+        <p className="text-xs text-muted-foreground pt-8 opacity-50 italic">{t('persistsHint')}</p>
       </div>
     </div>
   );

@@ -2,6 +2,21 @@
   "HomePage": {
     "title": "Hei verden!"
   },
+  "Accessibility": {
+    "skipToContent": "Hopp til innhold"
+  },
+  "NotFound": {
+    "title": "Siden ble ikke funnet",
+    "description": "Beklager, vi kunne ikke finne siden du leter etter. Den kan ha blitt fjernet, slettet, eller har kanskje aldri eksistert.",
+    "goHome": "Gå til forsiden"
+  },
+  "Error": {
+    "title": "Noe gikk galt",
+    "description": "Vi støtte på en uventet feil under lasting av denne siden.",
+    "errorId": "Feil-ID:",
+    "tryAgain": "Prøv igjen",
+    "persistsHint": "Hvis problemet vedvarer, vennligst prøv å oppdatere siden."
+  },
   "LocaleSwitcher": {
     "label": "Endre språk",
     "locale": "{locale, select, en {English} nb {Norsk} other {Ukjent}}",

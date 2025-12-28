@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function count(
-  arr: Array<any> | number | null | undefined,
+  arr: Array<unknown> | number | null | undefined,
   singular = 'item',
   plural?: string
 ) {
@@ -14,14 +14,14 @@ export function count(
   return `${n} ${n === 1 ? singular : plural || `${singular}s`}`;
 }
 
-export function debounce<T extends (...args: any[]) => void>(
+export function debounce<T extends (...args: unknown[]) => void>(
   func: T,
   delay = 1000 // 1 sec
 ): (...args: Parameters<T>) => void {
   // Use an AbortController for better cleanup
   let abortController: AbortController | null = null;
 
-  return function (this: any, ...args: Parameters<T>) {
+  return function (this: unknown, ...args: Parameters<T>) {
     // If there's a pending execution, abort it
     if (abortController) {
       abortController.abort();

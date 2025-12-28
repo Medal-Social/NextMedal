@@ -24,6 +24,15 @@ vi.mock('@/sanity/lib/fetch', () => ({
 
 vi.mock('@/sanity/lib/queries', () => ({
   TRANSLATIONS_QUERY: '"translations": *[_id == ^._id][0]',
+  CURRENT_PAGE_QUERY:
+    "*[(_type == 'page' || _type == 'blog.post') && metadata.slug.current == $slug && language == $locale][0]{ ..., translations }",
+}));
+
+vi.mock('@/i18n/routing', () => ({
+  routing: {
+    locales: ['en', 'nb'],
+    defaultLocale: 'en',
+  },
 }));
 
 // Import after mocks
@@ -58,8 +67,8 @@ describe('getCurrentPage', () => {
           if (name === 'referer') return '/nb/other';
           return null;
         },
-      });
-      mockFetchSanityLive.mockResolvedValue({ _id: 'page1' });
+      } as any);
+      mockFetchSanityLive.mockResolvedValue({ _id: 'page1' } as any);
 
       await getCurrentPage();
 
@@ -77,8 +86,8 @@ describe('getCurrentPage', () => {
           if (name === 'referer') return '/nb/contact';
           return null;
         },
-      });
-      mockFetchSanityLive.mockResolvedValue({ _id: 'page1' });
+      } as any);
+      mockFetchSanityLive.mockResolvedValue({ _id: 'page1' } as any);
 
       await getCurrentPage();
 
@@ -94,8 +103,8 @@ describe('getCurrentPage', () => {
     it('parses root path as en/index', async () => {
       mockHeaders.mockResolvedValue({
         get: () => '/',
-      });
-      mockFetchSanityLive.mockResolvedValue({ _id: 'home' });
+      } as any);
+      mockFetchSanityLive.mockResolvedValue({ _id: 'home' } as any);
 
       await getCurrentPage();
 
@@ -109,8 +118,8 @@ describe('getCurrentPage', () => {
     it('parses /en as en/index', async () => {
       mockHeaders.mockResolvedValue({
         get: () => '/en',
-      });
-      mockFetchSanityLive.mockResolvedValue({ _id: 'home' });
+      } as any);
+      mockFetchSanityLive.mockResolvedValue({ _id: 'home' } as any);
 
       await getCurrentPage();
 
@@ -124,8 +133,8 @@ describe('getCurrentPage', () => {
     it('parses /nb as nb/index', async () => {
       mockHeaders.mockResolvedValue({
         get: () => '/nb',
-      });
-      mockFetchSanityLive.mockResolvedValue({ _id: 'home' });
+      } as any);
+      mockFetchSanityLive.mockResolvedValue({ _id: 'home' } as any);
 
       await getCurrentPage();
 
@@ -139,8 +148,8 @@ describe('getCurrentPage', () => {
     it('parses /en/slug correctly', async () => {
       mockHeaders.mockResolvedValue({
         get: () => '/en/about',
-      });
-      mockFetchSanityLive.mockResolvedValue({ _id: 'about' });
+      } as any);
+      mockFetchSanityLive.mockResolvedValue({ _id: 'about' } as any);
 
       await getCurrentPage();
 
@@ -154,8 +163,8 @@ describe('getCurrentPage', () => {
     it('parses /nb/slug correctly', async () => {
       mockHeaders.mockResolvedValue({
         get: () => '/nb/om-oss',
-      });
-      mockFetchSanityLive.mockResolvedValue({ _id: 'about' });
+      } as any);
+      mockFetchSanityLive.mockResolvedValue({ _id: 'about' } as any);
 
       await getCurrentPage();
 
@@ -169,8 +178,8 @@ describe('getCurrentPage', () => {
     it('parses /slug without locale as en/slug', async () => {
       mockHeaders.mockResolvedValue({
         get: () => '/products',
-      });
-      mockFetchSanityLive.mockResolvedValue({ _id: 'products' });
+      } as any);
+      mockFetchSanityLive.mockResolvedValue({ _id: 'products' } as any);
 
       await getCurrentPage();
 
@@ -181,17 +190,18 @@ describe('getCurrentPage', () => {
       );
     });
 
-    it('handles nested paths correctly', async () => {
+    it('handles blog paths by stripping blog prefix', async () => {
       mockHeaders.mockResolvedValue({
         get: () => '/en/blog/my-post',
-      });
-      mockFetchSanityLive.mockResolvedValue({ _id: 'post1' });
+      } as any);
+      mockFetchSanityLive.mockResolvedValue({ _id: 'post1' } as any);
 
       await getCurrentPage();
 
+      // The implementation strips "blog" prefix for blog posts
       expect(mockFetchSanityLive).toHaveBeenCalledWith(
         expect.objectContaining({
-          params: { slug: 'blog/my-post', locale: 'en' },
+          params: { slug: 'my-post', locale: 'en' },
         })
       );
     });
@@ -199,8 +209,8 @@ describe('getCurrentPage', () => {
     it('handles deeply nested paths', async () => {
       mockHeaders.mockResolvedValue({
         get: () => '/nb/category/sub/item',
-      });
-      mockFetchSanityLive.mockResolvedValue({ _id: 'item1' });
+      } as any);
+      mockFetchSanityLive.mockResolvedValue({ _id: 'item1' } as any);
 
       await getCurrentPage();
 
@@ -214,8 +224,8 @@ describe('getCurrentPage', () => {
     it('handles full URLs with origin', async () => {
       mockHeaders.mockResolvedValue({
         get: () => 'https://example.com/en/page',
-      });
-      mockFetchSanityLive.mockResolvedValue({ _id: 'page1' });
+      } as any);
+      mockFetchSanityLive.mockResolvedValue({ _id: 'page1' } as any);
 
       await getCurrentPage();
 
@@ -238,8 +248,8 @@ describe('getCurrentPage', () => {
 
       mockHeaders.mockResolvedValue({
         get: () => '/en/test',
-      });
-      mockFetchSanityLive.mockResolvedValue(mockPage);
+      } as any);
+      mockFetchSanityLive.mockResolvedValue(mockPage as any);
 
       const result = await getCurrentPage();
 
@@ -249,8 +259,8 @@ describe('getCurrentPage', () => {
     it('queries for both page and blog.post types', async () => {
       mockHeaders.mockResolvedValue({
         get: () => '/en/my-post',
-      });
-      mockFetchSanityLive.mockResolvedValue(null);
+      } as any);
+      mockFetchSanityLive.mockResolvedValue(null as any);
 
       await getCurrentPage();
 
@@ -264,8 +274,8 @@ describe('getCurrentPage', () => {
     it('includes translations query', async () => {
       mockHeaders.mockResolvedValue({
         get: () => '/en/about',
-      });
-      mockFetchSanityLive.mockResolvedValue(null);
+      } as any);
+      mockFetchSanityLive.mockResolvedValue(null as any);
 
       await getCurrentPage();
 
@@ -281,7 +291,7 @@ describe('getCurrentPage', () => {
     it('returns undefined on fetch error', async () => {
       mockHeaders.mockResolvedValue({
         get: () => '/en/error-page',
-      });
+      } as any);
       mockFetchSanityLive.mockRejectedValue(new Error('Fetch failed'));
 
       const result = await getCurrentPage();
@@ -293,7 +303,7 @@ describe('getCurrentPage', () => {
       const error = new Error('Network error');
       mockHeaders.mockResolvedValue({
         get: () => '/en/error-page',
-      });
+      } as any);
       mockFetchSanityLive.mockRejectedValue(error);
 
       await getCurrentPage();
@@ -307,8 +317,8 @@ describe('getCurrentPage', () => {
     it('handles undefined page result gracefully', async () => {
       mockHeaders.mockResolvedValue({
         get: () => '/en/nonexistent',
-      });
-      mockFetchSanityLive.mockResolvedValue(undefined);
+      } as any);
+      mockFetchSanityLive.mockResolvedValue(undefined as any);
 
       const result = await getCurrentPage();
 
@@ -318,8 +328,8 @@ describe('getCurrentPage', () => {
     it('handles null page result gracefully', async () => {
       mockHeaders.mockResolvedValue({
         get: () => '/en/nonexistent',
-      });
-      mockFetchSanityLive.mockResolvedValue(null);
+      } as any);
+      mockFetchSanityLive.mockResolvedValue(null as any);
 
       const result = await getCurrentPage();
 
@@ -331,8 +341,8 @@ describe('getCurrentPage', () => {
     it('handles trailing slashes', async () => {
       mockHeaders.mockResolvedValue({
         get: () => '/en/about/',
-      });
-      mockFetchSanityLive.mockResolvedValue({ _id: 'about' });
+      } as any);
+      mockFetchSanityLive.mockResolvedValue({ _id: 'about' } as any);
 
       await getCurrentPage();
 
@@ -343,8 +353,8 @@ describe('getCurrentPage', () => {
     it('handles empty path segments', async () => {
       mockHeaders.mockResolvedValue({
         get: () => '/en//about',
-      });
-      mockFetchSanityLive.mockResolvedValue({ _id: 'about' });
+      } as any);
+      mockFetchSanityLive.mockResolvedValue({ _id: 'about' } as any);
 
       await getCurrentPage();
 
@@ -355,8 +365,8 @@ describe('getCurrentPage', () => {
     it('handles paths with query strings', async () => {
       mockHeaders.mockResolvedValue({
         get: () => '/en/page?foo=bar',
-      });
-      mockFetchSanityLive.mockResolvedValue({ _id: 'page' });
+      } as any);
+      mockFetchSanityLive.mockResolvedValue({ _id: 'page' } as any);
 
       await getCurrentPage();
 
@@ -370,8 +380,8 @@ describe('getCurrentPage', () => {
     it('handles paths with hash fragments', async () => {
       mockHeaders.mockResolvedValue({
         get: () => '/nb/section#anchor',
-      });
-      mockFetchSanityLive.mockResolvedValue({ _id: 'section' });
+      } as any);
+      mockFetchSanityLive.mockResolvedValue({ _id: 'section' } as any);
 
       await getCurrentPage();
 

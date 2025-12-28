@@ -14,7 +14,7 @@ export interface GalleryComponent {
   description?: string;
   category: string;
   moduleType: string;
-  componentData?: any;
+  componentData?: Sanity.Module;
   children: React.ReactNode;
 }
 
@@ -22,7 +22,7 @@ export default function ComponentGalleryClient({
   intro,
   components,
 }: Partial<{
-  intro: any[];
+  intro: Sanity.BlockContent;
   components: GalleryComponent[];
 }>) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,7 +30,7 @@ export default function ComponentGalleryClient({
 
   if (!components?.length) return null;
 
-  const categories = Array.from(new Set(components.map((c) => c.category)));
+  const categories = Array.from(new Set(components.map((comp) => comp.category)));
 
   const filteredComponents = components.filter((component) => {
     const matchesSearch = component.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -115,7 +115,10 @@ export default function ComponentGalleryClient({
               </div>
 
               <div className="rounded-xl border border-border bg-background shadow-sm overflow-hidden ring-1 ring-border/50 relative">
-                <ComponentPreview moduleType={item.moduleType} componentData={item.componentData}>
+                <ComponentPreview
+                  moduleType={item.moduleType}
+                  componentData={item.componentData as unknown as Record<string, unknown>}
+                >
                   <div className="bg-checkered absolute inset-0 opacity-[0.03] pointer-events-none" />
                   <div className="relative">{item.children}</div>
                 </ComponentPreview>

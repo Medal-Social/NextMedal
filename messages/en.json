@@ -2,6 +2,21 @@
   "HomePage": {
     "title": "Hello world!"
   },
+  "Accessibility": {
+    "skipToContent": "Skip to content"
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "Sorry, we couldn't find the page you're looking for. It might have been removed, deleted, or possibly never existed.",
+    "goHome": "Go to Homepage"
+  },
+  "Error": {
+    "title": "Something went wrong",
+    "description": "We encountered an unexpected error while loading this page.",
+    "errorId": "Error ID:",
+    "tryAgain": "Try again",
+    "persistsHint": "If the problem persists, please try refreshing the page."
+  },
   "LocaleSwitcher": {
     "label": "Change language",
     "locale": "{locale, select, en {English} nb {Norsk} other {Unknown}}",

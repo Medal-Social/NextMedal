@@ -1,8 +1,9 @@
 import { groq } from 'next-sanity';
 import { Suspense } from 'react';
+import { logger } from '@/lib/logger';
 import moduleProps from '@/lib/moduleProps';
 import { fetchSanityLive } from '@/sanity/lib/live';
-import { IMAGE_QUERY } from '@/sanity/lib/queries';
+import { AUTHOR_PREVIEW_QUERY, CATEGORY_PREVIEW_QUERY, IMAGE_QUERY } from '@/sanity/lib/queries';
 import PostPreview from '../PostPreview';
 import BlogFilterBar from './BlogFilterBar';
 import BlogHero from './BlogHero';
@@ -14,48 +15,56 @@ export default async function BlogFrontpage({
   posts: postsProp,
   ...props
 }: Sanity.BlogFrontpage) {
-  const posts =
-    postsProp ||
-    (await fetchSanityLive<Sanity.BlogPost[]>({
-      query: groq`*[_type == 'blog.post']|order(publishDate desc){
+  let posts: Sanity.BlogPost[] = postsProp || [];
+
+  if (!postsProp) {
+    try {
+      posts = await fetchSanityLive<Sanity.BlogPost[]>({
+        query: groq`*[_type == 'blog.post']|order(publishDate desc)[0...50]{
 			_type,
 			_id,
 			featured,
-			metadata {
-				...,
-				image { ${IMAGE_QUERY} }
-			},
-			categories[]->,
-			authors[]->{
-				...,
-				image { ${IMAGE_QUERY} }
-			},
 			publishDate,
+			"readTime": math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
+			metadata {
+				title,
+				description,
+				"slug": { "current": slug.current },
+				image { ${IMAGE_QUERY} }
+			},
+			categories[]->${CATEGORY_PREVIEW_QUERY},
+			authors[]->${AUTHOR_PREVIEW_QUERY}
 		}`,
-    }));
+      });
+    } catch (error) {
+      logger.error(error, 'Failed to fetch blog posts');
+      posts = [];
+    }
+  }
 
   // Determine Hero Post
   let heroPost: Sanity.BlogPost | undefined;
   if (mainPost === 'featured') {
-    heroPost = posts.find((p) => p.featured === true);
+    heroPost = posts.find((post) => post.featured === 'featured');
   }
   if (!heroPost) {
     heroPost = posts[0];
   }
 
   // Filter out hero post
-  const remainingPosts = posts.filter((p) => p._id !== heroPost?._id);
+  const remainingPosts = posts.filter((post) => post._id !== heroPost?._id);
 
   // Determine Sidebar Posts (Recent & Popular)
   // Recent: First remaining post
   const recentPost = remainingPosts[0];
 
   // Popular: Next featured post, or just next post
-  const popularPost = remainingPosts.slice(1).find((p) => p.featured === true) || remainingPosts[1];
+  const popularPost =
+    remainingPosts.slice(1).find((post) => post.featured === 'featured') || remainingPosts[1];
 
   // Grid Posts: All remaining posts excluding hero, recent, and popular
   const gridPosts = remainingPosts.filter(
-    (p) => p._id !== recentPost?._id && p._id !== popularPost?._id
+    (post) => post._id !== recentPost?._id && post._id !== popularPost?._id
   );
 
   return (

@@ -2,16 +2,21 @@ import type { SanityAssetDocument, SanityDocument } from 'next-sanity';
 
 declare global {
   namespace Sanity {
+    // Portable Text block content - a flexible array type for rich text
+    // Using unknown[] for compatibility with @portabletext/react rendering
+    // biome-ignore lint/suspicious/noExplicitAny: Portable Text blocks can contain arbitrary structured content
+    type BlockContent = any[];
+
     // documents
 
     interface Site extends SanityDocument {
       // branding
       title: string;
-      tagline?: any;
+      tagline?: BlockContent;
       logo?: Logo;
       // info
       banners?: Banner[];
-      copyright?: any;
+      copyright?: BlockContent;
       ogimage?: string;
       // navigation
       ctas?: CTA[];
@@ -87,13 +92,14 @@ declare global {
 
     interface BlogPost extends SanityDocument {
       _type: 'blog.post';
-      body: any[];
+      body: BlockContent;
       categories: BlogCategory[]; // Usually dereferenced in UI
       authors: Person[]; // Usually dereferenced in UI
       publishDate: string;
-      featured?: boolean;
+      featured?: 'standard' | 'featured';
       metadata?: Metadata;
       relatedPosts?: BlogPost[]; // Usually dereferenced in UI
+      readTime?: number; // Calculated from word count
     }
 
     interface BlogCategory extends SanityDocument {
@@ -106,7 +112,7 @@ declare global {
     // miscellaneous
 
     interface Banner extends SanityDocument {
-      content: any;
+      content: BlockContent;
       cta?: MenuItem;
       start?: string;
       end?: string;
@@ -127,7 +133,7 @@ declare global {
       _key?: string; // added for list rendering
       name: string;
       title?: string;
-      bio?: any;
+      bio?: BlockContent;
       image?: Image;
       socialLinks?: {
         _key: string;
@@ -147,7 +153,7 @@ declare global {
         suffix?: string;
       };
       ctas?: CTA[];
-      content?: any;
+      content?: BlockContent;
     }
 
     // objects
@@ -173,7 +179,7 @@ declare global {
       }[];
       alt?: string;
       loading?: 'lazy' | 'eager';
-      asset?: any;
+      asset?: Image['asset'];
       url?: string;
     }
 
@@ -192,6 +198,7 @@ declare global {
 
     interface MenuItem {
       readonly _type: 'menuItem';
+      _key?: string;
       label: string;
       type: 'internal' | 'external';
       internal?: Page | BlogPost;
@@ -244,7 +251,7 @@ declare global {
       };
     }
 
-    interface SanityReference<_T = any> {
+    interface SanityReference<_T = unknown> {
       _type: 'reference';
       _ref: string;
       _weak?: boolean;
@@ -280,7 +287,7 @@ declare global {
       formTitle?: string;
       fields: FormField[];
       submitButtonText: string;
-      successMessage?: any[];
+      successMessage?: BlockContent;
       acceptance?: {
         required: boolean;
         text: string;
@@ -306,7 +313,7 @@ declare global {
     }
 
     interface Contact extends Module<'contact'> {
-      intro?: any[];
+      intro?: BlockContent;
       form: Form;
       officeInfo?: {
         title: string;
@@ -331,7 +338,7 @@ declare global {
     }
 
     interface LeadMagnet extends Module<'lead-magnet'> {
-      content: any[];
+      content: BlockContent;
       buttonText: string;
       image?: Img;
       form: Form;
@@ -341,11 +348,11 @@ declare global {
     // Module Interfaces
 
     interface AccordionList extends Module<'accordion-list'> {
-      content?: any[];
+      content?: BlockContent;
       items?: {
         _key: string;
         summary: string;
-        content: any[];
+        content: BlockContent;
         open?: boolean;
       }[];
       generateSchema?: boolean;
@@ -365,12 +372,12 @@ declare global {
     }
 
     interface Callout extends Module<'callout'> {
-      content?: any[];
+      content?: BlockContent;
       ctas?: CTA[];
     }
 
     interface ComponentGallery extends Module<'component-gallery'> {
-      intro?: any[];
+      intro?: BlockContent;
       groups?: {
         _key: string;
         title: string;
@@ -379,18 +386,18 @@ declare global {
     }
 
     interface Features extends Module<'features'> {
-      intro?: any[];
+      intro?: BlockContent;
       items?: {
         _key: string;
         icon?: Icon;
         summary: string;
-        content: any[];
+        content: BlockContent;
       }[];
     }
 
     interface Hero extends Module<'hero'> {
       highlightedTitle?: string;
-      content?: any[]; // renamed from description to match schema
+      content?: BlockContent; // renamed from description to match schema
       ctas?: CTA[];
       image?: Img;
       options?: {
@@ -401,7 +408,7 @@ declare global {
     }
 
     interface LatestArticles extends Module<'latest-articles'> {
-      intro?: any[];
+      intro?: BlockContent;
       layout?: 'grid' | 'carousel';
       showFeaturedPostsFirst?: boolean;
       displayFilters?: boolean;
@@ -410,7 +417,7 @@ declare global {
     }
 
     interface LogoCloud extends Module<'logo-cloud'> {
-      content?: any[];
+      content?: BlockContent;
       logos?: Logo[]; // Resolved
     }
 
@@ -437,12 +444,12 @@ declare global {
     }
 
     interface PricingList extends Module<'pricing-list'> {
-      intro?: any[];
+      intro?: BlockContent;
       tiers?: Pricing[]; // Resolved
     }
 
     interface ProductComparison extends Module<'product-comparison'> {
-      intro?: any[];
+      intro?: BlockContent;
       products?: {
         _key: string;
         name: string;
@@ -456,13 +463,13 @@ declare global {
     }
 
     interface Team extends Module<'team'> {
-      intro?: any[];
+      intro?: BlockContent;
       people?: Person[]; // Resolved
       layout?: 'grid' | 'split';
     }
 
     interface Richtext extends Module<'richtext'> {
-      content?: any[];
+      content?: BlockContent;
     }
 
     interface VideoHero extends Module<'videoHero'> {

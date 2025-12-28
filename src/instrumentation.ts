@@ -18,7 +18,11 @@ export async function register() {
   }
 }
 
-export const onRequestError = (err: unknown, request: any, context: any) => {
+export const onRequestError = (
+  err: unknown,
+  request: { path: string; method: string; headers: Record<string, string> },
+  context: { routerKind: string; routePath: string; routeType: string; renderSource: string }
+) => {
   const IS_PRODUCTION =
     process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production';
 

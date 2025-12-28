@@ -52,17 +52,26 @@ export interface MuxVideo {
   _type: 'mux.video';
 }
 
+// Portable Text block type
+export interface PortableTextBlock {
+  _type: 'block';
+  _key: string;
+  children: Array<{ _type: string; _key: string; text?: string }>;
+  style?: string;
+  markDefs?: Array<{ _type: string; _key: string }>;
+}
+
 // Document types
 export interface Site extends SanityBase {
   _type: 'site';
   title: string;
-  tagline?: any[];
-  logo?: any;
+  tagline?: PortableTextBlock[];
+  logo?: SanityImage;
 }
 
 export interface BlogPost extends SanityBase {
   _type: 'blog.post';
-  body: any[];
+  body: PortableTextBlock[];
   categories: SanityReference[];
   authors: SanityReference[];
   publishDate: string;
@@ -92,7 +101,7 @@ export interface CTA {
   internalLink?: SanityDocument;
   externalLink?: string;
   style?: 'default' | 'secondary' | 'outline' | 'ghost' | 'link' | 'destructive';
-  icon?: any;
+  icon?: string;
   newTab?: boolean;
   params?: string;
   tracking?: {
@@ -112,7 +121,7 @@ export interface MenuItem {
 // Module types
 export interface Hero extends SanityBase {
   _type: 'hero';
-  content?: any[];
+  content?: PortableTextBlock[];
   ctas?: CTA[];
   assets?: SanityImage[];
   textAlign?: 'left' | 'center' | 'right' | 'justify';
@@ -120,7 +129,7 @@ export interface Hero extends SanityBase {
   layout?: 'default' | 'side-by-side';
   imagePosition?: 'left' | 'right';
   options?: ModuleOptions;
-  sidebysidecontent?: any[];
+  sidebysidecontent?: PortableTextBlock[];
   sideBySideTextAlign?: 'left' | 'center' | 'right';
 }
 

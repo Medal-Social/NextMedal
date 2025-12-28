@@ -70,6 +70,14 @@ In Next.js 16+, middleware MUST be named `proxy.ts` (not `middleware.ts`) and ex
 
 Component organization: Hooks first → derived state → internal functions → return statement
 
+### Naming Conventions
+
+- **Descriptive variable names**: Avoid single-letter variables for non-trivial objects. Use self-documenting names that convey meaning.
+  - Bad: `source: (d) => d.title`
+  - Good: `source: (doc) => doc.title` or `source: (document) => document.title`
+- **Callback parameters**: Use meaningful names in callbacks, especially for Sanity schema definitions where `doc`, `document`, or the specific type name (e.g., `post`, `author`) makes the code more readable.
+- **Loop variables**: Single-letter variables like `i`, `j`, `k` are acceptable for simple loop indices, but prefer descriptive names for complex iterations.
+
 ## Sanity Guidelines
 
 **Schema patterns:**

@@ -25,30 +25,64 @@
     "lineWidth": 100,
     "lineEnding": "lf"
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
       "a11y": {
-        "useAltText": "error"
+        "useAltText": "error",
+        "useValidAnchor": "error",
+        "useKeyWithClickEvents": "error",
+        "useButtonType": "error",
+        "noAccessKey": "error",
+        "noPositiveTabindex": "error",
+        "noAutofocus": "warn",
+        "useHeadingContent": "error",
+        "useAnchorContent": "error"
       },
       "complexity": {
         "noBannedTypes": "off",
-        "noUselessTypeConstraint": "off"
+        "noUselessTypeConstraint": "off",
+        "noExcessiveCognitiveComplexity": "warn",
+        "useFlatMap": "error"
       },
       "correctness": {
-        "noUnusedVariables": "warn",
-        "useExhaustiveDependencies": "warn"
+        "noUnusedVariables": "error",
+        "useExhaustiveDependencies": "error",
+        "noUnusedImports": "error",
+        "useHookAtTopLevel": "error"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "warn",
+        "noGlobalEval": "error"
       },
       "suspicious": {
         "noConsole": "warn",
-        "noExplicitAny": "off",
-        "noArrayIndexKey": "off"
+        "noExplicitAny": "error",
+        "noArrayIndexKey": "warn",
+        "noDoubleEquals": "error",
+        "noShadowRestrictedNames": "error",
+        "noEmptyBlockStatements": "warn"
       },
       "style": {
-        "noNonNullAssertion": "off"
+        "noNonNullAssertion": "warn",
+        "useConst": "error",
+        "useTemplate": "warn",
+        "useImportType": "error",
+        "noUselessElse": "warn"
       }
+    },
+    "domains": {
+      "react": "none",
+      "next": "recommended",
+      "test": "recommended"
     }
   },
   "javascript": {
@@ -62,5 +96,25 @@
     "parser": {
       "cssModules": true
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["src/test/**", "**/*.test.ts", "**/*.test.tsx"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off",
+            "noExplicitAny": "off",
+            "noEmptyBlockStatements": "off"
+          },
+          "style": {
+            "noNonNullAssertion": "off"
+          },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off"
+          }
+        }
+      }
+    }
+  ]
 }

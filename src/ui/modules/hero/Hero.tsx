@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import { stegaClean } from 'next-sanity';
+import type { ReactNode } from 'react';
 import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
@@ -11,20 +12,22 @@ import SharedPortableText from '@/ui/modules/SharedPortableText';
 
 const components = {
   block: {
-    h1: ({ children }: any) => (
+    h1: ({ children }: { children?: ReactNode }) => (
       <h1 className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl mb-6">{children}</h1>
     ),
-    normal: ({ children }: any) => (
+    normal: ({ children }: { children?: ReactNode }) => (
       <p className="mt-6 text-xl text-muted-foreground leading-relaxed">{children}</p>
     ),
   },
   marks: {
-    gradient: ({ children }: any) => (
+    gradient: ({ children }: { children?: ReactNode }) => (
       <span className="inline-block bg-gradient-to-r from-brand-vibrant to-brand-purple bg-clip-text text-transparent dark:text-brand-400 font-extrabold">
         {children}
       </span>
     ),
-    primary: ({ children }: any) => <span className="text-primary">{children}</span>,
+    primary: ({ children }: { children?: ReactNode }) => (
+      <span className="text-primary">{children}</span>
+    ),
   },
 };
 

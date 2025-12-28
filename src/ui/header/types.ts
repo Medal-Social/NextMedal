@@ -4,6 +4,7 @@
  */
 
 import type { ReactNode } from 'react';
+import type { ServerPageData } from '@/ui/language-switcher/LocaleSwitcherClient';
 
 /**
  * Menu item for navigation - uses Sanity.MenuItem from global types
@@ -44,6 +45,8 @@ export interface HeaderClientProps extends React.ComponentProps<'header'> {
   enableSearch?: boolean;
   /** Children to render inside the header */
   children: ReactNode;
+  /** Server-fetched page data for language switcher */
+  serverPage?: ServerPageData;
 }
 
 /**
@@ -56,6 +59,8 @@ export interface MobileNavigationProps {
   ctas: HeaderCTA[];
   /** Whether search is enabled */
   enableSearch?: boolean;
+  /** Server-fetched page data for language switcher */
+  serverPage?: ServerPageData;
 }
 
 /**

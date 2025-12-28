@@ -1,33 +1,26 @@
 import type { NextRequest } from 'next/server';
-import { groq } from 'next-sanity';
 import { BASE_URL } from '@/lib/env';
 import { logger } from '@/lib/logger';
 import { fetchSanityLive } from '@/sanity/lib/live';
+import { sitemapQuery } from '@/sanity/lib/queries';
+
+interface SitemapEntry {
+  url: string;
+  lastModified?: string;
+  priority?: number;
+}
+
+interface SitemapData {
+  pages: SitemapEntry[];
+  blog: SitemapEntry[];
+}
 
 export async function GET(_req: NextRequest) {
   const baseUrl = BASE_URL;
-  let data: Record<string, any>;
+  let data: SitemapData;
   try {
-    data = await fetchSanityLive<Record<string, any>>({
-      query: groq`{
-        'pages': *[
-          _type == 'page' &&
-          !(metadata.slug.current in ['404']) &&
-          metadata.noIndex != true
-        ]|order(metadata.slug.current){
-          'url': $baseUrl + select(metadata.slug.current == 'index' => '', metadata.slug.current),
-          'lastModified': _updatedAt,
-          'priority': select(
-            metadata.slug.current == 'index' => 1,
-            0.5
-          ),
-        },
-        'blog': *[_type == 'blog.post' && metadata.noIndex != true]|order(name){
-          'url': $baseUrl + 'blog/' + metadata.slug.current,
-          'lastModified': _updatedAt,
-          'priority': 0.4
-        },
-      }`,
+    data = await fetchSanityLive<SitemapData>({
+      query: sitemapQuery('$baseUrl'),
       params: { baseUrl: `${baseUrl}/` },
       stega: false,
     });

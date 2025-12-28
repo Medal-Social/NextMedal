@@ -98,11 +98,11 @@ function FormControl({ ...props }: React.ComponentProps<'div'>) {
     return null;
   }
 
-  const child = React.Children.only(props.children) as React.ReactElement;
+  const child = React.Children.only(props.children) as React.ReactElement<Record<string, unknown>>;
 
   return React.cloneElement(
     child,
-    mergeProps(child.props as any, {
+    mergeProps(child.props, {
       'data-slot': 'form-control',
       id: formItemId,
       'aria-describedby': !error ? `${formDescriptionId}` : `${formDescriptionId} ${formMessageId}`,

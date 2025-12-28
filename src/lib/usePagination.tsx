@@ -40,7 +40,9 @@ export function usePagination<T extends unknown>({
     prev = 'Prev',
     next = 'Next',
     hidePage,
-    onClick = () => {},
+    onClick = () => {
+      // Default empty handler for pagination click events
+    },
     ...props
   }: PaginationProps) => {
     if ((atStart && atEnd) || !paginatedItems?.length) return null;

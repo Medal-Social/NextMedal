@@ -35,7 +35,10 @@ export default defineType({
       type: 'slug',
       description: 'URL path or permalink',
       options: {
-        source: (doc: any) => (doc.issue ? `issue-${doc.issue}` : doc.title || doc.metadata?.title),
+        source: (doc) => {
+          const d = doc as { issue?: string; title?: string; metadata?: { title?: string } };
+          return d.issue ? `issue-${d.issue}` : d.title || d.metadata?.title || '';
+        },
         isUnique: isUniqueAcrossLocale,
       },
       validation: (Rule) =>

@@ -4,7 +4,7 @@ import { cn, slug } from '@/lib/utils';
 import resolveSlug from '@/sanity/lib/resolveSlug';
 
 interface SharedPortableTextProps {
-  value: any;
+  value: Sanity.BlockContent | undefined | null;
   className?: string;
   components?: PortableTextComponents;
   variant?: 'default' | 'prose' | 'intro';
@@ -67,20 +67,32 @@ const introComponents: PortableTextComponents = {
   },
 };
 
-const createProseComponents = (customTypes?: any): PortableTextComponents => ({
+// Helper to extract text from Portable Text block children
+const getBlockText = (value: { children?: unknown[] }): string => {
+  if (!value.children) return '';
+  return value.children
+    .map((child) =>
+      child && typeof child === 'object' && 'text' in child ? String(child.text) : ''
+    )
+    .join('');
+};
+
+const createProseComponents = (
+  customTypes?: PortableTextComponents['types']
+): PortableTextComponents => ({
   ...defaultComponents,
   types: customTypes || {},
   block: {
-    h2: ({ children, value }: any) => {
-      const id = slug(stegaClean(value.children?.map((child: any) => child.text).join('') || ''));
+    h2: ({ children, value }) => {
+      const id = slug(stegaClean(getBlockText(value)));
       return (
         <h2 id={id} className="scroll-mt-24">
           {children}
         </h2>
       );
     },
-    h3: ({ children, value }: any) => {
-      const id = slug(stegaClean(value.children?.map((child: any) => child.text).join('') || ''));
+    h3: ({ children, value }) => {
+      const id = slug(stegaClean(getBlockText(value)));
       return (
         <h3 id={id} className="scroll-mt-24">
           {children}

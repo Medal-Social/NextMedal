@@ -7,7 +7,7 @@ import SanityCopyButton from './SanityCopyButton';
 
 interface ComponentPreviewProps {
   moduleType: string;
-  componentData?: any;
+  componentData?: Record<string, unknown>;
   children: React.ReactNode;
 }
 

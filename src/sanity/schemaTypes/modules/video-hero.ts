@@ -9,6 +9,7 @@
  */
 
 import { VscDeviceCameraVideo } from 'react-icons/vsc';
+import type { Rule } from 'sanity';
 import { defineField } from 'sanity';
 import { createUidField } from './uid-input';
 
@@ -90,7 +91,7 @@ export default defineField({
         ],
         layout: 'radio',
       },
-      validation: (Rule: any) => Rule.required(),
+      validation: (rule: Rule) => rule.required(),
     },
     {
       name: 'videoId',
@@ -100,13 +101,14 @@ export default defineField({
         'Paste the full YouTube video URL (or just the ID). The video ID will be automatically extracted.',
       fieldset: 'videoOptions',
       hidden: ({ parent }) => parent?.type !== 'youtube',
-      validation: (Rule: any) =>
-        Rule.custom((value: string, context: any) => {
-          if (context.parent?.type === 'youtube' && !value) {
+      validation: (rule: Rule) =>
+        rule.custom((value, context) => {
+          const parent = context.parent as { type?: string } | undefined;
+          if (parent?.type === 'youtube' && !value) {
             return 'YouTube URL is required';
           }
-          const videoId = getYouTubeVideoId(value);
-          if (context.parent?.type === 'youtube' && !videoId) {
+          const videoId = getYouTubeVideoId(value as string);
+          if (parent?.type === 'youtube' && !videoId) {
             return 'Invalid YouTube URL';
           }
           return true;
@@ -119,9 +121,10 @@ export default defineField({
       description: 'Upload or select a video from Mux',
       fieldset: 'videoOptions',
       hidden: ({ parent }) => parent?.type !== 'mux',
-      validation: (Rule: any) =>
-        Rule.custom((value: any, context: any) => {
-          if (context.parent?.type === 'mux' && !value) {
+      validation: (rule: Rule) =>
+        rule.custom((value, context) => {
+          const parent = context.parent as { type?: string } | undefined;
+          if (parent?.type === 'mux' && !value) {
             return 'Mux video is required for Mux videos';
           }
           return true;
@@ -135,8 +138,8 @@ export default defineField({
       options: {
         hotspot: true,
       },
-      validation: (Rule: any) =>
-        Rule.warning('A thumbnail is recommended for better user experience'),
+      validation: (rule: Rule) =>
+        rule.warning('A thumbnail is recommended for better user experience'),
     },
   ],
 });

@@ -1,3 +1,4 @@
+import { getCurrentPage } from '@/lib/getCurrentPage';
 import { getSite } from '@/sanity/lib/fetch';
 import { CommandMenu } from '@/ui/CommandMenu';
 import CTAList from '@/ui/CTAList';
@@ -6,7 +7,18 @@ import Logo from './Logo';
 import Navigation from './navigation';
 
 export default async function Header() {
-  const { title, logo, ctas, headerMenu, brandPage, enableSearch } = await getSite();
+  const [site, page] = await Promise.all([getSite(), getCurrentPage()]);
+  const { title, logo, ctas, headerMenu, brandPage, enableSearch } = site;
+
+  // Transform page data for language switcher
+  const serverPage = page
+    ? {
+        _type: page._type,
+        slug: page.metadata?.slug?.current,
+        language: page.language,
+        translations: page.translations,
+      }
+    : undefined;
 
   const logoNode = <Logo title={title} logo={logo} brandPage={brandPage} />;
 
@@ -18,6 +30,7 @@ export default async function Header() {
       ctas={ctas ?? []}
       menu={{ items: headerMenu?.items }}
       enableSearch={enableSearch}
+      serverPage={serverPage}
     >
       <div className="flex items-center">{logoNode}</div>
 

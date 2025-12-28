@@ -23,6 +23,21 @@ export const IMAGE_QUERY = groq`
 	}
 `;
 
+// Optimized reference projections for blog listings
+export const AUTHOR_PREVIEW_QUERY = groq`{
+	_id,
+	_type,
+	name,
+	"slug": { "current": metadata.slug.current },
+	image { asset->{ url, metadata { dimensions } } }
+}`;
+
+export const CATEGORY_PREVIEW_QUERY = groq`{
+	_id,
+	title,
+	"slug": { "current": slug.current }
+}`;
+
 export const PT_BLOCK_QUERY = groq`
 	...,
 	markDefs[]{
@@ -70,11 +85,13 @@ const BASE_MODULES_QUERY = groq`
 			}
 		} 
 	},
-	_type == 'team' => { 
+	_type == 'team' => {
 		...,
+		intro[]{ ${PT_BLOCK_QUERY} },
 		people[]->{
 			...,
-			image { ${IMAGE_QUERY} }
+			image { ${IMAGE_QUERY} },
+			bio[]{ ${PT_BLOCK_QUERY} }
 		},
 	},
 	_type == 'pricing-list' => {
@@ -99,12 +116,15 @@ const BASE_MODULES_QUERY = groq`
 	},
 	_type == 'features' => {
 		...,
+		intro[]{ ${PT_BLOCK_QUERY} },
 		items[]{
-			...
+			...,
+			content[]{ ${PT_BLOCK_QUERY} }
 		}
 	},
 	_type == 'contact' => {
 		...,
+		intro[]{ ${PT_BLOCK_QUERY} },
 		form->{
 			...,
 			redirect { ${LINK_QUERY} }
@@ -120,6 +140,7 @@ const BASE_MODULES_QUERY = groq`
 	},
 	_type == 'lead-magnet' => {
 		...,
+		content[]{ ${PT_BLOCK_QUERY} },
 		form->{
 			...,
 			redirect { ${LINK_QUERY} }
@@ -132,6 +153,7 @@ const BASE_MODULES_QUERY = groq`
 	},
 	_type == 'hero' => {
 		...,
+		content[]{ ${PT_BLOCK_QUERY} },
 		image {
 			image {
 				${IMAGE_QUERY}
@@ -201,5 +223,138 @@ export const PAGE_QUERY = groq`
 			'ogimage': image.asset->url + '?w=1200',
 		},
 		${TRANSLATIONS_QUERY}
+	}
+`;
+
+// Blog categories that have at least one post
+export const BLOG_CATEGORIES_WITH_POSTS_QUERY = groq`
+	*[
+		_type == 'blog.category' &&
+		count(*[_type == 'blog.post' && references(^._id)]) > 0
+	]|order(title)
+`;
+
+// All blog post slugs for static generation
+export const BLOG_POST_SLUGS_QUERY = groq`
+	*[_type == 'blog.post' && defined(metadata.slug.current)].metadata.slug.current
+`;
+
+// All logos with image variants
+export const LOGOS_QUERY = groq`
+	*[_type == 'logo']|order(title){
+		...,
+		image {
+			default { ${IMAGE_QUERY} },
+			light { ${IMAGE_QUERY} },
+			dark { ${IMAGE_QUERY} }
+		}
+	}
+`;
+
+// Site banners from site document
+export const SITE_BANNERS_QUERY = groq`
+	*[_type == 'site'][0].banners[]->{
+		...,
+		cta{ ${LINK_QUERY} },
+	}
+`;
+
+// 404 page with modules (locale-aware)
+export const PAGE_404_QUERY = groq`
+	*[_type == 'page' && metadata.slug.current == '404' && language == $locale][0]{
+		...,
+		modules[]{ ${MODULES_QUERY} }
+	}
+`;
+
+// Current page for translation switching
+export const CURRENT_PAGE_QUERY = groq`
+	*[
+		(_type == 'page' || _type == 'blog.post') &&
+		metadata.slug.current == $slug &&
+		language == $locale
+	][0]{
+		_type,
+		_id,
+		language,
+		metadata {
+			slug
+		},
+		${TRANSLATIONS_QUERY}
+	}
+`;
+
+// Search index query for posts, pages, and authors
+export const SEARCH_INDEX_QUERY = groq`{
+	"posts": *[_type == "blog.post" && defined(metadata.slug.current) && metadata.noIndex != true] {
+		_id,
+		_type,
+		"title": metadata.title,
+		"slug": metadata.slug.current,
+		"description": metadata.description
+	},
+	"pages": *[_type == "page" && defined(metadata.slug.current) && metadata.slug.current != "index" && metadata.noIndex != true] {
+		_id,
+		_type,
+		"title": metadata.title,
+		"slug": metadata.slug.current
+	},
+	"authors": *[_type == "person"] {
+		_id,
+		_type,
+		"title": name,
+		"slug": null
+	}
+}`;
+
+// Sitemap query for pages and blog posts
+export function sitemapQuery(baseUrlParam: string) {
+  return groq`{
+		'pages': *[
+			_type == 'page' &&
+			!(metadata.slug.current in ['404']) &&
+			metadata.noIndex != true
+		]|order(metadata.slug.current){
+			'url': ${baseUrlParam} + select(metadata.slug.current == 'index' => '', metadata.slug.current),
+			'lastModified': _updatedAt,
+			'priority': select(
+				metadata.slug.current == 'index' => 1,
+				0.5
+			),
+		},
+		'blog': *[_type == 'blog.post' && metadata.noIndex != true]|order(name){
+			'url': ${baseUrlParam} + 'blog/' + metadata.slug.current,
+			'lastModified': _updatedAt,
+			'priority': 0.4
+		},
+	}`;
+}
+
+// Site settings query
+export const SITE_QUERY = groq`
+	*[_type == 'site' && _id == 'site'][0]{
+		...,
+		logo->{
+			_id,
+			title,
+			image {
+				default { ${IMAGE_QUERY} },
+				dark { ${IMAGE_QUERY} }
+			}
+		},
+		ctas[]{ ${CTA_QUERY} },
+		headerMenu->{ ${NAVIGATION_QUERY} },
+		enableSearch,
+		footerMenu->{ ${NAVIGATION_QUERY} },
+		footerLinks[]{ ${LINK_QUERY} },
+		systemStatus,
+		socialLinks,
+		cookieConsent {
+			enabled,
+			content,
+			privacyPolicy->{ "slug": metadata.slug.current }
+		},
+		'ogimage': ogimage.asset->url,
+		'brandPage': *[_type == "page" && metadata.slug.current == "brand"][0]._id
 	}
 `;

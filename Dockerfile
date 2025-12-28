@@ -73,6 +73,9 @@ WORKDIR /app
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1
 
+# Install curl for health checks
+RUN apk add --no-cache curl
+
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
@@ -89,6 +92,10 @@ USER nextjs
 
 # Expose port
 EXPOSE 3000
+
+# Health check for container orchestration
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD curl --fail --silent --head http://localhost:3000/api/health || exit 1
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"

@@ -11,12 +11,16 @@ import moduleProps from '@/lib/moduleProps';
 import CTAList from '@/ui/CTAList';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
 
+interface BlockChildrenProps {
+  children?: React.ReactNode;
+}
+
 const components = {
   list: {
-    bullet: ({ children }: any) => <ul className="space-y-2 my-4">{children}</ul>,
+    bullet: ({ children }: BlockChildrenProps) => <ul className="space-y-2 my-4">{children}</ul>,
   },
   listItem: {
-    bullet: ({ children }: any) => (
+    bullet: ({ children }: BlockChildrenProps) => (
       <li className="flex items-start gap-2">
         <div className="h-5 w-5 mr-4 mt-1.5">
           <CircleCheckBig className="h-5 w-5 text-primary " />

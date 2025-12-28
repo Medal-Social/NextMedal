@@ -26,6 +26,41 @@ export function resolveAnyUrl(url: string, base = false): string {
   return cleanUrl;
 }
 
+// Build query string from params object
+function buildQueryString(
+  params: Record<string, string | string[] | undefined>,
+  allowList?: string[]
+): string | undefined {
+  const usp = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(params)) {
+    if (allowList && !allowList.includes(key)) continue;
+    if (value === undefined || value === null) continue;
+
+    if (Array.isArray(value)) {
+      for (const v of value) {
+        usp.append(key, v);
+      }
+    } else {
+      usp.append(key, value);
+    }
+  }
+
+  const queryString = usp.toString();
+  return queryString ? `?${queryString}` : undefined;
+}
+
+// Get language prefix for URL
+function getLanguagePrefix(language?: string): string {
+  if (!language || language === 'en') return '';
+  return `/${language}`;
+}
+
+// Get path segment based on document type
+function getPathSegment(type: string): string {
+  return type === 'blog.post' ? '/blog' : '';
+}
+
 export default function resolveUrl(
   page?: Sanity.PageBase,
   {
@@ -41,34 +76,13 @@ export default function resolveUrl(
   if (!page) return '/';
 
   const slug = page.metadata?.slug?.current;
-  const path = slug === 'index' ? null : `/${slug}`;
+  const segment = getPathSegment(page._type);
+  const path = slug === 'index' ? null : `${segment}/${slug}`;
 
-  // Convert params to string if it's a record
-  let paramsStr: string | undefined;
-  if (typeof params === 'object' && params !== null) {
-    const usp = new URLSearchParams();
-    for (const [key, value] of Object.entries(params)) {
-      if (allowList && !allowList.includes(key)) continue;
-      if (value === undefined || value === null) continue;
-      if (Array.isArray(value)) {
-        for (const v of value) {
-          usp.append(key, v);
-        }
-      } else {
-        usp.append(key, value);
-      }
-    }
-    paramsStr = usp.toString() ? `?${usp.toString()}` : undefined;
-  } else {
-    paramsStr = params;
-  }
+  const paramsStr =
+    typeof params === 'object' && params !== null ? buildQueryString(params, allowList) : params;
 
-  const result = [
-    base && BASE_URL,
-    !page.language ? '' : page.language === 'en' ? '' : `/${page.language}`,
-    path,
-    stegaClean(paramsStr),
-  ]
+  const result = [base && BASE_URL, getLanguagePrefix(page.language), path, stegaClean(paramsStr)]
     .filter(Boolean)
     .join('');
 

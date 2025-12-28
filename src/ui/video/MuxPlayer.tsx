@@ -17,7 +17,7 @@ const MuxPlayerReact = dynamic(() => import('@mux/mux-player-react'), {
 interface MuxPlayerProps {
   playbackId: string;
   title?: string;
-  onError: (err: any) => void;
+  onError: (err: unknown) => void;
 }
 
 export const MuxVideoPlayer = ({ playbackId, title, onError }: MuxPlayerProps) => {
