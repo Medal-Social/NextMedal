@@ -83,6 +83,11 @@ export default defineType({
       of: [
         defineArrayMember({
           type: 'block',
+          styles: [
+            { title: 'Normal', value: 'normal' },
+            { title: 'Heading 1', value: 'h1' },
+          ],
+          lists: [],
           marks: {
             decorators: [
               { title: 'Strong', value: 'strong' },
@@ -108,7 +113,7 @@ export default defineType({
             const styles = ctas.map((cta) => (cta as { style?: string })?.style || 'primary');
 
             // Check for duplicates
-            const primaryCount = styles.filter((s) => s === 'primary').length;
+            const primaryCount = styles.filter((style) => style === 'primary').length;
 
             if (primaryCount > 1) {
               return 'Only one Primary button is allowed';
