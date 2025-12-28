@@ -8,28 +8,72 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { NextIntlClientProvider } from 'next-intl';
+import { describe, expect, it, vi } from 'vitest';
 import { routing } from '@/i18n/routing';
 import SkipToContent from '@/ui/SkipToContent';
+
+// Mock framer-motion to avoid animation-related issues in tests
+vi.mock('framer-motion', () => ({
+  motion: {
+    a: ({
+      children,
+      className,
+      href,
+      onClick,
+      onFocus,
+      onBlur,
+      ...props
+    }: React.ComponentProps<'a'>) => (
+      <a
+        className={className}
+        href={href}
+        onClick={onClick}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        {...props}
+      >
+        {children}
+      </a>
+    ),
+  },
+  useReducedMotion: () => false,
+}));
+
+// Test messages for next-intl
+const messages = {
+  Accessibility: {
+    skipToContent: 'Skip to content',
+  },
+};
+
+// Helper to render with NextIntlClientProvider
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={messages}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
 
 describe('Layout Components', () => {
   describe('SkipToContent', () => {
     it('renders as a link targeting main-content', () => {
-      render(<SkipToContent />);
+      renderWithIntl(<SkipToContent />);
       const skipLink = screen.getByRole('link', { name: /skip to content/i });
       expect(skipLink).toBeInTheDocument();
       expect(skipLink).toHaveAttribute('href', '#main-content');
     });
 
     it('is keyboard focusable (anchor elements are focusable by default)', () => {
-      render(<SkipToContent />);
+      renderWithIntl(<SkipToContent />);
       const skipLink = screen.getByRole('link', { name: /skip to content/i });
       // Anchor elements with href are focusable by default, no explicit tabIndex needed
       expect(skipLink).toHaveAttribute('href', '#main-content');
     });
 
     it('uses fixed positioning for modern slide-down animation', () => {
-      render(<SkipToContent />);
+      renderWithIntl(<SkipToContent />);
       const skipLink = screen.getByRole('link', { name: /skip to content/i });
       // Modern implementation uses fixed positioning with Framer Motion animation
       expect(skipLink).toHaveClass('fixed');
@@ -42,7 +86,7 @@ describe('Layout Components', () => {
      * WHEN the root layout renders THEN the layout SHALL include a SkipToContent link as the first focusable element
      */
     it('SkipToContent should be designed to be first focusable element', () => {
-      render(<SkipToContent />);
+      renderWithIntl(<SkipToContent />);
       const skipLink = screen.getByRole('link', { name: /skip to content/i });
       // SkipToContent is an anchor with href (inherently focusable) and positioned fixed at top-center
       expect(skipLink).toHaveAttribute('href', '#main-content');
@@ -54,7 +98,7 @@ describe('Layout Components', () => {
      * WHEN the main content area renders THEN the area SHALL have id="main-content" for skip link targeting
      */
     it('SkipToContent links to #main-content', () => {
-      render(<SkipToContent />);
+      renderWithIntl(<SkipToContent />);
       const skipLink = screen.getByRole('link', { name: /skip to content/i });
       expect(skipLink.getAttribute('href')).toBe('#main-content');
     });
