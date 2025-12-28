@@ -64,60 +64,78 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy to Azure Container Apps
+        env:
+          CONTAINER_APP_NAME: ${{ secrets.CONTAINER_APP_NAME }}
+          REGISTRY_URL: ${{ secrets.REGISTRY_URL }}
+          RUN_NUMBER: ${{ github.run_number }}
+          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
+          NEXT_PUBLIC_UMAMI_SCRIPT_URL: ${{ secrets.NEXT_PUBLIC_UMAMI_SCRIPT_URL }}
+          NEXT_PUBLIC_UMAMI_WEBSITE_ID: ${{ secrets.NEXT_PUBLIC_UMAMI_WEBSITE_ID }}
+          NEXT_PUBLIC_APP_ENV: ${{ secrets.NEXT_PUBLIC_APP_ENV }}
+          NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+          RESOURCE_GROUP: ${{ secrets.RESOURCE_GROUP }}
         run: |
+          YAML_FILE=$(mktemp --suffix=.yaml)
+          trap 'rm -f "$YAML_FILE"' EXIT
+
+          cat > "$YAML_FILE" <<EOF
+properties:
+  configuration:
+    ingress:
+      external: true
+      targetPort: 3000
+      transport: auto
+      allowInsecure: false
+  template:
+    scale:
+      minReplicas: 1
+      maxReplicas: 1
+    containers:
+      - name: ${CONTAINER_APP_NAME}
+        image: ${REGISTRY_URL}/${CONTAINER_APP_NAME}:${RUN_NUMBER}
+        resources:
+          cpu: 0.25
+          memory: 0.5Gi
+        env:
+          - name: NEXT_PUBLIC_BASE_URL
+            value: "${NEXT_PUBLIC_BASE_URL}"
+          - name: NEXT_PUBLIC_SANITY_PROJECT_ID
+            value: "${NEXT_PUBLIC_SANITY_PROJECT_ID}"
+          - name: NEXT_PUBLIC_SANITY_DATASET
+            value: "${NEXT_PUBLIC_SANITY_DATASET}"
+          - name: SANITY_API_READ_TOKEN
+            value: "${SANITY_API_READ_TOKEN}"
+          - name: NEXT_PUBLIC_UMAMI_SCRIPT_URL
+            value: "${NEXT_PUBLIC_UMAMI_SCRIPT_URL}"
+          - name: NEXT_PUBLIC_UMAMI_WEBSITE_ID
+            value: "${NEXT_PUBLIC_UMAMI_WEBSITE_ID}"
+          - name: NEXT_PUBLIC_APP_ENV
+            value: "${NEXT_PUBLIC_APP_ENV}"
+          - name: NEXT_PUBLIC_SENTRY_DSN
+            value: "${NEXT_PUBLIC_SENTRY_DSN}"
+        probes:
+          - type: liveness
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          - type: readiness
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+EOF
+
           az containerapp update \
-            --name ${{ secrets.CONTAINER_APP_NAME }} \
-            --resource-group ${{ secrets.RESOURCE_GROUP }} \
-            --yaml - <<EOF
-          properties:
-            configuration:
-              ingress:
-                external: true
-                targetPort: 3000
-                transport: auto
-                allowInsecure: false
-            template:
-              scale:
-                minReplicas: 1
-                maxReplicas: 1
-              containers:
-                - name: ${{ secrets.CONTAINER_APP_NAME }}
-                  image: ${{ secrets.REGISTRY_URL }}/${{ secrets.CONTAINER_APP_NAME }}:${{ github.run_number }}
-                  resources:
-                    cpu: 0.25
-                    memory: 0.5Gi
-                  env:
-                    - name: NEXT_PUBLIC_BASE_URL
-                      value: "${{ secrets.NEXT_PUBLIC_BASE_URL }}"
-                    - name: NEXT_PUBLIC_SANITY_PROJECT_ID
-                      value: "${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}"
-                    - name: NEXT_PUBLIC_SANITY_DATASET
-                      value: "${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}"
-                    - name: SANITY_API_READ_TOKEN
-                      value: "${{ secrets.SANITY_API_READ_TOKEN }}"
-                    - name: NEXT_PUBLIC_UMAMI_SCRIPT_URL
-                      value: "${{ secrets.NEXT_PUBLIC_UMAMI_SCRIPT_URL }}"
-                    - name: NEXT_PUBLIC_UMAMI_WEBSITE_ID
-                      value: "${{ secrets.NEXT_PUBLIC_UMAMI_WEBSITE_ID }}"
-                    - name: NEXT_PUBLIC_APP_ENV
-                      value: "${{ secrets.NEXT_PUBLIC_APP_ENV }}"
-                    - name: NEXT_PUBLIC_SENTRY_DSN
-                      value: "${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}"
-                  probes:
-                    - type: liveness
-                      httpGet:
-                        path: /api/health
-                        port: 3000
-                      initialDelaySeconds: 60
-                      periodSeconds: 30
-                      timeoutSeconds: 10
-                      failureThreshold: 3
-                    - type: readiness
-                      httpGet:
-                        path: /api/health
-                        port: 3000
-                      initialDelaySeconds: 10
-                      periodSeconds: 10
-                      timeoutSeconds: 5
-                      failureThreshold: 3
-          EOF
+            --name "${CONTAINER_APP_NAME}" \
+            --resource-group "${RESOURCE_GROUP}" \
+            --yaml "$YAML_FILE"
