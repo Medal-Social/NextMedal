@@ -30,7 +30,7 @@ export default function ComponentGalleryClient({
 
   if (!components?.length) return null;
 
-  const categories = Array.from(new Set(components.map((c) => c.category)));
+  const categories = Array.from(new Set(components.map((comp) => comp.category)));
 
   const filteredComponents = components.filter((component) => {
     const matchesSearch = component.name.toLowerCase().includes(searchQuery.toLowerCase());
