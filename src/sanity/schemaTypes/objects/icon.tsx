@@ -11,7 +11,7 @@
 import * as Lucide from 'lucide-react';
 import { VscSymbolMisc } from 'react-icons/vsc';
 import { defineField, defineType } from 'sanity';
-import Icon from '@/ui/Icon';
+import { Icon } from '@/ui/base';
 
 export default defineType({
   name: 'icon',

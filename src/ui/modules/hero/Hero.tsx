@@ -6,8 +6,8 @@ import type { ReactNode } from 'react';
 import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
-import CTAList from '@/ui/CTAList';
-import { Img } from '@/ui/Img';
+import { Img } from '@/ui/base';
+import { CTAList } from '@/ui/cta';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
 
 const components = {

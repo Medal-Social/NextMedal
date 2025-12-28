@@ -1,6 +1,6 @@
 import { fetchSanityLive } from '@/sanity/lib/live';
 import { SITE_BANNERS_QUERY } from '@/sanity/lib/queries';
-import BannerClient from './Banner-client';
+import BannerClient from './Banner.client';
 
 export default async function Banner() {
   const banners = await fetchSanityLive<(Sanity.Banner & Sanity.Module)[]>({

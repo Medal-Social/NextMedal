@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { Img, Source } from '@/ui/Img';
+import { Img, Source } from '@/ui/base';
 import BrandMenu from './BrandMenu';
 import type { LogoProps } from './types';
 

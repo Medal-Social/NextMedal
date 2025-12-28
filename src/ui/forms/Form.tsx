@@ -6,11 +6,11 @@ import type React from 'react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { submitForm } from '@/lib/actions/submitForm';
 import { cn } from '@/lib/utils';
 import { validateExternalUrl } from '@/lib/validateExternalUrl';
 import resolveSlug from '@/sanity/lib/resolveSlug';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
-import { submitForm } from './actions/submitForm';
 
 interface FormField {
   _key: string;

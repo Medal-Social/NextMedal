@@ -1,6 +1,6 @@
 import { BASE_URL } from '@/lib/env';
 import { getSite } from '@/sanity/lib/fetch';
-import JsonLd from '@/ui/JsonLd';
+import { JsonLd } from '@/ui/seo';
 
 export default async function SiteJsonLd() {
   const site = await getSite();

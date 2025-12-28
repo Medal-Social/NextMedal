@@ -3,7 +3,7 @@ import { createDataAttribute } from 'next-sanity';
 import { FaFacebook, FaInstagram, FaLinkedin, FaXTwitter, FaYoutube } from 'react-icons/fa6';
 import { GoPerson } from 'react-icons/go';
 import { cn } from '@/lib/utils';
-import { Img } from '@/ui/Img';
+import { Img } from '@/ui/base';
 
 export default function Authors({
   authors,

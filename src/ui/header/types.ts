@@ -4,7 +4,7 @@
  */
 
 import type { ReactNode } from 'react';
-import type { ServerPageData } from '@/ui/language-switcher/LocaleSwitcherClient';
+import type { ServerPageData } from '@/ui/language-switcher/LocaleSwitcher.client';
 
 /**
  * Menu item for navigation - uses Sanity.MenuItem from global types
