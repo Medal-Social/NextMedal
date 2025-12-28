@@ -1,7 +1,7 @@
 import type { NextRequest } from 'next/server';
+import { routing } from '@/i18n/routing';
 import { BASE_URL } from '@/lib/env';
 import { logger } from '@/lib/logger';
-import { routing } from '@/i18n/routing';
 import { fetchSanityLive } from '@/sanity/lib/live';
 import { SITEMAP_WITH_TRANSLATIONS_QUERY } from '@/sanity/lib/queries';
 
@@ -43,7 +43,10 @@ function buildHreflangLinks(
   links.push({ lang: entry.language, url: buildUrl(entry.slug, entry.language, prefix) });
   for (const translation of entry.translations) {
     if (translation?.language && translation?.slug && translation.language !== entry.language) {
-      links.push({ lang: translation.language, url: buildUrl(translation.slug, translation.language, prefix) });
+      links.push({
+        lang: translation.language,
+        url: buildUrl(translation.slug, translation.language, prefix),
+      });
     }
   }
   return links;
@@ -107,7 +110,8 @@ export async function GET(_req: NextRequest) {
 
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
   xml += '<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>\n';
-  xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n';
+  xml +=
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n';
 
   for (const entry of pages) xml += generateUrlEntry(entry, '');
   for (const entry of blog) xml += generateUrlEntry(entry, 'blog');

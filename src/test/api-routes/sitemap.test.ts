@@ -162,8 +162,12 @@ describe('sitemap.xml route', () => {
       const xml = await response.text();
 
       expect(xml).toContain('xmlns:xhtml="http://www.w3.org/1999/xhtml"');
-      expect(xml).toContain('<xhtml:link rel="alternate" hreflang="en" href="https://example.com/about"/>');
-      expect(xml).toContain('<xhtml:link rel="alternate" hreflang="nb" href="https://example.com/nb/om-oss"/>');
+      expect(xml).toContain(
+        '<xhtml:link rel="alternate" hreflang="en" href="https://example.com/about"/>'
+      );
+      expect(xml).toContain(
+        '<xhtml:link rel="alternate" hreflang="nb" href="https://example.com/nb/om-oss"/>'
+      );
     });
 
     it('handles Norwegian locale pages correctly', async () => {
@@ -184,8 +188,12 @@ describe('sitemap.xml route', () => {
       const xml = await response.text();
 
       expect(xml).toContain('<loc>https://example.com/nb/om-oss</loc>');
-      expect(xml).toContain('<xhtml:link rel="alternate" hreflang="nb" href="https://example.com/nb/om-oss"/>');
-      expect(xml).toContain('<xhtml:link rel="alternate" hreflang="en" href="https://example.com/about"/>');
+      expect(xml).toContain(
+        '<xhtml:link rel="alternate" hreflang="nb" href="https://example.com/nb/om-oss"/>'
+      );
+      expect(xml).toContain(
+        '<xhtml:link rel="alternate" hreflang="en" href="https://example.com/about"/>'
+      );
     });
 
     it('does not include alternates for pages without translations', async () => {
@@ -226,8 +234,12 @@ describe('sitemap.xml route', () => {
       const xml = await response.text();
 
       expect(xml).toContain('<loc>https://example.com</loc>');
-      expect(xml).toContain('<xhtml:link rel="alternate" hreflang="en" href="https://example.com"/>');
-      expect(xml).toContain('<xhtml:link rel="alternate" hreflang="nb" href="https://example.com/nb"/>');
+      expect(xml).toContain(
+        '<xhtml:link rel="alternate" hreflang="en" href="https://example.com"/>'
+      );
+      expect(xml).toContain(
+        '<xhtml:link rel="alternate" hreflang="nb" href="https://example.com/nb"/>'
+      );
     });
   });
 

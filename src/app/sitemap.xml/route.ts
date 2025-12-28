@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server';
-import { BASE_URL } from '@/lib/env';
 import { routing } from '@/i18n/routing';
+import { BASE_URL } from '@/lib/env';
 
 /**
  * Escape XML special characters
