@@ -50,8 +50,8 @@ const VISUAL_EDITOR_CARD: NavigationCard = {
 };
 
 const STRUCTURE_CARD: NavigationCard = {
-  title: 'Content Desk',
-  description: 'Manage your content',
+  title: 'Content Library',
+  description: 'Browse and organize all your documents',
   path: '/studio/structure',
   icon: <DatabaseIcon />,
   tone: 'default',
@@ -82,19 +82,19 @@ const LEARNING_RESOURCES: ResourceLink[] = [
   {
     title: 'Docs',
     description: 'Guides & Refs',
-    href: 'https://docs.medalsocial.com/nextmedal',
+    href: 'https://www.nextmedal.com',
     icon: <BookIcon />,
   },
   {
     title: 'Videos',
     description: 'Tutorials',
-    href: 'https://docs.medalsocial.com/nextmedal/videos',
+    href: 'https://youtube.com/@medalsocial',
     icon: <PlayIcon />,
   },
   {
     title: 'Updates',
     description: 'Changelog',
-    href: 'https://github.com/medalsocial/nextmedal/releases',
+    href: 'https://github.com/Medal-Social/NextMedal/releases',
     icon: <ClockIcon />,
   },
 ];
@@ -199,7 +199,7 @@ function PrimaryActions() {
             </Text>
           </Box>
 
-          <Button text="Open Content Desk" mode="bleed" />
+          <Button text="Open Library" mode="bleed" />
         </Flex>
       </Card>
     </Grid>
@@ -340,7 +340,7 @@ function FooterSection() {
               <Text size={1} muted>
                 by{' '}
                 <a
-                  href="https://medalsocial.com"
+                  href="https://www.medalsocial.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ color: 'inherit', textDecoration: 'none' }}
