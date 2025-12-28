@@ -8,7 +8,7 @@
   <xsl:template match="/">
     <html lang="en">
       <head>
-        <title>Sitemap - NextMedal</title>
+        <title>Sitemap Index - NextMedal</title>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <style type="text/css">
           :root {
@@ -24,9 +24,6 @@
             --header-fg: #fff;
             --footer-bg: #F5F3F7;
             --footer-fg: #5B2D8C;
-            --priority-high: #D97706;
-            --priority-medium: #7E3FAC;
-            --priority-low: #64748b;
             --card-shadow: 0 4px 6px -1px rgba(30, 16, 53, 0.1), 0 2px 4px -2px rgba(30, 16, 53, 0.1);
             --card-shadow-hover: 0 10px 15px -3px rgba(30, 16, 53, 0.1), 0 4px 6px -4px rgba(30, 16, 53, 0.1);
           }
@@ -44,9 +41,6 @@
               --header-fg: #f4f4f5;
               --footer-bg: #2D1650;
               --footer-fg: #D4CCE0;
-              --priority-high: #F59E0B;
-              --priority-medium: #B9A8CC;
-              --priority-low: #94a3b8;
               --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
               --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
             }
@@ -133,93 +127,68 @@
             font-weight: 500;
           }
           .container {
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 2rem;
           }
-          .table-wrapper {
+          .cards-wrapper {
+            margin-top: -2rem;
+            position: relative;
+            z-index: 10;
+            display: grid;
+            gap: 1.5rem;
+          }
+          .sitemap-card {
             background: var(--table-bg);
             border-radius: 16px;
             box-shadow: var(--card-shadow);
             overflow: hidden;
-            margin-top: -2rem;
-            position: relative;
-            z-index: 10;
-          }
-          table {
-            width: 100%;
-            border-collapse: collapse;
-          }
-          th {
-            background: var(--accent-light);
-            color: var(--accent);
-            font-weight: 600;
-            font-size: 0.8rem;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            padding: 1rem 1.25rem;
-            text-align: left;
-            border-bottom: 2px solid var(--table-border);
-          }
-          td {
-            padding: 1rem 1.25rem;
-            border-bottom: 1px solid var(--table-border);
-            vertical-align: middle;
-          }
-          tbody tr {
-            transition: all 0.15s ease;
-          }
-          tbody tr:hover {
-            background: var(--row-hover);
-          }
-          tbody tr:last-child td {
-            border-bottom: none;
-          }
-          .url-cell {
-            max-width: 500px;
-          }
-          a {
-            color: var(--accent);
+            transition: all 0.2s ease;
             text-decoration: none;
-            font-weight: 500;
-            word-break: break-word;
-            transition: color 0.15s ease;
+            display: block;
           }
-          a:hover {
-            color: var(--accent-hover);
-            text-decoration: underline;
+          .sitemap-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--card-shadow-hover);
           }
-          .date {
-            color: var(--footer-fg);
-            font-size: 0.9rem;
-            white-space: nowrap;
-          }
-          .priority {
-            display: inline-flex;
+          .card-content {
+            padding: 2rem;
+            display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-weight: 600;
-            font-size: 0.85rem;
-            padding: 0.35rem 0.75rem;
-            border-radius: 50px;
+            gap: 1.5rem;
           }
-          .priority-high {
-            background: rgba(217, 119, 6, 0.15);
-            color: var(--priority-high);
+          .flag-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            background: var(--accent-light);
+            flex-shrink: 0;
           }
-          .priority-medium {
-            background: rgba(126, 63, 172, 0.15);
-            color: var(--priority-medium);
+          .card-info {
+            flex: 1;
           }
-          .priority-low {
-            background: rgba(100, 116, 139, 0.1);
-            color: var(--priority-low);
+          .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--fg);
+            margin: 0 0 0.25rem 0;
           }
-          .priority-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: currentColor;
+          .card-subtitle {
+            color: var(--footer-fg);
+            font-size: 0.95rem;
+            margin: 0;
+          }
+          .card-arrow {
+            color: var(--accent);
+            flex-shrink: 0;
+          }
+          .card-arrow svg {
+            width: 24px;
+            height: 24px;
           }
           .footer {
             text-align: center;
@@ -283,23 +252,19 @@
             .container {
               padding: 1rem;
             }
-            .table-wrapper {
-              border-radius: 12px;
+            .cards-wrapper {
               margin-top: -1rem;
             }
-            th, td {
-              padding: 0.75rem 1rem;
-              font-size: 0.9rem;
+            .card-content {
+              padding: 1.5rem;
             }
-            th {
-              font-size: 0.7rem;
+            .flag-icon {
+              width: 48px;
+              height: 48px;
+              font-size: 1.75rem;
             }
-            .url-cell {
-              max-width: 200px;
-            }
-            .priority {
-              padding: 0.25rem 0.5rem;
-              font-size: 0.75rem;
+            .card-title {
+              font-size: 1.25rem;
             }
           }
         </style>
@@ -321,66 +286,54 @@
                 </svg>
               </div>
             </div>
-            <h1>Sitemap</h1>
-            <p class="subtitle">All pages indexed on this website</p>
+            <h1>Sitemap Index</h1>
+            <p class="subtitle">Browse sitemaps by language</p>
             <div class="stats">
               <span class="stat">
-                <xsl:value-of select="count(//s:url)"/> Pages
+                <xsl:value-of select="count(//s:sitemap)"/> Languages
               </span>
               <span class="stat">
-                XML Sitemap
+                Sitemap Index
               </span>
             </div>
           </div>
         </header>
         <main class="container">
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Page URL</th>
-                  <th>Last Updated</th>
-                  <th>Priority</th>
-                </tr>
-              </thead>
-              <tbody>
-                <xsl:for-each select="//s:url">
-                  <xsl:sort select="s:priority" data-type="number" order="descending"/>
-                  <tr>
-                    <td class="url-cell">
-                      <a href="{s:loc}"><xsl:value-of select="s:loc"/></a>
-                    </td>
-                    <td class="date">
-                      <xsl:call-template name="humanDate">
-                        <xsl:with-param name="date" select="s:lastmod"/>
-                      </xsl:call-template>
-                    </td>
-                    <td>
+          <div class="cards-wrapper">
+            <xsl:for-each select="//s:sitemap">
+              <a class="sitemap-card" href="{s:loc}">
+                <div class="card-content">
+                  <div class="flag-icon">
+                    <xsl:choose>
+                      <xsl:when test="contains(s:loc, '-en')">🇬🇧</xsl:when>
+                      <xsl:when test="contains(s:loc, '-nb')">🇳🇴</xsl:when>
+                      <xsl:otherwise>🌐</xsl:otherwise>
+                    </xsl:choose>
+                  </div>
+                  <div class="card-info">
+                    <h2 class="card-title">
                       <xsl:choose>
-                        <xsl:when test="number(s:priority) &gt;= 0.8">
-                          <span class="priority priority-high">
-                            <span class="priority-dot"></span>
-                            <xsl:value-of select="s:priority"/>
-                          </span>
-                        </xsl:when>
-                        <xsl:when test="number(s:priority) &gt;= 0.5">
-                          <span class="priority priority-medium">
-                            <span class="priority-dot"></span>
-                            <xsl:value-of select="s:priority"/>
-                          </span>
-                        </xsl:when>
-                        <xsl:otherwise>
-                          <span class="priority priority-low">
-                            <span class="priority-dot"></span>
-                            <xsl:value-of select="s:priority"/>
-                          </span>
-                        </xsl:otherwise>
+                        <xsl:when test="contains(s:loc, '-en')">English Sitemap</xsl:when>
+                        <xsl:when test="contains(s:loc, '-nb')">Norsk Sitemap</xsl:when>
+                        <xsl:otherwise>Sitemap</xsl:otherwise>
                       </xsl:choose>
-                    </td>
-                  </tr>
-                </xsl:for-each>
-              </tbody>
-            </table>
+                    </h2>
+                    <p class="card-subtitle">
+                      <xsl:choose>
+                        <xsl:when test="contains(s:loc, '-en')">View all English pages</xsl:when>
+                        <xsl:when test="contains(s:loc, '-nb')">Se alle norske sider</xsl:when>
+                        <xsl:otherwise>View all pages</xsl:otherwise>
+                      </xsl:choose>
+                    </p>
+                  </div>
+                  <div class="card-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                  </div>
+                </div>
+              </a>
+            </xsl:for-each>
           </div>
         </main>
         <footer class="footer">
@@ -396,23 +349,5 @@
         </footer>
       </body>
     </html>
-  </xsl:template>
-
-  <!-- Human-readable date formatting (YYYY-MM-DD or ISO8601 to e.g. 12 May 2025) -->
-  <xsl:template name="humanDate">
-    <xsl:param name="date"/>
-    <xsl:choose>
-      <xsl:when test="string-length($date) &gt;= 10">
-        <xsl:variable name="year" select="substring($date,1,4)"/>
-        <xsl:variable name="month" select="substring($date,6,2)"/>
-        <xsl:variable name="day" select="substring($date,9,2)"/>
-        <xsl:variable name="months" select="'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'"/>
-        <xsl:variable name="monthName" select="substring($months, (number($month)-1)*4+1, 3)"/>
-        <xsl:value-of select="concat($day, ' ', $monthName, ' ', $year)"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="$date"/>
-      </xsl:otherwise>
-    </xsl:choose>
   </xsl:template>
 </xsl:stylesheet>

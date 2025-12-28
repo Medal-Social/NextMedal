@@ -8,13 +8,16 @@ import { getSite } from '@/sanity/lib/fetch';
 
 const domain = BASE_URL.replace(/https?:\/\//, '');
 
+const MAX_TITLE_LENGTH = 200;
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const site = await getSite();
 
   // remove divider and site.title in metadata.title
   const regex = new RegExp(` [-—|] ${site.title}$`);
-  const title = searchParams.get('title')?.replace(regex, '');
+  const rawTitle = searchParams.get('title')?.replace(regex, '');
+  const title = rawTitle?.slice(0, MAX_TITLE_LENGTH);
 
   // Create a noise pattern SVG for texture
   const noiseSvg = `
