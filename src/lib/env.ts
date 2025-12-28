@@ -26,8 +26,6 @@ const envSchema = z.object({
 
   // Optional: Image Optimization
   NEXT_PUBLIC_IMAGE_PROXY_URL: z.url().optional(),
-  NEXT_PUBLIC_IMAGE_PROXY_KEY: z.string().optional(),
-  NEXT_PUBLIC_IMAGE_PROXY_SALT: z.string().optional(),
 
   // Optional: Medal Social API
   MEDAL_SOCIAL_CLIENT_ID: z.string().min(1).optional(),
@@ -52,8 +50,6 @@ const parsedEnv = envSchema.safeParse({
   SENTRY_ORG: process.env.SENTRY_ORG,
   SENTRY_PROJECT: process.env.SENTRY_PROJECT,
   NEXT_PUBLIC_IMAGE_PROXY_URL: process.env.NEXT_PUBLIC_IMAGE_PROXY_URL,
-  NEXT_PUBLIC_IMAGE_PROXY_KEY: process.env.NEXT_PUBLIC_IMAGE_PROXY_KEY,
-  NEXT_PUBLIC_IMAGE_PROXY_SALT: process.env.NEXT_PUBLIC_IMAGE_PROXY_SALT,
   MEDAL_SOCIAL_CLIENT_ID: process.env.MEDAL_SOCIAL_CLIENT_ID,
   MEDAL_SOCIAL_CLIENT_SECRET: process.env.MEDAL_SOCIAL_CLIENT_SECRET,
   MEDAL_API_ENDPOINT: process.env.MEDAL_API_ENDPOINT,
