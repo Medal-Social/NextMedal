@@ -267,16 +267,12 @@ describe('env', () => {
   });
 
   describe('image proxy configuration', () => {
-    it('accepts all image proxy env vars', async () => {
+    it('accepts image proxy URL env var', async () => {
       process.env.NEXT_PUBLIC_IMAGE_PROXY_URL = 'https://proxy.example.com';
-      process.env.NEXT_PUBLIC_IMAGE_PROXY_KEY = 'proxy-key';
-      process.env.NEXT_PUBLIC_IMAGE_PROXY_SALT = 'proxy-salt';
 
       const { env } = await import('@/lib/env');
 
       expect(env.NEXT_PUBLIC_IMAGE_PROXY_URL).toBe('https://proxy.example.com');
-      expect(env.NEXT_PUBLIC_IMAGE_PROXY_KEY).toBe('proxy-key');
-      expect(env.NEXT_PUBLIC_IMAGE_PROXY_SALT).toBe('proxy-salt');
     });
   });
 });
