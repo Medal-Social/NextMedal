@@ -11,13 +11,13 @@ import {
 } from '@/components/ui/breadcrumb';
 import type { Placements } from '@/lib/placement';
 import { Date as DateDisplay, Img } from '@/ui/base';
-import Modules from '@/ui/modules';
 import Authors from '@/ui/modules/blog/Authors';
 import MobileSidebar from '@/ui/modules/blog/MobileSidebar';
 import ReadTime from '@/ui/modules/blog/ReadTime';
 import Sidebar from '@/ui/modules/blog/Sidebar';
 import SocialShare from '@/ui/modules/blog/SocialShare';
 import Content from '@/ui/modules/RichtextModule/Content';
+import Modules from '../Modules';
 
 type BlogPost = Sanity.BlogPost & { headings?: Array<{ style: string; text: string }> };
 

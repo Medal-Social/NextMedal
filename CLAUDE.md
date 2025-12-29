@@ -115,7 +115,7 @@ Required:
 ```
 NEXT_PUBLIC_SANITY_PROJECT_ID    # Sanity project ID
 NEXT_PUBLIC_SANITY_DATASET       # Sanity dataset (usually "production")
-SANITY_API_READ_TOKEN            # Sanity API token for server-side fetching
+NEXT_PUBLIC_SANITY_BROWSER_TOKEN            # Sanity API token for server-side fetching
 NEXT_PUBLIC_BASE_URL             # Site base URL
 ```
 

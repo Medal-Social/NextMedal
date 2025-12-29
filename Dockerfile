@@ -59,10 +59,10 @@ ENV NEXT_PUBLIC_SANITY_PROJECT_ID=$NEXT_PUBLIC_SANITY_PROJECT_ID \
 
 # Build the Next.js app
 # We mount sensitive tokens as secrets to avoid leaking them in the image layers
-RUN --mount=type=secret,id=SANITY_API_READ_TOKEN \
+RUN --mount=type=secret,id=NEXT_PUBLIC_SANITY_BROWSER_TOKEN \
     --mount=type=secret,id=SENTRY_AUTH_TOKEN \
     --mount=type=cache,target=/app/.next/cache \
-    export SANITY_API_READ_TOKEN=$(cat /run/secrets/SANITY_API_READ_TOKEN) && \
+    export NEXT_PUBLIC_SANITY_BROWSER_TOKEN=$(cat /run/secrets/NEXT_PUBLIC_SANITY_BROWSER_TOKEN) && \
     export SENTRY_AUTH_TOKEN=$(cat /run/secrets/SENTRY_AUTH_TOKEN) && \
     pnpm build
 

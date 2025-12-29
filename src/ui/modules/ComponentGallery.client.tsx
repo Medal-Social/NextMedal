@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { ComponentPreview } from '@/components/component-preview/ComponentPreview';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { GalleryModuleRenderer } from './GalleryModuleRenderer';
 
 export interface GalleryComponent {
   id: string;
@@ -14,8 +15,7 @@ export interface GalleryComponent {
   description?: string;
   category: string;
   moduleType: string;
-  componentData?: Sanity.Module;
-  children: React.ReactNode;
+  moduleData: Sanity.Module;
 }
 
 export default function ComponentGalleryClient({
@@ -117,10 +117,12 @@ export default function ComponentGalleryClient({
               <div className="rounded-xl border border-border bg-background shadow-sm overflow-hidden ring-1 ring-border/50 relative">
                 <ComponentPreview
                   moduleType={item.moduleType}
-                  componentData={item.componentData as unknown as Record<string, unknown>}
+                  componentData={item.moduleData as unknown as Record<string, unknown>}
                 >
                   <div className="bg-checkered absolute inset-0 opacity-[0.03] pointer-events-none" />
-                  <div className="relative">{item.children}</div>
+                  <div className="relative">
+                    <GalleryModuleRenderer module={item.moduleData} />
+                  </div>
                 </ComponentPreview>
               </div>
             </div>

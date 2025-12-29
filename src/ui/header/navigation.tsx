@@ -1,3 +1,5 @@
+'use client';
+
 import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { stegaClean } from 'next-sanity';
@@ -12,38 +14,14 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import resolveUrl from '@/lib/resolveUrl';
-import { getSite } from '@/sanity/lib/fetch';
-import type { Metadata } from '@/sanity/lib/types';
 
-interface InternalLink {
-  _type: string;
-  title: string;
-  slug?: {
-    current: string;
-  };
-  metadata: Metadata;
-  _id: string;
-  _rev: string;
-  _createdAt: string;
-  _updatedAt: string;
+type NavMenuItem = Sanity.MenuItem | Sanity.DropdownMenu;
+
+interface NavigationProps {
+  headerMenu?: Sanity.Navigation;
 }
 
-export interface MenuItem {
-  _key: string;
-  _type: 'menuItem' | 'dropdownMenu';
-  label?: string;
-  title?: string;
-  internal?: InternalLink;
-  external?: string;
-  params?: string;
-  links?: MenuItem[];
-}
-
-interface HeaderMenu {
-  items?: MenuItem[];
-}
-
-function getLinkHref(item: MenuItem): string {
+function getLinkHref(item: Sanity.MenuItem): string {
   if (item.internal?.metadata?.slug?.current) {
     return resolveUrl(item.internal as Sanity.PageBase, {
       base: false,
@@ -82,62 +60,70 @@ function ListItem({
   );
 }
 
-export default async function Navigation() {
-  const { headerMenu } = await getSite();
+function isMenuItem(item: NavMenuItem): item is Sanity.MenuItem {
+  return item._type === 'menuItem';
+}
 
+function isDropdownMenu(item: NavMenuItem): item is Sanity.DropdownMenu {
+  return item._type === 'dropdownMenu';
+}
+
+export default function Navigation({ headerMenu }: NavigationProps) {
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        {(headerMenu as HeaderMenu)?.items?.map((item, index) => {
-          const itemKey = item._key || `nav-item-${index}`;
-          switch (item._type) {
-            case 'menuItem':
-              return (
-                <NavigationMenuItem key={itemKey}>
-                  <NavigationMenuLink
-                    render={
-                      <Link
-                        href={getLinkHref(item)}
-                        className={navigationMenuTriggerStyle()}
-                        target={item.external ? '_blank' : undefined}
-                        aria-label={item.external ? `${item.label} (opens in new tab)` : undefined}
-                      >
-                        {item.external ? (
-                          <p className="flex items-center gap-2">
-                            {item.label} <ExternalLink className="w-3 h-3" aria-hidden="true" />
-                          </p>
-                        ) : (
-                          item.label
-                        )}
-                      </Link>
-                    }
-                  />
-                </NavigationMenuItem>
-              );
-            case 'dropdownMenu':
-              return (
-                <NavigationMenuItem key={itemKey}>
-                  <NavigationMenuTrigger aria-label={`${item.title} menu`}>
-                    {item.title}
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="bg-background">
-                    <ul className="grid w-64 gap-2 p-4">
-                      {item.links?.map((link, linkIndex) => (
-                        <ListItem
-                          key={link._key || `nav-link-${index}-${linkIndex}`}
-                          title={link.label || ''}
-                          href={getLinkHref(link)}
-                        >
-                          {/* Description would go here if available */}
-                        </ListItem>
-                      ))}
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              );
-            default:
-              return null;
+        {headerMenu?.items?.map((item, index) => {
+          const itemKey = ('_key' in item && item._key) || `nav-item-${index}`;
+
+          if (isMenuItem(item)) {
+            return (
+              <NavigationMenuItem key={itemKey}>
+                <NavigationMenuLink
+                  render={
+                    <Link
+                      href={getLinkHref(item)}
+                      className={navigationMenuTriggerStyle()}
+                      target={item.external ? '_blank' : undefined}
+                      aria-label={item.external ? `${item.label} (opens in new tab)` : undefined}
+                    >
+                      {item.external ? (
+                        <p className="flex items-center gap-2">
+                          {item.label} <ExternalLink className="w-3 h-3" aria-hidden="true" />
+                        </p>
+                      ) : (
+                        item.label
+                      )}
+                    </Link>
+                  }
+                />
+              </NavigationMenuItem>
+            );
           }
+
+          if (isDropdownMenu(item)) {
+            return (
+              <NavigationMenuItem key={itemKey}>
+                <NavigationMenuTrigger aria-label={`${item.title} menu`}>
+                  {item.title}
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className="bg-background">
+                  <ul className="grid w-64 gap-2 p-4">
+                    {item.links?.map((link, linkIndex) => (
+                      <ListItem
+                        key={('_key' in link && link._key) || `nav-link-${index}-${linkIndex}`}
+                        title={link.label || ''}
+                        href={getLinkHref(link)}
+                      >
+                        {/* Description would go here if available */}
+                      </ListItem>
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            );
+          }
+
+          return null;
         })}
       </NavigationMenuList>
     </NavigationMenu>

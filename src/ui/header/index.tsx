@@ -68,7 +68,7 @@ export default async function Header() {
       <div className="flex items-center">{logoNode}</div>
 
       <nav className="max-lg:hidden flex items-center" aria-label="Main navigation">
-        <Navigation />
+        <Navigation headerMenu={headerMenu} />
       </nav>
 
       <div className="flex items-center justify-end gap-4 ml-auto">

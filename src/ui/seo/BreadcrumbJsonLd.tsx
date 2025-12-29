@@ -1,6 +1,6 @@
 import type { BreadcrumbList, WithContext } from 'schema-dts';
 import { BASE_URL } from '@/lib/env';
-import { JsonLd } from '@/ui/seo';
+import JsonLd from './JsonLd';
 
 type Props = {
   items: {
