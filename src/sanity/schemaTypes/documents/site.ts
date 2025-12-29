@@ -22,12 +22,12 @@ export default defineType({
     { name: 'advanced', title: 'Advanced Options' },
   ],
   fieldsets: [
-    { name: 'header', title: 'Header', options: { collapsible: true, collapsed: false } },
-    { name: 'footer', title: 'Footer', options: { collapsible: true, collapsed: false } },
+    { name: 'header', title: 'Header', options: { collapsible: true, collapsed: true } },
+    { name: 'footer', title: 'Footer', options: { collapsible: true, collapsed: true } },
     {
       name: 'cookies',
       title: 'Cookie Settings',
-      options: { collapsible: true, collapsed: false },
+      options: { collapsible: true, collapsed: true },
     },
   ],
   fields: [
@@ -44,7 +44,7 @@ export default defineType({
       description: 'Special banners shown across the site. Useful for promotions or urgent news.',
       type: 'array',
       of: [{ type: 'reference', to: [{ type: 'banner' }] }],
-      group: 'general',
+      group: 'advanced',
       initialValue: [],
     }),
     defineField({
@@ -107,8 +107,7 @@ export default defineType({
       description: 'Show the search bar in the header.',
       type: 'boolean',
       initialValue: true,
-      group: 'navigation',
-      fieldset: 'header',
+      group: 'advanced',
     }),
     defineField({
       name: 'ctas',
