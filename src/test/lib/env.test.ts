@@ -55,12 +55,12 @@ describe('env', () => {
     });
 
     it('includes optional env vars when provided', async () => {
-      process.env.SANITY_API_READ_TOKEN = 'secret-token';
+      process.env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN = 'secret-token';
       process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID = 'umami-123';
 
       const { env } = await import('@/lib/env');
 
-      expect(env.SANITY_API_READ_TOKEN).toBe('secret-token');
+      expect(env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN).toBe('secret-token');
       expect(env.NEXT_PUBLIC_UMAMI_WEBSITE_ID).toBe('umami-123');
     });
   });

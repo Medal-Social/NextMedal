@@ -38,7 +38,7 @@ REQUIRED_ARGS=(
 
 # Secrets that should be passed via --secret to avoid leaking them in image layers
 SECRET_ARGS=(
-  "SANITY_API_READ_TOKEN"
+  "NEXT_PUBLIC_SANITY_BROWSER_TOKEN"
   "SENTRY_AUTH_TOKEN"
 )
 
