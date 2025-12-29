@@ -176,6 +176,7 @@
 */
 
 :root {
+  --banner-height: 0px;
   --header-height: 4rem;
   --header-z-index: 50;
 
@@ -404,6 +405,21 @@ samp,
   ::selection {
     background-color: var(--color-brand-lavender);
     color: var(--color-brand-purple);
+  }
+
+  /* Dark mode specific selection - Muted Steel Violet */
+  .dark ::selection {
+    /* 
+       "Steel Violet" - A very desaturated, mid-tone slate.
+       Tuned down significantly:
+       - Lightness: 0.40 (visible but not bright)
+       - Chroma: 0.06 (very low saturation, almost gray)
+       - Hue: 285 (matches brand hue, but barely)
+       This feels like a native OS selection but subtly tinted to the brand.
+    */
+    background-color: oklch(0.40 0.06 285);
+    /* Keep text white for readability */
+    color: oklch(0.985 0 0);
   }
 
   [hidden] {
