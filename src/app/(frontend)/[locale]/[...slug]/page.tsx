@@ -11,7 +11,7 @@ import {
   SLUG_QUERY,
   TRANSLATIONS_QUERY,
 } from '@/sanity/lib/queries';
-import Modules from '@/ui/modules';
+import { Modules } from '@/ui/modules';
 
 export default async function Page({ params }: Props) {
   const { slug, locale } = await params;
