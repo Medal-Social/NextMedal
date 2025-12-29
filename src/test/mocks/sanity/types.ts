@@ -34,7 +34,11 @@ export interface MockSlug {
 export interface MockMetadata {
   slug: MockSlug;
   title: string;
-  description: string;
+}
+
+export interface MockSeo {
+  title?: string;
+  description?: string;
   noIndex?: boolean;
   image?: MockImg;
 }
@@ -103,6 +107,7 @@ export interface MockPage {
   title: string;
   modules?: MockModule[];
   metadata: MockMetadata;
+  seo?: MockSeo;
 }
 
 export interface MockBlogPost {
@@ -118,6 +123,7 @@ export interface MockBlogPost {
   publishDate: string;
   featured?: boolean;
   metadata: MockMetadata;
+  seo?: MockSeo;
 }
 
 export interface MockBlogCategory {
@@ -146,6 +152,13 @@ export interface MockPerson {
   }>;
 }
 
+export interface MockSocialLink {
+  _type: 'social-link';
+  _key: string;
+  text: string;
+  url: string;
+}
+
 export interface MockSite {
   _id: string;
   _type: 'site';
@@ -164,7 +177,7 @@ export interface MockSite {
   footerMenu?: { _ref: string; _type: 'reference' };
   ctas?: MockCta[];
   copyright?: MockPortableTextBlock[];
-  socialLinks?: Array<{ text: string; url: string }>;
+  socialLinks?: MockSocialLink[];
 }
 
 // ============================================================================
@@ -190,17 +203,20 @@ export interface MockCalloutModule {
   ctas?: MockCta[];
 }
 
+export interface MockAccordionItem {
+  _type: 'accordion-item';
+  _key: string;
+  summary: string;
+  content: MockPortableTextBlock[];
+  open?: boolean;
+}
+
 export interface MockAccordionListModule {
   _type: 'accordion-list';
   _key: string;
   options?: MockModuleOptions;
   content?: MockPortableTextBlock[];
-  items?: Array<{
-    _key: string;
-    summary: string;
-    content: MockPortableTextBlock[];
-    open?: boolean;
-  }>;
+  items?: MockAccordionItem[];
   generateSchema?: boolean;
 }
 
@@ -231,19 +247,22 @@ export interface MockBreadcrumbsModule {
   hideCurrent?: boolean;
 }
 
+export interface MockFeatureItem {
+  _type: 'feature-item';
+  _key: string;
+  icon?: MockIcon;
+  summary: string;
+  content: MockPortableTextBlock[];
+  link?: MockMenuItem;
+}
+
 export interface MockFeaturesModule {
   _type: 'features';
   _key: string;
   options?: MockModuleOptions;
   pretitle?: string;
   intro?: MockPortableTextBlock[];
-  items?: Array<{
-    _key: string;
-    icon?: MockIcon;
-    summary: string;
-    content: MockPortableTextBlock[];
-    link?: MockMenuItem;
-  }>;
+  items?: MockFeatureItem[];
 }
 
 export interface MockLogoCloudModule {
@@ -265,6 +284,7 @@ export interface MockTeamModule {
 }
 
 export interface MockPricingTier {
+  _type: 'pricing-tier';
   _key: string;
   name: string;
   price?: string;
@@ -273,17 +293,28 @@ export interface MockPricingTier {
   popular?: boolean;
 }
 
-export interface MockPricingFeature {
+export interface MockComparisonSubFeature {
+  _type: 'comparison-sub-feature';
   _key: string;
   name: string;
   tooltip?: string;
   tiers: Array<string | boolean>;
-  subItems?: Array<{
-    _key: string;
-    name: string;
-    tooltip?: string;
-    tiers: Array<string | boolean>;
-  }>;
+}
+
+export interface MockPricingFeature {
+  _type: 'comparison-feature';
+  _key: string;
+  name: string;
+  tooltip?: string;
+  tiers: Array<string | boolean>;
+  subItems?: MockComparisonSubFeature[];
+}
+
+export interface MockFeatureCategory {
+  _type: 'feature-category';
+  _key: string;
+  category: string;
+  items: MockPricingFeature[];
 }
 
 export interface MockPricingComparisonModule {
@@ -293,11 +324,7 @@ export interface MockPricingComparisonModule {
   title?: string;
   description?: string;
   tiers?: MockPricingTier[];
-  featureCategories?: Array<{
-    _key: string;
-    category: string;
-    items: MockPricingFeature[];
-  }>;
+  featureCategories?: MockFeatureCategory[];
 }
 
 export interface MockPricingListModule {
@@ -309,21 +336,27 @@ export interface MockPricingListModule {
   tiers?: Array<{ _ref: string; _type: 'reference' }>;
 }
 
+export interface MockComparisonProduct {
+  _type: 'comparison-product';
+  _key: string;
+  name: string;
+  highlight?: boolean;
+}
+
+export interface MockComparisonFeatureRow {
+  _type: 'comparison-feature-row';
+  _key: string;
+  name: string;
+  featureDetails?: string[];
+}
+
 export interface MockProductComparisonModule {
   _type: 'product-comparison';
   _key: string;
   pretitle?: string;
   intro?: MockPortableTextBlock[];
-  products?: Array<{
-    _key: string;
-    name: string;
-    highlight?: boolean;
-  }>;
-  features?: Array<{
-    _key: string;
-    name: string;
-    featureDetails?: string[];
-  }>;
+  products?: MockComparisonProduct[];
+  features?: MockComparisonFeatureRow[];
 }
 
 export interface MockRichtextModule {
@@ -343,15 +376,18 @@ export interface MockVideoHeroModule {
   thumbnail: MockImage;
 }
 
+export interface MockComponentGroup {
+  _type: 'component-group';
+  _key: string;
+  title: string;
+  items: MockModule[];
+}
+
 export interface MockComponentGalleryModule {
   _type: 'component-gallery';
   _key: string;
   intro?: MockPortableTextBlock[];
-  groups?: Array<{
-    _key: string;
-    title: string;
-    items: MockModule[];
-  }>;
+  groups?: MockComponentGroup[];
 }
 
 // Union type for all modules

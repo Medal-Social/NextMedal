@@ -9,6 +9,7 @@ import {
   createMockMenuItem,
   createMockMetadata,
   createMockPortableText,
+  createMockSeo,
   createMockSlug,
   generateId,
   generateKey,
@@ -30,6 +31,7 @@ export function createMockPage(overrides?: Partial<MockPage>): MockPage {
     title: 'Test Page',
     modules: [],
     metadata: createMockMetadata(),
+    seo: createMockSeo(),
     ...overrides,
   };
 }
@@ -57,6 +59,8 @@ export function createMockBlogPost(overrides?: Partial<MockBlogPost>): MockBlogP
     metadata: createMockMetadata({
       slug: createMockSlug('test-blog-post'),
       title: 'Test Blog Post Title - Engaging Content for Readers',
+    }),
+    seo: createMockSeo({
       description:
         'This is a test blog post description that summarizes the content and encourages readers to click.',
     }),
@@ -132,8 +136,18 @@ export function createMockSite(overrides?: Partial<MockSite>): MockSite {
     ],
     copyright: createMockPortableText(['© 2024 Test Site. All rights reserved.']),
     socialLinks: [
-      { text: 'Twitter', url: 'https://twitter.com/example' },
-      { text: 'LinkedIn', url: 'https://linkedin.com/company/example' },
+      {
+        _type: 'social-link',
+        _key: 'twitter',
+        text: 'Twitter',
+        url: 'https://twitter.com/example',
+      },
+      {
+        _type: 'social-link',
+        _key: 'linkedin',
+        text: 'LinkedIn',
+        url: 'https://linkedin.com/company/example',
+      },
     ],
     ...overrides,
   };

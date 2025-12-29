@@ -53,9 +53,9 @@ export default function BlogHero({
             </h1>
             <p
               className="max-w-lg text-base leading-relaxed text-slate-300 md:text-lg"
-              data-sanity={stega.scope('metadata.description').toString()}
+              data-sanity={stega.scope('seo.description').toString()}
             >
-              {featuredPost.metadata?.description}
+              {featuredPost.seo?.description}
             </p>
             <div className="flex items-center gap-3 pt-2">
               {featuredPost.authors?.[0] && (
@@ -168,9 +168,9 @@ function SidebarCard({
       </h3>
       <p
         className="mt-2 text-sm text-slate-400 line-clamp-2"
-        data-sanity={stega.scope('metadata.description').toString()}
+        data-sanity={stega.scope('seo.description').toString()}
       >
-        {post.metadata?.description}
+        {post.seo?.description}
       </p>
     </Link>
   );
