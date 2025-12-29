@@ -8,8 +8,12 @@ import Categories from './Categories';
 const IMAGE_CLASS =
   'aspect-video w-full object-cover rounded-2xl transition-transform duration-300 group-hover:scale-105 group-hover:brightness-110';
 
-function getFallbackImage(metadata: Sanity.BlogPost['metadata'], categoryTitle?: string) {
-  if (metadata?.image) return undefined;
+function getFallbackImage(
+  metadata: Sanity.BlogPost['metadata'],
+  seo: Sanity.BlogPost['seo'],
+  categoryTitle?: string
+) {
+  if (seo?.image) return undefined;
 
   return {
     src: `/api/og/blog-fallback?title=${encodeURIComponent(
@@ -24,6 +28,7 @@ function getFallbackImage(metadata: Sanity.BlogPost['metadata'], categoryTitle?:
 function PostImage({
   skeleton,
   metadata,
+  seo,
   fallbackImage,
   sizes,
   href,
@@ -31,6 +36,7 @@ function PostImage({
 }: {
   skeleton?: boolean;
   metadata?: Sanity.BlogPost['metadata'];
+  seo?: Sanity.BlogPost['seo'];
   fallbackImage?: { src: string; alt: string; width: number; height: number };
   sizes?: string;
   href: string;
@@ -39,11 +45,11 @@ function PostImage({
   const imageElement = (
     <Img
       className={IMAGE_CLASS}
-      image={metadata?.image || fallbackImage}
+      image={seo?.image || fallbackImage}
       width={700}
       sizes={sizes}
       alt={metadata?.title || ''}
-      data-sanity={skeleton ? undefined : dataAttribute?.scope('metadata.image').toString()}
+      data-sanity={skeleton ? undefined : dataAttribute?.scope('seo.image').toString()}
     />
   );
 
@@ -67,10 +73,11 @@ export default function PostPreview({
   if (!skeleton && (!post || !post.metadata)) return null;
 
   const metadata = skeleton ? undefined : post?.metadata;
+  const seo = skeleton ? undefined : post?.seo;
   const href = skeleton || !post?.metadata ? '' : resolveUrl(post, { base: false });
   const fallbackImage = skeleton
     ? undefined
-    : getFallbackImage(metadata, post?.categories?.[0]?.title);
+    : getFallbackImage(metadata, seo, post?.categories?.[0]?.title);
 
   const dataAttribute = post?._id
     ? createDataAttribute({
@@ -88,6 +95,7 @@ export default function PostPreview({
         <PostImage
           skeleton={skeleton}
           metadata={metadata}
+          seo={seo}
           fallbackImage={fallbackImage}
           sizes={sizes}
           href={href}
@@ -115,9 +123,9 @@ export default function PostPreview({
           </h3>
           <p
             className="mt-5 line-clamp-3 text-sm/6 text-muted-foreground"
-            data-sanity={dataAttribute?.scope('metadata.description').toString()}
+            data-sanity={dataAttribute?.scope('seo.description').toString()}
           >
-            {metadata?.description}
+            {seo?.description}
           </p>
         </div>
         <div className="relative mt-8 flex items-center gap-x-4">

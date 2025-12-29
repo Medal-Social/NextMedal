@@ -99,7 +99,7 @@ export default function ArticleCard({ post, variant = 'standard', className }: A
   const href = resolveUrl({ ...post, metadata: post.metadata } as Sanity.PageBase, { base: false });
   const category = post.categories?.[0];
   const author = post.authors?.[0];
-  const image = post.metadata?.image || getFallbackImage(post.metadata?.title, category?.title);
+  const image = post.seo?.image || getFallbackImage(post.metadata?.title, category?.title);
 
   const stega = createDataAttribute({
     id: post._id,
@@ -109,10 +109,7 @@ export default function ArticleCard({ post, variant = 'standard', className }: A
   return (
     <article className={getArticleClass(variant, className)}>
       {/* Image Section */}
-      <div
-        className={getImageClass(variant)}
-        data-sanity={stega.scope('metadata.image').toString()}
-      >
+      <div className={getImageClass(variant)} data-sanity={stega.scope('seo.image').toString()}>
         <Img
           image={image}
           className="h-full w-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
@@ -148,9 +145,9 @@ export default function ArticleCard({ post, variant = 'standard', className }: A
         </h3>
         <p
           className="mb-4 flex-1 text-base leading-relaxed text-slate-600 line-clamp-3 dark:text-slate-400"
-          data-sanity={stega.scope('metadata.description').toString()}
+          data-sanity={stega.scope('seo.description').toString()}
         >
-          {post.metadata?.description}
+          {post.seo?.description}
         </p>
 
         <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-4 dark:border-slate-700/50">

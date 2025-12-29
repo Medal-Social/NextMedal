@@ -11,16 +11,16 @@ import { fetchSanityLive } from '@/sanity/lib/live';
 export async function GET() {
   try {
     const { blog, posts, copyright } = await fetchSanityLive<{
-      blog: Sanity.Page;
-      posts: Array<Sanity.BlogPost & { image?: string }>;
+      blog: Sanity.Page & { seo?: { description?: string } };
+      posts: Array<Sanity.BlogPost & { image?: string; seo?: { description?: string } }>;
       copyright: string;
     }>({
       query: groq`{
 				'blog': *[_type == 'page' && metadata.slug.current == 'blog'][0]{
 					_type,
-					title,
 					metadata,
-					'image': metadata.image.asset->url
+					seo,
+					'image': seo.image.asset->url
 				},
 				'posts': *[_type == 'blog.post']|order(publishDate desc)[0...100]{
 					_type,
@@ -29,10 +29,12 @@ export async function GET() {
 					authors[]->{ name },
 					metadata {
 						title,
-						description,
 						"slug": { "current": slug.current }
 					},
-					'image': metadata.image.asset->url
+					seo {
+						description
+					},
+					'image': seo.image.asset->url
 				},
 				'copyright': pt::text(*[_type == 'site'][0].copyright)
 			}`,
@@ -48,8 +50,8 @@ export async function GET() {
     const url = resolveUrl(blog);
 
     const feed = new Feed({
-      title: blog?.title || blog.metadata?.title || 'Blog',
-      description: blog.metadata?.description || '',
+      title: blog.metadata?.title || 'Blog',
+      description: blog.seo?.description || '',
       link: url,
       id: url,
       copyright,
@@ -62,7 +64,7 @@ export async function GET() {
       if (!post.metadata) continue; // Skip posts without metadata
       feed.addItem({
         title: escapeHTML(post.metadata.title),
-        description: post.metadata.description,
+        description: post.seo?.description,
         id: resolveUrl(post as Sanity.PageBase),
         link: resolveUrl(post as Sanity.PageBase),
         published: new Date(post.publishDate),

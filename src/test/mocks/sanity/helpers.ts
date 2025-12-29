@@ -11,6 +11,7 @@ import type {
   MockMenuItem,
   MockMetadata,
   MockPortableTextBlock,
+  MockSeo,
   MockSlug,
   MockStat,
 } from './types';
@@ -173,12 +174,22 @@ export function createMockStat(overrides?: Partial<MockStat>): MockStat {
 }
 
 /**
- * Creates a mock metadata object
+ * Creates a mock metadata object (title + slug only)
  */
 export function createMockMetadata(overrides?: Partial<MockMetadata>): MockMetadata {
   return {
     slug: createMockSlug(),
-    title: 'Test Page Title - SEO Optimized for Search Engines',
+    title: 'Test Page Title',
+    ...overrides,
+  };
+}
+
+/**
+ * Creates a mock SEO object
+ */
+export function createMockSeo(overrides?: Partial<MockSeo>): MockSeo {
+  return {
+    title: 'SEO Title - Optimized for Search Engines',
     description:
       'This is a test page description that is optimized for search engines and provides valuable information to users.',
     noIndex: false,

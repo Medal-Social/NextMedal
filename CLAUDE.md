@@ -86,6 +86,10 @@ Component organization: Hooks first → derived state → internal functions →
 - Images require `options.hotspot: true`
 - Prefer `string` with `options.list` over `boolean` fields
 - Use arrays of references, not single references
+- **Inline objects in arrays MUST have a `name` property** - required for copy/paste, GraphQL, and TypeGen
+  - Bad: `defineArrayMember({ type: 'object', fields: [...] })`
+  - Good: `defineArrayMember({ name: 'my-item', type: 'object', fields: [...] })`
+  - Run `pnpm lint:sanity` to check for missing names
 - GROQ variables: SCREAMING_SNAKE_CASE (e.g., `POST_QUERY`)
 - After schema changes: `npx sanity@latest schema extract`
 

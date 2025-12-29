@@ -63,3 +63,4 @@ _templates/
 
 # Mockups
 src/app/**/mockups/
+src/components/mockup/

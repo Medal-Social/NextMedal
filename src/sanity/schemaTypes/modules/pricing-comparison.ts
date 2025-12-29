@@ -46,6 +46,7 @@ export default defineType({
       type: 'array',
       of: [
         defineArrayMember({
+          name: 'pricing-tier',
           type: 'object',
           fields: [
             defineField({
@@ -100,6 +101,7 @@ export default defineType({
 
       of: [
         defineArrayMember({
+          name: 'feature-category',
           type: 'object',
           fields: [
             defineField({
@@ -113,6 +115,7 @@ export default defineType({
               type: 'array',
               of: [
                 defineArrayMember({
+                  name: 'comparison-feature',
                   type: 'object',
                   fields: [
                     defineField({
@@ -169,6 +172,7 @@ export default defineType({
                       type: 'array',
                       of: [
                         defineArrayMember({
+                          name: 'comparison-sub-feature',
                           type: 'object',
                           fields: [
                             defineField({

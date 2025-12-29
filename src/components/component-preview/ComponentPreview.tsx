@@ -14,7 +14,9 @@ interface ComponentPreviewProps {
 export function ComponentPreview({ moduleType, componentData, children }: ComponentPreviewProps) {
   // Prepare raw data for the copy button (stripping keys used for frontend rendering)
   const getRawData = () => {
-    if (!componentData) return null;
+    if (!componentData) {
+      return null;
+    }
     return JSON.parse(
       JSON.stringify(componentData, (key, value) => {
         if (['src', 'width', 'height', 'alt', 'sanityData'].includes(key)) {

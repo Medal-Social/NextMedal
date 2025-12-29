@@ -56,6 +56,7 @@ export default defineType({
       description: 'List of collapsible items.',
       of: [
         defineArrayMember({
+          name: 'accordion-item',
           type: 'object',
           icon: StackCompactIcon,
           fields: [

@@ -187,7 +187,7 @@ function HeroImage({
   post: BlogPost;
   stega: ReturnType<typeof createDataAttribute>;
 }) {
-  if (!post.metadata?.image && !post.metadata?.title) return null;
+  if (!post.seo?.image && !post.metadata?.title) return null;
 
   const fallbackImage = {
     src: `/api/og/blog-fallback?title=${encodeURIComponent(post.metadata?.title || '')}&category=${encodeURIComponent(
@@ -201,16 +201,16 @@ function HeroImage({
   return (
     <div
       className="w-full rounded-xl overflow-hidden shadow-md mb-8 bg-muted aspect-video"
-      data-sanity={stega.scope('metadata.image').toString()}
+      data-sanity={stega.scope('seo.image').toString()}
     >
       <Img
-        image={post.metadata?.image || fallbackImage}
+        image={post.seo?.image || fallbackImage}
         className="w-full h-full object-cover"
         sizes="(max-width: 768px) 100vw, 900px"
         priority
         fetchPriority="high"
         alt={post.metadata?.title || ''}
-        unoptimized={!post.metadata?.image}
+        unoptimized={!post.seo?.image}
       />
     </div>
   );
