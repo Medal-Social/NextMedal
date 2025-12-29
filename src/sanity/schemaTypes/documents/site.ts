@@ -8,6 +8,7 @@
  * - 1.0.0: Initial version with core site configuration options
  */
 
+import { CogIcon, ControlsIcon, MenuIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 // import modules from '../fragments/modules';
@@ -17,17 +18,17 @@ export default defineType({
   title: 'Site Settings',
   type: 'document',
   groups: [
-    { name: 'general', title: 'General', default: true },
-    { name: 'navigation', title: 'Navigation' },
-    { name: 'advanced', title: 'Advanced Options' },
+    { name: 'general', title: 'General', icon: CogIcon, default: true },
+    { name: 'navigation', title: 'Navigation', icon: MenuIcon },
+    { name: 'advanced', title: 'Advanced Options', icon: ControlsIcon },
   ],
   fieldsets: [
-    { name: 'header', title: 'Header', options: { collapsible: true, collapsed: false } },
-    { name: 'footer', title: 'Footer', options: { collapsible: true, collapsed: false } },
+    { name: 'header', title: 'Header', options: { collapsible: true, collapsed: true } },
+    { name: 'footer', title: 'Footer', options: { collapsible: true, collapsed: true } },
     {
       name: 'cookies',
       title: 'Cookie Settings',
-      options: { collapsible: true, collapsed: false },
+      options: { collapsible: true, collapsed: true },
     },
   ],
   fields: [
@@ -44,7 +45,7 @@ export default defineType({
       description: 'Special banners shown across the site. Useful for promotions or urgent news.',
       type: 'array',
       of: [{ type: 'reference', to: [{ type: 'banner' }] }],
-      group: 'general',
+      group: 'advanced',
       initialValue: [],
     }),
     defineField({
@@ -107,8 +108,7 @@ export default defineType({
       description: 'Show the search bar in the header.',
       type: 'boolean',
       initialValue: true,
-      group: 'navigation',
-      fieldset: 'header',
+      group: 'advanced',
     }),
     defineField({
       name: 'ctas',

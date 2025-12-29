@@ -11,6 +11,8 @@ export function IconTwitterX(props: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
       viewBox="0 0 512 512"
       fill="currentColor"
       role="img"
@@ -26,6 +28,8 @@ export function IconFacebook(props: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
       viewBox="0 0 512 512"
       fill="currentColor"
       role="img"
@@ -41,6 +45,8 @@ export function IconFacebookF(props: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
       viewBox="0 0 320 512"
       fill="currentColor"
       role="img"
@@ -56,6 +62,8 @@ export function IconInstagram(props: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
       viewBox="0 0 448 512"
       fill="currentColor"
       role="img"
@@ -71,6 +79,8 @@ export function IconLinkedin(props: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
       viewBox="0 0 448 512"
       fill="currentColor"
       role="img"
@@ -86,6 +96,8 @@ export function IconLinkedinIn(props: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
       viewBox="0 0 448 512"
       fill="currentColor"
       role="img"
@@ -101,6 +113,8 @@ export function IconYoutube(props: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
       viewBox="0 0 576 512"
       fill="currentColor"
       role="img"
@@ -116,6 +130,8 @@ export function IconGithub(props: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
       viewBox="0 0 496 512"
       fill="currentColor"
       role="img"
@@ -131,6 +147,8 @@ export function IconTiktok(props: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
       viewBox="0 0 448 512"
       fill="currentColor"
       role="img"
@@ -146,6 +164,8 @@ export function IconBluesky(props: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
       viewBox="0 0 576 512"
       fill="currentColor"
       role="img"
@@ -161,6 +181,8 @@ export function IconWhatsapp(props: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
       viewBox="0 0 448 512"
       fill="currentColor"
       role="img"
@@ -176,6 +198,8 @@ export function IconLink(props: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
       viewBox="0 0 640 512"
       fill="currentColor"
       role="img"
@@ -191,6 +215,8 @@ export function IconUser(props: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
       viewBox="0 0 448 512"
       fill="currentColor"
       role="img"

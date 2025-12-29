@@ -20,7 +20,7 @@ export default defineType({
   type: 'object',
   groups: [
     { name: 'content', default: true, title: 'Content' },
-    { name: 'options', title: 'Options' },
+    { name: 'options', title: 'Advanced Options' },
   ],
   fields: [
     defineField({
