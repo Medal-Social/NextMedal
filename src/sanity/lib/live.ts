@@ -4,12 +4,14 @@ import { client } from '@/sanity/lib/client';
 import { token } from '@/sanity/lib/token';
 
 // Browser token for client-side live updates (NEXT_PUBLIC_ prefix exposes it to browser)
-const browserToken = process.env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN;
+// Only pass browserToken if it's actually set to avoid connection errors
+const browserToken = process.env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN || undefined;
 
 export const { sanityFetch, SanityLive } = defineLive({
   client,
   serverToken: token,
-  browserToken,
+  // When browserToken is undefined, SanityLive will skip client-side live connections
+  ...(browserToken ? { browserToken } : {}),
   fetchOptions: {
     revalidate: 60 * 60 * 24 * 90, // 90 days - SanityLive handles on-demand revalidation
   },

@@ -1,5 +1,4 @@
-import { ModuleRenderer } from './ModuleRenderer';
-import type { ModuleContext } from './registry';
+import { type ModuleContext, ModuleRenderer } from './ModuleRenderer';
 
 export type { ModuleContext };
 
