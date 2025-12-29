@@ -61,6 +61,7 @@ export default defineType({
       type: 'array',
       of: [
         {
+          name: 'component-group',
           type: 'object',
           title: 'Group',
           fields: [

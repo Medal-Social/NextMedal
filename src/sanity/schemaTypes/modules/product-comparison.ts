@@ -72,6 +72,7 @@ export default defineType({
       type: 'array',
       of: [
         defineArrayMember({
+          name: 'comparison-product',
           type: 'object',
           fields: [
             defineField({
@@ -112,6 +113,7 @@ export default defineType({
       type: 'array',
       of: [
         defineArrayMember({
+          name: 'comparison-feature-row',
           type: 'object',
           fields: [
             defineField({

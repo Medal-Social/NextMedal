@@ -46,6 +46,7 @@ export default defineType({
       type: 'array',
       of: [
         defineArrayMember({
+          name: 'form-field',
           type: 'object',
           fields: [
             defineField({
@@ -101,6 +102,7 @@ export default defineType({
       ],
       initialValue: [
         {
+          _type: 'form-field',
           _key: 'name-field',
           label: 'Name',
           name: { _type: 'slug', current: 'name' },
@@ -109,6 +111,7 @@ export default defineType({
           required: true,
         },
         {
+          _type: 'form-field',
           _key: 'email-field',
           label: 'Email',
           name: { _type: 'slug', current: 'email' },
@@ -117,6 +120,7 @@ export default defineType({
           required: true,
         },
         {
+          _type: 'form-field',
           _key: 'phone-field',
           label: 'Phone',
           name: { _type: 'slug', current: 'phone' },
@@ -125,6 +129,7 @@ export default defineType({
           required: false,
         },
         {
+          _type: 'form-field',
           _key: 'message-field',
           label: 'Message',
           name: { _type: 'slug', current: 'message' },
