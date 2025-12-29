@@ -54,7 +54,7 @@ export default async function Header() {
 
   return (
     <HeaderClient
-      className="@container fixed top-0 w-full z-50"
+      className="@container fixed top-[var(--banner-height,0px)] w-full z-50"
       role="banner"
       aria-label="Site header"
       ctas={ctas ?? []}
