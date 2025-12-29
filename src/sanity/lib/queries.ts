@@ -83,15 +83,8 @@ export const NAVIGATION_QUERY = groq`
 export const CTA_QUERY = groq`
 	_key,
 	_type,
-	label,
 	style,
-	link{ ${LINK_QUERY} },
-	internalLink->{
-		_id,
-		_type,
-		title,
-		metadata { slug }
-	}
+	link{ ${LINK_QUERY} }
 `;
 
 // Base modules query for non-recursive parts
