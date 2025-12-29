@@ -216,39 +216,62 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.19 0.013 285.82);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.19 0.013 285.82);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: var(--color-brand-500);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.269 0.02 285.82);
+  /* Modern deep violet-gray background - Further softened for eye comfort */
+  --background: oklch(0.20 0.03 285);
+  /* Dimmed white text to reduce glare */
+  --foreground: oklch(0.92 0.01 285);
+
+  /* Elevated surfaces with slightly more purple tint */
+  --card: oklch(0.25 0.04 285);
+  --card-foreground: oklch(0.92 0.01 285);
+  
+  --popover: oklch(0.25 0.04 285);
+  --popover-foreground: oklch(0.92 0.01 285);
+  
+  /* 
+     Elegant Dark Mode Primary:
+     Using a very light, almost white lavender creates a premium, high-contrast look.
+     This avoids the "dullness" of mid-tones while keeping it elegant.
+  */
+  --primary: oklch(0.96 0.01 285); 
+  /* Rich brand purple text anchors the identity */
+  --primary-foreground: var(--color-brand-700);
+  
+  --secondary: oklch(0.30 0.05 285);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0.02 285.82);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0.02 285.82);
+  
+  --muted: oklch(0.30 0.05 285);
+  --muted-foreground: oklch(0.75 0.02 285);
+  
+  --accent: oklch(0.30 0.05 285);
   --accent-foreground: oklch(0.985 0 0);
+  
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.269 0.02 285.82);
-  --input: oklch(0.269 0.02 285.82);
-  --ring: oklch(0.669 0.132 282.82);
-  --highlight-foreground: var(--color-brand-300);
+  
+  /* Subtle borders that define structure without being heavy */
+  --border: oklch(0.32 0.05 285);
+  --input: oklch(0.32 0.05 285);
+  /* Use vibrant brand color for focus rings to add a pop of "on-brand" energy */
+  --ring: var(--color-brand-500);
+  
+  --highlight-foreground: var(--color-brand-200);
+  
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.19 0.013 285.82);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.669 0.132 282.82);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0.02 285.82);
+  
+  /* Sidebar matching card/surface tones */
+  --sidebar: oklch(0.23 0.04 285);
+  --sidebar-foreground: oklch(0.92 0.01 285);
+  --sidebar-primary: oklch(0.96 0.01 285);
+  --sidebar-primary-foreground: var(--color-brand-700);
+  --sidebar-accent: oklch(0.30 0.05 285);
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0.02 285.82);
-  --sidebar-ring: oklch(0.669 0.132 282.82);
+  --sidebar-border: oklch(0.32 0.05 285);
+  --sidebar-ring: var(--color-brand-500);
 }
 
 /* Ensure font variables are available on :root for Tailwind @theme to resolve */
