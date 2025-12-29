@@ -1,4 +1,6 @@
+import Image from 'next/image';
 import { stegaClean } from 'next-sanity';
+
 import { getFallbackIconUrl, resolveIcon } from './utils/resolveIcon';
 
 interface IconStringProps {
@@ -18,13 +20,13 @@ export default function IconString({ icon, size = 24, className }: IconStringPro
   // Fallback to external icon service
   const cleanName = stegaClean(icon);
   return (
-    <img
+    <Image
       src={getFallbackIconUrl(cleanName)}
       width={size}
       height={size}
       alt=""
-      loading="lazy"
       className={className}
+      unoptimized
     />
   );
 }
