@@ -18,12 +18,15 @@ export default defineType({
   title: 'Logo Cloud',
   icon: ComponentIcon,
   type: 'object',
-  groups: [{ name: 'content', default: true }, { name: 'options' }],
+  groups: [
+    { name: 'content', default: true },
+    { name: 'options', title: 'Advanced Options' },
+  ],
   fields: [
     defineField({
       name: 'options',
       type: 'object',
-      title: 'Options',
+      title: 'Advanced Options',
       group: 'options',
       fields: [createUidField()],
     }),

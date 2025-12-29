@@ -19,7 +19,7 @@ export default defineType({
   groups: [
     { name: 'content', title: 'Content', default: true },
     { name: 'details', title: 'Contact Details' },
-    { name: 'options', title: 'Options' },
+    { name: 'options', title: 'Advanced Options' },
   ],
   fields: [
     defineField({
