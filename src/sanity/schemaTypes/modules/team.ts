@@ -19,7 +19,10 @@ export default defineType({
   title: 'Team',
   type: 'object',
   icon: UserIcon,
-  groups: [{ name: 'content', default: true }, { name: 'options' }],
+  groups: [
+    { name: 'content', default: true },
+    { name: 'options', title: 'Advanced Options' },
+  ],
   fields: [
     defineField({
       name: 'layout',
@@ -38,7 +41,7 @@ export default defineType({
     defineField({
       name: 'options',
       type: 'object',
-      title: 'Options',
+      title: 'Advanced Options',
       group: 'options',
       fields: [createUidField()],
     }),

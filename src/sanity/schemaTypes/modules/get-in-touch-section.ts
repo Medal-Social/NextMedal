@@ -21,7 +21,7 @@ export default defineType({
     { name: 'content', title: 'Content', default: true },
     { name: 'form', title: 'Form' },
     { name: 'contact', title: 'Contact Details' },
-    { name: 'options', title: 'Options' },
+    { name: 'options', title: 'Advanced Options' },
   ],
   fields: [
     defineField({
