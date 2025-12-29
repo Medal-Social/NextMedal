@@ -24,8 +24,6 @@ properties:
         value: "${NEXT_PUBLIC_SANITY_DATASET}"
       - name: NEXT_PUBLIC_SANITY_BROWSER_TOKEN
         value: "${NEXT_PUBLIC_SANITY_BROWSER_TOKEN}"
-      - name: SANITY_API_READ_TOKEN
-        value: "${SANITY_API_READ_TOKEN}"
       - name: NEXT_PUBLIC_UMAMI_SCRIPT_URL
         value: "${NEXT_PUBLIC_UMAMI_SCRIPT_URL}"
       - name: NEXT_PUBLIC_UMAMI_WEBSITE_ID

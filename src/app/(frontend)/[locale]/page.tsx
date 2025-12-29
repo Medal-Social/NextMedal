@@ -4,7 +4,7 @@ import { groupPlacements, type Placement } from '@/lib/placement';
 import processMetadata from '@/lib/processMetadata';
 import { fetchSanity } from '@/sanity/lib/fetch';
 import { PAGE_QUERY } from '@/sanity/lib/queries';
-import Modules from '@/ui/modules';
+import { Modules } from '@/ui/modules';
 
 type Props = {
   params: Promise<{ locale: string }>;
