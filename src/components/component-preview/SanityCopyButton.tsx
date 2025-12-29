@@ -71,11 +71,18 @@ export default function SanityCopyButton({ data, className }: SanityCopyButtonPr
   }, [hasCopied]);
 
   const handleCopy = async () => {
-    if (!data) return;
+    logger.info('[SanityCopyButton] handleCopy called');
+    logger.info({ data }, '[SanityCopyButton] data:');
+
+    if (!data) {
+      logger.info('[SanityCopyButton] No data provided, returning early');
+      return;
+    }
 
     try {
       // 1. Prepare and clean the data
       const cleanData = prepareSanityData(data);
+      logger.info({ cleanData }, '[SanityCopyButton] cleanData:');
 
       // 2. Wrap in Sanity clipboard payload
       const payload = {
@@ -90,21 +97,30 @@ export default function SanityCopyButton({ data, className }: SanityCopyButtonPr
         schemaTypeName: data._type || (Array.isArray(cleanData) ? cleanData[0]?._type : 'object'),
         valuePath: ['modules'],
       };
+      logger.info({ payload }, '[SanityCopyButton] payload:');
 
       // 3. Encode to Base64
       const jsonString = JSON.stringify(payload);
+      logger.info({ jsonStringLength: jsonString.length }, '[SanityCopyButton] jsonString length:');
       const encodedBase64 = base64(jsonString);
+      logger.info(
+        { encodedBase64Length: encodedBase64.length },
+        '[SanityCopyButton] encodedBase64 length:'
+      );
 
       // 4. Create the HTML snippet Sanity expects
       const htmlSnippet = `<div data-sanity-clipboard-base64="${encodedBase64}">Sanity Studio Data</div>`;
 
       // 5. Use ClipboardItem API to write both text and HTML
+      logger.info('[SanityCopyButton] Creating ClipboardItem...');
       const clipboardItem = new ClipboardItem({
         'text/plain': new Blob([jsonString], { type: 'text/plain' }),
         'text/html': new Blob([htmlSnippet], { type: 'text/html' }),
       });
 
+      logger.info('[SanityCopyButton] Writing to clipboard...');
       await navigator.clipboard.write([clipboardItem]);
+      logger.info('[SanityCopyButton] Clipboard write successful!');
 
       setHasCopied(true);
       toast.success('Copied to Sanity Clipboard', {
@@ -114,12 +130,15 @@ export default function SanityCopyButton({ data, className }: SanityCopyButtonPr
       logger.error({ err }, 'Failed to copy to Sanity clipboard:');
       // Fallback to simple text copy if ClipboardItem fails (some browsers)
       try {
+        logger.info('[SanityCopyButton] Trying fallback writeText...');
         await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
+        logger.info('[SanityCopyButton] Fallback writeText successful!');
         setHasCopied(true);
         toast.error('Partial Copy', {
           description: 'Used fallback copy method. Studio "Paste" might not work as expected.',
         });
-      } catch {
+      } catch (fallbackErr) {
+        logger.error({ fallbackErr }, '[SanityCopyButton] Fallback writeText also failed:');
         toast.error('Copy Failed', {
           description: 'Could not write to clipboard.',
         });
