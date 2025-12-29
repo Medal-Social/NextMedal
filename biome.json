@@ -36,6 +36,9 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "nursery": {
+        "noImportCycles": "error"
+      },
       "a11y": {
         "useAltText": "error",
         "useValidAnchor": "error",
