@@ -12,11 +12,11 @@ import type { SchemaTypeDefinition } from 'sanity';
 
 // documents
 import blogCategory from './documents/blog.category';
-import blogPost from './documents/blog.post';
+// import blogPost from './documents/blog.post';
 import componentLibrary from './documents/component-library';
 import form from './documents/form';
 import navigation from './documents/navigation';
-import page from './documents/page';
+// import page from './documents/page';
 import placement from './documents/placement';
 import redirect from './documents/redirect';
 import site from './documents/site';
@@ -58,11 +58,11 @@ import video from './objects/video';
 export const schemaTypes: SchemaTypeDefinition[] = [
   // documents
   blogCategory,
-  blogPost,
+  // blogPost,
   componentLibrary,
   form,
   placement,
-  page,
+  // page,
   redirect,
   site,
   navigation,
