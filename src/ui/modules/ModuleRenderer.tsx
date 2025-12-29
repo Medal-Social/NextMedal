@@ -1,5 +1,4 @@
 import { type ReactElement, Suspense } from 'react';
-// All module imports (same as previous registry.config.ts)
 import AccordionList from './AccordionList';
 import Breadcrumbs from './Breadcrumbs';
 import BlogFrontpage from './blog/BlogFrontpage';
@@ -15,9 +14,14 @@ import PricingComparison from './PricingComparison';
 import PricingList from './PricingList';
 import ProductComparison from './ProductComparison';
 import RichtextModule from './RichtextModule';
-import type { ModuleContext } from './registry';
 import Team from './Team';
 import VideoHero from './VideoHero';
+
+export interface ModuleContext {
+  page?: Sanity.Page | Sanity.ComponentLibrary;
+  post?: Sanity.BlogPost;
+  isSidebar?: boolean;
+}
 
 function ModuleSkeleton() {
   return (
