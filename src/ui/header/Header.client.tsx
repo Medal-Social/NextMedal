@@ -75,21 +75,37 @@ export default function HeaderClient({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Set --header-height
+  // Set --header-height (includes banner height for proper content offset)
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
     function setHeight() {
       if (!ref.current) return;
+      const bannerHeight =
+        Number.parseInt(
+          getComputedStyle(document.documentElement).getPropertyValue('--banner-height') || '0',
+          10
+        ) || 0;
+      const headerHeight = ref.current.offsetHeight ?? 0;
       document.documentElement.style.setProperty(
         '--header-height',
-        `${ref.current.offsetHeight ?? 0}px`
+        `${bannerHeight + headerHeight}px`
       );
     }
     setHeight();
     window.addEventListener('resize', setHeight, { passive: true });
 
-    return () => window.removeEventListener('resize', setHeight);
+    // Also listen for banner height changes via MutationObserver on style attribute
+    const observer = new MutationObserver(setHeight);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['style'],
+    });
+
+    return () => {
+      window.removeEventListener('resize', setHeight);
+      observer.disconnect();
+    };
   }, []);
 
   // Close mobile menu on route change
