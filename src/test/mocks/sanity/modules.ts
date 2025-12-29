@@ -96,6 +96,7 @@ export function createMockAccordionListModule(
     content: createMockPortableText(['Frequently Asked Questions']),
     items: [
       {
+        _type: 'accordion-item',
         _key: generateKey(),
         summary: 'What is this product?',
         content: createMockPortableText([
@@ -104,6 +105,7 @@ export function createMockAccordionListModule(
         open: false,
       },
       {
+        _type: 'accordion-item',
         _key: generateKey(),
         summary: 'How do I get started?',
         content: createMockPortableText([
@@ -172,12 +174,14 @@ export function createMockFeaturesModule(
     intro: createMockPortableText(['Everything you need to succeed']),
     items: [
       {
+        _type: 'feature-item',
         _key: generateKey(),
         icon: createMockIcon('zap'),
         summary: 'Lightning Speed',
         content: createMockPortableText(['Experience blazing fast performance.']),
       },
       {
+        _type: 'feature-item',
         _key: generateKey(),
         icon: createMockIcon('shield'),
         summary: 'Enterprise Security',
@@ -225,6 +229,7 @@ export function createMockPricingComparisonModule(
     description: 'Choose the plan that fits your needs',
     tiers: [
       {
+        _type: 'pricing-tier',
         _key: generateKey(),
         name: 'Starter',
         price: '$9/mo',
@@ -235,6 +240,7 @@ export function createMockPricingComparisonModule(
         popular: false,
       },
       {
+        _type: 'pricing-tier',
         _key: generateKey(),
         name: 'Pro',
         price: '$29/mo',
@@ -247,10 +253,12 @@ export function createMockPricingComparisonModule(
     ],
     featureCategories: [
       {
+        _type: 'feature-category',
         _key: generateKey(),
         category: 'Core Features',
         items: [
           {
+            _type: 'comparison-feature',
             _key: generateKey(),
             name: 'Users',
             tooltip: 'Number of team members',
@@ -286,11 +294,12 @@ export function createMockProductComparisonModule(
     pretitle: 'Compare',
     intro: createMockPortableText(['See how our products stack up']),
     products: [
-      { _key: generateKey(), name: 'Basic', highlight: false },
-      { _key: generateKey(), name: 'Premium', highlight: true },
+      { _type: 'comparison-product', _key: generateKey(), name: 'Basic', highlight: false },
+      { _type: 'comparison-product', _key: generateKey(), name: 'Premium', highlight: true },
     ],
     features: [
       {
+        _type: 'comparison-feature-row',
         _key: generateKey(),
         name: 'Feature A',
         featureDetails: ['Limited', 'Full'],

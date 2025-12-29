@@ -1,58 +1,31 @@
 /**
- * Metadata Schema
- * @version 1.1.1
- * @lastUpdated 2025-12-23
- * @description Search engine optimization settings (SEO).
+ * Metadata Schema (SEO fields only)
+ * @version 2.0.0
+ * @lastUpdated 2025-12-29
+ * @description SEO-only object type. Slug is now defined separately in document schemas.
  * @changelog
+ * - 2.0.0: Removed slug field - now defined inline in document schemas for proper tab placement
+ * - 1.2.0: Slug uses SlugWithPreview component for better visibility and preview buttons
  * - 1.1.1: Updated header documentation
  * - 1.1.0: Updated to use schema factory function
  * - 1.0.0: Initial version
  */
 
 import { defineField, defineType } from 'sanity';
-import { isUniqueAcrossLocale } from '@/sanity/lib/isUniqueAcrossLocale';
-import { createMetadataSchema } from '@/sanity/lib/schema-factory';
 import CharacterCount from '@/sanity/ui/CharacterCount';
 import PreviewOG from '@/sanity/ui/PreviewOG';
 
-/**
- * This is a custom metadata schema that extends the base metadata schema
- * with additional UI components for character counting and preview.
- */
-const metadataSchema = createMetadataSchema({
-  required: true,
-});
-
 export default defineType({
   name: 'metadata',
-  title: 'Metadata',
+  title: 'SEO Settings',
   description: 'Search engine optimization settings',
   type: 'object',
   fields: [
-    // Override the slug field to add validation
-    defineField({
-      name: 'slug',
-      type: 'slug',
-      description: 'URL path or permalink',
-      options: {
-        source: (doc) => {
-          const d = doc as { issue?: string; title?: string; metadata?: { title?: string } };
-          return d.issue ? `issue-${d.issue}` : d.title || d.metadata?.title || '';
-        },
-        isUnique: isUniqueAcrossLocale,
-      },
-      validation: (Rule) =>
-        Rule.required().custom((slug) => {
-          if (slug?.current?.includes('/')) {
-            return "Slugs cannot contain slashes. All pages and posts must use a flat structure (e.g., 'about' or 'my-post').";
-          }
-          return true;
-        }),
-    }),
-    // Override the title field to add character count and preview
     defineField({
       name: 'title',
+      title: 'SEO Title',
       type: 'string',
+      description: 'Title shown in search results (50-60 characters recommended)',
       validation: (Rule) => [Rule.required(), Rule.min(50).warning(), Rule.max(60).warning()],
       components: {
         input: (props) => (
@@ -62,19 +35,33 @@ export default defineType({
         ),
       },
     }),
-    // Override the description field to add character count
     defineField({
       name: 'description',
+      title: 'SEO Description',
       type: 'text',
       rows: 3,
+      description: 'Description shown in search results (70-160 characters recommended)',
       validation: (Rule) => [Rule.required(), Rule.min(70).warning(), Rule.max(160).warning()],
       components: {
         input: (props) => <CharacterCount as="textarea" max={160} {...props} />,
       },
     }),
-    // Keep other fields from the factory
-    ...metadataSchema.fields.filter(
-      (field) => !['slug', 'title', 'description'].includes(field.name)
-    ),
+    defineField({
+      name: 'image',
+      title: 'Social Sharing Image',
+      type: 'image',
+      description: 'Image displayed when sharing on social media',
+      options: {
+        hotspot: true,
+      },
+    }),
+    defineField({
+      name: 'noIndex',
+      title: 'Hide from search engines',
+      type: 'boolean',
+      description:
+        'Prevents this page from appearing in search results and removes it from the sitemap.',
+      initialValue: false,
+    }),
   ],
 });

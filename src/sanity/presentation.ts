@@ -41,17 +41,16 @@ export const presentation = presentationTool({
       }),
       page: defineLocations({
         select: {
-          title: 'title',
+          title: 'metadata.title',
           parent1: 'parent.0.metadata.slug.current',
           parent2: 'parent.1.metadata.slug.current',
           parent3: 'parent.2.metadata.slug.current',
-          metaTitle: 'metadata.title',
           slug: 'metadata.slug.current',
         },
         resolve: (doc) => ({
           locations: [
             {
-              title: doc?.title || doc?.metaTitle || 'Untitled',
+              title: doc?.title || 'Untitled',
               href: [
                 doc?.parent1 &&
                   `/${[doc.parent1, doc.parent2, doc.parent3].filter(Boolean).join('/')}`,
@@ -93,17 +92,16 @@ export const presentation = presentationTool({
       }),
       help: defineLocations({
         select: {
-          title: 'title',
+          title: 'metadata.title',
           parent1: 'parent.0.metadata.slug.current',
           parent2: 'parent.1.metadata.slug.current',
           parent3: 'parent.2.metadata.slug.current',
-          metaTitle: 'metadata.title',
           slug: 'metadata.slug.current',
         },
         resolve: (doc) => ({
           locations: [
             {
-              title: doc?.title || doc?.metaTitle || 'Untitled',
+              title: doc?.title || 'Untitled',
               href: [
                 doc?.parent1 &&
                   `/help/${[doc.parent1, doc.parent2, doc.parent3].filter(Boolean).join('/')}`,

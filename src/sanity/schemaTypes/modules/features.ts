@@ -63,6 +63,7 @@ export default defineType({
       type: 'array',
       of: [
         defineArrayMember({
+          name: 'feature-item',
           type: 'object',
           icon: ThLargeIcon,
           fields: [

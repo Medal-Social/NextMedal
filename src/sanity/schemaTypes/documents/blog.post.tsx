@@ -1,15 +1,23 @@
 /**
  * Blog Post Schema
- * @version 1.1.0
- * @lastUpdated 2025-12-23
+ * @version 1.4.0
+ * @lastUpdated 2025-12-29
  * @description Defines the structure for blog posts, including content, categories, authors, and metadata.
  * @changelog
+ * - 1.4.0: Clean separation - URL Slug in Content tab, SEO in SEO tab (no nested tabs)
+ * - 1.3.0: Split metadata - slug in Content tab, SEO fields in SEO tab
+ * - 1.2.0: Moved metadata to content group for better visibility of URL slug
  * - 1.1.0: Updated to latest UX standards (standardized icons, radio buttons for featured status)
  * - 1.0.0: Initial version with core blog post functionality
  */
 
 import { ControlsIcon, EditIcon, EyeClosedIcon, SearchIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
+import { isUniqueAcrossLocale } from '@/sanity/lib/isUniqueAcrossLocale';
+import CharacterCount from '@/sanity/ui/CharacterCount';
+import PageIdentityField from '@/sanity/ui/PageIdentityField';
+import PageIdentityInput from '@/sanity/ui/PageIdentityInput';
+import PreviewOG from '@/sanity/ui/PreviewOG';
 import { imageBlock } from '../fragments';
 import link from '../objects/link';
 
@@ -20,7 +28,7 @@ export default defineType({
   type: 'document',
   groups: [
     { name: 'content', title: 'Content', icon: EditIcon, default: true },
-    { name: 'metadata', title: 'SEO & Metadata', icon: SearchIcon },
+    { name: 'seo', title: 'SEO', icon: SearchIcon },
     { name: 'advanced', title: 'Advanced Options', icon: ControlsIcon },
   ],
   fields: [
@@ -29,6 +37,45 @@ export default defineType({
       type: 'string',
       readOnly: true,
       hidden: true,
+    }),
+    // Post Identity - Title and URL Slug together in Content tab
+    defineField({
+      name: 'metadata',
+      type: 'object',
+      group: 'content',
+      components: {
+        field: PageIdentityField,
+        input: PageIdentityInput,
+      },
+      fields: [
+        defineField({
+          name: 'title',
+          title: 'Post Title',
+          description: 'The title of the blog post',
+          type: 'string',
+          validation: (Rule) => Rule.required(),
+        }),
+        defineField({
+          name: 'slug',
+          title: 'URL Slug',
+          type: 'slug',
+          description: 'The URL path for this blog post',
+          options: {
+            source: (doc) => {
+              const d = doc as { metadata?: { title?: string } };
+              return d.metadata?.title || '';
+            },
+            isUnique: isUniqueAcrossLocale,
+          },
+          validation: (Rule) =>
+            Rule.required().custom((slug) => {
+              if (slug?.current?.includes('/')) {
+                return "Slugs cannot contain slashes. Use a flat structure (e.g., 'my-post').";
+              }
+              return true;
+            }),
+        }),
+      ],
     }),
     defineField({
       name: 'body',
@@ -103,6 +150,68 @@ export default defineType({
       validation: (Rule) => Rule.required(),
       group: 'content',
     }),
+    // SEO Settings - SEO tab only
+    defineField({
+      name: 'seo',
+      title: 'SEO Settings',
+      type: 'object',
+      group: 'seo',
+      options: {
+        collapsible: false,
+      },
+      fields: [
+        defineField({
+          name: 'title',
+          title: 'SEO Title',
+          type: 'string',
+          description: 'Title shown in search results (50-60 characters recommended)',
+          validation: (Rule) => [
+            Rule.required().warning(),
+            Rule.min(50).warning(),
+            Rule.max(60).warning(),
+          ],
+          components: {
+            input: (props) => (
+              <CharacterCount max={60} {...props}>
+                <PreviewOG title={props.elementProps.value} />
+              </CharacterCount>
+            ),
+          },
+        }),
+        defineField({
+          name: 'description',
+          title: 'SEO Description',
+          type: 'text',
+          rows: 3,
+          description: 'Description shown in search results (70-160 characters recommended)',
+          validation: (Rule) => [
+            Rule.required().warning(),
+            Rule.min(70).warning(),
+            Rule.max(160).warning(),
+          ],
+          components: {
+            input: (props) => <CharacterCount as="textarea" max={160} {...props} />,
+          },
+        }),
+        defineField({
+          name: 'image',
+          title: 'Social Sharing Image',
+          type: 'image',
+          description: 'Image displayed when sharing on social media',
+          options: {
+            hotspot: true,
+          },
+        }),
+        defineField({
+          name: 'noIndex',
+          title: 'Hide from search engines',
+          type: 'boolean',
+          description:
+            'Prevents this post from appearing in search results and removes it from the sitemap.',
+          initialValue: false,
+        }),
+      ],
+    }),
     defineField({
       name: 'featured',
       title: 'Featured',
@@ -118,13 +227,6 @@ export default defineType({
       initialValue: 'standard',
       group: 'advanced',
     }),
-    defineField({
-      name: 'metadata',
-      title: 'SEO & Metadata',
-      description: 'Search engine optimization settings.',
-      type: 'metadata',
-      group: 'metadata',
-    }),
   ],
   preview: {
     select: {
@@ -132,9 +234,9 @@ export default defineType({
       title: 'metadata.title',
       slug: 'metadata.slug.current',
       publishDate: 'publishDate',
-      media: 'metadata.image',
+      media: 'seo.image',
       language: 'language',
-      noindex: 'metadata.noIndex',
+      noindex: 'seo.noIndex',
     },
     prepare: ({ title, slug, publishDate, media, featured, language, noindex }) => {
       const languageLabel =
@@ -157,8 +259,8 @@ export default defineType({
     },
     {
       title: 'Title',
-      name: 'metadata.title',
-      by: [{ field: 'title', direction: 'asc' }],
+      name: 'seo.title',
+      by: [{ field: 'seo.title', direction: 'asc' }],
     },
   ],
 });

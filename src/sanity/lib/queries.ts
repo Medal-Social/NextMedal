@@ -244,7 +244,8 @@ export const PAGE_QUERY = groq`
 		...,
 		'modules': modules[]{ ${MODULES_QUERY} },
 		'placements': ${placementQuery("scope == 'page'")},
-		metadata {
+		metadata,
+		seo {
 			...,
 			'ogimage': image.asset->url + '?w=1200',
 		},
@@ -312,14 +313,14 @@ export const CURRENT_PAGE_QUERY = groq`
 
 // Search index query for posts, pages, and authors
 export const SEARCH_INDEX_QUERY = groq`{
-	"posts": *[_type == "blog.post" && defined(metadata.slug.current) && metadata.noIndex != true] {
+	"posts": *[_type == "blog.post" && defined(metadata.slug.current) && seo.noIndex != true] {
 		_id,
 		_type,
 		"title": metadata.title,
 		"slug": metadata.slug.current,
-		"description": metadata.description
+		"description": seo.description
 	},
-	"pages": *[_type == "page" && defined(metadata.slug.current) && metadata.slug.current != "index" && metadata.noIndex != true] {
+	"pages": *[_type == "page" && defined(metadata.slug.current) && metadata.slug.current != "index" && seo.noIndex != true] {
 		_id,
 		_type,
 		"title": metadata.title,
@@ -339,7 +340,7 @@ export function sitemapQuery(baseUrlParam: string) {
 		'pages': *[
 			_type == 'page' &&
 			!(metadata.slug.current in ['404']) &&
-			metadata.noIndex != true
+			seo.noIndex != true
 		]|order(metadata.slug.current){
 			'url': ${baseUrlParam} + select(metadata.slug.current == 'index' => '', metadata.slug.current),
 			'lastModified': _updatedAt,
@@ -348,7 +349,7 @@ export function sitemapQuery(baseUrlParam: string) {
 				0.5
 			),
 		},
-		'blog': *[_type == 'blog.post' && metadata.noIndex != true]|order(name){
+		'blog': *[_type == 'blog.post' && seo.noIndex != true]|order(name){
 			'url': ${baseUrlParam} + 'blog/' + metadata.slug.current,
 			'lastModified': _updatedAt,
 			'priority': 0.4
@@ -361,7 +362,7 @@ export const SITEMAP_WITH_TRANSLATIONS_QUERY = groq`{
 	'pages': *[
 		_type == 'page' &&
 		!(metadata.slug.current in ['404']) &&
-		metadata.noIndex != true
+		seo.noIndex != true
 	]|order(metadata.slug.current){
 		'slug': metadata.slug.current,
 		'lastModified': _updatedAt,
@@ -375,7 +376,7 @@ export const SITEMAP_WITH_TRANSLATIONS_QUERY = groq`{
 			language
 		}
 	},
-	'blog': *[_type == 'blog.post' && metadata.noIndex != true]|order(_updatedAt desc){
+	'blog': *[_type == 'blog.post' && seo.noIndex != true]|order(_updatedAt desc){
 		'slug': metadata.slug.current,
 		'lastModified': _updatedAt,
 		'priority': 0.4,
