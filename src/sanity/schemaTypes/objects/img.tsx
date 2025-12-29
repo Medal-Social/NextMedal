@@ -28,7 +28,7 @@ export default defineType({
       options: {
         hotspot: true,
       },
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) => Rule.required().warning('Adding an image is recommended'),
     }),
   ],
   preview: {

@@ -144,7 +144,8 @@ export default defineType({
       type: 'img',
       group: 'media',
       description: 'Image to display (will show play icon overlay if video is selected)',
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) =>
+        Rule.required().warning('Adding an image is recommended for better visual impact'),
     }),
     defineField({
       name: 'muxVideo',
