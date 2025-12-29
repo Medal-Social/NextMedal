@@ -16,6 +16,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "biome check .",
+    "lint:sanity": "npx tsx scripts/lint-sanity-schemas.ts",
+    "migrate:inline-types": "npx tsx scripts/migrate-inline-types.ts",
     "format": "biome format . --write",
     "manifest": "SANITY_CLI_EXTRACT_MANIFEST_ENABLED=false echo 'Manifest extraction disabled'",
     "typecheck": "tsc --noEmit",
