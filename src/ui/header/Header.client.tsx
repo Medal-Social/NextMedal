@@ -15,10 +15,6 @@ export default function HeaderClient({
   menu,
   enableSearch,
   children,
-  serverPage,
-  locale,
-  localeLabels,
-  themeLabels,
 }: HeaderClientProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isOpenRef = useRef(false);
@@ -95,7 +91,7 @@ export default function HeaderClient({
     setHeight();
     window.addEventListener('resize', setHeight, { passive: true });
 
-    // Also listen for banner height changes via MutationObserver on style attribute
+    // Listen for banner height changes via MutationObserver on style attribute
     const observer = new MutationObserver(setHeight);
     observer.observe(document.documentElement, {
       attributes: true,
@@ -158,8 +154,8 @@ export default function HeaderClient({
         ref={ref}
         className={cn(
           className,
-          'transition-colors duration-200 ease-in-out',
-          isScrolled
+          'relative z-10 transition-colors duration-200 ease-in-out',
+          isScrolled || isOpen
             ? 'bg-background border-b border-border/40 shadow-sm'
             : 'bg-transparent border-transparent',
           !isScrolled && isDarkHero && !isOpen && 'dark text-white'
@@ -175,17 +171,7 @@ export default function HeaderClient({
       </header>
 
       <AnimatePresence>
-        {isOpen && (
-          <MobileNavigation
-            menu={menu}
-            ctas={ctas}
-            enableSearch={enableSearch}
-            serverPage={serverPage}
-            locale={locale}
-            localeLabels={localeLabels}
-            themeLabels={themeLabels}
-          />
-        )}
+        {isOpen && <MobileNavigation menu={menu} ctas={ctas} enableSearch={enableSearch} />}
       </AnimatePresence>
     </>
   );

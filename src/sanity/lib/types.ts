@@ -118,11 +118,24 @@ export interface MenuItem {
   params?: Record<string, string>;
 }
 
+export interface Video extends SanityBase {
+  _type: 'video';
+  type?: 'mux' | 'youtube';
+  muxVideo?: MuxVideo;
+  videoId?: string;
+  title?: string;
+  thumbnail?: SanityImage;
+}
+
 // Module types
 export interface Hero extends SanityBase {
   _type: 'hero';
   content?: PortableTextBlock[];
   ctas?: CTA[];
+  videoType?: 'image' | 'mux' | 'youtube';
+  image?: { image: SanityImage };
+  muxVideo?: MuxVideo;
+  videoUrl?: string;
   assets?: SanityImage[];
   textAlign?: 'left' | 'center' | 'right' | 'justify';
   alignItems?: 'start' | 'center' | 'end' | 'stretch';

@@ -144,8 +144,9 @@ declare global {
 
     interface Pricing extends SanityDocument {
       title: string;
-      description?: string; // added
+      description?: string;
       highlight?: string;
+      style?: 'default' | 'featured' | 'dark';
       price: {
         base?: string;
         yearly?: string;
@@ -402,6 +403,13 @@ declare global {
       content?: BlockContent; // renamed from description to match schema
       ctas?: CTA[];
       image?: Img;
+      videoType?: 'image' | 'mux' | 'youtube';
+      muxVideo?: {
+        asset?: {
+          playbackId?: string;
+        };
+      };
+      videoUrl?: string;
       options?: {
         uid?: string;
         bgFrom?: string;

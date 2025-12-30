@@ -117,18 +117,14 @@ export default async function Footer() {
 
           {/* Right: Utilities */}
           <div className="flex items-center gap-4">
-            <div className="hidden lg:block">
-              <LocaleSwitcher
-                dropdownAlign="end"
-                className="[&>span]:inline-block text-muted-foreground hover:text-foreground hover:bg-transparent h-auto p-0 font-normal transition-colors duration-200"
-              />
-            </div>
-            <div className="hidden lg:block">
-              <ThemeToggleWrapper
-                dropdownAlign="end"
-                className="[&>span]:inline-block text-muted-foreground hover:text-foreground hover:bg-transparent h-auto p-0 font-normal transition-colors duration-200"
-              />
-            </div>
+            <LocaleSwitcher
+              dropdownAlign="end"
+              className="[&>span]:inline-block text-muted-foreground hover:text-foreground hover:bg-transparent h-auto p-0 font-normal transition-colors duration-200"
+            />
+            <ThemeToggleWrapper
+              dropdownAlign="end"
+              className="[&>span]:inline-block text-muted-foreground hover:text-foreground hover:bg-transparent h-auto p-0 font-normal transition-colors duration-200"
+            />
             {systemStatus && <SystemStatus status={systemStatus} />}
           </div>
         </Section>

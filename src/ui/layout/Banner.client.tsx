@@ -2,47 +2,40 @@
 import { X } from 'lucide-react';
 import Link from 'next/link';
 import { PortableText } from 'next-sanity';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import resolveUrl from '@/lib/resolveUrl';
-import { Scheduler } from '@/ui/utility';
 
-function BannerContent({
-  content,
-  cta,
-  onClose,
-}: {
-  content: Sanity.Banner['content'];
-  cta: Sanity.Banner['cta'];
-  onClose: () => void;
-}) {
-  const bannerRef = useRef<HTMLDivElement>(null);
+const BANNER_HEIGHT_VALUE = 40; // pixels
 
-  // Update CSS variable for banner height
+export default function BannerClient({ banner }: { banner: Sanity.Banner & Sanity.Module }) {
+  const { content, cta } = banner;
+  const [isClosed, setIsClosed] = useState(false);
+
+  // Set banner height CSS variable on mount and clear on dismiss
   useEffect(() => {
-    const updateBannerHeight = () => {
-      if (bannerRef.current) {
-        document.documentElement.style.setProperty(
-          '--banner-height',
-          `${bannerRef.current.offsetHeight}px`
-        );
-      }
-    };
-
-    // Use RAF to ensure DOM is ready
-    requestAnimationFrame(updateBannerHeight);
-    window.addEventListener('resize', updateBannerHeight, { passive: true });
+    if (!isClosed) {
+      document.documentElement.style.setProperty('--banner-height', `${BANNER_HEIGHT_VALUE}px`);
+    } else {
+      document.documentElement.style.setProperty('--banner-height', '0px');
+    }
 
     return () => {
-      window.removeEventListener('resize', updateBannerHeight);
       document.documentElement.style.setProperty('--banner-height', '0px');
     };
-  }, []);
+  }, [isClosed]);
+
+  // Handle dismiss
+  const handleClose = () => {
+    setIsClosed(true);
+  };
+
+  if (isClosed) return null;
 
   return (
     <div
-      ref={bannerRef}
-      className="fixed top-0 left-0 right-0 z-[60] flex items-center justify-center gap-x-6 bg-brand-700 text-white px-6 py-2 sm:px-3.5"
+      className="relative flex items-center justify-center gap-x-6 bg-brand-700 text-white px-6 py-2 sm:px-3.5"
+      style={{ height: `${BANNER_HEIGHT_VALUE}px` }}
     >
       <div className="relative flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
         <div className="text-sm font-medium [&_p]:m-0 [&_p]:leading-normal">
@@ -76,7 +69,7 @@ function BannerContent({
         <Button
           variant="ghost"
           size="icon-sm"
-          onClick={onClose}
+          onClick={handleClose}
           className="text-white/80 hover:text-white hover:bg-white/10"
         >
           <span className="sr-only">Dismiss</span>
@@ -84,25 +77,5 @@ function BannerContent({
         </Button>
       </div>
     </div>
-  );
-}
-
-export default function BannerClient({ banner }: { banner: Sanity.Banner & Sanity.Module }) {
-  const { start, end, content, cta } = banner;
-  const [isClosed, setIsClosed] = useState(false);
-
-  // Reset banner height when closed
-  useEffect(() => {
-    if (isClosed) {
-      document.documentElement.style.setProperty('--banner-height', '0px');
-    }
-  }, [isClosed]);
-
-  if (isClosed) return null;
-
-  return (
-    <Scheduler start={start} end={end}>
-      <BannerContent content={content} cta={cta} onClose={() => setIsClosed(true)} />
-    </Scheduler>
   );
 }
