@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version
  */
 
-import { BillIcon } from '@sanity/icons';
+import { BillIcon, ControlsIcon, EditIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
@@ -16,6 +16,10 @@ export default defineType({
   title: 'Pricing Tier',
   icon: BillIcon,
   type: 'document',
+  groups: [
+    { name: 'content', title: 'Content', icon: EditIcon, default: true },
+    { name: 'options', title: 'Advanced Options', icon: ControlsIcon },
+  ],
   fields: [
     defineField({
       name: 'title',
@@ -23,24 +27,21 @@ export default defineType({
       description: 'Name of the pricing tier (e.g. "Free", "Pro").',
       type: 'string',
       validation: (Rule) => Rule.required(),
+      group: 'content',
     }),
     defineField({
       name: 'description',
       title: 'Description',
       description: 'Brief summary of what this tier offers.',
       type: 'text',
-    }),
-    defineField({
-      name: 'highlight',
-      title: 'Highlight',
-      type: 'string',
-      description: 'e.g. Recommended, Most Popular, etc.',
+      group: 'content',
     }),
     defineField({
       name: 'price',
       title: 'Price',
       description: 'Pricing details.',
       type: 'object',
+      group: 'content',
       options: {
         columns: 2,
       },
@@ -73,6 +74,7 @@ export default defineType({
       description: 'Buttons for this pricing tier.',
       type: 'array',
       of: [{ type: 'cta' }],
+      group: 'content',
     }),
     defineField({
       name: 'content',
@@ -80,6 +82,30 @@ export default defineType({
       description: 'List of features included in this tier.',
       type: 'array',
       of: [{ type: 'block' }],
+      group: 'content',
+    }),
+    defineField({
+      name: 'highlight',
+      title: 'Highlight Badge',
+      type: 'string',
+      description: 'e.g. Recommended, Most Popular, etc.',
+      group: 'options',
+    }),
+    defineField({
+      name: 'style',
+      title: 'Card Style',
+      type: 'string',
+      description: 'Visual style of the pricing card.',
+      options: {
+        list: [
+          { title: 'Default', value: 'default' },
+          { title: 'Featured (Purple accent)', value: 'featured' },
+          { title: 'Dark (Dark background)', value: 'dark' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'default',
+      group: 'options',
     }),
   ],
   preview: {
