@@ -112,7 +112,7 @@ export default function Hero(props: Sanity.Hero & { className?: string }) {
         <div
           className={cn(
             'grid grid-cols-1 gap-12',
-            hasMedia ? 'lg:grid-cols-12 lg:items-center lg:gap-20' : 'max-w-5xl mx-auto text-center'
+            hasMedia ? 'lg:grid-cols-12 lg:items-start lg:gap-20' : 'max-w-5xl mx-auto text-center'
           )}
         >
           <motion.div
@@ -159,7 +159,7 @@ export default function Hero(props: Sanity.Hero & { className?: string }) {
             >
               <div
                 className={cn(
-                  'relative w-full overflow-hidden rounded-2xl shadow-2xl ring-1 ring-border/50 bg-muted',
+                  'relative w-full overflow-hidden rounded-2xl',
                   !imageAspectRatio && 'aspect-video'
                 )}
                 style={style}
@@ -198,9 +198,6 @@ export default function Hero(props: Sanity.Hero & { className?: string }) {
                     }}
                   />
                 )}
-
-                {/* Subtle decoration on the left only */}
-                <div className="absolute -bottom-6 -left-6 w-32 h-32 rounded-full bg-brand-vibrant/20 blur-2xl pointer-events-none dark:bg-brand-vibrant/10 z-10" />
               </div>
             </motion.div>
           )}
