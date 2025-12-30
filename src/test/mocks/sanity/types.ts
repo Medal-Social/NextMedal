@@ -112,7 +112,7 @@ export interface MockPage {
 
 export interface MockBlogPost {
   _id: string;
-  _type: 'blog.post';
+  _type: 'collection.blog';
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
@@ -121,9 +121,16 @@ export interface MockBlogPost {
   categories?: Array<{ _ref: string; _type: 'reference' }>;
   authors?: Array<{ _ref: string; _type: 'reference' }>;
   publishDate: string;
-  featured?: boolean;
+  featured?: 'standard' | 'featured';
   metadata: MockMetadata;
   seo?: MockSeo;
+  collection?: {
+    _id: string;
+    metadata?: {
+      slug?: { current: string };
+      title?: string;
+    };
+  };
 }
 
 export interface MockBlogCategory {
@@ -218,14 +225,6 @@ export interface MockAccordionListModule {
   content?: MockPortableTextBlock[];
   items?: MockAccordionItem[];
   generateSchema?: boolean;
-}
-
-export interface MockBlogFrontpageModule {
-  _type: 'blog-frontpage';
-  _key: string;
-  mainPost?: 'recent' | 'featured';
-  showFeaturedPostsFirst?: boolean;
-  itemsPerPage?: number;
 }
 
 export interface MockLatestArticlesModule {
@@ -395,7 +394,6 @@ export type MockModule =
   | MockHeroModule
   | MockCalloutModule
   | MockAccordionListModule
-  | MockBlogFrontpageModule
   | MockLatestArticlesModule
   | MockBreadcrumbsModule
   | MockFeaturesModule

@@ -37,13 +37,13 @@ export function createMockPage(overrides?: Partial<MockPage>): MockPage {
 }
 
 /**
- * Creates a mock Blog Post document
+ * Creates a mock Blog Post document (collection.blog)
  */
 export function createMockBlogPost(overrides?: Partial<MockBlogPost>): MockBlogPost {
   const now = new Date().toISOString();
   return {
     _id: generateId('blog-post'),
-    _type: 'blog.post',
+    _type: 'collection.blog',
     _createdAt: now,
     _updatedAt: now,
     _rev: generateId('rev'),
@@ -55,7 +55,7 @@ export function createMockBlogPost(overrides?: Partial<MockBlogPost>): MockBlogP
     categories: [],
     authors: [],
     publishDate: new Date().toISOString().split('T')[0],
-    featured: false,
+    featured: 'standard',
     metadata: createMockMetadata({
       slug: createMockSlug('test-blog-post'),
       title: 'Test Blog Post Title - Engaging Content for Readers',
@@ -64,6 +64,13 @@ export function createMockBlogPost(overrides?: Partial<MockBlogPost>): MockBlogP
       description:
         'This is a test blog post description that summarizes the content and encourages readers to click.',
     }),
+    collection: {
+      _id: generateId('page'),
+      metadata: {
+        slug: { current: 'blog' },
+        title: 'Blog',
+      },
+    },
     ...overrides,
   };
 }
@@ -158,7 +165,7 @@ export function createMockSite(overrides?: Partial<MockSite>): MockSite {
  */
 export function createMockDocument(type: 'page', overrides?: Partial<MockPage>): MockPage;
 export function createMockDocument(
-  type: 'blog.post',
+  type: 'collection.blog',
   overrides?: Partial<MockBlogPost>
 ): MockBlogPost;
 export function createMockDocument(
@@ -174,7 +181,7 @@ export function createMockDocument(
   switch (type) {
     case 'page':
       return createMockPage(overrides as Partial<MockPage>);
-    case 'blog.post':
+    case 'collection.blog':
       return createMockBlogPost(overrides as Partial<MockBlogPost>);
     case 'blog.category':
       return createMockBlogCategory(overrides as Partial<MockBlogCategory>);

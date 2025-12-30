@@ -17,14 +17,15 @@ vi.mock('@/sanity/lib/live', () => ({
   fetchSanityLive: vi.fn(),
 }));
 
-import { GET } from '@/app/sitemap.xml/route';
+// Import from locale-specific sitemap route (not the sitemap index)
+import { GET } from '@/app/sitemap-en.xml/route';
 import { fetchSanityLive } from '@/sanity/lib/live';
 
 const mockFetchSanityLive = vi.mocked(fetchSanityLive);
 
-describe('sitemap.xml route', () => {
+describe('sitemap-en.xml route', () => {
   const originalEnv = process.env;
-  const mockRequest = new NextRequest('http://localhost:3000/sitemap.xml');
+  const mockRequest = new NextRequest('http://localhost:3000/sitemap-en.xml');
 
   beforeEach(() => {
     vi.resetModules();
@@ -49,6 +50,7 @@ describe('sitemap.xml route', () => {
           },
         ],
         blog: [],
+        collections: [],
       });
 
       const response = await GET(mockRequest);
@@ -59,6 +61,7 @@ describe('sitemap.xml route', () => {
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [],
         blog: [],
+        collections: [],
       });
 
       const response = await GET(mockRequest);
@@ -79,6 +82,7 @@ describe('sitemap.xml route', () => {
           },
         ],
         blog: [],
+        collections: [],
       });
 
       const response = await GET(mockRequest);
@@ -108,6 +112,7 @@ describe('sitemap.xml route', () => {
           },
         ],
         blog: [],
+        collections: [],
       });
 
       const response = await GET(mockRequest);
@@ -133,6 +138,7 @@ describe('sitemap.xml route', () => {
             translations: [],
           },
         ],
+        collections: [],
       });
 
       const response = await GET(mockRequest);
@@ -156,6 +162,7 @@ describe('sitemap.xml route', () => {
           },
         ],
         blog: [],
+        collections: [],
       });
 
       const response = await GET(mockRequest);
@@ -170,29 +177,33 @@ describe('sitemap.xml route', () => {
       );
     });
 
-    it('handles Norwegian locale pages correctly', async () => {
+    it('includes hreflang self-reference for English pages with Norwegian translation', async () => {
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [
           {
-            slug: 'om-oss',
+            slug: 'about',
             lastModified: '2024-01-01T00:00:00Z',
             priority: 0.8,
-            language: 'nb',
-            translations: [{ slug: 'about', language: 'en' }],
+            language: 'en',
+            translations: [{ slug: 'om-oss', language: 'nb' }],
           },
         ],
         blog: [],
+        collections: [],
       });
 
       const response = await GET(mockRequest);
       const xml = await response.text();
 
-      expect(xml).toContain('<loc>https://example.com/nb/om-oss</loc>');
-      expect(xml).toContain(
-        '<xhtml:link rel="alternate" hreflang="nb" href="https://example.com/nb/om-oss"/>'
-      );
+      // English sitemap includes English pages
+      expect(xml).toContain('<loc>https://example.com/about</loc>');
+      // Self-reference for English
       expect(xml).toContain(
         '<xhtml:link rel="alternate" hreflang="en" href="https://example.com/about"/>'
+      );
+      // Reference to Norwegian translation
+      expect(xml).toContain(
+        '<xhtml:link rel="alternate" hreflang="nb" href="https://example.com/nb/om-oss"/>'
       );
     });
 
@@ -208,6 +219,7 @@ describe('sitemap.xml route', () => {
           },
         ],
         blog: [],
+        collections: [],
       });
 
       const response = await GET(mockRequest);
@@ -228,6 +240,7 @@ describe('sitemap.xml route', () => {
           },
         ],
         blog: [],
+        collections: [],
       });
 
       const response = await GET(mockRequest);
@@ -256,6 +269,7 @@ describe('sitemap.xml route', () => {
           },
         ],
         blog: [],
+        collections: [],
       });
 
       const response = await GET(mockRequest);
@@ -292,13 +306,14 @@ describe('sitemap.xml route', () => {
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [],
         blog: [],
+        collections: [],
       });
 
       await GET(mockRequest);
 
       expect(mockFetchSanityLive).toHaveBeenCalledWith(
         expect.objectContaining({
-          query: expect.stringContaining('metadata.noIndex != true'),
+          query: expect.stringContaining('seo.noIndex != true'),
           stega: false,
         })
       );
@@ -308,6 +323,7 @@ describe('sitemap.xml route', () => {
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [],
         blog: [],
+        collections: [],
       });
 
       await GET(mockRequest);
@@ -324,8 +340,8 @@ describe('sitemap.xml route', () => {
 /**
  * Property-Based Tests for Sitemap
  */
-describe('sitemap.xml property tests', () => {
-  const mockRequest = new NextRequest('http://localhost:3000/sitemap.xml');
+describe('sitemap-en.xml property tests', () => {
+  const mockRequest = new NextRequest('http://localhost:3000/sitemap-en.xml');
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -349,7 +365,8 @@ describe('sitemap.xml property tests', () => {
             slug: slugArb,
             lastModified: isoDateArb,
             priority: fc.double({ min: 0, max: 1, noNaN: true }),
-            language: fc.constantFrom('en', 'nb'),
+            // Only generate English pages since we're testing sitemap-en.xml
+            language: fc.constant('en'),
             translations: fc.constant([]),
           }),
           { minLength: 1, maxLength: 10 }
@@ -358,6 +375,7 @@ describe('sitemap.xml property tests', () => {
           mockFetchSanityLive.mockResolvedValueOnce({
             pages,
             blog: [],
+            collections: [],
           });
 
           const response = await GET(mockRequest);
@@ -380,13 +398,14 @@ describe('sitemap.xml property tests', () => {
     mockFetchSanityLive.mockResolvedValueOnce({
       pages: [],
       blog: [],
+      collections: [],
     });
 
     await GET(mockRequest);
 
     expect(mockFetchSanityLive).toHaveBeenCalledWith(
       expect.objectContaining({
-        query: expect.stringContaining('metadata.noIndex != true'),
+        query: expect.stringContaining('seo.noIndex != true'),
       })
     );
   });
@@ -401,6 +420,7 @@ describe('sitemap.xml property tests', () => {
     await fc.assert(
       fc.asyncProperty(slugArb, async (slug) => {
         // Test English (default locale - no prefix)
+        // English sitemap only includes English pages
         mockFetchSanityLive.mockResolvedValueOnce({
           pages: [
             {
@@ -412,29 +432,13 @@ describe('sitemap.xml property tests', () => {
             },
           ],
           blog: [],
+          collections: [],
         });
 
         const enResponse = await GET(mockRequest);
         const enXml = await enResponse.text();
+        // English pages appear without locale prefix (default locale)
         expect(enXml).toContain(`<loc>https://example.com/${slug}</loc>`);
-
-        // Test Norwegian (prefixed)
-        mockFetchSanityLive.mockResolvedValueOnce({
-          pages: [
-            {
-              slug,
-              lastModified: '2024-01-01T00:00:00Z',
-              priority: 0.5,
-              language: 'nb',
-              translations: [],
-            },
-          ],
-          blog: [],
-        });
-
-        const nbResponse = await GET(mockRequest);
-        const nbXml = await nbResponse.text();
-        expect(nbXml).toContain(`<loc>https://example.com/nb/${slug}</loc>`);
       }),
       { numRuns: 20 }
     );

@@ -47,8 +47,16 @@ describe('resolveUrl', () => {
     expect(url).toBe('https://example.com/');
   });
 
-  it('should handle blog post path with /blog/ prefix', () => {
-    const blogPost = { ...mockPage, _type: 'blog.post', metadata: { slug: { current: 'post-1' } } };
+  it('should handle collection.blog with collection reference', () => {
+    const blogPost = {
+      ...mockPage,
+      _type: 'collection.blog',
+      metadata: { slug: { current: 'post-1' } },
+      collection: {
+        _id: 'page-123',
+        metadata: { slug: { current: 'blog' } },
+      },
+    };
     const url = resolveUrl(blogPost);
     expect(url).toBe('https://example.com/blog/post-1');
   });

@@ -1,525 +1,465 @@
-import fc from 'fast-check';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { NextRequest } from 'next/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Mock the fetchSanityLive function
-vi.mock('@/sanity/lib/live', () => ({
-  fetchSanityLive: vi.fn(),
+// Create the mock fetch function
+const mockFetch = vi.fn();
+
+// Mock dependencies
+vi.mock('@/lib/env', () => ({
+  BASE_URL: 'https://example.com',
 }));
 
-// Mock resolveUrl
-vi.mock('@/lib/resolveUrl', () => ({
-  default: vi.fn((page) => `https://example.com/${page.metadata?.slug?.current || ''}`),
+vi.mock('@/sanity/lib/client', () => ({
+  client: {
+    withConfig: vi.fn(() => ({
+      fetch: mockFetch,
+    })),
+  },
 }));
 
-// Mock urlFor
-vi.mock('@/sanity/lib/image', () => ({
-  urlFor: vi.fn(() => ({
-    url: () => 'https://cdn.sanity.io/images/test/production/test-image.jpg',
-  })),
-}));
+import { GET } from '@/app/(frontend)/[locale]/[collection]/rss.xml/route';
 
-import { GET } from '@/app/(frontend)/[locale]/blog/rss.xml/route';
-import { fetchSanityLive } from '@/sanity/lib/live';
+describe('RSS Feed Route', () => {
+  const createMockRequest = (locale: string, collection: string) =>
+    new NextRequest(`http://localhost:3000/${locale}/${collection}/rss.xml`);
 
-const mockFetchSanityLive = vi.mocked(fetchSanityLive);
-
-describe('RSS feed route', () => {
-  const originalEnv = process.env;
+  const createMockParams = (locale: string, collection: string) =>
+    Promise.resolve({ locale, collection });
 
   beforeEach(() => {
-    vi.resetModules();
-    process.env = { ...originalEnv };
-    process.env.NEXT_PUBLIC_BASE_URL = 'https://example.com';
     vi.clearAllMocks();
   });
 
   afterEach(() => {
-    process.env = originalEnv;
+    vi.resetAllMocks();
   });
 
-  const mockBlogPage = {
-    _type: 'page',
-    title: 'Blog',
-    metadata: {
-      title: 'Blog',
-      description: 'Our blog posts',
-      slug: { current: 'blog' },
-    },
-  };
-
-  const mockPost = {
-    _type: 'blog.post',
-    publishDate: '2024-01-15T00:00:00Z',
-    authors: [{ name: 'John Doe' }],
-    metadata: {
-      title: 'Test Post',
-      description: 'A test blog post',
-      slug: { current: 'test-post' },
-    },
-    body: [
-      {
-        _type: 'block',
-        children: [{ _type: 'span', text: 'Hello world' }],
-      },
-    ],
-    image: 'https://example.com/image.jpg',
-  };
-
-  describe('Content-Type', () => {
-    it('returns Content-Type application/atom+xml', async () => {
-      mockFetchSanityLive.mockResolvedValueOnce({
-        blog: mockBlogPage,
-        posts: [mockPost],
-        copyright: '© 2024 Example',
-      });
-
-      const response = await GET();
-      expect(response.headers.get('Content-Type')).toBe('application/atom+xml');
-    });
-  });
-
-  describe('Feed metadata', () => {
-    it('includes feed title from blog page', async () => {
-      mockFetchSanityLive.mockResolvedValueOnce({
-        blog: mockBlogPage,
-        posts: [mockPost],
-        copyright: '© 2024 Example',
-      });
-
-      const response = await GET();
-      const xml = await response.text();
-
-      expect(xml).toContain('<title>Blog</title>');
-    });
-
-    it('includes feed description', async () => {
-      mockFetchSanityLive.mockResolvedValueOnce({
-        blog: mockBlogPage,
-        posts: [mockPost],
-        copyright: '© 2024 Example',
-      });
-
-      const response = await GET();
-      const xml = await response.text();
-
-      expect(xml).toContain('Our blog posts');
-    });
-
-    it('includes feed link', async () => {
-      mockFetchSanityLive.mockResolvedValueOnce({
-        blog: mockBlogPage,
-        posts: [mockPost],
-        copyright: '© 2024 Example',
-      });
-
-      const response = await GET();
-      const xml = await response.text();
-
-      expect(xml).toContain('<link');
-    });
-
-    it('includes copyright information', async () => {
-      mockFetchSanityLive.mockResolvedValueOnce({
-        blog: mockBlogPage,
-        posts: [mockPost],
-        copyright: '© 2024 Example',
-      });
-
-      const response = await GET();
-      const xml = await response.text();
-
-      expect(xml).toContain('© 2024 Example');
-    });
-  });
-
-  describe('Item elements', () => {
-    it('includes item elements for blog posts', async () => {
-      mockFetchSanityLive.mockResolvedValueOnce({
-        blog: mockBlogPage,
-        posts: [mockPost],
-        copyright: '© 2024 Example',
-      });
-
-      const response = await GET();
-      const xml = await response.text();
-
-      expect(xml).toContain('<entry>');
-      expect(xml).toContain('Test Post');
-    });
-
-    it('includes post title in item', async () => {
-      mockFetchSanityLive.mockResolvedValueOnce({
-        blog: mockBlogPage,
-        posts: [mockPost],
-        copyright: '© 2024 Example',
-      });
-
-      const response = await GET();
-      const xml = await response.text();
-
-      expect(xml).toContain('Test Post');
-    });
-
-    it('includes post description in item', async () => {
-      mockFetchSanityLive.mockResolvedValueOnce({
-        blog: mockBlogPage,
-        posts: [mockPost],
-        copyright: '© 2024 Example',
-      });
-
-      const response = await GET();
-      const xml = await response.text();
-
-      expect(xml).toContain('A test blog post');
-    });
-
-    it('includes published date in item', async () => {
-      mockFetchSanityLive.mockResolvedValueOnce({
-        blog: mockBlogPage,
-        posts: [mockPost],
-        copyright: '© 2024 Example',
-      });
-
-      const response = await GET();
-      const xml = await response.text();
-
-      expect(xml).toContain('<published>');
-    });
-  });
-
-  describe('Author information', () => {
-    it('includes author information when post has authors', async () => {
-      mockFetchSanityLive.mockResolvedValueOnce({
-        blog: mockBlogPage,
-        posts: [mockPost],
-        copyright: '© 2024 Example',
-      });
-
-      const response = await GET();
-      const xml = await response.text();
-
-      expect(xml).toContain('<author>');
-      expect(xml).toContain('John Doe');
-    });
-
-    it('handles posts without authors', async () => {
-      const postWithoutAuthor = { ...mockPost, authors: undefined };
-      mockFetchSanityLive.mockResolvedValueOnce({
-        blog: mockBlogPage,
-        posts: [postWithoutAuthor],
-        copyright: '© 2024 Example',
-      });
-
-      const response = await GET();
-      expect(response.status).toBe(200);
-    });
-  });
-
-  describe('Image handling', () => {
-    it('escapes images in content properly', async () => {
-      const postWithImage = {
-        ...mockPost,
-        body: [
+  describe('Content-Type and Headers', () => {
+    it('returns Content-Type application/xml', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          _id: 'page-1',
+          title: 'Blog',
+          slug: 'blog',
+          description: 'Our blog',
+          frontpageType: 'articles-frontpage',
+        })
+        .mockResolvedValueOnce([
           {
-            _type: 'image',
-            alt: 'Test image',
-            asset: { _ref: 'image-123' },
+            _id: 'post-1',
+            title: 'Test Post',
+            slug: 'test-post',
+            description: 'A test post',
+            publishDate: '2024-01-01T00:00:00Z',
+            authors: [{ name: 'John Doe' }],
+            categories: [{ title: 'Tech' }],
           },
-        ],
-      };
+        ]);
 
-      mockFetchSanityLive.mockResolvedValueOnce({
-        blog: mockBlogPage,
-        posts: [postWithImage],
-        copyright: '© 2024 Example',
+      const response = await GET(createMockRequest('en', 'blog'), {
+        params: createMockParams('en', 'blog'),
       });
 
-      const response = await GET();
-      const xml = await response.text();
+      expect(response.headers.get('Content-Type')).toContain('application/xml');
+    });
 
-      // The image should be rendered with proper escaping
-      expect(xml).toContain('<img');
-      expect(xml).toContain('alt=');
+    it('includes cache headers', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          _id: 'page-1',
+          title: 'Blog',
+          slug: 'blog',
+          frontpageType: 'articles-frontpage',
+        })
+        .mockResolvedValueOnce([]);
+
+      const response = await GET(createMockRequest('en', 'blog'), {
+        params: createMockParams('en', 'blog'),
+      });
+
+      expect(response.headers.get('Cache-Control')).toContain('s-maxage=3600');
     });
   });
 
-  describe('Error handling', () => {
-    it('returns 500 status when Sanity CMS is unavailable', async () => {
-      mockFetchSanityLive.mockRejectedValueOnce(new Error('CMS unavailable'));
+  describe('XSL Stylesheet Reference', () => {
+    it('includes XSL stylesheet reference in XML output', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          _id: 'page-1',
+          title: 'Blog',
+          slug: 'blog',
+          frontpageType: 'articles-frontpage',
+        })
+        .mockResolvedValueOnce([]);
 
-      const response = await GET();
-
-      expect(response.status).toBe(500);
-    });
-
-    it('returns 500 when blog page is missing', async () => {
-      mockFetchSanityLive.mockResolvedValueOnce({
-        blog: null,
-        posts: [mockPost],
-        copyright: '© 2024 Example',
+      const response = await GET(createMockRequest('en', 'blog'), {
+        params: createMockParams('en', 'blog'),
       });
+      const xml = await response.text();
 
-      const response = await GET();
-
-      expect(response.status).toBe(500);
-    });
-
-    it('returns 500 when posts are missing', async () => {
-      mockFetchSanityLive.mockResolvedValueOnce({
-        blog: mockBlogPage,
-        posts: null,
-        copyright: '© 2024 Example',
-      });
-
-      const response = await GET();
-
-      expect(response.status).toBe(500);
+      expect(xml).toContain('<?xml-stylesheet type="text/xsl" href="/rss.xsl"?>');
     });
   });
 
-  describe('Posts without metadata', () => {
-    it('skips posts without metadata', async () => {
-      const postWithoutMetadata = { ...mockPost, metadata: undefined };
-      mockFetchSanityLive.mockResolvedValueOnce({
-        blog: mockBlogPage,
-        posts: [postWithoutMetadata, mockPost],
-        copyright: '© 2024 Example',
-      });
+  describe('RSS Structure', () => {
+    it('returns valid RSS 2.0 structure with channel elements', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          _id: 'page-1',
+          title: 'My Blog',
+          slug: 'blog',
+          description: 'Blog description',
+          frontpageType: 'articles-frontpage',
+        })
+        .mockResolvedValueOnce([]);
 
-      const response = await GET();
+      const response = await GET(createMockRequest('en', 'blog'), {
+        params: createMockParams('en', 'blog'),
+      });
       const xml = await response.text();
 
-      // Should only include the post with metadata
+      expect(xml).toContain('<?xml version="1.0" encoding="UTF-8"?>');
+      expect(xml).toContain('<rss version="2.0"');
+      expect(xml).toContain('xmlns:atom="http://www.w3.org/2005/Atom"');
+      expect(xml).toContain('<channel>');
+      expect(xml).toContain('<title>My Blog</title>');
+      expect(xml).toContain('<link>https://example.com/blog</link>');
+      expect(xml).toContain('<description>Blog description</description>');
+      expect(xml).toContain('<language>en</language>');
+      expect(xml).toContain('</channel>');
+      expect(xml).toContain('</rss>');
+    });
+
+    it('includes atom:link self reference', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          _id: 'page-1',
+          title: 'Blog',
+          slug: 'blog',
+          frontpageType: 'articles-frontpage',
+        })
+        .mockResolvedValueOnce([]);
+
+      const response = await GET(createMockRequest('en', 'blog'), {
+        params: createMockParams('en', 'blog'),
+      });
+      const xml = await response.text();
+
+      expect(xml).toContain('<atom:link href="https://example.com/blog/rss.xml"');
+      expect(xml).toContain('rel="self"');
+      expect(xml).toContain('type="application/rss+xml"');
+    });
+  });
+
+  describe('RSS Items', () => {
+    it('includes item elements with required fields', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          _id: 'page-1',
+          title: 'Blog',
+          slug: 'blog',
+          frontpageType: 'articles-frontpage',
+        })
+        .mockResolvedValueOnce([
+          {
+            _id: 'post-1',
+            title: 'Test Article',
+            slug: 'test-article',
+            description: 'Article description',
+            publishDate: '2024-06-15T10:30:00Z',
+            authors: [{ name: 'Jane Smith' }],
+            categories: [{ title: 'Technology' }],
+          },
+        ]);
+
+      const response = await GET(createMockRequest('en', 'blog'), {
+        params: createMockParams('en', 'blog'),
+      });
+      const xml = await response.text();
+
+      expect(xml).toContain('<item>');
+      expect(xml).toContain('<title>Test Article</title>');
+      expect(xml).toContain('<link>https://example.com/blog/test-article</link>');
+      expect(xml).toContain(
+        '<guid isPermaLink="true">https://example.com/blog/test-article</guid>'
+      );
+      expect(xml).toContain('<pubDate>');
+      expect(xml).toContain('<description>Article description</description>');
+      expect(xml).toContain('<author>Jane Smith</author>');
+      expect(xml).toContain('<category>Technology</category>');
+      expect(xml).toContain('</item>');
+    });
+
+    it('handles items without optional fields', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          _id: 'page-1',
+          title: 'Blog',
+          slug: 'blog',
+          frontpageType: 'articles-frontpage',
+        })
+        .mockResolvedValueOnce([
+          {
+            _id: 'post-1',
+            title: 'Minimal Post',
+            slug: 'minimal-post',
+            publishDate: '2024-01-01T00:00:00Z',
+          },
+        ]);
+
+      const response = await GET(createMockRequest('en', 'blog'), {
+        params: createMockParams('en', 'blog'),
+      });
+      const xml = await response.text();
+
+      expect(xml).toContain('<title>Minimal Post</title>');
+      expect(xml).not.toContain('<description></description>');
+      expect(xml).not.toContain('<author></author>');
+    });
+  });
+
+  describe('Locale Handling', () => {
+    it('uses locale prefix for non-English locales', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          _id: 'page-1',
+          title: 'Blogg',
+          slug: 'blogg',
+          frontpageType: 'articles-frontpage',
+        })
+        .mockResolvedValueOnce([
+          {
+            _id: 'post-1',
+            title: 'Norsk Innlegg',
+            slug: 'norsk-innlegg',
+            publishDate: '2024-01-01T00:00:00Z',
+          },
+        ]);
+
+      const response = await GET(createMockRequest('nb', 'blogg'), {
+        params: createMockParams('nb', 'blogg'),
+      });
+      const xml = await response.text();
+
+      expect(xml).toContain('<link>https://example.com/nb/blogg</link>');
+      expect(xml).toContain('<link>https://example.com/nb/blogg/norsk-innlegg</link>');
+      expect(xml).toContain('<language>nb</language>');
+    });
+
+    it('omits locale prefix for English (default locale)', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          _id: 'page-1',
+          title: 'Blog',
+          slug: 'blog',
+          frontpageType: 'articles-frontpage',
+        })
+        .mockResolvedValueOnce([]);
+
+      const response = await GET(createMockRequest('en', 'blog'), {
+        params: createMockParams('en', 'blog'),
+      });
+      const xml = await response.text();
+
+      expect(xml).toContain('<link>https://example.com/blog</link>');
+      expect(xml).not.toContain('/en/blog');
+    });
+  });
+
+  describe('Collection Type Detection', () => {
+    it('returns 404 for non-collection pages', async () => {
+      mockFetch.mockResolvedValueOnce({
+        _id: 'page-1',
+        title: 'About',
+        slug: 'about',
+        frontpageType: null,
+      });
+
+      const response = await GET(createMockRequest('en', 'about'), {
+        params: createMockParams('en', 'about'),
+      });
+
+      expect(response.status).toBe(404);
+    });
+
+    it('returns 404 for non-existent pages', async () => {
+      mockFetch.mockResolvedValueOnce(null);
+
+      const response = await GET(createMockRequest('en', 'nonexistent'), {
+        params: createMockParams('en', 'nonexistent'),
+      });
+
+      expect(response.status).toBe(404);
+    });
+
+    it.each([
+      ['articles-frontpage', 'collection.blog'],
+      ['changelog-frontpage', 'collection.changelog'],
+      ['docs-frontpage', 'collection.documentation'],
+      ['events-frontpage', 'collection.events'],
+      ['newsletter-frontpage', 'collection.newsletter'],
+    ])('handles %s frontpage type correctly', async (frontpageType, _expectedDocType) => {
+      mockFetch
+        .mockResolvedValueOnce({
+          _id: 'page-1',
+          title: 'Collection',
+          slug: 'collection',
+          frontpageType,
+        })
+        .mockResolvedValueOnce([]);
+
+      const response = await GET(createMockRequest('en', 'collection'), {
+        params: createMockParams('en', 'collection'),
+      });
+
       expect(response.status).toBe(200);
-      expect(xml).toContain('Test Post');
+      // Verify the correct document type was queried
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('XML Escaping', () => {
+    it('escapes special XML characters in content', async () => {
+      mockFetch
+        .mockResolvedValueOnce({
+          _id: 'page-1',
+          title: 'Blog & News',
+          slug: 'blog',
+          description: 'Articles about <tech> & "stuff"',
+          frontpageType: 'articles-frontpage',
+        })
+        .mockResolvedValueOnce([
+          {
+            _id: 'post-1',
+            title: "Tom's Guide to A&B <Testing>",
+            slug: 'toms-guide',
+            description: 'A "quoted" description with <brackets>',
+            publishDate: '2024-01-01T00:00:00Z',
+          },
+        ]);
+
+      const response = await GET(createMockRequest('en', 'blog'), {
+        params: createMockParams('en', 'blog'),
+      });
+      const xml = await response.text();
+
+      // Channel escaping
+      expect(xml).toContain('Blog &amp; News');
+      expect(xml).toContain('&lt;tech&gt;');
+      expect(xml).toContain('&quot;stuff&quot;');
+
+      // Item escaping
+      expect(xml).toContain('Tom&apos;s Guide');
+      expect(xml).toContain('A&amp;B');
+      expect(xml).toContain('&lt;Testing&gt;');
     });
   });
 });
 
-/**
- * Property-Based Tests for RSS Feed
- */
-describe('RSS feed property tests', () => {
-  const mockBlogPage = {
-    _type: 'page',
-    title: 'Blog',
-    metadata: {
-      title: 'Blog',
-      description: 'Our blog posts',
-      slug: { current: 'blog' },
-    },
-  };
+describe('XSL Stylesheet Validation', () => {
+  const publicDir = join(process.cwd(), 'public');
 
-  beforeEach(() => {
-    vi.clearAllMocks();
-    process.env.NEXT_PUBLIC_BASE_URL = 'https://example.com';
-  });
-
-  // Generator for safe alphanumeric strings (no special chars that need escaping)
-  const safeStringArb = fc
-    .string({ minLength: 3, maxLength: 30 })
-    .filter((s) => /^[a-zA-Z][a-zA-Z0-9 ]*[a-zA-Z0-9]$/.test(s) && !/\s{2,}/.test(s));
-
-  // Generator for valid ISO date strings
-  const isoDateArb = fc
-    .date({
-      min: new Date('2020-01-01T00:00:00.000Z'),
-      max: new Date('2024-12-31T23:59:59.999Z'),
-      noInvalidDate: true,
-    })
-    .map((d) => d.toISOString());
-
-  // Generator for valid slug strings
-  const slugArb = fc
-    .string({ minLength: 3, maxLength: 30 })
-    .filter((s) => /^[a-z][a-z0-9-]*[a-z0-9]$/.test(s));
-
-  // Generator for valid blog post with safe strings
-  const blogPostArb = fc.record({
-    _type: fc.constant('blog.post'),
-    publishDate: isoDateArb,
-    authors: fc.option(
-      fc.array(
-        fc.record({
-          name: safeStringArb,
-        }),
-        { minLength: 1, maxLength: 3 }
-      ),
-      { nil: undefined }
-    ),
-    metadata: fc.record({
-      title: safeStringArb,
-      description: safeStringArb,
-      slug: fc.record({
-        current: slugArb,
-      }),
-    }),
-    body: fc.constant([
-      {
-        _type: 'block',
-        children: [{ _type: 'span', text: 'Content' }],
-      },
-    ]),
-    image: fc.option(fc.webUrl(), { nil: undefined }),
-  });
-
-  /**
-   * **Feature: component-accessibility-testing, Property 28: RSS Item Completeness**
-   * *For any* blog post included in the RSS feed, the feed item SHALL contain title, description, link, published date, and content fields.
-   * **Validates: Requirements 9.3**
-   */
-  it('Property 28: every RSS item contains title, description, link, published date, and content', async () => {
-    await fc.assert(
-      fc.asyncProperty(fc.array(blogPostArb, { minLength: 1, maxLength: 5 }), async (posts) => {
-        mockFetchSanityLive.mockResolvedValueOnce({
-          blog: mockBlogPage,
-          posts,
-          copyright: '© 2024 Example',
-        });
-
-        const response = await GET();
-        const xml = await response.text();
-
-        // Verify structural elements are present for each entry
-        const entryCount = (xml.match(/<entry>/g) || []).length;
-        expect(entryCount).toBe(posts.length);
-
-        // Verify each post's data appears in the feed
-        for (const post of posts) {
-          // Title should be present
-          expect(xml).toContain(post.metadata.title);
-          // Description should be present
-          expect(xml).toContain(post.metadata.description);
-        }
-
-        // Verify required elements are present
-        expect(xml).toContain('<link');
-        expect(xml).toContain('<published>');
-        expect(xml).toContain('<content');
-      }),
-      { numRuns: 100 }
-    );
-  });
-
-  /**
-   * **Feature: component-accessibility-testing, Property 29: RSS Author Inclusion**
-   * *For any* blog post with authors defined, the RSS feed item SHALL include author information for each author.
-   * **Validates: Requirements 9.4**
-   */
-  it('Property 29: posts with authors include author information in feed', async () => {
-    // Generator for posts that always have authors with safe names
-    const postWithAuthorsArb = fc.record({
-      _type: fc.constant('blog.post'),
-      publishDate: isoDateArb,
-      authors: fc.array(
-        fc.record({
-          name: safeStringArb,
-        }),
-        { minLength: 1, maxLength: 3 }
-      ),
-      metadata: fc.record({
-        title: safeStringArb,
-        description: safeStringArb,
-        slug: fc.record({
-          current: slugArb,
-        }),
-      }),
-      body: fc.constant([
-        {
-          _type: 'block',
-          children: [{ _type: 'span', text: 'Content' }],
-        },
-      ]),
+  describe('RSS XSL Stylesheet', () => {
+    it('rss.xsl file exists', () => {
+      const xslPath = join(publicDir, 'rss.xsl');
+      expect(() => readFileSync(xslPath, 'utf-8')).not.toThrow();
     });
 
-    await fc.assert(
-      fc.asyncProperty(
-        fc.array(postWithAuthorsArb, { minLength: 1, maxLength: 3 }),
-        async (posts) => {
-          mockFetchSanityLive.mockResolvedValueOnce({
-            blog: mockBlogPage,
-            posts,
-            copyright: '© 2024 Example',
-          });
+    it('rss.xsl is valid XML', () => {
+      const xslPath = join(publicDir, 'rss.xsl');
+      const xslContent = readFileSync(xslPath, 'utf-8');
 
-          const response = await GET();
-          const xml = await response.text();
-
-          // Verify author element is present
-          expect(xml).toContain('<author>');
-
-          // Verify each author name appears in the feed
-          for (const post of posts) {
-            if (post.authors) {
-              for (const author of post.authors) {
-                expect(xml).toContain(author.name);
-              }
-            }
-          }
-        }
-      ),
-      { numRuns: 100 }
-    );
-  });
-
-  /**
-   * **Feature: component-accessibility-testing, Property 30: RSS Image Escaping**
-   * *For any* blog post body containing images, the RSS feed content SHALL include properly escaped img elements with alt attributes.
-   * **Validates: Requirements 9.5**
-   */
-  it('Property 30: images in post body are properly escaped with alt attributes', async () => {
-    // Generator for image asset refs
-    const assetRefArb = fc
-      .string({ minLength: 5, maxLength: 20 })
-      .filter((s) => /^[a-z][a-z0-9-]*[a-z0-9]$/.test(s));
-
-    // Generator for posts with images in body using safe alt text
-    const postWithImageArb = fc.record({
-      _type: fc.constant('blog.post'),
-      publishDate: isoDateArb,
-      authors: fc.constant([{ name: 'Author' }]),
-      metadata: fc.record({
-        title: safeStringArb,
-        description: safeStringArb,
-        slug: fc.record({
-          current: slugArb,
-        }),
-      }),
-      body: fc.array(
-        fc.record({
-          _type: fc.constant('image'),
-          alt: safeStringArb,
-          asset: fc.record({
-            _ref: assetRefArb,
-          }),
-        }),
-        { minLength: 1, maxLength: 3 }
-      ),
+      // Basic XML structure checks
+      expect(xslContent).toContain('<?xml version="1.0"');
+      expect(xslContent).toContain('<xsl:stylesheet');
+      expect(xslContent).toContain('</xsl:stylesheet>');
     });
 
-    await fc.assert(
-      fc.asyncProperty(postWithImageArb, async (post) => {
-        mockFetchSanityLive.mockResolvedValueOnce({
-          blog: mockBlogPage,
-          posts: [post],
-          copyright: '© 2024 Example',
-        });
+    it('rss.xsl has correct namespace declarations', () => {
+      const xslPath = join(publicDir, 'rss.xsl');
+      const xslContent = readFileSync(xslPath, 'utf-8');
 
-        const response = await GET();
-        const xml = await response.text();
+      expect(xslContent).toContain('xmlns:xsl="http://www.w3.org/1999/XSL/Transform"');
+    });
 
-        // Verify img elements are present with alt attributes
-        expect(xml).toContain('<img');
-        expect(xml).toContain('alt=');
+    it('rss.xsl has required template elements', () => {
+      const xslPath = join(publicDir, 'rss.xsl');
+      const xslContent = readFileSync(xslPath, 'utf-8');
 
-        // Verify each image's alt text appears in the feed
-        for (const block of post.body) {
-          if (block._type === 'image' && block.alt) {
-            expect(xml).toContain(block.alt);
-          }
-        }
-      }),
-      { numRuns: 100 }
-    );
+      expect(xslContent).toContain('<xsl:template match="/">');
+      expect(xslContent).toContain('<xsl:output method="html"');
+    });
+
+    it('rss.xsl references RSS channel elements correctly', () => {
+      const xslPath = join(publicDir, 'rss.xsl');
+      const xslContent = readFileSync(xslPath, 'utf-8');
+
+      // Should reference RSS elements without namespace prefix (RSS 2.0 has no namespace)
+      expect(xslContent).toContain('/rss/channel/title');
+      expect(xslContent).toContain('/rss/channel/item');
+      expect(xslContent).toContain('/rss/channel/description');
+    });
+
+    it('rss.xsl has proper HTML structure', () => {
+      const xslPath = join(publicDir, 'rss.xsl');
+      const xslContent = readFileSync(xslPath, 'utf-8');
+
+      expect(xslContent).toContain('<html');
+      expect(xslContent).toContain('<head>');
+      expect(xslContent).toContain('<body>');
+      expect(xslContent).toContain('<style');
+    });
+  });
+
+  describe('Sitemap XSL Stylesheet', () => {
+    it('sitemap.xsl file exists', () => {
+      const xslPath = join(publicDir, 'sitemap.xsl');
+      expect(() => readFileSync(xslPath, 'utf-8')).not.toThrow();
+    });
+
+    it('sitemap.xsl is valid XML', () => {
+      const xslPath = join(publicDir, 'sitemap.xsl');
+      const xslContent = readFileSync(xslPath, 'utf-8');
+
+      expect(xslContent).toContain('<?xml version="1.0"');
+      expect(xslContent).toContain('<xsl:stylesheet');
+      expect(xslContent).toContain('</xsl:stylesheet>');
+    });
+
+    it('sitemap.xsl has correct namespace declarations', () => {
+      const xslPath = join(publicDir, 'sitemap.xsl');
+      const xslContent = readFileSync(xslPath, 'utf-8');
+
+      expect(xslContent).toContain('xmlns:xsl="http://www.w3.org/1999/XSL/Transform"');
+      expect(xslContent).toContain('xmlns:s="http://www.sitemaps.org/schemas/sitemap/0.9"');
+    });
+
+    it('sitemap.xsl references sitemap elements with namespace prefix', () => {
+      const xslPath = join(publicDir, 'sitemap.xsl');
+      const xslContent = readFileSync(xslPath, 'utf-8');
+
+      expect(xslContent).toContain('s:url');
+      expect(xslContent).toContain('s:loc');
+      expect(xslContent).toContain('s:lastmod');
+      expect(xslContent).toContain('s:priority');
+    });
+  });
+
+  describe('Sitemap Index XSL Stylesheet', () => {
+    it('sitemap-index.xsl file exists', () => {
+      const xslPath = join(publicDir, 'sitemap-index.xsl');
+      expect(() => readFileSync(xslPath, 'utf-8')).not.toThrow();
+    });
+
+    it('sitemap-index.xsl is valid XML', () => {
+      const xslPath = join(publicDir, 'sitemap-index.xsl');
+      const xslContent = readFileSync(xslPath, 'utf-8');
+
+      expect(xslContent).toContain('<?xml version="1.0"');
+      expect(xslContent).toContain('<xsl:stylesheet');
+      expect(xslContent).toContain('</xsl:stylesheet>');
+    });
   });
 });

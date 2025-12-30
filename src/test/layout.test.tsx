@@ -127,9 +127,9 @@ describe('Layout Components', () => {
      * Validates: Requirements 13.2
      * Verifies the layout structure includes Header, main, and Footer
      */
-    it('layout includes Header component', () => {
-      expect(layoutSource).toContain('import Header from');
-      expect(layoutSource).toContain('<Header');
+    it('layout includes SiteHeader component', () => {
+      expect(layoutSource).toContain('SiteHeader');
+      expect(layoutSource).toContain('<SiteHeader');
     });
 
     it('layout includes Footer component', () => {

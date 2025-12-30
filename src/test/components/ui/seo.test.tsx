@@ -61,7 +61,7 @@ describe('SEO Title and Meta Description Tests', () => {
         _type: 'page',
       } as Sanity.Page;
 
-      await expect(processMetadata(mockPage)).rejects.toThrow('Page metadata is required');
+      await expect(processMetadata(mockPage)).rejects.toThrow('Page SEO metadata is required');
     });
 
     it('generates auto OG image URL when ogimage is not provided', async () => {
@@ -138,7 +138,7 @@ describe('SEO Title and Meta Description Tests', () => {
     it('sets openGraph.type to article for blog posts', async () => {
       const mockBlogPost = {
         _id: 'test-post',
-        _type: 'blog.post',
+        _type: 'collection.blog',
         publishDate: '2024-01-15',
         metadata: {
           title: 'Test Blog Post',
@@ -146,7 +146,14 @@ describe('SEO Title and Meta Description Tests', () => {
           slug: { current: 'test-blog-post' },
           noIndex: false,
         },
-      } as Sanity.BlogPost;
+        collection: {
+          _id: 'page-blog',
+          metadata: {
+            slug: { current: 'blog' },
+            title: 'Blog',
+          },
+        },
+      } as Sanity.CollectionBlogPost;
 
       const result = await processMetadata(mockBlogPost);
       expect((result.openGraph as { type?: string })?.type).toBe('article');
@@ -155,7 +162,7 @@ describe('SEO Title and Meta Description Tests', () => {
     it('includes publishedTime for blog posts', async () => {
       const mockBlogPost = {
         _id: 'test-post',
-        _type: 'blog.post',
+        _type: 'collection.blog',
         publishDate: '2024-01-15',
         metadata: {
           title: 'Test Blog Post',
@@ -163,7 +170,14 @@ describe('SEO Title and Meta Description Tests', () => {
           slug: { current: 'test-blog-post' },
           noIndex: false,
         },
-      } as Sanity.BlogPost;
+        collection: {
+          _id: 'page-blog',
+          metadata: {
+            slug: { current: 'blog' },
+            title: 'Blog',
+          },
+        },
+      } as Sanity.CollectionBlogPost;
 
       const result = await processMetadata(mockBlogPost);
       expect((result.openGraph as { publishedTime?: string })?.publishedTime).toBe('2024-01-15');
@@ -570,10 +584,17 @@ describe('SEO Property-Based Tests', () => {
         fc.asyncProperty(pageMetadataArb, async ({ title, description, slug }) => {
           const mockBlogPost = {
             _id: 'test-post',
-            _type: 'blog.post',
+            _type: 'collection.blog',
             publishDate: '2024-01-15',
             metadata: { title, description, slug, noIndex: false },
-          } as Sanity.BlogPost;
+            collection: {
+              _id: 'page-blog',
+              metadata: {
+                slug: { current: 'blog' },
+                title: 'Blog',
+              },
+            },
+          } as Sanity.CollectionBlogPost;
 
           const result = await processMetadata(mockBlogPost);
 

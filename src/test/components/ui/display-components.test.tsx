@@ -67,7 +67,7 @@ describe('Card Component', () => {
       const card = screen.getByTestId('card');
       expect(card.className).toContain('custom-card');
       expect(card.className).toContain('rounded-xl');
-      expect(card.className).toContain('ring-1');
+      expect(card.className).toContain('border');
     });
 
     it('merges custom className on CardHeader', () => {
@@ -80,7 +80,7 @@ describe('Card Component', () => {
       );
       const header = screen.getByTestId('header');
       expect(header.className).toContain('custom-header');
-      expect(header.className).toContain('grid');
+      expect(header.className).toContain('flex');
     });
 
     it('merges custom className on CardContent', () => {
@@ -93,7 +93,7 @@ describe('Card Component', () => {
       );
       const content = screen.getByTestId('content');
       expect(content.className).toContain('custom-content');
-      expect(content.className).toContain('px-6');
+      expect(content.className).toContain('p-6');
     });
   });
 
@@ -614,7 +614,7 @@ describe('Display Components - Property-Based Tests', () => {
           );
           const card = screen.getByTestId('card');
           expect(card.className).toContain(customClass);
-          expect(card.className).toContain('ring-1');
+          expect(card.className).toContain('border');
         }),
         { numRuns: 50 }
       );

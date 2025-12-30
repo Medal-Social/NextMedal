@@ -25,7 +25,7 @@ vi.mock('@/sanity/lib/fetch', () => ({
 vi.mock('@/sanity/lib/queries', () => ({
   TRANSLATIONS_QUERY: '"translations": *[_id == ^._id][0]',
   CURRENT_PAGE_QUERY:
-    "*[(_type == 'page' || _type == 'blog.post') && metadata.slug.current == $slug && language == $locale][0]{ ..., translations }",
+    "*[(_type == 'page' || _type == 'collection.blog') && metadata.slug.current == $slug && language == $locale][0]{ ..., translations }",
 }));
 
 vi.mock('@/i18n/routing', () => ({
@@ -256,7 +256,7 @@ describe('getCurrentPage', () => {
       expect(result).toEqual(mockPage);
     });
 
-    it('queries for both page and blog.post types', async () => {
+    it('queries for both page and collection.blog types', async () => {
       mockHeaders.mockResolvedValue({
         get: () => '/en/my-post',
       } as any);
@@ -266,7 +266,7 @@ describe('getCurrentPage', () => {
 
       expect(mockFetchSanityLive).toHaveBeenCalledWith(
         expect.objectContaining({
-          query: expect.stringContaining("_type == 'page' || _type == 'blog.post'"),
+          query: expect.stringContaining("_type == 'page' || _type == 'collection.blog'"),
         })
       );
     });

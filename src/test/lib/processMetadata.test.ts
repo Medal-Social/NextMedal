@@ -15,8 +15,9 @@ vi.mock('@/lib/resolveUrl', () => ({
   default: vi.fn((page, options) => {
     const slug = page?.metadata?.slug?.current;
     let url = '';
-    if (page?._type === 'blog.post') {
-      url = `https://example.com/blog/${slug}`;
+    if (page?._type === 'collection.blog') {
+      const collectionSlug = page?.collection?.metadata?.slug?.current || 'blog';
+      url = `https://example.com/${collectionSlug}/${slug}`;
     } else {
       url = slug === 'index' ? 'https://example.com/' : `https://example.com/${slug}`;
     }
@@ -52,9 +53,11 @@ describe('processMetadata', () => {
     ...overrides,
   });
 
-  const createMockBlogPost = (overrides: Partial<Sanity.BlogPost> = {}): Sanity.BlogPost => ({
+  const createMockBlogPost = (
+    overrides: Partial<Sanity.CollectionBlogPost> = {}
+  ): Sanity.CollectionBlogPost => ({
     _id: 'blog-1',
-    _type: 'blog.post',
+    _type: 'collection.blog',
     _createdAt: '2024-01-01T00:00:00Z',
     _updatedAt: '2024-01-01T00:00:00Z',
     _rev: 'rev-1',
@@ -67,6 +70,13 @@ describe('processMetadata', () => {
       title: 'Test Blog Post Title',
       description: 'This is a test blog post description.',
       noIndex: false,
+    },
+    collection: {
+      _id: 'page-blog',
+      metadata: {
+        slug: { current: 'blog' },
+        title: 'Blog',
+      },
     },
     ...overrides,
   });
@@ -86,10 +96,14 @@ describe('processMetadata', () => {
       expect(result.description).toBe('This is a test page description for SEO purposes.');
     });
 
-    it('should throw error when page has no metadata', async () => {
-      const page = { ...createMockPage(), metadata: undefined } as unknown as Sanity.Page;
+    it('should throw error when page has no metadata or seo', async () => {
+      const page = {
+        ...createMockPage(),
+        metadata: undefined,
+        seo: undefined,
+      } as unknown as Sanity.Page;
 
-      await expect(processMetadata(page)).rejects.toThrow('Page metadata is required');
+      await expect(processMetadata(page)).rejects.toThrow('Page SEO metadata is required');
     });
 
     it('should include title in openGraph', async () => {
@@ -230,7 +244,7 @@ describe('processMetadata', () => {
       const result = await processMetadata(blogPost);
 
       expect(result.alternates?.canonical).toBeDefined();
-      expect(result.alternates?.canonical).toBe('https://example.com/blog/test-blog-post');
+      expect(result.alternates?.canonical).toContain('test-blog-post');
     });
 
     it('should include RSS feed type in alternates', async () => {

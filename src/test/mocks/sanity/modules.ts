@@ -14,7 +14,6 @@ import {
 } from './helpers';
 import type {
   MockAccordionListModule,
-  MockBlogFrontpageModule,
   MockBreadcrumbsModule,
   MockCalloutModule,
   MockComponentGalleryModule,
@@ -115,19 +114,6 @@ export function createMockAccordionListModule(
       },
     ],
     generateSchema: true,
-    ...overrides,
-  };
-}
-
-export function createMockBlogFrontpageModule(
-  overrides?: Partial<MockBlogFrontpageModule>
-): MockBlogFrontpageModule {
-  return {
-    _type: 'blog-frontpage',
-    _key: generateKey(),
-    mainPost: 'recent',
-    showFeaturedPostsFirst: true,
-    itemsPerPage: 6,
     ...overrides,
   };
 }
@@ -363,8 +349,6 @@ export function createMockModule(type: string, overrides?: Partial<MockModule>):
       return createMockCalloutModule(overrides as Partial<MockCalloutModule>);
     case 'accordion-list':
       return createMockAccordionListModule(overrides as Partial<MockAccordionListModule>);
-    case 'blog-frontpage':
-      return createMockBlogFrontpageModule(overrides as Partial<MockBlogFrontpageModule>);
     case 'latest-articles':
       return createMockLatestArticlesModule(overrides as Partial<MockLatestArticlesModule>);
     case 'breadcrumbs':
@@ -400,7 +384,6 @@ export const MODULE_TYPES = [
   'hero',
   'callout',
   'accordion-list',
-  'blog-frontpage',
   'latest-articles',
   'breadcrumbs',
   'features',
