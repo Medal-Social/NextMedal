@@ -4,8 +4,6 @@
  */
 
 import type { ReactNode } from 'react';
-import type { LocaleLabels, ServerPageData } from '@/ui/language-switcher/LocaleSwitcher.client';
-import type { ThemeLabels } from './ThemeToggle';
 
 /**
  * Menu item for navigation - uses Sanity.MenuItem from global types
@@ -46,14 +44,6 @@ export interface HeaderClientProps extends React.ComponentProps<'header'> {
   enableSearch?: boolean;
   /** Children to render inside the header */
   children: ReactNode;
-  /** Server-fetched page data for language switcher */
-  serverPage?: ServerPageData;
-  /** Current locale */
-  locale: string;
-  /** Locale switcher labels */
-  localeLabels: LocaleLabels;
-  /** Theme toggle labels */
-  themeLabels: ThemeLabels;
 }
 
 /**
@@ -66,14 +56,6 @@ export interface MobileNavigationProps {
   ctas: HeaderCTA[];
   /** Whether search is enabled */
   enableSearch?: boolean;
-  /** Server-fetched page data for language switcher */
-  serverPage?: ServerPageData;
-  /** Current locale */
-  locale: string;
-  /** Locale switcher labels */
-  localeLabels: LocaleLabels;
-  /** Theme toggle labels */
-  themeLabels: ThemeLabels;
 }
 
 /**
