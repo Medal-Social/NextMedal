@@ -112,7 +112,7 @@ export default function Hero(props: Sanity.Hero & { className?: string }) {
         <div
           className={cn(
             'grid grid-cols-1 gap-12',
-            hasMedia ? 'lg:grid-cols-12 lg:items-center lg:gap-20' : 'max-w-5xl mx-auto text-center'
+            hasMedia ? 'lg:grid-cols-12 lg:items-start lg:gap-20' : 'max-w-5xl mx-auto text-center'
           )}
         >
           <motion.div
