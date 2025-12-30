@@ -31,6 +31,13 @@
     "dark": "Mørk",
     "system": "System"
   },
+  "DraftMode": {
+    "title": "Forhåndsvisning",
+    "description": "Se hvordan endringene ser ut før publisering.",
+    "learnMore": "Lær mer",
+    "exit": "Avslutt",
+    "exiting": "Avslutter..."
+  },
   "contact-form": {
     "email": "E-post",
     "phone": "Telefon",
@@ -50,6 +57,56 @@
     "leadMagnet": {
       "defaultButtonText": "Få tilgang nå",
       "defaultFormTitle": "Registrer deg"
+    },
+    "events": {
+      "viewDetails": "Se detaljer",
+      "register": "Meld deg på",
+      "registerNow": "Meld deg på nå",
+      "joinNow": "Bli med nå",
+      "watchReplay": "Se opptak",
+      "upcoming": "Kommende",
+      "live": "Direkte",
+      "liveNow": "Direkte nå",
+      "past": "Tidligere",
+      "completed": "Avsluttet",
+      "featured": "Fremhevet",
+      "eventTypes": {
+        "webinar": "Webinar",
+        "video": "Video",
+        "physical": "Fysisk",
+        "hybrid": "Hybrid"
+      },
+      "duration": {
+        "minutes": "{count} min",
+        "hour": "1 time",
+        "hours": "{count} timer",
+        "hoursMinutes": "{hours}t {minutes}min"
+      },
+      "timeRange": "{start} – {end}",
+      "noEvents": "Ingen arrangementer funnet",
+      "allEvents": "Alle arrangementer",
+      "filterByType": "Filtrer etter type",
+      "layouts": {
+        "calendar": "Kalender",
+        "grid": "Rutenett",
+        "list": "Liste",
+        "timeline": "Tidslinje"
+      },
+      "rss": "Abonner på RSS",
+      "today": "I dag",
+      "nextEvent": "Neste arrangement",
+      "comingUpNext": "Kommer snart",
+      "noEventsOnDate": "Ingen arrangementer denne datoen",
+      "selectDateWithDot": "Velg en dato med en prikk for å se arrangementer",
+      "showPastEvents": "Vis tidligere arrangementer",
+      "speakers": "{count, plural, =1 {1 foredragsholder} other {# foredragsholdere}}",
+      "noEventsInCollection": "Det er ingen arrangementer i denne samlingen ennå.",
+      "eventCount": "{count, plural, =1 {1 arrangement} other {# arrangementer}}",
+      "upcomingEventCount": "{count, plural, =1 {1 kommende arrangement} other {# kommende arrangementer}}",
+      "previousMonth": "Forrige måned",
+      "nextMonth": "Neste måned",
+      "showCalendar": "Vis kalender",
+      "hideCalendar": "Skjul kalender"
     }
   }
 }

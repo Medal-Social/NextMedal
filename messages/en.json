@@ -31,6 +31,13 @@
     "dark": "Dark",
     "system": "System"
   },
+  "DraftMode": {
+    "title": "Preview Mode",
+    "description": "See how your changes look before publishing.",
+    "learnMore": "Learn more",
+    "exit": "Exit Preview",
+    "exiting": "Exiting..."
+  },
   "contact-form": {
     "email": "Email",
     "phone": "Phone",
@@ -50,6 +57,56 @@
     "leadMagnet": {
       "defaultButtonText": "Get access now",
       "defaultFormTitle": "Sign up"
+    },
+    "events": {
+      "viewDetails": "View Details",
+      "register": "Register",
+      "registerNow": "Register Now",
+      "joinNow": "Join Now",
+      "watchReplay": "Watch Replay",
+      "upcoming": "Upcoming",
+      "live": "Live",
+      "liveNow": "Live Now",
+      "past": "Past",
+      "completed": "Completed",
+      "featured": "Featured",
+      "eventTypes": {
+        "webinar": "Webinar",
+        "video": "Video",
+        "physical": "In-Person",
+        "hybrid": "Hybrid"
+      },
+      "duration": {
+        "minutes": "{count} min",
+        "hour": "1 hour",
+        "hours": "{count} hours",
+        "hoursMinutes": "{hours}h {minutes}min"
+      },
+      "timeRange": "{start} – {end}",
+      "noEvents": "No events found",
+      "allEvents": "All Events",
+      "filterByType": "Filter by type",
+      "layouts": {
+        "calendar": "Calendar",
+        "grid": "Grid",
+        "list": "List",
+        "timeline": "Timeline"
+      },
+      "rss": "Subscribe to RSS",
+      "today": "Today",
+      "nextEvent": "Next event",
+      "comingUpNext": "Coming up next",
+      "noEventsOnDate": "No events on this date",
+      "selectDateWithDot": "Select a date with a dot to see events",
+      "showPastEvents": "Show past events",
+      "speakers": "{count, plural, =1 {1 speaker} other {# speakers}}",
+      "noEventsInCollection": "There are no events in this collection yet.",
+      "eventCount": "{count, plural, =1 {1 event} other {# events}}",
+      "upcomingEventCount": "{count, plural, =1 {1 upcoming event} other {# upcoming events}}",
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "showCalendar": "Show Calendar",
+      "hideCalendar": "Hide Calendar"
     }
   }
 }
