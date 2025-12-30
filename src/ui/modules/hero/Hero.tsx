@@ -40,6 +40,17 @@ export default function Hero(props: Sanity.Hero & { className?: string }) {
   const hasYouTube = videoType === 'youtube' && !!videoUrl;
   const hasMedia = hasImage || hasMux || hasYouTube;
 
+  // Calculate aspect ratio from image metadata if available
+  const imageAsset = image?.image?.asset as
+    | { metadata?: { dimensions?: { width: number; height: number } } }
+    | undefined;
+  const imageAspectRatio =
+    hasImage && imageAsset?.metadata?.dimensions
+      ? imageAsset.metadata.dimensions.width / imageAsset.metadata.dimensions.height
+      : undefined;
+
+  const style = imageAspectRatio ? { aspectRatio: `${imageAspectRatio}` } : undefined;
+
   const components = {
     block: {
       h1: ({ children }: { children?: ReactNode }) => (
@@ -149,13 +160,14 @@ export default function Hero(props: Sanity.Hero & { className?: string }) {
               <div
                 className={cn(
                   'relative w-full overflow-hidden rounded-2xl shadow-2xl ring-1 ring-border/50 bg-muted',
-                  hasImage ? 'aspect-[3/2] md:aspect-video' : 'aspect-video'
+                  !imageAspectRatio && 'aspect-video'
                 )}
+                style={style}
               >
                 {hasImage && image?.image && (
                   <Img
                     image={image.image}
-                    className="absolute inset-0 w-full h-full object-cover"
+                    className="absolute inset-0 w-full h-full object-contain"
                     loading="eager"
                     fetchPriority="high"
                     fill
