@@ -148,8 +148,8 @@ export function Img({
   const imageElement = (
     <Image
       src={isGif ? src.split('?')[0] : src}
-      width={width}
-      height={height}
+      width={props.fill ? undefined : width}
+      height={props.fill ? undefined : height}
       alt={props.alt || image.alt || image.altText || image.asset?.altText || ''}
       unoptimized={isGif || isSvg}
       {...blurProps}
