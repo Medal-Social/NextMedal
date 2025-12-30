@@ -14,8 +14,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { routing } from '@/i18n/routing';
 import { SanityLive } from '@/sanity/lib/live';
 import Footer from '@/ui/footer';
-import Header from '@/ui/header';
-import { Banner, ScrollToTop, SkipToContent } from '@/ui/layout';
+import { ScrollToTop, SiteHeader, SkipToContent } from '@/ui/layout';
 import { SiteJsonLd } from '@/ui/seo';
 import VisualEditingControls from '@/ui/utility/VisualEditingControls';
 
@@ -61,12 +60,7 @@ export default async function RootLayout({ children, params }: Props) {
           <NuqsAdapter>
             <NextIntlClientProvider locale={locale}>
               <SkipToContent />
-              <Suspense fallback={null}>
-                <Banner />
-              </Suspense>
-              <Suspense fallback={null}>
-                <Header />
-              </Suspense>
+              <SiteHeader />
               <main
                 id="main-content"
                 className="flex-1 w-full pt-[var(--header-height)] min-h-[calc(100dvh-var(--header-height)-var(--footer-height))]"
