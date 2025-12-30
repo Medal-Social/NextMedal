@@ -7,36 +7,84 @@ import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/moduleProps';
 import { cn } from '@/lib/utils';
 import { Img } from '@/ui/base';
+import Video from '@/ui/base/Video';
 import { CTAList } from '@/ui/cta';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
 
-const components = {
-  block: {
-    h1: ({ children }: { children?: ReactNode }) => (
-      <h1 className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl mb-6">{children}</h1>
-    ),
-    normal: ({ children }: { children?: ReactNode }) => (
-      <p className="mt-6 text-xl text-muted-foreground leading-relaxed">{children}</p>
-    ),
-  },
-  marks: {
-    gradient: ({ children }: { children?: ReactNode }) => (
-      <span className="inline-block bg-gradient-to-r from-brand-vibrant to-brand-purple bg-clip-text text-transparent dark:text-brand-400 font-extrabold">
-        {children}
-      </span>
-    ),
-    primary: ({ children }: { children?: ReactNode }) => (
-      <span className="text-primary">{children}</span>
-    ),
-  },
-};
+// Helper to extract YouTube ID
+function getYouTubeId(url: string | undefined): string | undefined {
+  if (!url) return undefined;
+  const match = url.match(/[?&]v=([^&]+)/);
+  return match ? match[1] : undefined;
+}
 
 export default function Hero(props: Sanity.Hero & { className?: string }) {
-  const { className, content, ctas, image, options } = props;
+  const {
+    className,
+    content,
+    ctas,
+    image,
+    options,
+    videoType = 'image',
+    muxVideo,
+    videoUrl,
+  } = props;
   const prefersReducedMotion = useReducedMotion();
 
   const bgFrom = stegaClean(options?.bgFrom) || 'brand-vibrant';
   const bgTo = stegaClean(options?.bgTo) || 'brand-purple';
+
+  // Determine which media to show
+  const hasImage = videoType === 'image' && !!image?.image;
+  const hasMux = videoType === 'mux' && !!muxVideo?.asset?.playbackId;
+  const hasYouTube = videoType === 'youtube' && !!videoUrl;
+  const hasMedia = hasImage || hasMux || hasYouTube;
+
+  // Calculate aspect ratio from image metadata if available
+  const imageAsset = image?.image?.asset as
+    | { metadata?: { dimensions?: { width: number; height: number } } }
+    | undefined;
+  const imageAspectRatio =
+    hasImage && imageAsset?.metadata?.dimensions
+      ? imageAsset.metadata.dimensions.width / imageAsset.metadata.dimensions.height
+      : undefined;
+
+  const style = imageAspectRatio ? { aspectRatio: `${imageAspectRatio}` } : undefined;
+
+  const components = {
+    block: {
+      h1: ({ children }: { children?: ReactNode }) => (
+        <h1
+          className={cn(
+            'text-5xl font-black tracking-tighter md:text-6xl lg:text-7xl mb-6 text-balance text-foreground',
+            !hasMedia && 'mx-auto'
+          )}
+        >
+          {children}
+        </h1>
+      ),
+      normal: ({ children }: { children?: ReactNode }) => (
+        <p
+          className={cn(
+            'text-lg md:text-xl text-muted-foreground leading-relaxed font-normal text-pretty max-w-2xl',
+            !hasMedia && 'mx-auto'
+          )}
+        >
+          {children}
+        </p>
+      ),
+    },
+    marks: {
+      gradient: ({ children }: { children?: ReactNode }) => (
+        <span className="inline-block bg-gradient-to-r from-brand-vibrant to-brand-purple bg-clip-text text-transparent dark:text-brand-400 font-extrabold">
+          {children}
+        </span>
+      ),
+      primary: ({ children }: { children?: ReactNode }) => (
+        <span className="text-primary font-medium">{children}</span>
+      ),
+    },
+  };
 
   return (
     <section
@@ -53,21 +101,31 @@ export default function Hero(props: Sanity.Hero & { className?: string }) {
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-[30%] -right-[10%] w-[70%] h-[70%] rounded-full bg-gradient-to-br from-[var(--hero-from)]/20 to-[var(--hero-to)]/20 blur-3xl opacity-70 dark:from-[var(--hero-from)]/5 dark:to-[var(--hero-to)]/5" />
         <div className="absolute -bottom-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-gradient-to-tr from-brand-cyan/20 to-brand-rich/20 blur-3xl opacity-70 dark:from-brand-cyan/5 dark:to-brand-rich/5" />
+
+        {/* Extra texture for no-media state */}
+        {!hasMedia && (
+          <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-5 mix-blend-soft-light" />
+        )}
       </div>
 
       <Section spacing="relaxed" className="relative z-10">
-        <div className="grid grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:grid-cols-2">
+        <div
+          className={cn(
+            'grid grid-cols-1 gap-12',
+            hasMedia ? 'lg:grid-cols-12 lg:items-center lg:gap-20' : 'max-w-5xl mx-auto text-center'
+          )}
+        >
           <motion.div
             initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.5, ease: 'easeOut' }}
-            className="lg:pt-4 lg:pr-4"
+            className={cn(hasMedia && 'lg:col-span-5')}
           >
-            <div className="lg:max-w-lg mb-10">
+            <div className={cn(hasMedia ? 'space-y-8' : 'mx-auto items-center space-y-8')}>
               <motion.div
                 initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={prefersReducedMotion ? { duration: 0 } : { delay: 0.2, duration: 0.4 }}
+                transition={prefersReducedMotion ? { duration: 0 } : { delay: 0.1, duration: 0.4 }}
               >
                 {content && <SharedPortableText value={content} components={components} />}
               </motion.div>
@@ -80,29 +138,71 @@ export default function Hero(props: Sanity.Hero & { className?: string }) {
                   transition={
                     prefersReducedMotion ? { duration: 0 } : { delay: 0.3, duration: 0.4 }
                   }
-                  className="mt-8 flex gap-4"
+                  className={cn('flex flex-wrap gap-4', !hasMedia && 'justify-center')}
                 >
-                  <CTAList className="max-sm:min-w-full" ctas={ctas} />
+                  <CTAList
+                    className={cn('max-sm:min-w-full', !hasMedia && 'justify-center')}
+                    ctas={ctas}
+                    size="xl"
+                  />
                 </motion.div>
               )}
             </div>
           </motion.div>
 
-          {image?.image && (
-            <div className="flex items-center justify-center lg:justify-end lg:pt-4">
-              <div className="relative w-full overflow-hidden rounded-xl shadow-2xl ring-1 ring-border">
-                <Img
-                  image={image.image}
-                  className="w-full object-cover"
-                  loading="eager"
-                  fetchPriority="high"
-                  sizes="(min-width: 1024px) 50vw, 100vw"
-                />
+          {hasMedia && (
+            <motion.div
+              initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={prefersReducedMotion ? { duration: 0 } : { delay: 0.2, duration: 0.5 }}
+              className="lg:col-span-7"
+            >
+              <div
+                className={cn(
+                  'relative w-full overflow-hidden rounded-2xl shadow-2xl ring-1 ring-border/50 bg-muted',
+                  !imageAspectRatio && 'aspect-video'
+                )}
+                style={style}
+              >
+                {hasImage && image?.image && (
+                  <Img
+                    image={image.image}
+                    className="absolute inset-0 w-full h-full object-contain"
+                    loading="eager"
+                    fetchPriority="high"
+                    fill
+                    sizes="(min-width: 1024px) 50vw, 100vw"
+                  />
+                )}
+
+                {hasMux && muxVideo && (
+                  <Video
+                    data={{
+                      type: 'mux',
+                      muxVideo: muxVideo,
+                      thumbnail: image?.image
+                        ? { _type: 'image', asset: image.image.asset }
+                        : undefined,
+                    }}
+                  />
+                )}
+
+                {hasYouTube && videoUrl && (
+                  <Video
+                    data={{
+                      type: 'youtube',
+                      videoId: getYouTubeId(videoUrl),
+                      thumbnail: image?.image
+                        ? { _type: 'image', asset: image.image.asset }
+                        : undefined,
+                    }}
+                  />
+                )}
 
                 {/* Subtle decoration on the left only */}
-                <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-brand-vibrant/30 blur-xl pointer-events-none dark:bg-brand-vibrant/10" />
+                <div className="absolute -bottom-6 -left-6 w-32 h-32 rounded-full bg-brand-vibrant/20 blur-2xl pointer-events-none dark:bg-brand-vibrant/10 z-10" />
               </div>
-            </div>
+            </motion.div>
           )}
         </div>
       </Section>

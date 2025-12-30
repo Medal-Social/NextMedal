@@ -8,10 +8,8 @@ import { useCallback, useEffect, useRef } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import resolveUrl from '@/lib/resolveUrl';
 import { CTAList } from '@/ui/cta';
-import LocaleSwitcherClient from '@/ui/language-switcher/LocaleSwitcher.client';
 import { CommandMenu } from '@/ui/utility';
 import { ANIMATION_DURATION, ANIMATION_EASING } from './constants';
-import HeaderThemeToggle from './ThemeToggle';
 import type { MobileNavigationProps } from './types';
 
 function getNavLinkHref(link: Sanity.MenuItem | Sanity.Link): string {
@@ -50,15 +48,7 @@ export const NavLink = ({
   </Link>
 );
 
-export default function MobileNavigation({
-  menu,
-  ctas,
-  enableSearch,
-  serverPage,
-  locale,
-  localeLabels,
-  themeLabels,
-}: MobileNavigationProps) {
+export default function MobileNavigation({ menu, ctas, enableSearch }: MobileNavigationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Focus trap implementation
@@ -193,23 +183,12 @@ export default function MobileNavigation({
           </ul>
 
           <motion.div variants={itemVariants} className="space-y-6 pt-6 border-t border-border">
-            <CTAList ctas={ctas} className="grid gap-4 *:w-full *:text-lg *:py-6" />
-
-            <div className="flex flex-col gap-4 px-4 pb-6">
-              {enableSearch && <CommandMenu variant="mobile" className="w-full justify-start" />}
-              <LocaleSwitcherClient
-                dropdownAlign="start"
-                className="w-full justify-start h-14 px-4 text-lg [&>span]:inline-block [&>span]:text-lg"
-                serverPage={serverPage}
-                locale={locale}
-                labels={localeLabels}
-              />
-              <HeaderThemeToggle
-                dropdownAlign="start"
-                className="w-full justify-start h-14 px-4 text-lg [&>span]:inline-block [&>span]:text-lg"
-                labels={themeLabels}
-              />
-            </div>
+            {enableSearch && (
+              <div className="px-4">
+                <CommandMenu variant="mobile" className="w-full justify-start" />
+              </div>
+            )}
+            <CTAList ctas={ctas} className="grid gap-4 px-4 *:w-full *:text-lg *:py-6" />
           </motion.div>
         </div>
       </nav>
