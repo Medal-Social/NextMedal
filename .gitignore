@@ -8,6 +8,12 @@
 
 # testing
 /coverage
+/playwright-report/
+/playwright/.cache/
+/test-results/
+/lighthouse-report.html
+blob-report/
+*.lhci.json
 
 # next.js
 /.next/
