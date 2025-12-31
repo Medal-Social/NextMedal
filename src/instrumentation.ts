@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/nextjs';
-import { logger } from './lib/logger';
+import { logger } from '@/lib/core/logger';
 
 export async function register() {
   const IS_PRODUCTION =
