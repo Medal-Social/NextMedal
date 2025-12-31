@@ -1,19 +1,9 @@
-/**
- * Collection Documentation Document Type
- * @version 1.0.0
- * @lastUpdated 2025-12-30
- * @description Documentation article document type for guides, tutorials, and reference docs.
- * Supports nested hierarchy via parent references for building structured documentation.
- * References a parent collection page for dynamic URL resolution.
- */
-
 import { BookIcon, EyeClosedIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import { isUniqueAcrossLocale } from '@/sanity/lib/isUniqueAcrossLocale';
 import CharacterCount from '@/sanity/ui/CharacterCount';
 import PageIdentityField from '@/sanity/ui/PageIdentityField';
 
-// Flag emoji for preview
 const languageFlags: Record<string, string> = {
   en: '🇬🇧',
   nb: '🇳🇴',
@@ -30,7 +20,6 @@ export default defineType({
     { name: 'seo', title: 'SEO' },
   ],
   fields: [
-    // Collection reference (parent page)
     defineField({
       name: 'collection',
       title: 'Collection',
@@ -41,7 +30,6 @@ export default defineType({
       group: 'content',
     }),
 
-    // Parent document (for nested hierarchy)
     defineField({
       name: 'parent',
       title: 'Parent Article',
@@ -51,7 +39,6 @@ export default defineType({
       group: 'navigation',
     }),
 
-    // Category for organization
     defineField({
       name: 'category',
       title: 'Category',
@@ -61,7 +48,6 @@ export default defineType({
       group: 'navigation',
     }),
 
-    // Page identity (title + slug)
     defineField({
       name: 'metadata',
       type: 'object',
@@ -99,7 +85,6 @@ export default defineType({
       ],
     }),
 
-    // Order for sorting in navigation
     defineField({
       name: 'order',
       title: 'Navigation Order',
@@ -109,7 +94,6 @@ export default defineType({
       group: 'navigation',
     }),
 
-    // Short description for navigation/cards
     defineField({
       name: 'excerpt',
       title: 'Excerpt',
@@ -119,7 +103,6 @@ export default defineType({
       group: 'content',
     }),
 
-    // Icon for navigation
     defineField({
       name: 'icon',
       title: 'Navigation Icon',
@@ -128,12 +111,21 @@ export default defineType({
       group: 'navigation',
     }),
 
-    // Body content
     defineField({
       name: 'body',
       title: 'Content',
       type: 'array',
-      of: [{ type: 'block' }, { type: 'image', options: { hotspot: true } }, { type: 'code' }],
+      of: [
+        {
+          type: 'block',
+          lists: [
+            { title: 'Bullet', value: 'bullet' },
+            { title: 'Numbered', value: 'number' },
+          ],
+        },
+        { type: 'image', options: { hotspot: true } },
+        { type: 'code' },
+      ],
       group: 'content',
     }),
 
@@ -201,7 +193,6 @@ export default defineType({
       ],
     }),
 
-    // Language (for i18n)
     defineField({
       name: 'language',
       type: 'string',
