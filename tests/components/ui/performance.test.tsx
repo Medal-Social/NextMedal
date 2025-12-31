@@ -44,7 +44,7 @@ vi.mock('@sanity/asset-utils', () => ({
 }));
 
 // Import components after mocks
-import { Img, ResponsiveImg } from '@/ui/base';
+import { Img, ResponsiveImg } from '@/components/blocks/objects/core';
 
 // Helper to create mock Sanity image - using 'as unknown as' to bypass strict type checking
 // since we're mocking the Sanity image structure for testing purposes

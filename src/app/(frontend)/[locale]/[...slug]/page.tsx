@@ -1,5 +1,13 @@
 import { notFound } from 'next/navigation';
 import { groq } from 'next-sanity';
+import { Modules } from '@/components/blocks/modules';
+import {
+  ArticleDetail,
+  DocDetail,
+  EventDetail,
+  NewsletterDetail,
+} from '@/components/blocks/modules/frontpage';
+import { BreadcrumbJsonLd, JsonLd } from '@/components/blocks/seo';
 import { PageProvider } from '@/contexts';
 import { groupPlacements, type Placement } from '@/lib/sanity/placement';
 import processMetadata from '@/lib/sanity/process-metadata';
@@ -21,9 +29,6 @@ import {
   SLUG_QUERY,
   TRANSLATIONS_QUERY,
 } from '@/sanity/lib/queries';
-import { Modules } from '@/ui/modules';
-import { ArticleDetail, DocDetail, EventDetail, NewsletterDetail } from '@/ui/modules/collections';
-import { BreadcrumbJsonLd, JsonLd } from '@/ui/seo';
 
 // ============================================================================
 // Types

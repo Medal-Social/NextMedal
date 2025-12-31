@@ -21,7 +21,7 @@ vi.mock('next/navigation', () => ({
 }));
 
 // Import component after mocks
-import DraftModeControls from '@/ui/utility/DraftModeControls';
+import DraftModeControls from '@/components/blocks/utility/DraftModeControls';
 
 // ============================================================================
 // Unit Tests

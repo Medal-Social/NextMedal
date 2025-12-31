@@ -29,10 +29,10 @@ test.describe('Navigation Smoke Tests', () => {
   test('language switcher is functional', async ({ page }) => {
     await page.goto('/en');
 
-    // Look for language switcher
-    const langSwitcher = page
-      .locator('[data-testid="language-switcher"]')
-      .or(page.locator('button:has-text("English")').or(page.locator('button:has-text("Norsk")')));
+    // Look for language switcher (using comma-separated selectors)
+    const langSwitcher = page.locator(
+      '[data-testid="language-switcher"], button:has-text("English"), button:has-text("Norsk")'
+    );
 
     // If language switcher exists, it should be clickable
     if ((await langSwitcher.count()) > 0) {

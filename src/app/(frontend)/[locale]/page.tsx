@@ -1,10 +1,10 @@
+import { Modules } from '@/components/blocks/modules';
 import { EmptyPage } from '@/components/EmptyPage';
 import { PageProvider } from '@/contexts';
 import { groupPlacements, type Placement } from '@/lib/sanity/placement';
 import processMetadata from '@/lib/sanity/process-metadata';
 import { fetchSanity } from '@/sanity/lib/fetch';
 import { PAGE_QUERY } from '@/sanity/lib/queries';
-import { Modules } from '@/ui/modules';
 
 type Props = {
   params: Promise<{ locale: string }>;

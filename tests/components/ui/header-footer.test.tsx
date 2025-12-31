@@ -1,7 +1,7 @@
 import { axe, render, screen, userEvent } from '@tests/setup/providers';
 import { describe, expect, it, vi } from 'vitest';
-import FooterWrapper from '@/ui/footer/wrapper';
-import Toggle from '@/ui/header/Toggle';
+import FooterWrapper from '@/components/blocks/layout/footer/wrapper';
+import Toggle from '@/components/blocks/layout/header/Toggle';
 
 // Mock next-themes for ThemeToggle tests
 vi.mock('next-themes', () => ({

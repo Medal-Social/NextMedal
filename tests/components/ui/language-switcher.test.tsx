@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@tests/setup/providers';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import LocaleSwitcherSelect from '@/ui/language-switcher/LocaleSwitcherSelect';
+import LocaleSwitcherSelect from '@/components/blocks/layout/language-switcher/LocaleSwitcherSelect';
 
 // Mock dependencies
 const mockPush = vi.fn();

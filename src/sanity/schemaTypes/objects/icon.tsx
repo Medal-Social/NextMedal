@@ -11,8 +11,8 @@
 
 import { ComponentIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
-import { Icon } from '@/ui/base';
-import { isValidIconName } from '@/ui/base/utils/resolveIcon';
+import { Icon } from '@/components/blocks/objects/core';
+import { isValidIconName } from '@/components/blocks/objects/core/utils/resolveIcon';
 
 export default defineType({
   name: 'icon',
