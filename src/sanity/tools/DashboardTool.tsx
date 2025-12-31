@@ -370,7 +370,7 @@ const ContentOverview = memo(function ContentOverview() {
           : stats.seoIssuesCount === 1
             ? 'missing SEO metadata'
             : 'missing SEO metadata',
-      path: '/studio/structure/page',
+      path: '/studio/structure/seo-issues',
     },
     {
       title: 'Drafts Pending',
@@ -378,7 +378,7 @@ const ContentOverview = memo(function ContentOverview() {
       icon: <EditIcon />,
       tone: stats.draftsCount > 0 ? ('caution' as const) : ('positive' as const),
       subtitle: stats.draftsCount === 1 ? 'draft to review' : 'drafts to review',
-      path: '/studio/structure',
+      path: '/studio/structure/drafts-pending',
     },
     {
       title: 'Published Pages',
@@ -386,7 +386,7 @@ const ContentOverview = memo(function ContentOverview() {
       icon: <CheckmarkCircleIcon />,
       tone: 'positive' as const,
       subtitle: 'pages live',
-      path: '/studio/structure/page',
+      path: '/studio/structure/published-pages',
     },
   ];
 
