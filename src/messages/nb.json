@@ -22,10 +22,10 @@
   },
   "search": {
     "placeholder": "Søk...",
-    "commandPlaceholder": "Søk i sider, blogg, dokumentasjon...",
+    "commandPlaceholder": "Søk i sider, artikler, dokumentasjon...",
     "noResults": "Ingen resultater funnet. Prøv andre søkeord.",
     "categories": {
-      "blogPosts": "Blogginnlegg",
+      "articles": "Artikler",
       "documentation": "Dokumentasjon",
       "changelog": "Endringslogg",
       "newsletter": "Nyhetsbrev",
@@ -38,7 +38,7 @@
     "copyCode": "Kopier kode",
     "copiedState": "Kopiert"
   },
-  "blog": {
+  "article": {
     "shareOn": "Del på {platform}",
     "copyLink": "Kopier lenke",
     "linkCopied": "Lenke kopiert til utklippstavle",
@@ -77,7 +77,7 @@
   },
   "LocaleSwitcher": {
     "label": "Endre språk",
-    "locale": "{locale, select, en {English} nb {Norsk} other {Ukjent}}",
+    "locale": "{locale, select, en {English} nb {Norsk} ar {العربية} other {Ukjent}}",
     "selectLanguage": "Velg språk",
     "language": "Språk",
     "translationNotAvailable": "Ikke tilgjengelig på {locale}",

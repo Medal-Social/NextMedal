@@ -22,10 +22,10 @@
   },
   "search": {
     "placeholder": "Search...",
-    "commandPlaceholder": "Search pages, blog, docs...",
+    "commandPlaceholder": "Search pages, articles, docs...",
     "noResults": "No results found. Try different keywords.",
     "categories": {
-      "blogPosts": "Blog Posts",
+      "articles": "Articles",
       "documentation": "Documentation",
       "changelog": "Changelog",
       "newsletter": "Newsletter",
@@ -38,7 +38,7 @@
     "copyCode": "Copy code",
     "copiedState": "Copied"
   },
-  "blog": {
+  "article": {
     "shareOn": "Share on {platform}",
     "copyLink": "Copy link",
     "linkCopied": "Link copied to clipboard",
@@ -77,7 +77,7 @@
   },
   "LocaleSwitcher": {
     "label": "Change language",
-    "locale": "{locale, select, en {English} nb {Norsk} other {Unknown}}",
+    "locale": "{locale, select, en {English} nb {Norsk} ar {العربية} other {Unknown}}",
     "selectLanguage": "Select Language",
     "language": "Language",
     "translationNotAvailable": "Not available in {locale}",

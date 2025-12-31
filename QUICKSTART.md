@@ -212,7 +212,7 @@ Your site will be available at:
 
 ### Explore the Studio
 
-- Create more pages, blog posts, events, documentation
+- Create more pages, article posts, events, documentation
 - Upload images and videos
 - Customize your content
 
