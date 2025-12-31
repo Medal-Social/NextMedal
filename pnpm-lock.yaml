@@ -192,7 +192,7 @@ importers:
         version: 1.0.0
       fast-check:
         specifier: ^4.5.2
-        version: 4.5.2
+        version: 4.5.3
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -5289,8 +5289,8 @@ packages:
     engines: {node: '>= 10.17.0'}
     hasBin: true
 
-  fast-check@4.5.2:
-    resolution: {integrity: sha512-tOzL01LMrDIWPLfvMiGUMH0AjqnOelHQPmgvYkW/aRO4Yaw+pBQqWmyebNzAEbKOigoCN8HkRWUZXFkjmiaXMQ==}
+  fast-check@4.5.3:
+    resolution: {integrity: sha512-IE9csY7lnhxBnA8g/WI5eg/hygA6MGWJMSNfFRrBlXUciADEhS1EDB0SIsMSvzubzIlOBbVITSsypCsW717poA==}
     engines: {node: '>=12.17.0'}
 
   fast-copy@4.0.2:
@@ -14144,7 +14144,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  fast-check@4.5.2:
+  fast-check@4.5.3:
     dependencies:
       pure-rand: 7.0.1
 
