@@ -117,7 +117,7 @@ export function debounce<T extends (...args: unknown[]) => void>(
   func: T,
   delay = 1000
 ): (...args: Parameters<T>) => void {
-  // Use an AbortController for better cleanup
+  // Shared reference to the current pending controller
   let abortController: AbortController | null = null;
 
   return function (this: unknown, ...args: Parameters<T>) {
@@ -126,13 +126,13 @@ export function debounce<T extends (...args: unknown[]) => void>(
       abortController.abort();
     }
 
-    // Create a new abort controller for this execution
-    abortController = new AbortController();
-    const { signal } = abortController;
+    // Create a new abort controller scoped to this call
+    const currentController = new AbortController();
+    abortController = currentController;
+    const { signal } = currentController;
 
     // Create a promise that resolves after the delay
     const delayPromise = new Promise<void>((resolve, reject) => {
-      // Setup the timeout
       const timeoutId = setTimeout(() => {
         resolve();
       }, delay);
@@ -150,7 +150,10 @@ export function debounce<T extends (...args: unknown[]) => void>(
         if (!signal.aborted) {
           func.apply(this, args);
         }
-        abortController = null;
+        // Only clear if this is still the current controller (prevents race condition)
+        if (abortController === currentController) {
+          abortController = null;
+        }
       })
       .catch(() => {
         // Aborted, do nothing
