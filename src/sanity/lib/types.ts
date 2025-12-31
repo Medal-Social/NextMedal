@@ -1,13 +1,13 @@
 /**
  * Sanity Schema Type Definitions
- * @version 1.0.0
- * @lastUpdated 2024-03-13
+ * @version 1.0.1
+ * @lastUpdated 2025-12-31
  */
 
 import type { SanityDocument } from 'next-sanity';
 
-// Base types
-export interface SanityBase {
+// Base types (internal)
+interface SanityBase {
   _type: string;
   _id?: string;
   _key: string;
@@ -16,13 +16,13 @@ export interface SanityBase {
   _updatedAt?: string;
 }
 
-export interface SanityReference {
+interface SanityReference {
   _ref: string;
   _type: 'reference';
   _weak?: boolean;
 }
 
-export interface SanityImage {
+interface SanityImage {
   _type: 'image';
   asset: SanityReference;
   crop?: {
@@ -40,20 +40,19 @@ export interface SanityImage {
   alt?: string;
 }
 
-export interface MuxAsset {
+interface MuxAsset {
   playbackId?: string;
   _ref?: string;
   _type?: string;
   status?: 'ready' | 'preparing' | 'errored';
 }
 
-export interface MuxVideo {
+interface MuxVideo {
   asset?: MuxAsset;
   _type: 'mux.video';
 }
 
-// Portable Text block type
-export interface PortableTextBlock {
+interface PortableTextBlock {
   _type: 'block';
   _key: string;
   children: Array<{ _type: string; _key: string; text?: string }>;
@@ -61,29 +60,7 @@ export interface PortableTextBlock {
   markDefs?: Array<{ _type: string; _key: string }>;
 }
 
-// Document types
-export interface Site extends SanityBase {
-  _type: 'site';
-  title: string;
-  tagline?: PortableTextBlock[];
-  logo?: SanityImage;
-}
-
-// Object types
-export interface Metadata {
-  _type: 'metadata';
-  title?: string;
-  description?: string;
-  keywords?: string[];
-  image?: SanityImage;
-  noIndex?: boolean;
-  slug?: {
-    _type: 'slug';
-    current: string;
-  };
-}
-
-export interface CTA {
+interface CTA {
   _type: 'cta';
   text?: string;
   linkType?: 'internal' | 'external';
@@ -99,25 +76,15 @@ export interface CTA {
   };
 }
 
-export interface MenuItem {
-  _type: 'menuItem';
-  label?: string;
-  internal?: SanityReference;
-  external?: string;
-  params?: Record<string, string>;
+interface ModuleOptions {
+  _type: 'module-options';
+  background?: string;
+  isFullWidth?: boolean;
+  uid?: string;
 }
 
-export interface Video extends SanityBase {
-  _type: 'video';
-  type?: 'mux' | 'youtube';
-  muxVideo?: MuxVideo;
-  videoId?: string;
-  title?: string;
-  thumbnail?: SanityImage;
-}
-
-// Module types
-export interface Hero extends SanityBase {
+// Module types (internal)
+interface HeroModule extends SanityBase {
   _type: 'hero';
   content?: PortableTextBlock[];
   ctas?: CTA[];
@@ -135,11 +102,5 @@ export interface Hero extends SanityBase {
   sideBySideTextAlign?: 'left' | 'center' | 'right';
 }
 
-export interface ModuleOptions {
-  _type: 'module-options';
-  background?: string;
-  isFullWidth?: boolean;
-  uid?: string;
-}
-
-export type Module = Hero;
+// Exported types
+export type Module = HeroModule;

@@ -26,7 +26,7 @@ export default defineConfig({
   // Reporter configuration
   reporter: [
     ['list'],
-    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['html', { outputFolder: 'test-results/playwright', open: 'never' }],
   ],
 
   // Shared settings for all projects

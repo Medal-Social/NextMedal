@@ -32,7 +32,9 @@ describe('Secure Forms Validation', () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0].message).toContain('Submission too fast');
+      expect(result.error.issues[0].message).toContain(
+        'Please take a moment to review your information'
+      );
     }
   });
 
@@ -50,7 +52,7 @@ describe('Secure Forms Validation', () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0].message).toContain('Potential bot submission detected');
+      expect(result.error.issues[0].message).toContain('Please complete all fields correctly');
     }
   });
 
