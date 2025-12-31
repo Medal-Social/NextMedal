@@ -14,8 +14,8 @@ vi.mock('@/lib/env', () => ({
 vi.mock('@/lib/resolveUrl', () => ({
   default: vi.fn((page) => {
     const slug = page?.metadata?.slug?.current;
-    if (page?._type === 'collection.blog') {
-      const collectionSlug = page?.collection?.metadata?.slug?.current || 'blog';
+    if (page?._type === 'collection.article') {
+      const collectionSlug = page?.collection?.metadata?.slug?.current || 'articles';
       return `https://example.com/${collectionSlug}/${slug}`;
     }
     return slug === 'index' ? 'https://example.com/' : `https://example.com/${slug}`;
@@ -54,10 +54,10 @@ describe('processMetadata Property Tests', () => {
     metadata: metadataArb,
   });
 
-  // Arbitrary for generating valid blog posts
-  const blogPostArb = fc.record({
+  // Arbitrary for generating valid articles
+  const articlePostArb = fc.record({
     _id: fc.uuid(),
-    _type: fc.constant('collection.blog' as const),
+    _type: fc.constant('collection.article' as const),
     _createdAt: validDateArb.map((d) => d.toISOString()),
     _updatedAt: validDateArb.map((d) => d.toISOString()),
     _rev: fc.string({ minLength: 5, maxLength: 20 }),
@@ -67,10 +67,10 @@ describe('processMetadata Property Tests', () => {
     publishDate: validDateArb.map((d) => d.toISOString()),
     metadata: metadataArb,
     collection: fc.constant({
-      _id: 'page-blog',
+      _id: 'page-articles',
       metadata: {
-        slug: { current: 'blog' },
-        title: 'Blog',
+        slug: { current: 'articles' },
+        title: 'Articles',
       },
     }),
   });
@@ -101,10 +101,12 @@ describe('processMetadata Property Tests', () => {
       );
     });
 
-    it('should always return non-empty title and description for any valid blog post', async () => {
+    it('should always return non-empty title and description for any valid article', async () => {
       await fc.assert(
-        fc.asyncProperty(blogPostArb, async (blogPost) => {
-          const result = await processMetadata(blogPost as unknown as Sanity.CollectionBlogPost);
+        fc.asyncProperty(articlePostArb, async (articlePost) => {
+          const result = await processMetadata(
+            articlePost as unknown as Sanity.CollectionArticlePost
+          );
 
           // Title should be non-empty
           expect(result.title).toBeDefined();
@@ -279,16 +281,18 @@ describe('processMetadata Property Tests', () => {
   });
 
   /**
-   * **Feature: component-accessibility-testing, Property 34: Blog Post OG Type**
-   * *For any* blog post passed to processMetadata, the returned openGraph.type SHALL be "article"
+   * **Feature: component-accessibility-testing, Property 34: Article OG Type**
+   * *For any* article passed to processMetadata, the returned openGraph.type SHALL be "article"
    * and SHALL include publishedTime.
    * **Validates: Requirements 12.4**
    */
-  describe('Property 34: Blog Post OG Type', () => {
-    it('should set openGraph.type to article and include publishedTime for blog posts', async () => {
+  describe('Property 34: Article OG Type', () => {
+    it('should set openGraph.type to article and include publishedTime for articles', async () => {
       await fc.assert(
-        fc.asyncProperty(blogPostArb, async (blogPost) => {
-          const result = await processMetadata(blogPost as unknown as Sanity.CollectionBlogPost);
+        fc.asyncProperty(articlePostArb, async (articlePost) => {
+          const result = await processMetadata(
+            articlePost as unknown as Sanity.CollectionArticlePost
+          );
 
           // openGraph.type should be 'article' (cast to access type property)
           const og = result.openGraph as { type?: string; publishedTime?: string };
@@ -296,7 +300,7 @@ describe('processMetadata Property Tests', () => {
 
           // publishedTime should be included
           expect(og?.publishedTime).toBeDefined();
-          expect(og?.publishedTime).toBe(blogPost.publishDate);
+          expect(og?.publishedTime).toBe(articlePost.publishDate);
         }),
         { numRuns: 100 }
       );
@@ -342,10 +346,12 @@ describe('processMetadata Property Tests', () => {
       );
     });
 
-    it('should always include canonical URL in alternates for blog posts', async () => {
+    it('should always include canonical URL in alternates for articles', async () => {
       await fc.assert(
-        fc.asyncProperty(blogPostArb, async (blogPost) => {
-          const result = await processMetadata(blogPost as unknown as Sanity.CollectionBlogPost);
+        fc.asyncProperty(articlePostArb, async (articlePost) => {
+          const result = await processMetadata(
+            articlePost as unknown as Sanity.CollectionArticlePost
+          );
 
           // alternates should be defined
           expect(result.alternates).toBeDefined();
@@ -355,8 +361,8 @@ describe('processMetadata Property Tests', () => {
           expect(typeof result.alternates?.canonical).toBe('string');
           expect((result.alternates?.canonical as string).startsWith('https://')).toBe(true);
 
-          // For blog posts, canonical should include the collection slug
-          expect(result.alternates?.canonical as string).toContain('/blog/');
+          // For articles, canonical should include the collection slug
+          expect(result.alternates?.canonical as string).toContain('/articles/');
         }),
         { numRuns: 100 }
       );

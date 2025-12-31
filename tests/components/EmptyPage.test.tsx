@@ -5,24 +5,26 @@ import { EmptyPage } from '@/components/EmptyPage';
 describe('EmptyPage', () => {
   it('renders empty page component', () => {
     render(<EmptyPage />);
-    expect(screen.getByText('No Index Page Found')).toBeInTheDocument();
+    expect(screen.getByText('Welcome to NextMedal!')).toBeInTheDocument();
   });
 
   it('displays instructions for users', () => {
     render(<EmptyPage />);
-    expect(screen.getByText(/Add a new Page document in your Sanity Studio/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Your site is running, but no index page exists yet/)
+    ).toBeInTheDocument();
   });
 
   it('has link to Medal Social', () => {
     render(<EmptyPage />);
-    const link = screen.getByRole('link', { name: /Visit Medal Social/i });
+    const link = screen.getByRole('link', { name: /contact Medal Social/i });
     expect(link).toBeInTheDocument();
     expect(link).toHaveAttribute('href', 'https://www.medalsocial.com');
   });
 
   it('link opens in new tab', () => {
     render(<EmptyPage />);
-    const link = screen.getByRole('link', { name: /Visit Medal Social/i });
+    const link = screen.getByRole('link', { name: /contact Medal Social/i });
     expect(link).toHaveAttribute('target', '_blank');
     expect(link).toHaveAttribute('rel', 'noopener noreferrer');
   });

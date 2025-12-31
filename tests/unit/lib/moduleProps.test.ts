@@ -59,7 +59,7 @@ describe('moduleProps', () => {
     });
 
     it('handles various module types', () => {
-      const types = ['banner', 'cta', 'hero', 'faq', 'pricing', 'blog-list'];
+      const types = ['banner', 'cta', 'hero', 'faq', 'pricing', 'article-list'];
 
       for (const type of types) {
         const result = moduleProps({

@@ -61,17 +61,17 @@ describe('Search API', () => {
     });
   });
 
-  it('formats blog collection results correctly', async () => {
+  it('formats article collection results correctly', async () => {
     mockFetch.mockResolvedValueOnce({
       pages: [],
       collections: [
         {
           _id: 'post-1',
-          _type: 'collection.blog',
-          title: 'Blog Post',
+          _type: 'collection.article',
+          title: 'Article',
           slug: 'my-post',
-          collectionSlug: 'blog',
-          description: 'A blog post',
+          collectionSlug: 'articles',
+          description: 'A article',
         },
       ],
     });
@@ -80,8 +80,8 @@ describe('Search API', () => {
     const data = await response.json();
 
     expect(data).toHaveLength(1);
-    expect(data[0].type).toBe('Blog');
-    expect(data[0].href).toBe('/blog/my-post');
+    expect(data[0].type).toBe('Articles');
+    expect(data[0].href).toBe('/articles/my-post');
   });
 
   it('formats changelog collection results correctly', async () => {
@@ -170,7 +170,7 @@ describe('Search API', () => {
       collections: [
         {
           _id: 'item-1',
-          _type: 'collection.blog',
+          _type: 'collection.article',
           title: 'Item',
           slug: 'item',
           collectionSlug: null,
@@ -200,10 +200,10 @@ describe('Search API', () => {
       collections: [
         {
           _id: 'post-1',
-          _type: 'collection.blog',
+          _type: 'collection.article',
           title: 'Post',
           slug: 'post',
-          collectionSlug: 'blog',
+          collectionSlug: 'articles',
         },
       ],
     });
@@ -219,10 +219,10 @@ describe('Search API', () => {
       collections: [
         {
           _id: 'post-1',
-          _type: 'collection.blog',
+          _type: 'collection.article',
           title: 'Post',
           slug: 'post',
-          collectionSlug: 'blog',
+          collectionSlug: 'articles',
         },
       ],
     });

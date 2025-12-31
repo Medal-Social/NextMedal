@@ -33,7 +33,7 @@ export const options = {
 
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:3000';
 
-const searchTerms = ['blog', 'about', 'contact', 'services', 'home', 'test'];
+const searchTerms = ['articles', 'about', 'contact', 'services', 'home', 'test'];
 
 export default function () {
   const term = searchTerms[Math.floor(Math.random() * searchTerms.length)];

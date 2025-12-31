@@ -60,10 +60,10 @@ describe('Search API Contract', () => {
         collections: [
           {
             _id: 'post-1',
-            _type: 'collection.blog',
-            title: 'Blog Post',
+            _type: 'collection.article',
+            title: 'Article',
             slug: 'post',
-            collectionSlug: 'blog',
+            collectionSlug: 'articles',
             description: 'A post',
           },
         ],
@@ -123,10 +123,10 @@ describe('Search API Contract', () => {
         collections: [
           {
             _id: 'post-1',
-            _type: 'collection.blog',
+            _type: 'collection.article',
             title: 'Post',
             slug: 'my-post',
-            collectionSlug: 'blog',
+            collectionSlug: 'articles',
           },
         ],
       });
@@ -165,10 +165,10 @@ describe('Search API Contract', () => {
         collections: [
           {
             _id: 'post-1',
-            _type: 'collection.blog',
+            _type: 'collection.article',
             title: 'Post',
             slug: 'post',
-            collectionSlug: 'blog',
+            collectionSlug: 'articles',
             description: 'A description',
           },
         ],

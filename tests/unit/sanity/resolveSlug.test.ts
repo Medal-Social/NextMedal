@@ -41,9 +41,9 @@ describe('resolveSlug', () => {
     it('should handle nested paths', () => {
       expect(
         resolveSlug({
-          internal: 'blog/my-post',
+          internal: 'articles/my-post',
         })
-      ).toBe('/blog/my-post');
+      ).toBe('/articles/my-post');
     });
   });
 
@@ -87,19 +87,19 @@ describe('resolveSlug', () => {
     it('should handle nested path with anchor', () => {
       expect(
         resolveSlug({
-          internal: 'blog/my-post',
+          internal: 'articles/my-post',
           params: '#comments',
         })
-      ).toBe('/blog/my-post#comments');
+      ).toBe('/articles/my-post#comments');
     });
 
     it('should handle nested path with anchor without # prefix', () => {
       expect(
         resolveSlug({
-          internal: 'blog/my-post',
+          internal: 'articles/my-post',
           params: 'comments',
         })
-      ).toBe('/blog/my-post#comments');
+      ).toBe('/articles/my-post#comments');
     });
 
     it('should not double-add # prefix', () => {

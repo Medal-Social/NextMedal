@@ -83,3 +83,9 @@ src/components/mockup/
 schema.json
 *.doc
 schema-changes-report.html
+migration/
+
+migration-temp/
+# Ignore all migration-related files and directories
+migration/
+migrate-api.sh

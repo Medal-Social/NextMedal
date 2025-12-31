@@ -3,6 +3,7 @@ import { defineRouting } from 'next-intl/routing';
 export const localeConfig = {
   en: { title: 'English' },
   nb: { title: 'Norsk' },
+  ar: { title: 'العربية' },
 } as const;
 
 export type Locale = keyof typeof localeConfig;
