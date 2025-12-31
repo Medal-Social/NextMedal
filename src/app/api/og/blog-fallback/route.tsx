@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
   };
 
   // Load font
-  const fontData = await fs.readFile(path.join(process.cwd(), 'assets/Inter-SemiBold.ttf'));
+  const fontData = await fs.readFile(path.join(process.cwd(), 'src/assets/Inter-SemiBold.ttf'));
 
   return new ImageResponse(
     <div

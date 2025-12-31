@@ -1,17 +1,17 @@
 'use client';
 import { apiVersion, dataset, projectId } from '@/sanity/lib/env';
 import { defineConfig, isDev } from 'sanity';
-import { presentation } from './src/sanity/presentation';
+import { presentation } from '@/sanity/presentation';
 import { visionTool } from '@sanity/vision';
-import { structure } from './src/sanity/structure';
+import { structure } from '@/sanity/structure';
 import resolveUrl from '@/lib/sanity/resolve-url';
 import { codeInput } from '@sanity/code-input';
 import { documentInternationalization } from '@sanity/document-internationalization';
 import { media, mediaAssetSource } from 'sanity-plugin-media';
 import { muxInput } from 'sanity-plugin-mux-input';
-import { schemaTypes } from './src/sanity/schemaTypes';
-import StudioIcon from './src/sanity/ui/StudioIcon';
-import { dashboardTool } from './src/sanity/tools/DashboardTool';
+import { schemaTypes } from '@/sanity/schemaTypes';
+import StudioIcon from '@/sanity/ui/StudioIcon';
+import { dashboardTool } from '@/sanity/tools/DashboardTool';
 
 import { routing, localeConfig, type Locale } from '@/i18n/routing';
 

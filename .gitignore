@@ -7,10 +7,8 @@
 .yarn/install-state.gz
 
 # testing
-/coverage
-/playwright-report/
-/playwright/.cache/
 /test-results/
+/playwright/.cache/
 /lighthouse-report.html
 blob-report/
 *.lhci.json
@@ -18,9 +16,6 @@ blob-report/
 # Visual regression snapshots (updated on CI, not tracked locally)
 tests/e2e/visual/snapshots/
 *.png-snapshots/
-
-# k6 load test results
-/k6-results/
 
 # next.js
 /.next/
@@ -77,3 +72,9 @@ _templates/
 # Mockups
 src/app/**/mockups/
 src/components/mockup/
+
+.cursor
+.qodo
+
+# Auto Claude data directory
+.auto-claude/

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { NextStudio, viewport as studioViewport } from 'next-sanity/studio';
-import config from '$/sanity.config';
+import config from '@/sanity.config';
 
 export const maxDuration = 60; // sec
 
