@@ -288,7 +288,7 @@ const ContentOverview = memo(function ContentOverview() {
       count: stats.publishedCount,
       icon: <CheckmarkCircleIcon />,
       tone: 'positive' as const,
-      subtitle: 'pages live',
+      subtitle: 'documents live',
       path: '/studio/structure/contentHealth;published-documents',
     },
   ];
