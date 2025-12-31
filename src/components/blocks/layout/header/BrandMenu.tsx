@@ -12,6 +12,7 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
 import { logger } from '@/lib/core/logger';
+import { copyToClipboard } from '@/lib/utils/clipboard';
 import { urlFor } from '@/sanity/lib/image';
 
 interface BrandMenuProps {
@@ -26,7 +27,6 @@ export default function BrandMenu({ children, logoData, hasBrandPage }: BrandMen
   const label = extension === 'png' ? 'Copy Logo PNG' : 'Copy Logo SVG';
 
   const handleCopyLogo = async () => {
-    // Context Menu items don't need preventDefault usually, but logic remains same
     try {
       // Logic to get logo URL
       if (!image) {
@@ -36,8 +36,14 @@ export default function BrandMenu({ children, logoData, hasBrandPage }: BrandMen
       const url = urlFor(image).url();
 
       if (url) {
-        await navigator.clipboard.writeText(url);
-        toast.success('Logo URL copied to clipboard');
+        const success = await copyToClipboard(url);
+
+        if (success) {
+          toast.success('Logo URL copied to clipboard');
+        } else {
+          logger.error('Failed to copy logo URL');
+          toast.error('Failed to copy logo');
+        }
       } else {
         throw new Error('Could not generate logo URL');
       }

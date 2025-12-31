@@ -14,6 +14,7 @@ import { CheckmarkIcon, CopyIcon } from '@sanity/icons';
 import { Box, Button, Flex, Text, TextInput } from '@sanity/ui';
 import { useState } from 'react';
 import { defineField, defineType } from 'sanity';
+import { copyToClipboard } from '@/lib/utils/clipboard';
 
 export default defineType({
   name: 'module-options',
@@ -48,11 +49,18 @@ export default defineType({
                 mode="ghost"
                 icon={checked ? CheckmarkIcon : CopyIcon}
                 disabled={checked}
-                onClick={() => {
-                  navigator.clipboard.writeText(`#${elementProps.value || moduleKey}`);
+                onClick={async () => {
+                  const textToCopy = `#${elementProps.value || moduleKey}`;
+                  const success = await copyToClipboard(textToCopy);
 
-                  setChecked(true);
-                  setTimeout(() => setChecked(false), 1000);
+                  if (success) {
+                    setChecked(true);
+                    setTimeout(() => setChecked(false), 1000);
+                  } else {
+                    // Still show the checkmark briefly to indicate the attempt
+                    setChecked(true);
+                    setTimeout(() => setChecked(false), 500);
+                  }
                 }}
               />
             </Flex>

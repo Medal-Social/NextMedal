@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { IconLinkedin, IconTwitterX, IconWhatsapp } from '@/components/icons/social-icons';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
+import { copyToClipboard } from '@/lib/utils/clipboard';
 import { cn } from '@/lib/utils/index';
 
 export default function SocialShare({
@@ -26,11 +27,16 @@ export default function SocialShare({
     setUrl(`${window.location.origin}/blog/${slug}`);
   }, [slug]);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(url);
-    setCopied(true);
-    toast.success('Link copied to clipboard');
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async () => {
+    const success = await copyToClipboard(url);
+
+    if (success) {
+      setCopied(true);
+      toast.success('Link copied to clipboard');
+      setTimeout(() => setCopied(false), 2000);
+    } else {
+      toast.error('Failed to copy link');
+    }
   };
 
   const shareLinks = [
