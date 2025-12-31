@@ -2,7 +2,7 @@ import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { getLocale } from 'next-intl/server';
 import { PortableText } from 'next-sanity';
-import ThemeToggleWrapper from '@/components/blocks/layout/header/ThemeToggleWrapper';
+import ThemeToggle from '@/components/blocks/layout/header/ThemeToggle';
 import LocaleSwitcher from '@/components/blocks/layout/language-switcher';
 import { Img } from '@/components/blocks/objects/core';
 import { Social } from '@/components/blocks/utility';
@@ -112,15 +112,11 @@ export default async function Footer() {
 
           {/* Right: Utilities */}
           <div className="flex items-center gap-4">
-            <LocaleSwitcher
-              dropdownAlign="end"
-              className="[&>span]:inline-block text-muted-foreground hover:text-foreground hover:bg-transparent h-auto p-0 font-normal transition-colors duration-200"
-            />
-            <ThemeToggleWrapper
-              dropdownAlign="end"
-              className="[&>span]:inline-block text-muted-foreground hover:text-foreground hover:bg-transparent h-auto p-0 font-normal transition-colors duration-200"
-            />
             {systemStatus && <SystemStatus status={systemStatus} />}
+            <div className="flex items-center gap-1 md:gap-2">
+              <LocaleSwitcher />
+              <ThemeToggle />
+            </div>
           </div>
         </Section>
       </div>

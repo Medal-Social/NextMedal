@@ -54,7 +54,15 @@ export default defineConfig({
         id: locale,
         title: localeConfig[locale as Locale].title,
       })),
-      schemaTypes: ['page', 'site', 'collection.blog', 'collection.newsletter'],
+      schemaTypes: [
+        'page',
+        'site',
+        'collection.blog',
+        'collection.newsletter',
+        'collection.documentation',
+        'collection.changelog',
+        'collection.events',
+      ],
     }),
     ...devOnlyPlugins,
   ],
@@ -66,7 +74,15 @@ export default defineConfig({
     templates: (prev) =>
       prev.filter(
         (template) =>
-          !['page', 'site', 'collection.blog', 'collection.newsletter'].includes(template.id)
+          ![
+            'page',
+            'site',
+            'collection.blog',
+            'collection.newsletter',
+            'collection.documentation',
+            'collection.changelog',
+            'collection.events',
+          ].includes(template.id)
       ),
   },
   document: {
@@ -88,7 +104,14 @@ export default defineConfig({
     },
     productionUrl: async (prev, { document }) => {
       if (
-        ['page', 'collection.blog', 'collection.newsletter'].includes(document?._type)
+        [
+          'page',
+          'collection.blog',
+          'collection.newsletter',
+          'collection.documentation',
+          'collection.changelog',
+          'collection.events',
+        ].includes(document?._type)
       ) {
         return resolveUrl(document as Sanity.PageBase, { base: true });
       }

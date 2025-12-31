@@ -1,11 +1,15 @@
 'use client';
 
 import { AnimatePresence } from 'motion/react';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { CommandMenu } from '@/components/blocks/utility/CommandMenu';
 import { cn } from '@/lib/utils/index';
 import { DESKTOP_BREAKPOINT, SCROLL_THRESHOLD } from './constants';
+import MobileDocsNavigation from './mobile-docs-navigation';
 import MobileNavigation from './mobile-navigation';
+import ThemeToggle from './ThemeToggle';
 import Toggle from './Toggle';
 import type { HeaderClientProps } from './types';
 
@@ -14,7 +18,10 @@ export default function HeaderClient({
   ctas,
   menu,
   enableSearch,
-  children,
+  logoNode,
+  navNode,
+  ctaNode,
+  localeSwitcherNode,
 }: HeaderClientProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isOpenRef = useRef(false);
@@ -23,10 +30,13 @@ export default function HeaderClient({
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
-  // Keep ref in sync with state for resize handler
+  const isDocs = pathname?.includes('/docs');
+  const isDocsRoot = pathname?.endsWith('/docs');
+
+  const _backHref = isDocsRoot ? '/' : '/docs';
+
   isOpenRef.current = isOpen;
 
-  // Check for dark theme on first content element
   useEffect(() => {
     const checkDarkTheme = () => {
       const main = document.querySelector('main');
@@ -154,24 +164,114 @@ export default function HeaderClient({
         ref={ref}
         className={cn(
           className,
-          'relative z-10 transition-colors duration-200 ease-in-out',
-          isScrolled || isOpen
+          'relative z-50 transition-colors duration-200 ease-in-out',
+          isScrolled || isOpen || isDocs
             ? 'bg-background border-b border-border/40 shadow-sm'
             : 'bg-transparent border-transparent',
-          !isScrolled && isDarkHero && !isOpen && 'dark text-white'
+          !isScrolled && isDarkHero && !isOpen && !isDocs && 'dark text-white'
         )}
       >
-        <div className="mx-auto flex min-h-16 max-w-7xl items-center gap-x-6 p-4 px-4 sm:px-6 lg:px-8">
-          {children}
+        <div
+          className={cn(
+            'mx-auto flex min-h-16 items-center w-full p-4 px-4 sm:px-6 lg:px-8',
+            isDocs ? 'max-w-none' : 'max-w-7xl'
+          )}
+        >
+          {isDocs ? (
+            <div className="flex flex-1 items-center justify-between w-full">
+              <div className="flex items-center min-w-0">
+                {/* Identity: Logo | Docs */}
+                <Link
+                  href="/docs"
+                  className="flex items-center gap-2 sm:gap-4 hover:opacity-80 transition-opacity min-w-0"
+                >
+                  <div className="flex items-center shrink-0">{logoNode}</div>
+                  <div className="hidden sm:block h-6 w-px bg-border/60 rotate-12 shrink-0" />
+                  <span className="hidden sm:block font-semibold text-lg tracking-tight truncate">
+                    Docs
+                  </span>
+                </Link>
+              </div>
 
-          <div className="flex items-center gap-2 lg:hidden relative z-[101]">
-            <Toggle isOpen={isOpen} setIsOpen={setIsOpen} />
-          </div>
+              <div className="flex items-center gap-1 sm:gap-2 md:gap-4 relative z-[101] shrink-0">
+                {enableSearch && (
+                  <>
+                    <div className="hidden md:block">
+                      <CommandMenu
+                        variant="default"
+                        className="w-[180px] lg:w-[240px] bg-muted/40 border-transparent hover:bg-muted/60"
+                      />
+                    </div>
+                    <div className="md:hidden">
+                      <CommandMenu variant="icon" />
+                    </div>
+                  </>
+                )}
+
+                <div className="flex items-center gap-1">
+                  <ThemeToggle className="hover:bg-accent/50" />
+                  {localeSwitcherNode}
+                </div>
+
+                {/* Mobile Toggle Trigger */}
+                <Toggle isOpen={isOpen} setIsOpen={setIsOpen} className="md:hidden ml-1" />
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-1 items-center justify-between w-full">
+              {/* Left: Logo + Navigation */}
+              <div className="flex items-center gap-4 lg:gap-10 min-w-0">
+                <div className="shrink-0">{logoNode}</div>
+                <div className="hidden lg:block">{navNode}</div>
+              </div>
+
+              {/* Right: Search + Controls + CTA */}
+              <div className="flex items-center gap-2 md:gap-4 relative z-[101] shrink-0">
+                {/* Search */}
+                {enableSearch && (
+                  <>
+                    <div className="hidden md:block">
+                      <CommandMenu
+                        variant="default"
+                        className="w-[150px] lg:w-[200px] bg-muted/40 border-transparent hover:bg-muted/60"
+                      />
+                    </div>
+                    <div className="md:hidden">
+                      <CommandMenu variant="icon" />
+                    </div>
+                  </>
+                )}
+
+                {/* Theme + Language Controls */}
+                <div className="flex items-center gap-1">
+                  <ThemeToggle className="hover:bg-accent/50" />
+                  {localeSwitcherNode}
+                </div>
+
+                {/* Marketing CTAs */}
+                {ctaNode && (
+                  <div className="hidden md:flex items-center border-l border-border/40 pl-4 lg:pl-6 h-6">
+                    {ctaNode}
+                  </div>
+                )}
+
+                {/* Mobile Toggle */}
+                <div className="flex items-center lg:hidden ml-1">
+                  <Toggle isOpen={isOpen} setIsOpen={setIsOpen} />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
       <AnimatePresence>
-        {isOpen && <MobileNavigation menu={menu} ctas={ctas} enableSearch={enableSearch} />}
+        {isOpen &&
+          (isDocs ? (
+            <MobileDocsNavigation closeMenu={() => setIsOpen(false)} />
+          ) : (
+            <MobileNavigation menu={menu} ctas={ctas} enableSearch={enableSearch} />
+          ))}
       </AnimatePresence>
     </>
   );
