@@ -4,7 +4,7 @@
  * @lastUpdated 2025-12-30
  * @description Displays a list of articles from a collection. When added to a page,
  * that page becomes a collection index and articles can reference it.
- * Use for: Blog, Press, News, Studio posts, or any article-based content.
+ * Use for: Articles, Press, News, Studio posts, or any article-based content.
  * @changelog
  * - 1.1.0: Removed unused fields (layout, columns, filterByCategory)
  * - 1.0.0: Initial version with collection-based filtering

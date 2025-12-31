@@ -3,29 +3,17 @@ import Link from 'next/link';
 import AuthorCard from '@/components/blocks/modules/frontpage/articles/AuthorCard';
 import { Date as DateDisplay, Img } from '@/components/blocks/objects/core';
 import resolveUrl from '@/lib/sanity/resolve-url';
+import { getArticleFallbackImage } from '@/lib/utils/article-helpers';
 import { cn } from '@/lib/utils/index';
 import { createStegaAttribute } from '@/sanity/lib/client';
 
 interface ArticleCardProps {
-  post: Sanity.CollectionBlogPost;
+  post: Sanity.CollectionArticlePost;
   variant?: 'large' | 'wide' | 'standard' | 'horizontal';
   className?: string;
 }
 
 type CardVariant = ArticleCardProps['variant'];
-
-// Get fallback image for posts without an image
-function getFallbackImage(title?: string, description?: string) {
-  const params = new URLSearchParams();
-  if (title) params.set('title', title.slice(0, 100));
-  if (description) params.set('description', description.slice(0, 150));
-  return {
-    src: `/api/og/blog-fallback?${params.toString()}`,
-    alt: title || '',
-    width: 1200,
-    height: 630,
-  };
-}
 
 // Get image container classes based on variant
 function getImageClass(variant: CardVariant) {
@@ -71,7 +59,7 @@ export default function ArticleCard({ post, variant = 'standard', className }: A
   const hasValidImage = post.seo?.image?.asset;
   const image = hasValidImage
     ? post.seo?.image
-    : getFallbackImage(post.metadata?.title, post.seo?.description);
+    : getArticleFallbackImage(post.metadata?.title, post.seo?.description);
 
   const stega = createStegaAttribute({
     id: post._id,

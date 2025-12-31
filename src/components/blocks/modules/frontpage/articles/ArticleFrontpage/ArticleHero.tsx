@@ -5,14 +5,14 @@ import resolveUrl from '@/lib/sanity/resolve-url';
 import { cn } from '@/lib/utils/index';
 import { createStegaAttribute } from '@/sanity/lib/client';
 
-export default function BlogHero({
+export default function ArticleHero({
   featuredPost,
   recentPost,
   popularPost,
 }: {
-  featuredPost: Sanity.CollectionBlogPost;
-  recentPost?: Sanity.CollectionBlogPost;
-  popularPost?: Sanity.CollectionBlogPost;
+  featuredPost: Sanity.CollectionArticlePost;
+  recentPost?: Sanity.CollectionArticlePost;
+  popularPost?: Sanity.CollectionArticlePost;
 }) {
   if (!featuredPost) return null;
 
@@ -108,7 +108,7 @@ function SidebarCard({
   hoverColor,
   borderColor = 'hover:border-cyan-500/50',
 }: {
-  post: Sanity.CollectionBlogPost;
+  post: Sanity.CollectionArticlePost;
   label: string;
   labelColor: string;
   hoverColor: string;

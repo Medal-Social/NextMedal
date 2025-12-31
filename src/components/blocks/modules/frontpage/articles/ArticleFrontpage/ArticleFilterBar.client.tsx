@@ -2,19 +2,22 @@
 
 import { LayoutGrid, List, Rss } from 'lucide-react';
 import Link from 'next/link';
-import { useBlogFilters } from '@/components/blocks/modules/frontpage/articles/store';
+import { useArticleFilters } from '@/components/blocks/modules/frontpage/articles/store';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { usePageState } from '@/lib/hooks/use-pagination';
 import { cn } from '@/lib/utils/index';
 
-interface BlogFilterBarClientProps {
-  categories: Sanity.BlogCategory[];
+interface ArticleFilterBarClientProps {
+  categories: Sanity.ArticleCategory[];
   rssUrl?: string;
 }
 
-export default function BlogFilterBarClient({ categories, rssUrl }: BlogFilterBarClientProps) {
-  const { category, setCategory, view, setView } = useBlogFilters();
+export default function ArticleFilterBarClient({
+  categories,
+  rssUrl,
+}: ArticleFilterBarClientProps) {
+  const { category, setCategory, view, setView } = useArticleFilters();
   const { setPage } = usePageState();
 
   const handleCategoryChange = (newCategory: string) => {

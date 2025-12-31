@@ -1,8 +1,8 @@
 /**
- * Collection Blog Schema
+ * Collection Article Schema
  * @version 1.0.0
  * @lastUpdated 2025-12-30
- * @description Blog posts with flexible collection reference for dynamic URLs.
+ * @description Articles with flexible collection reference for dynamic URLs.
  * Items reference a parent collection page, enabling CMS-configurable collection names/URLs.
  * @changelog
  * - 1.0.0: Initial version with collection reference pattern
@@ -17,8 +17,8 @@ import { imageBlock } from '../../fragments';
 import link from '../../objects/link';
 
 export default defineType({
-  name: 'collection.blog',
-  title: 'Blog Post',
+  name: 'collection.article',
+  title: 'Article',
   icon: EditIcon,
   type: 'document',
   groups: [
@@ -37,7 +37,7 @@ export default defineType({
     defineField({
       name: 'collection',
       title: 'Collection',
-      description: 'The collection page this post belongs to (determines the URL)',
+      description: 'The collection page this article belongs to (determines the URL)',
       type: 'reference',
       to: [{ type: 'page' }],
       validation: (Rule) => Rule.required(),
@@ -55,8 +55,8 @@ export default defineType({
       fields: [
         defineField({
           name: 'title',
-          title: 'Post Title',
-          description: 'The title of the blog post',
+          title: 'Article Title',
+          description: 'The title of the article',
           type: 'string',
           validation: (Rule) => Rule.required(),
         }),
@@ -64,7 +64,7 @@ export default defineType({
           name: 'slug',
           title: 'URL Slug',
           type: 'slug',
-          description: 'The URL path for this blog post (appended to collection URL)',
+          description: 'The URL path for this article (appended to collection URL)',
           options: {
             source: (doc) => {
               const document = doc as { metadata?: { title?: string } };
@@ -79,7 +79,7 @@ export default defineType({
                 return `"${slug.current}" is a reserved path.`;
               }
               if (slug?.current?.includes('/')) {
-                return "Slugs cannot contain slashes. Use a flat structure (e.g., 'my-post').";
+                return "Slugs cannot contain slashes. Use a flat structure (e.g., 'my-article').";
               }
               return true;
             }),
@@ -89,7 +89,7 @@ export default defineType({
     defineField({
       name: 'body',
       title: 'Content',
-      description: 'The main content of the blog post.',
+      description: 'The main content of the article.',
       type: 'array',
       of: [
         {
@@ -128,12 +128,12 @@ export default defineType({
     defineField({
       name: 'categories',
       title: 'Categories',
-      description: 'Categories this post belongs to.',
+      description: 'Categories this article belongs to.',
       type: 'array',
       of: [
         {
           type: 'reference',
-          to: [{ type: 'blog.category' }],
+          to: [{ type: 'article.category' }],
         },
       ],
       group: 'content',
@@ -141,7 +141,7 @@ export default defineType({
     defineField({
       name: 'authors',
       title: 'Authors',
-      description: 'People who contributed to this post.',
+      description: 'People who contributed to this article.',
       type: 'array',
       of: [
         {
@@ -154,7 +154,7 @@ export default defineType({
     defineField({
       name: 'publishDate',
       title: 'Publish Date',
-      description: 'Date when the post is published.',
+      description: 'Date when the article is published.',
       type: 'date',
       validation: (Rule) => Rule.required(),
       group: 'content',

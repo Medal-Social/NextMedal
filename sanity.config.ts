@@ -35,6 +35,12 @@ export default defineConfig({
   tasks: { enabled: false },
   scheduledPublishing: { enabled: false },
 
+  // Enable dataset switcher for testing migrations
+  switcher: {
+    enabled: true,
+    datasets: ['production', 'migrationtest'],
+  },
+
   form: {
     image: {
       assetSources: () => [mediaAssetSource],
@@ -57,7 +63,7 @@ export default defineConfig({
       schemaTypes: [
         'page',
         'site',
-        'collection.blog',
+        'collection.article',
         'collection.newsletter',
         'collection.documentation',
         'collection.changelog',
@@ -77,7 +83,7 @@ export default defineConfig({
           ![
             'page',
             'site',
-            'collection.blog',
+            'collection.article',
             'collection.newsletter',
             'collection.documentation',
             'collection.changelog',
@@ -106,7 +112,7 @@ export default defineConfig({
       if (
         [
           'page',
-          'collection.blog',
+          'collection.article',
           'collection.newsletter',
           'collection.documentation',
           'collection.changelog',

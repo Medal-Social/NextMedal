@@ -11,17 +11,17 @@ import {
 } from '@/components/ui/pagination';
 import { getPageNumbers, usePagination } from '@/lib/hooks/use-pagination';
 import { filterPosts } from '../../../utility/LatestArticles/List';
-import { useBlogFilters } from '../store';
-import BlogGrid from './BlogGrid';
+import { useArticleFilters } from '../store';
+import ArticleGrid from './ArticleGrid';
 
 export default function Paginated({
   posts,
   itemsPerPage = 6,
 }: {
-  posts: Sanity.CollectionBlogPost[];
+  posts: Sanity.CollectionArticlePost[];
   itemsPerPage?: number;
 }) {
-  const { search, category, author } = useBlogFilters();
+  const { search, category, author } = useArticleFilters();
 
   // Filter all posts - grid always shows all matching posts
   const filteredPosts = filterPosts(posts, { category, author, search });
@@ -33,7 +33,7 @@ export default function Paginated({
 
   function scrollToList() {
     if (typeof window !== 'undefined')
-      document.querySelector('#blog-list')?.scrollIntoView({ behavior: 'smooth' });
+      document.querySelector('#article-list')?.scrollIntoView({ behavior: 'smooth' });
   }
 
   function handlePageClick(page: number) {
@@ -47,7 +47,7 @@ export default function Paginated({
   const pageNumbers = getPageNumbers(currentPage, totalPages);
 
   return (
-    <div id="blog-list" className="space-y-12">
+    <div id="article-list" className="space-y-12">
       {paginatedItems.length === 0 ? (
         <div className="py-20 text-center">
           <p className="text-lg text-slate-500">
@@ -55,7 +55,7 @@ export default function Paginated({
           </p>
         </div>
       ) : (
-        <BlogGrid posts={paginatedItems} />
+        <ArticleGrid posts={paginatedItems} />
       )}
 
       {totalPages > 1 && (

@@ -25,7 +25,7 @@ interface DocumentTypeConfig {
 
 const CONTENT_TYPES: DocumentTypeConfig[] = [
   { title: 'Pages', type: 'page', icon: DocumentsIcon },
-  { title: 'Blog Posts', type: 'collection.blog', icon: EditIcon },
+  { title: 'Articles', type: 'collection.article', icon: EditIcon },
   { title: 'Documentation', type: 'collection.documentation', icon: BookIcon },
   { title: 'Events', type: 'collection.events', icon: CalendarIcon },
   { title: 'Changelog', type: 'collection.changelog', icon: DocumentTextIcon },
@@ -124,7 +124,7 @@ export const structure = structureTool({
         S.divider(),
 
         group(S, 'Collections', [
-          S.documentTypeListItem('collection.blog').title('Blog Posts').icon(EditIcon),
+          S.documentTypeListItem('collection.article').title('Articles').icon(EditIcon),
           S.documentTypeListItem('collection.changelog').title('Changelog').icon(DocumentTextIcon),
           S.documentTypeListItem('collection.documentation').title('Documentation').icon(BookIcon),
           S.documentTypeListItem('collection.events').title('Events').icon(CalendarIcon),
@@ -146,7 +146,7 @@ export const structure = structureTool({
           S.documentTypeListItem('navigation'),
           S.documentTypeListItem('redirect').title('Redirects'),
           S.documentTypeListItem('pricing').title('Pricing tiers'),
-          S.documentTypeListItem('blog.category').title('Blog categories'),
+          S.documentTypeListItem('article.category').title('Article categories'),
           S.documentTypeListItem('docs.category').title('Documentation categories'),
         ]).icon(DatabaseIcon),
       ]),

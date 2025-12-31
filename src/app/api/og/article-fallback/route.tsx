@@ -5,7 +5,7 @@ import type { NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const title = searchParams.get('title') || 'NextMedal Blog';
+  const title = searchParams.get('title') || 'NextMedal Articles';
   const description = searchParams.get('description') || '';
 
   // Use CSS variables-like values for brand colors to make them easy to replace later

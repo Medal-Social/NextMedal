@@ -2,7 +2,7 @@
  * Latest Articles Module Schema
  * @version 1.0.1
  * @lastUpdated 2025-12-23
- * @description Displays a list of recent blog posts with filtering options.
+ * @description Displays a list of recent articles with filtering options.
  * @changelog
  * - 1.0.1: Updated header documentation
  * - 1.0.0: Initial version with grid/carousel layouts and category filtering
@@ -26,7 +26,7 @@ export default defineType({
     defineField({
       name: 'intro',
       title: 'Intro',
-      description: 'Introduction text/title for the blog list.',
+      description: 'Introduction text/title for the article list.',
       type: 'array',
       of: [{ type: 'block' }],
       group: 'content',
@@ -74,7 +74,7 @@ export default defineType({
       title: 'Filter posts by a category',
       description: 'Leave empty to show all posts',
       type: 'reference',
-      to: [{ type: 'blog.category' }],
+      to: [{ type: 'article.category' }],
       group: 'filtering',
     }),
   ],

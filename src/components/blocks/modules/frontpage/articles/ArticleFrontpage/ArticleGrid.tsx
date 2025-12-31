@@ -1,6 +1,6 @@
 'use client';
 
-import { useBlogFilters } from '@/components/blocks/modules/frontpage/articles/store';
+import { useArticleFilters } from '@/components/blocks/modules/frontpage/articles/store';
 import ArticleCard from './ArticleCard';
 
 // Bento grid pattern - creates visual rhythm in 4-column grid
@@ -9,8 +9,8 @@ function getVariant(index: number): 'wide' | 'standard' {
   return index % 3 === 0 ? 'wide' : 'standard';
 }
 
-export default function BlogGrid({ posts }: { posts: Sanity.CollectionBlogPost[] }) {
-  const { view } = useBlogFilters();
+export default function ArticleGrid({ posts }: { posts: Sanity.CollectionArticlePost[] }) {
+  const { view } = useArticleFilters();
 
   if (view === 'list') {
     return (
