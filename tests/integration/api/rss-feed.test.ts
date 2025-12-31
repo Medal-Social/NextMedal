@@ -3,12 +3,27 @@ import { join } from 'node:path';
 import { NextRequest } from 'next/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+// Cache XSL files at module level (read once, not per test)
+const publicDir = join(process.cwd(), 'public');
+const xslCache: Record<string, string | null> = {
+  rss: null,
+  sitemap: null,
+  'sitemap-index': null,
+};
+
+const getXslContent = (name: 'rss' | 'sitemap' | 'sitemap-index'): string => {
+  if (!xslCache[name]) {
+    xslCache[name] = readFileSync(join(publicDir, `${name}.xsl`), 'utf-8');
+  }
+  return xslCache[name]!;
+};
+
 // Create the mock fetch function
 const mockFetch = vi.fn();
 
 // Mock dependencies
 vi.mock('@/lib/env', () => ({
-  BASE_URL: 'https://example.com',
+  BASE_URL: 'https://test.example.com',
 }));
 
 vi.mock('@/sanity/lib/client', () => ({
@@ -125,7 +140,7 @@ describe('RSS Feed Route', () => {
       expect(xml).toContain('xmlns:atom="http://www.w3.org/2005/Atom"');
       expect(xml).toContain('<channel>');
       expect(xml).toContain('<title>My Blog</title>');
-      expect(xml).toContain('<link>https://example.com/blog</link>');
+      expect(xml).toContain('<link>https://test.example.com/blog</link>');
       expect(xml).toContain('<description>Blog description</description>');
       expect(xml).toContain('<language>en</language>');
       expect(xml).toContain('</channel>');
@@ -147,7 +162,7 @@ describe('RSS Feed Route', () => {
       });
       const xml = await response.text();
 
-      expect(xml).toContain('<atom:link href="https://example.com/blog/rss.xml"');
+      expect(xml).toContain('<atom:link href="https://test.example.com/blog/rss.xml"');
       expect(xml).toContain('rel="self"');
       expect(xml).toContain('type="application/rss+xml"');
     });
@@ -181,9 +196,9 @@ describe('RSS Feed Route', () => {
 
       expect(xml).toContain('<item>');
       expect(xml).toContain('<title>Test Article</title>');
-      expect(xml).toContain('<link>https://example.com/blog/test-article</link>');
+      expect(xml).toContain('<link>https://test.example.com/blog/test-article</link>');
       expect(xml).toContain(
-        '<guid isPermaLink="true">https://example.com/blog/test-article</guid>'
+        '<guid isPermaLink="true">https://test.example.com/blog/test-article</guid>'
       );
       expect(xml).toContain('<pubDate>');
       expect(xml).toContain('<description>Article description</description>');
@@ -243,8 +258,8 @@ describe('RSS Feed Route', () => {
       });
       const xml = await response.text();
 
-      expect(xml).toContain('<link>https://example.com/nb/blogg</link>');
-      expect(xml).toContain('<link>https://example.com/nb/blogg/norsk-innlegg</link>');
+      expect(xml).toContain('<link>https://test.example.com/nb/blogg</link>');
+      expect(xml).toContain('<link>https://test.example.com/nb/blogg/norsk-innlegg</link>');
       expect(xml).toContain('<language>nb</language>');
     });
 
@@ -263,7 +278,7 @@ describe('RSS Feed Route', () => {
       });
       const xml = await response.text();
 
-      expect(xml).toContain('<link>https://example.com/blog</link>');
+      expect(xml).toContain('<link>https://test.example.com/blog</link>');
       expect(xml).not.toContain('/en/blog');
     });
   });
@@ -359,17 +374,9 @@ describe('RSS Feed Route', () => {
 });
 
 describe('XSL Stylesheet Validation', () => {
-  const publicDir = join(process.cwd(), 'public');
-
   describe('RSS XSL Stylesheet', () => {
-    it('rss.xsl file exists', () => {
-      const xslPath = join(publicDir, 'rss.xsl');
-      expect(() => readFileSync(xslPath, 'utf-8')).not.toThrow();
-    });
-
-    it('rss.xsl is valid XML', () => {
-      const xslPath = join(publicDir, 'rss.xsl');
-      const xslContent = readFileSync(xslPath, 'utf-8');
+    it('rss.xsl file exists and is valid XML', () => {
+      const xslContent = getXslContent('rss');
 
       // Basic XML structure checks
       expect(xslContent).toContain('<?xml version="1.0"');
@@ -378,23 +385,18 @@ describe('XSL Stylesheet Validation', () => {
     });
 
     it('rss.xsl has correct namespace declarations', () => {
-      const xslPath = join(publicDir, 'rss.xsl');
-      const xslContent = readFileSync(xslPath, 'utf-8');
-
+      const xslContent = getXslContent('rss');
       expect(xslContent).toContain('xmlns:xsl="http://www.w3.org/1999/XSL/Transform"');
     });
 
     it('rss.xsl has required template elements', () => {
-      const xslPath = join(publicDir, 'rss.xsl');
-      const xslContent = readFileSync(xslPath, 'utf-8');
-
+      const xslContent = getXslContent('rss');
       expect(xslContent).toContain('<xsl:template match="/">');
       expect(xslContent).toContain('<xsl:output method="html"');
     });
 
     it('rss.xsl references RSS channel elements correctly', () => {
-      const xslPath = join(publicDir, 'rss.xsl');
-      const xslContent = readFileSync(xslPath, 'utf-8');
+      const xslContent = getXslContent('rss');
 
       // Should reference RSS elements without namespace prefix (RSS 2.0 has no namespace)
       expect(xslContent).toContain('/rss/channel/title');
@@ -403,8 +405,7 @@ describe('XSL Stylesheet Validation', () => {
     });
 
     it('rss.xsl has proper HTML structure', () => {
-      const xslPath = join(publicDir, 'rss.xsl');
-      const xslContent = readFileSync(xslPath, 'utf-8');
+      const xslContent = getXslContent('rss');
 
       expect(xslContent).toContain('<html');
       expect(xslContent).toContain('<head>');
@@ -414,14 +415,8 @@ describe('XSL Stylesheet Validation', () => {
   });
 
   describe('Sitemap XSL Stylesheet', () => {
-    it('sitemap.xsl file exists', () => {
-      const xslPath = join(publicDir, 'sitemap.xsl');
-      expect(() => readFileSync(xslPath, 'utf-8')).not.toThrow();
-    });
-
-    it('sitemap.xsl is valid XML', () => {
-      const xslPath = join(publicDir, 'sitemap.xsl');
-      const xslContent = readFileSync(xslPath, 'utf-8');
+    it('sitemap.xsl file exists and is valid XML', () => {
+      const xslContent = getXslContent('sitemap');
 
       expect(xslContent).toContain('<?xml version="1.0"');
       expect(xslContent).toContain('<xsl:stylesheet');
@@ -429,16 +424,14 @@ describe('XSL Stylesheet Validation', () => {
     });
 
     it('sitemap.xsl has correct namespace declarations', () => {
-      const xslPath = join(publicDir, 'sitemap.xsl');
-      const xslContent = readFileSync(xslPath, 'utf-8');
+      const xslContent = getXslContent('sitemap');
 
       expect(xslContent).toContain('xmlns:xsl="http://www.w3.org/1999/XSL/Transform"');
       expect(xslContent).toContain('xmlns:s="http://www.sitemaps.org/schemas/sitemap/0.9"');
     });
 
     it('sitemap.xsl references sitemap elements with namespace prefix', () => {
-      const xslPath = join(publicDir, 'sitemap.xsl');
-      const xslContent = readFileSync(xslPath, 'utf-8');
+      const xslContent = getXslContent('sitemap');
 
       expect(xslContent).toContain('s:url');
       expect(xslContent).toContain('s:loc');
@@ -448,14 +441,8 @@ describe('XSL Stylesheet Validation', () => {
   });
 
   describe('Sitemap Index XSL Stylesheet', () => {
-    it('sitemap-index.xsl file exists', () => {
-      const xslPath = join(publicDir, 'sitemap-index.xsl');
-      expect(() => readFileSync(xslPath, 'utf-8')).not.toThrow();
-    });
-
-    it('sitemap-index.xsl is valid XML', () => {
-      const xslPath = join(publicDir, 'sitemap-index.xsl');
-      const xslContent = readFileSync(xslPath, 'utf-8');
+    it('sitemap-index.xsl file exists and is valid XML', () => {
+      const xslContent = getXslContent('sitemap-index');
 
       expect(xslContent).toContain('<?xml version="1.0"');
       expect(xslContent).toContain('<xsl:stylesheet');

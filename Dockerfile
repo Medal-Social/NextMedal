@@ -1,5 +1,5 @@
 # --- Base image ---
-FROM node:lts-alpine AS base
+FROM node:24-alpine AS base
 
 # --- Dependencies stage ---
 FROM base AS deps

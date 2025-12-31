@@ -17,7 +17,10 @@ function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   );
 }
 
-function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
+function SelectValue({
+  className,
+  ...props
+}: SelectPrimitive.Value.Props & { placeholder?: string }) {
   return (
     <SelectPrimitive.Value
       data-slot="select-value"

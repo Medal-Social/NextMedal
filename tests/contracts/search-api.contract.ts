@@ -1,57 +1,185 @@
-import { describe, expect, it } from 'vitest';
-import { SearchResponseSchema } from './schemas/search.schema';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 /**
  * Contract tests verify that API responses match expected schemas.
  * These tests ensure API stability and help catch breaking changes.
  *
- * Run with: pnpm test:contracts
- *
- * NOTE: These tests require a running dev server (pnpm dev).
- * They will be skipped if the server is not available.
+ * Unlike integration tests which test behavior, contract tests validate
+ * that the response SHAPE is correct regardless of content.
  */
 
-async function isServerAvailable(baseUrl: string): Promise<boolean> {
-  try {
-    const response = await fetch(`${baseUrl}/api/search?q=test`, {
-      signal: AbortSignal.timeout(2000),
-    });
-    return response.ok;
-  } catch {
-    return false;
-  }
-}
+// Mock only external dependencies
+vi.mock('@/lib/core/logger', () => ({
+  logger: { error: vi.fn() },
+}));
+
+vi.mock('@/sanity/lib/client', () => ({
+  client: { fetch: vi.fn() },
+}));
+
+import { GET } from '@/app/api/search/route';
+import { client } from '@/sanity/lib/client';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockFetch = client.fetch as any;
 
 describe('Search API Contract', () => {
-  const baseUrl = process.env.TEST_BASE_URL || 'http://localhost:3000';
-
-  it.skip('returns response matching contract schema', async () => {
-    const available = await isServerAvailable(baseUrl);
-    if (!available) {
-      return;
-    }
-
-    const response = await fetch(`${baseUrl}/api/search?q=test`);
-    expect(response.ok).toBe(true);
-
-    const data = await response.json();
-    const result = SearchResponseSchema.safeParse(data);
-
-    // Validation errors will be visible through the expect assertion failure message
-    expect(result.success).toBe(true);
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it.skip('handles empty search query', async () => {
-    const available = await isServerAvailable(baseUrl);
-    if (!available) {
-      return;
-    }
+  describe('Response Schema Validation', () => {
+    it('response matches SearchResponse schema with pages', async () => {
+      mockFetch.mockResolvedValueOnce({
+        pages: [
+          { _id: 'page-1', _type: 'page', title: 'About', slug: 'about' },
+          { _id: 'page-2', _type: 'page', title: 'Contact', slug: 'contact' },
+        ],
+        collections: [],
+      });
 
-    const response = await fetch(`${baseUrl}/api/search?q=`);
-    expect(response.ok).toBe(true);
+      const response = await GET();
+      const data = await response.json();
 
-    const data = await response.json();
-    const result = SearchResponseSchema.safeParse(data);
-    expect(result.success).toBe(true);
+      // Contract: response must be an array
+      expect(Array.isArray(data)).toBe(true);
+
+      // Contract: each item must have required fields
+      for (const item of data) {
+        expect(item).toHaveProperty('_id');
+        expect(item).toHaveProperty('_type');
+        expect(item).toHaveProperty('title');
+        expect(item).toHaveProperty('href');
+        expect(item).toHaveProperty('type');
+      }
+    });
+
+    it('response matches SearchResponse schema with collections', async () => {
+      mockFetch.mockResolvedValueOnce({
+        pages: [],
+        collections: [
+          {
+            _id: 'post-1',
+            _type: 'collection.blog',
+            title: 'Blog Post',
+            slug: 'post',
+            collectionSlug: 'blog',
+            description: 'A post',
+          },
+        ],
+      });
+
+      const response = await GET();
+      const data = await response.json();
+
+      // Contract: collection items have type and href
+      expect(data[0]).toHaveProperty('type');
+      expect(data[0]).toHaveProperty('href');
+      expect(typeof data[0].href).toBe('string');
+      expect(data[0].href.startsWith('/')).toBe(true);
+    });
+
+    it('error response matches error schema', async () => {
+      mockFetch.mockRejectedValueOnce(new Error('Network failure'));
+
+      const response = await GET();
+      const data = await response.json();
+
+      // Contract: error response has error field
+      expect(data).toHaveProperty('error');
+      expect(typeof data.error).toBe('string');
+      expect(response.status).toBe(500);
+    });
+  });
+
+  describe('Schema Field Types', () => {
+    it('_id is always a string', async () => {
+      mockFetch.mockResolvedValueOnce({
+        pages: [{ _id: 'page-123', _type: 'page', title: 'Test', slug: 'test' }],
+        collections: [],
+      });
+
+      const response = await GET();
+      const data = await response.json();
+
+      expect(typeof data[0]._id).toBe('string');
+    });
+
+    it('title is always a string', async () => {
+      mockFetch.mockResolvedValueOnce({
+        pages: [{ _id: 'page-1', _type: 'page', title: 'My Title', slug: 'test' }],
+        collections: [],
+      });
+
+      const response = await GET();
+      const data = await response.json();
+
+      expect(typeof data[0].title).toBe('string');
+    });
+
+    it('href is always a valid path', async () => {
+      mockFetch.mockResolvedValueOnce({
+        pages: [{ _id: 'page-1', _type: 'page', title: 'Test', slug: 'my-page' }],
+        collections: [
+          {
+            _id: 'post-1',
+            _type: 'collection.blog',
+            title: 'Post',
+            slug: 'my-post',
+            collectionSlug: 'blog',
+          },
+        ],
+      });
+
+      const response = await GET();
+      const data = await response.json();
+
+      for (const item of data) {
+        expect(item.href).toMatch(/^\//); // Starts with /
+        expect(item.href).not.toContain(' '); // No spaces
+      }
+    });
+  });
+
+  describe('Schema Backward Compatibility', () => {
+    it('maintains required fields from v1 schema', async () => {
+      // These fields must always be present for backward compatibility
+      const requiredFields = ['_id', '_type', 'title', 'type', 'href'];
+
+      mockFetch.mockResolvedValueOnce({
+        pages: [{ _id: 'page-1', _type: 'page', title: 'Test', slug: 'test' }],
+        collections: [],
+      });
+
+      const response = await GET();
+      const data = await response.json();
+
+      for (const field of requiredFields) {
+        expect(data[0]).toHaveProperty(field);
+      }
+    });
+
+    it('optional description field is string when present', async () => {
+      mockFetch.mockResolvedValueOnce({
+        pages: [],
+        collections: [
+          {
+            _id: 'post-1',
+            _type: 'collection.blog',
+            title: 'Post',
+            slug: 'post',
+            collectionSlug: 'blog',
+            description: 'A description',
+          },
+        ],
+      });
+
+      const response = await GET();
+      const data = await response.json();
+
+      if (data[0].description !== undefined) {
+        expect(typeof data[0].description).toBe('string');
+      }
+    });
   });
 });

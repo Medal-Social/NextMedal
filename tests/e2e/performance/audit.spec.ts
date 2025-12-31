@@ -25,6 +25,12 @@ async function waitForPageReady(page: import('@playwright/test').Page) {
   await page.waitForTimeout(1000);
 }
 
+const getReportConfig = (name: string) => ({
+  formats: { html: true, json: true },
+  name: name,
+  directory: 'test-results/lighthouse',
+});
+
 test.describe('Lighthouse Audits', () => {
   // Skip on CI if not configured for Lighthouse
   test.skip(({ browserName }) => browserName !== 'chromium', 'Lighthouse requires Chromium');
@@ -45,6 +51,7 @@ test.describe('Lighthouse Audits', () => {
           'best-practices': thresholds['best-practices'],
           seo: thresholds.seo,
         },
+        reports: getReportConfig('homepage-en'),
         config: {
           extends: 'lighthouse:default',
           settings: {
@@ -73,6 +80,7 @@ test.describe('Lighthouse Audits', () => {
           'best-practices': thresholds['best-practices'],
           seo: thresholds.seo,
         },
+        reports: getReportConfig('homepage-nb'),
         config: {
           extends: 'lighthouse:default',
           settings: {
@@ -97,6 +105,7 @@ test.describe('Lighthouse Audits', () => {
         thresholds: {
           accessibility: 100, // Perfect accessibility required
         },
+        reports: getReportConfig('homepage-accessibility'),
         config: {
           extends: 'lighthouse:default',
           settings: {
@@ -121,6 +130,7 @@ test.describe('Lighthouse Audits', () => {
         thresholds: {
           performance: 90,
         },
+        reports: getReportConfig('homepage-performance'),
         config: {
           extends: 'lighthouse:default',
           settings: {
@@ -145,6 +155,7 @@ test.describe('Lighthouse Audits', () => {
         thresholds: {
           seo: 100,
         },
+        reports: getReportConfig('homepage-seo'),
         config: {
           extends: 'lighthouse:default',
           settings: {
@@ -169,6 +180,7 @@ test.describe('Lighthouse Audits', () => {
         thresholds: {
           'best-practices': 100,
         },
+        reports: getReportConfig('homepage-best-practices'),
         config: {
           extends: 'lighthouse:default',
           settings: {
@@ -195,6 +207,7 @@ test.describe('Lighthouse Audits', () => {
           performance: 60, // Mobile is slower
           accessibility: 90,
         },
+        reports: getReportConfig('homepage-mobile'),
         config: {
           extends: 'lighthouse:default',
           settings: {

@@ -7,8 +7,8 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils/index';
 
 // Static import using $/* alias - resolves to root directory
-// Using messages/en.json as a simple JSON file that doesn't have complex dependencies
-import enMessages from '$/messages/en.json';
+// Using src/messages/en.json as a simple JSON file that doesn't have complex dependencies
+import enMessages from '$/src/messages/en.json';
 
 /**
  * **Feature: component-accessibility-testing, Property: Path Alias Resolution**
@@ -62,7 +62,7 @@ describe('Path Alias Resolution', () => {
      * the module SHALL resolve to the root directory path
      */
     it('should resolve $/* alias to root directory modules', () => {
-      // Verify $/messages/en.json resolved correctly
+      // Verify $/src/messages/en.json resolved correctly
       expect(enMessages).toBeDefined();
       expect(typeof enMessages).toBe('object');
     });

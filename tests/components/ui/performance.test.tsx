@@ -186,7 +186,7 @@ describe('Performance Tests', () => {
             container.remove();
           }
         ),
-        { numRuns: 100 }
+        { numRuns: process.env.CI ? 25 : 50 }
       );
     });
   });

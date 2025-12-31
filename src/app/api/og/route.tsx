@@ -150,7 +150,7 @@ export async function GET(request: NextRequest) {
 
 async function loadFonts(): Promise<{ name: string; data: Buffer }[]> {
   try {
-    const fontPath = path.join(process.cwd(), 'assets/Inter-SemiBold.ttf');
+    const fontPath = path.join(process.cwd(), 'src/assets/Inter-SemiBold.ttf');
     const fontData = await fs.readFile(fontPath);
     return [{ name: 'serif', data: fontData }];
   } catch (error) {
