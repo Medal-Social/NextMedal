@@ -11,8 +11,45 @@ import {
   SearchIcon,
   StackCompactIcon,
 } from '@sanity/icons';
+import type { ComponentType } from 'react';
+import type { ListItemBuilder, StructureBuilder } from 'sanity/structure';
 import { structureTool } from 'sanity/structure';
 import { group, singleton } from './lib/utils';
+
+// Document type configuration for Content Health views
+interface DocumentTypeConfig {
+  title: string;
+  type: string;
+  icon: ComponentType;
+}
+
+const CONTENT_TYPES: DocumentTypeConfig[] = [
+  { title: 'Pages', type: 'page', icon: DocumentsIcon },
+  { title: 'Blog Posts', type: 'collection.blog', icon: EditIcon },
+  { title: 'Documentation', type: 'collection.documentation', icon: BookIcon },
+  { title: 'Events', type: 'collection.events', icon: CalendarIcon },
+  { title: 'Changelog', type: 'collection.changelog', icon: DocumentTextIcon },
+  { title: 'Newsletter', type: 'collection.newsletter', icon: EnvelopeIcon },
+];
+
+// Helper to create document type list items with custom filters
+function createDocTypeListItems(
+  S: StructureBuilder,
+  filterFn: (docType: string) => string,
+  titleSuffix: string
+): ListItemBuilder[] {
+  return CONTENT_TYPES.map((config) =>
+    S.listItem()
+      .title(config.title)
+      .icon(config.icon)
+      .child(
+        S.documentList()
+          .title(`${config.title} ${titleSuffix}`)
+          .filter(filterFn(config.type))
+          .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+      )
+  );
+}
 export const structure = structureTool({
   structure: (S) =>
     S.list()
@@ -31,74 +68,14 @@ export const structure = structureTool({
             .child(
               S.list()
                 .title('SEO Issues')
-                .items([
-                  S.listItem()
-                    .title('Pages')
-                    .icon(DocumentsIcon)
-                    .child(
-                      S.documentList()
-                        .title('Pages Missing SEO Metadata')
-                        .filter(
-                          '_type == "page" && !(_id match "drafts.*") && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))'
-                        )
-                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-                    ),
-                  S.listItem()
-                    .title('Blog Posts')
-                    .icon(EditIcon)
-                    .child(
-                      S.documentList()
-                        .title('Blog Posts Missing SEO Metadata')
-                        .filter(
-                          '_type == "collection.blog" && !(_id match "drafts.*") && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))'
-                        )
-                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-                    ),
-                  S.listItem()
-                    .title('Documentation')
-                    .icon(BookIcon)
-                    .child(
-                      S.documentList()
-                        .title('Documentation Missing SEO Metadata')
-                        .filter(
-                          '_type == "collection.documentation" && !(_id match "drafts.*") && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))'
-                        )
-                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-                    ),
-                  S.listItem()
-                    .title('Events')
-                    .icon(CalendarIcon)
-                    .child(
-                      S.documentList()
-                        .title('Events Missing SEO Metadata')
-                        .filter(
-                          '_type == "collection.events" && !(_id match "drafts.*") && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))'
-                        )
-                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-                    ),
-                  S.listItem()
-                    .title('Changelog')
-                    .icon(DocumentTextIcon)
-                    .child(
-                      S.documentList()
-                        .title('Changelog Missing SEO Metadata')
-                        .filter(
-                          '_type == "collection.changelog" && !(_id match "drafts.*") && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))'
-                        )
-                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-                    ),
-                  S.listItem()
-                    .title('Newsletter')
-                    .icon(EnvelopeIcon)
-                    .child(
-                      S.documentList()
-                        .title('Newsletter Missing SEO Metadata')
-                        .filter(
-                          '_type == "collection.newsletter" && !(_id match "drafts.*") && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))'
-                        )
-                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-                    ),
-                ])
+                .items(
+                  createDocTypeListItems(
+                    S,
+                    (type) =>
+                      `_type == "${type}" && !(_id match "drafts.*") && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))`,
+                    'Missing SEO Metadata'
+                  )
+                )
             ),
           // Drafts Pending - by document type
           S.listItem()
@@ -108,62 +85,13 @@ export const structure = structureTool({
             .child(
               S.list()
                 .title('Drafts Pending')
-                .items([
-                  S.listItem()
-                    .title('Pages')
-                    .icon(DocumentsIcon)
-                    .child(
-                      S.documentList()
-                        .title('Draft Pages')
-                        .filter('_type == "page" && _id match "drafts.*"')
-                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-                    ),
-                  S.listItem()
-                    .title('Blog Posts')
-                    .icon(EditIcon)
-                    .child(
-                      S.documentList()
-                        .title('Draft Blog Posts')
-                        .filter('_type == "collection.blog" && _id match "drafts.*"')
-                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-                    ),
-                  S.listItem()
-                    .title('Documentation')
-                    .icon(BookIcon)
-                    .child(
-                      S.documentList()
-                        .title('Draft Documentation')
-                        .filter('_type == "collection.documentation" && _id match "drafts.*"')
-                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-                    ),
-                  S.listItem()
-                    .title('Events')
-                    .icon(CalendarIcon)
-                    .child(
-                      S.documentList()
-                        .title('Draft Events')
-                        .filter('_type == "collection.events" && _id match "drafts.*"')
-                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-                    ),
-                  S.listItem()
-                    .title('Changelog')
-                    .icon(DocumentTextIcon)
-                    .child(
-                      S.documentList()
-                        .title('Draft Changelog')
-                        .filter('_type == "collection.changelog" && _id match "drafts.*"')
-                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-                    ),
-                  S.listItem()
-                    .title('Newsletter')
-                    .icon(EnvelopeIcon)
-                    .child(
-                      S.documentList()
-                        .title('Draft Newsletter')
-                        .filter('_type == "collection.newsletter" && _id match "drafts.*"')
-                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-                    ),
-                ])
+                .items(
+                  createDocTypeListItems(
+                    S,
+                    (type) => `_type == "${type}" && _id match "drafts.*"`,
+                    'Drafts'
+                  )
+                )
             ),
           // Published Documents - by document type
           S.listItem()
@@ -173,62 +101,13 @@ export const structure = structureTool({
             .child(
               S.list()
                 .title('Published Documents')
-                .items([
-                  S.listItem()
-                    .title('Pages')
-                    .icon(DocumentsIcon)
-                    .child(
-                      S.documentList()
-                        .title('Published Pages')
-                        .filter('_type == "page" && !(_id match "drafts.*")')
-                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-                    ),
-                  S.listItem()
-                    .title('Blog Posts')
-                    .icon(EditIcon)
-                    .child(
-                      S.documentList()
-                        .title('Published Blog Posts')
-                        .filter('_type == "collection.blog" && !(_id match "drafts.*")')
-                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-                    ),
-                  S.listItem()
-                    .title('Documentation')
-                    .icon(BookIcon)
-                    .child(
-                      S.documentList()
-                        .title('Published Documentation')
-                        .filter('_type == "collection.documentation" && !(_id match "drafts.*")')
-                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-                    ),
-                  S.listItem()
-                    .title('Events')
-                    .icon(CalendarIcon)
-                    .child(
-                      S.documentList()
-                        .title('Published Events')
-                        .filter('_type == "collection.events" && !(_id match "drafts.*")')
-                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-                    ),
-                  S.listItem()
-                    .title('Changelog')
-                    .icon(DocumentTextIcon)
-                    .child(
-                      S.documentList()
-                        .title('Published Changelog')
-                        .filter('_type == "collection.changelog" && !(_id match "drafts.*")')
-                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-                    ),
-                  S.listItem()
-                    .title('Newsletter')
-                    .icon(EnvelopeIcon)
-                    .child(
-                      S.documentList()
-                        .title('Published Newsletter')
-                        .filter('_type == "collection.newsletter" && !(_id match "drafts.*")')
-                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-                    ),
-                ])
+                .items(
+                  createDocTypeListItems(
+                    S,
+                    (type) => `_type == "${type}" && !(_id match "drafts.*")`,
+                    'Published'
+                  )
+                )
             ),
         ]).icon(SearchIcon),
         S.divider(),
