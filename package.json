@@ -6,6 +6,7 @@
   "license": "Apache-2.0",
   "private": true,
   "engines": {
+    "node": ">=24.0.0",
     "npm": "use pnpm instead - see packageManager field",
     "yarn": "use pnpm instead - see packageManager field"
   },
