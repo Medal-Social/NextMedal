@@ -71,6 +71,7 @@ import link from './objects/link';
 import menuItem from './objects/menu-item';
 import metadata from './objects/metadata';
 import moduleOptions from './objects/module-options';
+import seoMetadata from './objects/seo-metadata';
 import video from './objects/video';
 
 export const schemaTypes: SchemaTypeDefinition[] = [
@@ -108,6 +109,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   menuItem,
   metadata,
   moduleOptions,
+  seoMetadata,
   video,
   modules,
 

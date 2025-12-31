@@ -28,14 +28,12 @@ export default async function LatestArticles({
 				_type == 'collection.blog'
 				${filteredCategory ? '&& $filteredCategory in categories[]->._id' : ''}
 			]|order(
-				${showFeaturedPostsFirst ? 'featured desc, ' : ''}
 				publishDate desc
 			)
 			${limit ? `[0...${limit}]` : '[0...20]'}
 			{
 				_id,
 				_type,
-				featured,
 				publishDate,
 				metadata {
 					title,

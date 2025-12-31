@@ -11,10 +11,8 @@
 import { ControlsIcon, EditIcon, EyeClosedIcon, SearchIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import { isUniqueAcrossLocale } from '@/sanity/lib/isUniqueAcrossLocale';
-import CharacterCount from '@/sanity/ui/CharacterCount';
 import PageIdentityField from '@/sanity/ui/PageIdentityField';
 import PageIdentityInput from '@/sanity/ui/PageIdentityInput';
-import PreviewOG from '@/sanity/ui/PreviewOG';
 import { imageBlock } from '../../fragments';
 import link from '../../objects/link';
 
@@ -164,84 +162,12 @@ export default defineType({
     // SEO Settings
     defineField({
       name: 'seo',
-      title: 'SEO Settings',
-      type: 'object',
+      type: 'seo-metadata',
       group: 'seo',
-      options: {
-        collapsible: false,
-      },
-      fields: [
-        defineField({
-          name: 'title',
-          title: 'SEO Title',
-          type: 'string',
-          description: 'Title shown in search results (50-60 characters recommended)',
-          validation: (Rule) => [
-            Rule.required().warning(),
-            Rule.min(50).warning(),
-            Rule.max(60).warning(),
-          ],
-          components: {
-            input: (props) => (
-              <CharacterCount max={60} {...props}>
-                <PreviewOG title={props.elementProps.value} />
-              </CharacterCount>
-            ),
-          },
-        }),
-        defineField({
-          name: 'description',
-          title: 'SEO Description',
-          type: 'text',
-          rows: 3,
-          description: 'Description shown in search results (70-160 characters recommended)',
-          validation: (Rule) => [
-            Rule.required().warning(),
-            Rule.min(70).warning(),
-            Rule.max(160).warning(),
-          ],
-          components: {
-            input: (props) => <CharacterCount as="textarea" max={160} {...props} />,
-          },
-        }),
-        defineField({
-          name: 'image',
-          title: 'Social Sharing Image',
-          type: 'image',
-          description: 'Image displayed when sharing on social media',
-          options: {
-            hotspot: true,
-          },
-        }),
-        defineField({
-          name: 'noIndex',
-          title: 'Hide from search engines',
-          type: 'boolean',
-          description:
-            'Prevents this post from appearing in search results and removes it from the sitemap.',
-          initialValue: false,
-        }),
-      ],
-    }),
-    defineField({
-      name: 'featured',
-      title: 'Featured',
-      description: 'Highlight this post on the collection page.',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Standard', value: 'standard' },
-          { title: 'Featured', value: 'featured' },
-        ],
-        layout: 'radio',
-      },
-      initialValue: 'standard',
-      group: 'advanced',
     }),
   ],
   preview: {
     select: {
-      featured: 'featured',
       title: 'metadata.title',
       slug: 'metadata.slug.current',
       collectionSlug: 'collection.metadata.slug.current',
@@ -250,7 +176,7 @@ export default defineType({
       language: 'language',
       noindex: 'seo.noIndex',
     },
-    prepare: ({ title, slug, collectionSlug, publishDate, media, featured, language, noindex }) => {
+    prepare: ({ title, slug, collectionSlug, publishDate, media, language, noindex }) => {
       const languageLabel =
         language === 'en' ? 'EN' : language === 'nb' ? 'NO' : language?.toUpperCase();
 
@@ -258,7 +184,7 @@ export default defineType({
       const subtitle = [languageLabel, publishDate, fullPath].filter(Boolean).join(' - ');
 
       return {
-        title: [featured === 'featured' && '*', title].filter(Boolean).join(' '),
+        title,
         subtitle,
         media: media || (noindex ? EyeClosedIcon : EditIcon),
       };

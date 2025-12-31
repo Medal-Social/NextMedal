@@ -91,7 +91,6 @@ interface CollectionEvent {
   };
   eventType: 'webinar' | 'video' | 'physical' | 'hybrid';
   status: 'upcoming' | 'live' | 'completed';
-  featured?: 'standard' | 'featured';
   startDateTime: string;
   duration?: number; // Duration in hours
   timezone?: string;
@@ -242,16 +241,6 @@ function EventTypeBadge({
     >
       {type.icon}
       {type.label}
-    </span>
-  );
-}
-
-// Featured badge component
-function FeaturedBadge() {
-  const t = useTranslations('modules.events');
-  return (
-    <span className="rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-      {t('featured')}
     </span>
   );
 }
@@ -1128,7 +1117,6 @@ function EventSlot({ event, collectionSlug }: { event: CollectionEvent; collecti
           <div className="mb-2 flex flex-wrap items-center gap-2">
             {!event.metadata?.image && <StatusBadge status={event.status} />}
             <EventTypeBadge eventType={event.eventType} />
-            {event.featured === 'featured' && <FeaturedBadge />}
           </div>
           <Link href={href}>
             <h4
@@ -1428,7 +1416,6 @@ function TimelineEventCard({
           <div className="flex flex-wrap items-center gap-2 mb-3">
             <StatusBadge status={event.status} />
             <EventTypeBadge eventType={event.eventType} />
-            {event.featured === 'featured' && <FeaturedBadge />}
           </div>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground mb-3">
             <TimeLocationRow

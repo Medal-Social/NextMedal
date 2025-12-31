@@ -9,17 +9,17 @@ import moduleProps from '@/lib/sanity/module-props';
 
 describe('moduleProps', () => {
   describe('id generation', () => {
-    it('uses options.uid when provided', () => {
+    it('uses options.anchorId when provided', () => {
       const result = moduleProps({
         _type: 'banner',
         _key: 'abc123',
-        options: { uid: 'custom-id' },
+        options: { anchorId: 'custom-id' },
       });
 
       expect(result.id).toBe('custom-id');
     });
 
-    it('falls back to module-{_key} when uid is not provided', () => {
+    it('falls back to module-{_key} when anchorId is not provided', () => {
       const result = moduleProps({
         _type: 'banner',
         _key: 'abc123',
@@ -37,11 +37,11 @@ describe('moduleProps', () => {
       expect(result.id).toBe('module-xyz789');
     });
 
-    it('falls back to module-{_key} when uid is empty string', () => {
+    it('falls back to module-{_key} when anchorId is empty string', () => {
       const result = moduleProps({
         _type: 'hero',
         _key: 'key123',
-        options: { uid: '' },
+        options: { anchorId: '' },
       });
 
       expect(result.id).toBe('module-key123');
@@ -161,7 +161,7 @@ describe('moduleProps', () => {
       const result = moduleProps({
         _type: 'hero',
         _key: 'hero-1',
-        options: { uid: 'main-hero' },
+        options: { anchorId: 'main-hero' },
         spacing: 'relaxed',
         width: 'wide',
       });
@@ -197,11 +197,11 @@ describe('moduleProps', () => {
       expect(result.id).toBe('module-undefined');
     });
 
-    it('handles special characters in uid', () => {
+    it('handles special characters in anchorId', () => {
       const result = moduleProps({
         _type: 'banner',
         _key: 'key',
-        options: { uid: 'my-section#header' },
+        options: { anchorId: 'my-section#header' },
       });
 
       expect(result.id).toBe('my-section#header');

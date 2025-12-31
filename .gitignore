@@ -78,3 +78,8 @@ src/components/mockup/
 
 # Auto Claude data directory
 .auto-claude/
+
+# AI-generated files and documentation
+schema.json
+*.doc
+schema-changes-report.html

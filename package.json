@@ -16,6 +16,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "setup:check": "npx tsx src/scripts/validate-setup.ts",
     "lint": "biome check .",
     "lint:sanity": "npx tsx src/scripts/lint-sanity-schemas.ts",
     "migrate:inline-types": "npx tsx src/scripts/migrate-inline-types.ts",

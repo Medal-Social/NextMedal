@@ -471,7 +471,7 @@ declare global {
       spacing?: 'default' | 'compact' | 'relaxed' | 'none';
       width?: 'default' | 'narrow' | 'wide' | 'full';
       options?: {
-        uid?: string;
+        anchorId?: string;
       };
     }
 
@@ -642,7 +642,7 @@ declare global {
       };
       videoUrl?: string;
       options?: {
-        uid?: string;
+        anchorId?: string;
         bgFrom?: string;
         bgTo?: string;
       };
