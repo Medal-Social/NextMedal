@@ -1,5 +1,5 @@
 import { LayoutTemplate } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import {
   Empty,
   EmptyContent,
@@ -26,15 +26,14 @@ export function EmptyPage() {
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
-          <Button
-            nativeButton={false}
-            render={
-              <a href="https://www.medalsocial.com" target="_blank" rel="noopener noreferrer">
-                Visit Medal Social
-              </a>
-            }
-            variant="outline"
-          />
+          <a
+            href="https://www.medalsocial.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={buttonVariants({ variant: 'outline' })}
+          >
+            Visit Medal Social
+          </a>
         </EmptyContent>
       </Empty>
     </Section>

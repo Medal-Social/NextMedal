@@ -5,7 +5,7 @@ import * as CookieConsent from 'vanilla-cookieconsent';
 import 'vanilla-cookieconsent/dist/cookieconsent.css';
 import '@/styles/cookieconsent.css';
 import { useTheme } from 'next-themes';
-import resolveUrl from '@/lib/resolveUrl';
+import resolveUrl from '@/lib/sanity/resolve-url';
 
 interface CookieConsentProps {
   config: Sanity.Site['cookieConsent'];

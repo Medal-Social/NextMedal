@@ -1,7 +1,7 @@
 'use client';
 
 import Script from 'next/script';
-import { env } from '@/lib/env.client';
+import { env } from '@/lib/core/env.client';
 
 export function Analytics() {
   const isProduction = env.VERCEL_ENV === 'production' || env.NEXT_PUBLIC_APP_ENV === 'production';
