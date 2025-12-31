@@ -7,8 +7,8 @@ import {
   IconYoutube,
 } from '@/components/icons/social-icons';
 import { Section } from '@/components/ui/section';
-import moduleProps from '@/lib/moduleProps';
-import { cn } from '@/lib/utils';
+import moduleProps from '@/lib/sanity/module-props';
+import { cn } from '@/lib/utils/index';
 import { Img } from '@/ui/base';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
 

@@ -1,6 +1,6 @@
 import { getLocale, getTranslations } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
-import { getCurrentPage } from '@/lib/getCurrentPage';
+import { getCurrentPage } from '@/lib/sanity/get-current-page';
 import LocaleSwitcherClient from './LocaleSwitcher.client';
 
 interface LocaleSwitcherProps {

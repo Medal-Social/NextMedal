@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Section } from '@/components/ui/section';
-import moduleProps from '@/lib/moduleProps';
+import moduleProps from '@/lib/sanity/module-props';
 import { fetchSanityLive } from '@/sanity/lib/live';
 import { LOGOS_QUERY } from '@/sanity/lib/queries';
 import { Img } from '@/ui/base';

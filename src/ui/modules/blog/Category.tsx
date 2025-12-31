@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { createDataAttribute } from 'next-sanity';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/index';
+import { createStegaAttribute } from '@/sanity/lib/client';
 
 export default function Category({
   value,
@@ -15,9 +15,9 @@ export default function Category({
   badge?: boolean;
 }) {
   const stega = value?._id
-    ? createDataAttribute({
+    ? createStegaAttribute({
         id: value._id,
-        type: value._type,
+        type: value._type || 'blog.category',
         path: 'title',
       })
     : undefined;

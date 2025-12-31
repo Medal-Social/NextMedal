@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { logger } from '@/lib/logger';
+import { logger } from '@/lib/core/logger';
 
 interface WrapperProps extends React.ComponentProps<'footer'> {
   className?: string;

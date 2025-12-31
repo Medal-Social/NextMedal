@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/index';
 import CTA from './CTA';
 
 type CTAItem = Sanity.CTA | { _key?: string; link?: Sanity.Link; style?: string };

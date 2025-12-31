@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Spinner } from '@/components/ui/spinner';
 import { routing } from '@/i18n/routing';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/index';
 import { LocaleBadge } from './locale-badges';
 
 type Props = {

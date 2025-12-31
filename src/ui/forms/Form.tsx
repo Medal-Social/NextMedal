@@ -4,10 +4,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import type React from 'react';
 import { useEffect, useState } from 'react';
+import { submitForm } from '@/actions/forms/submit-form';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { submitForm } from '@/lib/actions/submitForm';
-import { cn } from '@/lib/utils';
+import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils/index';
 import { validateExternalUrl } from '@/lib/validateExternalUrl';
 import resolveSlug from '@/sanity/lib/resolveSlug';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
@@ -72,125 +75,80 @@ function getAutoComplete(type: FormField['type']): string {
   return 'on';
 }
 
-// TextField component for text/email/tel inputs
-function TextField({
-  field,
-  value,
-  onChange,
-}: {
-  field: FormField;
-  value: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <Input
-      id={`field-${field._key}`}
-      type={field.type}
-      placeholder={field.placeholder}
-      required={field.required}
-      autoComplete={getAutoComplete(field.type)}
-      className="rounded-2xl h-12 bg-background/50 border-input focus:ring-primary/20 transition-all"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-    />
-  );
-}
-
-// TextareaField component
-function TextareaField({
-  field,
-  value,
-  onChange,
-}: {
-  field: FormField;
-  value: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <textarea
-      id={`field-${field._key}`}
-      className="flex min-h-[140px] w-full rounded-2xl border border-input bg-background/50 px-4 py-3 text-base ring-offset-background placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary transition-all disabled:cursor-not-allowed disabled:opacity-50"
-      placeholder={field.placeholder}
-      required={field.required}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-    />
-  );
-}
-
-// CheckboxField component
-function CheckboxField({
-  field,
-  checked,
-  onChange,
-}: {
-  field: FormField;
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-}) {
-  return (
-    <div className="flex items-center space-x-3 py-2 px-1">
-      <input
-        type="checkbox"
-        id={`field-${field._key}`}
-        required={field.required}
-        className="h-5 w-5 rounded-lg border-input text-primary focus:ring-primary/20 transition-all cursor-pointer"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-      />
-      <label
-        htmlFor={`field-${field._key}`}
-        className="text-sm font-medium leading-tight text-foreground/80 cursor-pointer select-none"
-      >
-        {field.label} {field.required && <span className="text-destructive">*</span>}
-      </label>
-    </div>
-  );
-}
-
-// FieldLabel component
-function FieldLabel({ field }: { field: FormField }) {
-  if (field.type === 'checkbox') return null;
-  return (
-    <label
-      htmlFor={`field-${field._key}`}
-      className="text-sm font-semibold text-foreground/80 ml-1"
-    >
-      {field.label} {field.required && <span className="text-destructive">*</span>}
-    </label>
-  );
-}
-
 // FormFieldRenderer component
 function FormFieldRenderer({
   field,
   value,
   onChange,
+  error,
 }: {
   field: FormField;
   value: string | boolean;
   onChange: (name: string, value: string | boolean) => void;
+  error?: string;
 }) {
-  const handleChange = (val: string | boolean) => onChange(field.name.current, val);
+  const fieldId = `field-${field._key}`;
+  const hasError = !!error;
 
+  if (field.type === 'checkbox') {
+    return (
+      <Field orientation="horizontal" className="col-span-1">
+        <Checkbox
+          id={fieldId}
+          required={field.required}
+          checked={!!value}
+          onCheckedChange={(checked) => onChange(field.name.current, checked)}
+          aria-invalid={hasError}
+        />
+        <FieldLabel htmlFor={fieldId} className="cursor-pointer">
+          {field.label} {field.required && <span className="text-destructive">*</span>}
+        </FieldLabel>
+        {error && <FieldError>{error}</FieldError>}
+      </Field>
+    );
+  }
+
+  if (field.type === 'textarea') {
+    return (
+      <Field className="col-span-1 sm:col-span-2">
+        <FieldLabel htmlFor={fieldId}>
+          {field.label} {field.required && <span className="text-destructive">*</span>}
+        </FieldLabel>
+        <Textarea
+          id={fieldId}
+          placeholder={field.placeholder}
+          required={field.required}
+          value={String(value || '')}
+          onChange={(e) => onChange(field.name.current, e.target.value)}
+          className={cn('min-h-[140px]', hasError && 'border-destructive')}
+          aria-invalid={hasError}
+          aria-describedby={hasError ? `${fieldId}-error` : undefined}
+        />
+        {error && <FieldError id={`${fieldId}-error`}>{error}</FieldError>}
+      </Field>
+    );
+  }
+
+  // text, email, tel
   return (
-    <div
-      className={cn(
-        'flex flex-col gap-2',
-        field.type === 'textarea' ? 'col-span-1 sm:col-span-2' : 'col-span-1'
-      )}
-    >
-      <FieldLabel field={field} />
-      {field.type === 'textarea' && (
-        <TextareaField field={field} value={String(value || '')} onChange={handleChange} />
-      )}
-      {field.type === 'checkbox' && (
-        <CheckboxField field={field} checked={!!value} onChange={handleChange} />
-      )}
-      {field.type !== 'textarea' && field.type !== 'checkbox' && (
-        <TextField field={field} value={String(value || '')} onChange={handleChange} />
-      )}
-    </div>
+    <Field className="col-span-1">
+      <FieldLabel htmlFor={fieldId}>
+        {field.label} {field.required && <span className="text-destructive">*</span>}
+      </FieldLabel>
+      <Input
+        id={fieldId}
+        type={field.type}
+        placeholder={field.placeholder}
+        required={field.required}
+        autoComplete={getAutoComplete(field.type)}
+        value={String(value || '')}
+        onChange={(e) => onChange(field.name.current, e.target.value)}
+        className={cn(hasError && 'border-destructive')}
+        aria-invalid={hasError}
+        aria-describedby={hasError ? `${fieldId}-error` : undefined}
+      />
+      {error && <FieldError id={`${fieldId}-error`}>{error}</FieldError>}
+    </Field>
   );
 }
 
@@ -205,14 +163,9 @@ function SuccessMessage({
   t: ReturnType<typeof useTranslations>;
 }) {
   return (
-    <div
-      className={cn(
-        'py-12 text-center bg-card rounded-3xl border border-border shadow-xl',
-        className
-      )}
-    >
-      <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 mb-8 shadow-inner">
-        <span className="text-3xl font-bold">✓</span>
+    <div className={cn('py-12 text-center bg-card rounded-lg border shadow-sm', className)}>
+      <div className="inline-flex items-center justify-center size-20 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 mb-8 shadow-inner">
+        <span className="text-3xl font-bold">&#10003;</span>
       </div>
       <h3 className="text-3xl font-bold text-foreground mb-4">
         {t('success-title') || 'Thank you!'}
@@ -254,19 +207,14 @@ function AcceptanceCheckbox({
   };
 
   return (
-    <div className="flex items-start space-x-3 py-2 px-1">
-      <input
-        type="checkbox"
+    <Field orientation="horizontal">
+      <Checkbox
         id="form-acceptance"
         required={form.acceptance?.required}
-        className="h-5 w-5 rounded-lg border-input text-primary focus:ring-primary/20 transition-all mt-0.5 cursor-pointer"
         checked={accepted}
-        onChange={(e) => onAcceptedChange(e.target.checked)}
+        onCheckedChange={(checked) => onAcceptedChange(checked)}
       />
-      <label
-        htmlFor="form-acceptance"
-        className="text-sm font-medium leading-tight text-foreground/70 cursor-pointer select-none"
-      >
+      <FieldLabel htmlFor="form-acceptance" className="cursor-pointer font-normal">
         {form.acceptance?.text}{' '}
         {form.acceptance?.required && <span className="text-destructive">*</span>}
         {acceptanceUrl && (
@@ -276,12 +224,13 @@ function AcceptanceCheckbox({
             rel={form.acceptance.link?.type === 'external' ? 'noopener noreferrer' : undefined}
             className="text-primary hover:underline ml-1 font-semibold"
             onClick={handleLinkClick}
+            aria-label={t('privacy-policy-aria-label') || 'Read our privacy policy'}
           >
             {t('privacy-link') || 'Read more'}
           </a>
         )}
-      </label>
-    </div>
+      </FieldLabel>
+    </Field>
   );
 }
 
@@ -293,6 +242,7 @@ export default function Form({ form, className }: FormProps) {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [mountTime, setMountTime] = useState<string | null>(null);
   const t = useTranslations('contact-form');
 
@@ -320,6 +270,14 @@ export default function Form({ form, className }: FormProps) {
 
   const handleChange = (name: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
+    // Clear field error when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
+    }
   };
 
   const handleRedirect = (redirect: FormProps['form']['redirect']) => {
@@ -334,9 +292,45 @@ export default function Form({ form, className }: FormProps) {
     }
   };
 
+  // Extract first error message from a validation error object
+  const getFirstError = (value: unknown): string | undefined => {
+    if (!value || typeof value !== 'object') return undefined;
+    const err = value as { _errors?: string[] };
+    return err._errors?.[0];
+  };
+
+  // Extract field-level validation errors from server response
+  const extractFieldErrors = (
+    validationErrors: Record<string, unknown> | undefined
+  ): Record<string, string> => {
+    if (!validationErrors) return {};
+    const errors: Record<string, string> = {};
+
+    // Handle nested data object (from withSecurity schema wrapper)
+    const dataObj = validationErrors.data as Record<string, unknown> | undefined;
+    const source = dataObj || validationErrors;
+
+    for (const [key, value] of Object.entries(source)) {
+      if (key === '_errors') continue;
+      const errorMsg = getFirstError(value);
+      if (errorMsg) errors[key] = errorMsg;
+    }
+
+    return errors;
+  };
+
   const getErrorMessage = (result: Awaited<ReturnType<typeof submitForm>>) => {
     const serverError = result?.serverError;
     const validationErrors = result?.validationErrors;
+
+    // Extract and set field-level errors
+    if (validationErrors) {
+      const fieldErrs = extractFieldErrors(validationErrors as Record<string, unknown>);
+      if (Object.keys(fieldErrs).length > 0) {
+        setFieldErrors(fieldErrs);
+        return 'Please fix the errors above.';
+      }
+    }
 
     if (typeof serverError === 'string' && serverError.includes('Action not found')) {
       return serverError;
@@ -356,6 +350,7 @@ export default function Form({ form, className }: FormProps) {
 
     setLoading(true);
     setError(null);
+    setFieldErrors({});
 
     const result = await submitForm({
       intent: form.intent,
@@ -378,9 +373,7 @@ export default function Form({ form, className }: FormProps) {
   const acceptanceUrl = resolveFormLink(form.acceptance?.link);
 
   return (
-    <div
-      className={cn('p-8 sm:p-10 rounded-3xl bg-card border border-border shadow-xl', className)}
-    >
+    <div className={cn('p-8 sm:p-10 rounded-lg bg-card border shadow-sm', className)}>
       {form.formTitle && (
         <h3 className="text-2xl font-bold mb-8 text-foreground">{form.formTitle}</h3>
       )}
@@ -397,16 +390,17 @@ export default function Form({ form, className }: FormProps) {
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <FieldGroup className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           {form.fields.map((field) => (
             <FormFieldRenderer
               key={field._key}
               field={field}
               value={formData[field.name.current] ?? ''}
               onChange={handleChange}
+              error={fieldErrors[field.name.current]}
             />
           ))}
-        </div>
+        </FieldGroup>
 
         <AcceptanceCheckbox
           form={form}
@@ -417,20 +411,12 @@ export default function Form({ form, className }: FormProps) {
           t={t}
         />
 
-        {error && (
-          <div className="bg-destructive/10 text-destructive p-4 rounded-xl text-sm font-medium animate-in fade-in slide-in-from-top-1">
-            {error}
-          </div>
-        )}
+        {error && <FieldError>{error}</FieldError>}
 
-        <Button
-          type="submit"
-          disabled={loading}
-          className="w-full mt-4 py-7 text-lg font-bold rounded-2xl shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 active:scale-[0.98] transition-all"
-        >
+        <Button type="submit" disabled={loading} className="w-full mt-4">
           {loading ? (
             <div className="flex items-center gap-3">
-              <span className="h-5 w-5 animate-spin rounded-full border-3 border-background border-t-transparent" />
+              <span className="size-5 animate-spin rounded-full border-2 border-background border-t-transparent" />
               <span>{t('submitting') || 'Processing...'}</span>
             </div>
           ) : (

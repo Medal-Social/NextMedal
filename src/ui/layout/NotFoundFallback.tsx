@@ -3,7 +3,7 @@
 import { FileQuestion } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import {
   Empty,
   EmptyContent,
@@ -28,7 +28,9 @@ export default function NotFoundFallback() {
           <EmptyDescription>{t('description')}</EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
-          <Button nativeButton={false} render={<Link href="/">{t('goHome')}</Link>} />
+          <Link href="/" className={buttonVariants()}>
+            {t('goHome')}
+          </Link>
         </EmptyContent>
       </Empty>
     </Section>

@@ -1,5 +1,6 @@
+import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
-import moduleProps from '@/lib/moduleProps';
+import moduleProps from '@/lib/sanity/module-props';
 import { Loading } from '@/ui/base';
 import ComponentGalleryClient from './ComponentGallery.client';
 
@@ -41,8 +42,14 @@ export interface GalleryComponentData {
   moduleData: Sanity.Module;
 }
 
-export default function ComponentGallery({ intro, groups, ...props }: Sanity.ComponentGallery) {
+export default async function ComponentGallery({
+  intro,
+  groups,
+  ...props
+}: Sanity.ComponentGallery) {
   if (!groups?.length) return null;
+
+  const t = await getTranslations('common');
 
   // Flatten groups into component data (no React elements - client will render)
   const components: GalleryComponentData[] =
@@ -55,7 +62,7 @@ export default function ComponentGallery({ intro, groups, ...props }: Sanity.Com
 
           return {
             id: item._key,
-            name: title || 'Untitled',
+            name: title || t('untitled'),
             description: extItem.description || extItem.subtitle || '',
             category: group.title,
             moduleType: item._type,
@@ -68,7 +75,7 @@ export default function ComponentGallery({ intro, groups, ...props }: Sanity.Com
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          <Loading />
+          <Loading>{t('loading')}</Loading>
         </div>
       }
     >

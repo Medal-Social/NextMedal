@@ -3,7 +3,7 @@
 import { AnimatePresence } from 'motion/react';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/index';
 import { DESKTOP_BREAKPOINT, SCROLL_THRESHOLD } from './constants';
 import MobileNavigation from './mobile-navigation';
 import Toggle from './Toggle';

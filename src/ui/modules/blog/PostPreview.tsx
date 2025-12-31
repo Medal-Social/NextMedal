@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { createDataAttribute } from 'next-sanity';
-import resolveUrl from '@/lib/resolveUrl';
+import resolveUrl from '@/lib/sanity/resolve-url';
+import { createStegaAttribute } from '@/sanity/lib/client';
 import { Date as BlogDate, Img } from '@/ui/base';
 import Authors from './Authors';
 import Categories from './Categories';
@@ -9,16 +9,18 @@ const IMAGE_CLASS =
   'aspect-video w-full object-cover rounded-2xl transition-transform duration-300 group-hover:scale-105 group-hover:brightness-110';
 
 function getFallbackImage(
-  metadata: Sanity.BlogPost['metadata'],
-  seo: Sanity.BlogPost['seo'],
-  categoryTitle?: string
+  metadata: Sanity.CollectionBlogPost['metadata'],
+  seo: Sanity.CollectionBlogPost['seo']
 ) {
-  if (seo?.image) return undefined;
+  // Only skip fallback if seo.image has a valid asset
+  if (seo?.image?.asset) return undefined;
+
+  const params = new URLSearchParams();
+  if (metadata?.title) params.set('title', metadata.title.slice(0, 100));
+  if (seo?.description) params.set('description', seo.description.slice(0, 150));
 
   return {
-    src: `/api/og/blog-fallback?title=${encodeURIComponent(
-      (metadata?.title || '').slice(0, 100)
-    )}&category=${encodeURIComponent(categoryTitle || '')}`,
+    src: `/api/og/blog-fallback?${params.toString()}`,
     alt: metadata?.title || '',
     width: 1200,
     height: 630,
@@ -35,17 +37,21 @@ function PostImage({
   dataAttribute,
 }: {
   skeleton?: boolean;
-  metadata?: Sanity.BlogPost['metadata'];
-  seo?: Sanity.BlogPost['seo'];
+  metadata?: Sanity.CollectionBlogPost['metadata'];
+  seo?: Sanity.CollectionBlogPost['seo'];
   fallbackImage?: { src: string; alt: string; width: number; height: number };
   sizes?: string;
   href: string;
-  dataAttribute?: ReturnType<typeof createDataAttribute>;
+  dataAttribute?: ReturnType<typeof createStegaAttribute>;
 }) {
+  // Only use Sanity image if it has a valid asset, otherwise use fallback
+  const hasValidImage = seo?.image?.asset;
+  const image = hasValidImage ? seo?.image : fallbackImage;
+
   const imageElement = (
     <Img
       className={IMAGE_CLASS}
-      image={seo?.image || fallbackImage}
+      image={image}
       width={700}
       sizes={sizes}
       alt={metadata?.title || ''}
@@ -64,23 +70,24 @@ export default function PostPreview({
   post,
   skeleton,
   sizes,
+  href: hrefOverride,
 }: {
-  post?: Sanity.BlogPost;
+  post?: Sanity.CollectionBlogPost;
   skeleton?: boolean;
   sizes?: string;
+  href?: string;
 }) {
   // Early return for non-skeleton mode without valid post data
   if (!skeleton && (!post || !post.metadata)) return null;
 
   const metadata = skeleton ? undefined : post?.metadata;
   const seo = skeleton ? undefined : post?.seo;
-  const href = skeleton || !post?.metadata ? '' : resolveUrl(post, { base: false });
-  const fallbackImage = skeleton
-    ? undefined
-    : getFallbackImage(metadata, seo, post?.categories?.[0]?.title);
+  const href =
+    hrefOverride || (skeleton || !post?.metadata ? '' : resolveUrl(post, { base: false }));
+  const fallbackImage = skeleton ? undefined : getFallbackImage(metadata, seo);
 
   const dataAttribute = post?._id
-    ? createDataAttribute({
+    ? createStegaAttribute({
         id: post._id,
         type: post._type,
       })

@@ -3,7 +3,13 @@
 import { useBlogFilters } from '@/ui/modules/blog/store';
 import ArticleCard from './ArticleCard';
 
-export default function BlogGrid({ posts }: { posts: Sanity.BlogPost[] }) {
+// Bento grid pattern - creates visual rhythm in 4-column grid
+// Pattern: [wide, std, std] repeats = 2+1+1 = 4 cols per row
+function getVariant(index: number): 'wide' | 'standard' {
+  return index % 3 === 0 ? 'wide' : 'standard';
+}
+
+export default function BlogGrid({ posts }: { posts: Sanity.CollectionBlogPost[] }) {
   const { view } = useBlogFilters();
 
   if (view === 'list') {
@@ -17,14 +23,10 @@ export default function BlogGrid({ posts }: { posts: Sanity.BlogPost[] }) {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-4">
-      {posts.map((post, index) => {
-        let variant: 'large' | 'wide' | 'standard' = 'standard';
-        if (index === 0) variant = 'large';
-        else if (index === 1) variant = 'wide';
-
-        return <ArticleCard key={post._id} post={post} variant={variant} />;
-      })}
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {posts.map((post, index) => (
+        <ArticleCard key={post._id} post={post} variant={getVariant(index)} />
+      ))}
     </div>
   );
 }

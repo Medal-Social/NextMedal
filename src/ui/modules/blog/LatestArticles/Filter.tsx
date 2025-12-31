@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { usePageState } from '@/lib/usePagination';
+import { usePageState } from '@/lib/hooks/use-pagination';
 import Category from '../Category';
 import { useBlogFilters } from '../store';
 

@@ -2,6 +2,7 @@
 
 import { FileText, Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import * as React from 'react';
 import {
   CommandDialog,
@@ -12,8 +13,8 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command';
-import { logger } from '@/lib/logger';
-import { cn } from '@/lib/utils';
+import { logger } from '@/lib/core/logger';
+import { cn } from '@/lib/utils/index';
 import type { SearchResultItem } from '@/ui/header/types';
 
 interface CommandMenuProps {
@@ -26,6 +27,8 @@ export function CommandMenu({ variant = 'default', className }: CommandMenuProps
   const [items, setItems] = React.useState<SearchResultItem[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const router = useRouter();
+  const t = useTranslations('search');
+  const tA11y = useTranslations('Accessibility');
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -86,17 +89,17 @@ export function CommandMenu({ variant = 'default', className }: CommandMenuProps
           ],
           className
         )}
-        aria-label="Open search"
+        aria-label={tA11y('openSearch')}
       >
         <span className="flex items-center gap-2">
           <Search className={cn(variant === 'default' ? 'h-4 w-4' : 'h-5 w-5')} />
           {variant === 'default' ? (
             <>
-              <span className="hidden lg:inline">Search...</span>
-              <span className="inline lg:hidden">Search</span>
+              <span className="hidden lg:inline">{t('placeholder')}</span>
+              <span className="inline lg:hidden">{t('placeholder').replace('...', '')}</span>
             </>
           ) : (
-            <span>Search</span>
+            <span>{t('placeholder').replace('...', '')}</span>
           )}
         </span>
         {variant === 'default' && (
@@ -107,9 +110,9 @@ export function CommandMenu({ variant = 'default', className }: CommandMenuProps
       </button>
 
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type a command or search..." />
+        <CommandInput placeholder={t('commandPlaceholder')} />
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandEmpty>{t('noResults')}</CommandEmpty>
 
           {isLoading ? (
             <div className="p-4 space-y-3">
@@ -121,37 +124,102 @@ export function CommandMenu({ variant = 'default', className }: CommandMenuProps
             </div>
           ) : (
             <>
-              <CommandGroup heading="Blog Posts">
-                {items
-                  .filter((item) => item.type === 'Blog')
-                  .map((item) => (
-                    <CommandItem
-                      key={item._id}
-                      value={item.title}
-                      onSelect={() => runCommand(() => router.push(item.href))}
-                    >
-                      <FileText className="mr-2 h-4 w-4" />
-                      <span>{item.title}</span>
-                    </CommandItem>
-                  ))}
-              </CommandGroup>
+              {items.filter((item) => item.type === 'Blog').length > 0 && (
+                <CommandGroup heading={t('categories.blogPosts')}>
+                  {items
+                    .filter((item) => item.type === 'Blog')
+                    .map((item) => (
+                      <CommandItem
+                        key={item._id}
+                        value={item.title}
+                        onSelect={() => runCommand(() => router.push(item.href))}
+                      >
+                        <FileText className="mr-2 h-4 w-4" />
+                        <span>{item.title}</span>
+                      </CommandItem>
+                    ))}
+                </CommandGroup>
+              )}
 
-              <CommandSeparator />
+              {items.filter((item) => item.type === 'Docs').length > 0 && (
+                <>
+                  <CommandSeparator />
+                  <CommandGroup heading={t('categories.documentation')}>
+                    {items
+                      .filter((item) => item.type === 'Docs')
+                      .map((item) => (
+                        <CommandItem
+                          key={item._id}
+                          value={item.title}
+                          onSelect={() => runCommand(() => router.push(item.href))}
+                        >
+                          <FileText className="mr-2 h-4 w-4" />
+                          <span>{item.title}</span>
+                        </CommandItem>
+                      ))}
+                  </CommandGroup>
+                </>
+              )}
 
-              <CommandGroup heading="Pages">
-                {items
-                  .filter((item) => item.type === 'Page')
-                  .map((item) => (
-                    <CommandItem
-                      key={item._id}
-                      value={item.title}
-                      onSelect={() => runCommand(() => router.push(item.href))}
-                    >
-                      <FileText className="mr-2 h-4 w-4" />
-                      <span>{item.title}</span>
-                    </CommandItem>
-                  ))}
-              </CommandGroup>
+              {items.filter((item) => item.type === 'Changelog').length > 0 && (
+                <>
+                  <CommandSeparator />
+                  <CommandGroup heading={t('categories.changelog')}>
+                    {items
+                      .filter((item) => item.type === 'Changelog')
+                      .map((item) => (
+                        <CommandItem
+                          key={item._id}
+                          value={item.title}
+                          onSelect={() => runCommand(() => router.push(item.href))}
+                        >
+                          <FileText className="mr-2 h-4 w-4" />
+                          <span>{item.title}</span>
+                        </CommandItem>
+                      ))}
+                  </CommandGroup>
+                </>
+              )}
+
+              {items.filter((item) => item.type === 'Newsletter').length > 0 && (
+                <>
+                  <CommandSeparator />
+                  <CommandGroup heading={t('categories.newsletter')}>
+                    {items
+                      .filter((item) => item.type === 'Newsletter')
+                      .map((item) => (
+                        <CommandItem
+                          key={item._id}
+                          value={item.title}
+                          onSelect={() => runCommand(() => router.push(item.href))}
+                        >
+                          <FileText className="mr-2 h-4 w-4" />
+                          <span>{item.title}</span>
+                        </CommandItem>
+                      ))}
+                  </CommandGroup>
+                </>
+              )}
+
+              {items.filter((item) => item.type === 'Page').length > 0 && (
+                <>
+                  <CommandSeparator />
+                  <CommandGroup heading={t('categories.pages')}>
+                    {items
+                      .filter((item) => item.type === 'Page')
+                      .map((item) => (
+                        <CommandItem
+                          key={item._id}
+                          value={item.title}
+                          onSelect={() => runCommand(() => router.push(item.href))}
+                        >
+                          <FileText className="mr-2 h-4 w-4" />
+                          <span>{item.title}</span>
+                        </CommandItem>
+                      ))}
+                  </CommandGroup>
+                </>
+              )}
             </>
           )}
         </CommandList>

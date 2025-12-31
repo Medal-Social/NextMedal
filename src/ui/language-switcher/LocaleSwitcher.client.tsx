@@ -1,6 +1,6 @@
 'use client';
 
-import { usePage } from '@/contexts/PageContext';
+import { usePage } from '@/contexts';
 import { routing } from '@/i18n/routing';
 import LocaleSwitcherSelect from './LocaleSwitcherSelect';
 
@@ -50,14 +50,11 @@ export default function LocaleSwitcherClient({
   const translationUrls: Record<string, string> = {};
 
   // Helper to build locale-prefixed URL (default locale has no prefix)
-  const buildUrl = (lang: string, slug: string, type: string) => {
+  const buildUrl = (lang: string, slug: string, _type: string) => {
     const isDefaultLocale = lang === routing.defaultLocale;
     const prefix = isDefaultLocale ? '' : `/${lang}`;
     if (slug === 'index') {
       return isDefaultLocale ? '/' : `/${lang}`;
-    }
-    if (type === 'blog.post') {
-      return `${prefix}/blog/${slug}`;
     }
     return `${prefix}/${slug}`;
   };

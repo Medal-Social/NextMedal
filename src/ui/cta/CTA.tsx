@@ -2,21 +2,24 @@
 
 import Link from 'next/link';
 import { stegaClean } from 'next-sanity';
-import type { ComponentProps } from 'react';
-import { Button } from '@/components/ui/button';
-import resolveUrl from '@/lib/resolveUrl';
+import { Button, buttonVariants } from '@/components/ui/button';
+import resolveUrl from '@/lib/sanity/resolve-url';
+import { cn } from '@/lib/utils/index';
 import { validateExternalUrl } from '@/lib/validateExternalUrl';
 
 // Define the allowed button variants matching the Button component
 type ButtonVariant = 'default' | 'outline' | 'secondary' | 'ghost' | 'link' | 'destructive';
+type ButtonSize = 'default' | 'xs' | 'sm' | 'lg' | 'icon' | 'icon-xs' | 'icon-sm' | 'icon-lg';
 
-type CTAProps = Sanity.CTA &
-  ComponentProps<typeof Button> & {
-    internalLink?: Sanity.MenuItem['internal'];
-    externalLink?: string;
-    linkType?: 'internal' | 'external';
-    text?: string;
-  };
+type CTAProps = Sanity.CTA & {
+  internalLink?: Sanity.MenuItem['internal'];
+  externalLink?: string;
+  linkType?: 'internal' | 'external';
+  text?: string;
+  size?: ButtonSize;
+  className?: string;
+  children?: React.ReactNode;
+};
 
 // Build effective link from props (handles flat structure from some modules)
 function buildEffectiveLink(props: CTAProps): Sanity.MenuItem | null {
@@ -65,37 +68,30 @@ function InternalLinkButton({
   params,
   newTab,
   variant,
+  size,
   className,
   buttonContent,
-  rest,
 }: {
   internal: Sanity.MenuItem['internal'];
   params?: string;
   newTab?: boolean;
   variant: ButtonVariant;
-  className?: ComponentProps<typeof Button>['className'];
+  size?: ButtonSize;
+  className?: string;
   buttonContent: React.ReactNode;
-  rest: Omit<ComponentProps<typeof Button>, 'variant' | 'className'>;
 }) {
   const href = resolveUrl(internal, { base: false, params });
 
   return (
-    <Button
-      variant={variant}
-      className={className}
-      nativeButton={false}
-      render={
-        <Link
-          href={href}
-          target={newTab ? '_blank' : undefined}
-          rel={newTab ? 'noopener noreferrer' : undefined}
-          onClick={(e) => handleHashLinkClick(href, e)}
-        >
-          {buttonContent}
-        </Link>
-      }
-      {...rest}
-    />
+    <Link
+      href={href}
+      target={newTab ? '_blank' : undefined}
+      rel={newTab ? 'noopener noreferrer' : undefined}
+      onClick={(e) => handleHashLinkClick(href, e)}
+      className={cn(buttonVariants({ variant, size }), className)}
+    >
+      {buttonContent}
+    </Link>
   );
 }
 
@@ -104,23 +100,23 @@ function ExternalLinkButton({
   external,
   newTab,
   variant,
+  size,
   className,
   buttonContent,
-  rest,
 }: {
   external: string;
   newTab?: boolean;
   variant: ButtonVariant;
-  className?: ComponentProps<typeof Button>['className'];
+  size?: ButtonSize;
+  className?: string;
   buttonContent: React.ReactNode;
-  rest: Omit<ComponentProps<typeof Button>, 'variant' | 'className'>;
 }) {
   const cleanUrl = stegaClean(external);
   const validatedUrl = validateExternalUrl(cleanUrl);
 
   if (!validatedUrl) {
     return (
-      <Button variant={variant} className={className} disabled {...rest}>
+      <Button variant={variant} size={size} className={className} disabled>
         {buttonContent}
       </Button>
     );
@@ -129,45 +125,38 @@ function ExternalLinkButton({
   const shouldOpenNewTab = newTab !== false;
 
   return (
-    <Button
-      variant={variant}
-      className={className}
-      nativeButton={false}
-      render={
-        <Link
-          href={validatedUrl}
-          target={shouldOpenNewTab ? '_blank' : undefined}
-          rel={shouldOpenNewTab ? 'noopener noreferrer' : undefined}
-        >
-          {buttonContent}
-        </Link>
-      }
-      {...rest}
-    />
+    <Link
+      href={validatedUrl}
+      target={shouldOpenNewTab ? '_blank' : undefined}
+      rel={shouldOpenNewTab ? 'noopener noreferrer' : undefined}
+      className={cn(buttonVariants({ variant, size }), className)}
+    >
+      {buttonContent}
+    </Link>
   );
 }
 
 export default function CTA({
   link,
   style = 'primary',
+  size,
   className,
   children,
   internalLink,
   externalLink,
   linkType,
   text,
-  ...rest
 }: CTAProps) {
   const effectiveLink = buildEffectiveLink({
     link,
     style,
+    size,
     className,
     children,
     internalLink,
     externalLink,
     linkType,
     text,
-    ...rest,
   });
 
   if (!effectiveLink) return null;
@@ -183,9 +172,9 @@ export default function CTA({
         params={params}
         newTab={newTab}
         variant={variant}
+        size={size ?? undefined}
         className={className}
         buttonContent={buttonContent}
-        rest={rest}
       />
     );
   }
@@ -196,9 +185,9 @@ export default function CTA({
         external={external}
         newTab={newTab}
         variant={variant}
+        size={size ?? undefined}
         className={className}
         buttonContent={buttonContent}
-        rest={rest}
       />
     );
   }

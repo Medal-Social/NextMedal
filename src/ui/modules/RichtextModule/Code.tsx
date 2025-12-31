@@ -1,5 +1,5 @@
 import { codeToHtml } from 'shiki';
-import { logger } from '@/lib/logger';
+import { logger } from '@/lib/core/logger';
 import CopyButton from './CopyButton';
 
 export default async function Code({ value }: { value: { code: string; language?: string } }) {

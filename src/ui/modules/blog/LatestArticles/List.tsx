@@ -8,10 +8,11 @@ export default function List({
   sizes,
   ...props
 }: {
-  posts: Sanity.BlogPost[];
+  posts: Sanity.CollectionBlogPost[];
   sizes?: string;
 } & React.ComponentProps<'ul'>) {
-  const filtered = filterPosts(posts);
+  const { category, author, search } = useBlogFilters();
+  const filtered = filterPosts(posts, { category, author, search });
 
   if (!filtered.length) {
     return <div>No posts found...</div>;
@@ -28,8 +29,14 @@ export default function List({
   );
 }
 
-export function filterPosts(posts: Sanity.BlogPost[]) {
-  const { category, author, search } = useBlogFilters();
+interface FilterOptions {
+  category?: string | null;
+  author?: string | null;
+  search?: string | null;
+}
+
+export function filterPosts(posts: Sanity.CollectionBlogPost[], filters: FilterOptions) {
+  const { category, author, search } = filters;
 
   return posts.filter((post) => {
     // Search filter
@@ -40,13 +47,14 @@ export function filterPosts(posts: Sanity.BlogPost[]) {
       if (!titleMatch && !descMatch) return false;
     }
 
-    if (category !== 'All' && author)
+    if (category && category !== 'All' && author)
       return (
         post.authors?.some(({ slug }) => slug?.current === author) &&
         post.categories?.some(({ slug }) => slug?.current === category)
       );
 
-    if (category !== 'All') return post.categories?.some(({ slug }) => slug?.current === category);
+    if (category && category !== 'All')
+      return post.categories?.some(({ slug }) => slug?.current === category);
 
     if (author) return post.authors?.some(({ slug }) => slug?.current === author);
 

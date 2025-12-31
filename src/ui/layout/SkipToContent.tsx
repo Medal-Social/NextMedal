@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/index';
 
 /**
  * Modern skip-to-content link with slide-down animation.

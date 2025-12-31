@@ -1,17 +1,18 @@
 import Link from 'next/link';
-import { createDataAttribute } from 'next-sanity';
-import resolveUrl from '@/lib/resolveUrl';
-import { cn } from '@/lib/utils';
-import { Date as DateDisplay, Img } from '@/ui/base';
+import resolveUrl from '@/lib/sanity/resolve-url';
+import { cn } from '@/lib/utils/index';
+import { createStegaAttribute } from '@/sanity/lib/client';
+import { Date as DateDisplay } from '@/ui/base';
+import AuthorCard from '@/ui/modules/blog/AuthorCard';
 
 export default function BlogHero({
   featuredPost,
   recentPost,
   popularPost,
 }: {
-  featuredPost: Sanity.BlogPost;
-  recentPost?: Sanity.BlogPost;
-  popularPost?: Sanity.BlogPost;
+  featuredPost: Sanity.CollectionBlogPost;
+  recentPost?: Sanity.CollectionBlogPost;
+  popularPost?: Sanity.CollectionBlogPost;
 }) {
   if (!featuredPost) return null;
 
@@ -20,7 +21,7 @@ export default function BlogHero({
     { base: false }
   );
 
-  const stega = createDataAttribute({
+  const stega = createStegaAttribute({
     id: featuredPost._id,
     type: featuredPost._type,
   });
@@ -57,43 +58,17 @@ export default function BlogHero({
             >
               {featuredPost.seo?.description}
             </p>
-            <div className="flex items-center gap-3 pt-2">
+            <div className="flex items-center gap-2 pt-2 text-sm text-slate-400">
               {featuredPost.authors?.[0] && (
                 <>
-                  <Img
-                    className="h-8 w-8 rounded-full border-2 border-[#1a0b2e] ring-2 ring-[#f59e0b]"
-                    image={featuredPost.authors[0].image}
-                    width={32}
-                    height={32}
-                    alt={featuredPost.authors[0].name}
-                    data-sanity={createDataAttribute({
-                      id: featuredPost.authors[0]._id,
-                      type: featuredPost.authors[0]._type,
-                    })
-                      .scope('image')
-                      .toString()}
-                  />
-                  <div className="flex flex-col">
-                    <span
-                      className="text-sm font-medium text-white"
-                      data-sanity={createDataAttribute({
-                        id: featuredPost.authors[0]._id,
-                        type: featuredPost.authors[0]._type,
-                      })
-                        .scope('name')
-                        .toString()}
-                    >
-                      {featuredPost.authors[0].name}
-                    </span>
-                    <span className="text-[10px] tracking-wide text-slate-400 uppercase">
-                      <DateDisplay
-                        value={featuredPost.publishDate}
-                        data-sanity={stega.scope('publishDate').toString()}
-                      />
-                    </span>
-                  </div>
+                  <AuthorCard author={featuredPost.authors[0]} variant="dark" />
+                  <span>·</span>
                 </>
               )}
+              <DateDisplay
+                value={featuredPost.publishDate}
+                data-sanity={stega.scope('publishDate').toString()}
+              />
             </div>
           </div>
 
@@ -106,8 +81,8 @@ export default function BlogHero({
               <SidebarCard
                 post={recentPost}
                 label="Recent"
-                labelColor="text-[#f59e0b]"
-                hoverColor="group-hover:text-[#f59e0b]"
+                labelColor="text-cyan-400"
+                hoverColor="group-hover:text-cyan-400"
               />
             )}
             {popularPost && (
@@ -131,9 +106,9 @@ function SidebarCard({
   label,
   labelColor,
   hoverColor,
-  borderColor = 'hover:border-[#f59e0b]',
+  borderColor = 'hover:border-cyan-500/50',
 }: {
-  post: Sanity.BlogPost;
+  post: Sanity.CollectionBlogPost;
   label: string;
   labelColor: string;
   hoverColor: string;
@@ -141,7 +116,7 @@ function SidebarCard({
 }) {
   const href = resolveUrl({ ...post, metadata: post.metadata } as Sanity.PageBase, { base: false });
 
-  const stega = createDataAttribute({
+  const stega = createStegaAttribute({
     id: post._id,
     type: post._type,
   });

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { PortableText } from 'next-sanity';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import resolveUrl from '@/lib/resolveUrl';
+import resolveUrl from '@/lib/sanity/resolve-url';
 
 const BANNER_HEIGHT_VALUE = 40; // pixels
 

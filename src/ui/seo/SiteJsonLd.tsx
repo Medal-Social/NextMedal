@@ -1,4 +1,4 @@
-import { BASE_URL } from '@/lib/env';
+import { BASE_URL } from '@/lib/core/env';
 import { getSite } from '@/sanity/lib/fetch';
 import JsonLd from './JsonLd';
 

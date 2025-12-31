@@ -1,6 +1,6 @@
 import { Loader2 } from 'lucide-react';
 import type { ComponentProps } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/index';
 
 export default function Loading({ className, children }: ComponentProps<'div'>) {
   return (

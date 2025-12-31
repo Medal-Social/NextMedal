@@ -1,6 +1,6 @@
 import { Section } from '@/components/ui/section';
-import moduleProps from '@/lib/moduleProps';
-import { cn } from '@/lib/utils';
+import moduleProps from '@/lib/sanity/module-props';
+import { cn } from '@/lib/utils/index';
 import { CTAListCallout } from '@/ui/cta';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
 

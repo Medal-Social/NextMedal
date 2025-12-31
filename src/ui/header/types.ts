@@ -77,5 +77,5 @@ export interface SearchResultItem {
   _id: string;
   title: string;
   href: string;
-  type: 'Blog' | 'Page';
+  type: 'Blog' | 'Page' | 'Docs' | 'Changelog' | 'Newsletter';
 }

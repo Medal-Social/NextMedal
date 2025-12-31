@@ -10,8 +10,8 @@ import {
   IconTwitterX,
   IconYoutube,
 } from '@/components/icons/social-icons';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils/index';
 import { getSite } from '@/sanity/lib/fetch';
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
@@ -55,18 +55,19 @@ export default async function Social({ className }: React.ComponentProps<'div'>)
       {socialLinks.map((item: SocialLink, idx: number) => {
         const IconComponent = getIconForUrl(item.url);
         return (
-          <Button
+          <a
             key={item.url || idx}
-            variant="ghost"
-            size="icon"
-            className="h-9 w-9 rounded-full motion-safe:transition-all motion-safe:duration-200 motion-safe:hover:scale-110 hover:bg-primary/10"
-            nativeButton={false}
-            render={
-              <a href={item.url} target="_blank" rel="noopener noreferrer" aria-label={item.text}>
-                <IconComponent aria-hidden="true" className="h-4 w-4" />
-              </a>
-            }
-          />
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={item.text}
+            className={cn(
+              buttonVariants({ variant: 'ghost', size: 'icon' }),
+              'h-9 w-9 rounded-full motion-safe:transition-all motion-safe:duration-200 motion-safe:hover:scale-110 hover:bg-primary/10'
+            )}
+          >
+            <IconComponent aria-hidden="true" className="h-4 w-4" />
+          </a>
         );
       })}
     </nav>

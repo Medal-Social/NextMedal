@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { createDataAttribute } from 'next-sanity';
 import {
   IconFacebook,
   IconInstagram,
@@ -8,7 +7,8 @@ import {
   IconUser,
   IconYoutube,
 } from '@/components/icons/social-icons';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/index';
+import { createStegaAttribute } from '@/sanity/lib/client';
 import { Img } from '@/ui/base';
 
 export default function Authors({
@@ -57,7 +57,7 @@ function Author({
 }) {
   const stega =
     author?._id && author?._type
-      ? createDataAttribute({
+      ? createStegaAttribute({
           id: author._id,
           type: author._type,
         })

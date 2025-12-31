@@ -13,7 +13,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import resolveUrl from '@/lib/resolveUrl';
+import resolveUrl from '@/lib/sanity/resolve-url';
 
 type NavMenuItem = Sanity.MenuItem | Sanity.DropdownMenu;
 

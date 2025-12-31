@@ -1,5 +1,5 @@
 import { Section } from '@/components/ui/section';
-import moduleProps from '@/lib/moduleProps';
+import moduleProps from '@/lib/sanity/module-props';
 import Content from './Content';
 
 export default function RichtextModule({ content, ...props }: Sanity.Richtext) {

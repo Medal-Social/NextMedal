@@ -1,11 +1,15 @@
 import { type ReactElement, Suspense } from 'react';
 import AccordionList from './AccordionList';
 import Breadcrumbs from './Breadcrumbs';
-import BlogFrontpage from './blog/BlogFrontpage';
 import LatestArticles from './blog/LatestArticles';
 import Callout from './Callout';
 import ComponentGallery from './ComponentGallery';
 import Contact from './Contact';
+import { ArticlesFrontpage } from './collections/articles';
+import { ChangelogFrontpage } from './collections/changelog';
+import { DocsFrontpage } from './collections/docs';
+import { EventsFrontpage } from './collections/events';
+import { NewsletterFrontpage } from './collections/newsletter';
 import Features from './Features';
 import Hero from './hero/Hero';
 import LeadMagnet from './LeadMagnet';
@@ -19,7 +23,7 @@ import VideoHero from './VideoHero';
 
 export interface ModuleContext {
   page?: Sanity.Page | Sanity.ComponentLibrary;
-  post?: Sanity.BlogPost;
+  post?: Sanity.CollectionBlogPost;
   isSidebar?: boolean;
 }
 
@@ -65,11 +69,82 @@ export function ModuleRenderer({ module, context, sidebarProps }: Props): ReactE
       return <AccordionList {...props} {...sidebarProps} />;
     }
 
-    case 'blog-frontpage': {
-      const props = module as Sanity.BlogFrontpage;
+    case 'articles-frontpage': {
+      const props = module as Sanity.ArticlesFrontpage;
+      // Extract collection slug from the page context
+      const collectionSlug = page?.metadata?.slug?.current;
       return (
         <Suspense fallback={<ModuleSkeleton />}>
-          <BlogFrontpage {...props} {...sidebarProps} />
+          <ArticlesFrontpage
+            {...props}
+            {...sidebarProps}
+            collectionSlug={collectionSlug}
+            locale={page?.language}
+          />
+        </Suspense>
+      );
+    }
+
+    case 'newsletter-frontpage': {
+      const props = module as Sanity.NewsletterFrontpage;
+      // Extract collection slug from the page context
+      const collectionSlug = page?.metadata?.slug?.current;
+      return (
+        <Suspense fallback={<ModuleSkeleton />}>
+          <NewsletterFrontpage
+            {...props}
+            {...sidebarProps}
+            collectionSlug={collectionSlug}
+            locale={page?.language}
+          />
+        </Suspense>
+      );
+    }
+
+    case 'changelog-frontpage': {
+      const props = module as Sanity.ChangelogFrontpage;
+      // Extract collection slug from the page context
+      const collectionSlug = page?.metadata?.slug?.current;
+      return (
+        <Suspense fallback={<ModuleSkeleton />}>
+          <ChangelogFrontpage
+            {...props}
+            {...sidebarProps}
+            collectionSlug={collectionSlug}
+            locale={page?.language}
+          />
+        </Suspense>
+      );
+    }
+
+    case 'docs-frontpage': {
+      const props = module as Sanity.DocsFrontpage;
+      // Extract collection slug from the page context
+      const collectionSlug = page?.metadata?.slug?.current;
+      return (
+        <Suspense fallback={<ModuleSkeleton />}>
+          <DocsFrontpage
+            {...props}
+            {...sidebarProps}
+            collectionSlug={collectionSlug}
+            locale={page?.language}
+          />
+        </Suspense>
+      );
+    }
+
+    case 'events-frontpage': {
+      const props = module as Sanity.EventsFrontpage;
+      // Extract collection slug from the page context
+      const collectionSlug = page?.metadata?.slug?.current;
+      return (
+        <Suspense fallback={<ModuleSkeleton />}>
+          <EventsFrontpage
+            {...props}
+            {...sidebarProps}
+            collectionSlug={collectionSlug}
+            locale={page?.language}
+          />
         </Suspense>
       );
     }

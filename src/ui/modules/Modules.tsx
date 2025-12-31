@@ -13,7 +13,7 @@ export default function Modules({
 }: {
   modules?: Sanity.Module[];
   page?: Sanity.Page | Sanity.ComponentLibrary;
-  post?: Sanity.BlogPost;
+  post?: Sanity.CollectionBlogPost;
   isSidebar?: boolean;
 }) {
   if (!modules?.length) {

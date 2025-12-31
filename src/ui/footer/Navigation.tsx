@@ -1,7 +1,7 @@
 import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { stegaClean } from 'next-sanity';
-import resolveUrl from '@/lib/resolveUrl';
+import resolveUrl from '@/lib/sanity/resolve-url';
 import { getSite } from '@/sanity/lib/fetch';
 import { CTA } from '@/ui/cta';
 

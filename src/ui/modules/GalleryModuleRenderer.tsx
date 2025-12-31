@@ -51,9 +51,6 @@ export function GalleryModuleRenderer({ module }: Props) {
       return <AccordionList {...props} />;
     }
 
-    case 'blog-frontpage':
-      return <ServerOnlyPlaceholder moduleType="Blog Frontpage" />;
-
     case 'breadcrumbs':
       return <ServerOnlyPlaceholder moduleType="Breadcrumbs" />;
 

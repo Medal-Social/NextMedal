@@ -4,7 +4,9 @@ import { Check, Link } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { IconLinkedin, IconTwitterX, IconWhatsapp } from '@/components/icons/social-icons';
-import { cn } from '@/lib/utils';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { ButtonGroup } from '@/components/ui/button-group';
+import { cn } from '@/lib/utils/index';
 
 export default function SocialShare({
   title,
@@ -53,7 +55,7 @@ export default function SocialShare({
   ];
 
   return (
-    <div className={cn('flex gap-3', className)}>
+    <ButtonGroup className={cn('w-full', className)}>
       {shareLinks.map((link) => (
         <a
           key={link.name}
@@ -61,22 +63,24 @@ export default function SocialShare({
           target="_blank"
           rel="noopener noreferrer"
           className={cn(
-            'flex-1 py-2 rounded-lg bg-secondary/50 hover:bg-secondary border border-border flex items-center justify-center text-muted-foreground transition-colors group',
+            buttonVariants({ variant: 'outline', size: 'lg' }),
+            'flex-1 text-muted-foreground',
             link.hoverColor
           )}
           aria-label={`Share on ${link.name}`}
         >
-          <link.icon className="w-5 h-5" />
+          <link.icon className="size-5" />
         </a>
       ))}
-      <button
-        type="button"
+      <Button
+        variant="outline"
+        size="lg"
         onClick={handleCopy}
-        className="flex-1 py-2 rounded-lg bg-secondary/50 hover:bg-secondary border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+        className="flex-1 text-muted-foreground hover:text-foreground"
         aria-label="Copy link"
       >
-        {copied ? <Check className="w-5 h-5" /> : <Link className="w-5 h-5" />}
-      </button>
-    </div>
+        {copied ? <Check className="size-5" /> : <Link className="size-5" />}
+      </Button>
+    </ButtonGroup>
   );
 }

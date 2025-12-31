@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { PortableText, type PortableTextComponents, stegaClean } from 'next-sanity';
-import { cn, slug } from '@/lib/utils';
+import { cn, slug } from '@/lib/utils/index';
 import resolveSlug from '@/sanity/lib/resolveSlug';
 
 interface SharedPortableTextProps {

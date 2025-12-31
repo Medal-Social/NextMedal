@@ -3,8 +3,8 @@ import Image, { type ImageProps } from 'next/image';
 import { stegaClean } from 'next-sanity';
 import type { ComponentProps } from 'react';
 import { preload } from 'react-dom';
-import { logger } from '@/lib/logger';
-import { cn } from '@/lib/utils';
+import { logger } from '@/lib/core/logger';
+import { cn } from '@/lib/utils/index';
 import { urlFor } from '@/sanity/lib/image';
 
 type ImgProps = {

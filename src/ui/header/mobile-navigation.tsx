@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { stegaClean } from 'next-sanity';
 import { useCallback, useEffect, useRef } from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import resolveUrl from '@/lib/resolveUrl';
+import resolveUrl from '@/lib/sanity/resolve-url';
 import { CTAList } from '@/ui/cta';
 import { CommandMenu } from '@/ui/utility';
 import { ANIMATION_DURATION, ANIMATION_EASING } from './constants';

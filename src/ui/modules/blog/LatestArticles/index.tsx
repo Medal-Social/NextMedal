@@ -1,8 +1,8 @@
 import { groq, stegaClean } from 'next-sanity';
 import { Suspense } from 'react';
 import { Section } from '@/components/ui/section';
-import moduleProps from '@/lib/moduleProps';
-import { cn } from '@/lib/utils';
+import moduleProps from '@/lib/sanity/module-props';
+import { cn } from '@/lib/utils/index';
 import { fetchSanityLive } from '@/sanity/lib/live';
 import { AUTHOR_PREVIEW_QUERY, CATEGORY_PREVIEW_QUERY, IMAGE_QUERY } from '@/sanity/lib/queries';
 import FilterList from '@/ui/modules/blog/LatestArticles/FilterList';
@@ -19,13 +19,13 @@ export default async function LatestArticles({
   filteredCategory,
   posts: postsProp,
   ...props
-}: Sanity.LatestArticles & { posts?: Sanity.BlogPost[] }) {
+}: Sanity.LatestArticles & { posts?: Sanity.CollectionBlogPost[] }) {
   const posts =
     postsProp ||
-    (await fetchSanityLive<Sanity.BlogPost[]>({
+    (await fetchSanityLive<Sanity.CollectionBlogPost[]>({
       query: groq`
 			*[
-				_type == 'blog.post'
+				_type == 'collection.blog'
 				${filteredCategory ? '&& $filteredCategory in categories[]->._id' : ''}
 			]|order(
 				${showFeaturedPostsFirst ? 'featured desc, ' : ''}
@@ -43,6 +43,11 @@ export default async function LatestArticles({
 					"slug": { "current": slug.current },
 					image { ${IMAGE_QUERY} }
 				},
+				seo {
+					description,
+					image { ${IMAGE_QUERY} }
+				},
+				collection->{ metadata { slug } },
 				categories[]->${CATEGORY_PREVIEW_QUERY},
 				authors[]->${AUTHOR_PREVIEW_QUERY}
 			}

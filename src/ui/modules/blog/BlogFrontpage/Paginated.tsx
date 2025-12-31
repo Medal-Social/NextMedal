@@ -1,7 +1,15 @@
 'use client';
 
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { usePagination } from '@/lib/usePagination';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
+import { getPageNumbers, usePagination } from '@/lib/hooks/use-pagination';
 import { filterPosts } from '../LatestArticles/List';
 import { useBlogFilters } from '../store';
 import BlogGrid from './BlogGrid';
@@ -10,22 +18,33 @@ export default function Paginated({
   posts,
   itemsPerPage = 6,
 }: {
-  posts: Sanity.BlogPost[];
+  posts: Sanity.CollectionBlogPost[];
   itemsPerPage?: number;
 }) {
-  const { paginatedItems, currentPage, totalPages, onPrev, onNext, atStart, atEnd } = usePagination(
-    {
-      items: filterPosts(posts),
-      itemsPerPage,
-    }
-  );
+  const { search, category, author } = useBlogFilters();
 
-  const { search, category } = useBlogFilters();
+  // Filter all posts - grid always shows all matching posts
+  const filteredPosts = filterPosts(posts, { category, author, search });
+
+  const { paginatedItems, currentPage, totalPages, setPage, atStart, atEnd } = usePagination({
+    items: filteredPosts,
+    itemsPerPage,
+  });
 
   function scrollToList() {
     if (typeof window !== 'undefined')
       document.querySelector('#blog-list')?.scrollIntoView({ behavior: 'smooth' });
   }
+
+  function handlePageClick(page: number) {
+    return (event: React.MouseEvent) => {
+      event.preventDefault();
+      setPage(page);
+      scrollToList();
+    };
+  }
+
+  const pageNumbers = getPageNumbers(currentPage, totalPages);
 
   return (
     <div id="blog-list" className="space-y-12">
@@ -40,42 +59,46 @@ export default function Paginated({
       )}
 
       {totalPages > 1 && (
-        <div className="mt-12 flex items-center justify-center border-t border-slate-200 pt-8 dark:border-slate-800">
-          <nav
-            className="isolate inline-flex -space-x-px rounded-md shadow-sm"
-            aria-label="Pagination"
-          >
-            <button
-              type="button"
-              aria-label="Go to previous page"
-              onClick={() => {
-                onPrev();
-                scrollToList();
-              }}
-              disabled={atStart}
-              className="relative inline-flex items-center rounded-l-md px-3 py-2 text-slate-400 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:hover:bg-transparent dark:ring-slate-700 dark:hover:bg-slate-800 dark:text-slate-500"
-            >
-              <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-            </button>
+        <div className="mt-12 border-t border-slate-200 pt-8 dark:border-slate-800">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href={`?page=${currentPage - 1}`}
+                  onClick={handlePageClick(currentPage - 1)}
+                  aria-disabled={atStart}
+                  className={atStart ? 'pointer-events-none opacity-50' : undefined}
+                />
+              </PaginationItem>
 
-            {/* Simple page info for now, can be expanded to full pagination logic */}
-            <span className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-slate-900 ring-1 ring-inset ring-slate-300 focus:outline-offset-0 dark:text-slate-200 dark:ring-slate-700">
-              Page {currentPage} of {totalPages}
-            </span>
+              {pageNumbers.map((page, index) =>
+                page === 'ellipsis' ? (
+                  <PaginationItem key={`ellipsis-${index}`}>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                ) : (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      href={`?page=${page}`}
+                      onClick={handlePageClick(page)}
+                      isActive={page === currentPage}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                )
+              )}
 
-            <button
-              type="button"
-              aria-label="Go to next page"
-              onClick={() => {
-                onNext();
-                scrollToList();
-              }}
-              disabled={atEnd}
-              className="relative inline-flex items-center rounded-r-md px-3 py-2 text-slate-400 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:hover:bg-transparent dark:ring-slate-700 dark:hover:bg-slate-800 dark:text-slate-500"
-            >
-              <ChevronRight className="h-4 w-4" aria-hidden="true" />
-            </button>
-          </nav>
+              <PaginationItem>
+                <PaginationNext
+                  href={`?page=${currentPage + 1}`}
+                  onClick={handlePageClick(currentPage + 1)}
+                  aria-disabled={atEnd}
+                  className={atEnd ? 'pointer-events-none opacity-50' : undefined}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       )}
     </div>

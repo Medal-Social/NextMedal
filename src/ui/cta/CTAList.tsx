@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/index';
 import CTA from './CTA';
 
 type CTAItem = Sanity.CTA | { _key?: string; link?: Sanity.MenuItem; style?: Sanity.CTA['style'] };
@@ -9,7 +9,7 @@ export default function CTAList({
   size,
 }: {
   ctas?: CTAItem[];
-  size?: 'default' | 'sm' | 'lg' | 'icon' | 'xl';
+  size?: 'default' | 'xs' | 'sm' | 'lg' | 'icon' | 'icon-xs' | 'icon-sm' | 'icon-lg';
 } & React.ComponentProps<'div'>) {
   if (!ctas?.length) return null;
 

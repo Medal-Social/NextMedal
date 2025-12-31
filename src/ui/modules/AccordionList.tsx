@@ -5,8 +5,8 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Section } from '@/components/ui/section';
-import moduleProps from '@/lib/moduleProps';
-import { cn } from '@/lib/utils';
+import moduleProps from '@/lib/sanity/module-props';
+import { cn } from '@/lib/utils/index';
 import SharedPortableText from '@/ui/modules/SharedPortableText';
 
 export default function AccordionList({

@@ -4,8 +4,8 @@ import { Check, Copy } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { logger } from '@/lib/logger';
-import { cn } from '@/lib/utils';
+import { logger } from '@/lib/core/logger';
+import { cn } from '@/lib/utils/index';
 
 export default function CopyButton({ code, className }: { code: string; className?: string }) {
   const [copied, setCopied] = useState(false);

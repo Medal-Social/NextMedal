@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/index';
 import { Video } from '@/ui/base';
 import Callout from '@/ui/modules/Callout';
 import LeadMagnet from '@/ui/modules/LeadMagnet';

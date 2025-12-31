@@ -3,8 +3,8 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Section } from '@/components/ui/section';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import moduleProps from '@/lib/moduleProps';
-import { cn } from '@/lib/utils';
+import moduleProps from '@/lib/sanity/module-props';
+import { cn } from '@/lib/utils/index';
 
 // Define types based on schema
 export default function PricingComparison({

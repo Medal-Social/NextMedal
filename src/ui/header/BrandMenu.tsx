@@ -11,7 +11,7 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
-import { logger } from '@/lib/logger';
+import { logger } from '@/lib/core/logger';
 import { urlFor } from '@/sanity/lib/image';
 
 interface BrandMenuProps {

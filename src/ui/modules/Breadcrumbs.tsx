@@ -9,8 +9,8 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Section } from '@/components/ui/section';
-import moduleProps from '@/lib/moduleProps';
-import resolveUrl from '@/lib/resolveUrl';
+import moduleProps from '@/lib/sanity/module-props';
+import resolveUrl from '@/lib/sanity/resolve-url';
 
 export default async function Breadcrumbs({
   crumbs,

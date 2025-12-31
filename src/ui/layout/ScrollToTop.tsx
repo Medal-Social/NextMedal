@@ -9,7 +9,7 @@ import {
   useTransform,
 } from 'motion/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/index';
 
 // Constants
 const SCROLL_THRESHOLD = 400;

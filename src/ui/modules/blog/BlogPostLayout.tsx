@@ -1,5 +1,5 @@
 import { Calendar } from 'lucide-react';
-import { createDataAttribute, stegaClean } from 'next-sanity';
+import { stegaClean } from 'next-sanity';
 import { Fragment } from 'react';
 import {
   Breadcrumb,
@@ -9,7 +9,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import type { Placements } from '@/lib/placement';
+import type { Placements } from '@/lib/sanity/placement';
+import { createStegaAttribute } from '@/sanity/lib/client';
 import { Date as DateDisplay, Img } from '@/ui/base';
 import Authors from '@/ui/modules/blog/Authors';
 import MobileSidebar from '@/ui/modules/blog/MobileSidebar';
@@ -19,7 +20,7 @@ import SocialShare from '@/ui/modules/blog/SocialShare';
 import Content from '@/ui/modules/RichtextModule/Content';
 import Modules from '../Modules';
 
-type BlogPost = Sanity.BlogPost & { headings?: Array<{ style: string; text: string }> };
+type BlogPost = Sanity.CollectionBlogPost & { headings?: Array<{ style: string; text: string }> };
 
 // Build breadcrumbs from post data
 function buildBreadcrumbs(post: BlogPost) {
@@ -125,7 +126,7 @@ function PostHeader({
   stega,
 }: {
   post: BlogPost;
-  stega: ReturnType<typeof createDataAttribute>;
+  stega: ReturnType<typeof createStegaAttribute>;
 }) {
   const crumbs = buildBreadcrumbs(post);
 
@@ -157,7 +158,7 @@ function PostMeta({
   stega,
 }: {
   post: BlogPost;
-  stega: ReturnType<typeof createDataAttribute>;
+  stega: ReturnType<typeof createStegaAttribute>;
 }) {
   return (
     <div className="flex flex-wrap items-center gap-y-4 gap-x-6 text-muted-foreground text-sm">
@@ -185,7 +186,7 @@ function HeroImage({
   stega,
 }: {
   post: BlogPost;
-  stega: ReturnType<typeof createDataAttribute>;
+  stega: ReturnType<typeof createStegaAttribute>;
 }) {
   if (!post.seo?.image && !post.metadata?.title) return null;
 
@@ -241,7 +242,7 @@ export default function BlogPostLayout({
   post: BlogPost;
   placements?: Placements;
 }) {
-  const stega = createDataAttribute({
+  const stega = createStegaAttribute({
     id: post._id,
     type: post._type,
   });
