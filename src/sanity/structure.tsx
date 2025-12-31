@@ -21,39 +21,214 @@ export const structure = structureTool({
         S.documentTypeListItem('page').title('Pages').icon(DocumentsIcon),
         S.divider(),
 
-        // Content Health - Grouped filtered views
+        // Content Health - Grouped filtered views by document type
         group(S, 'Content Health', [
+          // SEO Issues - by document type
           S.listItem()
             .id('seo-issues')
             .title('SEO Issues')
             .icon(SearchIcon)
             .child(
-              S.documentList()
-                .title('Pages Missing SEO Metadata')
-                .filter(
-                  '_type == "page" && !(_id match "drafts.*") && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))'
-                )
-                .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+              S.list()
+                .title('SEO Issues')
+                .items([
+                  S.listItem()
+                    .title('Pages')
+                    .icon(DocumentsIcon)
+                    .child(
+                      S.documentList()
+                        .title('Pages Missing SEO Metadata')
+                        .filter(
+                          '_type == "page" && !(_id match "drafts.*") && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))'
+                        )
+                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+                    ),
+                  S.listItem()
+                    .title('Blog Posts')
+                    .icon(EditIcon)
+                    .child(
+                      S.documentList()
+                        .title('Blog Posts Missing SEO Metadata')
+                        .filter(
+                          '_type == "collection.blog" && !(_id match "drafts.*") && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))'
+                        )
+                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+                    ),
+                  S.listItem()
+                    .title('Documentation')
+                    .icon(BookIcon)
+                    .child(
+                      S.documentList()
+                        .title('Documentation Missing SEO Metadata')
+                        .filter(
+                          '_type == "collection.documentation" && !(_id match "drafts.*") && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))'
+                        )
+                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+                    ),
+                  S.listItem()
+                    .title('Events')
+                    .icon(CalendarIcon)
+                    .child(
+                      S.documentList()
+                        .title('Events Missing SEO Metadata')
+                        .filter(
+                          '_type == "collection.events" && !(_id match "drafts.*") && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))'
+                        )
+                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+                    ),
+                  S.listItem()
+                    .title('Changelog')
+                    .icon(DocumentTextIcon)
+                    .child(
+                      S.documentList()
+                        .title('Changelog Missing SEO Metadata')
+                        .filter(
+                          '_type == "collection.changelog" && !(_id match "drafts.*") && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))'
+                        )
+                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+                    ),
+                  S.listItem()
+                    .title('Newsletter')
+                    .icon(EnvelopeIcon)
+                    .child(
+                      S.documentList()
+                        .title('Newsletter Missing SEO Metadata')
+                        .filter(
+                          '_type == "collection.newsletter" && !(_id match "drafts.*") && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))'
+                        )
+                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+                    ),
+                ])
             ),
+          // Drafts Pending - by document type
           S.listItem()
             .id('drafts-pending')
             .title('Drafts Pending')
             .icon(EditIcon)
             .child(
-              S.documentList()
-                .title('All Drafts')
-                .filter('_id match "drafts.*"')
-                .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+              S.list()
+                .title('Drafts Pending')
+                .items([
+                  S.listItem()
+                    .title('Pages')
+                    .icon(DocumentsIcon)
+                    .child(
+                      S.documentList()
+                        .title('Draft Pages')
+                        .filter('_type == "page" && _id match "drafts.*"')
+                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+                    ),
+                  S.listItem()
+                    .title('Blog Posts')
+                    .icon(EditIcon)
+                    .child(
+                      S.documentList()
+                        .title('Draft Blog Posts')
+                        .filter('_type == "collection.blog" && _id match "drafts.*"')
+                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+                    ),
+                  S.listItem()
+                    .title('Documentation')
+                    .icon(BookIcon)
+                    .child(
+                      S.documentList()
+                        .title('Draft Documentation')
+                        .filter('_type == "collection.documentation" && _id match "drafts.*"')
+                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+                    ),
+                  S.listItem()
+                    .title('Events')
+                    .icon(CalendarIcon)
+                    .child(
+                      S.documentList()
+                        .title('Draft Events')
+                        .filter('_type == "collection.events" && _id match "drafts.*"')
+                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+                    ),
+                  S.listItem()
+                    .title('Changelog')
+                    .icon(DocumentTextIcon)
+                    .child(
+                      S.documentList()
+                        .title('Draft Changelog')
+                        .filter('_type == "collection.changelog" && _id match "drafts.*"')
+                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+                    ),
+                  S.listItem()
+                    .title('Newsletter')
+                    .icon(EnvelopeIcon)
+                    .child(
+                      S.documentList()
+                        .title('Draft Newsletter')
+                        .filter('_type == "collection.newsletter" && _id match "drafts.*"')
+                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+                    ),
+                ])
             ),
+          // Published Documents - by document type
           S.listItem()
-            .id('published-pages')
-            .title('Published Pages')
+            .id('published-documents')
+            .title('Published Documents')
             .icon(CheckmarkCircleIcon)
             .child(
-              S.documentList()
-                .title('All Published Pages')
-                .filter('_type == "page" && !(_id match "drafts.*")')
-                .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+              S.list()
+                .title('Published Documents')
+                .items([
+                  S.listItem()
+                    .title('Pages')
+                    .icon(DocumentsIcon)
+                    .child(
+                      S.documentList()
+                        .title('Published Pages')
+                        .filter('_type == "page" && !(_id match "drafts.*")')
+                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+                    ),
+                  S.listItem()
+                    .title('Blog Posts')
+                    .icon(EditIcon)
+                    .child(
+                      S.documentList()
+                        .title('Published Blog Posts')
+                        .filter('_type == "collection.blog" && !(_id match "drafts.*")')
+                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+                    ),
+                  S.listItem()
+                    .title('Documentation')
+                    .icon(BookIcon)
+                    .child(
+                      S.documentList()
+                        .title('Published Documentation')
+                        .filter('_type == "collection.documentation" && !(_id match "drafts.*")')
+                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+                    ),
+                  S.listItem()
+                    .title('Events')
+                    .icon(CalendarIcon)
+                    .child(
+                      S.documentList()
+                        .title('Published Events')
+                        .filter('_type == "collection.events" && !(_id match "drafts.*")')
+                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+                    ),
+                  S.listItem()
+                    .title('Changelog')
+                    .icon(DocumentTextIcon)
+                    .child(
+                      S.documentList()
+                        .title('Published Changelog')
+                        .filter('_type == "collection.changelog" && !(_id match "drafts.*")')
+                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+                    ),
+                  S.listItem()
+                    .title('Newsletter')
+                    .icon(EnvelopeIcon)
+                    .child(
+                      S.documentList()
+                        .title('Published Newsletter')
+                        .filter('_type == "collection.newsletter" && !(_id match "drafts.*")')
+                        .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+                    ),
+                ])
             ),
         ]).icon(SearchIcon),
         S.divider(),
