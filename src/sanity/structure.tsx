@@ -72,23 +72,34 @@ export const structure = structureTool({
                   createDocTypeListItems(
                     S,
                     (type) =>
-                      `_type == "${type}" && !(_id match "drafts.*") && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))`,
+                      `_type == "${type}" && !(_id in path("drafts.**")) && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))`,
                     'Missing SEO Metadata'
                   )
                 )
             ),
+          // All Drafts - every document type
+          S.listItem()
+            .id('all-drafts')
+            .title('All Drafts')
+            .icon(EditIcon)
+            .child(
+              S.documentList()
+                .title('All Draft Documents')
+                .filter('_id in path("drafts.**")')
+                .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+            ),
           // Drafts Pending - by document type
           S.listItem()
             .id('drafts-pending')
-            .title('Drafts Pending')
+            .title('Drafts by Type')
             .icon(EditIcon)
             .child(
               S.list()
-                .title('Drafts Pending')
+                .title('Drafts by Type')
                 .items(
                   createDocTypeListItems(
                     S,
-                    (type) => `_type == "${type}" && _id match "drafts.*"`,
+                    (type) => `_type == "${type}" && _id in path("drafts.**")`,
                     'Drafts'
                   )
                 )
@@ -104,7 +115,7 @@ export const structure = structureTool({
                 .items(
                   createDocTypeListItems(
                     S,
-                    (type) => `_type == "${type}" && !(_id match "drafts.*")`,
+                    (type) => `_type == "${type}" && !(_id in path("drafts.**"))`,
                     'Published'
                   )
                 )
