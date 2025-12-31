@@ -26,6 +26,19 @@ vi.mock('@/lib/validateExternalUrl', () => ({
 
 import CTA from '@/components/blocks/objects/cta/CTA';
 
+// Helper to create a minimal internal page for testing
+function createTestPage(slug: string) {
+  return {
+    _type: 'page',
+    metadata: {
+      slug: { current: slug },
+      title: 'Test Page',
+      description: 'Test description',
+      noIndex: false,
+    },
+  } as unknown as Sanity.MenuItem['internal'];
+}
+
 describe('CTA', () => {
   it('renders null when no link is provided', () => {
     const { container } = render(<CTA />);
@@ -39,10 +52,7 @@ describe('CTA', () => {
           _type: 'menuItem',
           label: 'Click Me',
           type: 'internal',
-          internal: {
-            _type: 'page',
-            metadata: { slug: { current: 'about' } },
-          },
+          internal: createTestPage('about'),
         }}
       />
     );
@@ -90,10 +100,7 @@ describe('CTA', () => {
           _type: 'menuItem',
           label: 'Label',
           type: 'internal',
-          internal: {
-            _type: 'page',
-            metadata: { slug: { current: 'test' } },
-          },
+          internal: createTestPage('test'),
         }}
       >
         Custom Content
@@ -109,10 +116,7 @@ describe('CTA', () => {
           _type: 'menuItem',
           label: 'Button',
           type: 'internal',
-          internal: {
-            _type: 'page',
-            metadata: { slug: { current: 'test' } },
-          },
+          internal: createTestPage('test'),
         }}
         className="custom-class"
       />
@@ -137,16 +141,7 @@ describe('CTA', () => {
   });
 
   it('uses flat props to build link', () => {
-    render(
-      <CTA
-        text="Flat Link"
-        linkType="internal"
-        internalLink={{
-          _type: 'page',
-          metadata: { slug: { current: 'flat-page' } },
-        }}
-      />
-    );
+    render(<CTA text="Flat Link" linkType="internal" internalLink={createTestPage('flat-page')} />);
     const link = screen.getByRole('link', { name: 'Flat Link' });
     expect(link).toBeInTheDocument();
   });
@@ -156,22 +151,19 @@ describe('CTA', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('applies outline variant style', () => {
+  it('applies ghost variant style', () => {
     render(
       <CTA
         link={{
           _type: 'menuItem',
-          label: 'Outline Button',
+          label: 'Ghost Button',
           type: 'internal',
-          internal: {
-            _type: 'page',
-            metadata: { slug: { current: 'test' } },
-          },
+          internal: createTestPage('test'),
         }}
-        style="outline"
+        style="ghost"
       />
     );
-    // The button should have outline variant classes
+    // The button should have ghost variant classes
     const link = screen.getByRole('link');
     expect(link).toBeInTheDocument();
   });
@@ -207,11 +199,9 @@ describe('CTA', () => {
       <CTA
         link={{
           _type: 'menuItem',
+          label: '',
           type: 'internal',
-          internal: {
-            _type: 'page',
-            metadata: { slug: { current: 'test' } },
-          },
+          internal: createTestPage('test'),
         }}
       />
     );
@@ -227,10 +217,7 @@ describe('CTA internal link behavior', () => {
           _type: 'menuItem',
           label: 'New Tab',
           type: 'internal',
-          internal: {
-            _type: 'page',
-            metadata: { slug: { current: 'test' } },
-          },
+          internal: createTestPage('test'),
           newTab: true,
         }}
       />
@@ -246,10 +233,7 @@ describe('CTA internal link behavior', () => {
           _type: 'menuItem',
           label: 'Same Tab',
           type: 'internal',
-          internal: {
-            _type: 'page',
-            metadata: { slug: { current: 'test' } },
-          },
+          internal: createTestPage('test'),
         }}
       />
     );

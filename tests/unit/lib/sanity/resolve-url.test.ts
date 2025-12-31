@@ -12,6 +12,66 @@ vi.mock('@/lib/core/env', () => ({
 
 import resolveUrl, { isRelativeUrl, resolveAnyUrl } from '@/lib/sanity/resolve-url';
 
+// Type for test page fixtures
+interface TestPage {
+  _type: string;
+  _id: string;
+  _rev: string;
+  _createdAt: string;
+  _updatedAt: string;
+  language?: string;
+  metadata: {
+    slug: { current: string };
+    title: string;
+    description: string;
+    noIndex: boolean;
+  };
+  collection?: {
+    metadata: { slug: { current: string } };
+  };
+}
+
+// Helper to create test page fixtures with minimal required fields
+function createPage(slug: string, type = 'page', language?: string): TestPage {
+  return {
+    _type: type,
+    _id: 'test-id',
+    _rev: 'test-rev',
+    _createdAt: '2024-01-01T00:00:00Z',
+    _updatedAt: '2024-01-01T00:00:00Z',
+    language,
+    metadata: {
+      slug: { current: slug },
+      title: 'Test',
+      description: 'Test',
+      noIndex: false,
+    },
+  };
+}
+
+function createPageWithCollection(
+  slug: string,
+  collectionSlug: string,
+  type = 'collection.blog'
+): TestPage {
+  return {
+    _type: type,
+    _id: 'test-id',
+    _rev: 'test-rev',
+    _createdAt: '2024-01-01T00:00:00Z',
+    _updatedAt: '2024-01-01T00:00:00Z',
+    metadata: {
+      slug: { current: slug },
+      title: 'Test',
+      description: 'Test',
+      noIndex: false,
+    },
+    collection: {
+      metadata: { slug: { current: collectionSlug } },
+    },
+  };
+}
+
 describe('isRelativeUrl', () => {
   it('returns false for empty string', () => {
     expect(isRelativeUrl('')).toBe(false);
@@ -72,136 +132,80 @@ describe('resolveUrl', () => {
   });
 
   it('returns / for null page', () => {
-    expect(resolveUrl(null as any)).toBe('/');
+    expect(resolveUrl(null as unknown as TestPage)).toBe('/');
   });
 
   it('resolves basic page with slug', () => {
-    const page = {
-      _type: 'page',
-      metadata: { slug: { current: 'about' } },
-    };
+    const page = createPage('about');
     expect(resolveUrl(page)).toBe('https://example.com/about');
   });
 
   it('resolves index page to base URL with trailing slash', () => {
-    const page = {
-      _type: 'page',
-      metadata: { slug: { current: 'index' } },
-    };
+    const page = createPage('index');
     expect(resolveUrl(page)).toBe('https://example.com/');
   });
 
   it('returns relative path when base=false', () => {
-    const page = {
-      _type: 'page',
-      metadata: { slug: { current: 'contact' } },
-    };
+    const page = createPage('contact');
     expect(resolveUrl(page, { base: false })).toBe('/contact');
   });
 
   it('adds language prefix for non-English pages', () => {
-    const page = {
-      _type: 'page',
-      language: 'nb',
-      metadata: { slug: { current: 'about' } },
-    };
+    const page = createPage('about', 'page', 'nb');
     expect(resolveUrl(page, { base: false })).toBe('/nb/about');
   });
 
   it('does not add language prefix for English pages', () => {
-    const page = {
-      _type: 'page',
-      language: 'en',
-      metadata: { slug: { current: 'about' } },
-    };
+    const page = createPage('about', 'page', 'en');
     expect(resolveUrl(page, { base: false })).toBe('/about');
   });
 
   it('resolves blog collection with collection slug', () => {
-    const page = {
-      _type: 'collection.blog',
-      metadata: { slug: { current: 'my-post' } },
-      collection: {
-        metadata: { slug: { current: 'blog' } },
-      },
-    };
+    const page = createPageWithCollection('my-post', 'blog', 'collection.blog');
     expect(resolveUrl(page, { base: false })).toBe('/blog/my-post');
   });
 
   it('resolves changelog collection with collection slug', () => {
-    const page = {
-      _type: 'collection.changelog',
-      metadata: { slug: { current: 'v1.0' } },
-      collection: {
-        metadata: { slug: { current: 'changelog' } },
-      },
-    };
+    const page = createPageWithCollection('v1.0', 'changelog', 'collection.changelog');
     expect(resolveUrl(page, { base: false })).toBe('/changelog/v1.0');
   });
 
   it('resolves documentation collection with collection slug', () => {
-    const page = {
-      _type: 'collection.documentation',
-      metadata: { slug: { current: 'getting-started' } },
-      collection: {
-        metadata: { slug: { current: 'docs' } },
-      },
-    };
+    const page = createPageWithCollection('getting-started', 'docs', 'collection.documentation');
     expect(resolveUrl(page, { base: false })).toBe('/docs/getting-started');
   });
 
   it('resolves newsletter collection with collection slug', () => {
-    const page = {
-      _type: 'collection.newsletter',
-      metadata: { slug: { current: 'issue-1' } },
-      collection: {
-        metadata: { slug: { current: 'newsletter' } },
-      },
-    };
+    const page = createPageWithCollection('issue-1', 'newsletter', 'collection.newsletter');
     expect(resolveUrl(page, { base: false })).toBe('/newsletter/issue-1');
   });
 
   it('handles collection without collection reference', () => {
-    const page = {
-      _type: 'collection.blog',
-      metadata: { slug: { current: 'my-post' } },
-    };
+    const page = createPage('my-post', 'collection.blog');
     expect(resolveUrl(page, { base: false })).toBe('/my-post');
   });
 
   it('appends query string from params object', () => {
-    const page = {
-      _type: 'page',
-      metadata: { slug: { current: 'search' } },
-    };
+    const page = createPage('search');
     expect(resolveUrl(page, { base: false, params: { q: 'test' } })).toBe('/search?q=test');
   });
 
   it('appends multiple params', () => {
-    const page = {
-      _type: 'page',
-      metadata: { slug: { current: 'search' } },
-    };
+    const page = createPage('search');
     expect(resolveUrl(page, { base: false, params: { q: 'test', page: '1' } })).toBe(
       '/search?q=test&page=1'
     );
   });
 
   it('handles array params', () => {
-    const page = {
-      _type: 'page',
-      metadata: { slug: { current: 'filter' } },
-    };
+    const page = createPage('filter');
     expect(resolveUrl(page, { base: false, params: { tags: ['a', 'b'] } })).toBe(
       '/filter?tags=a&tags=b'
     );
   });
 
   it('filters params by allowList', () => {
-    const page = {
-      _type: 'page',
-      metadata: { slug: { current: 'search' } },
-    };
+    const page = createPage('search');
     expect(
       resolveUrl(page, {
         base: false,
@@ -212,18 +216,12 @@ describe('resolveUrl', () => {
   });
 
   it('handles string params', () => {
-    const page = {
-      _type: 'page',
-      metadata: { slug: { current: 'page' } },
-    };
+    const page = createPage('page');
     expect(resolveUrl(page, { base: false, params: '?custom=value' })).toBe('/page?custom=value');
   });
 
   it('skips undefined and null params', () => {
-    const page = {
-      _type: 'page',
-      metadata: { slug: { current: 'page' } },
-    };
+    const page = createPage('page');
     expect(resolveUrl(page, { base: false, params: { valid: 'yes', empty: undefined } })).toBe(
       '/page?valid=yes'
     );
