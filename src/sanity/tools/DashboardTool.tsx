@@ -19,6 +19,7 @@ import { type KeyboardEvent, memo, useCallback, useEffect, useMemo, useState } f
 import { type Tool, useCurrentUser, useProjectId } from 'sanity';
 import { useRouter } from 'sanity/router';
 import { IconGithub, IconLinkedinIn, IconTwitterX } from '@/components/icons/social-icons';
+import dashboardImage from '@/sanity/assets/dashboard.png';
 import { STUDIO_TIPS } from './studio-tips';
 
 // ============================================================================
@@ -347,6 +348,46 @@ const StudioTip = memo(function StudioTip() {
   );
 });
 
+const ModuleReference = memo(function ModuleReference() {
+  return (
+    <Stack space={4}>
+      <Label size={1} muted>
+        Module Reference
+      </Label>
+      <Card padding={4} radius={3} border>
+        <Stack space={3}>
+          <Flex align="center" justify="space-between">
+            <Text size={2} weight="semibold">
+              Available Modules
+            </Text>
+            <Text size={1} muted>
+              Quick visual guide
+            </Text>
+          </Flex>
+          <Box
+            style={{
+              position: 'relative',
+              width: '100%',
+              borderRadius: '8px',
+              overflow: 'hidden',
+            }}
+          >
+            <img
+              src={dashboardImage.src}
+              alt="Module reference showing all available modules organized by category"
+              style={{
+                width: '100%',
+                height: 'auto',
+                display: 'block',
+              }}
+            />
+          </Box>
+        </Stack>
+      </Card>
+    </Stack>
+  );
+});
+
 const TeamAndLearning = memo(function TeamAndLearning() {
   const projectId = useProjectId();
   const manageUrl = useMemo(
@@ -499,6 +540,7 @@ const DashboardComponent = memo(function DashboardComponent() {
             <WelcomeSection />
             <PrimaryActions />
             <SecondaryActions />
+            <ModuleReference />
             <TeamAndLearning />
           </Stack>
         </Container>
