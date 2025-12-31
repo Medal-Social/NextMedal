@@ -98,9 +98,29 @@ export default defineType({
       name: 'params',
       title: 'Jump to Section',
       description:
-        'Enter an anchor ID (e.g., #contact) to jump to a specific section. You can find these IDs in the "Advanced Options" of any page module.',
-      placeholder: '#my-section',
+        'Enter an anchor ID to jump to a specific section (e.g., contact or #contact). You can find these IDs in the "Advanced Options" of any page module.',
+      placeholder: 'my-section',
       type: 'string',
+      validation: (Rule) =>
+        Rule.custom((value) => {
+          // Allow empty/undefined (field is optional)
+          if (!value) return true;
+
+          // Extract the anchor content (remove # if present)
+          const anchorContent = value.startsWith('#') ? value.slice(1) : value;
+
+          // Must have content
+          if (anchorContent.length === 0) {
+            return 'Anchor ID cannot be empty (e.g., contact or #contact)';
+          }
+
+          // Must be valid HTML ID format (alphanumeric, hyphens, underscores)
+          if (!/^[a-zA-Z0-9_-]+$/.test(anchorContent)) {
+            return 'Anchor ID must only contain letters, numbers, hyphens, and underscores';
+          }
+
+          return true;
+        }),
       hidden: ({ parent }) => parent?.type !== 'internal',
       fieldset: 'destination',
     }),
