@@ -21,39 +21,41 @@ export const structure = structureTool({
         S.documentTypeListItem('page').title('Pages').icon(DocumentsIcon),
         S.divider(),
 
-        // Content Health - Direct filtered views for dashboard navigation
-        S.listItem()
-          .id('seo-issues')
-          .title('SEO Issues')
-          .icon(SearchIcon)
-          .child(
-            S.documentList()
-              .title('Pages Missing SEO Metadata')
-              .filter(
-                '_type == "page" && !(_id in path("drafts.**")) && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))'
-              )
-              .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-          ),
-        S.listItem()
-          .id('drafts-pending')
-          .title('Drafts Pending')
-          .icon(EditIcon)
-          .child(
-            S.documentList()
-              .title('All Drafts')
-              .filter('_id in path("drafts.**")')
-              .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-          ),
-        S.listItem()
-          .id('published-pages')
-          .title('Published Pages')
-          .icon(CheckmarkCircleIcon)
-          .child(
-            S.documentList()
-              .title('All Published Pages')
-              .filter('_type == "page" && !(_id in path("drafts.**"))')
-              .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
-          ),
+        // Content Health - Grouped filtered views
+        group(S, 'Content Health', [
+          S.listItem()
+            .id('seo-issues')
+            .title('SEO Issues')
+            .icon(SearchIcon)
+            .child(
+              S.documentList()
+                .title('Pages Missing SEO Metadata')
+                .filter(
+                  '_type == "page" && !(_id in path("drafts.**")) && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))'
+                )
+                .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+            ),
+          S.listItem()
+            .id('drafts-pending')
+            .title('Drafts Pending')
+            .icon(EditIcon)
+            .child(
+              S.documentList()
+                .title('All Drafts')
+                .filter('_id in path("drafts.**")')
+                .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+            ),
+          S.listItem()
+            .id('published-pages')
+            .title('Published Pages')
+            .icon(CheckmarkCircleIcon)
+            .child(
+              S.documentList()
+                .title('All Published Pages')
+                .filter('_type == "page" && !(_id in path("drafts.**"))')
+                .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
+            ),
+        ]).icon(SearchIcon),
         S.divider(),
 
         group(S, 'Collections', [
