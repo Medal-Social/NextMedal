@@ -29,7 +29,9 @@ export default function BannerClient({ banner }: { banner: Sanity.Banner & Sanit
     updateHeight();
 
     // Re-measure on resize
-    const resizeObserver = new ResizeObserver(updateHeight);
+    const resizeObserver = new ResizeObserver(() => {
+      updateHeight();
+    });
     if (containerRef.current) {
       resizeObserver.observe(containerRef.current);
     }
