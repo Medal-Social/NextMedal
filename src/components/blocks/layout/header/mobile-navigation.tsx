@@ -134,7 +134,7 @@ export default function MobileNavigation({ menu, ctas, enableSearch }: MobileNav
       animate="open"
       exit="closed"
       variants={containerVariants}
-      className="fixed inset-0 z-[40] flex h-[100dvh] w-full flex-col overflow-hidden bg-background text-foreground lg:hidden pt-[var(--header-height)]"
+      className="absolute top-full left-0 z-40 flex h-[calc(100dvh-var(--header-height))] w-full flex-col overflow-hidden bg-background text-foreground lg:hidden"
       role="dialog"
       aria-modal="true"
       aria-label="Mobile navigation menu"

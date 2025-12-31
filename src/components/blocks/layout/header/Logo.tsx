@@ -16,14 +16,14 @@ export default function Logo({ title, logo, brandPage }: LogoProps) {
     <BrandMenu logoData={logo} hasBrandPage={!!brandPage}>
       <Link
         className={cn(
-          'h4 lg:h3 flex items-center gap-2 cursor-pointer',
+          'flex items-center gap-2 cursor-pointer text-lg lg:text-xl font-semibold leading-none',
           logo?.image && 'max-w-3xs'
         )}
         href="/"
         aria-label={`Return to ${title} homepage`}
       >
-        {hasLogoImages ? (
-          <picture>
+        {hasLogoImages && (
+          <picture className="flex items-center">
             {/* Dark mode source - uses prefers-color-scheme media query */}
             {logoImageDark && !isSameImage && (
               <Source image={logoImageDark} media="(prefers-color-scheme: dark)" />
@@ -31,21 +31,20 @@ export default function Logo({ title, logo, brandPage }: LogoProps) {
             {/* Light mode / default image */}
             {logoImageLight ? (
               <Img
-                className="max-h-[1.2em] w-auto filter brightness-150 drop-shadow-md"
+                className="h-8 lg:h-9 w-auto transition-transform duration-200 group-hover:scale-105"
                 image={logoImageLight}
                 alt={`${logo?.name || title} logo`}
               />
             ) : logoImageDark ? (
               <Img
-                className="max-h-[1.2em] w-auto filter brightness-150 drop-shadow-md"
+                className="h-8 lg:h-9 w-auto transition-transform duration-200 group-hover:scale-105"
                 image={logoImageDark}
                 alt={`${logo?.name || title} logo`}
               />
             ) : null}
           </picture>
-        ) : (
-          <span>{title}</span>
         )}
+        <span className={cn('leading-none', hasLogoImages && 'hidden sm:block')}>{title}</span>
       </Link>
     </BrandMenu>
   );
