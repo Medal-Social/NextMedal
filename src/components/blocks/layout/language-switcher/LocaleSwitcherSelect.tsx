@@ -1,31 +1,26 @@
 'use client';
 
-import { ChevronDown } from 'lucide-react';
+import { Languages } from 'lucide-react';
 import { useRouter as useNextRouter } from 'next/navigation';
-import { type ReactNode, useTransition } from 'react';
+import { type ReactNode, useEffect, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Spinner } from '@/components/ui/spinner';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { routing } from '@/i18n/routing';
 import { cn } from '@/lib/utils/index';
-import { LocaleBadge } from './locale-badges';
 
 type Props = {
   children: ReactNode;
   defaultValue: string;
   label: string;
-  selectLanguageLabel: string;
-  languageText: string;
   translationUrls?: Record<string, string>;
   className?: string;
   translationNotAvailable?: string;
@@ -41,7 +36,6 @@ export default function LocaleSwitcherSelect({
   children,
   defaultValue,
   label,
-  selectLanguageLabel,
   translationUrls = {},
   className,
   dropdownAlign = 'end',
@@ -64,7 +58,10 @@ export default function LocaleSwitcherSelect({
     }
   }
 
+  const [isOpen, setIsOpen] = useState(false);
+
   function onSelectLocale(nextLocale: string) {
+    setIsOpen(false);
     startTransition(() => {
       // Use translated URL if available
       const translatedUrl = translationUrls[nextLocale];
@@ -87,31 +84,68 @@ export default function LocaleSwitcherSelect({
     });
   }
 
+  // Keyboard shortcut for language menu
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if user is typing in an input, textarea, or contentEditable element
+      const target = e.target as HTMLElement;
+      if (
+        target.isContentEditable ||
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT'
+      ) {
+        return;
+      }
+
+      // Check for 'l' or 'L' key press without modifiers (except Shift)
+      if (e.key.toLowerCase() === 'l' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+        setIsOpen((prev) => !prev);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <Button
-            variant="outline"
-            size="sm"
-            aria-label={label}
-            className={cn(
-              'h-9 px-2.5 gap-1.5 group',
-              'transition-all duration-200',
-              'hover:bg-accent/50 hover:border-accent',
-              isPending && 'opacity-60 pointer-events-none',
-              className
-            )}
-            disabled={isPending}
-          >
-            {isPending ? <Spinner className="size-4" /> : <LocaleBadge locale={defaultValue} />}
-            <ChevronDown className="size-3.5 opacity-60 transition-transform duration-200 group-data-[popup-open]:rotate-180" />
-          </Button>
-        }
-      />
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon-lg"
+                  aria-label={label}
+                  className={cn(
+                    'hover:bg-accent/50',
+                    isPending && 'opacity-60 pointer-events-none',
+                    className
+                  )}
+                  disabled={isPending}
+                >
+                  {isPending ? <Spinner className="size-5" /> : <Languages className="size-5" />}
+                </Button>
+              }
+            />
+          }
+        />
+        {!isOpen && (
+          <TooltipContent side="bottom" className="flex items-center gap-2">
+            <span>Change language</span>
+            <kbd className="pointer-events-none inline-flex h-4 select-none items-center gap-1 rounded border bg-muted px-1 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+              L
+            </kbd>
+          </TooltipContent>
+        )}
+      </Tooltip>
+
       <DropdownMenuContent
         className={cn(
-          'w-48 z-[200] p-1.5',
+          'w-40 z-[200] p-1.5',
           'backdrop-blur-xl bg-popover/95',
           'border-border/50',
           'shadow-xl shadow-black/10 dark:shadow-black/30',
@@ -120,31 +154,22 @@ export default function LocaleSwitcherSelect({
         align={dropdownAlign}
         sideOffset={8}
       >
-        <DropdownMenuGroup>
-          <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            {selectLanguageLabel}
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator className="mx-1.5" />
-          <DropdownMenuRadioGroup value={defaultValue} onValueChange={onSelectLocale}>
-            {options.map((option) => (
-              <DropdownMenuRadioItem
-                key={option.value}
-                value={option.value}
-                className={cn(
-                  'py-2.5 px-3 mx-1 rounded-lg cursor-pointer',
-                  'transition-colors duration-150',
-                  'hover:bg-accent/80',
-                  'data-[checked]:bg-primary/10 data-[checked]:font-medium'
-                )}
-              >
-                <span className="flex items-center gap-3">
-                  <LocaleBadge locale={option.value} />
-                  <span>{option.label}</span>
-                </span>
-              </DropdownMenuRadioItem>
-            ))}
-          </DropdownMenuRadioGroup>
-        </DropdownMenuGroup>
+        <DropdownMenuRadioGroup value={defaultValue} onValueChange={onSelectLocale}>
+          {options.map((option) => (
+            <DropdownMenuRadioItem
+              key={option.value}
+              value={option.value}
+              className={cn(
+                'py-2 px-3 mx-0.5 rounded-lg cursor-pointer text-sm',
+                'transition-colors duration-150',
+                'hover:bg-accent/80',
+                'data-[checked]:bg-primary/5 data-[checked]:text-primary data-[checked]:font-medium'
+              )}
+            >
+              {option.label}
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );
