@@ -14,11 +14,12 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { logger } from '@/lib/core/logger';
 import { cn } from '@/lib/utils/index';
 
 interface CommandMenuProps {
-  variant?: 'default' | 'mobile';
+  variant?: 'default' | 'mobile' | 'icon';
   className?: string;
 }
 
@@ -75,39 +76,55 @@ export function CommandMenu({ variant = 'default', className }: CommandMenuProps
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className={cn(
-          variant === 'default' && [
-            'inline-flex h-9 items-center justify-between rounded-md border border-solid border-input bg-transparent px-3 py-2 text-sm shadow-sm',
-            'ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring',
-            'disabled:cursor-not-allowed disabled:opacity-50 w-full md:w-[200px] lg:w-[240px] text-muted-foreground hover:bg-muted/50 transition-colors',
-          ],
-          variant === 'mobile' && [
-            'flex items-center gap-4 rounded-lg p-4 text-lg font-medium hover:bg-accent hover:text-primary text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-colors h-14',
-          ],
-          className
-        )}
-        aria-label={tA11y('openSearch')}
-      >
-        <span className="flex items-center gap-2">
-          <Search className={cn(variant === 'default' ? 'h-4 w-4' : 'h-5 w-5')} />
-          {variant === 'default' ? (
-            <>
-              <span className="hidden lg:inline">{t('placeholder')}</span>
-              <span className="inline lg:hidden">{t('placeholder').replace('...', '')}</span>
-            </>
-          ) : (
-            <span>{t('placeholder').replace('...', '')}</span>
-          )}
-        </span>
-        {variant === 'default' && (
-          <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
-            <span className="text-xs">⌘</span>K
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              className={cn(
+                variant === 'default' && [
+                  'inline-flex h-9 items-center justify-between rounded-md border border-solid border-input bg-transparent px-3 py-2 text-sm shadow-sm',
+                  'ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring',
+                  'disabled:cursor-not-allowed disabled:opacity-50 w-full md:w-[200px] lg:w-[240px] text-muted-foreground hover:bg-muted/50 transition-colors',
+                ],
+                variant === 'mobile' && [
+                  'flex items-center gap-4 rounded-lg p-4 text-lg font-medium hover:bg-accent hover:text-primary text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-colors h-14',
+                ],
+                variant === 'icon' && [
+                  'inline-flex h-10 w-10 items-center justify-center rounded-md hover:bg-accent/50 text-foreground transition-colors outline-none',
+                ],
+                className
+              )}
+              aria-label={tA11y('openSearch')}
+            >
+              <span className="flex items-center gap-2">
+                <Search
+                  className={cn(variant === 'default' || variant === 'icon' ? 'size-5' : 'h-5 w-5')}
+                />
+                {variant === 'default' && (
+                  <>
+                    <span className="hidden lg:inline">{t('placeholder')}</span>
+                    <span className="inline lg:hidden">{t('placeholder').replace('...', '')}</span>
+                  </>
+                )}
+                {variant === 'mobile' && <span>{t('placeholder').replace('...', '')}</span>}
+              </span>
+              {variant === 'default' && (
+                <kbd className="pointer-events-none hidden lg:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+                  <span className="text-xs">⌘</span>K
+                </kbd>
+              )}
+            </button>
+          }
+        />
+        <TooltipContent side="bottom" className="flex items-center gap-2">
+          <span>Search</span>
+          <kbd className="pointer-events-none inline-flex h-4 select-none items-center gap-1 rounded border bg-muted px-1 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+            ⌘K
           </kbd>
-        )}
-      </button>
+        </TooltipContent>
+      </Tooltip>
 
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder={t('commandPlaceholder')} />

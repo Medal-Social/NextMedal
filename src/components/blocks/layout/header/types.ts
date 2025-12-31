@@ -43,7 +43,12 @@ export interface HeaderClientProps extends React.ComponentProps<'header'> {
   /** Whether search is enabled */
   enableSearch?: boolean;
   /** Children to render inside the header */
-  children: ReactNode;
+  /** Children to render inside the header */
+  children?: ReactNode;
+  logoNode: ReactNode;
+  navNode: ReactNode;
+  ctaNode: ReactNode;
+  localeSwitcherNode?: ReactNode;
 }
 
 /**

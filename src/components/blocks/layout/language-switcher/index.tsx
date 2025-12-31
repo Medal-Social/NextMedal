@@ -34,8 +34,6 @@ export default async function LocaleSwitcher({ className, dropdownAlign }: Local
 
   const labels = {
     label: t('label'),
-    selectLanguage: t('selectLanguage'),
-    language: t('language'),
     locales,
     translationNotAvailable: t('translationNotAvailable', { locale: '{locale}' }),
     goToHome: t('goToHome', { locale: '{locale}' }),

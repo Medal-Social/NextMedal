@@ -19,8 +19,6 @@ export interface ServerPageData {
 
 export interface LocaleLabels {
   label: string;
-  selectLanguage: string;
-  language: string;
   locales: Record<string, string>;
   translationNotAvailable: string;
   goToHome: string;
@@ -86,8 +84,6 @@ export default function LocaleSwitcherClient({
     <LocaleSwitcherSelect
       defaultValue={locale}
       label={labels.label}
-      selectLanguageLabel={labels.selectLanguage}
-      languageText={labels.language}
       translationUrls={translationUrls}
       className={className}
       dropdownAlign={dropdownAlign}

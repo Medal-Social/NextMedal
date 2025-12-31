@@ -15,21 +15,14 @@ export default function SystemStatus({ status, className }: SystemStatusProps) {
   if (!status?.title) return null;
 
   const content = (
-    <>
-      <span className="relative flex h-2 w-2 shrink-0">
-        <span className="motion-safe:animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75" />
-        <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-500" />
-      </span>
-      <span className="text-xs font-medium uppercase tracking-wider text-foreground group-hover:text-primary transition-colors">
-        {status.title}
-      </span>
-    </>
-  );
-
-  const containerClasses = cn(
-    'group flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/30 hover:bg-muted/50 transition-colors border border-border/40',
-    'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
-    className
+    <span
+      className={cn(
+        'text-xs font-semibold tracking-wide text-foreground hover:opacity-80 transition-opacity uppercase',
+        className
+      )}
+    >
+      {status.title}
+    </span>
   );
 
   if (status.url) {
@@ -38,18 +31,13 @@ export default function SystemStatus({ status, className }: SystemStatusProps) {
         href={status.url}
         target="_blank"
         rel="noopener noreferrer"
-        className={containerClasses}
+        className="focus:outline-none"
         aria-label={`System status: ${status.title}`}
-        data-footer-status=""
       >
         {content}
       </Link>
     );
   }
 
-  return (
-    <div className={containerClasses} data-footer-status="">
-      {content}
-    </div>
-  );
+  return content;
 }

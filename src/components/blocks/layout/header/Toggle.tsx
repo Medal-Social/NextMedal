@@ -1,8 +1,11 @@
 import { motion, type SVGMotionProps } from 'motion/react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils/index';
 
 interface ToggleProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  className?: string;
 }
 
 type PathProps = SVGMotionProps<SVGPathElement>;
@@ -10,24 +13,29 @@ type PathProps = SVGMotionProps<SVGPathElement>;
 const Path = (props: PathProps) => (
   <motion.path
     fill="transparent"
-    strokeWidth="3"
+    strokeWidth="2.5"
     stroke="currentColor"
     strokeLinecap="round"
     {...props}
   />
 );
 
-export default function Toggle({ isOpen, setIsOpen }: ToggleProps) {
+export default function Toggle({ isOpen, setIsOpen, className }: ToggleProps) {
   return (
-    <button
+    <Button
       type="button"
-      className="lg:hidden p-2.5 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors z-[101]"
+      variant="ghost"
+      size="icon-lg"
+      className={cn(
+        'rounded-md hover:bg-accent/50 transition-colors z-[101]',
+        className || 'lg:hidden'
+      )}
       onClick={() => setIsOpen(!isOpen)}
       aria-expanded={isOpen}
       aria-controls="mobile-menu"
       aria-label={isOpen ? 'Close menu' : 'Open menu'}
     >
-      <svg width="23" height="23" viewBox="0 0 23 23" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 23 23" aria-hidden="true">
         <Path
           variants={{
             closed: { d: 'M 2 2.5 L 20 2.5', opacity: 1 },
@@ -55,6 +63,6 @@ export default function Toggle({ isOpen, setIsOpen }: ToggleProps) {
           animate={isOpen ? 'open' : 'closed'}
         />
       </svg>
-    </button>
+    </Button>
   );
 }

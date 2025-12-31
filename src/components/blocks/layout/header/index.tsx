@@ -1,5 +1,5 @@
+import LocaleSwitcher from '@/components/blocks/layout/language-switcher';
 import { CTAList } from '@/components/blocks/objects/cta';
-import { CommandMenu } from '@/components/blocks/utility/CommandMenu';
 import { getSite } from '@/sanity/lib/fetch';
 import HeaderClient from './Header.client';
 import Logo from './Logo';
@@ -11,6 +11,18 @@ export default async function Header() {
 
   const logoNode = <Logo title={title} logo={logo} brandPage={brandPage} />;
 
+  const navNode = (
+    <nav className="max-lg:hidden flex items-center" aria-label="Main navigation">
+      <Navigation headerMenu={headerMenu} />
+    </nav>
+  );
+
+  const ctaNode = (
+    <div className="hidden lg:flex items-center gap-4">
+      <CTAList ctas={ctas} />
+    </div>
+  );
+
   return (
     <HeaderClient
       className="@container w-full"
@@ -19,17 +31,10 @@ export default async function Header() {
       ctas={ctas ?? []}
       menu={{ items: headerMenu?.items }}
       enableSearch={enableSearch}
-    >
-      <div className="flex items-center">{logoNode}</div>
-
-      <nav className="max-lg:hidden flex items-center" aria-label="Main navigation">
-        <Navigation headerMenu={headerMenu} />
-      </nav>
-
-      <div className="hidden lg:flex items-center justify-end gap-4 ml-auto">
-        {enableSearch && <CommandMenu />}
-        <CTAList ctas={ctas} />
-      </div>
-    </HeaderClient>
+      logoNode={<div className="flex items-center">{logoNode}</div>}
+      navNode={navNode}
+      ctaNode={ctaNode}
+      localeSwitcherNode={<LocaleSwitcher />}
+    />
   );
 }
