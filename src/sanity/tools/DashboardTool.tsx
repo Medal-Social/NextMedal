@@ -237,12 +237,12 @@ const ContentOverview = memo(function ContentOverview() {
       try {
         const [drafts, published, seoIssues] = await Promise.all([
           // Count all draft documents
-          client.fetch<number>('count(*[_id in path("drafts.**")])'),
+          client.fetch<number>('count(*[_id match "drafts.*"])'),
           // Count published pages
-          client.fetch<number>('count(*[_type == "page" && !(_id in path("drafts.**"))])'),
+          client.fetch<number>('count(*[_type == "page" && !(_id match "drafts.*")])'),
           // Count pages missing SEO metadata (excluding noindex pages)
           client.fetch<number>(
-            'count(*[_type == "page" && !(_id in path("drafts.**")) && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))])'
+            'count(*[_type == "page" && !(_id match "drafts.*") && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))])'
           ),
         ]);
 

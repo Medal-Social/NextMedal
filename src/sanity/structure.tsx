@@ -31,7 +31,7 @@ export const structure = structureTool({
               S.documentList()
                 .title('Pages Missing SEO Metadata')
                 .filter(
-                  '_type == "page" && !(_id in path("drafts.**")) && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))'
+                  '_type == "page" && !(_id match "drafts.*") && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))'
                 )
                 .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
             ),
@@ -42,7 +42,7 @@ export const structure = structureTool({
             .child(
               S.documentList()
                 .title('All Drafts')
-                .filter('_id in path("drafts.**")')
+                .filter('_id match "drafts.*"')
                 .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
             ),
           S.listItem()
@@ -52,7 +52,7 @@ export const structure = structureTool({
             .child(
               S.documentList()
                 .title('All Published Pages')
-                .filter('_type == "page" && !(_id in path("drafts.**"))')
+                .filter('_type == "page" && !(_id match "drafts.*")')
                 .defaultOrdering([{ field: '_updatedAt', direction: 'desc' }])
             ),
         ]).icon(SearchIcon),
