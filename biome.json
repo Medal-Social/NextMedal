@@ -102,7 +102,7 @@
   },
   "overrides": [
     {
-      "includes": ["src/test/**", "**/*.test.ts", "**/*.test.tsx"],
+      "includes": ["src/test/**", "**/*.test.ts", "**/*.test.tsx", "**/*.contract.ts"],
       "linter": {
         "rules": {
           "suspicious": {
