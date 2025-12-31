@@ -90,7 +90,7 @@
     "styled-components": "^6.1.19",
     "tailwind-merge": "^3.4.0",
     "vanilla-cookieconsent": "^3.1.0",
-    "zod": "^4.2.1"
+    "zod": "^4.3.2"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.0",
@@ -107,7 +107,7 @@
     "@vitejs/plugin-react": "^5.1.2",
     "@vitest/coverage-v8": "4.0.16",
     "babel-plugin-react-compiler": "^1.0.0",
-    "fast-check": "^4.5.2",
+    "fast-check": "^4.5.3",
     "husky": "^9.1.7",
     "jsdom": "^27.4.0",
     "lighthouse": "^12.8.2",
