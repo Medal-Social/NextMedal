@@ -20,8 +20,8 @@ interface CollectionSearchItem extends SearchItem {
 // Map collection types to search result types
 function getCollectionType(docType: string): string {
   switch (docType) {
-    case 'collection.blog':
-      return 'Blog';
+    case 'collection.article':
+      return 'Articles';
     case 'collection.changelog':
       return 'Changelog';
     case 'collection.documentation':

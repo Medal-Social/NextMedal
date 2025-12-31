@@ -70,7 +70,7 @@ function getPathSegment(page: PageWithCollection): string {
   // For collection documents, use the collection page's slug
   if (
     [
-      'collection.blog',
+      'collection.article',
       'collection.changelog',
       'collection.documentation',
       'collection.newsletter',

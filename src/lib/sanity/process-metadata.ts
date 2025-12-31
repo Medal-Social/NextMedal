@@ -45,17 +45,21 @@ interface SeoFields {
 }
 
 // Article types that should use 'article' OpenGraph type
-const ARTICLE_TYPES = ['collection.blog', 'collection.newsletter', 'collection.events'];
+const ARTICLE_TYPES = ['collection.article', 'collection.newsletter', 'collection.events'];
 
 function getOpenGraphType(pageType: string): 'article' | 'website' {
   return ARTICLE_TYPES.includes(pageType) ? 'article' : 'website';
 }
 
 function getPublishedTime(
-  page: Sanity.CollectionBlogPost | Sanity.CollectionNewsletter | Sanity.CollectionEvents | unknown
+  page:
+    | Sanity.CollectionArticlePost
+    | Sanity.CollectionNewsletter
+    | Sanity.CollectionEvents
+    | unknown
 ): string | undefined {
-  if ((page as Sanity.CollectionBlogPost).publishDate) {
-    return (page as Sanity.CollectionBlogPost).publishDate;
+  if ((page as Sanity.CollectionArticlePost).publishDate) {
+    return (page as Sanity.CollectionArticlePost).publishDate;
   }
   if ((page as Sanity.CollectionEvents).startDateTime) {
     return (page as Sanity.CollectionEvents).startDateTime;
@@ -74,7 +78,7 @@ export default async function processMetadata(
   page: (
     | Sanity.Page
     | Sanity.ComponentLibrary
-    | Sanity.CollectionBlogPost
+    | Sanity.CollectionArticlePost
     | Sanity.CollectionDocumentation
     | Sanity.CollectionEvents
     | Sanity.CollectionNewsletter
@@ -134,7 +138,7 @@ export default async function processMetadata(
       canonical: url,
       languages: generateAlternateLanguages(page as Sanity.PageBase, page.translations),
       types: {
-        'application/rss+xml': '/blog/rss.xml',
+        'application/rss+xml': '/articles/rss.xml',
       },
     },
     twitter: {

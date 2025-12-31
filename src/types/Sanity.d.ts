@@ -82,7 +82,7 @@ declare global {
 
     interface Placement extends SanityDocument {
       _type: 'placement';
-      scope: 'collection.blog' | 'page';
+      scope: 'collection.article' | 'page';
       location: 'top' | 'bottom' | 'sidebar' | 'injection';
       injectionConfig?: {
         afterParagraph?: number;
@@ -90,17 +90,17 @@ declare global {
       modules?: Module[];
     }
 
-    interface BlogCategory extends SanityDocument {
-      readonly _type: 'blog.category';
+    interface ArticleCategory extends SanityDocument {
+      readonly _type: 'article.category';
       title: string;
       description?: string;
       slug?: { current: string };
     }
 
-    interface CollectionBlogPost extends SanityDocument {
-      _type: 'collection.blog';
+    interface CollectionArticlePost extends SanityDocument {
+      _type: 'collection.article';
       body: BlockContent;
-      categories?: BlogCategory[];
+      categories?: ArticleCategory[];
       authors?: Person[];
       publishDate: string;
       featured?: 'standard' | 'featured';
@@ -442,7 +442,7 @@ declare global {
       _key?: string;
       label: string;
       type: 'internal' | 'external';
-      internal?: Page | CollectionBlogPost;
+      internal?: Page | CollectionArticlePost;
       external?: string;
       params?: string;
       newTab?: boolean;
@@ -602,7 +602,7 @@ declare global {
     interface Breadcrumbs extends Module<'breadcrumbs'> {
       crumbs?: MenuItem[];
       hideCurrent?: boolean;
-      currentPage?: Page | CollectionBlogPost | ComponentLibrary;
+      currentPage?: Page | CollectionArticlePost | ComponentLibrary;
     }
 
     interface Callout extends Module<'callout'> {
@@ -654,7 +654,7 @@ declare global {
       showFeaturedPostsFirst?: boolean;
       displayFilters?: boolean;
       limit?: number;
-      filteredCategory?: BlogCategory; // Resolved
+      filteredCategory?: ArticleCategory; // Resolved
     }
 
     interface ArticlesFrontpage extends Module<'articles-frontpage'> {

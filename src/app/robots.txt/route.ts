@@ -20,8 +20,8 @@ export async function GET() {
       : ['User-agent: *', 'Allow: /', '', 'User-agent: Twitterbot', 'Allow: /']),
     '',
     `Sitemap: ${siteUrl}/sitemap.xml`,
-    '# RSS feed for blog content',
-    `# ${siteUrl}/blog/rss.xml`,
+    '# RSS feed for article content',
+    `# ${siteUrl}/articles/rss.xml`,
     `Host: ${siteUrl}`,
   ].join('\n');
 
