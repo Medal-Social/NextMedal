@@ -337,9 +337,9 @@ const ContentOverview = memo(function ContentOverview() {
           client.fetch<number>('count(*[_id in path("drafts.**")])'),
           // Count published pages
           client.fetch<number>('count(*[_type == "page" && !(_id in path("drafts.**"))])'),
-          // Count pages missing SEO metadata
+          // Count pages missing SEO metadata (excluding noindex pages)
           client.fetch<number>(
-            'count(*[_type == "page" && !(_id in path("drafts.**")) && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))])'
+            'count(*[_type == "page" && !(_id in path("drafts.**")) && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))])'
           ),
         ]);
 
