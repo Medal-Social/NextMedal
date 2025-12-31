@@ -110,7 +110,7 @@ const SecondaryActions = memo(function SecondaryActions() {
     },
     {
       title: 'Collections',
-      description: 'Blog, docs & more',
+      description: 'Articles, docs & more',
       path: '/studio/structure/collections',
       icon: <StackCompactIcon />,
       type: 'internal' as const,
