@@ -1,9 +1,11 @@
 /**
  * Modules Fragment
- * @version 1.0.1
- * @lastUpdated 2025-12-23
+ * @version 1.2.0
+ * @lastUpdated 2025-12-30
  * @description A registry of all available content modules for the page builder.
  * @changelog
+ * - 1.2.0: Renamed listing modules to frontpage (articles-frontpage, etc.)
+ * - 1.1.0: Added Frontpages group with articles-frontpage module
  * - 1.0.1: Added header documentation
  * - 1.0.0: Initial version
  */
@@ -27,10 +29,15 @@ export default defineField({
     { type: 'team' },
     { type: 'pricing-list' },
     { type: 'product-comparison' },
-    { type: 'blog-frontpage' },
     { type: 'latest-articles' },
     { type: 'breadcrumbs' },
     { type: 'component-gallery' },
+    // Collection frontpage modules
+    { type: 'articles-frontpage' },
+    { type: 'changelog-frontpage' },
+    { type: 'docs-frontpage' },
+    { type: 'events-frontpage' },
+    { type: 'newsletter-frontpage' },
   ],
   options: {
     insertMenu: {
@@ -63,8 +70,18 @@ export default defineField({
           of: ['callout', 'contact', 'lead-magnet'],
         },
         {
+          name: 'Frontpages',
+          of: [
+            'articles-frontpage',
+            'changelog-frontpage',
+            'docs-frontpage',
+            'events-frontpage',
+            'newsletter-frontpage',
+          ],
+        },
+        {
           name: 'Utility',
-          of: ['breadcrumbs', 'component-gallery', 'blog-frontpage', 'latest-articles'],
+          of: ['breadcrumbs', 'component-gallery', 'latest-articles'],
         },
       ],
     },

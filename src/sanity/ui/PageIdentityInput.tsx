@@ -4,7 +4,7 @@ import { EyeOpenIcon, LaunchIcon } from '@sanity/icons';
 import { Box, Button, Flex, Stack, Text, TextInput } from '@sanity/ui';
 import { useCallback, useMemo, useState } from 'react';
 import { type ObjectInputProps, set, useFormValue } from 'sanity';
-import { BASE_URL } from '@/lib/env.client';
+import { BASE_URL } from '@/lib/core/env.client';
 
 /**
  * Custom input component for Page/Post Identity (title + slug)
@@ -48,14 +48,10 @@ export default function PageIdentityInput(props: ObjectInputProps) {
     if (!currentSlug) return null;
 
     const langPrefix = language && language !== 'en' ? `/${language}` : '';
-    let pathPrefix = '';
-    if (documentType === 'blog.post') {
-      pathPrefix = '/blog';
-    }
     const slugPath = currentSlug === 'index' ? '' : `/${currentSlug}`;
 
-    return `${BASE_URL}${langPrefix}${pathPrefix}${slugPath}` || `${BASE_URL}/`;
-  }, [currentSlug, language, documentType]);
+    return `${BASE_URL}${langPrefix}${slugPath}` || `${BASE_URL}/`;
+  }, [currentSlug, language]);
 
   // Open preview in new tab
   const openPreview = useCallback(() => {
@@ -105,13 +101,13 @@ export default function PageIdentityInput(props: ObjectInputProps) {
   );
 
   // Get labels based on document type
-  const isBlogPost = documentType === 'blog.post';
-  const titleLabel = isBlogPost ? 'Post Title' : 'Page Title';
-  const titleDescription = isBlogPost
-    ? 'The main title of the blog post'
+  const isCollectionItem = documentType?.startsWith('collection.');
+  const titleLabel = isCollectionItem ? 'Title' : 'Page Title';
+  const titleDescription = isCollectionItem
+    ? 'The main title of this item'
     : 'The main title of the page';
-  const slugDescription = isBlogPost
-    ? 'The URL path for this blog post (e.g., my-post-title)'
+  const slugDescription = isCollectionItem
+    ? 'The URL path for this item (e.g., my-article-title)'
     : 'The URL path for this page (e.g., about-us)';
 
   return (

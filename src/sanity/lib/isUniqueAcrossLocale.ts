@@ -1,5 +1,5 @@
 import type { PathSegment, SlugValidationContext } from 'sanity';
-import { logger } from '@/lib/logger';
+import { logger } from '@/lib/core/logger';
 
 /**
  * Converts a Sanity path to a safe GROQ path string.

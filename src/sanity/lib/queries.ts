@@ -45,14 +45,25 @@ export const AUTHOR_PREVIEW_QUERY = groq`{
 	_id,
 	_type,
 	name,
-	"slug": { "current": metadata.slug.current },
-	image { asset->{ url, metadata { dimensions } } }
+	title,
+	slug,
+	image { asset->{ url, metadata { dimensions } } },
+	banner { asset->{ url, metadata { dimensions } } },
+	bio,
+	socialLinks[]{ _key, _type, platform, url }
 }`;
 
 export const CATEGORY_PREVIEW_QUERY = groq`{
 	_id,
 	title,
 	"slug": { "current": slug.current }
+}`;
+
+export const PERSON_PREVIEW_QUERY = groq`{
+	_id,
+	name,
+	role,
+	image { asset->{ url, metadata { dimensions } } }
 }`;
 
 export const PT_BLOCK_QUERY = groq`
@@ -247,16 +258,239 @@ export const PAGE_QUERY = groq`
 `;
 
 // Blog categories that have at least one post
+// Categories that have posts in a specific collection and language
 export const BLOG_CATEGORIES_WITH_POSTS_QUERY = groq`
 	*[
 		_type == 'blog.category' &&
-		count(*[_type == 'blog.post' && references(^._id)]) > 0
-	]|order(title)
+		count(*[
+			_type == 'collection.blog' &&
+			references(^._id) &&
+			($collectionSlug == '' || collection->metadata.slug.current == $collectionSlug) &&
+			($locale == '' || language == $locale)
+		]) > 0
+	]|order(title){
+		_id,
+		_type,
+		title,
+		"slug": { "current": slug.current }
+	}
 `;
 
-// All blog post slugs for static generation
-export const BLOG_POST_SLUGS_QUERY = groq`
-	*[_type == 'blog.post' && defined(metadata.slug.current)].metadata.slug.current
+// Collection blog post query - fetches a blog post by slug within a specific collection
+export const COLLECTION_BLOG_POST_QUERY = groq`
+	*[
+		_type == 'collection.blog' &&
+		metadata.slug.current == $itemSlug &&
+		collection->metadata.slug.current == $collectionSlug &&
+		language == $locale
+	][0]{
+		...,
+		body[]{
+			${PT_BLOCK_QUERY},
+			_type == 'image' => { ${IMAGE_QUERY} }
+		},
+		'readTime': math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
+		'headings': body[style in ['h2', 'h3']]{
+			style,
+			'text': pt::text(@)
+		},
+		categories[]->${CATEGORY_PREVIEW_QUERY},
+		authors[]->${AUTHOR_PREVIEW_QUERY},
+		collection->{
+			_id,
+			metadata { slug, title }
+		},
+		metadata {
+			...,
+			'ogimage': seo.image.asset->url + '?w=1200'
+		},
+		seo {
+			...,
+			'ogimage': image.asset->url + '?w=1200'
+		},
+		'translations': *[_type == 'translation.metadata' && references(^._id)].translations[].value->{
+			_type,
+			'slug': metadata.slug.current,
+			'collectionSlug': collection->metadata.slug.current,
+			language
+		}
+	}
+`;
+
+// Query to check if a page is a collection (has frontpage modules)
+export const IS_COLLECTION_PAGE_QUERY = groq`
+	*[
+		_type == 'page' &&
+		metadata.slug.current == $slug &&
+		language == $locale
+	][0]{
+		_id,
+		'isCollection': count(modules[_type in ['articles-frontpage', 'changelog-frontpage', 'docs-frontpage', 'events-frontpage', 'newsletter-frontpage']]) > 0,
+		'collectionType': modules[_type in ['articles-frontpage', 'changelog-frontpage', 'docs-frontpage', 'events-frontpage', 'newsletter-frontpage']][0]._type
+	}
+`;
+
+// All collection blog posts for static generation
+export const COLLECTION_BLOG_SLUGS_QUERY = groq`
+	*[_type == 'collection.blog' && defined(metadata.slug.current) && defined(collection)]{
+		'slug': metadata.slug.current,
+		'collectionSlug': collection->metadata.slug.current,
+		language
+	}
+`;
+
+// Collection newsletter query - fetches a newsletter issue by slug within a specific collection
+export const COLLECTION_NEWSLETTER_QUERY = groq`
+	*[
+		_type == 'collection.newsletter' &&
+		metadata.slug.current == $itemSlug &&
+		collection->metadata.slug.current == $collectionSlug &&
+		language == $locale
+	][0]{
+		...,
+		body[]{
+			${PT_BLOCK_QUERY},
+			_type == 'image' => { ${IMAGE_QUERY} }
+		},
+		'readTime': math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
+		'headings': body[style in ['h2', 'h3']]{
+			style,
+			'text': pt::text(@)
+		},
+		collection->{
+			_id,
+			metadata { slug, title }
+		},
+		metadata {
+			...,
+			'ogimage': seo.image.asset->url + '?w=1200'
+		},
+		seo {
+			...,
+			'ogimage': image.asset->url + '?w=1200'
+		},
+		'translations': *[_type == 'translation.metadata' && references(^._id)].translations[].value->{
+			_type,
+			'slug': metadata.slug.current,
+			'collectionSlug': collection->metadata.slug.current,
+			language
+		}
+	}
+`;
+
+// All collection newsletter issues for static generation
+export const COLLECTION_NEWSLETTER_SLUGS_QUERY = groq`
+	*[_type == 'collection.newsletter' && defined(metadata.slug.current) && defined(collection)]{
+		'slug': metadata.slug.current,
+		'collectionSlug': collection->metadata.slug.current,
+		language
+	}
+`;
+
+// Collection documentation query - fetches a doc article by slug within a specific collection
+export const COLLECTION_DOCUMENTATION_QUERY = groq`
+	*[
+		_type == 'collection.documentation' &&
+		metadata.slug.current == $itemSlug &&
+		collection->metadata.slug.current == $collectionSlug &&
+		language == $locale
+	][0]{
+		...,
+		body[]{
+			${PT_BLOCK_QUERY},
+			_type == 'image' => { ${IMAGE_QUERY} }
+		},
+		'readTime': math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
+		'headings': body[style in ['h2', 'h3']]{
+			style,
+			'text': pt::text(@)
+		},
+		parent->{
+			_id,
+			metadata { slug, title }
+		},
+		relatedDocs[]->{
+			_id,
+			metadata { slug, title },
+			excerpt
+		},
+		collection->{
+			_id,
+			metadata { slug, title }
+		},
+		metadata {
+			...,
+			'ogimage': seo.image.asset->url + '?w=1200'
+		},
+		seo {
+			...,
+			'ogimage': image.asset->url + '?w=1200'
+		},
+		'translations': *[_type == 'translation.metadata' && references(^._id)].translations[].value->{
+			_type,
+			'slug': metadata.slug.current,
+			'collectionSlug': collection->metadata.slug.current,
+			language
+		}
+	}
+`;
+
+// All collection documentation articles for static generation
+export const COLLECTION_DOCUMENTATION_SLUGS_QUERY = groq`
+	*[_type == 'collection.documentation' && defined(metadata.slug.current) && defined(collection)]{
+		'slug': metadata.slug.current,
+		'collectionSlug': collection->metadata.slug.current,
+		language
+	}
+`;
+
+// Collection events query - fetches an event by slug within a specific collection
+export const COLLECTION_EVENTS_QUERY = groq`
+	*[
+		_type == 'collection.events' &&
+		metadata.slug.current == $itemSlug &&
+		collection->metadata.slug.current == $collectionSlug &&
+		(language == $locale || language == null)
+	][0]{
+		...,
+		body[]{
+			${PT_BLOCK_QUERY},
+			_type == 'image' => { ${IMAGE_QUERY} }
+		},
+		speakers[]->{
+			_id,
+			name,
+			role,
+			image { ${IMAGE_QUERY} }
+		},
+		collection->{
+			_id,
+			metadata { slug, title }
+		},
+		metadata {
+			...,
+			'ogimage': seo.image.asset->url + '?w=1200'
+		},
+		seo {
+			...,
+			'ogimage': image.asset->url + '?w=1200'
+		},
+		'translations': *[_type == 'translation.metadata' && references(^._id)].translations[].value->{
+			_type,
+			'slug': metadata.slug.current,
+			'collectionSlug': collection->metadata.slug.current,
+			language
+		}
+	}
+`;
+
+// All collection events for static generation
+export const COLLECTION_EVENTS_SLUGS_QUERY = groq`
+	*[_type == 'collection.events' && defined(metadata.slug.current) && defined(collection)]{
+		'slug': metadata.slug.current,
+		'collectionSlug': collection->metadata.slug.current,
+		language
+	}
 `;
 
 // All logos with image variants
@@ -290,7 +524,7 @@ export const PAGE_404_QUERY = groq`
 // Current page for translation switching
 export const CURRENT_PAGE_QUERY = groq`
 	*[
-		(_type == 'page' || _type == 'blog.post') &&
+		(_type == 'page' || _type == 'collection.blog') &&
 		metadata.slug.current == $slug &&
 		language == $locale
 	][0]{
@@ -304,20 +538,22 @@ export const CURRENT_PAGE_QUERY = groq`
 	}
 `;
 
-// Search index query for posts, pages, and authors
+// Search index query for pages, collections, and authors
 export const SEARCH_INDEX_QUERY = groq`{
-	"posts": *[_type == "blog.post" && defined(metadata.slug.current) && seo.noIndex != true] {
-		_id,
-		_type,
-		"title": metadata.title,
-		"slug": metadata.slug.current,
-		"description": seo.description
-	},
 	"pages": *[_type == "page" && defined(metadata.slug.current) && metadata.slug.current != "index" && seo.noIndex != true] {
 		_id,
 		_type,
 		"title": metadata.title,
 		"slug": metadata.slug.current
+	},
+	"collections": *[_type in ["collection.blog", "collection.changelog", "collection.documentation", "collection.newsletter"] && defined(metadata.slug.current) && seo.noIndex != true] {
+		_id,
+		_type,
+		"title": metadata.title,
+		"slug": metadata.slug.current,
+		"collectionSlug": collection->metadata.slug.current,
+		"description": seo.description,
+		language
 	},
 	"authors": *[_type == "person"] {
 		_id,
@@ -327,7 +563,7 @@ export const SEARCH_INDEX_QUERY = groq`{
 	}
 }`;
 
-// Sitemap query for pages and blog posts
+// Sitemap query for pages
 export function sitemapQuery(baseUrlParam: string) {
   return groq`{
 		'pages': *[
@@ -341,11 +577,6 @@ export function sitemapQuery(baseUrlParam: string) {
 				metadata.slug.current == 'index' => 1,
 				0.5
 			),
-		},
-		'blog': *[_type == 'blog.post' && seo.noIndex != true]|order(name){
-			'url': ${baseUrlParam} + 'blog/' + metadata.slug.current,
-			'lastModified': _updatedAt,
-			'priority': 0.4
 		},
 	}`;
 }
@@ -369,13 +600,16 @@ export const SITEMAP_WITH_TRANSLATIONS_QUERY = groq`{
 			language
 		}
 	},
-	'blog': *[_type == 'blog.post' && seo.noIndex != true]|order(_updatedAt desc){
+	'collections': *[_type in ['collection.blog', 'collection.changelog', 'collection.documentation', 'collection.newsletter'] && seo.noIndex != true]|order(_updatedAt desc){
+		_type,
 		'slug': metadata.slug.current,
+		'collectionSlug': collection->metadata.slug.current,
 		'lastModified': _updatedAt,
 		'priority': 0.4,
 		language,
 		'translations': *[_type == 'translation.metadata' && references(^._id)].translations[].value->{
 			'slug': metadata.slug.current,
+			'collectionSlug': collection->metadata.slug.current,
 			language
 		}
 	}

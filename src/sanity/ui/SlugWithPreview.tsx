@@ -4,13 +4,11 @@ import { EyeOpenIcon, LaunchIcon } from '@sanity/icons';
 import { Box, Button, Card, Flex, Stack, Text, TextInput } from '@sanity/ui';
 import { useCallback, useMemo, useState } from 'react';
 import { type SlugInputProps, set, useFormValue } from 'sanity';
-import { BASE_URL } from '@/lib/env.client';
+import { BASE_URL } from '@/lib/core/env.client';
 
 export default function SlugWithPreview(props: SlugInputProps) {
   const { value, onChange } = props;
 
-  // Auto-detect document type
-  const documentType = useFormValue(['_type']) as string | undefined;
   const [isGenerating, setIsGenerating] = useState(false);
 
   // Get document values for URL generation
@@ -40,16 +38,10 @@ export default function SlugWithPreview(props: SlugInputProps) {
     if (!value?.current) return null;
 
     const langPrefix = language && language !== 'en' ? `/${language}` : '';
-    // Determine path prefix based on document type
-    let pathPrefix = '';
-    if (documentType === 'blog.post') {
-      pathPrefix = '/blog';
-    }
-    // Add more document types here as needed
     const slugPath = value.current === 'index' ? '' : `/${value.current}`;
 
-    return `${BASE_URL}${langPrefix}${pathPrefix}${slugPath}` || `${BASE_URL}/`;
-  }, [value?.current, language, documentType]);
+    return `${BASE_URL}${langPrefix}${slugPath}` || `${BASE_URL}/`;
+  }, [value?.current, language]);
 
   // Open preview in new tab (published content)
   const openPreview = useCallback(() => {

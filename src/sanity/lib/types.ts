@@ -69,17 +69,6 @@ export interface Site extends SanityBase {
   logo?: SanityImage;
 }
 
-export interface BlogPost extends SanityBase {
-  _type: 'blog.post';
-  body: PortableTextBlock[];
-  categories: SanityReference[];
-  authors: SanityReference[];
-  publishDate: string;
-  featured?: boolean;
-  metadata?: Metadata;
-  relatedPosts?: SanityReference[];
-}
-
 // Object types
 export interface Metadata {
   _type: 'metadata';
