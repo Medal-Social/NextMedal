@@ -20,7 +20,8 @@ vi.mock('@/sanity/lib/client', () => ({
 import { GET } from '@/app/api/search/route';
 import { client } from '@/sanity/lib/client';
 
-const mockFetch = vi.mocked(client.fetch);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockFetch = client.fetch as any;
 
 describe('Search API Contract', () => {
   beforeEach(() => {

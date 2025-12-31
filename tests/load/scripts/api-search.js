@@ -59,3 +59,10 @@ export default function () {
 
   sleep(0.5);
 }
+
+export function handleSummary(data) {
+  return {
+    stdout: JSON.stringify(data, null, 2),
+    'test-results/k6/search-summary.json': JSON.stringify(data, null, 2),
+  };
+}

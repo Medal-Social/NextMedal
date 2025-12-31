@@ -49,5 +49,6 @@ export default function () {
 export function handleSummary(data) {
   return {
     stdout: JSON.stringify(data, null, 2),
+    'test-results/k6/homepage-summary.json': JSON.stringify(data, null, 2),
   };
 }
