@@ -8,6 +8,7 @@
 import { NextResponse } from 'next/server';
 import { groq } from 'next-sanity';
 import { BASE_URL } from '@/lib/core/env';
+import { logger } from '@/lib/core/logger';
 import { client } from '@/sanity/lib/client';
 
 // All frontpage module types that support RSS
@@ -234,21 +235,88 @@ function generateRss(
 </rss>`;
 }
 
+// Generate an error RSS feed for graceful degradation
+function generateErrorRss(collectionSlug: string, locale: string, errorMessage: string): string {
+  const baseUrl = BASE_URL || 'https://example.com';
+  const localePath = locale !== 'en' ? `/${locale}` : '';
+  const collectionUrl = `${baseUrl}${localePath}/${collectionSlug}`;
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>${escapeXml(collectionSlug)}</title>
+    <link>${collectionUrl}</link>
+    <description>${escapeXml(errorMessage)}</description>
+    <language>${locale}</language>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    <atom:link href="${collectionUrl}/rss.xml" rel="self" type="application/rss+xml"/>
+  </channel>
+</rss>`;
+}
+
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ locale: string; collection: string }> }
 ) {
   const { locale, collection: collectionSlug } = await params;
 
-  // Check if this is a valid collection page with a frontpage module
-  const collectionPage = await getCollectionPage(collectionSlug, locale);
+  let collectionPage: CollectionPage | null;
+
+  // Fetch collection page with error handling
+  try {
+    collectionPage = await getCollectionPage(collectionSlug, locale);
+  } catch (error) {
+    logger.error(
+      { err: error, collectionSlug, locale },
+      'RSS feed: Failed to fetch collection page from CMS'
+    );
+
+    // Return a 503 Service Unavailable with an error RSS feed
+    const errorRss = generateErrorRss(
+      collectionSlug,
+      locale,
+      'Feed temporarily unavailable. Please try again later.'
+    );
+    return new NextResponse(errorRss, {
+      status: 503,
+      headers: {
+        'Content-Type': 'application/xml; charset=utf-8',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Retry-After': '300', // Suggest retry after 5 minutes
+      },
+    });
+  }
 
   if (!collectionPage || !collectionPage.frontpageType) {
     return new NextResponse('Not Found', { status: 404 });
   }
 
-  // Fetch items for this collection based on frontpage type
-  const items = await getCollectionItems(collectionSlug, locale, collectionPage.frontpageType);
+  let items: CollectionItem[];
+
+  // Fetch collection items with error handling
+  try {
+    items = await getCollectionItems(collectionSlug, locale, collectionPage.frontpageType);
+  } catch (error) {
+    logger.error(
+      { err: error, collectionSlug, locale, frontpageType: collectionPage.frontpageType },
+      'RSS feed: Failed to fetch collection items from CMS'
+    );
+
+    // Return a 503 with an error RSS feed (collection exists but items failed)
+    const errorRss = generateErrorRss(
+      collectionSlug,
+      locale,
+      'Feed content temporarily unavailable. Please try again later.'
+    );
+    return new NextResponse(errorRss, {
+      status: 503,
+      headers: {
+        'Content-Type': 'application/xml; charset=utf-8',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Retry-After': '300',
+      },
+    });
+  }
 
   // Generate RSS XML
   const rss = generateRss(collectionPage, items, collectionSlug, locale);
