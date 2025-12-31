@@ -1,4 +1,14 @@
-import { ControlsIcon, DatabaseIcon, DocumentsIcon, EditIcon } from '@sanity/icons';
+import {
+  BookIcon,
+  CalendarIcon,
+  CogIcon,
+  DatabaseIcon,
+  DocumentsIcon,
+  DocumentTextIcon,
+  EditIcon,
+  EnvelopeIcon,
+  StackCompactIcon,
+} from '@sanity/icons';
 import { structureTool } from 'sanity/structure';
 import { group, singleton } from './lib/utils';
 export const structure = structureTool({
@@ -7,13 +17,20 @@ export const structure = structureTool({
       .title('Content')
       .items([
         S.documentTypeListItem('page').title('Pages').icon(DocumentsIcon),
-        // S.documentTypeListItem('component.library').title('Components'),
         S.divider(),
 
-        S.documentTypeListItem('blog.post').title('Blog').icon(EditIcon),
+        group(S, 'Collections', [
+          S.documentTypeListItem('collection.blog').title('Blog Posts').icon(EditIcon),
+          S.documentTypeListItem('collection.changelog').title('Changelog').icon(DocumentTextIcon),
+          S.documentTypeListItem('collection.documentation').title('Documentation').icon(BookIcon),
+          S.documentTypeListItem('collection.events').title('Events').icon(CalendarIcon),
+          S.documentTypeListItem('collection.newsletter')
+            .title('Newsletter Issues')
+            .icon(EnvelopeIcon),
+        ]).icon(StackCompactIcon),
         S.divider(),
 
-        singleton(S, 'site', 'Site Settings').icon(ControlsIcon),
+        singleton(S, 'site', 'Site Settings').icon(CogIcon),
         S.divider(),
 
         group(S, 'Shared Content', [
@@ -26,6 +43,7 @@ export const structure = structureTool({
           S.documentTypeListItem('redirect').title('Redirects'),
           S.documentTypeListItem('pricing').title('Pricing tiers'),
           S.documentTypeListItem('blog.category').title('Blog categories'),
+          S.documentTypeListItem('docs.category').title('Documentation categories'),
         ]).icon(DatabaseIcon),
       ]),
 });

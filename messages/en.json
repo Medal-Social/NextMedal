@@ -2,8 +2,66 @@
   "HomePage": {
     "title": "Hello world!"
   },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "close": "Close",
+    "cancel": "Cancel",
+    "done": "Done",
+    "processing": "Processing...",
+    "untitled": "Untitled"
+  },
   "Accessibility": {
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "openSearch": "Open search",
+    "loadingTheme": "Loading appearance options",
+    "mobileNavigation": "Mobile navigation menu",
+    "dismissBanner": "Dismiss announcement banner",
+    "required": "required"
+  },
+  "search": {
+    "placeholder": "Search...",
+    "commandPlaceholder": "Search pages, blog, docs...",
+    "noResults": "No results found. Try different keywords.",
+    "categories": {
+      "blogPosts": "Blog Posts",
+      "documentation": "Documentation",
+      "changelog": "Changelog",
+      "newsletter": "Newsletter",
+      "pages": "Pages"
+    }
+  },
+  "code": {
+    "copied": "Copied to clipboard",
+    "copyFailed": "Unable to copy. Try refreshing the page.",
+    "copyCode": "Copy code",
+    "copiedState": "Copied"
+  },
+  "blog": {
+    "shareOn": "Share on {platform}",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied to clipboard",
+    "gridView": "Grid view",
+    "listView": "List view",
+    "rssFeed": "RSS Feed"
+  },
+  "video": {
+    "preparing": "Preparing your video...",
+    "loading": "High quality experience loading",
+    "error": "Video Error",
+    "noVideoId": "No video ID provided",
+    "noMuxPlaybackId": "No Mux playback ID found",
+    "extractYouTubeError": "Could not extract YouTube video ID",
+    "extractError": "Could not load video",
+    "invalidVideoId": "Could not find a valid video ID for this video",
+    "playerError": "Video player error: {message}",
+    "backToThumbnail": "Back to thumbnail",
+    "play": "Play video",
+    "youtubePlayer": "YouTube video player",
+    "thumbnail": "Video thumbnail",
+    "noThumbnail": "No thumbnail available",
+    "defaultTitle": "Video"
   },
   "NotFound": {
     "title": "Page not found",
@@ -31,6 +89,13 @@
     "dark": "Dark",
     "system": "System"
   },
+  "DraftMode": {
+    "title": "Preview Mode",
+    "description": "See how your changes look before publishing.",
+    "learnMore": "Learn more",
+    "exit": "Exit Preview",
+    "exiting": "Exiting..."
+  },
   "contact-form": {
     "email": "Email",
     "phone": "Phone",
@@ -38,8 +103,22 @@
     "address": "Address",
     "opening-hours": "Opening hours",
     "success-title": "Thank you!",
-    "success-message": "We have received your message.",
-    "submitting": "Submitting..."
+    "success-message": "We've received your message and will respond within 1 business day.",
+    "submitting": "Sending your message...",
+    "validationFailed": "Please check your form fields and try again.",
+    "acceptTerms": "Please accept the privacy policy to continue."
+  },
+  "cookies": {
+    "title": "We use cookies",
+    "description": "We use cookies to enhance your browsing experience and analyze our traffic.",
+    "acceptAll": "Accept all",
+    "onlyNecessary": "Only necessary",
+    "preferences": "Cookie Preferences"
+  },
+  "emptyState": {
+    "title": "No content yet",
+    "description": "Content will appear here once it's been added.",
+    "cta": "Open Editor"
   },
   "modules": {
     "pricing": {
@@ -50,6 +129,64 @@
     "leadMagnet": {
       "defaultButtonText": "Get access now",
       "defaultFormTitle": "Sign up"
+    },
+    "events": {
+      "viewDetails": "View Details",
+      "register": "Register",
+      "registerNow": "Register Now",
+      "joinNow": "Join Now",
+      "watchReplay": "Watch Replay",
+      "upcoming": "Upcoming",
+      "live": "Live",
+      "liveNow": "Live Now",
+      "past": "Past",
+      "completed": "Completed",
+      "featured": "Featured",
+      "eventTypes": {
+        "webinar": "Webinar",
+        "video": "Video",
+        "physical": "In-Person",
+        "hybrid": "Hybrid"
+      },
+      "duration": {
+        "minutes": "{count} min",
+        "hour": "1 hour",
+        "hours": "{count} hours",
+        "hoursMinutes": "{hours}h {minutes}min"
+      },
+      "timeRange": "{start} – {end}",
+      "noEvents": "No events found",
+      "allEvents": "All Events",
+      "filterByType": "Filter by type",
+      "layouts": {
+        "calendar": "Calendar",
+        "grid": "Grid",
+        "list": "List",
+        "timeline": "Timeline"
+      },
+      "rss": "Subscribe to RSS",
+      "today": "Today",
+      "nextEvent": "Next event",
+      "comingUpNext": "Coming up next",
+      "noEventsOnDate": "No events on this date",
+      "selectDateWithDot": "Select a date with a dot to see events",
+      "showPastEvents": "Show past events",
+      "speakers": "{count, plural, =1 {1 speaker} other {# speakers}}",
+      "noEventsInCollection": "There are no events in this collection yet.",
+      "eventCount": "{count, plural, =1 {1 event} other {# events}}",
+      "upcomingEventCount": "{count, plural, =1 {1 upcoming event} other {# upcoming events}}",
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "showCalendar": "Show Calendar",
+      "hideCalendar": "Hide Calendar",
+      "registration": {
+        "title": "Registration Confirmed",
+        "successMessage": "You're registered! Check your email for event details.",
+        "registerFor": "Register for {title}",
+        "formDescription": "Fill out the form below to reserve your spot.",
+        "registering": "Registering...",
+        "close": "Done"
+      }
     }
   }
 }

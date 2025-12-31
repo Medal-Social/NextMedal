@@ -92,6 +92,17 @@ const config = {
     return [...cmsRedirects];
   },
 
+  // Rewrite sitemap URLs to use internal dynamic route
+  // External: /sitemap-en.xml → Internal: /sitemap/en
+  async rewrites() {
+    return [
+      {
+        source: '/sitemap-:locale.xml',
+        destination: '/sitemap/:locale',
+      },
+    ];
+  },
+
   env: {
     SC_DISABLE_SPEEDY: "false", // makes styled-components as fast in dev mode as it is in production mode
   },

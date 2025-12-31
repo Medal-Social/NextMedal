@@ -60,7 +60,7 @@ export default defineType({
       title: 'Internal Page',
       description: 'Select a page within this website',
       type: 'reference',
-      to: [{ type: 'page' }, { type: 'blog.post' }],
+      to: [{ type: 'page' }, { type: 'collection.blog' }],
       validation: (Rule) =>
         Rule.custom((value, context) => {
           // Only require if this is an internal link

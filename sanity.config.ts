@@ -4,7 +4,7 @@ import { defineConfig, isDev } from 'sanity';
 import { presentation } from './src/sanity/presentation';
 import { visionTool } from '@sanity/vision';
 import { structure } from './src/sanity/structure';
-import resolveUrl from '@/lib/resolveUrl';
+import resolveUrl from '@/lib/sanity/resolve-url';
 import { codeInput } from '@sanity/code-input';
 import { documentInternationalization } from '@sanity/document-internationalization';
 import { media, mediaAssetSource } from 'sanity-plugin-media';
@@ -54,7 +54,7 @@ export default defineConfig({
         id: locale,
         title: localeConfig[locale as Locale].title,
       })),
-      schemaTypes: ['page', 'blog.post', 'site'],
+      schemaTypes: ['page', 'site', 'collection.blog', 'collection.newsletter'],
     }),
     ...devOnlyPlugins,
   ],
@@ -64,7 +64,10 @@ export default defineConfig({
   schema: {
     types: schemaTypes,
     templates: (prev) =>
-      prev.filter((template) => !['page', 'blog.post', 'site'].includes(template.id)),
+      prev.filter(
+        (template) =>
+          !['page', 'site', 'collection.blog', 'collection.newsletter'].includes(template.id)
+      ),
   },
   document: {
     comments: { enabled: false },
@@ -84,7 +87,9 @@ export default defineConfig({
       return prev;
     },
     productionUrl: async (prev, { document }) => {
-      if (['page', 'blog.post'].includes(document?._type)) {
+      if (
+        ['page', 'collection.blog', 'collection.newsletter'].includes(document?._type)
+      ) {
         return resolveUrl(document as Sanity.PageBase, { base: true });
       }
 

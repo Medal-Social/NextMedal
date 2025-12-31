@@ -82,7 +82,7 @@ declare global {
 
     interface Placement extends SanityDocument {
       _type: 'placement';
-      scope: 'blog.post' | 'page';
+      scope: 'collection.blog' | 'page';
       location: 'top' | 'bottom' | 'sidebar' | 'injection';
       injectionConfig?: {
         afterParagraph?: number;
@@ -90,23 +90,261 @@ declare global {
       modules?: Module[];
     }
 
-    interface BlogPost extends SanityDocument {
-      _type: 'blog.post';
-      body: BlockContent;
-      categories: BlogCategory[]; // Usually dereferenced in UI
-      authors: Person[]; // Usually dereferenced in UI
-      publishDate: string;
-      featured?: 'standard' | 'featured';
-      metadata?: Metadata;
-      relatedPosts?: BlogPost[]; // Usually dereferenced in UI
-      readTime?: number; // Calculated from word count
-    }
-
     interface BlogCategory extends SanityDocument {
       readonly _type: 'blog.category';
       title: string;
       description?: string;
       slug?: { current: string };
+    }
+
+    interface CollectionBlogPost extends SanityDocument {
+      _type: 'collection.blog';
+      body: BlockContent;
+      categories?: BlogCategory[];
+      authors?: Person[];
+      publishDate: string;
+      featured?: 'standard' | 'featured';
+      metadata?: Metadata;
+      seo?: {
+        title?: string;
+        description?: string;
+        image?: Image;
+        ogimage?: string;
+        noIndex?: boolean;
+      };
+      collection?: {
+        _id: string;
+        metadata?: {
+          slug?: { current: string };
+          title?: string;
+        };
+      };
+      readTime?: number;
+      headings?: { style: string; text: string }[];
+      translations?: Array<{
+        _type: string;
+        slug: string;
+        collectionSlug: string;
+        language: string;
+      }>;
+      language?: string;
+    }
+
+    interface CollectionNewsletter extends SanityDocument {
+      _type: 'collection.newsletter';
+      body: BlockContent;
+      issueNumber?: number;
+      preheader?: string;
+      publishDate: string;
+      featured?: 'standard' | 'featured';
+      metadata?: Metadata;
+      seo?: {
+        title?: string;
+        description?: string;
+        image?: Image;
+        ogimage?: string;
+        noIndex?: boolean;
+      };
+      collection?: {
+        _id: string;
+        metadata?: {
+          slug?: { current: string };
+          title?: string;
+        };
+      };
+      readTime?: number;
+      headings?: { style: string; text: string }[];
+      translations?: Array<{
+        _type: string;
+        slug: string;
+        collectionSlug: string;
+        language: string;
+      }>;
+      language?: string;
+    }
+
+    interface CollectionChangelogItem {
+      _key: string;
+      description: string;
+      link?: string;
+    }
+
+    interface CollectionChangelogCategory {
+      _key: string;
+      category:
+        | 'features'
+        | 'improvements'
+        | 'bugfixes'
+        | 'security'
+        | 'breaking'
+        | 'docs'
+        | 'deprecated';
+      items?: CollectionChangelogItem[];
+    }
+
+    interface CollectionChangelog extends SanityDocument {
+      _type: 'collection.changelog';
+      version?: string;
+      releaseType?: 'major' | 'minor' | 'patch' | 'beta' | 'alpha' | 'hotfix';
+      publishDate: string;
+      summary?: string;
+      changes?: CollectionChangelogCategory[];
+      featured?: 'standard' | 'featured';
+      metadata?: Metadata;
+      seo?: {
+        title?: string;
+        description?: string;
+        noIndex?: boolean;
+      };
+      collection?: {
+        _id: string;
+        metadata?: {
+          slug?: { current: string };
+          title?: string;
+        };
+      };
+      language?: string;
+    }
+
+    interface NewsletterFrontpage extends Module<'newsletter-frontpage'> {
+      intro?: BlockContent;
+      layout?: 'grid' | 'list' | 'carousel';
+      columns?: 2 | 3 | 4;
+      showFeaturedFirst?: boolean;
+      limit?: number;
+      showRssLink?: boolean;
+    }
+
+    interface ChangelogFrontpage extends Module<'changelog-frontpage'> {
+      intro?: BlockContent;
+      layout?: 'timeline' | 'cards' | 'compact';
+      groupByYear?: boolean;
+      showFeaturedFirst?: boolean;
+      limit?: number;
+      showRssLink?: boolean;
+    }
+
+    interface CollectionDocumentation extends SanityDocument {
+      _type: 'collection.documentation';
+      body: BlockContent;
+      excerpt?: string;
+      icon?: string;
+      order?: number;
+      parent?: {
+        _id: string;
+        metadata?: {
+          slug?: { current: string };
+          title?: string;
+        };
+      };
+      relatedDocs?: CollectionDocumentation[];
+      metadata?: Metadata;
+      seo?: {
+        title?: string;
+        description?: string;
+        image?: Image;
+        ogimage?: string;
+        noIndex?: boolean;
+      };
+      collection?: {
+        _id: string;
+        metadata?: {
+          slug?: { current: string };
+          title?: string;
+        };
+      };
+      readTime?: number;
+      headings?: { style: string; text: string }[];
+      translations?: Array<{
+        _type: string;
+        slug: string;
+        collectionSlug: string;
+        language: string;
+      }>;
+      language?: string;
+    }
+
+    interface DocsCategory extends SanityDocument {
+      readonly _type: 'docs.category';
+      title: string;
+      slug?: { current: string };
+      description?: string;
+      icon?: string;
+      order: number;
+    }
+
+    interface DocsFrontpage extends Module<'docs-frontpage'> {
+      intro?: BlockContent;
+      layout?: 'sidebar' | 'cards' | 'categorized';
+      categoryOrder?: Array<{ _ref: string }>;
+      showUncategorized?: boolean;
+      uncategorizedLabel?: string;
+      uncategorizedPosition?: 'start' | 'end';
+      sidebarStyle?: 'collapsible' | 'expanded' | 'flat';
+      showCategoryDescriptions?: boolean;
+      showCategoryIcons?: boolean;
+      showSearch?: boolean;
+      showTableOfContents?: boolean;
+      showRelatedDocs?: boolean;
+      defaultArticle?: CollectionDocumentation;
+    }
+
+    interface CollectionEvents extends SanityDocument {
+      _type: 'collection.events';
+      metadata: Metadata;
+      eventType: 'webinar' | 'video' | 'physical' | 'hybrid';
+      status: 'upcoming' | 'live' | 'completed' | 'cancelled';
+      featured?: 'standard' | 'featured';
+      startDateTime: string;
+      endDateTime?: string;
+      timezone?: string;
+      location?: {
+        venue?: string;
+        address?: string;
+        city?: string;
+        country?: string;
+        mapUrl?: string;
+      };
+      onlineLinks?: {
+        registrationUrl?: string;
+        liveUrl?: string;
+        replayUrl?: string;
+      };
+      speakers?: Person[];
+      body?: BlockContent;
+      headings?: { style: string; text: string }[];
+      seo?: {
+        title?: string;
+        description?: string;
+        image?: Image;
+        ogimage?: string;
+        noIndex?: boolean;
+      };
+      collection?: {
+        _id: string;
+        metadata?: {
+          slug?: { current: string };
+          title?: string;
+        };
+      };
+      translations?: Array<{
+        _type: string;
+        slug: string;
+        collectionSlug: string;
+        language: string;
+      }>;
+      language?: string;
+    }
+
+    interface EventsFrontpage extends Module<'events-frontpage'> {
+      intro?: BlockContent;
+      layout?: 'calendar' | 'cards' | 'list' | 'timeline';
+      filterByType?: 'all' | 'webinar' | 'video' | 'physical' | 'hybrid';
+      showUpcomingFirst?: boolean;
+      showFeaturedFirst?: boolean;
+      hidePastEvents?: boolean;
+      limit?: number;
+      showRssLink?: boolean;
     }
 
     // miscellaneous
@@ -135,6 +373,7 @@ declare global {
       title?: string;
       bio?: BlockContent;
       image?: Image;
+      banner?: Image;
       socialLinks?: {
         _key: string;
         platform: string;
@@ -203,7 +442,7 @@ declare global {
       _key?: string;
       label: string;
       type: 'internal' | 'external';
-      internal?: Page | BlogPost;
+      internal?: Page | CollectionBlogPost;
       external?: string;
       params?: string;
       newTab?: boolean;
@@ -360,18 +599,10 @@ declare global {
       generateSchema?: boolean;
     }
 
-    interface BlogFrontpage extends Module<'blog-frontpage'> {
-      mainPost?: 'recent' | 'featured';
-      showFeaturedPostsFirst?: boolean;
-      itemsPerPage?: number;
-      posts?: BlogPost[]; // Extended for UI usage
-      language?: string; // Added for locale filtering
-    }
-
     interface Breadcrumbs extends Module<'breadcrumbs'> {
       crumbs?: MenuItem[];
       hideCurrent?: boolean;
-      currentPage?: Page | BlogPost | ComponentLibrary;
+      currentPage?: Page | CollectionBlogPost | ComponentLibrary;
     }
 
     interface Callout extends Module<'callout'> {
@@ -424,6 +655,13 @@ declare global {
       displayFilters?: boolean;
       limit?: number;
       filteredCategory?: BlogCategory; // Resolved
+    }
+
+    interface ArticlesFrontpage extends Module<'articles-frontpage'> {
+      showFeaturedFirst?: boolean;
+      displayFilters?: boolean;
+      limit?: number;
+      showRssLink?: boolean;
     }
 
     interface LogoCloud extends Module<'logo-cloud'> {

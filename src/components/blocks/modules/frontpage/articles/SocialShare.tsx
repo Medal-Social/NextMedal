@@ -1,0 +1,86 @@
+'use client';
+
+import { Check, Link } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { IconLinkedin, IconTwitterX, IconWhatsapp } from '@/components/icons/social-icons';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { ButtonGroup } from '@/components/ui/button-group';
+import { cn } from '@/lib/utils/index';
+
+export default function SocialShare({
+  title,
+  slug,
+  className,
+}: {
+  title: string;
+  slug: string;
+  className?: string;
+}) {
+  const [copied, setCopied] = useState(false);
+  // Default to empty string on server to match initial client state
+  const [url, setUrl] = useState('');
+
+  useEffect(() => {
+    // Only set URL on client side
+    setUrl(`${window.location.origin}/blog/${slug}`);
+  }, [slug]);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    toast.success('Link copied to clipboard');
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const shareLinks = [
+    {
+      name: 'Twitter',
+      icon: IconTwitterX,
+      url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`,
+      hoverColor: 'hover:text-foreground',
+    },
+    {
+      name: 'LinkedIn',
+      icon: IconLinkedin,
+      url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+      hoverColor: 'hover:text-[#0A66C2]',
+    },
+    {
+      name: 'WhatsApp',
+      icon: IconWhatsapp,
+      url: `https://wa.me/?text=${encodeURIComponent(`${title} ${url}`)}`,
+      hoverColor: 'hover:text-[#25D366]',
+    },
+  ];
+
+  return (
+    <ButtonGroup className={cn('w-full', className)}>
+      {shareLinks.map((link) => (
+        <a
+          key={link.name}
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn(
+            buttonVariants({ variant: 'outline', size: 'lg' }),
+            'flex-1 text-muted-foreground',
+            link.hoverColor
+          )}
+          aria-label={`Share on ${link.name}`}
+        >
+          <link.icon className="size-5" />
+        </a>
+      ))}
+      <Button
+        variant="outline"
+        size="lg"
+        onClick={handleCopy}
+        className="flex-1 text-muted-foreground hover:text-foreground"
+        aria-label="Copy link"
+      >
+        {copied ? <Check className="size-5" /> : <Link className="size-5" />}
+      </Button>
+    </ButtonGroup>
+  );
+}

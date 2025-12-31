@@ -9,14 +9,14 @@ import { setRequestLocale } from 'next-intl/server';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { Suspense } from 'react';
 import { Analytics } from '@/components/Analytics';
+import { ScrollToTop, SiteHeader, SkipToContent } from '@/components/blocks/layout';
+import Footer from '@/components/blocks/layout/footer';
+import { SiteJsonLd } from '@/components/blocks/seo';
+import VisualEditingControls from '@/components/blocks/utility/VisualEditingControls';
 import CookieConsentWrapper from '@/components/CookieConsentWrapper';
 import { Toaster } from '@/components/ui/sonner';
 import { routing } from '@/i18n/routing';
 import { SanityLive } from '@/sanity/lib/live';
-import Footer from '@/ui/footer';
-import { ScrollToTop, SiteHeader, SkipToContent } from '@/ui/layout';
-import { SiteJsonLd } from '@/ui/seo';
-import VisualEditingControls from '@/ui/utility/VisualEditingControls';
 
 type Props = {
   children: React.ReactNode;

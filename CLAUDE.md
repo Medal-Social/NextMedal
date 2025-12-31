@@ -19,10 +19,22 @@ pnpm lint                   # Run Biome linting
 pnpm format                 # Auto-format with Biome
 pnpm typecheck              # TypeScript type checking
 
-# Testing
-pnpm test                   # Run all tests once
+# Testing (Vitest)
+pnpm test                   # Run all unit/integration/component tests
 pnpm test:watch             # Run tests in watch mode
-vitest src/test/components/ui/header-footer.test.tsx  # Run single test file
+pnpm test:unit              # Run unit tests only
+pnpm test:components        # Run component tests only
+pnpm test:integration       # Run integration tests only
+pnpm test:contracts         # Run API contract tests
+pnpm test:coverage          # Run tests with coverage report
+
+# E2E Testing (Playwright)
+pnpm e2e                    # Run full E2E tests
+pnpm e2e:smoke              # Run smoke tests (quick critical paths)
+pnpm e2e:visual             # Run visual regression tests
+pnpm e2e:visual:update      # Update visual baselines
+pnpm e2e:a11y               # Run accessibility tests
+pnpm e2e:perf               # Run performance/Lighthouse tests
 
 # Docker
 pnpm docker:build           # Build production Docker image
@@ -33,17 +45,41 @@ pnpm docker:build           # Build production Docker image
 ### Directory Structure
 
 ```
-src/
-├── app/                    # Next.js 16 App Router
-│   ├── (frontend)/         # Main website routes with [locale] parameter
-│   ├── (studio)/           # Sanity CMS Studio at /studio
-│   └── api/                # API routes (search, draft-mode)
-├── ui/                     # 30+ page-level UI components and modules
-├── components/ui/          # Reusable base UI primitives
-├── sanity/schemaTypes/     # 38 Sanity schema definitions
-├── lib/                    # Core utilities (logger, env, utils, safe-action)
-├── i18n/                   # Internationalization config
-└── test/                   # Vitest test setup and test files
+project-root/
+├── src/                    # Production source code
+│   ├── app/                # Next.js 16 App Router
+│   │   ├── (frontend)/     # Main website routes with [locale] parameter
+│   │   ├── (studio)/       # Sanity CMS Studio at /studio
+│   │   └── api/            # API routes (search, draft-mode)
+│   ├── ui/                 # 30+ page-level UI components and modules
+│   ├── components/ui/      # Reusable base UI primitives
+│   ├── sanity/schemaTypes/ # 38 Sanity schema definitions
+│   ├── lib/                # Core utilities (logger, env, utils, safe-action)
+│   └── i18n/               # Internationalization config
+│
+└── tests/                  # All tests (enterprise standard)
+    ├── unit/               # Pure function tests (Vitest)
+    │   ├── lib/            # Utils, helpers, pure logic
+    │   ├── sanity/         # Sanity utilities
+    │   └── config/         # Configuration validation
+    ├── components/         # React component tests (Vitest + Testing Library)
+    │   └── ui/             # Base UI primitives
+    ├── integration/        # Multi-module tests (Vitest)
+    │   ├── api/            # API route integration
+    │   ├── hooks/          # Custom hooks
+    │   └── forms/          # Form validation
+    ├── contracts/          # API contract tests (Vitest + Zod)
+    ├── e2e/                # End-to-end tests (Playwright)
+    │   ├── smoke/          # Quick critical path tests
+    │   ├── specs/          # Full E2E test specs
+    │   ├── visual/         # Visual regression tests
+    │   ├── performance/    # Lighthouse performance tests
+    │   └── accessibility/  # WCAG compliance tests
+    ├── load/               # Load testing (k6)
+    ├── fixtures/           # Shared test data
+    │   ├── sanity/         # Sanity mock data
+    │   └── playwright/     # Playwright fixtures
+    └── setup/              # Test configuration
 ```
 
 ### Key Patterns
@@ -78,6 +114,161 @@ Component organization: Hooks first → derived state → internal functions →
 - **Callback parameters**: Use meaningful names in callbacks, especially for Sanity schema definitions where `doc`, `document`, or the specific type name (e.g., `post`, `author`) makes the code more readable.
 - **Loop variables**: Single-letter variables like `i`, `j`, `k` are acceptable for simple loop indices, but prefer descriptive names for complex iterations.
 
+## Responsive Design Requirements
+
+All UI components and design work MUST be tested across these device sizes:
+
+### Target Devices (2025 Standard)
+
+| Device | Width | Priority |
+|--------|-------|----------|
+| Samsung Galaxy / Android baseline | 360px | Required |
+| iPhone 14/15 | 390px | Required |
+| Large phones landscape | 640px | Required |
+| iPad Mini portrait | 768px | Required |
+| iPad Air portrait | 820px | Recommended |
+| Small laptops | 1024px | Required |
+| Desktop | 1280px+ | Required |
+
+### Tailwind CSS Breakpoints
+
+| Breakpoint | Min Width | Use For |
+|------------|-----------|---------|
+| Base (no prefix) | 0px | Mobile-first styles |
+| `sm` | 640px | Large phones, phablets |
+| `md` | 768px | Tablets |
+| `lg` | 1024px | Laptops, large tablets landscape |
+| `xl` | 1280px | Desktops |
+
+### Design Principles
+
+- **Mobile-first**: Write base styles for mobile, add complexity at larger breakpoints
+- **Touch targets**: Minimum 44px for interactive elements (Apple HIG)
+- **Target spacing**: Minimum 8px between adjacent touch targets (WCAG 2.2)
+- **Collapsible patterns**: Hide secondary UI on mobile, provide toggle to reveal
+- **Responsive spacing**: Use smaller gaps on mobile (e.g., `gap-3 sm:gap-4`)
+- **Responsive sizing**: Scale elements appropriately (e.g., `size-7 md:size-9`)
+
+### Accessibility Requirements (WCAG 2.2 + Vercel Guidelines)
+
+- **Color independence**: Don't rely on color alone; include text labels
+- **Reduced motion**: Honor `prefers-reduced-motion` media query
+- **Semantic HTML**: Use `<button>`, `<a>`, `<label>` before ARIA attributes
+- **Focus indicators**: Visible focus states on all interactive elements
+- **Color contrast**: 4.5:1 for normal text, 3:1 for large text (WCAG AA)
+
+### Testing Checklist
+
+Before completing any UI/design work, verify:
+
+- [ ] Layout works at 360px width (Android baseline)
+- [ ] Layout works at 390px width (iPhone 14/15)
+- [ ] Layout works at 768px width (tablet)
+- [ ] Layout works at 1280px+ width (desktop)
+- [ ] Touch targets are at least 44px
+- [ ] 8px minimum spacing between adjacent targets
+- [ ] Text is readable without horizontal scrolling
+- [ ] Interactive elements are easily tappable
+- [ ] Focus states visible on all interactive elements
+- [ ] Color contrast meets WCAG AA (4.5:1 / 3:1)
+
+## SEO Requirements
+
+All pages MUST meet these standards for maximum search visibility.
+
+### Core Web Vitals Thresholds (Google)
+
+| Metric | Good | Needs Improvement | Poor |
+|--------|------|-------------------|------|
+| LCP (Largest Contentful Paint) | ≤2.5s | 2.5s–4s | >4s |
+| INP (Interaction to Next Paint) | ≤200ms | 200ms–500ms | >500ms |
+| CLS (Cumulative Layout Shift) | ≤0.1 | 0.1–0.25 | >0.25 |
+
+### Metadata Requirements
+
+Every page MUST have:
+- **Title**: 50-60 characters, unique per page, primary keyword near start
+- **Description**: 70-160 characters, compelling call-to-action
+- **Canonical URL**: Absolute URL, one per page
+- **OG Image**: 1200×630px, unique or auto-generated
+- **hreflang**: For all language variants (handled by `processMetadata.ts`)
+
+### Structured Data (JSON-LD)
+
+Required schemas by content type:
+
+| Content Type | Required Schema | Status |
+|--------------|-----------------|--------|
+| All pages | `Organization`, `WebSite`, `BreadcrumbList` | ✅ Implemented |
+| Blog posts | `BlogPosting` or `Article` | ✅ Implemented |
+| Newsletter | `NewsArticle` | ✅ Implemented |
+| Documentation | `TechArticle` | ✅ Implemented |
+| Events | `Event` | ✅ Implemented |
+| Pricing pages | `Product` with `Offer` | Required |
+| FAQ sections | `FAQPage` with `Question`/`Answer` | Required |
+| Video content | `VideoObject` | Required |
+| Testimonials | `Review` or `AggregateRating` | Required |
+| Tutorials | `HowTo` with `HowToStep` | Recommended |
+
+**Implementation notes:**
+- `FAQPage`: Add to any page with FAQ accordion/section (improves featured snippets)
+- `Product`: Required for pricing tiers, include `offers` with `price` and `priceCurrency`
+- `VideoObject`: Required for embedded YouTube/Vimeo, include `thumbnailUrl`, `duration`, `uploadDate`
+- `Review`: Add to testimonial sections with `author`, `reviewRating`
+- Validate all schemas with [Google Rich Results Test](https://search.google.com/test/rich-results)
+
+### Content Structure
+
+- **One `<h1>` per page**: Contains primary keyword
+- **Logical heading hierarchy**: h1 → h2 → h3 (never skip levels)
+- **Internal links**: Link to related content using descriptive anchor text
+- **Image alt text**: Descriptive, includes keywords where natural
+- **URL structure**: Lowercase, hyphens, descriptive slugs (`/blog/seo-best-practices`)
+
+### Image Optimization
+
+- **Format**: WebP preferred, fallback to JPEG/PNG
+- **Sizing**: Use `next/image` with explicit width/height (prevents CLS)
+- **Loading**: `loading="lazy"` for below-fold, `priority` for LCP images
+- **Alt text**: Required on all images, descriptive and keyword-aware
+- **Aspect ratio**: Maintain consistent ratios to prevent layout shift
+
+### Performance Optimization
+
+- **Server Components**: Default for all pages (faster TTFB)
+- **Code splitting**: Dynamic imports for heavy components
+- **Font loading**: `next/font` with `display: swap`
+- **Third-party scripts**: Load async/defer, use `next/script`
+- **Preconnect**: Add for external domains (CDN, analytics)
+
+### SEO Checklist
+
+Before publishing any page, verify:
+
+**Metadata**
+- [ ] Title is 50-60 characters with primary keyword
+- [ ] Description is 70-160 characters with CTA
+- [ ] OG image is present (custom or auto-generated)
+- [ ] Canonical URL is correct
+
+**Content**
+- [ ] Single `<h1>` with primary keyword
+- [ ] Logical heading hierarchy (h1 → h2 → h3)
+- [ ] All images have descriptive alt text
+- [ ] Internal links to related content
+- [ ] URLs are clean and descriptive
+
+**Performance**
+- [ ] LCP ≤2.5s (test with Lighthouse)
+- [ ] INP ≤200ms
+- [ ] CLS ≤0.1
+- [ ] No render-blocking resources
+
+**Structured Data**
+- [ ] Appropriate schema for content type
+- [ ] Validated with Google Rich Results Test
+- [ ] No errors in Search Console
+
 ## Sanity Guidelines
 
 **Schema patterns:**
@@ -105,9 +296,119 @@ Component organization: Hooks first → derived state → internal functions →
 
 ## Testing
 
-- Framework: Vitest + Testing Library + vitest-axe for accessibility
-- Setup file: `src/test/setup.tsx` (mocks ResizeObserver, PointerEvent, scrollIntoView)
-- Coverage thresholds: 40% lines, 35% functions, 25% branches
+### Testing Philosophy
+
+**The Testing Pyramid**
+
+We follow Martin Fowler's testing pyramid approach:
+- **Many unit tests** (fast, isolated, cheap to run)
+- **Fewer integration tests** (combine modules, test boundaries)
+- **Minimal E2E tests** (slow, expensive, but highest confidence)
+
+**When to Write Tests**
+
+| Scenario | Required | Recommended |
+|----------|----------|-------------|
+| Bug fix | ✅ Regression test | - |
+| New feature | ✅ Core functionality | Edge cases |
+| API change | ✅ Contract test | Integration |
+| Refactor | - | ✅ Before refactoring |
+| UI component | - | ✅ Accessibility |
+
+**What NOT to Test**
+- Third-party library internals (trust the library)
+- Simple pass-through functions
+- CSS styling (use visual regression tests instead)
+- Framework behavior (Next.js, React internals)
+- Getter/setter methods without logic
+
+**Test Quality Guidelines**
+- Tests should fail when behavior breaks, not when implementation changes
+- Avoid testing implementation details (mock minimally)
+- One logical assertion per test when possible
+- Use descriptive test names that explain intent and expected outcome
+- Arrange-Act-Assert pattern for test structure
+
+### Test Types
+
+| Type | Purpose | Tool | Location |
+|------|---------|------|----------|
+| **Unit** | Test isolated functions/components | Vitest | `tests/unit/` |
+| **Component** | Test React components with providers | Vitest + Testing Library | `tests/components/` |
+| **Integration** | Test combined modules (API routes, hooks) | Vitest | `tests/integration/` |
+| **Contract** | Verify API response shapes match schemas | Vitest + Zod | `tests/contracts/` |
+| **Smoke** | Quick critical path sanity checks | Playwright | `tests/e2e/smoke/` |
+| **E2E** | Test full user flows in browser | Playwright | `tests/e2e/specs/` |
+| **Visual** | Catch unintended UI changes | Playwright screenshots | `tests/e2e/visual/` |
+| **Performance** | Core Web Vitals, Lighthouse | Playwright + Lighthouse | `tests/e2e/performance/` |
+| **Accessibility** | WCAG compliance | Playwright + axe-core | `tests/e2e/accessibility/` |
+| **Load** | Performance under concurrent users | k6 | `tests/load/` |
+
+### Configuration
+
+- **Vitest setup**: `tests/setup/vitest.setup.ts` (mocks ResizeObserver, PointerEvent, scrollIntoView)
+- **Test providers**: `tests/setup/providers.tsx` (React testing wrappers)
+- **Fixtures**: `tests/fixtures/` (shared mock data for all test types)
+- **Path alias**: `@tests/*` maps to `tests/*`
+
+### Coverage Thresholds
+
+- Lines: 40%
+- Functions: 35%
+- Branches: 25%
+
+### Test Naming Conventions
+
+| Type | Pattern | Example |
+|------|---------|---------|
+| Unit | `{name}.test.ts` | `utils.test.ts` |
+| Component | `{component}.test.tsx` | `button.test.tsx` |
+| Integration | `{feature}.test.ts` | `search-api.test.ts` |
+| Contract | `{api}.contract.ts` | `search-api.contract.ts` |
+| Smoke | `{feature}.smoke.ts` | `navigation.smoke.ts` |
+| E2E | `{flow}.spec.ts` | `checkout.spec.ts` |
+| Visual | `{component}.visual.ts` | `header.visual.ts` |
+
+## Documentation
+
+### Documentation Inventory
+
+| Document | Location | Purpose | Audience |
+|----------|----------|---------|----------|
+| README.md | Root | Project overview, setup, deployment | All |
+| CLAUDE.md | Root | Developer guide, standards, architecture | Developers |
+| SECURITY.md | Root | Vulnerability reporting | Security researchers |
+| CODE_OF_CONDUCT.md | .github/ | Community standards | Contributors |
+| .env.example | Root | Environment configuration | Developers |
+| Workflow YAMLs | .github/workflows/ | CI/CD documentation | DevOps |
+
+### Where to Document
+
+| Type of Information | Where to Document |
+|---------------------|-------------------|
+| Getting started, installation | README.md |
+| Code standards, patterns, architecture | CLAUDE.md |
+| API endpoints | Inline JSDoc + OpenAPI (future) |
+| Component props and usage | JSDoc/TSDoc in component file |
+| Architecture decisions | Live site at /docs |
+| Security vulnerabilities | SECURITY.md |
+| Schema definitions | Inline comments in schemaTypes/ |
+
+### Documentation Maintenance
+
+**Update documentation when:**
+- Adding new features or CLI commands
+- Changing architecture patterns
+- Modifying environment variables
+- Updating dependencies significantly
+- Changing deployment or CI/CD process
+
+**Documentation standards:**
+- README.md: Focus on getting started quickly
+- CLAUDE.md: Detailed developer reference (this file)
+- Use tables for structured information
+- Include code examples for complex patterns
+- Keep documentation close to the code it describes
 
 ## Package Manager
 

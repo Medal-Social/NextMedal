@@ -10,7 +10,7 @@
 
 import { FolderIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
-import { count } from '@/lib/utils';
+import { count } from '@/lib/utils/index';
 
 export default defineType({
   name: 'dropdownMenu',

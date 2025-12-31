@@ -6,7 +6,7 @@ import type { NextRequest } from 'next/server';
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const title = searchParams.get('title') || 'NextMedal Blog';
-  const category = searchParams.get('category') || '';
+  const description = searchParams.get('description') || '';
 
   // Use CSS variables-like values for brand colors to make them easy to replace later
   // In a real implementation, you might fetch these from Sanity "site" settings
@@ -19,9 +19,7 @@ export async function GET(request: NextRequest) {
   };
 
   // Load font
-  const fontData = await fs.readFile(
-    path.join(process.cwd(), 'src/assets/fonts/Inter-SemiBold.ttf')
-  );
+  const fontData = await fs.readFile(path.join(process.cwd(), 'assets/Inter-SemiBold.ttf'));
 
   return new ImageResponse(
     <div
@@ -74,29 +72,13 @@ export async function GET(request: NextRequest) {
           textAlign: 'center',
           padding: '4rem',
           zIndex: 10,
-          maxWidth: '80%',
+          maxWidth: '85%',
         }}
       >
-        {category && (
-          <div
-            style={{
-              display: 'flex',
-              fontSize: '2rem',
-              color: colors.accent,
-              marginBottom: '1rem',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              fontWeight: 600,
-            }}
-          >
-            {category}
-          </div>
-        )}
-
         <div
           style={{
             display: 'flex',
-            fontSize: '4.5rem',
+            fontSize: description ? '3.5rem' : '4.5rem',
             fontWeight: 700,
             color: colors.text,
             lineHeight: 1.1,
@@ -105,6 +87,23 @@ export async function GET(request: NextRequest) {
         >
           {title}
         </div>
+        {description && (
+          <div
+            style={{
+              display: 'flex',
+              fontSize: '1.75rem',
+              fontWeight: 400,
+              color: colors.accent,
+              lineHeight: 1.4,
+              marginTop: '1.5rem',
+              maxWidth: '90%',
+              opacity: 0.9,
+            }}
+          >
+            {description.slice(0, 120)}
+            {description.length > 120 ? '...' : ''}
+          </div>
+        )}
       </div>
 
       {/* Brand Footer */}

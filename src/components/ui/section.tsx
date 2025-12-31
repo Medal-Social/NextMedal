@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import type * as React from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/index';
 
 const sectionVariants = cva(
   'w-full mx-auto px-4 sm:px-6 lg:px-8', // Base: Consistent horizontal padding

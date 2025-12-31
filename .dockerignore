@@ -1,16 +1,37 @@
+# Git
 .git
 .gitignore
+
+# Docker
 .dockerignore
+Dockerfile
+
+# Build artifacts
 .next
-coverage
 node_modules
 npm-debug.log
+
+# Test files
+src/test
+vitest.config.ts
+coverage
+
+# Documentation
 README.md
 openspec
 docs
-test
-vitest.config.ts
+CLAUDE.md
+
+# Environment files
 .env
 .env.local
+.env.*
+
+# IDE and OS
 .DS_Store
+.vscode
+.idea
+
+# Scripts (dev only)
+scripts
 

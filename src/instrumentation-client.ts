@@ -3,7 +3,7 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from '@sentry/nextjs';
-import { env } from './lib/env.client';
+import { env } from '@/lib/core/env.client';
 
 const IS_PRODUCTION =
   process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production';

@@ -4,14 +4,14 @@ import {
   AddUserIcon,
   BookIcon,
   ClockIcon,
-  ControlsIcon,
+  CogIcon,
   DatabaseIcon,
   DocumentsIcon,
-  EditIcon,
   EyeOpenIcon,
   LaunchIcon,
   MasterDetailIcon,
   PlayIcon,
+  StackCompactIcon,
 } from '@sanity/icons';
 import { Box, Button, Card, Container, Flex, Grid, Heading, Label, Stack, Text } from '@sanity/ui';
 import { type KeyboardEvent, memo, useCallback, useMemo } from 'react';
@@ -66,16 +66,16 @@ const QUICK_NAVIGATION: NavigationCard[] = [
     icon: <DocumentsIcon />,
   },
   {
-    title: 'Blog',
-    description: 'Manage posts',
-    path: '/studio/structure/blog.post',
-    icon: <EditIcon />,
+    title: 'Collections',
+    description: 'Blog, docs & more',
+    path: '/studio/structure/collections',
+    icon: <StackCompactIcon />,
   },
   {
     title: 'Settings',
     description: 'Site config',
     path: '/studio/structure/site',
-    icon: <ControlsIcon />,
+    icon: <CogIcon />,
   },
 ];
 
