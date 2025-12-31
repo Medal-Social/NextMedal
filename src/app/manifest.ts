@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { logger } from '@/lib/logger';
+import { logger } from '@/lib/core/logger';
 import { getSite } from '@/sanity/lib/fetch';
 import { getBlockText } from '@/sanity/lib/utils';
 

@@ -2,8 +2,8 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { ImageResponse } from 'next/og';
 import type { NextRequest } from 'next/server';
-import { BASE_URL } from '@/lib/env';
-import { logger } from '@/lib/logger';
+import { BASE_URL } from '@/lib/core/env';
+import { logger } from '@/lib/core/logger';
 import { getSite } from '@/sanity/lib/fetch';
 
 const domain = BASE_URL.replace(/https?:\/\//, '');
@@ -150,7 +150,7 @@ export async function GET(request: NextRequest) {
 
 async function loadFonts(): Promise<{ name: string; data: Buffer }[]> {
   try {
-    const fontPath = path.join(process.cwd(), 'src/assets/fonts/Inter-SemiBold.ttf');
+    const fontPath = path.join(process.cwd(), 'assets/Inter-SemiBold.ttf');
     const fontData = await fs.readFile(fontPath);
     return [{ name: 'serif', data: fontData }];
   } catch (error) {

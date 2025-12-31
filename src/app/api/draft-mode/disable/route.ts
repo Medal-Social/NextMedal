@@ -1,6 +1,6 @@
 import { draftMode } from 'next/headers';
 import { type NextRequest, NextResponse } from 'next/server';
-import { BASE_URL } from '@/lib/env';
+import { BASE_URL } from '@/lib/core/env';
 
 /**
  * Validates that a redirect path is safe (internal only).

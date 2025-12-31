@@ -6,7 +6,7 @@ import { GeistSans } from 'geist/font/sans';
 import { AlertCircle, Home, RefreshCcw } from 'lucide-react';
 import { useEffect } from 'react';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/index';
 import '@/styles/globals.css';
 
 export default function GlobalError({
