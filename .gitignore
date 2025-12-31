@@ -15,6 +15,13 @@
 blob-report/
 *.lhci.json
 
+# Visual regression snapshots (updated on CI, not tracked locally)
+tests/e2e/visual/snapshots/
+*.png-snapshots/
+
+# k6 load test results
+/k6-results/
+
 # next.js
 /.next/
 /out/
