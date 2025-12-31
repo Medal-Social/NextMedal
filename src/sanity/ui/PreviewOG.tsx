@@ -3,7 +3,7 @@
 import { EyeClosedIcon, EyeOpenIcon } from '@sanity/icons';
 import { Box, Button, Flex, Popover, Spinner, Text } from '@sanity/ui';
 import { useState } from 'react';
-import { BASE_URL } from '@/lib/env.client';
+import { BASE_URL } from '@/lib/core/env.client';
 
 export default function PreviewOG({ title }: { title?: string }) {
   const [open, setOpen] = useState(false);

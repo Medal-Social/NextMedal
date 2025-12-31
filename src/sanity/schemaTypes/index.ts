@@ -1,50 +1,68 @@
 /**
  * Sanity Schema Index
- * @version 1.0.1
- * @lastUpdated 2025-12-23
+ * @version 2.0.0
+ * @lastUpdated 2025-12-31
  * @description Central registry where all document, object, module, and fragment schemas are exported.
  * @changelog
+ * - 2.0.0: Reorganized schema structure to match Sanity Studio (shared/, modules/*)
+ * - 1.2.0: Renamed listing modules to frontpage (articles-frontpage, changelog-frontpage, etc.)
+ * - 1.1.0: Added collections system (collection.blog, articles-frontpage module)
  * - 1.0.1: Added header documentation
  * - 1.0.0: Initial version
  */
 
 import type { SchemaTypeDefinition } from 'sanity';
-
-// documents
-import blogCategory from './documents/blog.category';
-import blogPost from './documents/blog.post';
+// Documents - Collections
+import collectionBlog from './documents/collections/blog';
+import collectionChangelog from './documents/collections/changelog';
+import collectionDocumentation from './documents/collections/documentation';
+import collectionEvents from './documents/collections/events';
+import lead from './documents/collections/lead';
+import collectionNewsletter from './documents/collections/newsletter';
 import componentLibrary from './documents/component-library';
-import form from './documents/form';
-import navigation from './documents/navigation';
+// Documents - Pages
 import page from './documents/page';
-import placement from './documents/placement';
-import redirect from './documents/redirect';
+// Documents - Shared Content
+import banner from './documents/shared/banner';
+import blogCategory from './documents/shared/blog.category';
+import docsCategory from './documents/shared/docs.category';
+import form from './documents/shared/form';
+import logo from './documents/shared/logo';
+import navigation from './documents/shared/navigation';
+import person from './documents/shared/person';
+import placement from './documents/shared/placement';
+import pricing from './documents/shared/pricing';
+import redirect from './documents/shared/redirect';
 import site from './documents/site';
-// objects
+// Fragments
 import modules from './fragments/modules';
-// miscellaneous
-import banner from './misc/banner';
-import logo from './misc/logo';
-import person from './misc/person';
-import pricing from './misc/pricing';
-// modules
-import accordionList from './modules/accordion-list';
-import blogFrontpage from './modules/blog-frontpage';
-import breadcrumbs from './modules/breadcrumbs';
-import callout from './modules/callout';
-import componentGallery from './modules/component-gallery';
-import contact from './modules/contact';
-import features from './modules/features';
-import hero from './modules/hero';
-import latestArticles from './modules/latest-articles';
-import leadMagnet from './modules/lead-magnet';
-import logoCloud from './modules/logo-cloud';
-import pricingComparison from './modules/pricing-comparison';
-import pricingList from './modules/pricing-list';
-import productComparison from './modules/product-comparison';
-import team from './modules/team';
-import text from './modules/text';
-import videoHero from './modules/video-hero';
+// Modules - Content Sections
+import accordionList from './modules/content/accordion-list';
+import features from './modules/content/features';
+import logoCloud from './modules/content/logo-cloud';
+import pricingComparison from './modules/content/pricing-comparison';
+import pricingList from './modules/content/pricing-list';
+import productComparison from './modules/content/product-comparison';
+import team from './modules/content/team';
+import text from './modules/content/text';
+// Modules - Frontpages
+import articlesFrontpage from './modules/frontpage/articles-frontpage';
+import changelogFrontpage from './modules/frontpage/changelog-frontpage';
+import docsFrontpage from './modules/frontpage/docs-frontpage';
+import eventsFrontpage from './modules/frontpage/events-frontpage';
+import newsletterFrontpage from './modules/frontpage/newsletter-frontpage';
+// Modules - Hero Sections
+import hero from './modules/hero/hero';
+import videoHero from './modules/hero/video-hero';
+// Modules - Marketing & Leads
+import callout from './modules/marketing/callout';
+import contact from './modules/marketing/contact';
+import leadMagnet from './modules/marketing/lead-magnet';
+// Modules - Utility
+import breadcrumbs from './modules/utility/breadcrumbs';
+import componentGallery from './modules/utility/component-gallery';
+import latestArticles from './modules/utility/latest-articles';
+// Objects
 import cta from './objects/cta';
 import dropdownMenu from './objects/dropdown-menu';
 import icon from './objects/icon';
@@ -56,52 +74,71 @@ import moduleOptions from './objects/module-options';
 import video from './objects/video';
 
 export const schemaTypes: SchemaTypeDefinition[] = [
-  // documents
-  blogCategory,
-  blogPost,
-  componentLibrary,
-  form,
+  // Documents - Pages
   page,
-  placement,
-  redirect,
   site,
-  navigation,
+  componentLibrary,
 
-  // miscellaneous
+  // Documents - Collections
+  collectionBlog,
+  collectionChangelog,
+  collectionDocumentation,
+  collectionEvents,
+  collectionNewsletter,
+  lead,
+
+  // Documents - Shared Content
   banner,
+  blogCategory,
+  docsCategory,
+  form,
   logo,
+  navigation,
   person,
+  placement,
   pricing,
+  redirect,
 
-  // objects
+  // Objects
   cta,
+  dropdownMenu,
   icon,
   img,
   link,
   menuItem,
-  dropdownMenu,
   metadata,
   moduleOptions,
   video,
   modules,
 
-  // modules
-  accordionList,
-  blogFrontpage,
-  latestArticles,
-  leadMagnet,
-  breadcrumbs,
-  callout,
-  componentGallery,
-  features,
-  contact,
+  // Modules - Hero Sections
   hero,
-  logoCloud,
+  videoHero,
 
-  team,
+  // Modules - Content Sections
+  accordionList,
+  features,
+  logoCloud,
   pricingComparison,
   pricingList,
   productComparison,
+  team,
   text,
-  videoHero,
+
+  // Modules - Marketing & Leads
+  callout,
+  contact,
+  leadMagnet,
+
+  // Modules - Frontpages
+  articlesFrontpage,
+  changelogFrontpage,
+  docsFrontpage,
+  eventsFrontpage,
+  newsletterFrontpage,
+
+  // Modules - Utility
+  breadcrumbs,
+  componentGallery,
+  latestArticles,
 ];

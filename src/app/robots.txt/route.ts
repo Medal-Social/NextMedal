@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { BASE_URL, isPreview, isStaging, vercelPreview } from '@/lib/env';
+import { BASE_URL, isPreview, isStaging, vercelPreview } from '@/lib/core/env';
 
 export async function GET() {
   const siteUrl = BASE_URL;

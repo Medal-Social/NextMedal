@@ -5,8 +5,8 @@ import * as React from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { logger } from '@/lib/logger';
-import { base64, cn } from '@/lib/utils';
+import { logger } from '@/lib/core/logger';
+import { base64, cn } from '@/lib/utils/index';
 
 interface SanityCopyButtonProps {
   data: Record<string, unknown> | null;

@@ -7,7 +7,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    setupFiles: ['./src/test/setup.tsx'],
+    setupFiles: ['./tests/setup/vitest.setup.ts'],
     env: {
       NEXT_PUBLIC_BASE_URL: 'https://test.example.com',
       NEXT_PUBLIC_SANITY_PROJECT_ID: 'test-project-id',
@@ -15,7 +15,15 @@ export default defineConfig({
       NEXT_PUBLIC_SANITY_API_VERSION: '2024-12-01',
       NEXT_PUBLIC_SANITY_BROWSER_TOKEN: 'test-token',
     },
-    include: ['**/*.test.{ts,tsx}'],
+    include: [
+      'tests/**/*.test.{ts,tsx}',
+      'tests/**/*.contract.{ts,tsx}',
+    ],
+    exclude: [
+      'tests/e2e/**',
+      'tests/load/**',
+      'node_modules',
+    ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
@@ -36,7 +44,7 @@ export default defineConfig({
       ],
       exclude: [
         'node_modules',
-        'src/test/**',
+        'tests/**',
         '**/*.test.{ts,tsx}',
         '**/*.d.ts',
       ],
@@ -46,6 +54,7 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, './src'),
       '$': resolve(__dirname, './'),
+      '@tests': resolve(__dirname, './tests'),
     },
   },
 });

@@ -76,6 +76,10 @@ export default defineType({
           },
           validation: (Rule) =>
             Rule.required().custom((slug) => {
+              const reserved = ['studio', 'api', 'monitoring'];
+              if (slug?.current && reserved.includes(slug.current.toLowerCase())) {
+                return `"${slug.current}" is a reserved path used by the system.`;
+              }
               if (slug?.current?.includes('/')) {
                 return "Slugs cannot contain slashes. Use a flat structure (e.g., 'about').";
               }

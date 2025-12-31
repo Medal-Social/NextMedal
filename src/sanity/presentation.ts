@@ -25,8 +25,8 @@ export const presentation = presentationTool({
 				`,
       },
       {
-        route: '/blog/:slug',
-        filter: groq`_type == 'blog.post' && metadata.slug.current == $slug`,
+        route: '/:collection/:slug',
+        filter: groq`_type in ['collection.blog', 'collection.newsletter', 'collection.documentation'] && collection->metadata.slug.current == $collection && metadata.slug.current == $slug`,
       },
     ],
     locations: {
@@ -62,16 +62,47 @@ export const presentation = presentationTool({
           ],
         }),
       }),
-      'blog.post': defineLocations({
+      'collection.blog': defineLocations({
         select: {
           title: 'metadata.title',
           slug: 'metadata.slug.current',
+          collectionSlug: 'collection.metadata.slug.current',
         },
         resolve: (doc) => ({
           locations: [
             {
               title: doc?.title || 'Untitled',
-              href: doc?.slug ? `/blog/${doc.slug}` : '/blog',
+              href: doc?.collectionSlug && doc?.slug ? `/${doc.collectionSlug}/${doc.slug}` : '/',
+            },
+          ],
+        }),
+      }),
+      'collection.newsletter': defineLocations({
+        select: {
+          title: 'metadata.title',
+          slug: 'metadata.slug.current',
+          collectionSlug: 'collection.metadata.slug.current',
+        },
+        resolve: (doc) => ({
+          locations: [
+            {
+              title: doc?.title || 'Untitled',
+              href: doc?.collectionSlug && doc?.slug ? `/${doc.collectionSlug}/${doc.slug}` : '/',
+            },
+          ],
+        }),
+      }),
+      'collection.documentation': defineLocations({
+        select: {
+          title: 'metadata.title',
+          slug: 'metadata.slug.current',
+          collectionSlug: 'collection.metadata.slug.current',
+        },
+        resolve: (doc) => ({
+          locations: [
+            {
+              title: doc?.title || 'Untitled',
+              href: doc?.collectionSlug && doc?.slug ? `/${doc.collectionSlug}/${doc.slug}` : '/',
             },
           ],
         }),
