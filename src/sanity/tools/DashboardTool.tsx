@@ -27,34 +27,6 @@ import { STUDIO_TIPS } from './studio-tips';
 // Types
 // ============================================================================
 
-interface NavigationCard {
-  title: string;
-  description: string;
-  path: string;
-  icon: React.ReactNode;
-  tone?: 'primary' | 'positive' | 'caution' | 'critical' | 'default';
-}
-
-// ============================================================================
-// Constants
-// ============================================================================
-
-const VISUAL_EDITOR_CARD: NavigationCard = {
-  title: 'Visual Editor',
-  description: 'Edit content visually with live preview',
-  path: '/studio/editor',
-  icon: <EyeOpenIcon />,
-  tone: 'primary',
-};
-
-const STRUCTURE_CARD: NavigationCard = {
-  title: 'Content Library',
-  description: 'Browse and organize all your documents',
-  path: '/studio/structure',
-  icon: <DatabaseIcon />,
-  tone: 'default',
-};
-
 // ============================================================================
 // Utilities
 // ============================================================================
@@ -99,89 +71,6 @@ const WelcomeSection = memo(function WelcomeSection() {
   );
 });
 
-const PrimaryActions = memo(function PrimaryActions() {
-  const router = useRouter();
-
-  const navigateToVisualEditor = useCallback(() => {
-    router.navigateUrl({ path: VISUAL_EDITOR_CARD.path });
-  }, [router]);
-
-  const navigateToStructure = useCallback(() => {
-    router.navigateUrl({ path: STRUCTURE_CARD.path });
-  }, [router]);
-
-  return (
-    <Grid columns={[1, 1, 2]} gap={[4, 5]}>
-      <Card
-        padding={[4, 5]}
-        radius={4}
-        shadow={2}
-        tone="primary"
-        style={{ cursor: 'pointer' }}
-        onClick={navigateToVisualEditor}
-        onKeyDown={(event) => handleCardKeyDown(event, navigateToVisualEditor)}
-        tabIndex={0}
-        role="button"
-        aria-label={`${VISUAL_EDITOR_CARD.title}: ${VISUAL_EDITOR_CARD.description}`}
-      >
-        <Flex align="center" gap={3}>
-          <Box
-            padding={2}
-            style={{
-              backgroundColor: 'rgba(255,255,255,0.25)',
-              borderRadius: '8px',
-              color: 'inherit',
-            }}
-          >
-            <Text size={3} weight="bold" style={{ color: 'inherit' }}>
-              {VISUAL_EDITOR_CARD.icon}
-            </Text>
-          </Box>
-          <Stack space={2}>
-            <Heading size={2} style={{ color: 'inherit' }}>
-              {VISUAL_EDITOR_CARD.title}
-            </Heading>
-            <Text size={2} style={{ color: 'inherit', opacity: 0.9 }}>
-              {VISUAL_EDITOR_CARD.description}
-            </Text>
-          </Stack>
-        </Flex>
-      </Card>
-
-      <Card
-        padding={[4, 5]}
-        radius={4}
-        border
-        style={{ cursor: 'pointer' }}
-        onClick={navigateToStructure}
-        onKeyDown={(event) => handleCardKeyDown(event, navigateToStructure)}
-        tabIndex={0}
-        role="button"
-        aria-label={`${STRUCTURE_CARD.title}: ${STRUCTURE_CARD.description}`}
-      >
-        <Flex align="center" gap={3}>
-          <Box
-            padding={2}
-            style={{
-              backgroundColor: 'var(--card-bg-color)',
-              border: '1px solid var(--card-border-color)',
-              borderRadius: '8px',
-            }}
-          >
-            <Text size={3}>{STRUCTURE_CARD.icon}</Text>
-          </Box>
-          <Stack space={2}>
-            <Heading size={2}>{STRUCTURE_CARD.title}</Heading>
-            <Text size={2} muted>
-              {STRUCTURE_CARD.description}
-            </Text>
-          </Stack>
-        </Flex>
-      </Card>
-    </Grid>
-  );
-});
-
 const SecondaryActions = memo(function SecondaryActions() {
   const router = useRouter();
   const projectId = useProjectId();
@@ -198,6 +87,20 @@ const SecondaryActions = memo(function SecondaryActions() {
   );
 
   const allActions = [
+    {
+      title: 'Visual Editor',
+      description: 'Edit with live preview',
+      path: '/studio/editor',
+      icon: <EyeOpenIcon />,
+      type: 'internal' as const,
+    },
+    {
+      title: 'Content Library',
+      description: 'Browse all documents',
+      path: '/studio/structure',
+      icon: <DatabaseIcon />,
+      type: 'internal' as const,
+    },
     {
       title: 'Pages',
       description: 'Manage pages',
@@ -247,7 +150,7 @@ const SecondaryActions = memo(function SecondaryActions() {
       <Label size={1} muted>
         Quick Access
       </Label>
-      <Grid columns={[1, 2, 3]} gap={4}>
+      <Grid columns={[1, 2, 4]} gap={4}>
         {allActions.map((item) => {
           if (item.type === 'internal') {
             const navigate = () => handleNavigate(item.path);
@@ -616,7 +519,6 @@ const DashboardComponent = memo(function DashboardComponent() {
         <Container width={4}>
           <Stack space={[5, 6]}>
             <WelcomeSection />
-            <PrimaryActions />
             <ContentOverview />
             <SecondaryActions />
             <ModuleReference />
