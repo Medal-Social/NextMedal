@@ -1,17 +1,17 @@
 'use client';
 
 import PostPreview from '../../frontpage/articles/PostPreview';
-import { useBlogFilters } from '../../frontpage/articles/store';
+import { useArticleFilters } from '../../frontpage/articles/store';
 
 export default function List({
   posts,
   sizes,
   ...props
 }: {
-  posts: Sanity.CollectionBlogPost[];
+  posts: Sanity.CollectionArticlePost[];
   sizes?: string;
 } & React.ComponentProps<'ul'>) {
-  const { category, author, search } = useBlogFilters();
+  const { category, author, search } = useArticleFilters();
   const filtered = filterPosts(posts, { category, author, search });
 
   if (!filtered.length) {
@@ -35,7 +35,7 @@ interface FilterOptions {
   search?: string | null;
 }
 
-export function filterPosts(posts: Sanity.CollectionBlogPost[], filters: FilterOptions) {
+export function filterPosts(posts: Sanity.CollectionArticlePost[], filters: FilterOptions) {
   const { category, author, search } = filters;
 
   return posts.filter((post) => {

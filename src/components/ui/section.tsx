@@ -8,7 +8,7 @@ const sectionVariants = cva(
     variants: {
       width: {
         default: 'max-w-7xl', // Standard page width
-        narrow: 'max-w-3xl', // Blog posts, legal pages
+        narrow: 'max-w-3xl', // Articles, legal pages
         wide: 'max-w-screen-2xl', // Galleries, large tables
         full: 'max-w-none p-0 sm:px-0 lg:px-0', // Full-bleed backgrounds (Hero)
       },

@@ -24,7 +24,7 @@ export default function SocialShare({
 
   useEffect(() => {
     // Only set URL on client side
-    setUrl(`${window.location.origin}/blog/${slug}`);
+    setUrl(`${window.location.origin}/articles/${slug}`);
   }, [slug]);
 
   const handleCopy = async () => {

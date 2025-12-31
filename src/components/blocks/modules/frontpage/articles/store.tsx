@@ -1,6 +1,6 @@
 import { useQueryState } from 'nuqs';
 
-export const useBlogFilters = () => {
+export const useArticleFilters = () => {
   const [category, setCategory] = useQueryState('category', {
     defaultValue: 'All',
     shallow: false,

@@ -73,7 +73,7 @@ function Author({
       data-sanity={stega?.scope('name').toString()}
     >
       {linked && author?.slug?.current && (
-        <Link href={`/blog?author=${author.slug.current}`} className="absolute inset-0 z-0">
+        <Link href={`/articles?author=${author.slug.current}`} className="absolute inset-0 z-0">
           <span className="sr-only">View author {author.name}</span>
         </Link>
       )}

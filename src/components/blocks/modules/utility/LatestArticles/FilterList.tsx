@@ -1,11 +1,11 @@
 import { Suspense } from 'react';
 import { fetchSanityLive } from '@/sanity/lib/live';
-import { BLOG_CATEGORIES_WITH_POSTS_QUERY } from '@/sanity/lib/queries';
+import { ARTICLE_CATEGORIES_WITH_POSTS_QUERY } from '@/sanity/lib/queries';
 import Filter from './Filter';
 
 export default async function FilterList() {
-  const categories = await fetchSanityLive<Sanity.BlogCategory[]>({
-    query: BLOG_CATEGORIES_WITH_POSTS_QUERY,
+  const categories = await fetchSanityLive<Sanity.ArticleCategory[]>({
+    query: ARTICLE_CATEGORIES_WITH_POSTS_QUERY,
   });
 
   if (!categories) return null;

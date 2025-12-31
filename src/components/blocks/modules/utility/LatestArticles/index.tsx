@@ -19,13 +19,13 @@ export default async function LatestArticles({
   filteredCategory,
   posts: postsProp,
   ...props
-}: Sanity.LatestArticles & { posts?: Sanity.CollectionBlogPost[] }) {
+}: Sanity.LatestArticles & { posts?: Sanity.CollectionArticlePost[] }) {
   const posts =
     postsProp ||
-    (await fetchSanityLive<Sanity.CollectionBlogPost[]>({
+    (await fetchSanityLive<Sanity.CollectionArticlePost[]>({
       query: groq`
 			*[
-				_type == 'collection.blog'
+				_type == 'collection.article'
 				${filteredCategory ? '&& $filteredCategory in categories[]->._id' : ''}
 			]|order(
 				publishDate desc

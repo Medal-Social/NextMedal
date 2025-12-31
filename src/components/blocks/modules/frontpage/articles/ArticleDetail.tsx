@@ -25,14 +25,13 @@ import {
 import { createStegaAttribute } from '@/sanity/lib/client';
 
 interface ArticleDetailProps {
-  post: Sanity.CollectionBlogPost;
+  post: Sanity.CollectionArticlePost;
   collectionSlug: string;
-  locale: string;
 }
 
 // Build breadcrumbs from post data
 function buildBreadcrumbs(
-  post: Sanity.CollectionBlogPost,
+  post: Sanity.CollectionArticlePost,
   collectionSlug: string
 ): Array<{ label: string; href: string }> {
   const collectionTitle = post.collection?.metadata?.title || collectionSlug;
@@ -87,7 +86,7 @@ function PostHeader({
   collectionSlug,
   stega,
 }: {
-  post: Sanity.CollectionBlogPost;
+  post: Sanity.CollectionArticlePost;
   collectionSlug: string;
   stega: ReturnType<typeof createStegaAttribute>;
 }) {
@@ -120,7 +119,7 @@ function PostMeta({
   post,
   stega,
 }: {
-  post: Sanity.CollectionBlogPost;
+  post: Sanity.CollectionArticlePost;
   stega: ReturnType<typeof createStegaAttribute>;
 }) {
   const authors = post.authors as Sanity.Person[] | undefined;
@@ -156,13 +155,13 @@ function HeroImage({
   post,
   stega,
 }: {
-  post: Sanity.CollectionBlogPost;
+  post: Sanity.CollectionArticlePost;
   stega: ReturnType<typeof createStegaAttribute>;
 }) {
   if (!post.seo?.image && !post.metadata?.title) return null;
 
   const fallbackImage = {
-    src: `/api/og/blog-fallback?title=${encodeURIComponent(post.metadata?.title || '')}&category=${encodeURIComponent(
+    src: `/api/og/article-fallback?title=${encodeURIComponent(post.metadata?.title || '')}&category=${encodeURIComponent(
       post.categories?.[0]?.title || ''
     )}`,
     alt: post.metadata?.title || '',
@@ -193,7 +192,7 @@ function MobileBottomContent({
   post,
   collectionSlug,
 }: {
-  post: Sanity.CollectionBlogPost;
+  post: Sanity.CollectionArticlePost;
   collectionSlug: string;
 }) {
   return (

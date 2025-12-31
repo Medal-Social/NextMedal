@@ -15,8 +15,8 @@ import resolveUrl from '@/lib/sanity/resolve-url';
 import { client } from '@/sanity/lib/client';
 import { fetchSanityLive } from '@/sanity/lib/live';
 import {
-  COLLECTION_BLOG_POST_QUERY,
-  COLLECTION_BLOG_SLUGS_QUERY,
+  COLLECTION_ARTICLE_POST_QUERY,
+  COLLECTION_ARTICLE_SLUGS_QUERY,
   COLLECTION_DOCUMENTATION_QUERY,
   COLLECTION_DOCUMENTATION_SLUGS_QUERY,
   COLLECTION_EVENTS_QUERY,
@@ -113,10 +113,10 @@ function buildEventsBreadcrumbs(
   ];
 }
 
-function buildBlogBreadcrumbs(
+function buildArticleBreadcrumbs(
   locale: string,
   collectionSlug: string,
-  post: Sanity.CollectionBlogPost
+  post: Sanity.CollectionArticlePost
 ): BreadcrumbItem[] {
   const localePath = locale !== 'en' ? `/${locale}` : '';
   const base = buildBaseBreadcrumbs(locale, collectionSlug, post.collection?.metadata?.title);
@@ -233,10 +233,10 @@ function buildEventsJsonLd(event: Sanity.CollectionEvents) {
   };
 }
 
-function buildBlogJsonLd(post: Sanity.CollectionBlogPost) {
+function buildArticleJsonLd(post: Sanity.CollectionArticlePost) {
   return {
     '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
+    '@type': 'Article',
     headline: post.metadata?.title,
     description: post.seo?.description,
     image: post.seo?.ogimage,
@@ -248,7 +248,7 @@ function buildBlogJsonLd(post: Sanity.CollectionBlogPost) {
     })),
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': resolveUrl({ ...post, _type: 'collection.blog' } as unknown as Sanity.PageBase, {
+      '@id': resolveUrl({ ...post, _type: 'collection.article' } as unknown as Sanity.PageBase, {
         base: true,
       }),
     },
@@ -300,13 +300,17 @@ function renderEventsItem(event: Sanity.CollectionEvents, collectionSlug: string
   );
 }
 
-function renderBlogItem(post: Sanity.CollectionBlogPost, collectionSlug: string, locale: string) {
-  const breadcrumbs = buildBlogBreadcrumbs(locale, collectionSlug, post);
+function renderArticleItem(
+  post: Sanity.CollectionArticlePost,
+  collectionSlug: string,
+  locale: string
+) {
+  const breadcrumbs = buildArticleBreadcrumbs(locale, collectionSlug, post);
   return (
     <>
       <BreadcrumbJsonLd items={breadcrumbs} />
-      <JsonLd data={buildBlogJsonLd(post)} />
-      <ArticleDetail post={post} collectionSlug={collectionSlug} locale={locale} />
+      <JsonLd data={buildArticleJsonLd(post)} />
+      <ArticleDetail post={post} collectionSlug={collectionSlug} />
     </>
   );
 }
@@ -339,10 +343,10 @@ async function handleCollectionItem(
     return renderEventsItem(event, collectionSlug, locale);
   }
 
-  // Default: blog collection
-  const post = await getCollectionBlogPost(collectionSlug, itemSlug, locale);
+  // Default: article collection
+  const post = await getCollectionArticlePost(collectionSlug, itemSlug, locale);
   if (!post) return null;
-  return renderBlogItem(post, collectionSlug, locale);
+  return renderArticleItem(post, collectionSlug, locale);
 }
 
 // ============================================================================
@@ -413,7 +417,7 @@ async function getCollectionItemMetadata(
     return processMetadata(event, searchParams);
   }
 
-  const post = await getCollectionBlogPost(collectionSlug, itemSlug, locale, false);
+  const post = await getCollectionArticlePost(collectionSlug, itemSlug, locale, false);
   if (!post) return null;
   return processMetadata(post, searchParams);
 }
@@ -466,7 +470,7 @@ export async function generateStaticParams() {
         fetchOptions
       ),
       clientWithoutStega.fetch<{ slug: string; collectionSlug: string }[]>(
-        COLLECTION_BLOG_SLUGS_QUERY,
+        COLLECTION_ARTICLE_SLUGS_QUERY,
         {},
         fetchOptions
       ),
@@ -519,14 +523,14 @@ async function checkCollectionPage(
   });
 }
 
-async function getCollectionBlogPost(
+async function getCollectionArticlePost(
   collectionSlug: string,
   itemSlug: string,
   locale: string,
   stega?: boolean
 ) {
-  return await fetchSanityLive<Sanity.CollectionBlogPost>({
-    query: COLLECTION_BLOG_POST_QUERY,
+  return await fetchSanityLive<Sanity.CollectionArticlePost>({
+    query: COLLECTION_ARTICLE_POST_QUERY,
     params: { collectionSlug, itemSlug, locale },
     stega,
   });

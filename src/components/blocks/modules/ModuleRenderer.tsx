@@ -23,7 +23,7 @@ import LatestArticles from './utility/LatestArticles';
 
 export interface ModuleContext {
   page?: Sanity.Page | Sanity.ComponentLibrary;
-  post?: Sanity.CollectionBlogPost;
+  post?: Sanity.CollectionArticlePost;
   isSidebar?: boolean;
 }
 

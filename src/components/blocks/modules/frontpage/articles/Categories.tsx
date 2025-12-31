@@ -6,7 +6,7 @@ export default function Categories({
   badge,
   ...props
 }: {
-  categories?: Sanity.BlogCategory[];
+  categories?: Sanity.ArticleCategory[];
   linked?: boolean;
   badge?: boolean;
 } & React.ComponentProps<'ul'>) {

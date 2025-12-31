@@ -141,10 +141,10 @@ export function CommandMenu({ variant = 'default', className }: CommandMenuProps
             </div>
           ) : (
             <>
-              {items.filter((item) => item.type === 'Blog').length > 0 && (
-                <CommandGroup heading={t('categories.blogPosts')}>
+              {items.filter((item) => item.type === 'Article').length > 0 && (
+                <CommandGroup heading={t('categories.articles')}>
                   {items
-                    .filter((item) => item.type === 'Blog')
+                    .filter((item) => item.type === 'Article')
                     .map((item) => (
                       <CommandItem
                         key={item._id}

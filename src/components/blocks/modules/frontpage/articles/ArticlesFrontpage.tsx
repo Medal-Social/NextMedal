@@ -3,14 +3,14 @@
  * @version 2.1.0
  * @lastUpdated 2025-12-30
  * @description Displays a list of articles from a collection with hero, filters, and pagination.
- * Uses the same layout as the original BlogFrontpage with addition of RSS feed link.
+ * Uses the same layout as the original ArticleFrontpage with addition of RSS feed link.
  */
 
 import { groq } from 'next-sanity';
 import { Suspense } from 'react';
-import BlogFilterBar from '@/components/blocks/modules/frontpage/articles/BlogFrontpage/BlogFilterBar';
-import BlogHeroWrapper from '@/components/blocks/modules/frontpage/articles/BlogFrontpage/BlogHeroWrapper';
-import Paginated from '@/components/blocks/modules/frontpage/articles/BlogFrontpage/Paginated';
+import ArticleFilterBar from '@/components/blocks/modules/frontpage/articles/ArticleFrontpage/ArticleFilterBar';
+import ArticleHeroWrapper from '@/components/blocks/modules/frontpage/articles/ArticleFrontpage/ArticleHeroWrapper';
+import Paginated from '@/components/blocks/modules/frontpage/articles/ArticleFrontpage/Paginated';
 import PostPreview from '@/components/blocks/modules/frontpage/articles/PostPreview';
 import moduleProps from '@/lib/sanity/module-props';
 import { fetchSanityLive } from '@/sanity/lib/live';
@@ -21,12 +21,12 @@ interface ArticlesFrontpageProps extends Sanity.ArticlesFrontpage {
   locale?: string;
 }
 
-// Fetch collection blog posts based on collection slug
+// Fetch collection articles based on collection slug
 async function fetchCollectionPosts(collectionSlug: string, locale: string) {
-  return await fetchSanityLive<Sanity.CollectionBlogPost[]>({
+  return await fetchSanityLive<Sanity.CollectionArticlePost[]>({
     query: groq`
       *[
-        _type == 'collection.blog' &&
+        _type == 'collection.article' &&
         collection->metadata.slug.current == $collectionSlug &&
         language == $locale
       ]|order(publishDate desc)[0...50]{
@@ -81,7 +81,7 @@ export default async function ArticlesFrontpage({
   const posts = await fetchCollectionPosts(collectionSlug, locale);
 
   // Determine Hero Post (for unfiltered view)
-  let heroPost: Sanity.CollectionBlogPost | undefined;
+  let heroPost: Sanity.CollectionArticlePost | undefined;
   if (showFeaturedFirst) {
     heroPost = posts.find((post) => post.featured === 'featured');
   }
@@ -101,10 +101,10 @@ export default async function ArticlesFrontpage({
 
   return (
     <div {...moduleProps(props)}>
-      <BlogHeroWrapper heroPost={heroPost} recentPost={recentPost} popularPost={popularPost} />
+      <ArticleHeroWrapper heroPost={heroPost} recentPost={recentPost} popularPost={popularPost} />
 
       {displayFilters && (
-        <BlogFilterBar rssUrl={rssUrl} collectionSlug={collectionSlug} locale={locale} />
+        <ArticleFilterBar rssUrl={rssUrl} collectionSlug={collectionSlug} locale={locale} />
       )}
 
       <section className="min-h-screen bg-slate-50 py-8 dark:bg-[#0f172a]">

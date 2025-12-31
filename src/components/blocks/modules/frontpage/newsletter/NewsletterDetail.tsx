@@ -154,7 +154,7 @@ function HeroImage({
   if (!issue.seo?.image && !issue.metadata?.title) return null;
 
   const fallbackImage = {
-    src: `/api/og/blog-fallback?title=${encodeURIComponent(issue.metadata?.title || '')}&category=${encodeURIComponent(
+    src: `/api/og/article-fallback?title=${encodeURIComponent(issue.metadata?.title || '')}&category=${encodeURIComponent(
       issue.issueNumber ? `Issue #${issue.issueNumber}` : 'Newsletter'
     )}`,
     alt: issue.metadata?.title || '',
