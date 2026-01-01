@@ -17,15 +17,10 @@ import VideoHero from './hero/VideoHero';
 import Callout from './marketing/Callout';
 import Contact from './marketing/Contact';
 import LeadMagnet from './marketing/LeadMagnet';
+import type { FilterParams, ModuleContext, SidebarProps } from './types';
 import Breadcrumbs from './utility/Breadcrumbs';
 import ComponentGallery from './utility/ComponentGallery';
 import LatestArticles from './utility/LatestArticles';
-
-export interface ModuleContext {
-  page?: Sanity.Page | Sanity.ComponentLibrary;
-  post?: Sanity.CollectionArticlePost;
-  isSidebar?: boolean;
-}
 
 function ModuleSkeleton() {
   return (
@@ -35,15 +30,11 @@ function ModuleSkeleton() {
   );
 }
 
-type SidebarProps = {
-  spacing?: 'default' | 'compact' | 'relaxed' | 'none';
-  width?: 'default' | 'narrow' | 'wide' | 'full';
-};
-
 interface Props {
   module: Sanity.Module;
   context: ModuleContext;
   sidebarProps: SidebarProps;
+  searchParams?: FilterParams;
 }
 
 /**
@@ -58,8 +49,14 @@ interface Props {
  * 2. Add a case to the switch below
  * 3. Wrap in Suspense if it fetches data or is heavy
  */
-export function ModuleRenderer({ module, context, sidebarProps }: Props): ReactElement | null {
+export function ModuleRenderer({
+  module,
+  context,
+  sidebarProps,
+  searchParams,
+}: Props): ReactElement | null {
   const { page, post, isSidebar } = context;
+  const collectionSlug = page?.metadata?.slug?.current;
 
   // Type assertions are needed because Sanity.Module._type is a generic string,
   // and TypeScript switch doesn't narrow to literal types automatically.
@@ -71,8 +68,6 @@ export function ModuleRenderer({ module, context, sidebarProps }: Props): ReactE
 
     case 'articles-frontpage': {
       const props = module as Sanity.ArticlesFrontpage;
-      // Extract collection slug from the page context
-      const collectionSlug = page?.metadata?.slug?.current;
       return (
         <Suspense fallback={<ModuleSkeleton />}>
           <ArticlesFrontpage
@@ -80,6 +75,7 @@ export function ModuleRenderer({ module, context, sidebarProps }: Props): ReactE
             {...sidebarProps}
             collectionSlug={collectionSlug}
             locale={page?.language}
+            searchParams={searchParams}
           />
         </Suspense>
       );
@@ -87,8 +83,6 @@ export function ModuleRenderer({ module, context, sidebarProps }: Props): ReactE
 
     case 'newsletter-frontpage': {
       const props = module as Sanity.NewsletterFrontpage;
-      // Extract collection slug from the page context
-      const collectionSlug = page?.metadata?.slug?.current;
       return (
         <Suspense fallback={<ModuleSkeleton />}>
           <NewsletterFrontpage
@@ -103,8 +97,6 @@ export function ModuleRenderer({ module, context, sidebarProps }: Props): ReactE
 
     case 'changelog-frontpage': {
       const props = module as Sanity.ChangelogFrontpage;
-      // Extract collection slug from the page context
-      const collectionSlug = page?.metadata?.slug?.current;
       return (
         <Suspense fallback={<ModuleSkeleton />}>
           <ChangelogFrontpage
@@ -119,8 +111,6 @@ export function ModuleRenderer({ module, context, sidebarProps }: Props): ReactE
 
     case 'docs-frontpage': {
       const props = module as Sanity.DocsFrontpage;
-      // Extract collection slug from the page context
-      const collectionSlug = page?.metadata?.slug?.current;
       return (
         <Suspense fallback={<ModuleSkeleton />}>
           <DocsFrontpage
@@ -135,8 +125,6 @@ export function ModuleRenderer({ module, context, sidebarProps }: Props): ReactE
 
     case 'events-frontpage': {
       const props = module as Sanity.EventsFrontpage;
-      // Extract collection slug from the page context
-      const collectionSlug = page?.metadata?.slug?.current;
       return (
         <Suspense fallback={<ModuleSkeleton />}>
           <EventsFrontpage

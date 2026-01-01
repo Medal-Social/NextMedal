@@ -6,6 +6,7 @@
  */
 
 import { Calendar, Hash } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 import { Fragment } from 'react';
 import Content from '@/components/blocks/modules/content/RichtextModule/Content';
 import MobileSidebar from '@/components/blocks/modules/frontpage/articles/MobileSidebar';
@@ -42,15 +43,17 @@ function buildBreadcrumbs(
 function IssueBreadcrumbs({
   crumbs,
   currentTitle,
+  homeLabel,
 }: {
   crumbs: Array<{ label: string; href: string }>;
   currentTitle?: string;
+  homeLabel: string;
 }) {
   return (
     <Breadcrumb className="mb-6 font-medium text-muted-foreground">
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          <BreadcrumbLink href="/">{homeLabel}</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
 
@@ -76,17 +79,23 @@ function IssueHeader({
   issue,
   collectionSlug,
   stega,
+  homeLabel,
 }: {
   issue: Sanity.CollectionNewsletter;
   collectionSlug: string;
   stega: ReturnType<typeof createStegaAttribute>;
+  homeLabel: string;
 }) {
   const crumbs = buildBreadcrumbs(issue, collectionSlug);
 
   return (
     <section className="bg-background pt-24 md:pt-32 pb-8 border-b border-border relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <IssueBreadcrumbs crumbs={crumbs} currentTitle={issue.metadata?.title} />
+        <IssueBreadcrumbs
+          crumbs={crumbs}
+          currentTitle={issue.metadata?.title}
+          homeLabel={homeLabel}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           <div className="lg:col-span-8">
@@ -184,15 +193,17 @@ function HeroImage({
 function MobileBottomContent({
   issue,
   collectionSlug,
+  shareLabel,
 }: {
   issue: Sanity.CollectionNewsletter;
   collectionSlug: string;
+  shareLabel: string;
 }) {
   return (
     <div className="lg:hidden mt-12 space-y-12">
       <div className="bg-card rounded-2xl p-6 border shadow-sm">
         <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4">
-          Share Newsletter
+          {shareLabel}
         </h4>
         <SocialShare
           title={issue.metadata?.title || ''}
@@ -203,7 +214,9 @@ function MobileBottomContent({
   );
 }
 
-export default function NewsletterDetail({ issue, collectionSlug }: NewsletterDetailProps) {
+export default async function NewsletterDetail({ issue, collectionSlug }: NewsletterDetailProps) {
+  const t = await getTranslations('article');
+
   const stega = createStegaAttribute({
     id: issue._id,
     type: issue._type,
@@ -211,7 +224,12 @@ export default function NewsletterDetail({ issue, collectionSlug }: NewsletterDe
 
   return (
     <article>
-      <IssueHeader issue={issue} collectionSlug={collectionSlug} stega={stega} />
+      <IssueHeader
+        issue={issue}
+        collectionSlug={collectionSlug}
+        stega={stega}
+        homeLabel={t('home')}
+      />
 
       {/* Main Content Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -219,7 +237,7 @@ export default function NewsletterDetail({ issue, collectionSlug }: NewsletterDe
           {/* Content Column */}
           <div className="lg:col-span-8">
             <HeroImage issue={issue} stega={stega} />
-            <MobileSidebar headings={issue.headings} />
+            <MobileSidebar headings={issue.headings} onThisPageLabel={t('onThisPage')} />
 
             {issue.body && (
               <Content
@@ -229,7 +247,11 @@ export default function NewsletterDetail({ issue, collectionSlug }: NewsletterDe
               />
             )}
 
-            <MobileBottomContent issue={issue} collectionSlug={collectionSlug} />
+            <MobileBottomContent
+              issue={issue}
+              collectionSlug={collectionSlug}
+              shareLabel={t('shareArticle')}
+            />
           </div>
 
           {/* Sidebar Column */}
@@ -238,6 +260,8 @@ export default function NewsletterDetail({ issue, collectionSlug }: NewsletterDe
               headings={issue.headings}
               title={issue.metadata?.title || ''}
               slug={`${collectionSlug}/${issue.metadata?.slug?.current || ''}`}
+              shareLabel={t('shareArticle')}
+              onThisPageLabel={t('onThisPage')}
             />
           </div>
         </div>

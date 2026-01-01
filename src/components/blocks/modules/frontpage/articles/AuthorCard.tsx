@@ -34,7 +34,8 @@ export default function AuthorCard({ author, variant = 'light' }: AuthorCardProp
   // Extract plain text from bio (which is portable text)
   const bioText = Array.isArray(author.bio)
     ? author.bio
-        .map((block: { children?: Array<{ text?: string }> }) =>
+        .filter((block): block is Sanity.PortableTextBlock => block._type === 'block')
+        .map((block: Sanity.PortableTextBlock) =>
           block.children?.map((child) => child.text).join('')
         )
         .join(' ')

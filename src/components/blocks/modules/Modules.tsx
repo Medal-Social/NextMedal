@@ -1,20 +1,18 @@
-import { type ModuleContext, ModuleRenderer } from './ModuleRenderer';
-
-type SidebarProps = {
-  spacing?: 'default' | 'compact' | 'relaxed' | 'none';
-  width?: 'default' | 'narrow' | 'wide' | 'full';
-};
+import { ModuleRenderer } from './ModuleRenderer';
+import type { FilterParams, ModuleContext, SidebarProps } from './types';
 
 export default function Modules({
   modules,
   page,
   post,
   isSidebar = false,
+  searchParams,
 }: {
   modules?: Sanity.Module[];
   page?: Sanity.Page | Sanity.ComponentLibrary;
   post?: Sanity.CollectionArticlePost;
   isSidebar?: boolean;
+  searchParams?: FilterParams;
 }) {
   if (!modules?.length) {
     return null;
@@ -34,6 +32,7 @@ export default function Modules({
             module={module}
             context={context}
             sidebarProps={sidebarProps}
+            searchParams={searchParams}
           />
         );
       })}

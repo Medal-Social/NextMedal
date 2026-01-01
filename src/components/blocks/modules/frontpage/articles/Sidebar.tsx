@@ -11,12 +11,16 @@ export default function Sidebar({
   headings,
   title,
   slug,
+  shareLabel,
+  onThisPageLabel,
   children,
   className,
 }: {
   headings?: HeadingItem[];
   title: string;
   slug: string;
+  shareLabel: string;
+  onThisPageLabel?: string;
   children?: React.ReactNode;
   className?: string;
 }) {
@@ -26,14 +30,14 @@ export default function Sidebar({
         {/* Table of Contents */}
         {headings && headings.length > 0 && (
           <div className="bg-card rounded-2xl p-6 border shadow-sm">
-            <TableOfContents headings={headings} />
+            <TableOfContents headings={headings} onThisPageLabel={onThisPageLabel} />
           </div>
         )}
 
         {/* Share Article */}
         <div className="bg-card rounded-2xl p-6 border shadow-sm">
           <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4">
-            Share Article
+            {shareLabel}
           </h4>
           <SocialShare title={title} slug={slug} />
         </div>

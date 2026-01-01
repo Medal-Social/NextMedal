@@ -1,6 +1,7 @@
 'use client';
 
 import { Check, Link } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { IconLinkedin, IconTwitterX, IconWhatsapp } from '@/components/icons/social-icons';
@@ -18,6 +19,7 @@ export default function SocialShare({
   slug: string;
   className?: string;
 }) {
+  const t = useTranslations('article');
   const [copied, setCopied] = useState(false);
   // Default to empty string on server to match initial client state
   const [url, setUrl] = useState('');
@@ -32,10 +34,10 @@ export default function SocialShare({
 
     if (success) {
       setCopied(true);
-      toast.success('Link copied to clipboard');
+      toast.success(t('linkCopied'));
       setTimeout(() => setCopied(false), 2000);
     } else {
-      toast.error('Failed to copy link');
+      toast.error(t('linkCopyFailed'));
     }
   };
 
@@ -73,7 +75,7 @@ export default function SocialShare({
             'flex-1 text-muted-foreground',
             link.hoverColor
           )}
-          aria-label={`Share on ${link.name}`}
+          aria-label={t('shareOn', { platform: link.name })}
         >
           <link.icon className="size-5" />
         </a>
@@ -83,7 +85,7 @@ export default function SocialShare({
         size="lg"
         onClick={handleCopy}
         className="flex-1 text-muted-foreground hover:text-foreground"
-        aria-label="Copy link"
+        aria-label={t('copyLink')}
       >
         {copied ? <Check className="size-5" /> : <Link className="size-5" />}
       </Button>

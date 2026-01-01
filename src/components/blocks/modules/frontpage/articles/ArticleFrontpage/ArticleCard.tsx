@@ -52,7 +52,10 @@ function ReadTimeDisplay({ readTime }: { readTime?: number }) {
 }
 
 export default function ArticleCard({ post, variant = 'standard', className }: ArticleCardProps) {
-  const href = resolveUrl({ ...post, metadata: post.metadata } as Sanity.PageBase, { base: false });
+  const href = resolveUrl(
+    { ...post, metadata: post.metadata, language: post.language } as Sanity.PageBase,
+    { base: false }
+  );
   const category = post.categories?.[0];
   const author = post.authors?.[0];
   // Only use Sanity image if it has a valid asset, otherwise use fallback

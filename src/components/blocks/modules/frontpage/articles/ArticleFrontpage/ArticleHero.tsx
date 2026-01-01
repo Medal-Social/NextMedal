@@ -1,11 +1,12 @@
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import AuthorCard from '@/components/blocks/modules/frontpage/articles/AuthorCard';
 import { Date as DateDisplay } from '@/components/blocks/objects/core';
 import resolveUrl from '@/lib/sanity/resolve-url';
 import { cn } from '@/lib/utils/index';
 import { createStegaAttribute } from '@/sanity/lib/client';
 
-export default function ArticleHero({
+export default async function ArticleHero({
   featuredPost,
   recentPost,
   popularPost,
@@ -14,10 +15,15 @@ export default function ArticleHero({
   recentPost?: Sanity.CollectionArticlePost;
   popularPost?: Sanity.CollectionArticlePost;
 }) {
+  const t = await getTranslations('article');
   if (!featuredPost) return null;
 
   const featuredHref = resolveUrl(
-    { ...featuredPost, metadata: featuredPost.metadata } as Sanity.PageBase,
+    {
+      ...featuredPost,
+      metadata: featuredPost.metadata,
+      language: featuredPost.language,
+    } as Sanity.PageBase,
     { base: false }
   );
 
@@ -42,7 +48,7 @@ export default function ArticleHero({
           {/* Main Feature */}
           <div className="flex flex-col items-start space-y-4 lg:w-5/12">
             <span className="inline-block rounded-full border border-white/10 bg-white/10 px-2.5 py-1 text-[10px] font-bold tracking-widest text-purple-200 uppercase backdrop-blur-sm">
-              Featured Insight
+              {t('featuredInsight')}
             </span>
             <h1
               className="font-serif text-3xl font-bold leading-tight tracking-tight text-white md:text-4xl lg:text-5xl"
@@ -80,7 +86,7 @@ export default function ArticleHero({
             {recentPost && (
               <SidebarCard
                 post={recentPost}
-                label="Recent"
+                label={t('recent')}
                 labelColor="text-cyan-400"
                 hoverColor="group-hover:text-cyan-400"
               />
@@ -88,7 +94,7 @@ export default function ArticleHero({
             {popularPost && (
               <SidebarCard
                 post={popularPost}
-                label="Popular"
+                label={t('popular')}
                 labelColor="text-indigo-300"
                 hoverColor="group-hover:text-purple-300"
                 borderColor="hover:border-purple-500/30"
@@ -114,7 +120,10 @@ function SidebarCard({
   hoverColor: string;
   borderColor?: string;
 }) {
-  const href = resolveUrl({ ...post, metadata: post.metadata } as Sanity.PageBase, { base: false });
+  const href = resolveUrl(
+    { ...post, metadata: post.metadata, language: post.language } as Sanity.PageBase,
+    { base: false }
+  );
 
   const stega = createStegaAttribute({
     id: post._id,

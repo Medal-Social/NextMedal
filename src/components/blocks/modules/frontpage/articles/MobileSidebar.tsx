@@ -15,9 +15,11 @@ interface HeadingItem {
 
 export default function MobileSidebar({
   headings,
+  onThisPageLabel,
   className,
 }: {
   headings?: HeadingItem[];
+  onThisPageLabel?: string;
   className?: string;
 }) {
   return (
@@ -30,7 +32,7 @@ export default function MobileSidebar({
               <AccordionTrigger className="px-6 py-4 hover:no-underline">
                 <span className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase tracking-widest">
                   <List className="w-4 h-4" />
-                  On This Page
+                  {onThisPageLabel || 'On This Page'}
                 </span>
               </AccordionTrigger>
               <AccordionContent className="px-6 pb-6 [&_a]:no-underline [&_a]:hover:text-primary">
