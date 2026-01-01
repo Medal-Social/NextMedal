@@ -89,3 +89,6 @@ migration-temp/
 # Ignore all migration-related files and directories
 migration/
 migrate-api.sh
+
+.playwright*
+plugins
