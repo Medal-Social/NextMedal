@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-NextMedal is a Next.js 16 + Sanity CMS website template built by Medal Social. It features Server Components, Turbopack, i18n support (Norwegian/English), and Docker-optimized standalone output.
+NextMedal is a Next.js 16 + Sanity CMS website template built by Medal Social. It features Server Components, Turbopack, i18n support (Norwegian/English/Arabic), Docker-optimized standalone output, and a flexible article system for content publishing.
 
 ## Commands
 
@@ -86,10 +86,11 @@ project-root/
 
 - **Server Components by default**: Use `'use client'` only when needed
 - **Sanity integration**: Schemas in `sanity/schemaTypes/`, Studio at `/studio`
-- **i18n routing**: `[locale]` dynamic segment for Norwegian (nb) and English (en)
+- **i18n routing**: `[locale]` dynamic segment for Norwegian (nb), English (en), and Arabic (ar)
 - **Environment validation**: Zod-validated env vars in `lib/env.ts`
 - **Structured logging**: Pino logger in `lib/logger.ts` with Sentry hooks (production-only)
 - **Safe server actions**: Use `next-safe-action` wrapper in `lib/safe-action.ts`
+- **Article system**: Flexible content publishing with categories, authors, and SEO optimization
 
 ### Next.js 16 Middleware Naming
 
@@ -200,7 +201,7 @@ Required schemas by content type:
 | Content Type | Required Schema | Status |
 |--------------|-----------------|--------|
 | All pages | `Organization`, `WebSite`, `BreadcrumbList` | ✅ Implemented |
-| Blog posts | `BlogPosting` or `Article` | ✅ Implemented |
+| Articles | `Article` | ✅ Implemented |
 | Newsletter | `NewsArticle` | ✅ Implemented |
 | Documentation | `TechArticle` | ✅ Implemented |
 | Events | `Event` | ✅ Implemented |
@@ -223,7 +224,7 @@ Required schemas by content type:
 - **Logical heading hierarchy**: h1 → h2 → h3 (never skip levels)
 - **Internal links**: Link to related content using descriptive anchor text
 - **Image alt text**: Descriptive, includes keywords where natural
-- **URL structure**: Lowercase, hyphens, descriptive slugs (`/blog/seo-best-practices`)
+- **URL structure**: Lowercase, hyphens, descriptive slugs (`/articles/seo-best-practices`)
 
 ### Image Optimization
 
@@ -269,11 +270,44 @@ Before publishing any page, verify:
 - [ ] Validated with Google Rich Results Test
 - [ ] No errors in Search Console
 
+## Content System
+
+### Article Architecture
+
+The article system is the primary content publishing mechanism, replacing the legacy blog structure:
+
+**Key Features:**
+- **Multi-language support**: Articles available in Norwegian (nb), English (en), and Arabic (ar)
+- **Category taxonomy**: Organize articles with categories (e.g., "Guide", "News", "Tutorial")
+- **Author attribution**: Link articles to author profiles with bio, image, and social links
+- **SEO optimization**: Auto-generated metadata, structured data (Article schema), and social sharing
+- **RSS feeds**: Per-locale RSS feeds at `/[locale]/articles/rss.xml`
+- **Flexible frontpage**: Featured articles, category filtering, and pagination
+
+**Schema Types:**
+- `article` - Main content document type (replaces legacy `blog`)
+- `article.category` - Category taxonomy (replaces `blog.category`)
+- `author` - Author profiles
+- `articlesFrontpage` - Frontpage module configuration
+- `latestArticles` - Reusable latest articles widget
+
+**Routing:**
+- Article collection: `/[locale]/articles`
+- Individual article: `/[locale]/articles/[slug]`
+- Category filter: `/[locale]/articles?category=guide`
+- RSS feed: `/[locale]/articles/rss.xml`
+
+**Important Notes:**
+- The term "blog" is deprecated - always use "article" in code, documentation, and UI
+- Article slugs must be unique per locale
+- Published date controls visibility and ordering
+- Categories are shared across all locales
+
 ## Sanity Guidelines
 
 **Schema patterns:**
 - Use `defineType`, `defineField`, `defineArrayMember` helpers
-- Export named const matching filename (e.g., `lessonType` in `lessonType.ts`)
+- Export named const matching filename (e.g., `articleType` in `article.tsx`)
 - Images require `options.hotspot: true`
 - Prefer `string` with `options.list` over `boolean` fields
 - Use arrays of references, not single references
@@ -281,7 +315,7 @@ Before publishing any page, verify:
   - Bad: `defineArrayMember({ type: 'object', fields: [...] })`
   - Good: `defineArrayMember({ name: 'my-item', type: 'object', fields: [...] })`
   - Run `pnpm lint:sanity` to check for missing names
-- GROQ variables: SCREAMING_SNAKE_CASE (e.g., `POST_QUERY`)
+- GROQ variables: SCREAMING_SNAKE_CASE (e.g., `ARTICLE_QUERY`)
 - After schema changes: `npx sanity@latest schema extract`
 
 **Data fetching:**
@@ -420,12 +454,12 @@ Required:
 ```
 NEXT_PUBLIC_SANITY_PROJECT_ID    # Sanity project ID
 NEXT_PUBLIC_SANITY_DATASET       # Sanity dataset (usually "production")
-NEXT_PUBLIC_SANITY_BROWSER_TOKEN            # Sanity API token for server-side fetching
 NEXT_PUBLIC_BASE_URL             # Site base URL
 ```
 
 Optional:
 ```
+NEXT_PUBLIC_SANITY_BROWSER_TOKEN # Sanity API token for live preview/draft mode (CLIENT-EXPOSED, MUST be read-only/Viewer permissions)
 NEXT_PUBLIC_SENTRY_DSN           # Enables Sentry error tracking (production-only)
 NEXT_PUBLIC_UMAMI_SCRIPT_URL     # Umami analytics script URL
 NEXT_PUBLIC_IMAGE_PROXY_URL      # Custom image proxy (enables custom loader)

@@ -1,4 +1,7 @@
+'use client';
+
 import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import type * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils/index';
@@ -53,34 +56,37 @@ function PaginationLink({ className, isActive, size = 'icon', ...props }: Pagina
 }
 
 function PaginationPrevious({ className, ...props }: React.ComponentProps<typeof PaginationLink>) {
+  const t = useTranslations('pagination');
   return (
     <PaginationLink
-      aria-label="Go to previous page"
+      aria-label={t('goToPrevious')}
       size="default"
-      className={cn('pl-2!', className)}
+      className={cn('ps-2 pe-2.5', className)}
       {...props}
     >
-      <ChevronLeftIcon data-icon="inline-start" />
-      <span className="hidden sm:block">Previous</span>
+      <ChevronLeftIcon className="rtl:rotate-180" />
+      <span className="hidden sm:block">{t('previous')}</span>
     </PaginationLink>
   );
 }
 
 function PaginationNext({ className, ...props }: React.ComponentProps<typeof PaginationLink>) {
+  const t = useTranslations('pagination');
   return (
     <PaginationLink
-      aria-label="Go to next page"
+      aria-label={t('goToNext')}
       size="default"
-      className={cn('pr-2!', className)}
+      className={cn('ps-2.5 pe-2', className)}
       {...props}
     >
-      <span className="hidden sm:block">Next</span>
-      <ChevronRightIcon data-icon="inline-end" />
+      <span className="hidden sm:block">{t('next')}</span>
+      <ChevronRightIcon className="rtl:rotate-180" />
     </PaginationLink>
   );
 }
 
 function PaginationEllipsis({ className, ...props }: React.ComponentProps<'span'>) {
+  const t = useTranslations('pagination');
   return (
     <span
       aria-hidden
@@ -92,7 +98,7 @@ function PaginationEllipsis({ className, ...props }: React.ComponentProps<'span'
       {...props}
     >
       <MoreHorizontalIcon />
-      <span className="sr-only">More pages</span>
+      <span className="sr-only">{t('morePages')}</span>
     </span>
   );
 }

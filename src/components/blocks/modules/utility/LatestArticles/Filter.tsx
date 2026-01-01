@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { usePageState } from '@/lib/hooks/use-pagination';
 import Category from '../../frontpage/articles/Category';
-import { useBlogFilters } from '../../frontpage/articles/store';
+import { useArticleFilters } from '../../frontpage/articles/store';
 
 export default function Filter({
   label,
@@ -12,7 +12,7 @@ export default function Filter({
   label: string;
   value?: 'All' | string;
 }) {
-  const { category, setCategory } = useBlogFilters();
+  const { category, setCategory } = useArticleFilters();
   const { setPage } = usePageState();
 
   return (

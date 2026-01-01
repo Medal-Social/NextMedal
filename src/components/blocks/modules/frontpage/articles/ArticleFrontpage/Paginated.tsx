@@ -9,31 +9,29 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import { getPageNumbers, usePagination } from '@/lib/hooks/use-pagination';
-import { filterPosts } from '../../../utility/LatestArticles/List';
-import { useBlogFilters } from '../store';
-import BlogGrid from './BlogGrid';
+import { getPageNumbers, usePageState } from '@/lib/hooks/use-pagination';
+import ArticleGrid from './ArticleGrid';
 
 export default function Paginated({
   posts,
+  totalCount,
   itemsPerPage = 6,
 }: {
-  posts: Sanity.CollectionBlogPost[];
+  posts: Sanity.CollectionArticlePost[];
+  totalCount: number;
   itemsPerPage?: number;
 }) {
-  const { search, category, author } = useBlogFilters();
+  const { page: currentPage, setPage } = usePageState();
 
-  // Filter all posts - grid always shows all matching posts
-  const filteredPosts = filterPosts(posts, { category, author, search });
+  // Calculate total pages from server-provided count
+  const totalPages = Math.ceil(totalCount / itemsPerPage) || 1;
 
-  const { paginatedItems, currentPage, totalPages, setPage, atStart, atEnd } = usePagination({
-    items: filteredPosts,
-    itemsPerPage,
-  });
+  const atStart = currentPage === 1;
+  const atEnd = currentPage === totalPages;
 
   function scrollToList() {
     if (typeof window !== 'undefined')
-      document.querySelector('#blog-list')?.scrollIntoView({ behavior: 'smooth' });
+      document.querySelector('#article-list')?.scrollIntoView({ behavior: 'smooth' });
   }
 
   function handlePageClick(page: number) {
@@ -47,15 +45,13 @@ export default function Paginated({
   const pageNumbers = getPageNumbers(currentPage, totalPages);
 
   return (
-    <div id="blog-list" className="space-y-12">
-      {paginatedItems.length === 0 ? (
+    <div id="article-list" className="space-y-12">
+      {posts.length === 0 ? (
         <div className="py-20 text-center">
-          <p className="text-lg text-slate-500">
-            No posts found for "{search}" in {category}...
-          </p>
+          <p className="text-lg text-slate-500">No articles found matching your filters.</p>
         </div>
       ) : (
-        <BlogGrid posts={paginatedItems} />
+        <ArticleGrid posts={posts} />
       )}
 
       {totalPages > 1 && (

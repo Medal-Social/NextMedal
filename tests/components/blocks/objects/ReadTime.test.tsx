@@ -1,7 +1,18 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import ReadTime from '@/components/blocks/modules/frontpage/articles/ReadTime';
+
+// Mock next-intl
+vi.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => {
+    const translations: Record<string, string> = {
+      minute: 'minute',
+      minutes: 'minutes',
+    };
+    return translations[key] || key;
+  },
+}));
 
 describe('ReadTime', () => {
   it('renders with value', () => {

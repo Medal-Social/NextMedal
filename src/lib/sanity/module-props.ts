@@ -7,7 +7,7 @@ export default function moduleProps({
   ...rest
 }: Partial<Sanity.Module> & { spacing?: string; width?: string }) {
   return {
-    id: stegaClean(options?.uid) || `module-${_key}`,
+    id: stegaClean(options?.anchorId) || `module-${_key}`,
     'data-module': _type,
     ...(rest.spacing ? { spacing: rest.spacing } : {}),
     ...(rest.width ? { width: rest.width } : {}),

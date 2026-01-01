@@ -56,9 +56,9 @@ describe('RSS Feed Route', () => {
       mockFetch
         .mockResolvedValueOnce({
           _id: 'page-1',
-          title: 'Blog',
-          slug: 'blog',
-          description: 'Our blog',
+          title: 'Articles',
+          slug: 'articles',
+          description: 'Our articles',
           frontpageType: 'articles-frontpage',
         })
         .mockResolvedValueOnce([
@@ -73,8 +73,8 @@ describe('RSS Feed Route', () => {
           },
         ]);
 
-      const response = await GET(createMockRequest('en', 'blog'), {
-        params: createMockParams('en', 'blog'),
+      const response = await GET(createMockRequest('en', 'articles'), {
+        params: createMockParams('en', 'articles'),
       });
 
       expect(response.headers.get('Content-Type')).toContain('application/xml');
@@ -84,14 +84,14 @@ describe('RSS Feed Route', () => {
       mockFetch
         .mockResolvedValueOnce({
           _id: 'page-1',
-          title: 'Blog',
-          slug: 'blog',
+          title: 'Articles',
+          slug: 'articles',
           frontpageType: 'articles-frontpage',
         })
         .mockResolvedValueOnce([]);
 
-      const response = await GET(createMockRequest('en', 'blog'), {
-        params: createMockParams('en', 'blog'),
+      const response = await GET(createMockRequest('en', 'articles'), {
+        params: createMockParams('en', 'articles'),
       });
 
       expect(response.headers.get('Cache-Control')).toContain('s-maxage=3600');
@@ -103,14 +103,14 @@ describe('RSS Feed Route', () => {
       mockFetch
         .mockResolvedValueOnce({
           _id: 'page-1',
-          title: 'Blog',
-          slug: 'blog',
+          title: 'Articles',
+          slug: 'articles',
           frontpageType: 'articles-frontpage',
         })
         .mockResolvedValueOnce([]);
 
-      const response = await GET(createMockRequest('en', 'blog'), {
-        params: createMockParams('en', 'blog'),
+      const response = await GET(createMockRequest('en', 'articles'), {
+        params: createMockParams('en', 'articles'),
       });
       const xml = await response.text();
 
@@ -123,15 +123,15 @@ describe('RSS Feed Route', () => {
       mockFetch
         .mockResolvedValueOnce({
           _id: 'page-1',
-          title: 'My Blog',
-          slug: 'blog',
-          description: 'Blog description',
+          title: 'My Articles',
+          slug: 'articles',
+          description: 'Articles description',
           frontpageType: 'articles-frontpage',
         })
         .mockResolvedValueOnce([]);
 
-      const response = await GET(createMockRequest('en', 'blog'), {
-        params: createMockParams('en', 'blog'),
+      const response = await GET(createMockRequest('en', 'articles'), {
+        params: createMockParams('en', 'articles'),
       });
       const xml = await response.text();
 
@@ -139,9 +139,9 @@ describe('RSS Feed Route', () => {
       expect(xml).toContain('<rss version="2.0"');
       expect(xml).toContain('xmlns:atom="http://www.w3.org/2005/Atom"');
       expect(xml).toContain('<channel>');
-      expect(xml).toContain('<title>My Blog</title>');
-      expect(xml).toContain('<link>https://test.example.com/blog</link>');
-      expect(xml).toContain('<description>Blog description</description>');
+      expect(xml).toContain('<title>My Articles</title>');
+      expect(xml).toContain('<link>https://test.example.com/articles</link>');
+      expect(xml).toContain('<description>Articles description</description>');
       expect(xml).toContain('<language>en</language>');
       expect(xml).toContain('</channel>');
       expect(xml).toContain('</rss>');
@@ -151,18 +151,18 @@ describe('RSS Feed Route', () => {
       mockFetch
         .mockResolvedValueOnce({
           _id: 'page-1',
-          title: 'Blog',
-          slug: 'blog',
+          title: 'Articles',
+          slug: 'articles',
           frontpageType: 'articles-frontpage',
         })
         .mockResolvedValueOnce([]);
 
-      const response = await GET(createMockRequest('en', 'blog'), {
-        params: createMockParams('en', 'blog'),
+      const response = await GET(createMockRequest('en', 'articles'), {
+        params: createMockParams('en', 'articles'),
       });
       const xml = await response.text();
 
-      expect(xml).toContain('<atom:link href="https://test.example.com/blog/rss.xml"');
+      expect(xml).toContain('<atom:link href="https://test.example.com/articles/rss.xml"');
       expect(xml).toContain('rel="self"');
       expect(xml).toContain('type="application/rss+xml"');
     });
@@ -173,8 +173,8 @@ describe('RSS Feed Route', () => {
       mockFetch
         .mockResolvedValueOnce({
           _id: 'page-1',
-          title: 'Blog',
-          slug: 'blog',
+          title: 'Articles',
+          slug: 'articles',
           frontpageType: 'articles-frontpage',
         })
         .mockResolvedValueOnce([
@@ -189,16 +189,16 @@ describe('RSS Feed Route', () => {
           },
         ]);
 
-      const response = await GET(createMockRequest('en', 'blog'), {
-        params: createMockParams('en', 'blog'),
+      const response = await GET(createMockRequest('en', 'articles'), {
+        params: createMockParams('en', 'articles'),
       });
       const xml = await response.text();
 
       expect(xml).toContain('<item>');
       expect(xml).toContain('<title>Test Article</title>');
-      expect(xml).toContain('<link>https://test.example.com/blog/test-article</link>');
+      expect(xml).toContain('<link>https://test.example.com/articles/test-article</link>');
       expect(xml).toContain(
-        '<guid isPermaLink="true">https://test.example.com/blog/test-article</guid>'
+        '<guid isPermaLink="true">https://test.example.com/articles/test-article</guid>'
       );
       expect(xml).toContain('<pubDate>');
       expect(xml).toContain('<description>Article description</description>');
@@ -211,8 +211,8 @@ describe('RSS Feed Route', () => {
       mockFetch
         .mockResolvedValueOnce({
           _id: 'page-1',
-          title: 'Blog',
-          slug: 'blog',
+          title: 'Articles',
+          slug: 'articles',
           frontpageType: 'articles-frontpage',
         })
         .mockResolvedValueOnce([
@@ -224,8 +224,8 @@ describe('RSS Feed Route', () => {
           },
         ]);
 
-      const response = await GET(createMockRequest('en', 'blog'), {
-        params: createMockParams('en', 'blog'),
+      const response = await GET(createMockRequest('en', 'articles'), {
+        params: createMockParams('en', 'articles'),
       });
       const xml = await response.text();
 
@@ -240,8 +240,8 @@ describe('RSS Feed Route', () => {
       mockFetch
         .mockResolvedValueOnce({
           _id: 'page-1',
-          title: 'Blogg',
-          slug: 'blogg',
+          title: 'Artikler',
+          slug: 'artikler',
           frontpageType: 'articles-frontpage',
         })
         .mockResolvedValueOnce([
@@ -253,13 +253,13 @@ describe('RSS Feed Route', () => {
           },
         ]);
 
-      const response = await GET(createMockRequest('nb', 'blogg'), {
-        params: createMockParams('nb', 'blogg'),
+      const response = await GET(createMockRequest('nb', 'artikler'), {
+        params: createMockParams('nb', 'artikler'),
       });
       const xml = await response.text();
 
-      expect(xml).toContain('<link>https://test.example.com/nb/blogg</link>');
-      expect(xml).toContain('<link>https://test.example.com/nb/blogg/norsk-innlegg</link>');
+      expect(xml).toContain('<link>https://test.example.com/nb/artikler</link>');
+      expect(xml).toContain('<link>https://test.example.com/nb/artikler/norsk-innlegg</link>');
       expect(xml).toContain('<language>nb</language>');
     });
 
@@ -267,19 +267,19 @@ describe('RSS Feed Route', () => {
       mockFetch
         .mockResolvedValueOnce({
           _id: 'page-1',
-          title: 'Blog',
-          slug: 'blog',
+          title: 'Articles',
+          slug: 'articles',
           frontpageType: 'articles-frontpage',
         })
         .mockResolvedValueOnce([]);
 
-      const response = await GET(createMockRequest('en', 'blog'), {
-        params: createMockParams('en', 'blog'),
+      const response = await GET(createMockRequest('en', 'articles'), {
+        params: createMockParams('en', 'articles'),
       });
       const xml = await response.text();
 
-      expect(xml).toContain('<link>https://test.example.com/blog</link>');
-      expect(xml).not.toContain('/en/blog');
+      expect(xml).toContain('<link>https://test.example.com/articles</link>');
+      expect(xml).not.toContain('/en/articles');
     });
   });
 
@@ -310,7 +310,7 @@ describe('RSS Feed Route', () => {
     });
 
     it.each([
-      ['articles-frontpage', 'collection.blog'],
+      ['articles-frontpage', 'collection.article'],
       ['changelog-frontpage', 'collection.changelog'],
       ['docs-frontpage', 'collection.documentation'],
       ['events-frontpage', 'collection.events'],
@@ -340,8 +340,8 @@ describe('RSS Feed Route', () => {
       mockFetch
         .mockResolvedValueOnce({
           _id: 'page-1',
-          title: 'Blog & News',
-          slug: 'blog',
+          title: 'Articles & News',
+          slug: 'articles',
           description: 'Articles about <tech> & "stuff"',
           frontpageType: 'articles-frontpage',
         })
@@ -355,13 +355,13 @@ describe('RSS Feed Route', () => {
           },
         ]);
 
-      const response = await GET(createMockRequest('en', 'blog'), {
-        params: createMockParams('en', 'blog'),
+      const response = await GET(createMockRequest('en', 'articles'), {
+        params: createMockParams('en', 'articles'),
       });
       const xml = await response.text();
 
       // Channel escaping
-      expect(xml).toContain('Blog &amp; News');
+      expect(xml).toContain('Articles &amp; News');
       expect(xml).toContain('&lt;tech&gt;');
       expect(xml).toContain('&quot;stuff&quot;');
 

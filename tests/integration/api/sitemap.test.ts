@@ -51,7 +51,7 @@ describe('sitemap-[locale].xml route', () => {
     it('accepts valid English locale', async () => {
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [],
-        blog: [],
+        articles: [],
         collections: [],
       });
 
@@ -62,7 +62,7 @@ describe('sitemap-[locale].xml route', () => {
     it('accepts valid Norwegian locale', async () => {
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [],
-        blog: [],
+        articles: [],
         collections: [],
       });
 
@@ -83,7 +83,7 @@ describe('sitemap-[locale].xml route', () => {
             translations: [],
           },
         ],
-        blog: [],
+        articles: [],
         collections: [],
       });
 
@@ -94,7 +94,7 @@ describe('sitemap-[locale].xml route', () => {
     it('includes cache headers', async () => {
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [],
-        blog: [],
+        articles: [],
         collections: [],
       });
 
@@ -115,7 +115,7 @@ describe('sitemap-[locale].xml route', () => {
             translations: [],
           },
         ],
-        blog: [],
+        articles: [],
         collections: [],
       });
 
@@ -145,7 +145,7 @@ describe('sitemap-[locale].xml route', () => {
             translations: [],
           },
         ],
-        blog: [],
+        articles: [],
         collections: [],
       });
 
@@ -160,10 +160,10 @@ describe('sitemap-[locale].xml route', () => {
       expect(xml).toContain('<priority>0.5</priority>');
     });
 
-    it('includes blog posts in sitemap', async () => {
+    it('includes articles in sitemap', async () => {
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [],
-        blog: [
+        articles: [
           {
             slug: 'test-post',
             lastModified: '2024-01-03T00:00:00Z',
@@ -178,7 +178,7 @@ describe('sitemap-[locale].xml route', () => {
       const response = await GET(mockRequest, { params: createParams('en') });
       const xml = await response.text();
 
-      expect(xml).toContain('<loc>https://example.com/blog/test-post</loc>');
+      expect(xml).toContain('<loc>https://example.com/articles/test-post</loc>');
       expect(xml).toContain('<priority>0.4</priority>');
     });
 
@@ -200,7 +200,7 @@ describe('sitemap-[locale].xml route', () => {
             translations: [],
           },
         ],
-        blog: [],
+        articles: [],
         collections: [],
       });
 
@@ -226,7 +226,7 @@ describe('sitemap-[locale].xml route', () => {
             translations: [{ slug: 'om-oss', language: 'nb' }],
           },
         ],
-        blog: [],
+        articles: [],
         collections: [],
       });
 
@@ -253,7 +253,7 @@ describe('sitemap-[locale].xml route', () => {
             translations: [{ slug: 'om-oss', language: 'nb' }],
           },
         ],
-        blog: [],
+        articles: [],
         collections: [],
       });
 
@@ -283,7 +283,7 @@ describe('sitemap-[locale].xml route', () => {
             translations: [],
           },
         ],
-        blog: [],
+        articles: [],
         collections: [],
       });
 
@@ -304,7 +304,7 @@ describe('sitemap-[locale].xml route', () => {
             translations: [{ slug: 'index', language: 'nb' }],
           },
         ],
-        blog: [],
+        articles: [],
         collections: [],
       });
 
@@ -333,7 +333,7 @@ describe('sitemap-[locale].xml route', () => {
             translations: [{ slug: 'about', language: 'en' }],
           },
         ],
-        blog: [],
+        articles: [],
         collections: [],
       });
 
@@ -360,7 +360,7 @@ describe('sitemap-[locale].xml route', () => {
             translations: [{ slug: 'index', language: 'en' }],
           },
         ],
-        blog: [],
+        articles: [],
         collections: [],
       });
 
@@ -383,7 +383,7 @@ describe('sitemap-[locale].xml route', () => {
             translations: [],
           },
         ],
-        blog: [],
+        articles: [],
         collections: [],
       });
 
@@ -420,7 +420,7 @@ describe('sitemap-[locale].xml route', () => {
     it('uses SITEMAP_WITH_TRANSLATIONS_QUERY with noIndex filter', async () => {
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [],
-        blog: [],
+        articles: [],
         collections: [],
       });
 
@@ -437,7 +437,7 @@ describe('sitemap-[locale].xml route', () => {
     it('query includes translations lookup', async () => {
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [],
-        blog: [],
+        articles: [],
         collections: [],
       });
 
@@ -489,7 +489,7 @@ describe('sitemap-[locale].xml property tests', () => {
         async (pages) => {
           mockFetchSanityLive.mockResolvedValueOnce({
             pages,
-            blog: [],
+            articles: [],
             collections: [],
           });
 
@@ -512,7 +512,7 @@ describe('sitemap-[locale].xml property tests', () => {
   it('Property 27: noIndex pages are excluded via query filter', async () => {
     mockFetchSanityLive.mockResolvedValueOnce({
       pages: [],
-      blog: [],
+      articles: [],
       collections: [],
     });
 
@@ -546,7 +546,7 @@ describe('sitemap-[locale].xml property tests', () => {
               translations: [],
             },
           ],
-          blog: [],
+          articles: [],
           collections: [],
         });
 
@@ -578,7 +578,7 @@ describe('sitemap-[locale].xml property tests', () => {
               translations: [],
             },
           ],
-          blog: [],
+          articles: [],
           collections: [],
         });
 

@@ -52,7 +52,7 @@ function createPage(slug: string, type = 'page', language?: string): TestPage {
 function createPageWithCollection(
   slug: string,
   collectionSlug: string,
-  type = 'collection.blog'
+  type = 'collection.article'
 ): TestPage {
   return {
     _type: type,
@@ -79,7 +79,7 @@ describe('isRelativeUrl', () => {
 
   it('returns true for paths starting with /', () => {
     expect(isRelativeUrl('/about')).toBe(true);
-    expect(isRelativeUrl('/blog/post-1')).toBe(true);
+    expect(isRelativeUrl('/articles/post-1')).toBe(true);
   });
 
   it('returns false for URLs with protocol', () => {
@@ -160,9 +160,9 @@ describe('resolveUrl', () => {
     expect(resolveUrl(page, { base: false })).toBe('/about');
   });
 
-  it('resolves blog collection with collection slug', () => {
-    const page = createPageWithCollection('my-post', 'blog', 'collection.blog');
-    expect(resolveUrl(page, { base: false })).toBe('/blog/my-post');
+  it('resolves article collection with collection slug', () => {
+    const page = createPageWithCollection('my-post', 'articles', 'collection.article');
+    expect(resolveUrl(page, { base: false })).toBe('/articles/my-post');
   });
 
   it('resolves changelog collection with collection slug', () => {
@@ -181,7 +181,7 @@ describe('resolveUrl', () => {
   });
 
   it('handles collection without collection reference', () => {
-    const page = createPage('my-post', 'collection.blog');
+    const page = createPage('my-post', 'collection.article');
     expect(resolveUrl(page, { base: false })).toBe('/my-post');
   });
 

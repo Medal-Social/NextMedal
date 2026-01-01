@@ -9,10 +9,15 @@ type TableOfContentsProps = {
     style: string;
     text: string;
   }[];
+  onThisPageLabel?: string;
   className?: string;
 };
 
-export default function TableOfContents({ headings, className }: TableOfContentsProps) {
+export default function TableOfContents({
+  headings,
+  onThisPageLabel,
+  className,
+}: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>('');
 
   useEffect(() => {
@@ -44,7 +49,7 @@ export default function TableOfContents({ headings, className }: TableOfContents
   return (
     <nav className={cn('sticky top-24 max-h-[calc(100vh-6rem)] overflow-auto', className)}>
       <h4 className="flex items-center gap-2 mb-4 text-xs font-bold tracking-widest text-muted-foreground uppercase">
-        <span className="text-lg">≡</span> On this page
+        <span className="text-lg">≡</span> {onThisPageLabel || 'On this page'}
       </h4>
       <ul className="space-y-0 text-sm">
         {headings.map((heading, index) => {

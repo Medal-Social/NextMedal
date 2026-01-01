@@ -24,6 +24,7 @@ function NavigationMenuList({ className, ...props }: NavigationMenuPrimitive.Lis
     <NavigationMenuPrimitive.List
       data-slot="navigation-menu-list"
       className={cn('gap-0 group flex flex-1 list-none items-center justify-center', className)}
+      aria-orientation={undefined}
       {...props}
     />
   );

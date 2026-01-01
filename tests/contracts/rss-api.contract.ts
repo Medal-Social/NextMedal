@@ -33,9 +33,9 @@ describe('RSS Feed API Contract', () => {
       // First call: getCollectionPage
       mockFetch.mockResolvedValueOnce({
         _id: 'page-1',
-        title: 'Blog',
-        slug: 'blog',
-        description: 'Our blog posts',
+        title: 'Articles',
+        slug: 'articles',
+        description: 'Our articles',
         frontpageType: 'articles-frontpage',
       });
 
@@ -52,8 +52,8 @@ describe('RSS Feed API Contract', () => {
         },
       ]);
 
-      const response = await GET(new Request('http://localhost:3000/en/blog/rss.xml'), {
-        params: Promise.resolve({ locale: 'en', collection: 'blog' }),
+      const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
+        params: Promise.resolve({ locale: 'en', collection: 'articles' }),
       });
       const xml = await response.text();
 
@@ -72,14 +72,14 @@ describe('RSS Feed API Contract', () => {
 
       mockFetch.mockResolvedValueOnce({
         _id: 'page-1',
-        title: 'Blog',
-        slug: 'blog',
+        title: 'Articles',
+        slug: 'articles',
         frontpageType: 'articles-frontpage',
       });
       mockFetch.mockResolvedValueOnce([]);
 
-      const response = await GET(new Request('http://localhost:3000/en/blog/rss.xml'), {
-        params: Promise.resolve({ locale: 'en', collection: 'blog' }),
+      const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
+        params: Promise.resolve({ locale: 'en', collection: 'articles' }),
       });
 
       expect(response.headers.get('Content-Type')).toContain('application/xml');
@@ -93,14 +93,14 @@ describe('RSS Feed API Contract', () => {
 
       mockFetch.mockResolvedValueOnce({
         _id: 'page-1',
-        title: 'Blog',
-        slug: 'blog',
+        title: 'Articles',
+        slug: 'articles',
         frontpageType: 'articles-frontpage',
       });
       mockFetch.mockResolvedValueOnce([]);
 
-      const response = await GET(new Request('http://localhost:3000/en/blog/rss.xml'), {
-        params: Promise.resolve({ locale: 'en', collection: 'blog' }),
+      const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
+        params: Promise.resolve({ locale: 'en', collection: 'articles' }),
       });
       const xml = await response.text();
 
@@ -113,14 +113,14 @@ describe('RSS Feed API Contract', () => {
 
       mockFetch.mockResolvedValueOnce({
         _id: 'page-1',
-        title: 'Blog',
-        slug: 'blog',
+        title: 'Articles',
+        slug: 'articles',
         frontpageType: 'articles-frontpage',
       });
       mockFetch.mockResolvedValueOnce([]);
 
-      const response = await GET(new Request('http://localhost:3000/en/blog/rss.xml'), {
-        params: Promise.resolve({ locale: 'en', collection: 'blog' }),
+      const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
+        params: Promise.resolve({ locale: 'en', collection: 'articles' }),
       });
       const xml = await response.text();
 
@@ -134,14 +134,14 @@ describe('RSS Feed API Contract', () => {
 
       mockFetch.mockResolvedValueOnce({
         _id: 'page-1',
-        title: 'Blog',
-        slug: 'blog',
+        title: 'Articles',
+        slug: 'articles',
         frontpageType: 'articles-frontpage',
       });
       mockFetch.mockResolvedValueOnce([]);
 
-      const response = await GET(new Request('http://localhost:3000/en/blog/rss.xml'), {
-        params: Promise.resolve({ locale: 'en', collection: 'blog' }),
+      const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
+        params: Promise.resolve({ locale: 'en', collection: 'articles' }),
       });
       const xml = await response.text();
 
@@ -157,15 +157,15 @@ describe('RSS Feed API Contract', () => {
 
       mockFetch.mockResolvedValueOnce({
         _id: 'page-1',
-        title: 'Tech Blog',
-        slug: 'blog',
+        title: 'Tech Articles',
+        slug: 'articles',
         description: 'Latest tech updates',
         frontpageType: 'articles-frontpage',
       });
       mockFetch.mockResolvedValueOnce([]);
 
-      const response = await GET(new Request('http://localhost:3000/en/blog/rss.xml'), {
-        params: Promise.resolve({ locale: 'en', collection: 'blog' }),
+      const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
+        params: Promise.resolve({ locale: 'en', collection: 'articles' }),
       });
       const xml = await response.text();
 
@@ -182,18 +182,18 @@ describe('RSS Feed API Contract', () => {
 
       mockFetch.mockResolvedValueOnce({
         _id: 'page-1',
-        title: 'My Awesome Blog',
-        slug: 'blog',
+        title: 'My Awesome Articles',
+        slug: 'articles',
         frontpageType: 'articles-frontpage',
       });
       mockFetch.mockResolvedValueOnce([]);
 
-      const response = await GET(new Request('http://localhost:3000/en/blog/rss.xml'), {
-        params: Promise.resolve({ locale: 'en', collection: 'blog' }),
+      const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
+        params: Promise.resolve({ locale: 'en', collection: 'articles' }),
       });
       const xml = await response.text();
 
-      expect(xml).toContain('<title>My Awesome Blog</title>');
+      expect(xml).toContain('<title>My Awesome Articles</title>');
     });
   });
 
@@ -204,8 +204,8 @@ describe('RSS Feed API Contract', () => {
 
       mockFetch.mockResolvedValueOnce({
         _id: 'page-1',
-        title: 'Blog',
-        slug: 'blog',
+        title: 'Articles',
+        slug: 'articles',
         frontpageType: 'articles-frontpage',
       });
       mockFetch.mockResolvedValueOnce([
@@ -218,8 +218,8 @@ describe('RSS Feed API Contract', () => {
         },
       ]);
 
-      const response = await GET(new Request('http://localhost:3000/en/blog/rss.xml'), {
-        params: Promise.resolve({ locale: 'en', collection: 'blog' }),
+      const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
+        params: Promise.resolve({ locale: 'en', collection: 'articles' }),
       });
       const xml = await response.text();
 
@@ -236,8 +236,8 @@ describe('RSS Feed API Contract', () => {
 
       mockFetch.mockResolvedValueOnce({
         _id: 'page-1',
-        title: 'Blog',
-        slug: 'blog',
+        title: 'Articles',
+        slug: 'articles',
         frontpageType: 'articles-frontpage',
       });
       mockFetch.mockResolvedValueOnce([
@@ -249,8 +249,8 @@ describe('RSS Feed API Contract', () => {
         },
       ]);
 
-      const response = await GET(new Request('http://localhost:3000/en/blog/rss.xml'), {
-        params: Promise.resolve({ locale: 'en', collection: 'blog' }),
+      const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
+        params: Promise.resolve({ locale: 'en', collection: 'articles' }),
       });
       const xml = await response.text();
 
@@ -278,8 +278,8 @@ describe('RSS Feed API Contract', () => {
 
       mockFetch.mockRejectedValueOnce(new Error('CMS unavailable'));
 
-      const response = await GET(new Request('http://localhost:3000/en/blog/rss.xml'), {
-        params: Promise.resolve({ locale: 'en', collection: 'blog' }),
+      const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
+        params: Promise.resolve({ locale: 'en', collection: 'articles' }),
       });
       const xml = await response.text();
 
@@ -295,8 +295,8 @@ describe('RSS Feed API Contract', () => {
 
       mockFetch.mockRejectedValueOnce(new Error('Network error'));
 
-      const response = await GET(new Request('http://localhost:3000/en/blog/rss.xml'), {
-        params: Promise.resolve({ locale: 'en', collection: 'blog' }),
+      const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
+        params: Promise.resolve({ locale: 'en', collection: 'articles' }),
       });
 
       expect(response.status).toBe(503);
@@ -311,14 +311,14 @@ describe('RSS Feed API Contract', () => {
 
       mockFetch.mockResolvedValueOnce({
         _id: 'page-1',
-        title: 'Blog',
-        slug: 'blog',
+        title: 'Articles',
+        slug: 'articles',
         frontpageType: 'articles-frontpage',
       });
       mockFetch.mockResolvedValueOnce([]);
 
-      const response = await GET(new Request('http://localhost:3000/en/blog/rss.xml'), {
-        params: Promise.resolve({ locale: 'en', collection: 'blog' }),
+      const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
+        params: Promise.resolve({ locale: 'en', collection: 'articles' }),
       });
       const xml = await response.text();
 

@@ -134,52 +134,52 @@ describe('SEO Title and Meta Description Tests', () => {
     });
   });
 
-  describe('processMetadata Blog Post handling', () => {
-    it('sets openGraph.type to article for blog posts', async () => {
-      const mockBlogPost = {
+  describe('processMetadata Article handling', () => {
+    it('sets openGraph.type to article for articles', async () => {
+      const mockArticlePost = {
         _id: 'test-post',
-        _type: 'collection.blog',
+        _type: 'collection.article',
         publishDate: '2024-01-15',
         metadata: {
-          title: 'Test Blog Post',
-          description: 'Test blog description',
-          slug: { current: 'test-blog-post' },
+          title: 'Test Article',
+          description: 'Test article description',
+          slug: { current: 'test-article-post' },
           noIndex: false,
         },
         collection: {
-          _id: 'page-blog',
+          _id: 'page-articles',
           metadata: {
-            slug: { current: 'blog' },
-            title: 'Blog',
+            slug: { current: 'articles' },
+            title: 'Articles',
           },
         },
-      } as Sanity.CollectionBlogPost;
+      } as Sanity.CollectionArticlePost;
 
-      const result = await processMetadata(mockBlogPost);
+      const result = await processMetadata(mockArticlePost);
       expect((result.openGraph as { type?: string })?.type).toBe('article');
     });
 
-    it('includes publishedTime for blog posts', async () => {
-      const mockBlogPost = {
+    it('includes publishedTime for articles', async () => {
+      const mockArticlePost = {
         _id: 'test-post',
-        _type: 'collection.blog',
+        _type: 'collection.article',
         publishDate: '2024-01-15',
         metadata: {
-          title: 'Test Blog Post',
-          description: 'Test blog description',
-          slug: { current: 'test-blog-post' },
+          title: 'Test Article',
+          description: 'Test article description',
+          slug: { current: 'test-article-post' },
           noIndex: false,
         },
         collection: {
-          _id: 'page-blog',
+          _id: 'page-articles',
           metadata: {
-            slug: { current: 'blog' },
-            title: 'Blog',
+            slug: { current: 'articles' },
+            title: 'Articles',
           },
         },
-      } as Sanity.CollectionBlogPost;
+      } as Sanity.CollectionArticlePost;
 
-      const result = await processMetadata(mockBlogPost);
+      const result = await processMetadata(mockArticlePost);
       expect((result.openGraph as { publishedTime?: string })?.publishedTime).toBe('2024-01-15');
     });
 
@@ -579,24 +579,24 @@ describe('SEO Property-Based Tests', () => {
       );
     });
 
-    it('processMetadata generates complete OG metadata for blog posts', async () => {
+    it('processMetadata generates complete OG metadata for articles', async () => {
       await fc.assert(
         fc.asyncProperty(pageMetadataArb, async ({ title, description, slug }) => {
-          const mockBlogPost = {
+          const mockArticlePost = {
             _id: 'test-post',
-            _type: 'collection.blog',
+            _type: 'collection.article',
             publishDate: '2024-01-15',
             metadata: { title, description, slug, noIndex: false },
             collection: {
-              _id: 'page-blog',
+              _id: 'page-articles',
               metadata: {
-                slug: { current: 'blog' },
-                title: 'Blog',
+                slug: { current: 'articles' },
+                title: 'Articles',
               },
             },
-          } as Sanity.CollectionBlogPost;
+          } as Sanity.CollectionArticlePost;
 
-          const result = await processMetadata(mockBlogPost);
+          const result = await processMetadata(mockArticlePost);
 
           // Verify all required OG properties are present
           expect(result.openGraph).toBeDefined();
@@ -696,13 +696,13 @@ describe('Heading Hierarchy Tests', () => {
 
     it('PostContent uses h1 for main title', () => {
       // PostContent renders: <h1>{post.metadata.title}</h1>
-      // This is the correct semantic structure for blog posts
+      // This is the correct semantic structure for articles
       const expectedTitleLevel = 1;
       expect(expectedTitleLevel).toBe(1);
     });
 
-    it('validates blog post heading hierarchy starts after h1', () => {
-      // Blog post body headings should start at h2 (after the h1 title)
+    it('validates article heading hierarchy starts after h1', () => {
+      // Article body headings should start at h2 (after the h1 title)
       const bodyHeadings = [
         { style: 'h2', text: 'Introduction' },
         { style: 'h3', text: 'Background' },

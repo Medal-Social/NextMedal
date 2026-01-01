@@ -29,10 +29,9 @@ async function fetchCollectionNewsletters(
   locale: string,
   options: {
     limit?: number;
-    showFeaturedFirst?: boolean;
   }
 ) {
-  const { limit = 12, showFeaturedFirst = true } = options;
+  const { limit = 12 } = options;
 
   return await fetchSanityLive<Sanity.CollectionNewsletter[]>({
     query: groq`
@@ -41,12 +40,10 @@ async function fetchCollectionNewsletters(
         collection->metadata.slug.current == $collectionSlug &&
         language == $locale
       ]|order(
-        ${showFeaturedFirst ? 'featured desc, ' : ''}
         publishDate desc
       )[0...$limit]{
         _id,
         _type,
-        featured,
         publishDate,
         issueNumber,
         preheader,
@@ -100,7 +97,6 @@ export default async function NewsletterFrontpage({
   layout = 'grid',
   columns = 3,
   limit = 12,
-  showFeaturedFirst = true,
   showRssLink,
   collectionSlug,
   locale = 'en',
@@ -122,7 +118,6 @@ export default async function NewsletterFrontpage({
   const fetchLimit = Math.max(limit * 10, 100);
   const newsletters = await fetchCollectionNewsletters(collectionSlug, locale, {
     limit: fetchLimit,
-    showFeaturedFirst,
   });
 
   const cleanLayout = stegaClean(layout);

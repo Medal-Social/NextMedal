@@ -1,9 +1,16 @@
 import { BASE_URL } from '@/lib/core/env';
-import { getSite } from '@/sanity/lib/fetch';
+import { getSiteOptional } from '@/sanity/lib/fetch';
+import { ErrorBoundary } from '../layout/ErrorBoundary';
 import JsonLd from './JsonLd';
+import { SiteJsonLdFallback } from './SiteJsonLdFallback';
 
-export default async function SiteJsonLd() {
-  const site = await getSite();
+async function SiteJsonLdInner() {
+  const site = await getSiteOptional();
+
+  // If no site settings, return null (SEO is nice-to-have, not critical)
+  if (!site) {
+    return <SiteJsonLdFallback />;
+  }
 
   return (
     <JsonLd
@@ -28,5 +35,13 @@ export default async function SiteJsonLd() {
         ],
       }}
     />
+  );
+}
+
+export default function SiteJsonLd() {
+  return (
+    <ErrorBoundary fallback={<SiteJsonLdFallback />} componentName="SiteJsonLd">
+      <SiteJsonLdInner />
+    </ErrorBoundary>
   );
 }

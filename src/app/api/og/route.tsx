@@ -4,18 +4,22 @@ import { ImageResponse } from 'next/og';
 import type { NextRequest } from 'next/server';
 import { BASE_URL } from '@/lib/core/env';
 import { logger } from '@/lib/core/logger';
-import { getSite } from '@/sanity/lib/fetch';
+import { getSiteOptional } from '@/sanity/lib/fetch';
 
 const domain = BASE_URL.replace(/https?:\/\//, '');
+const FALLBACK_SITE_TITLE = 'Your Site';
 
 const MAX_TITLE_LENGTH = 200;
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const site = await getSite();
+  const site = await getSiteOptional();
+
+  // Fallback site title if no site settings
+  const siteTitle = site?.title || FALLBACK_SITE_TITLE;
 
   // remove divider and site.title in metadata.title
-  const regex = new RegExp(` [-—|] ${site.title}$`);
+  const regex = new RegExp(` [-—|] ${siteTitle}$`);
   const rawTitle = searchParams.get('title')?.replace(regex, '');
   const title = rawTitle?.slice(0, MAX_TITLE_LENGTH);
 
@@ -122,7 +126,7 @@ export async function GET(request: NextRequest) {
           zIndex: 1,
         }}
       >
-        {title || site.title}
+        {title || siteTitle}
       </div>
       <div
         style={{
@@ -136,10 +140,10 @@ export async function GET(request: NextRequest) {
           position: 'absolute',
           bottom: '40px',
           left: '50%',
-          transform: 'translateX(-25%)',
+          transform: 'translateX(-50%)',
         }}
       >
-        {domain || site.title}
+        {domain || siteTitle}
       </div>
     </div>,
     {

@@ -65,7 +65,7 @@ async function getCollectionPage(
 
 // Map frontpage module type to document type
 const DOCUMENT_TYPE_MAP: Record<FrontpageModuleType, string> = {
-  'articles-frontpage': 'collection.blog',
+  'articles-frontpage': 'collection.article',
   'changelog-frontpage': 'collection.changelog',
   'docs-frontpage': 'collection.documentation',
   'events-frontpage': 'collection.events',
@@ -153,7 +153,7 @@ async function getCollectionItems(
     );
   }
 
-  // Default: articles-frontpage (collection.blog)
+  // Default: articles-frontpage (collection.article)
   return await client.withConfig({ stega: false }).fetch(
     groq`*[
       _type == $documentType &&

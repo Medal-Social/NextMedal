@@ -13,7 +13,7 @@ describe('string utilities', () => {
 
     it('removes special characters', () => {
       expect(slug('Hello World!')).toBe('hello-world');
-      expect(slug('My Blog Post #1')).toBe('my-blog-post-1');
+      expect(slug('My Article #1')).toBe('my-article-1');
     });
 
     it('removes leading hyphens', () => {

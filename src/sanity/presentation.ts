@@ -26,7 +26,7 @@ export const presentation = presentationTool({
       },
       {
         route: '/:collection/:slug',
-        filter: groq`_type in ['collection.blog', 'collection.newsletter', 'collection.documentation'] && collection->metadata.slug.current == $collection && metadata.slug.current == $slug`,
+        filter: groq`_type in ['collection.article', 'collection.newsletter', 'collection.documentation'] && collection->metadata.slug.current == $collection && metadata.slug.current == $slug`,
       },
     ],
     locations: {
@@ -62,7 +62,7 @@ export const presentation = presentationTool({
           ],
         }),
       }),
-      'collection.blog': defineLocations({
+      'collection.article': defineLocations({
         select: {
           title: 'metadata.title',
           slug: 'metadata.slug.current',
@@ -107,7 +107,7 @@ export const presentation = presentationTool({
           ],
         }),
       }),
-      'blog.category': defineLocations({
+      'article.category': defineLocations({
         select: {
           title: 'title',
           slug: 'slug.current',
@@ -116,7 +116,7 @@ export const presentation = presentationTool({
           locations: [
             {
               title: doc?.title || 'Untitled',
-              href: doc?.slug ? `/blog?category=${doc.slug}` : '/blog',
+              href: doc?.slug ? `/articles?category=${doc.slug}` : '/articles',
             },
           ],
         }),

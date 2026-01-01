@@ -5,7 +5,7 @@
  * @returns URL-safe slug (e.g., "Hello World!" → "hello-world")
  * @example
  * slug("Hello World!") // "hello-world"
- * slug("My Blog Post #1") // "my-blog-post-1"
+ * slug("My Article #1") // "my-article-1"
  */
 export function slug(str: string) {
   return str

@@ -1,6 +1,7 @@
 'use client';
 
 import { Moon, Sun } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,7 @@ import { cn } from '@/lib/utils/index';
 export default function HeaderThemeToggle({ className }: { className?: string }) {
   const [mounted, setMounted] = useState(false);
   const { setTheme, resolvedTheme } = useTheme();
+  const t = useTranslations('Accessibility');
 
   // useEffect only runs on the client, so now we can safely show the UI
   useEffect(() => {
@@ -48,7 +50,13 @@ export default function HeaderThemeToggle({ className }: { className?: string })
 
   if (!mounted) {
     return (
-      <Button variant="ghost" size="icon-lg" disabled className={cn('opacity-50', className)}>
+      <Button
+        variant="ghost"
+        size="icon-lg"
+        disabled
+        aria-label={t('toggleTheme')}
+        className={cn('opacity-50', className)}
+      >
         <Sun className="size-5" />
       </Button>
     );
@@ -62,16 +70,17 @@ export default function HeaderThemeToggle({ className }: { className?: string })
             size="icon-lg"
             variant="ghost"
             onClick={toggleTheme}
+            aria-label={t('toggleTheme')}
             className={cn('hover:bg-accent/50', className)}
           >
             <Sun className="size-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
             <Moon className="absolute size-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            <span className="sr-only">Toggle mode</span>
+            <span className="sr-only">{t('toggleTheme')}</span>
           </Button>
         }
       />
       <TooltipContent side="bottom" className="flex items-center gap-2">
-        <span>Toggle mode</span>
+        <span>{t('toggleTheme')}</span>
         <kbd className="pointer-events-none inline-flex h-4 select-none items-center gap-1 rounded border bg-muted px-1 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
           D
         </kbd>

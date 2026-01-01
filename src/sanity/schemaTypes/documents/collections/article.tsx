@@ -1,8 +1,8 @@
 /**
- * Collection Blog Schema
+ * Collection Article Schema
  * @version 1.0.0
  * @lastUpdated 2025-12-30
- * @description Blog posts with flexible collection reference for dynamic URLs.
+ * @description Articles with flexible collection reference for dynamic URLs.
  * Items reference a parent collection page, enabling CMS-configurable collection names/URLs.
  * @changelog
  * - 1.0.0: Initial version with collection reference pattern
@@ -11,16 +11,14 @@
 import { ControlsIcon, EditIcon, EyeClosedIcon, SearchIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import { isUniqueAcrossLocale } from '@/sanity/lib/isUniqueAcrossLocale';
-import CharacterCount from '@/sanity/ui/CharacterCount';
 import PageIdentityField from '@/sanity/ui/PageIdentityField';
 import PageIdentityInput from '@/sanity/ui/PageIdentityInput';
-import PreviewOG from '@/sanity/ui/PreviewOG';
-import { imageBlock } from '../../fragments';
+import { imageBlock, socialEmbedBlock } from '../../fragments';
 import link from '../../objects/link';
 
 export default defineType({
-  name: 'collection.blog',
-  title: 'Blog Post',
+  name: 'collection.article',
+  title: 'Article',
   icon: EditIcon,
   type: 'document',
   groups: [
@@ -39,7 +37,7 @@ export default defineType({
     defineField({
       name: 'collection',
       title: 'Collection',
-      description: 'The collection page this post belongs to (determines the URL)',
+      description: 'The collection page this article belongs to (determines the URL)',
       type: 'reference',
       to: [{ type: 'page' }],
       validation: (Rule) => Rule.required(),
@@ -57,8 +55,8 @@ export default defineType({
       fields: [
         defineField({
           name: 'title',
-          title: 'Post Title',
-          description: 'The title of the blog post',
+          title: 'Article Title',
+          description: 'The title of the article',
           type: 'string',
           validation: (Rule) => Rule.required(),
         }),
@@ -66,7 +64,7 @@ export default defineType({
           name: 'slug',
           title: 'URL Slug',
           type: 'slug',
-          description: 'The URL path for this blog post (appended to collection URL)',
+          description: 'The URL path for this article (appended to collection URL)',
           options: {
             source: (doc) => {
               const document = doc as { metadata?: { title?: string } };
@@ -81,7 +79,7 @@ export default defineType({
                 return `"${slug.current}" is a reserved path.`;
               }
               if (slug?.current?.includes('/')) {
-                return "Slugs cannot contain slashes. Use a flat structure (e.g., 'my-post').";
+                return "Slugs cannot contain slashes. Use a flat structure (e.g., 'my-article').";
               }
               return true;
             }),
@@ -91,7 +89,7 @@ export default defineType({
     defineField({
       name: 'body',
       title: 'Content',
-      description: 'The main content of the blog post.',
+      description: 'The main content of the article.',
       type: 'array',
       of: [
         {
@@ -122,6 +120,7 @@ export default defineType({
           },
         },
         imageBlock,
+        socialEmbedBlock,
         { type: 'code' },
         { type: 'video' },
       ],
@@ -130,12 +129,12 @@ export default defineType({
     defineField({
       name: 'categories',
       title: 'Categories',
-      description: 'Categories this post belongs to.',
+      description: 'Categories this article belongs to.',
       type: 'array',
       of: [
         {
           type: 'reference',
-          to: [{ type: 'blog.category' }],
+          to: [{ type: 'article.category' }],
         },
       ],
       group: 'content',
@@ -143,7 +142,7 @@ export default defineType({
     defineField({
       name: 'authors',
       title: 'Authors',
-      description: 'People who contributed to this post.',
+      description: 'People who contributed to this article.',
       type: 'array',
       of: [
         {
@@ -156,7 +155,7 @@ export default defineType({
     defineField({
       name: 'publishDate',
       title: 'Publish Date',
-      description: 'Date when the post is published.',
+      description: 'Date when the article is published.',
       type: 'date',
       validation: (Rule) => Rule.required(),
       group: 'content',
@@ -164,84 +163,12 @@ export default defineType({
     // SEO Settings
     defineField({
       name: 'seo',
-      title: 'SEO Settings',
-      type: 'object',
+      type: 'seo-metadata',
       group: 'seo',
-      options: {
-        collapsible: false,
-      },
-      fields: [
-        defineField({
-          name: 'title',
-          title: 'SEO Title',
-          type: 'string',
-          description: 'Title shown in search results (50-60 characters recommended)',
-          validation: (Rule) => [
-            Rule.required().warning(),
-            Rule.min(50).warning(),
-            Rule.max(60).warning(),
-          ],
-          components: {
-            input: (props) => (
-              <CharacterCount max={60} {...props}>
-                <PreviewOG title={props.elementProps.value} />
-              </CharacterCount>
-            ),
-          },
-        }),
-        defineField({
-          name: 'description',
-          title: 'SEO Description',
-          type: 'text',
-          rows: 3,
-          description: 'Description shown in search results (70-160 characters recommended)',
-          validation: (Rule) => [
-            Rule.required().warning(),
-            Rule.min(70).warning(),
-            Rule.max(160).warning(),
-          ],
-          components: {
-            input: (props) => <CharacterCount as="textarea" max={160} {...props} />,
-          },
-        }),
-        defineField({
-          name: 'image',
-          title: 'Social Sharing Image',
-          type: 'image',
-          description: 'Image displayed when sharing on social media',
-          options: {
-            hotspot: true,
-          },
-        }),
-        defineField({
-          name: 'noIndex',
-          title: 'Hide from search engines',
-          type: 'boolean',
-          description:
-            'Prevents this post from appearing in search results and removes it from the sitemap.',
-          initialValue: false,
-        }),
-      ],
-    }),
-    defineField({
-      name: 'featured',
-      title: 'Featured',
-      description: 'Highlight this post on the collection page.',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Standard', value: 'standard' },
-          { title: 'Featured', value: 'featured' },
-        ],
-        layout: 'radio',
-      },
-      initialValue: 'standard',
-      group: 'advanced',
     }),
   ],
   preview: {
     select: {
-      featured: 'featured',
       title: 'metadata.title',
       slug: 'metadata.slug.current',
       collectionSlug: 'collection.metadata.slug.current',
@@ -250,7 +177,7 @@ export default defineType({
       language: 'language',
       noindex: 'seo.noIndex',
     },
-    prepare: ({ title, slug, collectionSlug, publishDate, media, featured, language, noindex }) => {
+    prepare: ({ title, slug, collectionSlug, publishDate, media, language, noindex }) => {
       const languageLabel =
         language === 'en' ? 'EN' : language === 'nb' ? 'NO' : language?.toUpperCase();
 
@@ -258,7 +185,7 @@ export default defineType({
       const subtitle = [languageLabel, publishDate, fullPath].filter(Boolean).join(' - ');
 
       return {
-        title: [featured === 'featured' && '*', title].filter(Boolean).join(' '),
+        title,
         subtitle,
         media: media || (noindex ? EyeClosedIcon : EditIcon),
       };

@@ -10,7 +10,7 @@ import { expect, test } from '@playwright/test';
 test.describe('Page Visual Regression', () => {
   test('homepage matches baseline', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Wait for any animations to complete
     await page.waitForTimeout(500);
@@ -24,7 +24,7 @@ test.describe('Page Visual Regression', () => {
 
   test('homepage header matches baseline', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const header = page.locator('header');
     await expect(header).toHaveScreenshot('header.png', {
@@ -34,7 +34,7 @@ test.describe('Page Visual Regression', () => {
 
   test('homepage footer matches baseline', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const footer = page.locator('footer');
     await expect(footer).toHaveScreenshot('footer.png', {

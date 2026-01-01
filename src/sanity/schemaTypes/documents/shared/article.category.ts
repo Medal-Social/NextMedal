@@ -1,10 +1,10 @@
 /**
- * Blog Category Schema
+ * Article Category Schema
  * @version 1.0.1
- * @lastUpdated 2025-12-23
- * @description Defines categories for organizing blog posts with title and slug.
+ * @lastUpdated 2025-12-31
+ * @description Defines categories for organizing articles with title and slug.
  * @changelog
- * - 1.0.1: Updated header documentation
+ * - 1.0.1: Renamed from article.category to article.category
  * - 1.0.0: Initial version with basic category structure
  */
 
@@ -12,8 +12,8 @@ import { TagIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
-  name: 'blog.category',
-  title: 'Blog category',
+  name: 'article.category',
+  title: 'Article category',
   type: 'document',
   icon: TagIcon,
   fields: [

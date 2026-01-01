@@ -3,112 +3,178 @@
 import {
   AddUserIcon,
   BookIcon,
-  ClockIcon,
+  CheckmarkCircleIcon,
   CogIcon,
   DatabaseIcon,
   DocumentsIcon,
+  EditIcon,
   EyeOpenIcon,
-  LaunchIcon,
+  InfoOutlineIcon,
   MasterDetailIcon,
   PlayIcon,
+  SearchIcon,
   StackCompactIcon,
 } from '@sanity/icons';
 import { Box, Button, Card, Container, Flex, Grid, Heading, Label, Stack, Text } from '@sanity/ui';
-import { type KeyboardEvent, memo, useCallback, useMemo } from 'react';
-import { type Tool, useCurrentUser, useProjectId } from 'sanity';
+import { type KeyboardEvent, memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { type Tool, useClient, useCurrentUser, useProjectId } from 'sanity';
 import { useRouter } from 'sanity/router';
 import { IconGithub, IconLinkedinIn, IconTwitterX } from '@/components/icons/social-icons';
+import dashboardImage from '@/sanity/assets/dashboard.png';
+import { STUDIO_TIPS } from './studio-tips';
 
 // ============================================================================
 // Types
 // ============================================================================
 
-interface NavigationCard {
-  title: string;
-  description: string;
-  path: string;
-  icon: React.ReactNode;
-  tone?: 'primary' | 'positive' | 'caution' | 'critical' | 'default';
-}
-
-interface ResourceLink {
-  title: string;
-  description: string;
-  href: string;
-  icon: React.ReactNode;
-}
-
-// ============================================================================
-// Constants
-// ============================================================================
-
-const VISUAL_EDITOR_CARD: NavigationCard = {
-  title: 'Visual Editor',
-  description: 'Edit content visually with live preview',
-  path: '/studio/editor',
-  icon: <EyeOpenIcon />,
-  tone: 'primary',
-};
-
-const STRUCTURE_CARD: NavigationCard = {
-  title: 'Content Library',
-  description: 'Browse and organize all your documents',
-  path: '/studio/structure',
-  icon: <DatabaseIcon />,
-  tone: 'default',
-};
-
-const QUICK_NAVIGATION: NavigationCard[] = [
-  {
-    title: 'Pages',
-    description: 'Manage pages',
-    path: '/studio/structure/page',
-    icon: <DocumentsIcon />,
-  },
-  {
-    title: 'Collections',
-    description: 'Blog, docs & more',
-    path: '/studio/structure/collections',
-    icon: <StackCompactIcon />,
-  },
-  {
-    title: 'Settings',
-    description: 'Site config',
-    path: '/studio/structure/site',
-    icon: <CogIcon />,
-  },
-];
-
-const LEARNING_RESOURCES: ResourceLink[] = [
-  {
-    title: 'Docs',
-    description: 'Guides & Refs',
-    href: 'https://www.nextmedal.com',
-    icon: <BookIcon />,
-  },
-  {
-    title: 'Videos',
-    description: 'Tutorials',
-    href: 'https://youtube.com/@medalsocial',
-    icon: <PlayIcon />,
-  },
-  {
-    title: 'Updates',
-    description: 'Changelog',
-    href: 'https://github.com/Medal-Social/NextMedal/releases',
-    icon: <ClockIcon />,
-  },
-];
-
 // ============================================================================
 // Utilities
 // ============================================================================
 
+// Greeting Arrays - Growth & Efficiency Focused
+const SPECIAL_OCCASION_GREETINGS = [
+  {
+    check: (date: Date) => date.getMonth() === 0 && date.getDate() === 1,
+    message: 'New year, new scale',
+  },
+  {
+    check: (date: Date) => date.getMonth() === 11 && date.getDate() === 25,
+    message: 'Unplug and recharge',
+  },
+  {
+    check: (date: Date) => date.getMonth() === 11 && date.getDate() === 31,
+    message: 'Celebrate the wins',
+  },
+];
+
+const SEASONAL_GREETINGS: Record<string, string[]> = {
+  spring: [
+    'Q2 growth mode',
+    'Planting seeds for scale',
+    'Spring into action',
+    'Fresh quarter, fresh strategy',
+  ],
+  summer: ['Heat up the growth', 'Summer shipping', 'Build momentum', 'Keep the pace'],
+  autumn: ['Harvest the results', 'Q4 focus', 'Finish strong', 'Push to year-end'],
+  winter: [
+    'Cool head, hot strategy',
+    'Year-end sprint',
+    'Strategic planning mode',
+    'Set up for success',
+  ],
+};
+
+const DAY_GREETINGS: Record<string, string[]> = {
+  monday: ['Set the strategy', 'Ready to ship?', 'Start the week strong', 'Monday momentum'],
+  tuesday: ['Execute the plan', 'Build and iterate', 'Keep shipping', 'Focus on impact'],
+  wednesday: ['Mid-week momentum', 'Keep scaling', 'Halfway to the weekend', 'Sprint continues'],
+  thursday: ['Almost there', 'Maintain velocity', 'Thursday grind', 'Push through'],
+  friday: ['Ship it and quit it?', 'Close the week strong', 'Final push', 'Wrap up the wins'],
+  saturday: ['Rest is productive too', 'Weekend mode', 'Recharge for growth', 'Take a break'],
+  sunday: ['Recharge for growth', 'Prep for the week', 'Sunday planning', 'Rest and strategize'],
+};
+
+const TIME_GREETINGS: Record<string, string[]> = {
+  morning: ['Rise and scale', 'Start smart', 'Morning momentum', 'Fresh start'],
+  afternoon: ['Deep work mode', 'Focus on impact', 'Afternoon execution', 'Keep building'],
+  evening: ['Wrapping up the wins?', 'Prepare for tomorrow', 'Evening review', 'Close it out'],
+  lateNight: [
+    'Quiet hours, big moves',
+    'Night owl mode',
+    'Burning the midnight oil?',
+    'Late night hustle',
+  ],
+};
+
+const POWER_GREETINGS = [
+  'Ready to scale?',
+  'Do more with less',
+  'Focus on growth',
+  'Ship 10x faster',
+  'What are we shipping today?',
+  'Work smarter',
+  "Let's build",
+  'Zero chaos',
+  'Execute with precision',
+  'Scale faster',
+];
+
+function getSeason(date: Date): 'spring' | 'summer' | 'autumn' | 'winter' {
+  const month = date.getMonth();
+  if (month >= 2 && month <= 4) return 'spring';
+  if (month >= 5 && month <= 7) return 'summer';
+  if (month >= 8 && month <= 10) return 'autumn';
+  return 'winter';
+}
+
+function getDayOfWeek(date: Date): string {
+  const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  return days[date.getDay()];
+}
+
+function getTimeOfDay(hour: number): 'morning' | 'afternoon' | 'evening' | 'lateNight' {
+  if (hour >= 5 && hour < 12) return 'morning';
+  if (hour >= 12 && hour < 18) return 'afternoon';
+  if (hour >= 18 && hour < 23) return 'evening';
+  return 'lateNight';
+}
+
+// Generate a stable daily seed based on the date to make greetings consistent throughout the day
+function getDailySeed(date: Date): number {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const day = date.getDate();
+  return year * 10000 + month * 100 + day;
+}
+
+// Seeded random number generator for consistent daily greetings
+function seededRandom(seed: number): number {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
+
 function getGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 18) return 'Good afternoon';
-  return 'Good evening';
+  const now = new Date();
+  const hour = now.getHours();
+  const dailySeed = getDailySeed(now);
+
+  // Priority 1: Special Occasions (always shown)
+  for (const occasion of SPECIAL_OCCASION_GREETINGS) {
+    if (occasion.check(now)) {
+      return occasion.message;
+    }
+  }
+
+  // Use seeded random for consistent greetings throughout the day
+  const random = seededRandom(dailySeed);
+
+  // Priority 2: Season (60% chance)
+  if (random < 0.6) {
+    const season = getSeason(now);
+    const seasonalGreetings = SEASONAL_GREETINGS[season];
+    const index = Math.floor(seededRandom(dailySeed + 1) * seasonalGreetings.length);
+    return seasonalGreetings[index];
+  }
+
+  // Priority 3: Day of Week (25% chance)
+  if (random < 0.85) {
+    const day = getDayOfWeek(now);
+    const dayGreetings = DAY_GREETINGS[day];
+    const index = Math.floor(seededRandom(dailySeed + 2) * dayGreetings.length);
+    return dayGreetings[index];
+  }
+
+  // Priority 4: Time of Day (10% chance)
+  if (random < 0.95) {
+    const timeOfDay = getTimeOfDay(hour);
+    const timeGreetings = TIME_GREETINGS[timeOfDay];
+    const index = Math.floor(seededRandom(dailySeed + 3) * timeGreetings.length);
+    return timeGreetings[index];
+  }
+
+  // Fallback: Power Greetings (5% chance)
+  const index = Math.floor(seededRandom(dailySeed + 4) * POWER_GREETINGS.length);
+  return POWER_GREETINGS[index];
 }
 
 function handleCardKeyDown(event: KeyboardEvent<HTMLDivElement>, onClick: () => void): void {
@@ -128,104 +194,29 @@ const WelcomeSection = memo(function WelcomeSection() {
   const greeting = getGreeting();
 
   return (
-    <Box>
-      <Stack space={5}>
-        <Heading as="h1" size={4} weight="bold">
-          {firstName ? `${greeting}, ${firstName}` : 'Welcome to Your Studio'}
-        </Heading>
-        <Text size={2} muted>
-          What would you like to work on today?
-        </Text>
-      </Stack>
-    </Box>
-  );
-});
-
-const PrimaryActions = memo(function PrimaryActions() {
-  const router = useRouter();
-
-  const navigateToVisualEditor = useCallback(() => {
-    router.navigateUrl({ path: VISUAL_EDITOR_CARD.path });
-  }, [router]);
-
-  const navigateToStructure = useCallback(() => {
-    router.navigateUrl({ path: STRUCTURE_CARD.path });
-  }, [router]);
-
-  return (
-    <Grid columns={[1, 1, 2]} gap={[4, 5]}>
-      <Card
-        padding={[4, 5]}
-        radius={4}
-        shadow={2}
-        tone="primary"
-        style={{ cursor: 'pointer' }}
-        onClick={navigateToVisualEditor}
-        onKeyDown={(event) => handleCardKeyDown(event, navigateToVisualEditor)}
-        tabIndex={0}
-        role="button"
-        aria-label={`${VISUAL_EDITOR_CARD.title}: ${VISUAL_EDITOR_CARD.description}`}
-      >
-        <Flex align="center" gap={3}>
-          <Box
-            padding={2}
-            style={{
-              backgroundColor: 'rgba(255,255,255,0.25)',
-              borderRadius: '8px',
-              color: 'inherit',
-            }}
-          >
-            <Text size={3} weight="bold" style={{ color: 'inherit' }}>
-              {VISUAL_EDITOR_CARD.icon}
-            </Text>
-          </Box>
-          <Stack space={2}>
-            <Heading size={2} style={{ color: 'inherit' }}>
-              {VISUAL_EDITOR_CARD.title}
-            </Heading>
-            <Text size={2} style={{ color: 'inherit', opacity: 0.9 }}>
-              {VISUAL_EDITOR_CARD.description}
-            </Text>
-          </Stack>
-        </Flex>
-      </Card>
-
-      <Card
-        padding={[4, 5]}
-        radius={4}
-        border
-        style={{ cursor: 'pointer' }}
-        onClick={navigateToStructure}
-        onKeyDown={(event) => handleCardKeyDown(event, navigateToStructure)}
-        tabIndex={0}
-        role="button"
-        aria-label={`${STRUCTURE_CARD.title}: ${STRUCTURE_CARD.description}`}
-      >
-        <Flex align="center" gap={3}>
-          <Box
-            padding={2}
-            style={{
-              backgroundColor: 'var(--card-bg-color)',
-              border: '1px solid var(--card-border-color)',
-              borderRadius: '8px',
-            }}
-          >
-            <Text size={3}>{STRUCTURE_CARD.icon}</Text>
-          </Box>
-          <Stack space={2}>
-            <Heading size={2}>{STRUCTURE_CARD.title}</Heading>
-            <Text size={2} muted>
-              {STRUCTURE_CARD.description}
-            </Text>
-          </Stack>
-        </Flex>
-      </Card>
-    </Grid>
+    <Stack space={4}>
+      <Box>
+        <Stack space={3}>
+          <Heading as="h1" size={4} weight="bold">
+            {firstName ? `${greeting}, ${firstName}` : 'Welcome to Your Studio'}
+          </Heading>
+          <Text size={2} muted>
+            What would you like to work on today?
+          </Text>
+        </Stack>
+      </Box>
+      <StudioTip />
+    </Stack>
   );
 });
 
 const SecondaryActions = memo(function SecondaryActions() {
   const router = useRouter();
+  const projectId = useProjectId();
+  const manageUrl = useMemo(
+    () => `https://www.sanity.io/manage/project/${projectId}/members`,
+    [projectId]
+  );
 
   const handleNavigate = useCallback(
     (path: string) => {
@@ -234,25 +225,115 @@ const SecondaryActions = memo(function SecondaryActions() {
     [router]
   );
 
+  const allActions = [
+    {
+      title: 'Visual Editor',
+      description: 'Edit with live preview',
+      path: '/studio/editor',
+      icon: <EyeOpenIcon />,
+      type: 'internal' as const,
+    },
+    {
+      title: 'Content Library',
+      description: 'Browse all documents',
+      path: '/studio/structure',
+      icon: <DatabaseIcon />,
+      type: 'internal' as const,
+    },
+    {
+      title: 'Pages',
+      description: 'Manage pages',
+      path: '/studio/structure/page',
+      icon: <DocumentsIcon />,
+      type: 'internal' as const,
+    },
+    {
+      title: 'Collections',
+      description: 'Articles, docs & more',
+      path: '/studio/structure/collections',
+      icon: <StackCompactIcon />,
+      type: 'internal' as const,
+    },
+    {
+      title: 'Settings',
+      description: 'Site config',
+      path: '/studio/structure/site',
+      icon: <CogIcon />,
+      type: 'internal' as const,
+    },
+    {
+      title: 'Collaborate',
+      description: 'Invite your team',
+      href: manageUrl,
+      icon: <AddUserIcon />,
+      type: 'external' as const,
+    },
+    {
+      title: 'Docs',
+      description: 'Guides & Refs',
+      href: 'https://www.nextmedal.com',
+      icon: <BookIcon />,
+      type: 'external' as const,
+    },
+    {
+      title: 'Videos',
+      description: 'Tutorials',
+      href: 'https://youtube.com/@medalsocial',
+      icon: <PlayIcon />,
+      type: 'external' as const,
+    },
+  ];
+
   return (
     <Stack space={4}>
       <Label size={1} muted>
         Quick Access
       </Label>
-      <Grid columns={[1, 2, 3]} gap={4}>
-        {QUICK_NAVIGATION.map((item) => {
-          const navigate = () => handleNavigate(item.path);
+      <Grid columns={[1, 2, 4]} gap={4}>
+        {allActions.map((item) => {
+          if (item.type === 'internal') {
+            const navigate = () => handleNavigate(item.path);
+            return (
+              <Card
+                key={item.title}
+                padding={4}
+                radius={3}
+                border
+                style={{ cursor: 'pointer' }}
+                onClick={navigate}
+                onKeyDown={(event) => handleCardKeyDown(event, navigate)}
+                tabIndex={0}
+                role="button"
+                aria-label={`${item.title}: ${item.description}`}
+              >
+                <Flex align="center" gap={4}>
+                  <Text size={2}>{item.icon}</Text>
+                  <Stack space={2}>
+                    <Text size={2} weight="medium">
+                      {item.title}
+                    </Text>
+                    <Text size={1} muted>
+                      {item.description}
+                    </Text>
+                  </Stack>
+                </Flex>
+              </Card>
+            );
+          }
+
+          // External link
           return (
             <Card
               key={item.title}
+              as="a"
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
               padding={4}
               radius={3}
               border
-              style={{ cursor: 'pointer' }}
-              onClick={navigate}
-              onKeyDown={(event) => handleCardKeyDown(event, navigate)}
+              style={{ cursor: 'pointer', textDecoration: 'none' }}
               tabIndex={0}
-              role="button"
               aria-label={`${item.title}: ${item.description}`}
             >
               <Flex align="center" gap={4}>
@@ -274,76 +355,230 @@ const SecondaryActions = memo(function SecondaryActions() {
   );
 });
 
-const TeamAndLearning = memo(function TeamAndLearning() {
-  const projectId = useProjectId();
-  const manageUrl = useMemo(
-    () => `https://www.sanity.io/manage/project/${projectId}/members`,
-    [projectId]
-  );
+interface ContentStats {
+  draftsCount: number;
+  publishedCount: number;
+  seoIssuesCount: number;
+}
+
+const ContentOverview = memo(function ContentOverview() {
+  const client = useClient({ apiVersion: '2024-01-01' });
+  const router = useRouter();
+  const [stats, setStats] = useState<ContentStats>({
+    draftsCount: 0,
+    publishedCount: 0,
+    seoIssuesCount: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const [drafts, published, seoIssues] = await Promise.all([
+          // Count all draft documents
+          client.fetch<number>('count(*[_id in path("drafts.**")])'),
+          // Count published pages
+          client.fetch<number>('count(*[_type == "page" && !(_id in path("drafts.**"))])'),
+          // Count pages missing SEO metadata (excluding noindex pages)
+          client.fetch<number>(
+            'count(*[_type == "page" && !(_id in path("drafts.**")) && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))])'
+          ),
+        ]);
+
+        setStats({
+          draftsCount: drafts,
+          publishedCount: published,
+          seoIssuesCount: seoIssues,
+        });
+      } catch {
+        // Silently fail - stats will remain at 0
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, [client]);
+
+  const statCards = [
+    {
+      title: 'SEO Health',
+      count: stats.seoIssuesCount,
+      icon: <SearchIcon />,
+      tone: stats.seoIssuesCount > 0 ? ('critical' as const) : ('positive' as const),
+      subtitle:
+        stats.seoIssuesCount === 0
+          ? 'All pages optimized!'
+          : stats.seoIssuesCount === 1
+            ? 'missing SEO metadata'
+            : 'missing SEO metadata',
+      path: '/studio/structure/contentHealth;seo-issues',
+    },
+    {
+      title: 'Drafts Pending',
+      count: stats.draftsCount,
+      icon: <EditIcon />,
+      tone: stats.draftsCount > 0 ? ('caution' as const) : ('positive' as const),
+      subtitle: stats.draftsCount === 1 ? 'draft to review' : 'drafts to review',
+      path: '/studio/structure/contentHealth;all-drafts',
+    },
+    {
+      title: 'Published Documents',
+      count: stats.publishedCount,
+      icon: <CheckmarkCircleIcon />,
+      tone: 'positive' as const,
+      subtitle: 'documents live',
+      path: '/studio/structure/contentHealth;published-documents',
+    },
+  ];
 
   return (
-    <Grid columns={[1, 1, 2]} gap={5}>
-      <Stack space={4}>
-        <Label size={1} muted>
-          Team
-        </Label>
-        <Card padding={4} radius={3} border style={{ height: '100%', boxSizing: 'border-box' }}>
-          <Flex align="center" justify="space-between" gap={4}>
-            <Flex align="center" gap={3}>
-              <Text size={2}>
-                <AddUserIcon />
-              </Text>
-              <Stack space={2}>
-                <Text size={2} weight="semibold">
-                  Collaborate
+    <Stack space={4}>
+      <Label size={1} muted>
+        Content Overview
+      </Label>
+      <Grid columns={[1, 2, 3]} gap={4}>
+        {statCards.map((stat) => (
+          <Card
+            key={stat.title}
+            padding={4}
+            radius={3}
+            tone={stat.tone}
+            style={{ cursor: 'pointer' }}
+            onClick={() => router.navigateUrl({ path: stat.path })}
+            tabIndex={0}
+            role="button"
+            aria-label={`${stat.title}: ${stat.count} ${stat.subtitle}`}
+          >
+            <Stack space={3}>
+              <Flex align="center" justify="space-between">
+                <Text size={1} weight="medium" muted>
+                  {stat.title}
                 </Text>
-                <Text size={1} muted>
-                  Invite your team
-                </Text>
-              </Stack>
-            </Flex>
-            <Button
-              as="a"
-              href={manageUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              text="Manage Team"
-              mode="ghost"
-              icon={LaunchIcon}
-              fontSize={1}
-            />
-          </Flex>
-        </Card>
-      </Stack>
-
-      <Stack space={4}>
-        <Label size={1} muted>
-          Resources
-        </Label>
-        <Card padding={4} radius={3} border style={{ height: '100%', boxSizing: 'border-box' }}>
-          <Flex gap={4} justify="space-between">
-            {LEARNING_RESOURCES.map((resource) => (
-              <Flex
-                key={resource.title}
-                as="a"
-                href={resource.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                direction="column"
-                align="center"
-                gap={2}
-                style={{ textDecoration: 'none', color: 'inherit', flex: 1 }}
-              >
-                <Text size={2}>{resource.icon}</Text>
-                <Text size={1} weight="medium">
-                  {resource.title}
-                </Text>
+                <Text size={2}>{stat.icon}</Text>
               </Flex>
-            ))}
+              <Box>
+                <Text size={4} weight="bold">
+                  {loading ? '—' : stat.count}
+                </Text>
+              </Box>
+              <Text size={1} muted>
+                {stat.subtitle}
+              </Text>
+            </Stack>
+          </Card>
+        ))}
+      </Grid>
+    </Stack>
+  );
+});
+
+const StudioTip = memo(function StudioTip() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
+
+  // Auto-rotate tips every 8 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsVisible(false);
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 1) % STUDIO_TIPS.length);
+        setIsVisible(true);
+      }, 300);
+    }, 8000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const tip = STUDIO_TIPS[currentIndex];
+
+  return (
+    <Box
+      paddingY={3}
+      paddingX={4}
+      style={{
+        borderLeft: '3px solid var(--card-focus-ring-color)',
+        backgroundColor: 'var(--card-bg-color)',
+        borderRadius: '4px',
+        opacity: isVisible ? 1 : 0,
+        transition: 'opacity 300ms ease-in-out',
+      }}
+    >
+      <Flex align="center" gap={3} justify="space-between">
+        <Flex align="center" gap={3} flex={1}>
+          <Text size={1} muted>
+            <InfoOutlineIcon />
+          </Text>
+          <Box flex={1}>
+            <Flex align="baseline" gap={2} wrap="wrap">
+              <Text size={1} muted style={{ textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Tip:
+              </Text>
+              <Text size={1} weight="medium">
+                {tip.description}
+              </Text>
+              {tip.shortcut && (
+                <Card
+                  padding={1}
+                  paddingX={2}
+                  radius={2}
+                  border
+                  style={{ backgroundColor: 'var(--card-bg-color)' }}
+                >
+                  <Text size={0} muted style={{ fontFamily: 'monospace' }}>
+                    {tip.shortcut}
+                  </Text>
+                </Card>
+              )}
+            </Flex>
+          </Box>
+        </Flex>
+        <Text size={0} muted>
+          {currentIndex + 1}/{STUDIO_TIPS.length}
+        </Text>
+      </Flex>
+    </Box>
+  );
+});
+
+const ModuleReference = memo(function ModuleReference() {
+  return (
+    <Stack space={4}>
+      <Label size={1} muted>
+        Module Reference
+      </Label>
+      <Card padding={4} radius={3} border>
+        <Stack space={3}>
+          <Flex align="center" justify="space-between">
+            <Text size={2} weight="semibold">
+              Available Modules
+            </Text>
+            <Text size={1} muted>
+              Quick visual guide
+            </Text>
           </Flex>
-        </Card>
-      </Stack>
-    </Grid>
+          <Box
+            style={{
+              position: 'relative',
+              width: '100%',
+              borderRadius: '8px',
+              overflow: 'hidden',
+            }}
+          >
+            {/* biome-ignore lint/performance/noImgElement: Sanity Studio component, not Next.js */}
+            <img
+              src={dashboardImage.src}
+              alt="Module reference showing all available modules organized by category"
+              style={{
+                width: '100%',
+                height: 'auto',
+                display: 'block',
+              }}
+            />
+          </Box>
+        </Stack>
+      </Card>
+    </Stack>
   );
 });
 
@@ -424,9 +659,9 @@ const DashboardComponent = memo(function DashboardComponent() {
         <Container width={4}>
           <Stack space={[5, 6]}>
             <WelcomeSection />
-            <PrimaryActions />
+            <ContentOverview />
             <SecondaryActions />
-            <TeamAndLearning />
+            <ModuleReference />
           </Stack>
         </Container>
       </Box>

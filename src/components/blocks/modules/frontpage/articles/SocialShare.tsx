@@ -1,11 +1,13 @@
 'use client';
 
 import { Check, Link } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { IconLinkedin, IconTwitterX, IconWhatsapp } from '@/components/icons/social-icons';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
+import { copyToClipboard } from '@/lib/utils/clipboard';
 import { cn } from '@/lib/utils/index';
 
 export default function SocialShare({
@@ -17,20 +19,26 @@ export default function SocialShare({
   slug: string;
   className?: string;
 }) {
+  const t = useTranslations('article');
   const [copied, setCopied] = useState(false);
   // Default to empty string on server to match initial client state
   const [url, setUrl] = useState('');
 
   useEffect(() => {
     // Only set URL on client side
-    setUrl(`${window.location.origin}/blog/${slug}`);
+    setUrl(`${window.location.origin}/articles/${slug}`);
   }, [slug]);
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(url);
-    setCopied(true);
-    toast.success('Link copied to clipboard');
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async () => {
+    const success = await copyToClipboard(url);
+
+    if (success) {
+      setCopied(true);
+      toast.success(t('linkCopied'));
+      setTimeout(() => setCopied(false), 2000);
+    } else {
+      toast.error(t('linkCopyFailed'));
+    }
   };
 
   const shareLinks = [
@@ -67,7 +75,7 @@ export default function SocialShare({
             'flex-1 text-muted-foreground',
             link.hoverColor
           )}
-          aria-label={`Share on ${link.name}`}
+          aria-label={t('shareOn', { platform: link.name })}
         >
           <link.icon className="size-5" />
         </a>
@@ -77,7 +85,7 @@ export default function SocialShare({
         size="lg"
         onClick={handleCopy}
         className="flex-1 text-muted-foreground hover:text-foreground"
-        aria-label="Copy link"
+        aria-label={t('copyLink')}
       >
         {copied ? <Check className="size-5" /> : <Link className="size-5" />}
       </Button>

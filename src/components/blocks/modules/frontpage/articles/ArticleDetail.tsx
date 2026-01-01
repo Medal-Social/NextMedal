@@ -6,6 +6,7 @@
  */
 
 import { Calendar } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 import { Fragment } from 'react';
 import Content from '@/components/blocks/modules/content/RichtextModule/Content';
 import AuthorCard from '@/components/blocks/modules/frontpage/articles/AuthorCard';
@@ -22,26 +23,28 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import { routing } from '@/i18n/routing';
 import { createStegaAttribute } from '@/sanity/lib/client';
 
 interface ArticleDetailProps {
-  post: Sanity.CollectionBlogPost;
+  post: Sanity.CollectionArticlePost;
   collectionSlug: string;
-  locale: string;
 }
 
 // Build breadcrumbs from post data
 function buildBreadcrumbs(
-  post: Sanity.CollectionBlogPost,
+  post: Sanity.CollectionArticlePost,
   collectionSlug: string
 ): Array<{ label: string; href: string }> {
   const collectionTitle = post.collection?.metadata?.title || collectionSlug;
-  const crumbs = [{ label: collectionTitle, href: `/${collectionSlug}` }];
+  const languagePrefix =
+    post.language && post.language !== routing.defaultLocale ? `/${post.language}` : '';
+  const crumbs = [{ label: collectionTitle, href: `${languagePrefix}/${collectionSlug}` }];
 
   if (post.categories?.[0]) {
     crumbs.push({
       label: post.categories[0].title,
-      href: `/${collectionSlug}?category=${post.categories[0].slug?.current}`,
+      href: `${languagePrefix}/${collectionSlug}?category=${post.categories[0].slug?.current}`,
     });
   }
 
@@ -52,15 +55,17 @@ function buildBreadcrumbs(
 function PostBreadcrumbs({
   crumbs,
   currentTitle,
+  homeLabel,
 }: {
   crumbs: Array<{ label: string; href: string }>;
   currentTitle?: string;
+  homeLabel: string;
 }) {
   return (
     <Breadcrumb className="mb-6 font-medium text-muted-foreground">
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          <BreadcrumbLink href="/">{homeLabel}</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
 
@@ -86,17 +91,23 @@ function PostHeader({
   post,
   collectionSlug,
   stega,
+  homeLabel,
 }: {
-  post: Sanity.CollectionBlogPost;
+  post: Sanity.CollectionArticlePost;
   collectionSlug: string;
   stega: ReturnType<typeof createStegaAttribute>;
+  homeLabel: string;
 }) {
   const crumbs = buildBreadcrumbs(post, collectionSlug);
 
   return (
     <section className="bg-background pt-24 md:pt-32 pb-8 border-b border-border relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <PostBreadcrumbs crumbs={crumbs} currentTitle={post.metadata?.title} />
+        <PostBreadcrumbs
+          crumbs={crumbs}
+          currentTitle={post.metadata?.title}
+          homeLabel={homeLabel}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           <div className="lg:col-span-8">
@@ -120,7 +131,7 @@ function PostMeta({
   post,
   stega,
 }: {
-  post: Sanity.CollectionBlogPost;
+  post: Sanity.CollectionArticlePost;
   stega: ReturnType<typeof createStegaAttribute>;
 }) {
   const authors = post.authors as Sanity.Person[] | undefined;
@@ -156,13 +167,13 @@ function HeroImage({
   post,
   stega,
 }: {
-  post: Sanity.CollectionBlogPost;
+  post: Sanity.CollectionArticlePost;
   stega: ReturnType<typeof createStegaAttribute>;
 }) {
   if (!post.seo?.image && !post.metadata?.title) return null;
 
   const fallbackImage = {
-    src: `/api/og/blog-fallback?title=${encodeURIComponent(post.metadata?.title || '')}&category=${encodeURIComponent(
+    src: `/api/og/article-fallback?title=${encodeURIComponent(post.metadata?.title || '')}&category=${encodeURIComponent(
       post.categories?.[0]?.title || ''
     )}`,
     alt: post.metadata?.title || '',
@@ -192,15 +203,17 @@ function HeroImage({
 function MobileBottomContent({
   post,
   collectionSlug,
+  shareLabel,
 }: {
-  post: Sanity.CollectionBlogPost;
+  post: Sanity.CollectionArticlePost;
   collectionSlug: string;
+  shareLabel: string;
 }) {
   return (
     <div className="lg:hidden mt-12 space-y-12">
       <div className="bg-card rounded-2xl p-6 border shadow-sm">
         <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4">
-          Share Article
+          {shareLabel}
         </h4>
         <SocialShare
           title={post.metadata?.title || ''}
@@ -211,7 +224,9 @@ function MobileBottomContent({
   );
 }
 
-export default function ArticleDetail({ post, collectionSlug }: ArticleDetailProps) {
+export default async function ArticleDetail({ post, collectionSlug }: ArticleDetailProps) {
+  const t = await getTranslations('article');
+
   const stega = createStegaAttribute({
     id: post._id,
     type: post._type,
@@ -219,7 +234,7 @@ export default function ArticleDetail({ post, collectionSlug }: ArticleDetailPro
 
   return (
     <article>
-      <PostHeader post={post} collectionSlug={collectionSlug} stega={stega} />
+      <PostHeader post={post} collectionSlug={collectionSlug} stega={stega} homeLabel={t('home')} />
 
       {/* Main Content Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -227,7 +242,7 @@ export default function ArticleDetail({ post, collectionSlug }: ArticleDetailPro
           {/* Content Column */}
           <div className="lg:col-span-8">
             <HeroImage post={post} stega={stega} />
-            <MobileSidebar headings={post.headings} />
+            <MobileSidebar headings={post.headings} onThisPageLabel={t('onThisPage')} />
 
             {post.body && (
               <Content
@@ -237,7 +252,11 @@ export default function ArticleDetail({ post, collectionSlug }: ArticleDetailPro
               />
             )}
 
-            <MobileBottomContent post={post} collectionSlug={collectionSlug} />
+            <MobileBottomContent
+              post={post}
+              collectionSlug={collectionSlug}
+              shareLabel={t('shareArticle')}
+            />
           </div>
 
           {/* Sidebar Column */}
@@ -246,6 +265,8 @@ export default function ArticleDetail({ post, collectionSlug }: ArticleDetailPro
               headings={post.headings}
               title={post.metadata?.title || ''}
               slug={`${collectionSlug}/${post.metadata?.slug?.current || ''}`}
+              shareLabel={t('shareArticle')}
+              onThisPageLabel={t('onThisPage')}
             />
           </div>
         </div>

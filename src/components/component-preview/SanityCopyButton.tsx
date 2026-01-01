@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { logger } from '@/lib/core/logger';
+import { copyToClipboard } from '@/lib/utils/clipboard';
 import { base64, cn } from '@/lib/utils/index';
 
 interface SanityCopyButtonProps {
@@ -111,16 +112,17 @@ export default function SanityCopyButton({ data, className }: SanityCopyButtonPr
   };
 
   const handleFallbackCopy = async (data: Record<string, unknown>) => {
-    try {
-      await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
+    const success = await copyToClipboard(JSON.stringify(data, null, 2));
+
+    if (success) {
       setHasCopied(true);
       toast.error('Partial Copy', {
         description: 'Used fallback copy method. Studio "Paste" might not work as expected.',
       });
-    } catch (fallbackErr) {
-      logger.error({ fallbackErr }, 'Fallback clipboard write also failed');
+    } else {
+      logger.error('Fallback clipboard write failed');
       toast.error('Copy Failed', {
-        description: `Clipboard error: ${fallbackErr instanceof Error ? fallbackErr.message : String(fallbackErr)}`,
+        description: 'Clipboard is not available in this context.',
       });
     }
   };

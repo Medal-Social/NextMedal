@@ -15,6 +15,7 @@ import { CopyIcon } from '@sanity/icons';
 import { Box, Button, Flex, Text, TextInput, useToast } from '@sanity/ui';
 import type { StringInputProps } from 'sanity';
 import { logger } from '@/lib/core/logger';
+import { copyToClipboard } from '@/lib/utils/clipboard';
 
 export const UidInputComponent = (props: StringInputProps) => {
   const { elementProps, path } = props;
@@ -36,32 +37,23 @@ export const UidInputComponent = (props: StringInputProps) => {
         title="Click to copy"
         mode="ghost"
         icon={CopyIcon}
-        onClick={() => {
+        onClick={async () => {
           const valueToCopy = `#${elementProps.value || moduleKey}`;
 
-          if (!navigator?.clipboard) {
+          const success = await copyToClipboard(valueToCopy);
+
+          if (success) {
+            toast.push({
+              status: 'success',
+              title: 'Copied to clipboard',
+            });
+          } else {
+            logger.error('Failed to copy to clipboard');
             toast.push({
               status: 'error',
-              title: 'Clipboard not available',
+              title: 'Failed to copy',
             });
-            return;
           }
-
-          navigator.clipboard
-            .writeText(valueToCopy)
-            .then(() => {
-              toast.push({
-                status: 'success',
-                title: 'Copied to clipboard',
-              });
-            })
-            .catch((err) => {
-              logger.error({ err }, 'Failed to copy:');
-              toast.push({
-                status: 'error',
-                title: 'Failed to copy',
-              });
-            });
         }}
       />
     </Flex>

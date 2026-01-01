@@ -4,14 +4,14 @@ import { expect, test } from '@playwright/test';
  * RSS Feed E2E Smoke Tests
  *
  * These tests verify that RSS feed routes are accessible and properly configured.
- * RSS feeds are generated dynamically for collection pages (blog, changelog, newsletter, etc.)
+ * RSS feeds are generated dynamically for collection pages (articles, changelog, newsletter, etc.)
  *
  * Route pattern: /[locale]/[collection]/rss.xml
- * Example: /en/blog/rss.xml, /nb/changelog/rss.xml
+ * Example: /en/articles/rss.xml, /nb/changelog/rss.xml
  */
 
 // Known collection slugs to test - update these based on your CMS content
-const COLLECTION_SLUGS = ['blog', 'changelog', 'newsletter', 'docs', 'events'];
+const COLLECTION_SLUGS = ['articles', 'changelog', 'newsletter', 'docs', 'events'];
 
 test.describe('RSS Feed Routes', () => {
   test('at least one collection RSS feed is accessible', async ({ request }) => {

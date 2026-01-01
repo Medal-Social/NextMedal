@@ -175,7 +175,7 @@ export default defineType({
         (slug === 'index' && HomeIcon) ||
         (slug === '404' && HelpCircleIcon) ||
         (slug === 'search' && SearchIcon) ||
-        (slug === 'blog' && EditIcon) ||
+        (slug === 'articles' && EditIcon) ||
         (noindex && EyeClosedIcon) ||
         DocumentIcon;
 

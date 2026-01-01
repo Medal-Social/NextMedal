@@ -48,17 +48,17 @@ describe('resolveUrl', () => {
     expect(url).toBe('https://example.com/');
   });
 
-  it('should handle collection.blog with collection reference', () => {
-    const blogPost = {
+  it('should handle collection.article with collection reference', () => {
+    const articlePost = {
       ...mockPage,
-      _type: 'collection.blog',
+      _type: 'collection.article',
       metadata: { slug: { current: 'post-1' } },
       collection: {
         _id: 'page-123',
-        metadata: { slug: { current: 'blog' } },
+        metadata: { slug: { current: 'articles' } },
       },
     };
-    const url = resolveUrl(blogPost);
-    expect(url).toBe('https://example.com/blog/post-1');
+    const url = resolveUrl(articlePost);
+    expect(url).toBe('https://example.com/articles/post-1');
   });
 });

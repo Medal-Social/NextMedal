@@ -12,20 +12,29 @@
     "processing": "Processing...",
     "untitled": "Untitled"
   },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "goToPrevious": "Go to previous page",
+    "goToNext": "Go to next page",
+    "morePages": "More pages"
+  },
   "Accessibility": {
     "skipToContent": "Skip to content",
     "openSearch": "Open search",
     "loadingTheme": "Loading appearance options",
     "mobileNavigation": "Mobile navigation menu",
     "dismissBanner": "Dismiss announcement banner",
-    "required": "required"
+    "required": "required",
+    "toggleTheme": "Toggle mode",
+    "changeLanguage": "Change language"
   },
   "search": {
     "placeholder": "Search...",
-    "commandPlaceholder": "Search pages, blog, docs...",
+    "commandPlaceholder": "Search pages, articles, docs...",
     "noResults": "No results found. Try different keywords.",
     "categories": {
-      "blogPosts": "Blog Posts",
+      "articles": "Articles",
       "documentation": "Documentation",
       "changelog": "Changelog",
       "newsletter": "Newsletter",
@@ -38,10 +47,19 @@
     "copyCode": "Copy code",
     "copiedState": "Copied"
   },
-  "blog": {
+  "article": {
+    "home": "Home",
+    "shareArticle": "Share Article",
+    "onThisPage": "On This Page",
     "shareOn": "Share on {platform}",
     "copyLink": "Copy link",
     "linkCopied": "Link copied to clipboard",
+    "linkCopyFailed": "Failed to copy link",
+    "minute": "minute",
+    "minutes": "minutes",
+    "featuredInsight": "Featured Insight",
+    "recent": "Recent",
+    "popular": "Popular",
     "gridView": "Grid view",
     "listView": "List view",
     "rssFeed": "RSS Feed"
@@ -77,7 +95,7 @@
   },
   "LocaleSwitcher": {
     "label": "Change language",
-    "locale": "{locale, select, en {English} nb {Norsk} other {Unknown}}",
+    "locale": "{locale, select, en {English} nb {Norsk} ar {العربية} other {Unknown}}",
     "selectLanguage": "Select Language",
     "language": "Language",
     "translationNotAvailable": "Not available in {locale}",
@@ -187,6 +205,36 @@
         "registering": "Registering...",
         "close": "Done"
       }
+    }
+  },
+  "setup": {
+    "title": "Welcome to NextMedal!",
+    "description": "Your site is running, but no index page exists yet. Let's create one!",
+    "quickSetup": "Quick Setup (3 steps):",
+    "step1": {
+      "title": "Open Sanity Studio",
+      "description": "Visit {studioUrl}"
+    },
+    "step2": {
+      "title": "Configure Site Settings",
+      "description": "Set up your header, footer, and navigation in \"Site Settings\""
+    },
+    "step3": {
+      "title": "Create an index page",
+      "description": "Click \"Create\" → \"Page\" → Set slug to <slug>index</slug>, then publish"
+    },
+    "needHelp": "Need help? Check the <readme>README</readme> or <contact>contact Medal Social</contact>",
+    "openStudio": "Open Sanity Studio",
+    "header": {
+      "yourSite": "Your Site",
+      "configureHint": "Configure in Studio → Site Settings",
+      "completeSetup": "Complete Setup"
+    },
+    "footer": {
+      "brandName": "NextMedal",
+      "description": "Almost ready! Complete your site setup in Sanity Studio to customize this footer with your branding, links, and social media.",
+      "configureHint": "Configure in Studio → Site Settings",
+      "copyright": "NextMedal • Created by <link>Medal Social</link> © {year}"
     }
   }
 }

@@ -1,19 +1,27 @@
 import LocaleSwitcher from '@/components/blocks/layout/language-switcher';
 import { CTAList } from '@/components/blocks/objects/cta';
-import { getSite } from '@/sanity/lib/fetch';
+import { getSiteOptional } from '@/sanity/lib/fetch';
+import { ErrorBoundary } from '../ErrorBoundary';
 import HeaderClient from './Header.client';
+import { HeaderFallback } from './HeaderFallback';
 import Logo from './Logo';
 import Navigation from './navigation';
 
-export default async function Header() {
-  const site = await getSite();
-  const { title, logo, ctas, headerMenu, brandPage, enableSearch } = site;
+async function HeaderInner() {
+  const site = await getSiteOptional();
+
+  // If no site settings, return fallback (build-time and runtime safe)
+  if (!site) {
+    return <HeaderFallback />;
+  }
+
+  const { title, logo, ctas, headerNav, brandPage, enableSearch } = site;
 
   const logoNode = <Logo title={title} logo={logo} brandPage={brandPage} />;
 
   const navNode = (
     <nav className="max-lg:hidden flex items-center" aria-label="Main navigation">
-      <Navigation headerMenu={headerMenu} />
+      <Navigation items={headerNav} />
     </nav>
   );
 
@@ -29,12 +37,20 @@ export default async function Header() {
       role="banner"
       aria-label="Site header"
       ctas={ctas ?? []}
-      menu={{ items: headerMenu?.items }}
+      menu={{ items: headerNav }}
       enableSearch={enableSearch}
       logoNode={<div className="flex items-center">{logoNode}</div>}
       navNode={navNode}
       ctaNode={ctaNode}
       localeSwitcherNode={<LocaleSwitcher />}
     />
+  );
+}
+
+export default function Header() {
+  return (
+    <ErrorBoundary fallback={<HeaderFallback />} componentName="Header">
+      <HeaderInner />
+    </ErrorBoundary>
   );
 }

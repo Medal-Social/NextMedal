@@ -1,7 +1,6 @@
-import { BookIcon, EyeClosedIcon } from '@sanity/icons';
+import { BookIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import { isUniqueAcrossLocale } from '@/sanity/lib/isUniqueAcrossLocale';
-import CharacterCount from '@/sanity/ui/CharacterCount';
 import PageIdentityField from '@/sanity/ui/PageIdentityField';
 
 const languageFlags: Record<string, string> = {
@@ -28,15 +27,6 @@ export default defineType({
       description: 'The documentation root page this article belongs to (determines URL base)',
       validation: (Rule) => Rule.required(),
       group: 'content',
-    }),
-
-    defineField({
-      name: 'parent',
-      title: 'Parent Article',
-      type: 'reference',
-      to: [{ type: 'collection.documentation' }],
-      description: 'Optional parent article for creating nested documentation structure',
-      group: 'navigation',
     }),
 
     defineField({
@@ -142,55 +132,8 @@ export default defineType({
     // SEO fields
     defineField({
       name: 'seo',
-      title: 'SEO',
-      type: 'object',
+      type: 'seo-metadata',
       group: 'seo',
-      options: { collapsible: true, collapsed: true },
-      fields: [
-        defineField({
-          name: 'title',
-          type: 'string',
-          title: 'SEO Title',
-          description: 'Override the page title for search engines',
-          components: {
-            input: (props) => (
-              <CharacterCount max={60} {...props}>
-                {props.renderDefault(props)}
-              </CharacterCount>
-            ),
-          },
-        }),
-        defineField({
-          name: 'description',
-          type: 'text',
-          title: 'SEO Description',
-          rows: 3,
-          components: {
-            input: (props) => <CharacterCount as="textarea" max={160} {...props} />,
-          },
-        }),
-        defineField({
-          name: 'image',
-          title: 'SEO Image',
-          type: 'image',
-          options: { hotspot: true },
-        }),
-        defineField({
-          name: 'noIndex',
-          type: 'boolean',
-          title: 'No Index',
-          description: 'Prevent this page from being indexed by search engines',
-          initialValue: false,
-          components: {
-            field: (props) => (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <EyeClosedIcon style={{ opacity: 0.5 }} />
-                {props.renderDefault(props)}
-              </div>
-            ),
-          },
-        }),
-      ],
     }),
 
     defineField({
@@ -205,23 +148,16 @@ export default defineType({
     select: {
       title: 'metadata.title',
       excerpt: 'excerpt',
-      parent: 'parent.metadata.title',
       category: 'category.title',
       language: 'language',
       order: 'order',
     },
-    prepare({ title, excerpt, parent, category, language, order }) {
+    prepare({ title, excerpt, category, language, order }) {
       const flag = language ? languageFlags[language] || '' : '';
-      const prefix = parent ? `└ ` : '';
       const categoryLabel = category ? `[${category}]` : '';
       return {
-        title: `${flag} ${prefix}${title || 'Untitled'}`.trim(),
-        subtitle: [
-          categoryLabel,
-          excerpt || (parent ? `Child of: ${parent}` : `Order: ${order || 100}`),
-        ]
-          .filter(Boolean)
-          .join(' '),
+        title: `${flag} ${title || 'Untitled'}`.trim(),
+        subtitle: [categoryLabel, excerpt || `Order: ${order || 100}`].filter(Boolean).join(' '),
         media: BookIcon,
       };
     },

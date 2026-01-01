@@ -94,11 +94,12 @@ export default defineType({
 
     // Navigation Group
     defineField({
-      name: 'headerMenu',
-      title: 'Header Menu',
-      description: 'Navigation links shown in the site header.',
-      type: 'reference',
-      to: [{ type: 'navigation' }],
+      name: 'headerNav',
+      title: 'Header Navigation',
+      description:
+        'Navigation links shown in the site header. Supports both simple links and dropdown menus.',
+      type: 'array',
+      of: [{ type: 'menuItem' }, { type: 'dropdownMenu' }],
       group: 'navigation',
       fieldset: 'header',
     }),
@@ -123,11 +124,12 @@ export default defineType({
     }),
 
     defineField({
-      name: 'footerMenu',
-      title: 'Footer Menu',
-      description: 'Navigation links shown in the site footer.',
-      type: 'reference',
-      to: [{ type: 'navigation' }],
+      name: 'footerNav',
+      title: 'Footer Navigation',
+      description:
+        'Navigation links shown in the site footer. Organized by category groups (use dropdown menus).',
+      type: 'array',
+      of: [{ type: 'dropdownMenu' }],
       group: 'navigation',
       fieldset: 'footer',
     }),

@@ -29,10 +29,10 @@ export default defineType({
             <code>/</code>.
           </p>
           <p style={{ marginTop: '8px', fontSize: '0.9em', opacity: 0.8 }}>
-            <strong>Advanced:</strong> To match dynamic paths (like any blog post), use a colon +
+            <strong>Advanced:</strong> To match dynamic paths (like any article), use a colon +
             name. <br />
             <em>
-              Example: <code>/blog/:slug</code> will match <code>/blog/anything</code>
+              Example: <code>/articles/:slug</code> will match <code>/articles/anything</code>
             </em>
           </p>
         </>
@@ -72,7 +72,7 @@ export default defineType({
           title: 'Internal Page',
           description: 'Select a page within this website',
           type: 'reference',
-          to: [{ type: 'page' }, { type: 'collection.blog' }],
+          to: [{ type: 'page' }, { type: 'collection.article' }],
           validation: (Rule) =>
             Rule.custom((value, context) => {
               // Only require if this is an internal link
