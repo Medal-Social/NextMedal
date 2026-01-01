@@ -1,17 +1,18 @@
 /**
  * Articles Frontpage Module Component
- * @version 2.1.0
- * @lastUpdated 2025-12-30
+ * @version 3.0.0
+ * @lastUpdated 2026-01-01
  * @description Displays a list of articles from a collection with hero, filters, and pagination.
- * Uses the same layout as the original BlogFrontpage with addition of RSS feed link.
+ * Uses server-side pagination and filtering for optimal performance with large datasets (1000+ articles).
  */
 
 import { groq } from 'next-sanity';
 import { Suspense } from 'react';
-import BlogFilterBar from '@/components/blocks/modules/frontpage/articles/BlogFrontpage/BlogFilterBar';
-import BlogHeroWrapper from '@/components/blocks/modules/frontpage/articles/BlogFrontpage/BlogHeroWrapper';
-import Paginated from '@/components/blocks/modules/frontpage/articles/BlogFrontpage/Paginated';
+import ArticleFilterBar from '@/components/blocks/modules/frontpage/articles/ArticleFrontpage/ArticleFilterBar';
+import ArticleHeroWrapper from '@/components/blocks/modules/frontpage/articles/ArticleFrontpage/ArticleHeroWrapper';
+import Paginated from '@/components/blocks/modules/frontpage/articles/ArticleFrontpage/Paginated';
 import PostPreview from '@/components/blocks/modules/frontpage/articles/PostPreview';
+import { routing } from '@/i18n/routing';
 import moduleProps from '@/lib/sanity/module-props';
 import { fetchSanityLive } from '@/sanity/lib/live';
 import { AUTHOR_PREVIEW_QUERY, CATEGORY_PREVIEW_QUERY, IMAGE_QUERY } from '@/sanity/lib/queries';
@@ -19,17 +20,55 @@ import { AUTHOR_PREVIEW_QUERY, CATEGORY_PREVIEW_QUERY, IMAGE_QUERY } from '@/san
 interface ArticlesFrontpageProps extends Sanity.ArticlesFrontpage {
   collectionSlug?: string;
   locale?: string;
+  searchParams?: {
+    page?: string;
+    category?: string;
+    author?: string;
+    search?: string;
+  };
 }
 
-// Fetch collection blog posts based on collection slug
-async function fetchCollectionPosts(collectionSlug: string, locale: string) {
-  return await fetchSanityLive<Sanity.CollectionBlogPost[]>({
+// Build dynamic GROQ filter based on search params
+function buildArticleFilter(
+  _collectionSlug: string,
+  _locale: string,
+  params?: ArticlesFrontpageProps['searchParams']
+) {
+  const filters = [
+    '_type == "collection.article"',
+    'collection->metadata.slug.current == $collectionSlug',
+    'language == $locale',
+  ];
+
+  if (params?.category && params.category !== 'All') {
+    filters.push('$category in categories[]->slug.current');
+  }
+
+  if (params?.author) {
+    filters.push('$author in authors[]->slug.current');
+  }
+
+  if (params?.search) {
+    filters.push('metadata.title match $search || pt::text(body) match $search');
+  }
+
+  return filters.join(' && ');
+}
+
+// Fetch paginated collection articles with filters
+async function fetchCollectionPosts(
+  collectionSlug: string,
+  locale: string,
+  page: number,
+  limit: number,
+  params?: ArticlesFrontpageProps['searchParams']
+) {
+  const offset = (page - 1) * limit;
+  const filter = buildArticleFilter(collectionSlug, locale, params);
+
+  const posts = await fetchSanityLive<Sanity.CollectionArticlePost[]>({
     query: groq`
-      *[
-        _type == 'collection.blog' &&
-        collection->metadata.slug.current == $collectionSlug &&
-        language == $locale
-      ]|order(publishDate desc)[0...50]{
+      *[${filter}]|order(publishDate desc)[${offset}...${offset + limit}]{
         _type,
         _id,
         featured,
@@ -46,7 +85,81 @@ async function fetchCollectionPosts(collectionSlug: string, locale: string) {
           description,
           image { ${IMAGE_QUERY} }
         },
-        collection->{ metadata { slug } },
+        collection->{
+          metadata {
+            slug { current },
+            title
+          }
+        },
+        categories[]->${CATEGORY_PREVIEW_QUERY},
+        authors[]->${AUTHOR_PREVIEW_QUERY}
+      }
+    `,
+    params: {
+      collectionSlug,
+      locale,
+      category: params?.category || null,
+      author: params?.author || null,
+      search: params?.search ? `*${params.search}*` : null,
+    },
+  });
+
+  return posts;
+}
+
+// Fetch total count for pagination
+async function fetchTotalCount(
+  collectionSlug: string,
+  locale: string,
+  params?: ArticlesFrontpageProps['searchParams']
+) {
+  const filter = buildArticleFilter(collectionSlug, locale, params);
+
+  const result = await fetchSanityLive<number>({
+    query: groq`count(*[${filter}])`,
+    params: {
+      collectionSlug,
+      locale,
+      category: params?.category || null,
+      author: params?.author || null,
+      search: params?.search ? `*${params.search}*` : null,
+    },
+  });
+
+  return result;
+}
+
+// Fetch hero posts (unfiltered, for display above filters)
+async function fetchHeroPosts(collectionSlug: string, locale: string) {
+  return await fetchSanityLive<Sanity.CollectionArticlePost[]>({
+    query: groq`
+      *[
+        _type == 'collection.article' &&
+        collection->metadata.slug.current == $collectionSlug &&
+        language == $locale
+      ]|order(publishDate desc)[0...3]{
+        _type,
+        _id,
+        featured,
+        publishDate,
+        language,
+        "readTime": math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
+        metadata {
+          title,
+          description,
+          "slug": { "current": slug.current },
+          image { ${IMAGE_QUERY} }
+        },
+        seo {
+          description,
+          image { ${IMAGE_QUERY} }
+        },
+        collection->{
+          metadata {
+            slug { current },
+            title
+          }
+        },
         categories[]->${CATEGORY_PREVIEW_QUERY},
         authors[]->${AUTHOR_PREVIEW_QUERY}
       }
@@ -65,6 +178,7 @@ export default async function ArticlesFrontpage({
   showRssLink = true,
   collectionSlug,
   locale = 'en',
+  searchParams,
   ...props
 }: ArticlesFrontpageProps) {
   // If no collection slug is provided, we can't fetch posts
@@ -78,33 +192,48 @@ export default async function ArticlesFrontpage({
     );
   }
 
-  const posts = await fetchCollectionPosts(collectionSlug, locale);
+  // Parse page number from search params
+  const currentPage = Math.max(1, Number.parseInt(searchParams?.page || '1', 10));
 
-  // Determine Hero Post (for unfiltered view)
-  let heroPost: Sanity.CollectionBlogPost | undefined;
+  // Fetch hero posts (unfiltered, for display above filters)
+  const heroPosts = await fetchHeroPosts(collectionSlug, locale);
+
+  // Determine Hero Post
+  let heroPost: Sanity.CollectionArticlePost | undefined;
   if (showFeaturedFirst) {
-    heroPost = posts.find((post) => post.featured === 'featured');
+    heroPost = heroPosts.find((post) => post.featured === 'featured');
   }
   if (!heroPost) {
-    heroPost = posts[0];
+    heroPost = heroPosts[0];
   }
 
   // Filter out hero post for sidebar
-  const remainingPosts = posts.filter((post) => post._id !== heroPost?._id);
+  const remainingPosts = heroPosts.filter((post) => post._id !== heroPost?._id);
 
   // Determine Sidebar Posts (Recent & Popular)
   const recentPost = remainingPosts[0];
   const popularPost =
     remainingPosts.slice(1).find((post) => post.featured === 'featured') || remainingPosts[1];
 
-  const rssUrl = showRssLink ? `/${collectionSlug}/rss.xml` : undefined;
+  // Fetch paginated posts with filters (server-side)
+  const posts = await fetchCollectionPosts(
+    collectionSlug,
+    locale,
+    currentPage,
+    limit,
+    searchParams
+  );
+  const totalCount = await fetchTotalCount(collectionSlug, locale, searchParams);
+
+  const languagePrefix = locale && locale !== routing.defaultLocale ? `/${locale}` : '';
+  const rssUrl = showRssLink ? `${languagePrefix}/${collectionSlug}/rss.xml` : undefined;
 
   return (
     <div {...moduleProps(props)}>
-      <BlogHeroWrapper heroPost={heroPost} recentPost={recentPost} popularPost={popularPost} />
+      <ArticleHeroWrapper heroPost={heroPost} recentPost={recentPost} popularPost={popularPost} />
 
       {displayFilters && (
-        <BlogFilterBar rssUrl={rssUrl} collectionSlug={collectionSlug} locale={locale} />
+        <ArticleFilterBar rssUrl={rssUrl} collectionSlug={collectionSlug} locale={locale} />
       )}
 
       <section className="min-h-screen bg-slate-50 py-8 dark:bg-[#0f172a]">
@@ -120,7 +249,7 @@ export default async function ArticlesFrontpage({
               </ul>
             }
           >
-            <Paginated posts={posts} itemsPerPage={limit} />
+            <Paginated posts={posts} totalCount={totalCount} itemsPerPage={limit} />
           </Suspense>
         </div>
       </section>

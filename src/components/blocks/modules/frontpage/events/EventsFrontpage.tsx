@@ -55,7 +55,6 @@ interface RawCollectionEvent {
     image?: Sanity.Image;
   };
   eventType: 'webinar' | 'video' | 'physical' | 'hybrid';
-  featured?: 'standard' | 'featured';
   startDateTime: string;
   duration?: number; // Duration in hours
   timezone?: string;
@@ -79,7 +78,6 @@ async function fetchCollectionEvents(
   locale: string,
   options: {
     limit?: number;
-    showFeaturedFirst?: boolean;
     showUpcomingFirst?: boolean;
     hidePastEvents?: boolean;
     filterByType?: string;
@@ -87,7 +85,6 @@ async function fetchCollectionEvents(
 ) {
   const {
     limit = 50,
-    showFeaturedFirst = true,
     showUpcomingFirst = true,
     hidePastEvents = false,
     filterByType = 'all',
@@ -106,12 +103,10 @@ async function fetchCollectionEvents(
         ${typeFilter}
         ${pastFilter}
       ]|order(
-        ${showFeaturedFirst ? 'featured desc, ' : ''}
         ${showUpcomingFirst ? 'startDateTime asc' : 'startDateTime desc'}
       )[0...$limit]{
         _id,
         _type,
-        featured,
         startDateTime,
         duration,
         timezone,
@@ -269,7 +264,6 @@ async function EventsContent({
   layout,
   filterByType,
   showUpcomingFirst,
-  showFeaturedFirst,
   hidePastEvents,
   limit,
   intro,
@@ -280,7 +274,6 @@ async function EventsContent({
   layout: 'calendar' | 'cards' | 'list' | 'timeline';
   filterByType?: string;
   showUpcomingFirst?: boolean;
-  showFeaturedFirst?: boolean;
   hidePastEvents?: boolean;
   limit?: number;
   intro?: Sanity.BlockContent;
@@ -288,7 +281,6 @@ async function EventsContent({
 }) {
   const rawEvents = await fetchCollectionEvents(collectionSlug, locale, {
     limit: limit || 50,
-    showFeaturedFirst: showFeaturedFirst ?? true,
     showUpcomingFirst: showUpcomingFirst ?? true,
     hidePastEvents: hidePastEvents ?? false,
     filterByType: filterByType || 'all',
@@ -316,7 +308,6 @@ export default async function EventsFrontpage({
   layout = 'cards',
   filterByType = 'all',
   showUpcomingFirst = true,
-  showFeaturedFirst = true,
   hidePastEvents = false,
   limit = 50,
   showRssLink,
@@ -346,7 +337,6 @@ export default async function EventsFrontpage({
           layout={cleanLayout}
           filterByType={filterByType}
           showUpcomingFirst={showUpcomingFirst}
-          showFeaturedFirst={showFeaturedFirst}
           hidePastEvents={hidePastEvents}
           limit={limit}
           intro={intro}

@@ -163,16 +163,16 @@ function NavigationItem({ item, index }: { item: MenuItem; index: number }) {
 }
 
 export default async function Menu() {
-  const { footerMenu } = await getSite();
+  const { footerNav } = await getSite();
 
-  if (!footerMenu?.items?.length) return null;
+  if (!footerNav?.length) return null;
 
   return (
     <nav
       className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
       aria-label="Footer navigation"
     >
-      {footerMenu.items.map((item, index) => (
+      {footerNav.map((item, index) => (
         <NavigationItem
           key={getItemKey(item as MenuItem, index)}
           item={item as MenuItem}

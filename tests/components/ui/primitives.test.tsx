@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { act } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -15,6 +16,20 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { Toggle } from '@/components/ui/toggle';
+
+// Mock next-intl for pagination components
+vi.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => {
+    const translations: Record<string, string> = {
+      goToPrevious: 'Go to previous page',
+      goToNext: 'Go to next page',
+      previous: 'Previous',
+      next: 'Next',
+      morePages: 'More pages',
+    };
+    return translations[key] || key;
+  },
+}));
 
 describe('Checkbox', () => {
   it('renders unchecked by default', () => {
@@ -221,29 +236,39 @@ describe('Toggle', () => {
 
 describe('Slider', () => {
   it('renders slider component', () => {
-    render(<Slider aria-label="Volume" />);
+    act(() => {
+      render(<Slider aria-label="Volume" />);
+    });
     // Base-ui slider renders a group with slider children
     expect(screen.getByRole('group')).toBeInTheDocument();
   });
 
   it('renders with data-slot attribute', () => {
-    render(<Slider aria-label="Volume" />);
+    act(() => {
+      render(<Slider aria-label="Volume" />);
+    });
     expect(document.querySelector('[data-slot="slider"]')).toBeInTheDocument();
   });
 
   it('renders track and thumb elements', () => {
-    render(<Slider aria-label="Volume" defaultValue={[50]} />);
+    act(() => {
+      render(<Slider aria-label="Volume" defaultValue={[50]} />);
+    });
     expect(document.querySelector('[data-slot="slider-track"]')).toBeInTheDocument();
     expect(document.querySelector('[data-slot="slider-thumb"]')).toBeInTheDocument();
   });
 
   it('applies custom className', () => {
-    render(<Slider aria-label="Volume" className="custom-class" />);
+    act(() => {
+      render(<Slider aria-label="Volume" className="custom-class" />);
+    });
     expect(document.querySelector('.custom-class')).toBeInTheDocument();
   });
 
   it('renders multiple thumbs for range slider', () => {
-    render(<Slider aria-label="Price range" defaultValue={[25, 75]} />);
+    act(() => {
+      render(<Slider aria-label="Price range" defaultValue={[25, 75]} />);
+    });
     const thumbs = document.querySelectorAll('[data-slot="slider-thumb"]');
     expect(thumbs).toHaveLength(2);
   });

@@ -34,7 +34,7 @@ interface CollectionSitemapEntry extends SitemapEntry {
 
 interface SitemapData {
   pages: SitemapEntry[];
-  blog: SitemapEntry[];
+  articles: SitemapEntry[];
   collections: CollectionSitemapEntry[];
 }
 
@@ -189,13 +189,15 @@ export async function GET(_req: NextRequest, context: { params: Promise<Params> 
   const pages = (data.pages ?? [])
     .filter(isValidEntry)
     .filter((entry) => entry.language === locale);
-  const blog = (data.blog ?? []).filter(isValidEntry).filter((entry) => entry.language === locale);
+  const articles = (data.articles ?? [])
+    .filter(isValidEntry)
+    .filter((entry) => entry.language === locale);
   const collections = (data.collections ?? [])
     .filter(isValidCollectionEntry)
     .filter((entry) => entry.language === locale);
 
   for (const entry of pages) entry.translations = entry.translations ?? [];
-  for (const entry of blog) entry.translations = entry.translations ?? [];
+  for (const entry of articles) entry.translations = entry.translations ?? [];
   for (const entry of collections) entry.translations = entry.translations ?? [];
 
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
@@ -204,7 +206,7 @@ export async function GET(_req: NextRequest, context: { params: Promise<Params> 
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n';
 
   for (const entry of pages) xml += generateUrlEntry(entry, '');
-  for (const entry of blog) xml += generateUrlEntry(entry, 'blog');
+  for (const entry of articles) xml += generateUrlEntry(entry, 'articles');
   for (const entry of collections) xml += generateCollectionUrlEntry(entry);
 
   xml += '</urlset>';

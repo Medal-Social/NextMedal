@@ -2,15 +2,15 @@ import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { getLocale } from 'next-intl/server';
 import { PortableText } from 'next-sanity';
-import ThemeToggle from '@/components/blocks/layout/header/ThemeToggle';
-import LocaleSwitcher from '@/components/blocks/layout/language-switcher';
 import { Img } from '@/components/blocks/objects/core';
 import { Social } from '@/components/blocks/utility';
 import CookiePreferencesTrigger from '@/components/CookiePreferencesTrigger';
 import { Section } from '@/components/ui/section';
 import resolveUrl from '@/lib/sanity/resolve-url';
 import { cn } from '@/lib/utils/index';
-import { getSite } from '@/sanity/lib/fetch';
+import { getSiteOptional } from '@/sanity/lib/fetch';
+import { ErrorBoundary } from '../ErrorBoundary';
+import { FooterFallback } from './FooterFallback';
 import Navigation from './Navigation';
 import SystemStatus from './SystemStatus';
 import Wrapper from './wrapper';
@@ -18,8 +18,14 @@ import Wrapper from './wrapper';
 const footerLinkStyles =
   'relative hover:text-foreground motion-safe:transition-all motion-safe:duration-200 focus:outline-none focus:ring-2 focus:ring-primary after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-current motion-safe:after:transition-all motion-safe:after:duration-200 motion-safe:hover:after:w-full';
 
-export default async function Footer() {
-  const [site, locale] = await Promise.all([getSite(), getLocale()]);
+async function FooterInner() {
+  const [site, locale] = await Promise.all([getSiteOptional(), getLocale()]);
+
+  // If no site settings, return fallback (build-time and runtime safe)
+  if (!site) {
+    return <FooterFallback />;
+  }
+
   const { title, tagline, logo, copyright, footerLinks, systemStatus } = site;
 
   const logoImageDark = logo?.image?.dark || logo?.image?.default || logo?.image?.light;
@@ -113,13 +119,17 @@ export default async function Footer() {
           {/* Right: Utilities */}
           <div className="flex items-center gap-4">
             {systemStatus && <SystemStatus status={systemStatus} />}
-            <div className="flex items-center gap-1 md:gap-2">
-              <LocaleSwitcher />
-              <ThemeToggle />
-            </div>
           </div>
         </Section>
       </div>
     </Wrapper>
+  );
+}
+
+export default function Footer() {
+  return (
+    <ErrorBoundary fallback={<FooterFallback />} componentName="Footer">
+      <FooterInner />
+    </ErrorBoundary>
   );
 }

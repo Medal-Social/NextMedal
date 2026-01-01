@@ -1,8 +1,10 @@
+import { ar, enUS, nb } from 'date-fns/locale';
 import { defineRouting } from 'next-intl/routing';
 
 export const localeConfig = {
-  en: { title: 'English' },
-  nb: { title: 'Norsk' },
+  en: { title: 'English', dateLocale: enUS },
+  nb: { title: 'Norsk', dateLocale: nb },
+  ar: { title: 'العربية', dateLocale: ar },
 } as const;
 
 export type Locale = keyof typeof localeConfig;

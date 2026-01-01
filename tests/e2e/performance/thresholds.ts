@@ -57,7 +57,7 @@ export const pageThresholds: Record<string, Partial<LighthouseThresholds>> = {
   '/': strictThresholds,
 
   // Add page-specific overrides here as needed
-  // '/blog': { performance: 70 }, // Blog has many images
+  // '/articles': { performance: 70 }, // Articles page has many images
 };
 
 /**

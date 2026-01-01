@@ -1,6 +1,5 @@
 import type { ComponentType, SVGProps } from 'react';
 import {
-  IconBluesky,
   IconFacebookF,
   IconGithub,
   IconInstagram,
@@ -12,13 +11,12 @@ import {
 } from '@/components/icons/social-icons';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils/index';
-import { getSite } from '@/sanity/lib/fetch';
+import { getSiteOptional } from '@/sanity/lib/fetch';
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
 
 // Domain to icon mapping - each entry can have multiple domains
 const SOCIAL_ICONS: Array<{ domains: string[]; icon: IconComponent }> = [
-  { domains: ['bsky.app'], icon: IconBluesky },
   { domains: ['facebook.com'], icon: IconFacebookF },
   { domains: ['github.com'], icon: IconGithub },
   { domains: ['instagram.com'], icon: IconInstagram },
@@ -44,9 +42,11 @@ function getIconForUrl(url: string): IconComponent {
 }
 
 export default async function Social({ className }: React.ComponentProps<'div'>) {
-  const { socialLinks } = await getSite();
+  const site = await getSiteOptional();
 
-  if (!socialLinks?.length) return null;
+  if (!site?.socialLinks?.length) return null;
+
+  const { socialLinks } = site;
 
   type SocialLink = { _key: string; text: string; url: string };
 

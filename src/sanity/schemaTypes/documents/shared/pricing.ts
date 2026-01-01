@@ -1,9 +1,10 @@
 /**
  * Pricing Tier Schema
- * @version 1.0.1
- * @lastUpdated 2025-12-23
+ * @version 2.0.0
+ * @lastUpdated 2025-12-31
  * @description Defines a pricing tier or plan (e.g., Free, Pro, Enterprise).
  * @changelog
+ * - 2.0.0: Flattened price object - moved fields to root level for simpler editing
  * - 1.0.1: Updated header documentation
  * - 1.0.0: Initial version
  */
@@ -37,36 +38,38 @@ export default defineType({
       group: 'content',
     }),
     defineField({
-      name: 'price',
-      title: 'Price',
-      description: 'Pricing details.',
-      type: 'object',
+      name: 'monthlyPrice',
+      title: 'Monthly Price',
+      type: 'string',
+      description: 'Monthly price (e.g., "99", "Free", "Contact us"). Leave empty to hide.',
+      placeholder: 'e.g., 99, Free, Contact us',
       group: 'content',
-      options: {
-        columns: 2,
-      },
-      fields: [
-        defineField({
-          name: 'base',
-          type: 'string',
-          description: 'Enter 0 for free tier, leave empty to hide',
-        }),
-        defineField({
-          name: 'yearly',
-          type: 'string',
-          description: 'Enter 0 for free tier, leave empty to hide',
-        }),
-        defineField({
-          name: 'currency',
-          type: 'string',
-          description: 'Currency symbol (e.g., $, kr)',
-        }),
-        defineField({
-          name: 'suffix',
-          type: 'string',
-          placeholder: 'e.g. /mo, per seat, forever, etc.',
-        }),
-      ],
+    }),
+    defineField({
+      name: 'yearlyPrice',
+      title: 'Yearly Price',
+      type: 'string',
+      description: 'Yearly price (e.g., "999"). Leave empty to hide yearly option.',
+      placeholder: 'e.g., 999',
+      group: 'content',
+    }),
+    defineField({
+      name: 'currency',
+      title: 'Currency Symbol',
+      type: 'string',
+      description: 'Currency symbol displayed before the price (e.g., $, €, kr)',
+      placeholder: 'e.g., $, €, kr',
+      initialValue: '$',
+      group: 'content',
+    }),
+    defineField({
+      name: 'priceSuffix',
+      title: 'Price Suffix',
+      type: 'string',
+      description: 'Text shown after the price (e.g., /month, /user, /year)',
+      placeholder: 'e.g., /month, /user, /year',
+      initialValue: '/month',
+      group: 'content',
     }),
     defineField({
       name: 'ctas',
@@ -111,17 +114,13 @@ export default defineType({
   preview: {
     select: {
       title: 'title',
-      price: 'price',
+      monthlyPrice: 'monthlyPrice',
+      currency: 'currency',
+      suffix: 'priceSuffix',
     },
-    prepare: ({ title, price }) => ({
+    prepare: ({ title, monthlyPrice, currency, suffix }) => ({
       title,
-      subtitle: [
-        price?.base || 'Free',
-        price?.strikethrough && `(${price.strikethrough})`,
-        price?.suffix,
-      ]
-        .filter(Boolean)
-        .join(' '),
+      subtitle: [currency, monthlyPrice || 'Free', suffix].filter(Boolean).join(' '),
     }),
   },
 });

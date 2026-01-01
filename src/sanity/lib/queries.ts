@@ -40,7 +40,7 @@ export const IMAGE_QUERY = groq`
 	}
 `;
 
-// Optimized reference projections for blog listings
+// Optimized reference projections for article listings
 export const AUTHOR_PREVIEW_QUERY = groq`{
 	_id,
 	_type,
@@ -72,20 +72,6 @@ export const PT_BLOCK_QUERY = groq`
 		...,
 		_type == 'link' => {
 			${LINK_QUERY}
-		}
-	}
-`;
-
-export const NAVIGATION_QUERY = groq`
-	title,
-	items[]{
-		_key,
-		title,
-		${LINK_QUERY},
-		links[]{ ${LINK_QUERY} },
-		categories[]{
-			...,
-			links[]{ ${LINK_QUERY} }
 		}
 	}
 `;
@@ -257,13 +243,13 @@ export const PAGE_QUERY = groq`
 	}
 `;
 
-// Blog categories that have at least one post
+// Article categories that have at least one post
 // Categories that have posts in a specific collection and language
-export const BLOG_CATEGORIES_WITH_POSTS_QUERY = groq`
+export const ARTICLE_CATEGORIES_WITH_POSTS_QUERY = groq`
 	*[
-		_type == 'blog.category' &&
+		_type == 'article.category' &&
 		count(*[
-			_type == 'collection.blog' &&
+			_type == 'collection.article' &&
 			references(^._id) &&
 			($collectionSlug == '' || collection->metadata.slug.current == $collectionSlug) &&
 			($locale == '' || language == $locale)
@@ -276,10 +262,10 @@ export const BLOG_CATEGORIES_WITH_POSTS_QUERY = groq`
 	}
 `;
 
-// Collection blog post query - fetches a blog post by slug within a specific collection
-export const COLLECTION_BLOG_POST_QUERY = groq`
+// Collection article query - fetches a article by slug within a specific collection
+export const COLLECTION_ARTICLE_POST_QUERY = groq`
 	*[
-		_type == 'collection.blog' &&
+		_type == 'collection.article' &&
 		metadata.slug.current == $itemSlug &&
 		collection->metadata.slug.current == $collectionSlug &&
 		language == $locale
@@ -287,7 +273,9 @@ export const COLLECTION_BLOG_POST_QUERY = groq`
 		...,
 		body[]{
 			${PT_BLOCK_QUERY},
-			_type == 'image' => { ${IMAGE_QUERY} }
+			_type == 'image' => { ${IMAGE_QUERY} },
+			_type == 'socialEmbed' => { _type, platform, url },
+			_type == 'video' => { _type, type, videoId, muxVideo, thumbnail, title }
 		},
 		'readTime': math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
 		'headings': body[style in ['h2', 'h3']]{
@@ -298,7 +286,10 @@ export const COLLECTION_BLOG_POST_QUERY = groq`
 		authors[]->${AUTHOR_PREVIEW_QUERY},
 		collection->{
 			_id,
-			metadata { slug, title }
+			metadata {
+				slug { current },
+				title
+			}
 		},
 		metadata {
 			...,
@@ -330,9 +321,9 @@ export const IS_COLLECTION_PAGE_QUERY = groq`
 	}
 `;
 
-// All collection blog posts for static generation
-export const COLLECTION_BLOG_SLUGS_QUERY = groq`
-	*[_type == 'collection.blog' && defined(metadata.slug.current) && defined(collection)]{
+// All collection articles for static generation
+export const COLLECTION_ARTICLE_SLUGS_QUERY = groq`
+	*[_type == 'collection.article' && defined(metadata.slug.current) && defined(collection)]{
 		'slug': metadata.slug.current,
 		'collectionSlug': collection->metadata.slug.current,
 		language
@@ -350,7 +341,9 @@ export const COLLECTION_NEWSLETTER_QUERY = groq`
 		...,
 		body[]{
 			${PT_BLOCK_QUERY},
-			_type == 'image' => { ${IMAGE_QUERY} }
+			_type == 'image' => { ${IMAGE_QUERY} },
+			_type == 'socialEmbed' => { _type, platform, url },
+			_type == 'video' => { _type, type, videoId, muxVideo, thumbnail, title }
 		},
 		'readTime': math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
 		'headings': body[style in ['h2', 'h3']]{
@@ -398,7 +391,9 @@ export const COLLECTION_DOCUMENTATION_QUERY = groq`
 		...,
 		body[]{
 			${PT_BLOCK_QUERY},
-			_type == 'image' => { ${IMAGE_QUERY} }
+			_type == 'image' => { ${IMAGE_QUERY} },
+			_type == 'socialEmbed' => { _type, platform, url },
+			_type == 'video' => { _type, type, videoId, muxVideo, thumbnail, title }
 		},
 		'readTime': math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
 		'headings': body[style in ['h2', 'h3']]{
@@ -455,7 +450,9 @@ export const COLLECTION_EVENTS_QUERY = groq`
 		...,
 		body[]{
 			${PT_BLOCK_QUERY},
-			_type == 'image' => { ${IMAGE_QUERY} }
+			_type == 'image' => { ${IMAGE_QUERY} },
+			_type == 'socialEmbed' => { _type, platform, url },
+			_type == 'video' => { _type, type, videoId, muxVideo, thumbnail, title }
 		},
 		speakers[]->{
 			_id,
@@ -524,7 +521,7 @@ export const PAGE_404_QUERY = groq`
 // Current page for translation switching
 export const CURRENT_PAGE_QUERY = groq`
 	*[
-		(_type == 'page' || _type == 'collection.blog') &&
+		(_type == 'page' || _type == 'collection.article') &&
 		metadata.slug.current == $slug &&
 		language == $locale
 	][0]{
@@ -546,7 +543,7 @@ export const SEARCH_INDEX_QUERY = groq`{
 		"title": metadata.title,
 		"slug": metadata.slug.current
 	},
-	"collections": *[_type in ["collection.blog", "collection.changelog", "collection.documentation", "collection.newsletter"] && defined(metadata.slug.current) && seo.noIndex != true] {
+	"collections": *[_type in ["collection.article", "collection.changelog", "collection.documentation", "collection.newsletter"] && defined(metadata.slug.current) && seo.noIndex != true] {
 		_id,
 		_type,
 		"title": metadata.title,
@@ -600,7 +597,7 @@ export const SITEMAP_WITH_TRANSLATIONS_QUERY = groq`{
 			language
 		}
 	},
-	'collections': *[_type in ['collection.blog', 'collection.changelog', 'collection.documentation', 'collection.newsletter'] && seo.noIndex != true]|order(_updatedAt desc){
+	'collections': *[_type in ['collection.article', 'collection.changelog', 'collection.documentation', 'collection.newsletter'] && seo.noIndex != true]|order(_updatedAt desc){
 		_type,
 		'slug': metadata.slug.current,
 		'collectionSlug': collection->metadata.slug.current,
@@ -628,9 +625,24 @@ export const SITE_QUERY = groq`
 			}
 		},
 		ctas[]{ ${CTA_QUERY} },
-		headerMenu->{ ${NAVIGATION_QUERY} },
+		headerNav[]{
+			_key,
+			_type,
+			_type == 'menuItem' => {
+				${LINK_QUERY}
+			},
+			_type == 'dropdownMenu' => {
+				title,
+				links[]{ ${LINK_QUERY} }
+			}
+		},
 		enableSearch,
-		footerMenu->{ ${NAVIGATION_QUERY} },
+		footerNav[]{
+			_key,
+			_type,
+			title,
+			links[]{ ${LINK_QUERY} }
+		},
 		footerLinks[]{ ${LINK_QUERY} },
 		systemStatus,
 		socialLinks,

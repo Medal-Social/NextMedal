@@ -16,13 +16,13 @@ test.describe('Homepage Smoke Tests', () => {
 
     await page.goto('/');
 
+    // Wait for page to be fully loaded (DOM + resources)
+    await page.waitForLoadState('load');
+
     // Critical elements should be visible
     await expect(page.locator('header')).toBeVisible();
     await expect(page.locator('main')).toBeVisible();
     await expect(page.locator('footer')).toBeVisible();
-
-    // Wait for page to be fully loaded
-    await page.waitForLoadState('networkidle');
 
     // No critical console errors
     const criticalErrors = errors.filter((e) => !e.includes('favicon') && !e.includes('analytics'));

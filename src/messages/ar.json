@@ -1,0 +1,372 @@
+{
+  "HomePage": {
+    "title": "مرحباً بالعالم!"
+  },
+  "common": {
+    "loading": "جارٍ التحميل...",
+    "error": "خطأ",
+    "success": "نجح",
+    "close": "إغلاق",
+    "cancel": "إلغاء",
+    "done": "تم",
+    "processing": "جارٍ المعالجة...",
+    "untitled": "بدون عنوان",
+    "readMore": "اقرأ المزيد",
+    "viewAll": "عرض الكل",
+    "showMore": "عرض المزيد",
+    "showLess": "عرض أقل",
+    "filter": "تصفية",
+    "sort": "ترتيب",
+    "all": "الكل"
+  },
+  "pagination": {
+    "previous": "السابق",
+    "next": "التالي",
+    "goToPrevious": "الانتقال إلى الصفحة السابقة",
+    "goToNext": "الانتقال إلى الصفحة التالية",
+    "morePages": "المزيد من الصفحات"
+  },
+  "Accessibility": {
+    "skipToContent": "الانتقال إلى المحتوى",
+    "openSearch": "فتح البحث",
+    "loadingTheme": "جارٍ تحميل خيارات المظهر",
+    "mobileNavigation": "قائمة التنقل على الهاتف المحمول",
+    "dismissBanner": "إغلاق إعلان البانر",
+    "required": "مطلوب",
+    "toggleTheme": "تبديل الوضع",
+    "changeLanguage": "تغيير اللغة"
+  },
+  "search": {
+    "placeholder": "بحث...",
+    "commandPlaceholder": "ابحث عن الصفحات، المقالات، الوثائق...",
+    "noResults": "لم يتم العثور على نتائج. جرب كلمات مفتاحية مختلفة.",
+    "searching": "جارٍ البحث...",
+    "searchResults": "نتائج البحث",
+    "resultsFor": "نتائج البحث عن \"{query}\"",
+    "categories": {
+      "articles": "المقالات",
+      "documentation": "الوثائق",
+      "changelog": "سجل التغييرات",
+      "newsletter": "النشرة الإخبارية",
+      "pages": "الصفحات"
+    }
+  },
+  "code": {
+    "copied": "تم النسخ إلى الحافظة",
+    "copyFailed": "تعذر النسخ. حاول تحديث الصفحة.",
+    "copyCode": "نسخ الكود",
+    "copiedState": "تم النسخ"
+  },
+  "article": {
+    "home": "الرئيسية",
+    "shareArticle": "مشاركة المقال",
+    "onThisPage": "في هذه الصفحة",
+    "shareOn": "مشاركة على {platform}",
+    "copyLink": "نسخ الرابط",
+    "linkCopied": "تم نسخ الرابط إلى الحافظة",
+    "linkCopyFailed": "فشل نسخ الرابط",
+    "minute": "دقيقة",
+    "minutes": "دقائق",
+    "featuredInsight": "رؤية مميزة",
+    "recent": "الأحدث",
+    "popular": "الأكثر شعبية",
+    "gridView": "عرض شبكي",
+    "listView": "عرض قائمة",
+    "rssFeed": "خلاصة RSS",
+    "readingTime": "{minutes} دقائق قراءة",
+    "publishedOn": "نُشر في {date}",
+    "updatedOn": "تم التحديث في {date}",
+    "byAuthor": "بواسطة {author}",
+    "inCategory": "في {category}",
+    "relatedArticles": "مقالات ذات صلة",
+    "noArticles": "لا توجد مقالات بعد",
+    "noArticlesDescription": "ستظهر المقالات هنا بمجرد نشرها.",
+    "filterByCategory": "تصفية حسب الفئة",
+    "allCategories": "جميع الفئات",
+    "sortBy": "ترتيب حسب",
+    "sortNewest": "الأحدث أولاً",
+    "sortOldest": "الأقدم أولاً",
+    "sortTitle": "حسب العنوان",
+    "showingResults": "عرض {count} {count, plural, =1 {مقالة} other {مقالات}}",
+    "loadMore": "تحميل المزيد",
+    "backToArticles": "العودة إلى المقالات",
+    "featured": "مميز",
+    "trending": "الأكثر قراءة",
+    "latest": "الأحدث"
+  },
+  "video": {
+    "preparing": "جارٍ تحضير الفيديو...",
+    "loading": "جارٍ تحميل تجربة عالية الجودة",
+    "error": "خطأ في الفيديو",
+    "noVideoId": "لم يتم توفير معرّف الفيديو",
+    "noMuxPlaybackId": "لم يتم العثور على معرّف تشغيل Mux",
+    "extractYouTubeError": "تعذر استخراج معرّف فيديو YouTube",
+    "extractError": "تعذر تحميل الفيديو",
+    "invalidVideoId": "تعذر العثور على معرّف فيديو صالح لهذا الفيديو",
+    "playerError": "خطأ في مشغل الفيديو: {message}",
+    "backToThumbnail": "العودة إلى الصورة المصغرة",
+    "play": "تشغيل الفيديو",
+    "youtubePlayer": "مشغل فيديو YouTube",
+    "thumbnail": "صورة مصغرة للفيديو",
+    "noThumbnail": "لا توجد صورة مصغرة متاحة",
+    "defaultTitle": "فيديو",
+    "watchOn": "شاهد على {platform}"
+  },
+  "NotFound": {
+    "title": "الصفحة غير موجودة",
+    "description": "عذراً، تعذر العثور على الصفحة التي تبحث عنها. ربما تم إزالتها أو حذفها أو لم تكن موجودة أصلاً.",
+    "goHome": "الانتقال إلى الصفحة الرئيسية"
+  },
+  "Error": {
+    "title": "حدث خطأ ما",
+    "description": "واجهنا خطأ غير متوقع أثناء تحميل هذه الصفحة.",
+    "errorId": "معرّف الخطأ:",
+    "tryAgain": "حاول مرة أخرى",
+    "persistsHint": "إذا استمرت المشكلة، يرجى محاولة تحديث الصفحة."
+  },
+  "LocaleSwitcher": {
+    "label": "تغيير اللغة",
+    "locale": "{locale, select, en {English} nb {Norsk} ar {العربية} other {Unknown}}",
+    "selectLanguage": "اختر اللغة",
+    "language": "اللغة",
+    "translationNotAvailable": "غير متوفر بـ {locale}",
+    "goToHome": "الانتقال إلى الصفحة الرئيسية"
+  },
+  "ThemeSelector": {
+    "theme": "المظهر",
+    "light": "فاتح",
+    "dark": "داكن",
+    "system": "النظام"
+  },
+  "DraftMode": {
+    "title": "وضع المعاينة",
+    "description": "شاهد كيف ستبدو تغييراتك قبل النشر.",
+    "learnMore": "معرفة المزيد",
+    "exit": "الخروج من المعاينة",
+    "exiting": "جارٍ الخروج..."
+  },
+  "contact-form": {
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "name": "الاسم",
+    "message": "الرسالة",
+    "subject": "الموضوع",
+    "company": "الشركة",
+    "sendMessage": "إرسال الرسالة",
+    "privacy-link": "سياسة الخصوصية",
+    "address": "العنوان",
+    "opening-hours": "ساعات العمل",
+    "success-title": "شكراً لك!",
+    "success-message": "تلقينا رسالتك وسنرد عليك خلال يوم عمل واحد.",
+    "submitting": "جارٍ إرسال رسالتك...",
+    "validationFailed": "يرجى التحقق من حقول النموذج والمحاولة مرة أخرى.",
+    "acceptTerms": "يرجى قبول سياسة الخصوصية للمتابعة.",
+    "required": "هذا الحقل مطلوب",
+    "invalidEmail": "يرجى إدخال بريد إلكتروني صالح"
+  },
+  "cookies": {
+    "title": "نحن نستخدم ملفات تعريف الارتباط",
+    "description": "نستخدم ملفات تعريف الارتباط لتحسين تجربة التصفح وتحليل حركة المرور.",
+    "acceptAll": "قبول الكل",
+    "onlyNecessary": "الضرورية فقط",
+    "preferences": "تفضيلات ملفات تعريف الارتباط",
+    "learnMore": "معرفة المزيد",
+    "manage": "إدارة التفضيلات"
+  },
+  "emptyState": {
+    "title": "لا يوجد محتوى بعد",
+    "description": "سيظهر المحتوى هنا بمجرد إضافته.",
+    "cta": "فتح المحرر",
+    "noResults": "لا توجد نتائج",
+    "noResultsDescription": "جرب تعديل معايير البحث أو التصفية."
+  },
+  "modules": {
+    "pricing": {
+      "monthly": "شهري",
+      "yearly": "سنوي",
+      "yearlyDiscount": "سنوي (خصم {discount}٪)",
+      "perMonth": "/ شهرياً",
+      "perYear": "/ سنوياً",
+      "billedMonthly": "يُفوتر شهرياً",
+      "billedYearly": "يُفوتر سنوياً",
+      "mostPopular": "الأكثر شعبية",
+      "selectPlan": "اختر الخطة",
+      "currentPlan": "الخطة الحالية",
+      "features": "المميزات",
+      "allFeatures": "جميع المميزات"
+    },
+    "leadMagnet": {
+      "defaultButtonText": "احصل على الوصول الآن",
+      "defaultFormTitle": "سجل الآن",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني",
+      "subscribe": "اشترك",
+      "subscribing": "جارٍ الاشتراك...",
+      "successMessage": "شكراً لاشتراكك!",
+      "errorMessage": "حدث خطأ. يرجى المحاولة مرة أخرى."
+    },
+    "events": {
+      "viewDetails": "عرض التفاصيل",
+      "register": "سجل",
+      "registerNow": "سجل الآن",
+      "joinNow": "انضم الآن",
+      "watchReplay": "شاهد الإعادة",
+      "upcoming": "قادم",
+      "live": "مباشر",
+      "liveNow": "مباشر الآن",
+      "past": "سابق",
+      "completed": "مكتمل",
+      "featured": "مميز",
+      "eventTypes": {
+        "webinar": "ويبينار",
+        "video": "فيديو",
+        "physical": "حضوري",
+        "hybrid": "هجين"
+      },
+      "duration": {
+        "minutes": "{count} دقيقة",
+        "hour": "ساعة واحدة",
+        "hours": "{count} ساعات",
+        "hoursMinutes": "{hours} ساعة {minutes} دقيقة"
+      },
+      "timeRange": "{start} – {end}",
+      "noEvents": "لم يتم العثور على فعاليات",
+      "allEvents": "جميع الفعاليات",
+      "filterByType": "تصفية حسب النوع",
+      "layouts": {
+        "calendar": "تقويم",
+        "grid": "شبكة",
+        "list": "قائمة",
+        "timeline": "الخط الزمني"
+      },
+      "rss": "الاشتراك في RSS",
+      "today": "اليوم",
+      "nextEvent": "الفعالية التالية",
+      "comingUpNext": "قادم قريباً",
+      "noEventsOnDate": "لا توجد فعاليات في هذا التاريخ",
+      "selectDateWithDot": "اختر تاريخاً به نقطة لرؤية الفعاليات",
+      "showPastEvents": "عرض الفعاليات السابقة",
+      "speakers": "{count, plural, =1 {متحدث واحد} other {# متحدثين}}",
+      "noEventsInCollection": "لا توجد فعاليات في هذه المجموعة بعد.",
+      "eventCount": "{count, plural, =1 {فعالية واحدة} other {# فعاليات}}",
+      "upcomingEventCount": "{count, plural, =1 {فعالية قادمة واحدة} other {# فعاليات قادمة}}",
+      "previousMonth": "الشهر السابق",
+      "nextMonth": "الشهر التالي",
+      "showCalendar": "عرض التقويم",
+      "hideCalendar": "إخفاء التقويم",
+      "registration": {
+        "title": "تم تأكيد التسجيل",
+        "successMessage": "تم تسجيلك! تحقق من بريدك الإلكتروني لتفاصيل الفعالية.",
+        "registerFor": "سجل في {title}",
+        "formDescription": "املأ النموذج أدناه لحجز مكانك.",
+        "registering": "جارٍ التسجيل...",
+        "close": "تم"
+      }
+    },
+    "newsletter": {
+      "subscribe": "اشترك في النشرة الإخبارية",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني",
+      "subscribeButton": "اشترك",
+      "subscribing": "جارٍ الاشتراك...",
+      "successTitle": "شكراً لاشتراكك!",
+      "successMessage": "تحقق من بريدك الإلكتروني لتأكيد الاشتراك.",
+      "errorMessage": "حدث خطأ. يرجى المحاولة مرة أخرى.",
+      "alreadySubscribed": "أنت مشترك بالفعل",
+      "privacyNotice": "لن نشارك بريدك الإلكتروني مع أي شخص. اقرأ {link}.",
+      "privacyLink": "سياسة الخصوصية"
+    },
+    "testimonials": {
+      "testimonials": "آراء العملاء",
+      "noTestimonials": "لا توجد آراء بعد",
+      "readMore": "اقرأ المزيد",
+      "showLess": "عرض أقل"
+    },
+    "faq": {
+      "frequentlyAskedQuestions": "الأسئلة الشائعة",
+      "noQuestions": "لا توجد أسئلة بعد",
+      "expand": "توسيع",
+      "collapse": "طي"
+    },
+    "team": {
+      "ourTeam": "فريقنا",
+      "meetTheTeam": "تعرف على الفريق",
+      "noTeamMembers": "لا يوجد أعضاء فريق بعد",
+      "viewProfile": "عرض الملف الشخصي",
+      "readBio": "اقرأ السيرة الذاتية"
+    }
+  },
+  "navigation": {
+    "home": "الرئيسية",
+    "menu": "القائمة",
+    "openMenu": "فتح القائمة",
+    "closeMenu": "إغلاق القائمة",
+    "skipToContent": "الانتقال إلى المحتوى",
+    "backToTop": "العودة إلى الأعلى"
+  },
+  "date": {
+    "today": "اليوم",
+    "yesterday": "أمس",
+    "tomorrow": "غداً",
+    "daysAgo": "{count, plural, =1 {منذ يوم واحد} other {منذ # أيام}}",
+    "weeksAgo": "{count, plural, =1 {منذ أسبوع واحد} other {منذ # أسابيع}}",
+    "monthsAgo": "{count, plural, =1 {منذ شهر واحد} other {منذ # أشهر}}",
+    "yearsAgo": "{count, plural, =1 {منذ سنة واحدة} other {منذ # سنوات}}",
+    "justNow": "الآن",
+    "minutesAgo": "{count, plural, =1 {منذ دقيقة واحدة} other {منذ # دقائق}}",
+    "hoursAgo": "{count, plural, =1 {منذ ساعة واحدة} other {منذ # ساعات}}"
+  },
+  "share": {
+    "shareThis": "شارك هذا",
+    "shareOn": "شارك على {platform}",
+    "copyLink": "نسخ الرابط",
+    "linkCopied": "تم نسخ الرابط",
+    "shareVia": "شارك عبر",
+    "email": "البريد الإلكتروني",
+    "twitter": "تويتر",
+    "facebook": "فيسبوك",
+    "linkedin": "لينكدإن",
+    "whatsapp": "واتساب",
+    "telegram": "تيليجرام"
+  },
+  "footer": {
+    "allRightsReserved": "جميع الحقوق محفوظة",
+    "followUs": "تابعنا",
+    "newsletter": "النشرة الإخبارية",
+    "legal": "قانوني",
+    "privacyPolicy": "سياسة الخصوصية",
+    "termsOfService": "شروط الخدمة",
+    "cookiePolicy": "سياسة ملفات تعريف الارتباط",
+    "contactUs": "اتصل بنا",
+    "about": "حول",
+    "links": "روابط"
+  },
+  "setup": {
+    "title": "مرحباً بك في NextMedal!",
+    "description": "موقعك يعمل، لكن لا توجد صفحة فهرس بعد. لنقم بإنشاء واحدة!",
+    "quickSetup": "إعداد سريع (3 خطوات):",
+    "step1": {
+      "title": "افتح Sanity Studio",
+      "description": "قم بزيارة {studioUrl}"
+    },
+    "step2": {
+      "title": "تكوين إعدادات الموقع",
+      "description": "قم بإعداد الرأس والتذييل والتنقل في \"إعدادات الموقع\""
+    },
+    "step3": {
+      "title": "إنشاء صفحة فهرس",
+      "description": "انقر على \"إنشاء\" ← \"صفحة\" ← اضبط الـ slug على <slug>index</slug>، ثم انشر"
+    },
+    "needHelp": "هل تحتاج مساعدة؟ راجع <readme>README</readme> أو <contact>اتصل بـ Medal Social</contact>",
+    "openStudio": "افتح Sanity Studio",
+    "header": {
+      "yourSite": "موقعك",
+      "configureHint": "قم بالتكوين في Studio ← إعدادات الموقع",
+      "completeSetup": "إكمال الإعداد"
+    },
+    "footer": {
+      "brandName": "NextMedal",
+      "description": "شبه جاهز! أكمل إعداد موقعك في Sanity Studio لتخصيص هذا التذييل بعلامتك التجارية والروابط ووسائل التواصل الاجتماعي.",
+      "configureHint": "قم بالتكوين في Studio ← إعدادات الموقع",
+      "copyright": "NextMedal • تم الإنشاء بواسطة <link>Medal Social</link> © {year}"
+    }
+  }
+}

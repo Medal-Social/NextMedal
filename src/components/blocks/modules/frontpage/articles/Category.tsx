@@ -9,7 +9,7 @@ export default function Category({
   linked,
   badge = false,
 }: {
-  value?: Sanity.BlogCategory;
+  value?: Sanity.ArticleCategory;
   label?: string;
   linked?: boolean;
   badge?: boolean;
@@ -17,7 +17,7 @@ export default function Category({
   const stega = value?._id
     ? createStegaAttribute({
         id: value._id,
-        type: value._type || 'blog.category',
+        type: value._type || 'article.category',
         path: 'title',
       })
     : undefined;
@@ -40,7 +40,7 @@ export default function Category({
   return linked && value?.slug?.current ? (
     <Link
       href={{
-        pathname: '/blog',
+        pathname: '/articles',
         query: { category: value?.slug.current },
       }}
       {...props}

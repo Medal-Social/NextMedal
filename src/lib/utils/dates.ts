@@ -1,4 +1,6 @@
 import { format, formatDistanceToNow } from 'date-fns';
+import { enUS } from 'date-fns/locale';
+import { type Locale, localeConfig } from '@/i18n/routing';
 
 /**
  * Formats a number as a USD currency string.
@@ -23,32 +25,48 @@ export function parseDate(value: string): Date {
 }
 
 /**
+ * Get date-fns locale from locale string
+ */
+function getDateFnsLocale(locale?: string) {
+  if (locale && locale in localeConfig) {
+    return localeConfig[locale as Locale].dateLocale;
+  }
+  return enUS;
+}
+
+/**
  * Formats a date as a relative time string like "2 days ago" or "3 months ago".
  */
-export function formatRelativeDate(value: string): string {
-  return formatDistanceToNow(parseDate(value), { addSuffix: true });
+export function formatRelativeDate(value: string, locale?: string): string {
+  return formatDistanceToNow(parseDate(value), {
+    addSuffix: true,
+    locale: getDateFnsLocale(locale),
+  });
 }
 
 /**
  * Formats a datetime as a relative time string like "in 3 days" or "2 hours ago".
  * Preserves the time component for more accurate relative times.
  */
-export function formatRelativeDateTime(value: string): string {
-  return formatDistanceToNow(new Date(value), { addSuffix: true });
+export function formatRelativeDateTime(value: string, locale?: string): string {
+  return formatDistanceToNow(new Date(value), {
+    addSuffix: true,
+    locale: getDateFnsLocale(locale),
+  });
 }
 
 /**
  * Formats a date as a full readable string like "January 15, 2025".
  */
-export function formatFullDate(value: string): string {
-  return format(parseDate(value), 'MMMM d, yyyy');
+export function formatFullDate(value: string, locale?: string): string {
+  return format(parseDate(value), 'MMMM d, yyyy', { locale: getDateFnsLocale(locale) });
 }
 
 /**
  * Formats a date as a short string like "Jan 15, 2025".
  */
-export function formatShortDate(value: string): string {
-  return format(parseDate(value), 'MMM d, yyyy');
+export function formatShortDate(value: string, locale?: string): string {
+  return format(parseDate(value), 'MMM d, yyyy', { locale: getDateFnsLocale(locale) });
 }
 
 /**

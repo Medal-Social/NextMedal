@@ -2,10 +2,75 @@ import type { SanityAssetDocument, SanityDocument } from 'next-sanity';
 
 declare global {
   namespace Sanity {
-    // Portable Text block content - a flexible array type for rich text
-    // Using unknown[] for compatibility with @portabletext/react rendering
-    // biome-ignore lint/suspicious/noExplicitAny: Portable Text blocks can contain arbitrary structured content
-    type BlockContent = any[];
+    // Base Portable Text block (standard text blocks with marks and styles)
+    interface PortableTextBlock {
+      _type: 'block';
+      _key: string;
+      style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote';
+      children: Array<{
+        _type: 'span';
+        _key: string;
+        text: string;
+        marks?: string[];
+      }>;
+      markDefs?: Array<{
+        _key: string;
+        _type: string;
+        [key: string]: unknown;
+      }>;
+      listItem?: 'bullet' | 'number';
+      level?: number;
+    }
+
+    // Image block for portable text
+    interface ImageBlock {
+      _type: 'image';
+      _key: string;
+      asset: {
+        _ref: string;
+        _type: 'reference';
+      };
+      alt?: string;
+      caption?: string;
+      hotspot?: unknown;
+      crop?: unknown;
+    }
+
+    // Social embed block for portable text
+    interface SocialEmbedBlock {
+      _type: 'socialEmbed';
+      _key: string;
+      platform: 'twitter' | 'linkedin' | 'instagram' | 'threads' | 'tiktok' | 'youtube';
+      url: string;
+    }
+
+    // Code block for portable text
+    interface CodeBlock {
+      _type: 'code';
+      _key: string;
+      code?: string;
+      language?: string;
+      filename?: string;
+    }
+
+    // Video block for portable text
+    interface VideoBlock {
+      _type: 'video';
+      _key: string;
+      [key: string]: unknown;
+    }
+
+    // Unknown block type (for extensibility)
+    interface UnknownBlock {
+      _type: string;
+      _key: string;
+      [key: string]: unknown;
+    }
+
+    // Portable Text block content - strongly typed union of all block types
+    type BlockContent = Array<
+      PortableTextBlock | ImageBlock | SocialEmbedBlock | CodeBlock | VideoBlock | UnknownBlock
+    >;
 
     // documents
 
@@ -20,14 +85,13 @@ declare global {
       ogimage?: string;
       // navigation
       ctas?: CTA[];
-      headerMenu?: Navigation;
-      footerMenu?: Navigation;
+      headerNav?: (MenuItem | DropdownMenu)[];
+      footerNav?: (MenuItem | DropdownMenu)[];
       footerLinks?: MenuItem[];
       systemStatus?: {
         title: string;
         url: string;
       };
-      social?: Navigation;
       socialLinks?: {
         _key: string;
         text: string;
@@ -42,11 +106,6 @@ declare global {
         enabled: boolean;
         privacyPolicy?: SanityReference<Page> | Page;
       };
-    }
-
-    interface Navigation extends SanityDocument {
-      title: string;
-      items?: (MenuItem | DropdownMenu)[];
     }
 
     // pages
@@ -82,7 +141,7 @@ declare global {
 
     interface Placement extends SanityDocument {
       _type: 'placement';
-      scope: 'collection.blog' | 'page';
+      scope: 'collection.article' | 'page';
       location: 'top' | 'bottom' | 'sidebar' | 'injection';
       injectionConfig?: {
         afterParagraph?: number;
@@ -90,17 +149,17 @@ declare global {
       modules?: Module[];
     }
 
-    interface BlogCategory extends SanityDocument {
-      readonly _type: 'blog.category';
+    interface ArticleCategory extends SanityDocument {
+      readonly _type: 'article.category';
       title: string;
       description?: string;
       slug?: { current: string };
     }
 
-    interface CollectionBlogPost extends SanityDocument {
-      _type: 'collection.blog';
+    interface CollectionArticlePost extends SanityDocument {
+      _type: 'collection.article';
       body: BlockContent;
-      categories?: BlogCategory[];
+      categories?: ArticleCategory[];
       authors?: Person[];
       publishDate: string;
       featured?: 'standard' | 'featured';
@@ -442,7 +501,7 @@ declare global {
       _key?: string;
       label: string;
       type: 'internal' | 'external';
-      internal?: Page | CollectionBlogPost;
+      internal?: Page | CollectionArticlePost;
       external?: string;
       params?: string;
       newTab?: boolean;
@@ -471,7 +530,7 @@ declare global {
       spacing?: 'default' | 'compact' | 'relaxed' | 'none';
       width?: 'default' | 'narrow' | 'wide' | 'full';
       options?: {
-        uid?: string;
+        anchorId?: string;
       };
     }
 
@@ -512,6 +571,11 @@ declare global {
       };
       thumbnail?: Sanity.Image; // made optional
       title?: string;
+    }
+
+    interface SocialEmbed {
+      platform: 'twitter' | 'linkedin' | 'instagram' | 'threads' | 'tiktok' | 'youtube';
+      url: string;
     }
 
     interface FormField {
@@ -602,7 +666,7 @@ declare global {
     interface Breadcrumbs extends Module<'breadcrumbs'> {
       crumbs?: MenuItem[];
       hideCurrent?: boolean;
-      currentPage?: Page | CollectionBlogPost | ComponentLibrary;
+      currentPage?: Page | CollectionArticlePost | ComponentLibrary;
     }
 
     interface Callout extends Module<'callout'> {
@@ -642,7 +706,7 @@ declare global {
       };
       videoUrl?: string;
       options?: {
-        uid?: string;
+        anchorId?: string;
         bgFrom?: string;
         bgTo?: string;
       };
@@ -654,7 +718,7 @@ declare global {
       showFeaturedPostsFirst?: boolean;
       displayFilters?: boolean;
       limit?: number;
-      filteredCategory?: BlogCategory; // Resolved
+      filteredCategory?: ArticleCategory; // Resolved
     }
 
     interface ArticlesFrontpage extends Module<'articles-frontpage'> {

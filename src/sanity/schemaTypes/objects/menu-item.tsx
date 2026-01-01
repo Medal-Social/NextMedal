@@ -1,9 +1,10 @@
 /**
  * Menu Item Schema
- * @version 1.5.1
- * @lastUpdated 2025-12-23
- * @description Internal or external link with optional icon and label.
+ * @version 2.0.0
+ * @lastUpdated 2025-12-31
+ * @description Simplified navigation link with clear conditional fields based on link type.
  * @changelog
+ * - 2.0.0: Simplified UX with clearer field descriptions and better organization
  * - 1.5.1: Updated header documentation
  * - 1.5.0: Renamed from Link to Menu Item
  * - 1.4.0: Grouped destination fields, renamed label to Text, improved helper text
@@ -60,7 +61,7 @@ export default defineType({
       title: 'Internal Page',
       description: 'Select a page within this website',
       type: 'reference',
-      to: [{ type: 'page' }, { type: 'collection.blog' }],
+      to: [{ type: 'page' }, { type: 'collection.article' }],
       validation: (Rule) =>
         Rule.custom((value, context) => {
           // Only require if this is an internal link
@@ -96,11 +97,31 @@ export default defineType({
     }),
     defineField({
       name: 'params',
-      title: 'Jump to Section',
+      title: 'Anchor Link (Optional)',
       description:
-        'Enter an anchor ID (e.g., #contact) to jump to a specific section. You can find these IDs in the "Advanced Options" of any page module.',
-      placeholder: '#my-section',
+        'Link to a specific section on the page (e.g., pricing, contact). Anchor IDs are set in each module\'s "Advanced Options".',
+      placeholder: 'e.g., pricing, contact, features',
       type: 'string',
+      validation: (Rule) =>
+        Rule.custom((value) => {
+          // Allow empty/undefined (field is optional)
+          if (!value) return true;
+
+          // Extract the anchor content (remove # if present)
+          const anchorContent = value.startsWith('#') ? value.slice(1) : value;
+
+          // Must have content
+          if (anchorContent.length === 0) {
+            return 'Anchor ID cannot be empty';
+          }
+
+          // Must be valid HTML ID format (alphanumeric, hyphens, underscores)
+          if (!/^[a-zA-Z0-9_-]+$/.test(anchorContent)) {
+            return 'Anchor ID must only contain letters, numbers, hyphens, and underscores';
+          }
+
+          return true;
+        }),
       hidden: ({ parent }) => parent?.type !== 'internal',
       fieldset: 'destination',
     }),

@@ -5,19 +5,21 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { logger } from '@/lib/core/logger';
+import { copyToClipboard } from '@/lib/utils/clipboard';
 import { cn } from '@/lib/utils/index';
 
 export default function CopyButton({ code, className }: { code: string; className?: string }) {
   const [copied, setCopied] = useState(false);
 
   const onCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(code);
+    const success = await copyToClipboard(code);
+
+    if (success) {
       setCopied(true);
       toast.success('Copied to clipboard');
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      logger.error({ err }, 'Failed to copy code:');
+    } else {
+      logger.error('Failed to copy code');
       toast.error('Failed to copy code');
     }
   };

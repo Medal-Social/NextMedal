@@ -25,7 +25,7 @@ const devOnlyPlugins = isDev
   : [];
 
 export default defineConfig({
-  title: 'Studio by Medal Social',
+  title: `Studio by Medal Social ${dataset === 'migrationtest' ? '(MIGRATION TEST)' : ''}`,
   icon: StudioIcon,
   projectId,
   dataset,
@@ -57,7 +57,7 @@ export default defineConfig({
       schemaTypes: [
         'page',
         'site',
-        'collection.blog',
+        'collection.article',
         'collection.newsletter',
         'collection.documentation',
         'collection.changelog',
@@ -67,7 +67,32 @@ export default defineConfig({
     ...devOnlyPlugins,
   ],
 
-  tools: (prev) => [dashboardTool(), ...prev],
+  tools: (prev) => {
+    // Extract tools by name for explicit ordering
+    const dashboard = dashboardTool();
+    const structureTool = prev.find((tool) => tool.name === 'structure');
+    // Editor is the custom name for presentationTool (see presentation.ts line 7)
+    const editorTool = prev.find((tool) => tool.name === 'editor');
+    const mediaTool = prev.find((tool) => tool.name === 'media');
+    // Try multiple possible names for mux plugin
+    const muxTool =
+      prev.find((tool) => tool.name === 'mux-input') ||
+      prev.find((tool) => tool.name === 'mux') ||
+      prev.find((tool) => tool.title?.toLowerCase().includes('mux'));
+    const visionToolItem = prev.find((tool) => tool.name === 'vision');
+
+    // Explicit order: dashboard, structure, editor, media, videos (mux), vision
+    const orderedTools = [
+      dashboard,
+      structureTool,
+      editorTool,
+      mediaTool,
+      muxTool,
+      visionToolItem,
+    ].filter((tool): tool is NonNullable<typeof tool> => Boolean(tool));
+
+    return orderedTools;
+  },
 
   schema: {
     types: schemaTypes,
@@ -77,7 +102,7 @@ export default defineConfig({
           ![
             'page',
             'site',
-            'collection.blog',
+            'collection.article',
             'collection.newsletter',
             'collection.documentation',
             'collection.changelog',
@@ -106,7 +131,7 @@ export default defineConfig({
       if (
         [
           'page',
-          'collection.blog',
+          'collection.article',
           'collection.newsletter',
           'collection.documentation',
           'collection.changelog',

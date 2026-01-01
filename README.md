@@ -48,68 +48,198 @@ NextMedal is the ultimate choice for developers, agencies, and businesses who de
 
 ## Getting Started 🚀
 
-### Prerequisites
+> **New to NextMedal?** Check out [QUICKSTART.md](./QUICKSTART.md) for a complete beginner's guide!
 
-- Node.js 22+ (LTS recommended)
-- pnpm
-- Git
-- Sanity account (free tier)
+### Critical Requirements
 
-### Installation
+⚠️ **This project requires:**
+- **Node.js 24 or later** (Next.js 16 + React 19 requirement)
+- **pnpm package manager** (NOT npm or yarn)
 
-1. Clone the repository:
+```bash
+# Check your versions:
+node --version   # Should be v24.x.x or higher
+pnpm --version   # Should be 10.x.x or higher
+```
+
+**Don't have these?** See [QUICKSTART.md](./QUICKSTART.md#️-critical-requirements-read-first) for installation instructions.
+
+---
+
+### Quick Setup (3 Steps)
+
+#### 1. Clone & Install
+
 ```bash
 git clone https://github.com/Medal-Social/NextMedal.git
 cd NextMedal
-```
-
-2. Install dependencies:
-```bash
 pnpm install
 ```
 
-3. Set up environment variables:
+#### 2. Configure Environment
+
 ```bash
+# Copy the example environment file
 cp .env.example .env.local
-```
-Edit `.env.local` with your Sanity project credentials:
-```
-NEXT_PUBLIC_SANITY_PROJECT_ID=your-project-id
-NEXT_PUBLIC_SANITY_DATASET=production
-SANITY_API_TOKEN=your-api-token
+
+# Edit .env.local and set these REQUIRED variables:
+# NEXT_PUBLIC_SANITY_PROJECT_ID=your-project-id-here
+# NEXT_PUBLIC_SANITY_DATASET=production
+# NEXT_PUBLIC_BASE_URL=http://localhost:3000
 ```
 
-### Development
+**Get your Sanity Project ID:**
+1. Go to [sanity.io/manage](https://www.sanity.io/manage)
+2. Create a new project or use an existing one
+3. Copy the Project ID
+4. **Configure CORS** (Important for new projects!):
+   - Go to API → CORS Origins
+   - Add `http://localhost:3000` with "Allow credentials" checked
+   - This lets you access the Studio at `/studio`
 
-1. Start the development server:
+**Validate your setup:**
 ```bash
+pnpm setup:check
+```
+
+#### 3. Start Development
+
+```bash
+# Start the dev server
 pnpm dev
 ```
-Your site will be available at `http://localhost:3000`
 
-2. Launch Sanity Studio:
+**Access your site:**
+- **Frontend:** http://localhost:3000
+- **Sanity Studio:** http://localhost:3000/studio (schemas auto-deploy on first access)
+
+---
+
+### Creating Your First Page
+
+1. Open http://localhost:3000/studio
+2. Click **Create** → **Page**
+3. Set **slug** to `index`
+4. Add content and **Publish**
+5. Visit http://localhost:3000 to see your homepage!
+
+---
+
+### Available Commands
+
 ```bash
-pnpm sanity:dev
-```
-Access the Studio at `http://localhost:3000/admin`
+# Development
+pnpm dev                    # Start dev server (http://localhost:3000)
+pnpm setup:check            # Validate environment setup
 
-### Build and Deploy
+# Code Quality
+pnpm lint                   # Run Biome linting
+pnpm format                 # Auto-format with Biome
+pnpm typecheck              # TypeScript type checking
 
-1. Build for production:
-```bash
-pnpm build
+# Testing
+pnpm test                   # Run all tests
+pnpm test:watch             # Run tests in watch mode
+pnpm e2e                    # Run E2E tests
+pnpm e2e:smoke              # Quick smoke tests
+
+# Production
+pnpm build                  # Production build
+pnpm start                  # Run production build
 ```
 
-2. Preview the production build:
-```bash
-pnpm start
+See [CLAUDE.md](./CLAUDE.md) for the complete command reference.
+
+---
+
+### Project Structure
+
 ```
+NextMedal/
+├── src/
+│   ├── app/                      # Next.js 16 App Router
+│   │   ├── (frontend)/           # Main site routes (with [locale])
+│   │   └── (studio)/             # Sanity Studio at /studio
+│   ├── ui/                       # Page-level UI components
+│   ├── components/ui/            # Reusable base components
+│   ├── sanity/schemaTypes/       # Sanity schema definitions
+│   └── lib/                      # Core utilities
+└── tests/                        # All tests (Vitest + Playwright)
+```
+
+---
 
 ### Customization
 
-1. Modify theme settings in `styles/theme.ts`
-2. Update Sanity schema in `sanity/schemas/`
-3. Customize components in `components/`
+- **Content schemas:** `src/sanity/schemaTypes/`
+- **UI components:** `src/ui/` and `src/components/ui/`
+- **Page routes:** `src/app/(frontend)/[locale]/`
+- **Styling:** Tailwind CSS (edit classes directly in components)
+
+---
+
+## Troubleshooting 🔧
+
+### Common Issues
+
+#### "This project requires Node.js 24 or higher"
+
+You're using an older Node version. Upgrade to Node 24+:
+```bash
+# Using nvm (recommended)
+nvm install 24
+nvm use 24
+
+# Or download from nodejs.org (choose "Current")
+```
+
+#### "This project requires pnpm" or similar error
+
+You tried to use npm or yarn. Install and use pnpm instead:
+```bash
+npm install -g pnpm
+rm -rf node_modules
+pnpm install
+```
+
+#### Blank page at http://localhost:3000
+
+No index page exists in Sanity. Create one:
+1. Go to http://localhost:3000/studio
+2. Create a Page document with slug = "index"
+3. Publish it
+4. Refresh your site
+
+#### "Invalid environment variables"
+
+Missing required env vars. Run the validator:
+```bash
+pnpm setup:check
+```
+Fix any failed checks shown in the output.
+
+#### Port 3000 already in use
+
+Another app is using port 3000:
+```bash
+# Kill the other process
+lsof -ti:3000 | xargs kill
+
+# Or use a different port
+PORT=3001 pnpm dev
+```
+
+#### Studio blocked by CORS or won't load
+
+Configure CORS in your Sanity project:
+1. Go to [sanity.io/manage](https://www.sanity.io/manage) → Your Project
+2. Navigate to **API** → **CORS Origins**
+3. Add `http://localhost:3000` with "Allow credentials" checked
+4. Save and refresh the Studio
+
+**More help?** See [QUICKSTART.md](./QUICKSTART.md#troubleshooting) for detailed troubleshooting.
+
+---
 
 ### Deployment
 

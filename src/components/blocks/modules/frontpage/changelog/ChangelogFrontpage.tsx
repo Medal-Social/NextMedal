@@ -102,10 +102,9 @@ async function fetchChangelogEntries(
   locale: string,
   options: {
     limit?: number;
-    showFeaturedFirst?: boolean;
   }
 ) {
-  const { limit = 0, showFeaturedFirst = false } = options;
+  const { limit = 0 } = options;
 
   return await fetchSanityLive<Sanity.CollectionChangelog[]>({
     query: groq`
@@ -114,12 +113,10 @@ async function fetchChangelogEntries(
         collection->metadata.slug.current == $collectionSlug &&
         (language == $locale || language == null)
       ]|order(
-        ${showFeaturedFirst ? 'featured desc, ' : ''}
         publishDate desc
       )${limit > 0 ? `[0...${limit}]` : ''}{
         _id,
         _type,
-        featured,
         publishDate,
         version,
         releaseType,
@@ -153,12 +150,10 @@ async function fetchChangelogEntries(
 function EntryBadges({
   version,
   releaseInfo,
-  featured,
   compact = false,
 }: {
   version?: string;
   releaseInfo: { label: string; color: string } | null;
-  featured?: string;
   compact?: boolean;
 }) {
   const badgeClass = compact ? 'px-2 py-0.5 text-xs rounded' : 'px-2.5 py-1 text-xs rounded-full';
@@ -172,11 +167,6 @@ function EntryBadges({
       {releaseInfo && (
         <span className={cn(badgeClass, 'font-medium', releaseInfo.color)}>
           {releaseInfo.label}
-        </span>
-      )}
-      {featured === 'featured' && (
-        <span className={cn(badgeClass, 'font-medium bg-primary text-primary-foreground')}>
-          Featured
         </span>
       )}
     </>
@@ -235,12 +225,7 @@ function CompactEntry({ entry }: { entry: Sanity.CollectionChangelog }) {
   return (
     <div className="border-b border-border py-4 first:pt-0 last:border-0">
       <div className="flex flex-wrap items-center gap-3 mb-2">
-        <EntryBadges
-          version={entry.version}
-          releaseInfo={releaseInfo}
-          featured={entry.featured}
-          compact
-        />
+        <EntryBadges version={entry.version} releaseInfo={releaseInfo} compact />
         <span className="text-sm text-muted-foreground">
           <DateDisplay value={entry.publishDate} />
         </span>
@@ -274,7 +259,7 @@ function FullEntry({
       )}
 
       <div className="flex flex-wrap items-center gap-3 mb-4">
-        <EntryBadges version={entry.version} releaseInfo={releaseInfo} featured={entry.featured} />
+        <EntryBadges version={entry.version} releaseInfo={releaseInfo} />
       </div>
 
       <div className="mb-4">
@@ -410,7 +395,6 @@ export default async function ChangelogFrontpage({
   layout = 'timeline',
   groupByYear = true,
   limit = 0,
-  showFeaturedFirst = false,
   showRssLink,
   collectionSlug,
   locale = 'en',
@@ -429,7 +413,6 @@ export default async function ChangelogFrontpage({
 
   const entries = await fetchChangelogEntries(collectionSlug, locale, {
     limit,
-    showFeaturedFirst,
   });
 
   const cleanLayout = stegaClean(layout) as 'timeline' | 'cards' | 'compact';

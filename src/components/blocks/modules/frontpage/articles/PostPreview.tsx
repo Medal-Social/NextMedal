@@ -1,31 +1,13 @@
 import Link from 'next/link';
-import { Date as BlogDate, Img } from '@/components/blocks/objects/core';
+import { Date as ArticleDate, Img } from '@/components/blocks/objects/core';
 import resolveUrl from '@/lib/sanity/resolve-url';
+import { getArticleFallbackImage } from '@/lib/utils/article-helpers';
 import { createStegaAttribute } from '@/sanity/lib/client';
 import Authors from './Authors';
 import Categories from './Categories';
 
 const IMAGE_CLASS =
   'aspect-video w-full object-cover rounded-2xl transition-transform duration-300 group-hover:scale-105 group-hover:brightness-110';
-
-function getFallbackImage(
-  metadata: Sanity.CollectionBlogPost['metadata'],
-  seo: Sanity.CollectionBlogPost['seo']
-) {
-  // Only skip fallback if seo.image has a valid asset
-  if (seo?.image?.asset) return undefined;
-
-  const params = new URLSearchParams();
-  if (metadata?.title) params.set('title', metadata.title.slice(0, 100));
-  if (seo?.description) params.set('description', seo.description.slice(0, 150));
-
-  return {
-    src: `/api/og/blog-fallback?${params.toString()}`,
-    alt: metadata?.title || '',
-    width: 1200,
-    height: 630,
-  };
-}
 
 function PostImage({
   skeleton,
@@ -37,8 +19,8 @@ function PostImage({
   dataAttribute,
 }: {
   skeleton?: boolean;
-  metadata?: Sanity.CollectionBlogPost['metadata'];
-  seo?: Sanity.CollectionBlogPost['seo'];
+  metadata?: Sanity.CollectionArticlePost['metadata'];
+  seo?: Sanity.CollectionArticlePost['seo'];
   fallbackImage?: { src: string; alt: string; width: number; height: number };
   sizes?: string;
   href: string;
@@ -72,7 +54,7 @@ export default function PostPreview({
   sizes,
   href: hrefOverride,
 }: {
-  post?: Sanity.CollectionBlogPost;
+  post?: Sanity.CollectionArticlePost;
   skeleton?: boolean;
   sizes?: string;
   href?: string;
@@ -84,7 +66,10 @@ export default function PostPreview({
   const seo = skeleton ? undefined : post?.seo;
   const href =
     hrefOverride || (skeleton || !post?.metadata ? '' : resolveUrl(post, { base: false }));
-  const fallbackImage = skeleton ? undefined : getFallbackImage(metadata, seo);
+  const fallbackImage =
+    skeleton || seo?.image?.asset
+      ? undefined
+      : getArticleFallbackImage(metadata?.title, seo?.description);
 
   const dataAttribute = post?._id
     ? createStegaAttribute({
@@ -111,7 +96,7 @@ export default function PostPreview({
       </div>
       <div className="max-w-xl">
         <div className="mt-8 flex items-center gap-x-4 text-xs">
-          <BlogDate
+          <ArticleDate
             value={skeleton ? undefined : post?.publishDate}
             data-sanity={dataAttribute?.scope('publishDate').toString()}
           />

@@ -1,5 +1,5 @@
 import type { NextRequest } from 'next/server';
-import { routing } from '@/i18n/routing';
+import { type Locale, localeConfig, routing } from '@/i18n/routing';
 import { BASE_URL } from '@/lib/core/env';
 
 /**
@@ -15,14 +15,10 @@ function escapeXml(str: string): string {
 }
 
 /**
- * Get locale display name
+ * Get locale display name from centralized config
  */
 function getLocaleDisplayName(locale: string): string {
-  const names: Record<string, string> = {
-    en: 'English',
-    nb: 'Norsk',
-  };
-  return names[locale] ?? locale;
+  return localeConfig[locale as Locale]?.title ?? locale;
 }
 
 export async function GET(_req: NextRequest) {

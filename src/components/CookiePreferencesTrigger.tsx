@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as CookieConsent from 'vanilla-cookieconsent';
 
 interface CookiePreferencesTriggerProps {
@@ -7,20 +8,17 @@ interface CookiePreferencesTriggerProps {
   locale?: string;
 }
 
-export default function CookiePreferencesTrigger({
-  className,
-  locale = 'en',
-}: CookiePreferencesTriggerProps) {
-  const label = locale === 'nb' ? 'Informasjonskapsler' : 'Cookie Preferences';
+export default function CookiePreferencesTrigger({ className }: CookiePreferencesTriggerProps) {
+  const t = useTranslations('cookies');
 
   return (
     <button
       type="button"
       onClick={() => CookieConsent.showPreferences()}
       className={className}
-      aria-label={label}
+      aria-label={t('preferences')}
     >
-      {label}
+      {t('preferences')}
     </button>
   );
 }

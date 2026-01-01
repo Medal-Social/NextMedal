@@ -118,33 +118,26 @@ export default defineType({
       group: 'content',
     }),
 
-    // Featured
-    defineField({
-      name: 'featured',
-      title: 'Featured',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Standard', value: 'standard' },
-          { title: 'Featured', value: 'featured' },
-        ],
-        layout: 'radio',
-        direction: 'horizontal',
-      },
-      initialValue: 'standard',
-      group: 'content',
-    }),
-
-    // Date and time
+    // Date and time (hidden for recorded videos)
     defineField({
       name: 'startDateTime',
       title: 'Start Date & Time',
       type: 'datetime',
+      description: 'When the event starts (not needed for recorded videos)',
       options: {
         dateFormat: 'MMMM D, YYYY',
         timeFormat: 'HH:mm',
       },
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          const parent = context.parent as { eventType?: string };
+          // Required for all types except video
+          if (parent?.eventType !== 'video' && !value) {
+            return 'Start date & time is required for live and physical events';
+          }
+          return true;
+        }),
+      hidden: ({ parent }) => parent?.eventType === 'video',
       group: 'details',
     }),
 
@@ -152,7 +145,7 @@ export default defineType({
       name: 'duration',
       title: 'Duration',
       type: 'number',
-      description: 'Event duration in hours',
+      description: 'Event duration in hours (not needed for recorded videos)',
       options: {
         list: [
           { title: '30 minutes', value: 0.5 },
@@ -165,6 +158,7 @@ export default defineType({
         ],
       },
       initialValue: 1,
+      hidden: ({ parent }) => parent?.eventType === 'video',
       group: 'details',
     }),
 
@@ -172,8 +166,9 @@ export default defineType({
       name: 'timezone',
       title: 'Timezone',
       type: 'string',
-      description: 'Display timezone for the event (e.g., CET, PST, UTC)',
+      description: 'Display timezone (e.g., CET, PST, UTC) - not needed for recorded videos',
       initialValue: 'CET',
+      hidden: ({ parent }) => parent?.eventType === 'video',
       group: 'details',
     }),
 
@@ -222,7 +217,8 @@ export default defineType({
       type: 'reference',
       to: [{ type: 'form' }],
       group: 'details',
-      description: 'Select a form to capture registrations. Leave empty for no registration.',
+      description: 'Select a form to capture registrations (not needed for recorded videos)',
+      hidden: ({ parent }) => parent?.eventType === 'video',
     }),
 
     // Speakers/hosts
@@ -269,30 +265,8 @@ export default defineType({
     // SEO fields
     defineField({
       name: 'seo',
-      title: 'SEO',
-      type: 'object',
+      type: 'seo-metadata',
       group: 'seo',
-      fields: [
-        defineField({ name: 'title', type: 'string', title: 'SEO Title' }),
-        defineField({
-          name: 'description',
-          type: 'text',
-          title: 'SEO Description',
-          rows: 3,
-        }),
-        defineField({
-          name: 'image',
-          type: 'image',
-          title: 'OG Image',
-          options: { hotspot: true },
-        }),
-        defineField({
-          name: 'noIndex',
-          type: 'boolean',
-          title: 'No Index',
-          description: 'Prevent this page from being indexed by search engines',
-        }),
-      ],
     }),
 
     // Language (for i18n)

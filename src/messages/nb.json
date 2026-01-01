@@ -12,20 +12,29 @@
     "processing": "Behandler...",
     "untitled": "Uten tittel"
   },
+  "pagination": {
+    "previous": "Forrige",
+    "next": "Neste",
+    "goToPrevious": "Gå til forrige side",
+    "goToNext": "Gå til neste side",
+    "morePages": "Flere sider"
+  },
   "Accessibility": {
     "skipToContent": "Hopp til innhold",
     "openSearch": "Åpne søk",
     "loadingTheme": "Laster temavalg",
     "mobileNavigation": "Mobilnavigasjonsmeny",
     "dismissBanner": "Lukk kunngjøringsbanner",
-    "required": "påkrevd"
+    "required": "påkrevd",
+    "toggleTheme": "Bytt tema",
+    "changeLanguage": "Endre språk"
   },
   "search": {
     "placeholder": "Søk...",
-    "commandPlaceholder": "Søk i sider, blogg, dokumentasjon...",
+    "commandPlaceholder": "Søk i sider, artikler, dokumentasjon...",
     "noResults": "Ingen resultater funnet. Prøv andre søkeord.",
     "categories": {
-      "blogPosts": "Blogginnlegg",
+      "articles": "Artikler",
       "documentation": "Dokumentasjon",
       "changelog": "Endringslogg",
       "newsletter": "Nyhetsbrev",
@@ -38,10 +47,19 @@
     "copyCode": "Kopier kode",
     "copiedState": "Kopiert"
   },
-  "blog": {
+  "article": {
+    "home": "Hjem",
+    "shareArticle": "Del artikkel",
+    "onThisPage": "På denne siden",
     "shareOn": "Del på {platform}",
     "copyLink": "Kopier lenke",
     "linkCopied": "Lenke kopiert til utklippstavle",
+    "linkCopyFailed": "Kunne ikke kopiere lenke",
+    "minute": "minutt",
+    "minutes": "minutter",
+    "featuredInsight": "Fremhevet innsikt",
+    "recent": "Nylig",
+    "popular": "Populær",
     "gridView": "Rutenettvisning",
     "listView": "Listevisning",
     "rssFeed": "RSS-feed"
@@ -77,7 +95,7 @@
   },
   "LocaleSwitcher": {
     "label": "Endre språk",
-    "locale": "{locale, select, en {English} nb {Norsk} other {Ukjent}}",
+    "locale": "{locale, select, en {English} nb {Norsk} ar {العربية} other {Ukjent}}",
     "selectLanguage": "Velg språk",
     "language": "Språk",
     "translationNotAvailable": "Ikke tilgjengelig på {locale}",
@@ -187,6 +205,36 @@
         "registering": "Melder deg på...",
         "close": "Ferdig"
       }
+    }
+  },
+  "setup": {
+    "title": "Velkommen til NextMedal!",
+    "description": "Nettstedet ditt kjører, men ingen indeksside eksisterer ennå. La oss lage en!",
+    "quickSetup": "Rask oppsett (3 trinn):",
+    "step1": {
+      "title": "Åpne Sanity Studio",
+      "description": "Besøk {studioUrl}"
+    },
+    "step2": {
+      "title": "Konfigurer nettstedsinnstillinger",
+      "description": "Sett opp topptekst, bunntekst og navigasjon i \"Nettstedsinnstillinger\""
+    },
+    "step3": {
+      "title": "Opprett en indeksside",
+      "description": "Klikk \"Opprett\" → \"Side\" → Sett slug til <slug>index</slug>, publiser deretter"
+    },
+    "needHelp": "Trenger du hjelp? Sjekk <readme>README</readme> eller <contact>kontakt Medal Social</contact>",
+    "openStudio": "Åpne Sanity Studio",
+    "header": {
+      "yourSite": "Ditt nettsted",
+      "configureHint": "Konfigurer i Studio → Nettstedsinnstillinger",
+      "completeSetup": "Fullfør oppsett"
+    },
+    "footer": {
+      "brandName": "NextMedal",
+      "description": "Nesten klar! Fullfør nettstedsoppsettet i Sanity Studio for å tilpasse denne bunnteksten med merkevaren, lenker og sosiale medier.",
+      "configureHint": "Konfigurer i Studio → Nettstedsinnstillinger",
+      "copyright": "NextMedal • Laget av <link>Medal Social</link> © {year}"
     }
   }
 }

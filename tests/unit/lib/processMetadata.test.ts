@@ -5,6 +5,7 @@ import resolveUrl from '@/lib/sanity/resolve-url';
 // Mock the env module (must match actual import path in process-metadata.ts)
 vi.mock('@/lib/core/env', () => ({
   BASE_URL: 'https://example.com',
+  dev: false,
   vercelPreview: false,
   isStaging: false,
   isPreview: false,
@@ -15,8 +16,8 @@ vi.mock('@/lib/sanity/resolve-url', () => ({
   default: vi.fn((page, options) => {
     const slug = page?.metadata?.slug?.current;
     let url = '';
-    if (page?._type === 'collection.blog') {
-      const collectionSlug = page?.collection?.metadata?.slug?.current || 'blog';
+    if (page?._type === 'collection.article') {
+      const collectionSlug = page?.collection?.metadata?.slug?.current || 'articles';
       url = `https://example.com/${collectionSlug}/${slug}`;
     } else {
       url = slug === 'index' ? 'https://example.com/' : `https://example.com/${slug}`;
@@ -34,7 +35,7 @@ vi.mock('@/lib/sanity/resolve-url', () => ({
 
 /**
  * processMetadata Unit Tests
- * Tests title/description generation, auto OG image, noIndex robots, blog post type, canonical URL
+ * Tests title/description generation, auto OG image, noIndex robots, article type, canonical URL
  * Requirements: 12.1, 12.2, 12.3, 12.4, 12.5
  */
 describe('processMetadata', () => {
@@ -53,11 +54,11 @@ describe('processMetadata', () => {
     ...overrides,
   });
 
-  const createMockBlogPost = (
-    overrides: Partial<Sanity.CollectionBlogPost> = {}
-  ): Sanity.CollectionBlogPost => ({
-    _id: 'blog-1',
-    _type: 'collection.blog',
+  const createMockArticlePost = (
+    overrides: Partial<Sanity.CollectionArticlePost> = {}
+  ): Sanity.CollectionArticlePost => ({
+    _id: 'article-1',
+    _type: 'collection.article',
     _createdAt: '2024-01-01T00:00:00Z',
     _updatedAt: '2024-01-01T00:00:00Z',
     _rev: 'rev-1',
@@ -66,16 +67,16 @@ describe('processMetadata', () => {
     authors: [],
     publishDate: '2024-06-15T10:00:00Z',
     metadata: {
-      slug: { current: 'test-blog-post' },
-      title: 'Test Blog Post Title',
-      description: 'This is a test blog post description.',
+      slug: { current: 'test-article-post' },
+      title: 'Test Article Title',
+      description: 'This is a test article description.',
       noIndex: false,
     },
     collection: {
-      _id: 'page-blog',
+      _id: 'page-articles',
       metadata: {
-        slug: { current: 'blog' },
-        title: 'Blog',
+        slug: { current: 'articles' },
+        title: 'Articles',
       },
     },
     ...overrides,
@@ -194,10 +195,10 @@ describe('processMetadata', () => {
     });
   });
 
-  describe('Blog Post OG Type (Requirement 12.4)', () => {
-    it('should set openGraph.type to article for blog posts', async () => {
-      const blogPost = createMockBlogPost();
-      const result = await processMetadata(blogPost);
+  describe('Article OG Type (Requirement 12.4)', () => {
+    it('should set openGraph.type to article for articles', async () => {
+      const articlePost = createMockArticlePost();
+      const result = await processMetadata(articlePost);
       const openGraph = result.openGraph as { type?: string; publishedTime?: string } | undefined;
 
       expect(openGraph?.type).toBe('article');
@@ -211,11 +212,11 @@ describe('processMetadata', () => {
       expect(openGraph?.type).toBe('website');
     });
 
-    it('should include publishedTime for blog posts', async () => {
-      const blogPost = createMockBlogPost({
+    it('should include publishedTime for articles', async () => {
+      const articlePost = createMockArticlePost({
         publishDate: '2024-06-15T10:00:00Z',
       });
-      const result = await processMetadata(blogPost);
+      const result = await processMetadata(articlePost);
       const openGraph = result.openGraph as { type?: string; publishedTime?: string } | undefined;
 
       expect(openGraph?.publishedTime).toBe('2024-06-15T10:00:00Z');
@@ -239,12 +240,12 @@ describe('processMetadata', () => {
       expect(result.alternates?.canonical).toBe('https://example.com/test-page');
     });
 
-    it('should include canonical URL for blog posts', async () => {
-      const blogPost = createMockBlogPost();
-      const result = await processMetadata(blogPost);
+    it('should include canonical URL for articles', async () => {
+      const articlePost = createMockArticlePost();
+      const result = await processMetadata(articlePost);
 
       expect(result.alternates?.canonical).toBeDefined();
-      expect(result.alternates?.canonical).toContain('test-blog-post');
+      expect(result.alternates?.canonical).toContain('test-article-post');
     });
 
     it('should include RSS feed type in alternates', async () => {
@@ -252,7 +253,7 @@ describe('processMetadata', () => {
       const result = await processMetadata(page);
 
       expect(result.alternates?.types).toBeDefined();
-      expect(result.alternates?.types?.['application/rss+xml']).toBe('/blog/rss.xml');
+      expect(result.alternates?.types?.['application/rss+xml']).toBe('/articles/rss.xml');
     });
 
     it('should pass searchParams and allowList to resolveUrl', async () => {

@@ -1,2 +1,2 @@
-export type { ModuleContext } from './ModuleRenderer';
 export { default as Modules } from './Modules';
+export type { FilterParams, ModuleContext, SidebarProps } from './types';

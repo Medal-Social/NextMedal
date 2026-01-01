@@ -1,9 +1,10 @@
 /**
  * Person Schema
- * @version 1.0.1
- * @lastUpdated 2025-12-23
+ * @version 1.1.0
+ * @lastUpdated 2025-12-31
  * @description Defines a team member profile with bio and social links.
  * @changelog
+ * - 1.1.0: Expanded socialLinks to 7 platforms (added GitHub and Website)
  * - 1.0.1: Updated header documentation
  * - 1.0.0: Initial version
  */
@@ -112,9 +113,11 @@ export default defineType({
                 list: [
                   { title: 'LinkedIn', value: 'linkedin' },
                   { title: 'X (Twitter)', value: 'twitter' },
+                  { title: 'GitHub', value: 'github' },
                   { title: 'Instagram', value: 'instagram' },
                   { title: 'YouTube', value: 'youtube' },
                   { title: 'Facebook', value: 'facebook' },
+                  { title: 'Website', value: 'website' },
                 ],
               },
               validation: (Rule) => Rule.required(),
@@ -135,9 +138,11 @@ export default defineType({
               const platforms = {
                 linkedin: 'LinkedIn',
                 twitter: 'X (Twitter)',
+                github: 'GitHub',
                 instagram: 'Instagram',
                 youtube: 'YouTube',
                 facebook: 'Facebook',
+                website: 'Website',
               };
               return {
                 title: platforms[title as keyof typeof platforms] || title,

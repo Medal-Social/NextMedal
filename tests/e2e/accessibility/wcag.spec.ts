@@ -10,7 +10,7 @@ import { expect, test } from '@playwright/test';
 test.describe('WCAG Accessibility Tests', () => {
   test('homepage should have no accessibility violations', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
@@ -21,7 +21,7 @@ test.describe('WCAG Accessibility Tests', () => {
 
   test('homepage should have proper heading structure', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     // Check for single h1
     const h1Count = await page.locator('h1').count();
@@ -41,7 +41,7 @@ test.describe('WCAG Accessibility Tests', () => {
 
   test('images should have alt text', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withRules(['image-alt'])
@@ -52,7 +52,7 @@ test.describe('WCAG Accessibility Tests', () => {
 
   test('interactive elements should be keyboard accessible', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(['keyboard'])

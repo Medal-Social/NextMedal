@@ -39,13 +39,13 @@ export default async function RootLayout({ children, params }: Props) {
   return (
     <html
       lang={locale}
+      dir={locale === 'ar' ? 'rtl' : 'ltr'}
       className={`${GeistSans.variable} ${GeistMono.variable}`}
       suppressHydrationWarning
     >
       <head>
         {/* Preconnect to critical external origins for faster resource loading */}
-        <link rel="preconnect" href="https://cdn.sanity.io" />
-        <link rel="dns-prefetch" href="https://cdn.sanity.io" />
+        <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous" />
       </head>
       <body className="bg-background text-foreground dark:bg-background dark:text-foreground font-sans flex flex-col min-h-screen">
         <Suspense fallback={null}>

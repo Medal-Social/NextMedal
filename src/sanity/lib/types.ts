@@ -80,7 +80,7 @@ interface ModuleOptions {
   _type: 'module-options';
   background?: string;
   isFullWidth?: boolean;
-  uid?: string;
+  anchorId?: string;
 }
 
 // Module types (internal)

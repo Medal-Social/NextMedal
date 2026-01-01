@@ -1,9 +1,10 @@
 /**
  * Module Options Schema
- * @version 1.0.1
- * @lastUpdated 2025-12-23
- * @description Common options for modules, such as custom anchors/IDs.
+ * @version 1.1.0
+ * @lastUpdated 2025-12-31
+ * @description Advanced module options for anchor linking and deep navigation.
  * @changelog
+ * - 1.1.0: Renamed uid → anchorId, improved descriptions, made collapsible by default
  * - 1.0.1: Updated header documentation
  * - 1.0.0: Initial version
  */
@@ -14,16 +15,22 @@ import { CheckmarkIcon, CopyIcon } from '@sanity/icons';
 import { Box, Button, Flex, Text, TextInput } from '@sanity/ui';
 import { useState } from 'react';
 import { defineField, defineType } from 'sanity';
+import { copyToClipboard } from '@/lib/utils/clipboard';
 
 export default defineType({
   name: 'module-options',
-  title: 'Module Options',
+  title: 'Advanced Options',
   type: 'object',
+  options: {
+    collapsible: true,
+    collapsed: true,
+  },
   fields: [
     defineField({
-      name: 'uid',
-      title: 'Unique identifier',
-      description: 'Used for anchor/jump links (HTML `id` attribute).',
+      name: 'anchorId',
+      title: 'Anchor ID',
+      description:
+        'Optional ID for deep linking (e.g., #pricing, #contact). Useful for navigation and scroll-to-section functionality.',
       type: 'string',
       validation: (Rule) =>
         Rule.regex(/^[a-zA-Z0-9-]+$/g).error('Must not contain spaces or special characters'),
@@ -48,11 +55,18 @@ export default defineType({
                 mode="ghost"
                 icon={checked ? CheckmarkIcon : CopyIcon}
                 disabled={checked}
-                onClick={() => {
-                  navigator.clipboard.writeText(`#${elementProps.value || moduleKey}`);
+                onClick={async () => {
+                  const textToCopy = `#${elementProps.value || moduleKey}`;
+                  const success = await copyToClipboard(textToCopy);
 
-                  setChecked(true);
-                  setTimeout(() => setChecked(false), 1000);
+                  if (success) {
+                    setChecked(true);
+                    setTimeout(() => setChecked(false), 1000);
+                  } else {
+                    // Still show the checkmark briefly to indicate the attempt
+                    setChecked(true);
+                    setTimeout(() => setChecked(false), 500);
+                  }
                 }}
               />
             </Flex>

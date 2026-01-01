@@ -41,7 +41,7 @@ export default function PricingList({ intro, tiers, ...props }: Sanity.PricingLi
           <SharedPortableText value={intro} />
         </header>
       )}
-      {tiers?.find((tier) => tier.price?.yearly !== undefined) && (
+      {tiers?.find((tier) => tier.yearlyPrice !== undefined) && (
         <div className="flex justify-center items-center space-x-4 rounded-full">
           <Tabs
             onValueChange={(value) => setIsYearly(value === 'yearly')}
@@ -89,30 +89,30 @@ export default function PricingList({ intro, tiers, ...props }: Sanity.PricingLi
                   )}
                 </div>
 
-                {tier.price?.base !== undefined && (
+                {tier.monthlyPrice !== undefined && (
                   <div className="flex flex-wrap items-end gap-x-1" aria-live="polite">
-                    {tier.price.base !== undefined && tier.price.base && (
+                    {tier.monthlyPrice !== undefined && tier.monthlyPrice && (
                       <span className="text-4xl text-foreground font-semibold font-numeric">
-                        {tier.price.currency}{' '}
-                        {!Number.isNaN(Number.parseInt(tier.price.base, 10)) &&
-                        Number.parseInt(tier.price.base, 10) > 0 &&
-                        !Number.isNaN(Number.parseInt(tier.price.yearly || '0', 10)) &&
-                        Number.parseInt(tier.price.yearly || '0', 10) > 0 ? (
+                        {tier.currency}{' '}
+                        {!Number.isNaN(Number.parseInt(tier.monthlyPrice, 10)) &&
+                        Number.parseInt(tier.monthlyPrice, 10) > 0 &&
+                        !Number.isNaN(Number.parseInt(tier.yearlyPrice || '0', 10)) &&
+                        Number.parseInt(tier.yearlyPrice || '0', 10) > 0 ? (
                           <AnimatedNumber
                             value={
-                              isYearly && tier.price?.yearly
-                                ? Number.parseInt(tier.price.yearly, 10)
-                                : Number.parseInt(tier.price.base, 10)
+                              isYearly && tier.yearlyPrice
+                                ? Number.parseInt(tier.yearlyPrice, 10)
+                                : Number.parseInt(tier.monthlyPrice, 10)
                             }
                           />
                         ) : (
-                          tier.price.base
+                          tier.monthlyPrice
                         )}
                       </span>
                     )}
-                    {tier.price.suffix && (
+                    {tier.priceSuffix && (
                       <span className="text-sm font-normal text-foreground">
-                        {tier.price.suffix}
+                        {tier.priceSuffix}
                       </span>
                     )}
                   </div>

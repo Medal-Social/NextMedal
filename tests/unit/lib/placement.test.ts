@@ -260,7 +260,7 @@ describe('groupPlacements', () => {
     it('preserves full placement object for injections', () => {
       const placement: Placement = {
         _id: 'injection-1',
-        scope: 'blog',
+        scope: 'articles',
         location: 'injection',
         injectionConfig: { afterParagraph: 5 },
         modules: [createModule('ad1'), createModule('ad2')],

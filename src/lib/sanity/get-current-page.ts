@@ -32,7 +32,7 @@ export async function getCurrentPage(): Promise<Sanity.PageBase | undefined> {
 
 /**
  * Parse pathname to extract locale and slug
- * Patterns: /, /en, /nb, /en/slug, /nb/slug, /slug, /blog/slug, /nb/blog/slug
+ * Patterns: /, /en, /nb, /en/slug, /nb/slug, /slug, /article/slug, /nb/article/slug
  */
 function parsePathname(pathname: string): { locale: string; slug: string } {
   const urlPath = new URL(pathname, 'http://localhost').pathname;
@@ -58,8 +58,8 @@ function parsePathname(pathname: string): { locale: string; slug: string } {
     return { locale, slug: 'index' };
   }
 
-  // Handle /blog/slug pattern - strip "blog" prefix for blog posts
-  if (remainingSegments[0] === 'blog' && remainingSegments.length > 1) {
+  // Handle /article/slug pattern - strip "article" prefix for articles
+  if (remainingSegments[0] === 'articles' && remainingSegments.length > 1) {
     return {
       locale,
       slug: remainingSegments.slice(1).join('/'),

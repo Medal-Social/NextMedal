@@ -6,14 +6,14 @@
  * @changelog
  * - 2.0.0: Reorganized schema structure to match Sanity Studio (shared/, modules/*)
  * - 1.2.0: Renamed listing modules to frontpage (articles-frontpage, changelog-frontpage, etc.)
- * - 1.1.0: Added collections system (collection.blog, articles-frontpage module)
+ * - 1.1.0: Added collections system (collection.article, articles-frontpage module)
  * - 1.0.1: Added header documentation
  * - 1.0.0: Initial version
  */
 
 import type { SchemaTypeDefinition } from 'sanity';
 // Documents - Collections
-import collectionBlog from './documents/collections/blog';
+import collectionArticle from './documents/collections/article';
 import collectionChangelog from './documents/collections/changelog';
 import collectionDocumentation from './documents/collections/documentation';
 import collectionEvents from './documents/collections/events';
@@ -22,13 +22,12 @@ import collectionNewsletter from './documents/collections/newsletter';
 import componentLibrary from './documents/component-library';
 // Documents - Pages
 import page from './documents/page';
+import articleCategory from './documents/shared/article.category';
 // Documents - Shared Content
 import banner from './documents/shared/banner';
-import blogCategory from './documents/shared/blog.category';
 import docsCategory from './documents/shared/docs.category';
 import form from './documents/shared/form';
 import logo from './documents/shared/logo';
-import navigation from './documents/shared/navigation';
 import person from './documents/shared/person';
 import placement from './documents/shared/placement';
 import pricing from './documents/shared/pricing';
@@ -71,6 +70,8 @@ import link from './objects/link';
 import menuItem from './objects/menu-item';
 import metadata from './objects/metadata';
 import moduleOptions from './objects/module-options';
+import seoMetadata from './objects/seo-metadata';
+import socialEmbed from './objects/social-embed';
 import video from './objects/video';
 
 export const schemaTypes: SchemaTypeDefinition[] = [
@@ -80,7 +81,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   componentLibrary,
 
   // Documents - Collections
-  collectionBlog,
+  collectionArticle,
   collectionChangelog,
   collectionDocumentation,
   collectionEvents,
@@ -89,11 +90,10 @@ export const schemaTypes: SchemaTypeDefinition[] = [
 
   // Documents - Shared Content
   banner,
-  blogCategory,
+  articleCategory,
   docsCategory,
   form,
   logo,
-  navigation,
   person,
   placement,
   pricing,
@@ -108,6 +108,8 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   menuItem,
   metadata,
   moduleOptions,
+  seoMetadata,
+  socialEmbed,
   video,
   modules,
 

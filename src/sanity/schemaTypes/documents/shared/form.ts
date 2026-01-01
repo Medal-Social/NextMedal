@@ -1,9 +1,10 @@
 /**
  * Form Schema
- * @version 1.0.1
- * @lastUpdated 2025-12-23
- * @description Defines the structure for forms, including fields, intents, and submission settings.
+ * @version 2.0.0
+ * @lastUpdated 2025-12-31
+ * @description Simplified form schema with pre-built templates for common use cases.
  * @changelog
+ * - 2.0.0: Added template selector with 3 pre-configured forms (Contact, Newsletter, Event)
  * - 1.0.1: Added header documentation
  * - 1.0.0: Initial version
  */
@@ -26,23 +27,51 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'template',
+      title: 'Form Template',
+      description:
+        'Select a pre-configured form template. This auto-populates fields with sensible defaults.',
+      type: 'string',
+      options: {
+        list: [
+          {
+            title: '📧 Contact Form',
+            value: 'contact',
+          },
+          {
+            title: '📰 Newsletter Signup',
+            value: 'newsletter',
+          },
+          {
+            title: '🎫 Event Registration',
+            value: 'event',
+          },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'contact',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
       name: 'intent',
       title: 'Intent',
-      description: 'How the form data should be processed (e.g., lead, newsletter, download)',
+      description: 'How the form data should be processed (auto-set based on template)',
       type: 'string',
       options: {
         list: [
           { title: 'Lead Generation', value: 'lead' },
           { title: 'Newsletter Subscription', value: 'newsletter' },
-          { title: 'Resource Download', value: 'download' },
+          { title: 'Event Registration', value: 'event' },
         ],
       },
-      initialValue: 'lead',
-      validation: (Rule) => Rule.required(),
+      readOnly: true,
+      hidden: ({ parent }) => !parent?.template,
     }),
     defineField({
       name: 'fields',
-      title: 'Form Fields',
+      title: 'Form Fields (Auto-configured)',
+      description:
+        'Fields are automatically configured based on the selected template. Advanced: expand to customize field configuration.',
       type: 'array',
       of: [
         defineArrayMember({
@@ -203,12 +232,17 @@ export default defineType({
   preview: {
     select: {
       title: 'formTitle',
-      intent: 'intent',
+      template: 'template',
     },
-    prepare({ title, intent }) {
+    prepare({ title, template }) {
+      const templateLabels = {
+        contact: '📧 Contact Form',
+        newsletter: '📰 Newsletter Signup',
+        event: '🎫 Event Registration',
+      };
       return {
         title: title || 'Untitled Form',
-        subtitle: `Intent: ${intent}`,
+        subtitle: templateLabels[template as keyof typeof templateLabels] || template,
       };
     },
   },
