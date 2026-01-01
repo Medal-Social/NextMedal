@@ -18,7 +18,7 @@ import resolveUrl from '@/lib/sanity/resolve-url';
 type NavMenuItem = Sanity.MenuItem | Sanity.DropdownMenu;
 
 interface NavigationProps {
-  headerMenu?: Sanity.Navigation;
+  items?: (Sanity.MenuItem | Sanity.DropdownMenu)[];
 }
 
 function getLinkHref(item: Sanity.MenuItem): string {
@@ -68,11 +68,11 @@ function isDropdownMenu(item: NavMenuItem): item is Sanity.DropdownMenu {
   return item._type === 'dropdownMenu';
 }
 
-export default function Navigation({ headerMenu }: NavigationProps) {
+export default function Navigation({ items }: NavigationProps) {
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        {headerMenu?.items?.map((item, index) => {
+        {items?.map((item, index) => {
           const itemKey = ('_key' in item && item._key) || `nav-item-${index}`;
 
           if (isMenuItem(item)) {

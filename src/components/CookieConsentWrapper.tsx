@@ -1,4 +1,4 @@
-import { getSite } from '@/sanity/lib/fetch';
+import { getSiteOptional } from '@/sanity/lib/fetch';
 import CookieConsent from './CookieConsent';
 
 interface CookieConsentWrapperProps {
@@ -6,9 +6,9 @@ interface CookieConsentWrapperProps {
 }
 
 export default async function CookieConsentWrapper({ locale }: CookieConsentWrapperProps) {
-  const site = await getSite();
+  const site = await getSiteOptional();
 
-  if (!site.cookieConsent) {
+  if (!site?.cookieConsent) {
     return null;
   }
 

@@ -32,6 +32,56 @@ export interface LocaleSwitcherClientProps {
   labels: LocaleLabels;
 }
 
+/**
+ * Helper to build locale-prefixed URL (default locale has no prefix)
+ */
+function buildUrl(lang: string, slug: string, _type: string): string {
+  const isDefaultLocale = lang === routing.defaultLocale;
+  const prefix = isDefaultLocale ? '' : `/${lang}`;
+  if (slug === 'index') {
+    return isDefaultLocale ? '/' : `/${lang}`;
+  }
+  return `${prefix}/${slug}`;
+}
+
+/**
+ * Build translation URLs from current page and its translations
+ */
+function buildPageTranslationUrls(page: ServerPageData, locale: string): Record<string, string> {
+  const urls: Record<string, string> = {};
+  // biome-ignore lint/suspicious/noExplicitAny: ServerPageData has dynamic shape (metadata or slug)
+  const currentSlug = 'metadata' in page ? (page as any).metadata?.slug?.current : page.slug;
+
+  if (currentSlug) {
+    urls[locale] = buildUrl(locale, currentSlug, page._type);
+  }
+
+  if (page.translations) {
+    for (const translation of page.translations) {
+      if (!translation?.language) continue;
+      urls[translation.language] = buildUrl(
+        translation.language,
+        translation.slug,
+        translation._type
+      );
+    }
+  }
+
+  return urls;
+}
+
+/**
+ * Build fallback URLs for all locales pointing to home
+ */
+function buildFallbackUrls(): Record<string, string> {
+  const urls: Record<string, string> = {};
+  for (const loc of routing.locales) {
+    const isDefaultLocale = loc === routing.defaultLocale;
+    urls[loc] = isDefaultLocale ? '/' : `/${loc}`;
+  }
+  return urls;
+}
+
 export default function LocaleSwitcherClient({
   className,
   dropdownAlign,
@@ -40,45 +90,9 @@ export default function LocaleSwitcherClient({
   labels,
 }: LocaleSwitcherClientProps) {
   const { page: contextPage } = usePage();
-
-  // Use page from context if available, otherwise use server-provided page
   const page = contextPage || serverPage;
 
-  // Build translation map: locale -> URL
-  const translationUrls: Record<string, string> = {};
-
-  // Helper to build locale-prefixed URL (default locale has no prefix)
-  const buildUrl = (lang: string, slug: string, _type: string) => {
-    const isDefaultLocale = lang === routing.defaultLocale;
-    const prefix = isDefaultLocale ? '' : `/${lang}`;
-    if (slug === 'index') {
-      return isDefaultLocale ? '/' : `/${lang}`;
-    }
-    return `${prefix}/${slug}`;
-  };
-
-  // Build URLs from page data
-  if (page) {
-    const currentSlug = 'metadata' in page ? page.metadata?.slug?.current : page.slug;
-
-    // Current page URL
-    if (currentSlug) {
-      translationUrls[locale] = buildUrl(locale, currentSlug, page._type);
-    }
-
-    // Add translations
-    if (page.translations) {
-      for (const translation of page.translations) {
-        // Skip null/undefined translations (can happen with deleted references)
-        if (!translation?.language) continue;
-        translationUrls[translation.language] = buildUrl(
-          translation.language,
-          translation.slug,
-          translation._type
-        );
-      }
-    }
-  }
+  const translationUrls = page ? buildPageTranslationUrls(page, locale) : buildFallbackUrls();
 
   return (
     <LocaleSwitcherSelect

@@ -1,12 +1,6 @@
 import { format, formatDistanceToNow } from 'date-fns';
-import { ar, enUS, nb, type Locale as DateFnsLocale } from 'date-fns/locale';
-import type { Locale } from '@/i18n/routing';
-
-const locales: Record<Locale, DateFnsLocale> = {
-  ar,
-  en: enUS,
-  nb,
-};
+import { enUS } from 'date-fns/locale';
+import { type Locale, localeConfig } from '@/i18n/routing';
 
 /**
  * Formats a number as a USD currency string.
@@ -33,8 +27,11 @@ export function parseDate(value: string): Date {
 /**
  * Get date-fns locale from locale string
  */
-function getDateFnsLocale(locale?: string): DateFnsLocale {
-  return locales[locale as Locale] ?? enUS;
+function getDateFnsLocale(locale?: string) {
+  if (locale && locale in localeConfig) {
+    return localeConfig[locale as Locale].dateLocale;
+  }
+  return enUS;
 }
 
 /**
@@ -43,7 +40,7 @@ function getDateFnsLocale(locale?: string): DateFnsLocale {
 export function formatRelativeDate(value: string, locale?: string): string {
   return formatDistanceToNow(parseDate(value), {
     addSuffix: true,
-    locale: getDateFnsLocale(locale)
+    locale: getDateFnsLocale(locale),
   });
 }
 
@@ -54,7 +51,7 @@ export function formatRelativeDate(value: string, locale?: string): string {
 export function formatRelativeDateTime(value: string, locale?: string): string {
   return formatDistanceToNow(new Date(value), {
     addSuffix: true,
-    locale: getDateFnsLocale(locale)
+    locale: getDateFnsLocale(locale),
   });
 }
 

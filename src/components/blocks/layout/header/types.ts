@@ -82,5 +82,5 @@ export interface SearchResultItem {
   _id: string;
   title: string;
   href: string;
-  type: 'Article' | 'Page' | 'Docs' | 'Changelog' | 'Newsletter';
+  type: 'Articles' | 'Page' | 'Docs' | 'Changelog' | 'Newsletter';
 }

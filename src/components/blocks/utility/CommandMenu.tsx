@@ -2,7 +2,7 @@
 
 import { FileText, Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import * as React from 'react';
 import type { SearchResultItem } from '@/components/blocks/layout/header/types';
 import {
@@ -28,6 +28,7 @@ export function CommandMenu({ variant = 'default', className }: CommandMenuProps
   const [items, setItems] = React.useState<SearchResultItem[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const router = useRouter();
+  const locale = useLocale(); // Get current locale from next-intl
   const t = useTranslations('search');
   const tA11y = useTranslations('Accessibility');
 
@@ -46,7 +47,7 @@ export function CommandMenu({ variant = 'default', className }: CommandMenuProps
     async function fetchItems() {
       setIsLoading(true);
       try {
-        const res = await fetch('/api/search', { signal });
+        const res = await fetch(`/api/search?locale=${locale}`, { signal });
         if (!res.ok) throw new Error('Failed to fetch search items');
         const data = await res.json();
         setItems(data);
@@ -67,7 +68,7 @@ export function CommandMenu({ variant = 'default', className }: CommandMenuProps
       document.removeEventListener('keydown', down);
       controller.abort();
     };
-  }, []);
+  }, [locale]);
 
   const runCommand = React.useCallback((command: () => unknown) => {
     setOpen(false);
@@ -141,10 +142,10 @@ export function CommandMenu({ variant = 'default', className }: CommandMenuProps
             </div>
           ) : (
             <>
-              {items.filter((item) => item.type === 'Article').length > 0 && (
+              {items.filter((item) => item.type === 'Articles').length > 0 && (
                 <CommandGroup heading={t('categories.articles')}>
                   {items
-                    .filter((item) => item.type === 'Article')
+                    .filter((item) => item.type === 'Articles')
                     .map((item) => (
                       <CommandItem
                         key={item._id}

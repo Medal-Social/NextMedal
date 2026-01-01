@@ -34,3 +34,27 @@ export function normalizeUrl(url: string | undefined, forceHttps = false): strin
     return '';
   }
 }
+
+/**
+ * Extract a string value from Next.js searchParams
+ *
+ * Next.js searchParams can be string | string[] | undefined,
+ * this helper safely extracts only string values.
+ */
+export function getStringParam(value: string | string[] | undefined): string | undefined {
+  return typeof value === 'string' ? value : undefined;
+}
+
+/**
+ * Parse common search/filter params from Next.js searchParams
+ *
+ * Used at the page level to normalize searchParams before passing to components.
+ */
+export function parseFilterParams(params: Record<string, string | string[] | undefined>) {
+  return {
+    page: getStringParam(params.page),
+    category: getStringParam(params.category),
+    author: getStringParam(params.author),
+    search: getStringParam(params.search),
+  };
+}

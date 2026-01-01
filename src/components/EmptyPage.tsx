@@ -1,4 +1,5 @@
 import { ExternalLink, LayoutTemplate } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { buttonVariants } from '@/components/ui/button';
 import {
   Empty,
@@ -11,9 +12,9 @@ import {
 import { Section } from '@/components/ui/section';
 
 export function EmptyPage() {
-  // Detect if we're in dev mode by checking localhost
-  const isDev = typeof window !== 'undefined' && window.location.hostname === 'localhost';
-  const studioUrl = isDev ? 'http://localhost:3000/studio' : '/studio';
+  const t = useTranslations('setup');
+
+  const studioUrl = '/studio/structure/page';
 
   return (
     <Section className="min-h-[50vh] flex items-center justify-center">
@@ -22,23 +23,23 @@ export function EmptyPage() {
           <EmptyMedia variant="icon">
             <LayoutTemplate />
           </EmptyMedia>
-          <EmptyTitle>Welcome to NextMedal!</EmptyTitle>
+          <EmptyTitle>{t('title')}</EmptyTitle>
           <EmptyDescription className="text-left space-y-4">
-            <p className="text-center">
-              Your site is running, but no index page exists yet. Let's create one!
-            </p>
+            <p className="text-center">{t('description')}</p>
 
             <div className="bg-muted/50 p-4 rounded-lg space-y-3 text-sm">
-              <p className="font-medium">Quick Setup (3 steps):</p>
+              <p className="font-medium">{t('quickSetup')}</p>
 
               <ol className="list-decimal list-inside space-y-2">
                 <li>
-                  <strong>Open Sanity Studio</strong>
+                  <strong>{t('step1.title')}</strong>
                   <br />
                   <span className="text-muted-foreground ml-6">
-                    Visit{' '}
+                    {t('step1.description', { studioUrl: '' })}{' '}
                     <a
                       href={studioUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="text-primary hover:underline inline-flex items-center gap-1"
                     >
                       {studioUrl}
@@ -48,49 +49,59 @@ export function EmptyPage() {
                 </li>
 
                 <li>
-                  <strong>Create an index page</strong>
+                  <strong>{t('step2.title')}</strong>
                   <br />
-                  <span className="text-muted-foreground ml-6">
-                    Click "Create" → "Page" → Set slug to{' '}
-                    <code className="bg-background px-1 py-0.5 rounded">index</code>
-                  </span>
+                  <span className="text-muted-foreground ml-6">{t('step2.description')}</span>
                 </li>
 
                 <li>
-                  <strong>Publish it</strong>
+                  <strong>{t('step3.title')}</strong>
                   <br />
                   <span className="text-muted-foreground ml-6">
-                    Click the "Publish" button in the Studio, then refresh this page
+                    {t.rich('step3.description', {
+                      slug: (children) => (
+                        <code className="bg-background px-1 py-0.5 rounded">{children}</code>
+                      ),
+                    })}
                   </span>
                 </li>
               </ol>
             </div>
 
             <p className="text-xs text-muted-foreground text-center pt-2">
-              Need help? Check the{' '}
-              <a
-                href="https://github.com/Medal-Social/NextMedal#readme"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline"
-              >
-                README
-              </a>{' '}
-              or{' '}
-              <a
-                href="https://www.medalsocial.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline"
-              >
-                contact Medal Social
-              </a>
+              {t.rich('needHelp', {
+                readme: (children) => (
+                  <a
+                    href="https://github.com/Medal-Social/NextMedal#readme"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    {children}
+                  </a>
+                ),
+                contact: (children) => (
+                  <a
+                    href="https://www.medalsocial.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    {children}
+                  </a>
+                ),
+              })}
             </p>
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
-          <a href={studioUrl} className={buttonVariants({ variant: 'default' })}>
-            Open Sanity Studio
+          <a
+            href={studioUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={buttonVariants({ variant: 'default' })}
+          >
+            {t('openStudio')}
           </a>
         </EmptyContent>
       </Empty>

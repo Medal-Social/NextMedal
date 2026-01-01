@@ -2,6 +2,7 @@
 
 import { Languages } from 'lucide-react';
 import { useRouter as useNextRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { type ReactNode, useEffect, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -44,6 +45,7 @@ export default function LocaleSwitcherSelect({
 }: Props & { dropdownAlign?: 'start' | 'end' | 'center' }) {
   const nextRouter = useNextRouter();
   const [isPending, startTransition] = useTransition();
+  const t = useTranslations('Accessibility');
 
   // Extract options from children
   const options: LocaleOption[] = [];
@@ -135,7 +137,7 @@ export default function LocaleSwitcherSelect({
         />
         {!isOpen && (
           <TooltipContent side="bottom" className="flex items-center gap-2">
-            <span>Change language</span>
+            <span>{t('changeLanguage')}</span>
             <kbd className="pointer-events-none inline-flex h-4 select-none items-center gap-1 rounded border bg-muted px-1 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
               L
             </kbd>

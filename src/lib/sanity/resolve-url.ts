@@ -1,4 +1,5 @@
 import { stegaClean } from 'next-sanity';
+import { routing } from '@/i18n/routing';
 import { BASE_URL } from '@/lib/core/env';
 
 // Helper function to detect if a URL is relative (starts with / or doesn't have a protocol)
@@ -52,7 +53,7 @@ function buildQueryString(
 
 // Get language prefix for URL
 function getLanguagePrefix(language?: string): string {
-  if (!language || language === 'en') return '';
+  if (!language || language === routing.defaultLocale) return '';
   return `/${language}`;
 }
 
