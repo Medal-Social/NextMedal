@@ -12,6 +12,7 @@ import { PageProvider } from '@/contexts';
 import { groupPlacements, type Placement } from '@/lib/sanity/placement';
 import processMetadata from '@/lib/sanity/process-metadata';
 import resolveUrl from '@/lib/sanity/resolve-url';
+import { parseFilterParams } from '@/lib/utils/url';
 import { client } from '@/sanity/lib/client';
 import { fetchSanityLive } from '@/sanity/lib/live';
 import {
@@ -353,8 +354,12 @@ async function handleCollectionItem(
 // Page Component
 // ============================================================================
 
-export default async function Page({ params }: Props) {
+export default async function Page({ params, searchParams }: Props) {
   const { slug, locale } = await params;
+  const resolvedSearchParams = await searchParams;
+
+  // Parse and normalize searchParams at page level
+  const filterParams = parseFilterParams(resolvedSearchParams);
 
   // Handle collection items (multi-segment slug like /news/my-article)
   if (slug?.length === 2) {
@@ -381,9 +386,11 @@ export default async function Page({ params }: Props) {
 
   return (
     <PageProvider page={page}>
-      {placements.top && <Modules modules={placements.top} />}
-      {page.modules && page.modules.length > 0 && <Modules modules={page.modules} page={page} />}
-      {placements.bottom && <Modules modules={placements.bottom} />}
+      {placements.top && <Modules modules={placements.top} searchParams={filterParams} />}
+      {page.modules && page.modules.length > 0 && (
+        <Modules modules={page.modules} page={page} searchParams={filterParams} />
+      )}
+      {placements.bottom && <Modules modules={placements.bottom} searchParams={filterParams} />}
     </PageProvider>
   );
 }
