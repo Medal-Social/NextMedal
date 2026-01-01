@@ -276,19 +276,13 @@ export default function SocialEmbed({ platform, url }: SocialEmbedProps) {
   // Intersection Observer for lazy loading
   useEffect(() => {
     const currentContainer = containerRef.current;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !isVisible) {
-            setIsVisible(true);
-          }
-        });
-      },
-      {
-        rootMargin: '300px', // Start loading 300px before entering viewport
-        threshold: 0.01,
-      }
-    );
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !isVisible) {
+          setIsVisible(true);
+        }
+      });
+    });
 
     if (currentContainer) {
       observer.observe(currentContainer);
