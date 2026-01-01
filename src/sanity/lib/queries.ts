@@ -76,20 +76,6 @@ export const PT_BLOCK_QUERY = groq`
 	}
 `;
 
-export const NAVIGATION_QUERY = groq`
-	title,
-	items[]{
-		_key,
-		title,
-		${LINK_QUERY},
-		links[]{ ${LINK_QUERY} },
-		categories[]{
-			...,
-			links[]{ ${LINK_QUERY} }
-		}
-	}
-`;
-
 // CTA query with all required fields
 export const CTA_QUERY = groq`
 	_key,
@@ -287,7 +273,9 @@ export const COLLECTION_ARTICLE_POST_QUERY = groq`
 		...,
 		body[]{
 			${PT_BLOCK_QUERY},
-			_type == 'image' => { ${IMAGE_QUERY} }
+			_type == 'image' => { ${IMAGE_QUERY} },
+			_type == 'socialEmbed' => { _type, platform, url },
+			_type == 'video' => { _type, type, videoId, muxVideo, thumbnail, title }
 		},
 		'readTime': math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
 		'headings': body[style in ['h2', 'h3']]{
@@ -298,7 +286,10 @@ export const COLLECTION_ARTICLE_POST_QUERY = groq`
 		authors[]->${AUTHOR_PREVIEW_QUERY},
 		collection->{
 			_id,
-			metadata { slug, title }
+			metadata {
+				slug { current },
+				title
+			}
 		},
 		metadata {
 			...,
@@ -350,7 +341,9 @@ export const COLLECTION_NEWSLETTER_QUERY = groq`
 		...,
 		body[]{
 			${PT_BLOCK_QUERY},
-			_type == 'image' => { ${IMAGE_QUERY} }
+			_type == 'image' => { ${IMAGE_QUERY} },
+			_type == 'socialEmbed' => { _type, platform, url },
+			_type == 'video' => { _type, type, videoId, muxVideo, thumbnail, title }
 		},
 		'readTime': math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
 		'headings': body[style in ['h2', 'h3']]{
@@ -398,7 +391,9 @@ export const COLLECTION_DOCUMENTATION_QUERY = groq`
 		...,
 		body[]{
 			${PT_BLOCK_QUERY},
-			_type == 'image' => { ${IMAGE_QUERY} }
+			_type == 'image' => { ${IMAGE_QUERY} },
+			_type == 'socialEmbed' => { _type, platform, url },
+			_type == 'video' => { _type, type, videoId, muxVideo, thumbnail, title }
 		},
 		'readTime': math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
 		'headings': body[style in ['h2', 'h3']]{
@@ -455,7 +450,9 @@ export const COLLECTION_EVENTS_QUERY = groq`
 		...,
 		body[]{
 			${PT_BLOCK_QUERY},
-			_type == 'image' => { ${IMAGE_QUERY} }
+			_type == 'image' => { ${IMAGE_QUERY} },
+			_type == 'socialEmbed' => { _type, platform, url },
+			_type == 'video' => { _type, type, videoId, muxVideo, thumbnail, title }
 		},
 		speakers[]->{
 			_id,
@@ -628,9 +625,24 @@ export const SITE_QUERY = groq`
 			}
 		},
 		ctas[]{ ${CTA_QUERY} },
-		headerMenu->{ ${NAVIGATION_QUERY} },
+		headerNav[]{
+			_key,
+			_type,
+			_type == 'menuItem' => {
+				${LINK_QUERY}
+			},
+			_type == 'dropdownMenu' => {
+				title,
+				links[]{ ${LINK_QUERY} }
+			}
+		},
 		enableSearch,
-		footerMenu->{ ${NAVIGATION_QUERY} },
+		footerNav[]{
+			_key,
+			_type,
+			title,
+			links[]{ ${LINK_QUERY} }
+		},
 		footerLinks[]{ ${LINK_QUERY} },
 		systemStatus,
 		socialLinks,

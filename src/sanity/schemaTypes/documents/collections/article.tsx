@@ -13,7 +13,7 @@ import { defineField, defineType } from 'sanity';
 import { isUniqueAcrossLocale } from '@/sanity/lib/isUniqueAcrossLocale';
 import PageIdentityField from '@/sanity/ui/PageIdentityField';
 import PageIdentityInput from '@/sanity/ui/PageIdentityInput';
-import { imageBlock } from '../../fragments';
+import { imageBlock, socialEmbedBlock } from '../../fragments';
 import link from '../../objects/link';
 
 export default defineType({
@@ -120,6 +120,7 @@ export default defineType({
           },
         },
         imageBlock,
+        socialEmbedBlock,
         { type: 'code' },
         { type: 'video' },
       ],

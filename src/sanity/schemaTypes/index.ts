@@ -28,7 +28,6 @@ import banner from './documents/shared/banner';
 import docsCategory from './documents/shared/docs.category';
 import form from './documents/shared/form';
 import logo from './documents/shared/logo';
-import navigation from './documents/shared/navigation';
 import person from './documents/shared/person';
 import placement from './documents/shared/placement';
 import pricing from './documents/shared/pricing';
@@ -72,6 +71,7 @@ import menuItem from './objects/menu-item';
 import metadata from './objects/metadata';
 import moduleOptions from './objects/module-options';
 import seoMetadata from './objects/seo-metadata';
+import socialEmbed from './objects/social-embed';
 import video from './objects/video';
 
 export const schemaTypes: SchemaTypeDefinition[] = [
@@ -94,7 +94,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   docsCategory,
   form,
   logo,
-  navigation,
   person,
   placement,
   pricing,
@@ -110,6 +109,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   metadata,
   moduleOptions,
   seoMetadata,
+  socialEmbed,
   video,
   modules,
 

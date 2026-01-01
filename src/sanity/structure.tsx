@@ -58,6 +58,17 @@ export const structure = structureTool({
         S.documentTypeListItem('page').title('Pages').icon(DocumentsIcon),
         S.divider(),
 
+        group(S, 'Collections', [
+          S.documentTypeListItem('collection.article').title('Articles').icon(EditIcon),
+          S.documentTypeListItem('collection.changelog').title('Changelog').icon(DocumentTextIcon),
+          S.documentTypeListItem('collection.documentation').title('Documentation').icon(BookIcon),
+          S.documentTypeListItem('collection.events').title('Events').icon(CalendarIcon),
+          S.documentTypeListItem('collection.newsletter')
+            .title('Newsletter Issues')
+            .icon(EnvelopeIcon),
+        ]).icon(StackCompactIcon),
+        S.divider(),
+
         // Content Health - Grouped filtered views by document type
         group(S, 'Content Health', [
           // SEO Issues - by document type
@@ -123,17 +134,6 @@ export const structure = structureTool({
         ]).icon(SearchIcon),
         S.divider(),
 
-        group(S, 'Collections', [
-          S.documentTypeListItem('collection.article').title('Articles').icon(EditIcon),
-          S.documentTypeListItem('collection.changelog').title('Changelog').icon(DocumentTextIcon),
-          S.documentTypeListItem('collection.documentation').title('Documentation').icon(BookIcon),
-          S.documentTypeListItem('collection.events').title('Events').icon(CalendarIcon),
-          S.documentTypeListItem('collection.newsletter')
-            .title('Newsletter Issues')
-            .icon(EnvelopeIcon),
-        ]).icon(StackCompactIcon),
-        S.divider(),
-
         singleton(S, 'site', 'Site Settings').icon(CogIcon),
         S.divider(),
 
@@ -143,7 +143,6 @@ export const structure = structureTool({
           S.documentTypeListItem('placement').title('Placement Rules'),
           S.documentTypeListItem('logo').title('Logos'),
           S.documentTypeListItem('person').title('Team Members'),
-          S.documentTypeListItem('navigation'),
           S.documentTypeListItem('redirect').title('Redirects'),
           S.documentTypeListItem('pricing').title('Pricing tiers'),
           S.documentTypeListItem('article.category').title('Article categories'),

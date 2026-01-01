@@ -34,3 +34,13 @@ export async function getSite() {
 
   return site;
 }
+
+// Optional site settings - returns null instead of throwing when site is missing
+// Useful for setup/onboarding flows where we want to handle missing site gracefully
+export async function getSiteOptional() {
+  const site = await fetchSanityLive<Sanity.Site>({
+    query: SITE_QUERY,
+  });
+
+  return site ?? null;
+}
