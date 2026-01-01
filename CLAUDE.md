@@ -454,12 +454,12 @@ Required:
 ```
 NEXT_PUBLIC_SANITY_PROJECT_ID    # Sanity project ID
 NEXT_PUBLIC_SANITY_DATASET       # Sanity dataset (usually "production")
-NEXT_PUBLIC_SANITY_BROWSER_TOKEN            # Sanity API token for server-side fetching
 NEXT_PUBLIC_BASE_URL             # Site base URL
 ```
 
 Optional:
 ```
+NEXT_PUBLIC_SANITY_BROWSER_TOKEN # Sanity API token for live preview/draft mode (CLIENT-EXPOSED, MUST be read-only/Viewer permissions)
 NEXT_PUBLIC_SENTRY_DSN           # Enables Sentry error tracking (production-only)
 NEXT_PUBLIC_UMAMI_SCRIPT_URL     # Umami analytics script URL
 NEXT_PUBLIC_IMAGE_PROXY_URL      # Custom image proxy (enables custom loader)
