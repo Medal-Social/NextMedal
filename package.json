@@ -18,8 +18,6 @@
     "start": "next start",
     "setup:check": "npx tsx src/scripts/validate-setup.ts",
     "lint": "biome check .",
-    "lint:sanity": "npx tsx src/scripts/lint-sanity-schemas.ts",
-    "migrate:inline-types": "npx tsx src/scripts/migrate-inline-types.ts",
     "format": "biome format . --write",
     "manifest": "SANITY_CLI_EXTRACT_MANIFEST_ENABLED=false echo 'Manifest extraction disabled'",
     "typecheck": "tsc --noEmit",
@@ -42,12 +40,6 @@
     "e2e:headed": "playwright test --headed",
     "e2e:debug": "playwright test --debug",
     "e2e:all": "playwright test",
-    "load": "k6 run tests/load/scripts/homepage.js",
-    "load:homepage": "k6 run tests/load/scripts/homepage.js",
-    "load:search": "k6 run tests/load/scripts/api-search.js",
-    "load:all": "k6 run tests/load/scripts/homepage.js && k6 run tests/load/scripts/api-search.js",
-    "load:stress": "k6 run --vus 100 --duration 2m tests/load/scripts/homepage.js",
-    "load:spike": "k6 run --stage 10s:10,5s:200,10s:10,10s:0 tests/load/scripts/homepage.js",
     "prepare": "husky"
   },
   "dependencies": {
@@ -72,7 +64,7 @@
     "lucide-react": "^0.562.0",
     "motion": "^12.23.26",
     "next": "^16.1.1",
-    "next-intl": "^4.6.1",
+    "next-intl": "^4.7.0",
     "next-safe-action": "^8.0.11",
     "next-sanity": "^12.0.7",
     "next-themes": "^0.4.6",
@@ -91,7 +83,7 @@
     "styled-components": "^6.1.19",
     "tailwind-merge": "^3.4.0",
     "vanilla-cookieconsent": "^3.1.0",
-    "zod": "^4.3.2"
+    "zod": "^4.3.4"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.0",

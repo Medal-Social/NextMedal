@@ -5,9 +5,18 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import { withSentryConfig } from "@sentry/nextjs";
 
-// Custom headers for branding
+// Custom headers for branding and security
 const customHeaders = [
   { key: 'X-Powered-By', value: 'Medal Social' },
+  {
+    key: 'Content-Security-Policy',
+    value: [
+      // Social media embed iframe sources
+      "frame-src 'self' platform.twitter.com www.linkedin.com www.instagram.com www.threads.net www.tiktok.com www.youtube.com;",
+      // Script sources - 'unsafe-inline' needed for Next.js
+      "script-src 'self' 'unsafe-inline';",
+    ].join(' '),
+  },
 ];
 
 const client = projectId

@@ -92,3 +92,5 @@ migrate-api.sh
 
 .playwright*
 plugins
+.claude
+todo.md
