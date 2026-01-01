@@ -38,7 +38,8 @@ describe('Search API Contract', () => {
         collections: [],
       });
 
-      const response = await GET();
+      const request = new Request('http://localhost:3000/api/search');
+      const response = await GET(request);
       const data = await response.json();
 
       // Contract: response must be an array
@@ -65,11 +66,13 @@ describe('Search API Contract', () => {
             slug: 'post',
             collectionSlug: 'articles',
             description: 'A post',
+            language: 'en',
           },
         ],
       });
 
-      const response = await GET();
+      const request = new Request('http://localhost:3000/api/search');
+      const response = await GET(request);
       const data = await response.json();
 
       // Contract: collection items have type and href
@@ -82,7 +85,8 @@ describe('Search API Contract', () => {
     it('error response matches error schema', async () => {
       mockFetch.mockRejectedValueOnce(new Error('Network failure'));
 
-      const response = await GET();
+      const request = new Request('http://localhost:3000/api/search');
+      const response = await GET(request);
       const data = await response.json();
 
       // Contract: error response has error field
@@ -99,7 +103,8 @@ describe('Search API Contract', () => {
         collections: [],
       });
 
-      const response = await GET();
+      const request = new Request('http://localhost:3000/api/search');
+      const response = await GET(request);
       const data = await response.json();
 
       expect(typeof data[0]._id).toBe('string');
@@ -111,7 +116,8 @@ describe('Search API Contract', () => {
         collections: [],
       });
 
-      const response = await GET();
+      const request = new Request('http://localhost:3000/api/search');
+      const response = await GET(request);
       const data = await response.json();
 
       expect(typeof data[0].title).toBe('string');
@@ -127,11 +133,13 @@ describe('Search API Contract', () => {
             title: 'Post',
             slug: 'my-post',
             collectionSlug: 'articles',
+            language: 'en',
           },
         ],
       });
 
-      const response = await GET();
+      const request = new Request('http://localhost:3000/api/search');
+      const response = await GET(request);
       const data = await response.json();
 
       for (const item of data) {
@@ -151,7 +159,8 @@ describe('Search API Contract', () => {
         collections: [],
       });
 
-      const response = await GET();
+      const request = new Request('http://localhost:3000/api/search');
+      const response = await GET(request);
       const data = await response.json();
 
       for (const field of requiredFields) {
@@ -170,11 +179,13 @@ describe('Search API Contract', () => {
             slug: 'post',
             collectionSlug: 'articles',
             description: 'A description',
+            language: 'en',
           },
         ],
       });
 
-      const response = await GET();
+      const request = new Request('http://localhost:3000/api/search');
+      const response = await GET(request);
       const data = await response.json();
 
       if (data[0].description !== undefined) {

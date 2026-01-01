@@ -7,6 +7,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 vi.mock('@/lib/core/logger', () => ({
   logger: {
     error: vi.fn(),
+    warn: vi.fn(),
   },
 }));
 
@@ -23,6 +24,11 @@ import { client } from '@/sanity/lib/client';
 // Get the mocked fetch function - use any to allow flexible mock data
 const mockFetch = client.fetch as ReturnType<typeof vi.fn>;
 
+// Helper to create a mock Request object
+function createMockRequest(locale = 'en'): Request {
+  return new Request(`http://localhost:3000/api/search?locale=${locale}`);
+}
+
 describe('Search API', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -34,7 +40,7 @@ describe('Search API', () => {
       collections: [],
     });
 
-    const response = await GET();
+    const response = await GET(createMockRequest());
     const data = await response.json();
 
     expect(Array.isArray(data)).toBe(true);
@@ -47,7 +53,7 @@ describe('Search API', () => {
       collections: [],
     });
 
-    const response = await GET();
+    const response = await GET(createMockRequest());
     const data = await response.json();
 
     expect(data).toHaveLength(1);
@@ -72,11 +78,12 @@ describe('Search API', () => {
           slug: 'my-post',
           collectionSlug: 'articles',
           description: 'A article',
+          language: 'en',
         },
       ],
     });
 
-    const response = await GET();
+    const response = await GET(createMockRequest());
     const data = await response.json();
 
     expect(data).toHaveLength(1);
@@ -94,11 +101,12 @@ describe('Search API', () => {
           title: 'Version 1.0',
           slug: 'v1',
           collectionSlug: 'changelog',
+          language: 'en',
         },
       ],
     });
 
-    const response = await GET();
+    const response = await GET(createMockRequest());
     const data = await response.json();
 
     expect(data[0].type).toBe('Changelog');
@@ -114,11 +122,12 @@ describe('Search API', () => {
           title: 'Getting Started',
           slug: 'getting-started',
           collectionSlug: 'docs',
+          language: 'en',
         },
       ],
     });
 
-    const response = await GET();
+    const response = await GET(createMockRequest());
     const data = await response.json();
 
     expect(data[0].type).toBe('Docs');
@@ -134,11 +143,12 @@ describe('Search API', () => {
           title: 'Weekly Update',
           slug: 'weekly-1',
           collectionSlug: 'newsletter',
+          language: 'en',
         },
       ],
     });
 
-    const response = await GET();
+    const response = await GET(createMockRequest());
     const data = await response.json();
 
     expect(data[0].type).toBe('Newsletter');
@@ -154,11 +164,12 @@ describe('Search API', () => {
           title: 'Unknown Type',
           slug: 'unknown',
           collectionSlug: 'unknown',
+          language: 'en',
         },
       ],
     });
 
-    const response = await GET();
+    const response = await GET(createMockRequest());
     const data = await response.json();
 
     expect(data[0].type).toBe('Article');
@@ -174,20 +185,22 @@ describe('Search API', () => {
           title: 'Item',
           slug: 'item',
           collectionSlug: null,
+          language: 'en',
         },
       ],
     });
 
-    const response = await GET();
+    const response = await GET(createMockRequest());
     const data = await response.json();
 
-    expect(data[0].href).toBe('/item');
+    // Item will be filtered out because collectionSlug is null
+    expect(data).toHaveLength(0);
   });
 
   it('returns 500 on error', async () => {
     mockFetch.mockRejectedValueOnce(new Error('Network error'));
 
-    const response = await GET();
+    const response = await GET(createMockRequest());
     const data = await response.json();
 
     expect(response.status).toBe(500);
@@ -204,11 +217,12 @@ describe('Search API', () => {
           title: 'Post',
           slug: 'post',
           collectionSlug: 'articles',
+          language: 'en',
         },
       ],
     });
 
-    const response = await GET();
+    const response = await GET(createMockRequest());
     const data = await response.json();
 
     expect(data).toHaveLength(2);
@@ -223,11 +237,12 @@ describe('Search API', () => {
           title: 'Post',
           slug: 'post',
           collectionSlug: 'articles',
+          language: 'en',
         },
       ],
     });
 
-    const response = await GET();
+    const response = await GET(createMockRequest());
     const data = await response.json();
 
     expect(data).toHaveLength(1);
@@ -238,7 +253,7 @@ describe('Search API', () => {
       pages: [{ _id: 'page-1', _type: 'page', title: 'Home', slug: 'index' }],
     });
 
-    const response = await GET();
+    const response = await GET(createMockRequest());
     const data = await response.json();
 
     expect(data).toHaveLength(1);

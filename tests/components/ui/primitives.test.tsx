@@ -17,6 +17,20 @@ import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { Toggle } from '@/components/ui/toggle';
 
+// Mock next-intl for pagination components
+vi.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => {
+    const translations: Record<string, string> = {
+      goToPrevious: 'Go to previous page',
+      goToNext: 'Go to next page',
+      previous: 'Previous',
+      next: 'Next',
+      morePages: 'More pages',
+    };
+    return translations[key] || key;
+  },
+}));
+
 describe('Checkbox', () => {
   it('renders unchecked by default', () => {
     render(<Checkbox aria-label="Test checkbox" />);

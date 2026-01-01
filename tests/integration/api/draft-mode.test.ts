@@ -36,6 +36,7 @@ vi.mock('next-sanity/draft-mode', () => ({
 // Mock the env module (must match actual import paths in source files)
 vi.mock('@/lib/core/env', () => ({
   BASE_URL: 'https://example.com',
+  dev: false,
   vercelPreview: false,
   isStaging: false,
   isPreview: false,
@@ -44,6 +45,7 @@ vi.mock('@/lib/core/env', () => ({
 // Also mock the re-export file for backward compatibility
 vi.mock('@/lib/env', () => ({
   BASE_URL: 'https://example.com',
+  dev: false,
   vercelPreview: false,
   isStaging: false,
   isPreview: false,
@@ -141,6 +143,7 @@ describe('Draft mode noIndex behavior', () => {
       // Mock with vercelPreview set to true (must match actual import path)
       vi.doMock('@/lib/core/env', () => ({
         BASE_URL: 'https://example.com',
+        dev: false,
         vercelPreview: true,
         isStaging: false,
         isPreview: false,
@@ -176,6 +179,7 @@ describe('Draft mode noIndex behavior', () => {
       // Mock with vercelPreview set to false (must match actual import path)
       vi.doMock('@/lib/core/env', () => ({
         BASE_URL: 'https://example.com',
+        dev: false,
         vercelPreview: false,
         isStaging: false,
         isPreview: false,

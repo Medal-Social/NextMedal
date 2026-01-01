@@ -5,6 +5,7 @@ import resolveUrl from '@/lib/sanity/resolve-url';
 // Mock the env module (must match actual import path in process-metadata.ts)
 vi.mock('@/lib/core/env', () => ({
   BASE_URL: 'https://example.com',
+  dev: false,
   vercelPreview: false,
   isStaging: false,
   isPreview: false,

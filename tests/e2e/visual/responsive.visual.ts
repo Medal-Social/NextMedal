@@ -19,7 +19,7 @@ test.describe('Responsive Visual Regression', () => {
     }) => {
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
       await page.goto('/');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('load');
       await page.waitForTimeout(500);
 
       await expect(page).toHaveScreenshot(`homepage-${viewport.name}.png`, {
