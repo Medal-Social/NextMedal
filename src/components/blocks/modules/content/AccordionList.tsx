@@ -12,7 +12,6 @@ import { cn } from '@/lib/utils/index';
 export default function AccordionList({
   content,
   items,
-  generateSchema,
   ...props
 }: Sanity.AccordionList) {
   const defaultOpenItems = items
@@ -26,10 +25,8 @@ export default function AccordionList({
   return (
     <Section
       className="space-y-4 text-center"
-      {...(generateSchema && {
-        itemScope: true,
-        itemType: 'https://schema.org/FAQPage',
-      })}
+      itemScope
+      itemType="https://schema.org/FAQPage"
       {...moduleProps(props)}
     >
       {content && (
@@ -64,31 +61,21 @@ export default function AccordionList({
             <AccordionItem
               key={itemKey}
               value={itemKey}
-              {...(generateSchema && {
-                itemScope: true,
-                itemProp: 'mainEntity',
-                itemType: 'https://schema.org/Question',
-              })}
+              itemScope
+              itemProp="mainEntity"
+              itemType="https://schema.org/Question"
             >
-              <AccordionTrigger
-                {...(generateSchema && {
-                  itemProp: 'name',
-                })}
+              <AccordionTrigger itemProp="name">{summary}</AccordionTrigger>
+              <div
+                className="sr-only"
+                itemScope
+                itemProp="acceptedAnswer"
+                itemType="https://schema.org/Answer"
               >
-                {summary}
-              </AccordionTrigger>
-              {generateSchema && (
-                <div
-                  className="sr-only"
-                  itemScope
-                  itemProp="acceptedAnswer"
-                  itemType="https://schema.org/Answer"
-                >
-                  <div className="sr-only" itemProp="text">
-                    <SharedPortableText value={content} />
-                  </div>
+                <div itemProp="text">
+                  <SharedPortableText value={content} />
                 </div>
-              )}
+              </div>
 
               <AccordionContent>
                 <SharedPortableText value={content} variant="prose" />

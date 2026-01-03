@@ -660,7 +660,6 @@ declare global {
         content: BlockContent;
         open?: boolean;
       }[];
-      generateSchema?: boolean;
     }
 
     interface Breadcrumbs extends Module<'breadcrumbs'> {

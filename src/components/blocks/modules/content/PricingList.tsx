@@ -76,7 +76,12 @@ export default function PricingList({ intro, tiers, ...props }: Sanity.PricingLi
               <article
                 className="backdrop-blur-sm bg-card/30 p-8 rounded-lg border border-primary/10 hover:border-primary/20 transition-colors duration-300 flex flex-col gap-6"
                 key={tier._id}
+                itemScope
+                itemType="https://schema.org/Product"
               >
+                <meta itemProp="name" content={tier.title || ''} />
+                {tier.description && <meta itemProp="description" content={tier.description} />}
+
                 <div className="flex flex-col gap-2">
                   <div className="text-2xl flex items-center justify-between">
                     {tier.title}
@@ -90,7 +95,22 @@ export default function PricingList({ intro, tiers, ...props }: Sanity.PricingLi
                 </div>
 
                 {tier.monthlyPrice !== undefined && (
-                  <div className="flex flex-wrap items-end gap-x-1" aria-live="polite">
+                  <div
+                    className="flex flex-wrap items-end gap-x-1"
+                    aria-live="polite"
+                    itemScope
+                    itemProp="offers"
+                    itemType="https://schema.org/Offer"
+                  >
+                    <meta
+                      itemProp="price"
+                      content={
+                        isYearly && tier.yearlyPrice
+                          ? tier.yearlyPrice.toString()
+                          : tier.monthlyPrice.toString()
+                      }
+                    />
+                    <meta itemProp="priceCurrency" content={tier.currency || 'USD'} />
                     {tier.monthlyPrice !== undefined && tier.monthlyPrice && (
                       <span className="text-4xl text-foreground font-semibold font-numeric">
                         {tier.currency}{' '}
