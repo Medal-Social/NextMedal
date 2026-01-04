@@ -1,6 +1,7 @@
+import { getLocale } from 'next-intl/server';
 import LocaleSwitcher from '@/components/blocks/layout/language-switcher';
 import { CTAList } from '@/components/blocks/objects/cta';
-import { getSiteOptional } from '@/sanity/lib/fetch';
+import { getHeaderSettings } from '@/sanity/lib/fetch';
 import { ErrorBoundary } from '../ErrorBoundary';
 import HeaderClient from './Header.client';
 import { HeaderFallback } from './HeaderFallback';
@@ -8,7 +9,8 @@ import Logo from './Logo';
 import Navigation from './navigation';
 
 async function HeaderInner() {
-  const site = await getSiteOptional();
+  const locale = await getLocale();
+  const site = await getHeaderSettings(locale);
 
   // If no site settings, return fallback (build-time and runtime safe)
   if (!site) {
@@ -17,7 +19,7 @@ async function HeaderInner() {
 
   const { title, logo, ctas, headerNav, brandPage, enableSearch } = site;
 
-  const logoNode = <Logo title={title} logo={logo} brandPage={brandPage} />;
+  const logoNode = <Logo title={title} logo={logo} brandPage={brandPage} locale={locale} />;
 
   const navNode = (
     <nav className="max-lg:hidden flex items-center" aria-label="Main navigation">

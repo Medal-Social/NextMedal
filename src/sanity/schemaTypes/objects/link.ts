@@ -5,12 +5,16 @@
 
 import { LinkIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
+import { LinkAnnotationInput } from '../../components/LinkAnnotationInput';
 
 export default defineType({
   name: 'link',
   title: 'Link',
   icon: LinkIcon,
   type: 'object',
+  components: {
+    input: LinkAnnotationInput,
+  },
   fields: [
     defineField({
       name: 'type',
@@ -42,7 +46,6 @@ export default defineType({
           }
           return true;
         }),
-      hidden: ({ parent }) => parent?.type !== 'internal',
     }),
     defineField({
       name: 'external',
@@ -62,7 +65,6 @@ export default defineType({
           }
           return true;
         }),
-      hidden: ({ parent }) => parent?.type !== 'external',
     }),
   ],
 });

@@ -10,4 +10,5 @@ export { default as pricingComparisonType } from './pricing-comparison';
 export { default as pricingListType } from './pricing-list';
 export { default as productComparisonType } from './product-comparison';
 export { default as teamType } from './team';
+export { default as testimonialsType } from './testimonials';
 export { default as textType } from './text';

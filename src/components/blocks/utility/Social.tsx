@@ -1,3 +1,4 @@
+import { getLocale } from 'next-intl/server';
 import type { ComponentType, SVGProps } from 'react';
 import {
   IconFacebookF,
@@ -11,7 +12,7 @@ import {
 } from '@/components/icons/social-icons';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils/index';
-import { getSiteOptional } from '@/sanity/lib/fetch';
+import { getSocialLinks } from '@/sanity/lib/fetch';
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
 
@@ -42,11 +43,10 @@ function getIconForUrl(url: string): IconComponent {
 }
 
 export default async function Social({ className }: React.ComponentProps<'div'>) {
-  const site = await getSiteOptional();
+  const locale = await getLocale();
+  const socialLinks = await getSocialLinks(locale);
 
-  if (!site?.socialLinks?.length) return null;
-
-  const { socialLinks } = site;
+  if (!socialLinks?.length) return null;
 
   type SocialLink = { _key: string; text: string; url: string };
 

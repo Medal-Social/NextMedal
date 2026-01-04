@@ -13,12 +13,16 @@
 import { LinkIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import resolveSlug from '@/sanity/lib/resolveSlug';
+import { MenuItemInput } from '../../components/MenuItemInput';
 
 export default defineType({
   name: 'menuItem',
   title: 'Menu Item',
   icon: LinkIcon,
   type: 'object',
+  components: {
+    input: MenuItemInput,
+  },
   description: 'Internal or external link with optional icon and label',
   fieldsets: [
     {
@@ -71,7 +75,6 @@ export default defineType({
           }
           return true;
         }),
-      hidden: ({ parent }) => parent?.type !== 'internal',
       fieldset: 'destination',
     }),
     defineField({
@@ -92,7 +95,6 @@ export default defineType({
           }
           return true;
         }),
-      hidden: ({ parent }) => parent?.type !== 'external',
       fieldset: 'destination',
     }),
     defineField({
@@ -122,7 +124,6 @@ export default defineType({
 
           return true;
         }),
-      hidden: ({ parent }) => parent?.type !== 'internal',
       fieldset: 'destination',
     }),
     defineField({

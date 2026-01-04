@@ -1,10 +1,51 @@
 'use client';
 import { X } from 'lucide-react';
 import Link from 'next/link';
-import { PortableText } from 'next-sanity';
+import { PortableText, stegaClean } from 'next-sanity';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import resolveUrl from '@/lib/sanity/resolve-url';
+import { resolveUrlSync } from '@/lib/sanity/resolve-url';
+
+/**
+ * Generate descriptive aria-label for generic link text to improve accessibility.
+ * Returns undefined if the text is already descriptive.
+ */
+function getAriaLabel(
+  linkText: string,
+  internal?: Sanity.MenuItem['internal'],
+  linkType?: 'internal' | 'external'
+): string | undefined {
+  const cleanText = stegaClean(linkText).trim().toLowerCase();
+
+  // List of generic/non-descriptive link texts that need enhancement
+  const genericTexts = ['read more', 'click here', 'learn more', 'more', 'continue', 'next'];
+
+  if (!genericTexts.includes(cleanText)) {
+    return undefined; // Text is already descriptive
+  }
+
+  // Try to generate a better description from the linked page
+  if (internal?.metadata?.title) {
+    const pageTitle = stegaClean(internal.metadata.title);
+    return `${linkText}: ${pageTitle}`;
+  }
+
+  // Fallback to link type if we can't determine the page title
+  if (internal?._type) {
+    const typeLabel = internal._type
+      .replace('collection.', '')
+      .replace(/([A-Z])/g, ' $1')
+      .trim();
+    return `${linkText} about ${typeLabel}`;
+  }
+
+  // For external links, just add basic context
+  if (linkType === 'external') {
+    return `${linkText} (external link)`;
+  }
+
+  return undefined;
+}
 
 export default function BannerClient({ banner }: { banner: Sanity.Banner & Sanity.Module }) {
   const { content, cta } = banner;
@@ -70,13 +111,14 @@ export default function BannerClient({ banner }: { banner: Sanity.Banner & Sanit
           <Link
             href={
               cta?.type === 'internal'
-                ? resolveUrl(cta.internal, { base: false })
+                ? resolveUrlSync(cta.internal, { base: false })
                 : cta?.external
                   ? cta.external
                   : '#'
             }
             target={cta?.external ? '_blank' : undefined}
             className="inline-flex items-center justify-center rounded-md border border-transparent bg-white px-2.5 h-7 text-xs font-semibold text-brand-700 hover:bg-white/90 transition-all focus-visible:ring-[3px] focus-visible:ring-white/50 outline-none shrink-0"
+            aria-label={getAriaLabel(cta.label, cta.internal, cta.type)}
           >
             {cta.label}
           </Link>

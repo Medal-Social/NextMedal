@@ -21,11 +21,12 @@ import {
   SearchIcon,
 } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/i18n/config';
 import { isUniqueAcrossLocale } from '@/sanity/lib/isUniqueAcrossLocale';
 import CharacterCount from '@/sanity/ui/CharacterCount';
 import PageIdentityField from '@/sanity/ui/PageIdentityField';
 import PageIdentityInput from '@/sanity/ui/PageIdentityInput';
-import PreviewOG from '@/sanity/ui/PreviewOG';
+import SocialImageInput from '@/sanity/ui/SocialImageInput';
 import modules from '../fragments/modules';
 
 export default defineType({
@@ -44,6 +45,7 @@ export default defineType({
       type: 'string',
       readOnly: true,
       hidden: true,
+      initialValue: DEFAULT_LOCALE,
     }),
     // Page Identity - Title and URL Slug together in Content tab
     defineField({
@@ -76,7 +78,7 @@ export default defineType({
           },
           validation: (Rule) =>
             Rule.required().custom((slug) => {
-              const reserved = ['studio', 'api', 'monitoring'];
+              const reserved = ['studio', 'api', 'monitoring', ...SUPPORTED_LOCALES];
               if (slug?.current && reserved.includes(slug.current.toLowerCase())) {
                 return `"${slug.current}" is a reserved path used by the system.`;
               }
@@ -118,11 +120,7 @@ export default defineType({
             Rule.max(60).warning(),
           ],
           components: {
-            input: (props) => (
-              <CharacterCount max={60} {...props}>
-                <PreviewOG title={props.elementProps.value} />
-              </CharacterCount>
-            ),
+            input: (props) => <CharacterCount max={60} {...props} />,
           },
         }),
         defineField({
@@ -144,9 +142,13 @@ export default defineType({
           name: 'image',
           title: 'Social Sharing Image',
           type: 'image',
-          description: 'Image displayed when sharing on social media',
+          description:
+            'Image displayed when sharing on social media (1200×630px recommended). If not provided, an auto-generated image will be created from your SEO title.',
           options: {
             hotspot: true,
+          },
+          components: {
+            input: SocialImageInput,
           },
         }),
         defineField({

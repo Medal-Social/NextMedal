@@ -7,6 +7,7 @@ const aliases = {
   '@': resolve(__dirname, './src'),
   $: resolve(__dirname, './'),
   '@tests': resolve(__dirname, './tests'),
+  'server-only': resolve(__dirname, './tests/setup/server-only-mock.ts'),
 };
 
 // Shared test configuration
@@ -26,6 +27,11 @@ const sharedTestConfig = {
   // Filter noisy console logs from libraries
   onConsoleLog(log: string) {
     if (log.includes('Consider') || log.includes('recommend')) return false;
+  },
+  server: {
+    deps: {
+      inline: ['server-only'],
+    },
   },
 };
 

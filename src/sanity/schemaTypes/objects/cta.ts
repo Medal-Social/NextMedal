@@ -11,12 +11,17 @@
 
 import { LaunchIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
+import { CtaInput } from '../../components/CtaInput';
+import { CtaLinkInput } from '../../components/CtaLinkInput';
 
 export default defineType({
   name: 'cta',
   title: 'Call-to-Action',
   icon: LaunchIcon,
   type: 'object',
+  components: {
+    input: CtaInput,
+  },
   description: 'Button or link with customizable style and destination',
   fields: [
     defineField({
@@ -24,6 +29,10 @@ export default defineType({
       title: 'Link',
       description: 'The destination link.',
       type: 'menuItem',
+      components: {
+        // biome-ignore lint/suspicious/noExplicitAny: Sanity component casting
+        input: CtaLinkInput as any,
+      },
       validation: (Rule) => Rule.required(),
     }),
     defineField({

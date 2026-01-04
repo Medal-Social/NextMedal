@@ -11,6 +11,7 @@
 import { TransferIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import resolveSlug from '@/sanity/lib/resolveSlug';
+import { RedirectInput } from '../../../components/RedirectInput';
 
 export default defineType({
   name: 'redirect',
@@ -25,8 +26,9 @@ export default defineType({
       description: (
         <>
           <p>
-            Enter the path to redirect from. You don&apos;t need to worry about the leading slash{' '}
-            <code>/</code>.
+            Enter the path to redirect from. If you don&apos;t include a leading slash{' '}
+            <code>/</code>, it will be added automatically (e.g., <code>about-us</code> becomes{' '}
+            <code>/about-us</code>).
           </p>
           <p style={{ marginTop: '8px', fontSize: '0.9em', opacity: 0.8 }}>
             <strong>Advanced:</strong> To match dynamic paths (like any article), use a colon +
@@ -40,9 +42,18 @@ export default defineType({
       type: 'string',
       validation: (Rule) =>
         Rule.required().custom((value) => {
+          if (!value) return true;
+
+          // Reject full URLs
           if (typeof value === 'string' && value.startsWith('http')) {
             return 'Please enter a relative path (e.g. /about), not a full URL.';
           }
+
+          // Reject empty paths or just whitespace
+          if (typeof value === 'string' && value.trim() === '') {
+            return 'Please enter a valid path.';
+          }
+
           return true;
         }),
     }),
@@ -50,6 +61,10 @@ export default defineType({
       name: 'destination',
       description: 'Redirect to',
       type: 'object',
+      components: {
+        // biome-ignore lint/suspicious/noExplicitAny: Sanity component casting
+        input: RedirectInput as any,
+      },
       validation: (Rule) => Rule.required(),
       fields: [
         defineField({

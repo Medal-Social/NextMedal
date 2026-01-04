@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '../../../src/i18n/config';
 
 /**
  * RSS Feed E2E Smoke Tests
@@ -8,6 +9,8 @@ import { expect, test } from '@playwright/test';
  *
  * Route pattern: /[locale]/[collection]/rss.xml
  * Example: /en/articles/rss.xml, /nb/changelog/rss.xml
+ *
+ * These tests dynamically cover all locales defined in src/i18n/config.ts
  */
 
 // Known collection slugs to test - update these based on your CMS content
@@ -19,7 +22,7 @@ test.describe('RSS Feed Routes', () => {
     let foundValidFeed = false;
 
     for (const collection of COLLECTION_SLUGS) {
-      const response = await request.get(`/en/${collection}/rss.xml`);
+      const response = await request.get(`/${DEFAULT_LOCALE}/${collection}/rss.xml`);
 
       if (response.status() === 200) {
         foundValidFeed = true;
@@ -39,7 +42,7 @@ test.describe('RSS Feed Routes', () => {
 
   test('RSS feed returns proper Content-Type header', async ({ request }) => {
     for (const collection of COLLECTION_SLUGS) {
-      const response = await request.get(`/en/${collection}/rss.xml`);
+      const response = await request.get(`/${DEFAULT_LOCALE}/${collection}/rss.xml`);
 
       if (response.status() === 200) {
         expect(response.headers()['content-type']).toContain('xml');
@@ -53,7 +56,7 @@ test.describe('RSS Feed Routes', () => {
 
   test('RSS feed includes cache headers', async ({ request }) => {
     for (const collection of COLLECTION_SLUGS) {
-      const response = await request.get(`/en/${collection}/rss.xml`);
+      const response = await request.get(`/${DEFAULT_LOCALE}/${collection}/rss.xml`);
 
       if (response.status() === 200) {
         const cacheControl = response.headers()['cache-control'];
@@ -68,7 +71,7 @@ test.describe('RSS Feed Routes', () => {
 
   test('RSS feed includes XSL stylesheet reference', async ({ request }) => {
     for (const collection of COLLECTION_SLUGS) {
-      const response = await request.get(`/en/${collection}/rss.xml`);
+      const response = await request.get(`/${DEFAULT_LOCALE}/${collection}/rss.xml`);
 
       if (response.status() === 200) {
         const body = await response.text();
@@ -82,7 +85,7 @@ test.describe('RSS Feed Routes', () => {
 
   test('RSS feed contains required channel elements', async ({ request }) => {
     for (const collection of COLLECTION_SLUGS) {
-      const response = await request.get(`/en/${collection}/rss.xml`);
+      const response = await request.get(`/${DEFAULT_LOCALE}/${collection}/rss.xml`);
 
       if (response.status() === 200) {
         const body = await response.text();
@@ -91,7 +94,7 @@ test.describe('RSS Feed Routes', () => {
         expect(body).toContain('<title>');
         expect(body).toContain('<link>');
         expect(body).toContain('<description>');
-        expect(body).toContain('<language>en</language>');
+        expect(body).toContain(`<language>${DEFAULT_LOCALE}</language>`);
         expect(body).toContain('<lastBuildDate>');
         expect(body).toContain('<atom:link');
         return;
@@ -102,23 +105,26 @@ test.describe('RSS Feed Routes', () => {
   });
 
   test('invalid collection returns 404', async ({ request }) => {
-    const response = await request.get('/en/nonexistent-collection-xyz/rss.xml');
+    const response = await request.get(`/${DEFAULT_LOCALE}/nonexistent-collection-xyz/rss.xml`);
 
     expect(response.status()).toBe(404);
   });
 
-  test('Norwegian locale RSS feed is accessible', async ({ request }) => {
-    for (const collection of COLLECTION_SLUGS) {
-      const response = await request.get(`/nb/${collection}/rss.xml`);
+  // Dynamically test all non-default locales
+  for (const locale of SUPPORTED_LOCALES.filter((l) => l !== DEFAULT_LOCALE)) {
+    test(`${locale} locale RSS feed is accessible`, async ({ request }) => {
+      for (const collection of COLLECTION_SLUGS) {
+        const response = await request.get(`/${locale}/${collection}/rss.xml`);
 
-      if (response.status() === 200) {
-        const body = await response.text();
-        expect(body).toContain('<language>nb</language>');
-        return;
+        if (response.status() === 200) {
+          const body = await response.text();
+          expect(body).toContain(`<language>${locale}</language>`);
+          return;
+        }
       }
-    }
 
-    // Norwegian content may not exist - skip rather than fail
-    test.skip();
-  });
+      // Content may not exist for this locale - skip rather than fail
+      test.skip();
+    });
+  }
 });

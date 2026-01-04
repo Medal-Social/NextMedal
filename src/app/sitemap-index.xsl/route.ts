@@ -1,4 +1,127 @@
-<?xml version="1.0" encoding="UTF-8"?>
+import type { NextRequest } from 'next/server';
+import { LOCALE_CONFIG, type SupportedLocale } from '@/i18n/config';
+
+/**
+ * FULLY AUTOMATIC LANGUAGE DETECTION
+ *
+ * TO ADD A NEW LANGUAGE:
+ * 1. Add the locale to src/i18n/config.ts (LOCALE_CONFIG)
+ * 2. Create translation file in src/messages/[locale].json
+ * 3. Run `pnpm generate:collections`
+ * 4. That's it! The sitemap automatically updates with the right flag.
+ *
+ * Flags are auto-detected from ISO 639-1 language codes.
+ * If you want custom text, add an entry to LOCALE_DISPLAY_OVERRIDES below.
+ */
+
+/**
+ * Auto-detect flag emoji from ISO 639-1 language code
+ * Maps common language codes to their primary country flag
+ */
+const LANGUAGE_TO_FLAG: Record<string, string> = {
+  en: '🇬🇧', // English
+  nb: '🇳🇴', // Norwegian Bokmål
+  nn: '🇳🇴', // Norwegian Nynorsk
+  ar: '🇸🇦', // Arabic
+  sv: '🇸🇪', // Swedish
+  es: '🇪🇸', // Spanish
+  fr: '🇫🇷', // French
+  de: '🇩🇪', // German
+  it: '🇮🇹', // Italian
+  pt: '🇵🇹', // Portuguese
+  nl: '🇳🇱', // Dutch
+  ru: '🇷🇺', // Russian
+  ja: '🇯🇵', // Japanese
+  ko: '🇰🇷', // Korean
+  zh: '🇨🇳', // Chinese
+  da: '🇩🇰', // Danish
+  fi: '🇫🇮', // Finnish
+  pl: '🇵🇱', // Polish
+  tr: '🇹🇷', // Turkish
+  el: '🇬🇷', // Greek
+  cs: '🇨🇿', // Czech
+  hu: '🇭🇺', // Hungarian
+  ro: '🇷🇴', // Romanian
+  th: '🇹🇭', // Thai
+  vi: '🇻🇳', // Vietnamese
+  id: '🇮🇩', // Indonesian
+  uk: '🇺🇦', // Ukrainian
+  he: '🇮🇱', // Hebrew
+  hi: '🇮🇳', // Hindi
+};
+
+/**
+ * Optional: Override display text for specific languages
+ * If not specified, uses auto-generated text from LOCALE_CONFIG
+ */
+const LOCALE_DISPLAY_OVERRIDES: Partial<
+  Record<
+    SupportedLocale,
+    {
+      title?: string;
+      subtitle?: string;
+    }
+  >
+> = {
+  // Example: Customize Arabic to use native script
+  ar: {
+    title: 'خريطة الموقع العربية',
+    subtitle: 'عرض جميع الصفحات العربية',
+  },
+  // Norwegian: Use Norwegian text
+  nb: {
+    title: 'Norsk Sitemap',
+    subtitle: 'Se alle norske sider',
+  },
+};
+
+/**
+ * Get display metadata for a locale (auto-generated or overridden)
+ */
+function getLocaleDisplay(locale: SupportedLocale) {
+  const config = LOCALE_CONFIG[locale];
+  const override = LOCALE_DISPLAY_OVERRIDES[locale];
+
+  return {
+    flag: LANGUAGE_TO_FLAG[locale] ?? '🌐',
+    title: override?.title ?? `${config.title} Sitemap`,
+    subtitle: override?.subtitle ?? `View all ${config.title} pages`,
+  };
+}
+
+/**
+ * Dynamically generate sitemap-index.xsl based on LOCALE_CONFIG
+ * This ensures the sitemap index automatically updates when languages are added/removed
+ */
+export async function GET(_req: NextRequest) {
+  const locales = Object.keys(LOCALE_CONFIG) as SupportedLocale[];
+
+  // Generate XSL with dynamic language cases
+  const languageCases = locales
+    .map((locale) => {
+      const display = getLocaleDisplay(locale);
+      return `
+                      <xsl:when test="contains(s:loc, '-${locale}')">${display.flag}</xsl:when>`;
+    })
+    .join('');
+
+  const titleCases = locales
+    .map((locale) => {
+      const display = getLocaleDisplay(locale);
+      return `
+                        <xsl:when test="contains(s:loc, '-${locale}')">${display.title}</xsl:when>`;
+    })
+    .join('');
+
+  const subtitleCases = locales
+    .map((locale) => {
+      const display = getLocaleDisplay(locale);
+      return `
+                        <xsl:when test="contains(s:loc, '-${locale}')">${display.subtitle}</xsl:when>`;
+    })
+    .join('');
+
+  const xsl = `<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:s="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -304,24 +427,18 @@
               <a class="sitemap-card" href="{s:loc}">
                 <div class="card-content">
                   <div class="flag-icon">
-                    <xsl:choose>
-                      <xsl:when test="contains(s:loc, '-en')">🇬🇧</xsl:when>
-                      <xsl:when test="contains(s:loc, '-nb')">🇳🇴</xsl:when>
+                    <xsl:choose>${languageCases}
                       <xsl:otherwise>🌐</xsl:otherwise>
                     </xsl:choose>
                   </div>
                   <div class="card-info">
                     <h2 class="card-title">
-                      <xsl:choose>
-                        <xsl:when test="contains(s:loc, '-en')">English Sitemap</xsl:when>
-                        <xsl:when test="contains(s:loc, '-nb')">Norsk Sitemap</xsl:when>
+                      <xsl:choose>${titleCases}
                         <xsl:otherwise>Sitemap</xsl:otherwise>
                       </xsl:choose>
                     </h2>
                     <p class="card-subtitle">
-                      <xsl:choose>
-                        <xsl:when test="contains(s:loc, '-en')">View all English pages</xsl:when>
-                        <xsl:when test="contains(s:loc, '-nb')">Se alle norske sider</xsl:when>
+                      <xsl:choose>${subtitleCases}
                         <xsl:otherwise>View all pages</xsl:otherwise>
                       </xsl:choose>
                     </p>
@@ -350,4 +467,12 @@
       </body>
     </html>
   </xsl:template>
-</xsl:stylesheet>
+</xsl:stylesheet>`;
+
+  return new Response(xsl, {
+    headers: {
+      'Content-Type': 'application/xslt+xml; charset=UTF-8',
+      'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+    },
+  });
+}

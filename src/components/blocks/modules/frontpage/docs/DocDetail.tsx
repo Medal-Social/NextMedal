@@ -9,6 +9,7 @@
 import { Book, ChevronRight, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import Code from '@/components/blocks/modules/content/RichtextModule/Code';
 import SharedPortableText from '@/components/blocks/modules/SharedPortableText';
 import { Section } from '@/components/ui/section';
 import { cn } from '@/lib/utils/index';
@@ -147,7 +148,15 @@ export default function DocDetail({
           {/* Body content */}
           {doc.body && (
             <div className="prose prose-lg max-w-none">
-              <SharedPortableText value={doc.body} />
+              <SharedPortableText
+                value={doc.body}
+                variant="prose"
+                components={{
+                  types: {
+                    code: Code,
+                  },
+                }}
+              />
             </div>
           )}
 

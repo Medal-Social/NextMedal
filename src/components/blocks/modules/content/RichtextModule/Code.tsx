@@ -1,9 +1,15 @@
 import { codeToHtml } from 'shiki';
 import { logger } from '@/lib/core/logger';
 import CopyButton from './CopyButton';
+import { Mermaid } from './Mermaid';
 
 export default async function Code({ value }: { value: { code: string; language?: string } }) {
   if (!value?.code) return null;
+
+  // Route to Mermaid renderer for diagrams
+  if (value.language === 'mermaid') {
+    return <Mermaid value={value as { code: string; language: 'mermaid' }} />;
+  }
 
   try {
     const html = await codeToHtml(value.code, {

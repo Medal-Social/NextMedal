@@ -1,31 +1,38 @@
 import Link from 'next/link';
-import { getTranslations } from 'next-intl/server';
 import AuthorCard from '@/components/blocks/modules/frontpage/articles/AuthorCard';
 import { Date as DateDisplay } from '@/components/blocks/objects/core';
-import resolveUrl from '@/lib/sanity/resolve-url';
+import { routing } from '@/i18n/routing';
 import { cn } from '@/lib/utils/index';
 import { createStegaAttribute } from '@/sanity/lib/client';
 
-export default async function ArticleHero({
+interface ArticleHeroTranslations {
+  featuredInsight: string;
+  recent: string;
+  popular: string;
+}
+
+export default function ArticleHero({
   featuredPost,
   recentPost,
   popularPost,
+  collectionSlug,
+  translations,
 }: {
   featuredPost: Sanity.CollectionArticlePost;
   recentPost?: Sanity.CollectionArticlePost;
   popularPost?: Sanity.CollectionArticlePost;
+  collectionSlug: string;
+  translations: ArticleHeroTranslations;
 }) {
-  const t = await getTranslations('article');
+  const t = translations;
   if (!featuredPost) return null;
 
-  const featuredHref = resolveUrl(
-    {
-      ...featuredPost,
-      metadata: featuredPost.metadata,
-      language: featuredPost.language,
-    } as Sanity.PageBase,
-    { base: false }
-  );
+  // Build URL using the actual collection slug from site settings
+  const languagePrefix =
+    featuredPost.language && featuredPost.language !== routing.defaultLocale
+      ? `/${featuredPost.language}`
+      : '';
+  const featuredHref = `${languagePrefix}/${collectionSlug}/${featuredPost.metadata?.slug?.current}`;
 
   const stega = createStegaAttribute({
     id: featuredPost._id,
@@ -48,7 +55,7 @@ export default async function ArticleHero({
           {/* Main Feature */}
           <div className="flex flex-col items-start space-y-4 lg:w-5/12">
             <span className="inline-block rounded-full border border-white/10 bg-white/10 px-2.5 py-1 text-[10px] font-bold tracking-widest text-purple-200 uppercase backdrop-blur-sm">
-              {t('featuredInsight')}
+              {t.featuredInsight}
             </span>
             <h1
               className="font-serif text-3xl font-bold leading-tight tracking-tight text-white md:text-4xl lg:text-5xl"
@@ -86,7 +93,8 @@ export default async function ArticleHero({
             {recentPost && (
               <SidebarCard
                 post={recentPost}
-                label={t('recent')}
+                collectionSlug={collectionSlug}
+                label={t.recent}
                 labelColor="text-cyan-400"
                 hoverColor="group-hover:text-cyan-400"
               />
@@ -94,7 +102,8 @@ export default async function ArticleHero({
             {popularPost && (
               <SidebarCard
                 post={popularPost}
-                label={t('popular')}
+                collectionSlug={collectionSlug}
+                label={t.popular}
                 labelColor="text-indigo-300"
                 hoverColor="group-hover:text-purple-300"
                 borderColor="hover:border-purple-500/30"
@@ -109,21 +118,23 @@ export default async function ArticleHero({
 
 function SidebarCard({
   post,
+  collectionSlug,
   label,
   labelColor,
   hoverColor,
   borderColor = 'hover:border-cyan-500/50',
 }: {
   post: Sanity.CollectionArticlePost;
+  collectionSlug: string;
   label: string;
   labelColor: string;
   hoverColor: string;
   borderColor?: string;
 }) {
-  const href = resolveUrl(
-    { ...post, metadata: post.metadata, language: post.language } as Sanity.PageBase,
-    { base: false }
-  );
+  // Build URL using the actual collection slug from site settings
+  const languagePrefix =
+    post.language && post.language !== routing.defaultLocale ? `/${post.language}` : '';
+  const href = `${languagePrefix}/${collectionSlug}/${post.metadata?.slug?.current}`;
 
   const stega = createStegaAttribute({
     id: post._id,

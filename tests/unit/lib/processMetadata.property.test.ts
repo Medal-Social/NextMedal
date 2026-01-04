@@ -1,5 +1,14 @@
 import * as fc from 'fast-check';
 import { describe, expect, it, vi } from 'vitest';
+
+// Mock Sanity live client (must be before processMetadata import)
+vi.mock('@/sanity/lib/live', () => ({
+  sanityFetch: vi.fn(),
+  SanityLive: () => null,
+  fetchSanityLive: vi.fn(),
+  fetchSanityStatic: vi.fn(),
+}));
+
 import processMetadata from '@/lib/sanity/process-metadata';
 
 // Mock the env module
@@ -11,8 +20,8 @@ vi.mock('@/lib/env', () => ({
 }));
 
 // Mock resolveUrl
-vi.mock('@/lib/resolveUrl', () => ({
-  default: vi.fn((page) => {
+vi.mock('@/lib/sanity/resolve-url-server', () => ({
+  default: vi.fn(async (page) => {
     const slug = page?.metadata?.slug?.current;
     if (page?._type === 'collection.article') {
       const collectionSlug = page?.collection?.metadata?.slug?.current || 'articles';

@@ -1,6 +1,17 @@
 import { stegaClean } from 'next-sanity';
 import { routing } from '@/i18n/routing';
+import { getCollectionSlugWithFallback } from '@/lib/collections/registry';
+import type { CollectionType } from '@/lib/collections/types';
 import { BASE_URL } from '@/lib/core/env';
+
+// Collection types that need collection slugs
+const COLLECTION_TYPES: CollectionType[] = [
+  'collection.article',
+  'collection.documentation',
+  'collection.changelog',
+  'collection.newsletter',
+  'collection.events',
+];
 
 // Helper function to detect if a URL is relative (starts with / or doesn't have a protocol)
 export function isRelativeUrl(url: string): boolean {
@@ -57,34 +68,25 @@ function getLanguagePrefix(language?: string): string {
   return `/${language}`;
 }
 
-// Extended page type that may include collection reference
-interface PageWithCollection extends Sanity.PageBase {
-  collection?: {
-    metadata?: {
-      slug?: { current: string };
-    };
-  };
-}
-
-// Get path segment based on document type and collection reference
-function getPathSegment(page: PageWithCollection): string {
-  // For collection documents, use the collection page's slug
-  if (
-    [
-      'collection.article',
-      'collection.changelog',
-      'collection.documentation',
-      'collection.newsletter',
-    ].includes(page._type) &&
-    page.collection?.metadata?.slug?.current
-  ) {
-    return `/${page.collection.metadata.slug.current}`;
+// Get path segment using registry (sync version for Client Components)
+function getPathSegmentSync(page: Sanity.PageBase): string {
+  // For collection documents, try to use the actual collection slug from the data
+  if (COLLECTION_TYPES.includes(page._type as CollectionType)) {
+    const locale = page.language || routing.defaultLocale;
+    // Check if the page has a collection reference with a slug
+    // This is populated in GROQ queries like: collection->{ metadata { slug } }
+    const collectionSlug =
+      (page as { collection?: { metadata?: { slug?: { current?: string } } } }).collection?.metadata
+        ?.slug?.current || getCollectionSlugWithFallback(page._type as CollectionType, locale);
+    return `/${collectionSlug}`;
   }
   return '';
 }
 
-export default function resolveUrl(
-  page?: Sanity.PageBase | PageWithCollection,
+// Synchronous version for Client Components (uses default collection slugs)
+// NOTE: Server Components should import from resolve-url-server.ts instead
+export function resolveUrlSync(
+  page?: Sanity.PageBase,
   {
     base = true,
     params,
@@ -94,11 +96,11 @@ export default function resolveUrl(
     params?: string | Record<string, string | string[] | undefined>;
     allowList?: string[];
   } = {}
-) {
+): string {
   if (!page) return '/';
 
   const slug = page.metadata?.slug?.current;
-  const segment = getPathSegment(page as PageWithCollection);
+  const segment = getPathSegmentSync(page);
   const path = slug === 'index' ? null : `${segment}/${slug}`;
 
   const paramsStr =

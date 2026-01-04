@@ -1,12 +1,15 @@
 import { Settings } from 'lucide-react';
 import Link from 'next/link';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import LocaleSwitcher from '@/components/blocks/layout/language-switcher';
+import { DEFAULT_LOCALE } from '@/i18n/config';
 import ThemeToggle from './ThemeToggle';
 
 export async function HeaderFallback() {
   try {
     const t = await getTranslations('setup.header');
+    const locale = await getLocale();
+    const homeHref = locale === DEFAULT_LOCALE ? '/' : `/${locale}`;
 
     return (
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -14,7 +17,7 @@ export async function HeaderFallback() {
           <div className="flex flex-1 items-center justify-between w-full">
             {/* Logo / Site Title */}
             <div className="flex items-center gap-3">
-              <Link href="/" className="text-lg font-semibold">
+              <Link href={homeHref} className="text-lg font-semibold">
                 {t('yourSite')}
               </Link>
               <Link
@@ -52,6 +55,7 @@ export async function HeaderFallback() {
     );
   } catch {
     // Ultra-fallback: minimal header with hardcoded strings
+    // Note: Using "/" for homepage since this is an emergency fallback
     return (
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="mx-auto flex min-h-16 items-center w-full px-4 sm:px-6 lg:px-8 max-w-7xl">

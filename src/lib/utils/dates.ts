@@ -1,6 +1,6 @@
 import { format, formatDistanceToNow } from 'date-fns';
 import { enUS } from 'date-fns/locale';
-import { type Locale, localeConfig } from '@/i18n/routing';
+import { getLocaleMetadata } from '@/i18n/config';
 
 /**
  * Formats a number as a USD currency string.
@@ -28,10 +28,7 @@ export function parseDate(value: string): Date {
  * Get date-fns locale from locale string
  */
 function getDateFnsLocale(locale?: string) {
-  if (locale && locale in localeConfig) {
-    return localeConfig[locale as Locale].dateLocale;
-  }
-  return enUS;
+  return getLocaleMetadata(locale)?.dateLocale ?? enUS;
 }
 
 /**

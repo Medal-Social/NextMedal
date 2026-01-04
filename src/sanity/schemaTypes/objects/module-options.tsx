@@ -30,7 +30,7 @@ export default defineType({
       name: 'anchorId',
       title: 'Anchor ID',
       description:
-        'Optional ID for deep linking (e.g., #pricing, #contact). Useful for navigation and scroll-to-section functionality.',
+        'Custom URL identifier (e.g., #pricing). If left empty, a system-generated ID will be used.',
       type: 'string',
       validation: (Rule) =>
         Rule.regex(/^[a-zA-Z0-9-]+$/g).error('Must not contain spaces or special characters'),

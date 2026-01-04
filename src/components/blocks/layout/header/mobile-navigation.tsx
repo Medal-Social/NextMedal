@@ -8,13 +8,13 @@ import { useCallback, useEffect, useRef } from 'react';
 import { CTAList } from '@/components/blocks/objects/cta';
 import { CommandMenu } from '@/components/blocks/utility';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import resolveUrl from '@/lib/sanity/resolve-url';
+import { resolveUrlSync } from '@/lib/sanity/resolve-url';
 import { ANIMATION_DURATION, ANIMATION_EASING } from './constants';
 import type { MobileNavigationProps } from './types';
 
 function getNavLinkHref(link: Sanity.MenuItem | Sanity.Link): string {
   if (link.internal && '_type' in link.internal) {
-    return resolveUrl(link.internal as Sanity.PageBase, {
+    return resolveUrlSync(link.internal as Sanity.PageBase, {
       base: false,
       params: link.params,
     });

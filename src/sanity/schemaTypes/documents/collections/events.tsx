@@ -1,18 +1,20 @@
 /**
  * Collection Events Document Type
- * @version 1.0.0
- * @lastUpdated 2025-12-30
- * @description Event document type for webinars, videos, and physical events.
- * References a parent collection page for dynamic URL resolution.
+ * @version 2.0.0
+ * @lastUpdated 2026-01-03
+ * @description Event document type with field-level translation support for webinars, videos, and physical events.
+ * Single document contains all language versions for simpler management.
+ * @changelog
+ * - 2.0.0: Converted to field-level translation (title, description, body internationalized)
+ * - 1.0.0: Initial version with collection reference pattern
  */
 
 import { CalendarIcon } from '@sanity/icons';
 import { defineArrayMember, defineField, defineType } from 'sanity';
-import { isUniqueAcrossLocale } from '@/sanity/lib/isUniqueAcrossLocale';
 import PageIdentityField from '@/sanity/ui/PageIdentityField';
 
 // Flag emoji for preview
-const languageFlags: Record<string, string> = {
+const _languageFlags: Record<string, string> = {
   en: '🇬🇧',
   nb: '🇳🇴',
 };
@@ -36,17 +38,6 @@ export default defineType({
     { name: 'seo', title: 'SEO' },
   ],
   fields: [
-    // Collection reference (parent page)
-    defineField({
-      name: 'collection',
-      title: 'Collection',
-      type: 'reference',
-      to: [{ type: 'page' }],
-      description: 'The collection page this event belongs to (determines URL)',
-      validation: (Rule) => Rule.required(),
-      group: 'content',
-    }),
-
     // Page identity (title + slug)
     defineField({
       name: 'metadata',
@@ -59,19 +50,27 @@ export default defineType({
       fields: [
         defineField({
           name: 'title',
-          type: 'string',
+          type: 'internationalizedArrayString',
+          title: 'Event Title',
+          description: 'Event title - localized per language',
           validation: (Rule) => Rule.required(),
         }),
         defineField({
           name: 'slug',
           type: 'slug',
+          title: 'URL Slug',
+          description: 'The URL path for this event - shared across all languages',
           options: {
-            source: 'metadata.title',
+            source: (doc) => {
+              const document = doc as { metadata?: { title?: Array<{ value?: string }> } };
+              // Extract first available language value for slug generation
+              return document.metadata?.title?.[0]?.value || '';
+            },
             maxLength: 96,
-            isUnique: isUniqueAcrossLocale,
           },
           validation: (Rule) =>
             Rule.required().custom((slug) => {
+              // Only ban system paths - language codes are fine since events are under /events/ prefix
               const reserved = ['studio', 'api', 'monitoring', 'rss.xml'];
               if (slug?.current && reserved.includes(slug.current.toLowerCase())) {
                 return `"${slug.current}" is a reserved path.`;
@@ -84,15 +83,15 @@ export default defineType({
         }),
         defineField({
           name: 'description',
-          type: 'text',
-          rows: 3,
+          type: 'internationalizedArrayText',
           title: 'Description',
-          description: 'Brief description for listings and SEO',
+          description: 'Brief description for listings and SEO - localized per language',
         }),
         defineField({
           name: 'image',
           type: 'image',
           title: 'Cover Image',
+          description: 'Cover image - shared across all languages',
           options: { hotspot: true },
         }),
       ],
@@ -124,6 +123,7 @@ export default defineType({
       title: 'Start Date & Time',
       type: 'datetime',
       description: 'When the event starts (not needed for recorded videos)',
+      initialValue: () => new Date().toISOString(),
       options: {
         dateFormat: 'MMMM D, YYYY',
         timeFormat: 'HH:mm',
@@ -239,26 +239,8 @@ export default defineType({
     defineField({
       name: 'body',
       title: 'Description',
-      type: 'array',
-      of: [
-        defineArrayMember({ type: 'block' }),
-        defineArrayMember({
-          type: 'image',
-          options: { hotspot: true },
-          fields: [
-            defineField({
-              name: 'alt',
-              type: 'string',
-              title: 'Alt Text',
-            }),
-            defineField({
-              name: 'caption',
-              type: 'string',
-              title: 'Caption',
-            }),
-          ],
-        }),
-      ],
+      type: 'internationalizedArrayBlockContent',
+      description: 'Full event description - localized per language',
       group: 'content',
     }),
 
@@ -268,14 +250,6 @@ export default defineType({
       type: 'seo-metadata',
       group: 'seo',
     }),
-
-    // Language (for i18n)
-    defineField({
-      name: 'language',
-      type: 'string',
-      readOnly: true,
-      hidden: true,
-    }),
   ],
 
   preview: {
@@ -283,17 +257,19 @@ export default defineType({
       title: 'metadata.title',
       eventType: 'eventType',
       date: 'startDateTime',
-      language: 'language',
       image: 'metadata.image',
     },
-    prepare({ title, eventType, date, language, image }) {
-      const flag = language ? languageFlags[language] || '' : '';
+    prepare({ title, eventType, date, image }) {
+      // Extract first available language value from internationalized array
+      const titleText =
+        Array.isArray(title) && title.length > 0 ? title[0].value || 'Untitled' : 'Untitled';
+
       const typeIcon = eventType ? eventTypeIcons[eventType] || '' : '';
       const dateStr = date ? new Date(date).toLocaleDateString() : 'No date';
       const isPast = date ? new Date(date) < new Date() : false;
 
       return {
-        title: `${flag} ${typeIcon} ${title || 'Untitled'}`.trim(),
+        title: `${typeIcon} ${titleText}`.trim(),
         subtitle: `${isPast ? '✓ ' : ''}${dateStr}`,
         media: image || CalendarIcon,
       };

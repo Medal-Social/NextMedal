@@ -13,7 +13,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import resolveUrl from '@/lib/sanity/resolve-url';
+import { resolveUrlSync } from '@/lib/sanity/resolve-url';
 
 type NavMenuItem = Sanity.MenuItem | Sanity.DropdownMenu;
 
@@ -23,7 +23,7 @@ interface NavigationProps {
 
 function getLinkHref(item: Sanity.MenuItem): string {
   if (item.internal?.metadata?.slug?.current) {
-    return resolveUrl(item.internal as Sanity.PageBase, {
+    return resolveUrlSync(item.internal as Sanity.PageBase, {
       base: false,
       params: item.params,
     });

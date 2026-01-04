@@ -24,6 +24,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { routing } from '@/i18n/routing';
+import { getArticleFallbackImage } from '@/lib/utils/article-helpers';
 import { createStegaAttribute } from '@/sanity/lib/client';
 
 interface ArticleDetailProps {
@@ -172,14 +173,7 @@ function HeroImage({
 }) {
   if (!post.seo?.image && !post.metadata?.title) return null;
 
-  const fallbackImage = {
-    src: `/api/og/article-fallback?title=${encodeURIComponent(post.metadata?.title || '')}&category=${encodeURIComponent(
-      post.categories?.[0]?.title || ''
-    )}`,
-    alt: post.metadata?.title || '',
-    width: 1200,
-    height: 630,
-  };
+  const fallbackImage = getArticleFallbackImage(post.metadata?.title, post.language);
 
   return (
     <div

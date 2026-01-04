@@ -9,6 +9,7 @@ import { groq, stegaClean } from 'next-sanity';
 import { Suspense } from 'react';
 import SharedPortableText from '@/components/blocks/modules/SharedPortableText';
 import { Section } from '@/components/ui/section';
+import { getCollectionSlugWithFallback } from '@/lib/collections/registry';
 import moduleProps from '@/lib/sanity/module-props';
 import { fetchSanityLive } from '@/sanity/lib/live';
 import DocsFrontpageClient from './DocsFrontpageClient';
@@ -207,19 +208,26 @@ export default async function DocsFrontpageServer({
   uncategorizedPosition = 'end',
   categoryOrder,
   showSearch,
-  collectionSlug,
+  collectionSlug: providedSlug,
   locale = 'en',
   ...props
 }: DocsFrontpageProps) {
-  // If no collection slug is provided, we can't fetch docs
+  // Self-determine collection slug from site settings if not provided
+  let collectionSlug = providedSlug;
+
   if (!collectionSlug) {
-    return (
-      <Section className="space-y-8" {...moduleProps(props)}>
-        <div className="text-center py-12 text-muted-foreground">
-          <p>Collection not configured. Add this module to a page to create a documentation hub.</p>
-        </div>
-      </Section>
-    );
+    const result = await getCollectionSlugWithFallback('collection.documentation', locale);
+    if (!result.success) {
+      return (
+        <Section className="space-y-8" {...moduleProps(props)}>
+          <div className="text-center py-12 text-muted-foreground">
+            <p>Documentation collection not configured for this language.</p>
+            <p className="text-sm mt-2">Configure the documentation frontpage in site settings.</p>
+          </div>
+        </Section>
+      );
+    }
+    collectionSlug = result.slug;
   }
 
   const cleanLayout = stegaClean(layout) as 'sidebar' | 'cards' | 'categorized';

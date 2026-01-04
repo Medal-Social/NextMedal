@@ -1,9 +1,22 @@
 import { describe, expect, it, vi } from 'vitest';
-import processMetadata from '@/lib/sanity/process-metadata';
-import resolveUrl from '@/lib/sanity/resolve-url';
+
+// Mock Sanity live client (must be before processMetadata import)
+vi.mock('@/sanity/lib/live', () => ({
+  sanityFetch: vi.fn(),
+  SanityLive: () => null,
+  fetchSanityLive: vi.fn(),
+  fetchSanityStatic: vi.fn(),
+}));
 
 // Mock the env module (must match actual import path in process-metadata.ts)
 vi.mock('@/lib/core/env', () => ({
+  env: {
+    NEXT_PUBLIC_BASE_URL: 'https://example.com',
+    NODE_ENV: 'test' as const,
+    NEXT_PUBLIC_SANITY_PROJECT_ID: 'test-project',
+    NEXT_PUBLIC_SANITY_DATASET: 'test',
+    NEXT_PUBLIC_SANITY_API_VERSION: '2025-12-23',
+  },
   BASE_URL: 'https://example.com',
   dev: false,
   vercelPreview: false,
@@ -11,9 +24,12 @@ vi.mock('@/lib/core/env', () => ({
   isPreview: false,
 }));
 
+import processMetadata from '@/lib/sanity/process-metadata';
+import resolveUrl from '@/lib/sanity/resolve-url-server';
+
 // Mock resolveUrl (must match actual import path in process-metadata.ts)
-vi.mock('@/lib/sanity/resolve-url', () => ({
-  default: vi.fn((page, options) => {
+vi.mock('@/lib/sanity/resolve-url-server', () => ({
+  default: vi.fn(async (page, options) => {
     const slug = page?.metadata?.slug?.current;
     let url = '';
     if (page?._type === 'collection.article') {

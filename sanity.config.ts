@@ -1,12 +1,14 @@
 'use client';
 import { apiVersion, dataset, projectId } from '@/sanity/lib/env';
-import { defineConfig, isDev } from 'sanity';
+import { defineConfig, defineField, isDev } from 'sanity';
 import { presentation } from '@/sanity/presentation';
 import { visionTool } from '@sanity/vision';
 import { structure } from '@/sanity/structure';
-import resolveUrl from '@/lib/sanity/resolve-url';
+import { resolveUrlSync } from '@/lib/sanity/resolve-url';
 import { codeInput } from '@sanity/code-input';
 import { documentInternationalization } from '@sanity/document-internationalization';
+import { internationalizedArray } from 'sanity-plugin-internationalized-array';
+import { languageFilter } from '@sanity/language-filter';
 import { media, mediaAssetSource } from 'sanity-plugin-media';
 import { muxInput } from 'sanity-plugin-mux-input';
 import { schemaTypes } from '@/sanity/schemaTypes';
@@ -30,6 +32,7 @@ export default defineConfig({
   projectId,
   dataset,
   basePath: '/studio',
+  apiVersion,
 
   announcements: { enabled: false },
   tasks: { enabled: false },
@@ -54,14 +57,75 @@ export default defineConfig({
         id: locale,
         title: localeConfig[locale as Locale].title,
       })),
-      schemaTypes: [
-        'page',
-        'site',
-        'collection.article',
+      schemaTypes: ['page', 'collection.article', 'collection.documentation'],
+    }),
+    internationalizedArray({
+      languages: routing.locales.map((locale) => ({
+        id: locale,
+        title: localeConfig[locale as Locale].title,
+      })),
+      defaultLanguages: [routing.defaultLocale],
+      fieldTypes: [
+        'string',
+        'text',
+        defineField({
+          name: 'blockContent',
+          type: 'array',
+          of: [
+            {
+              type: 'block',
+              styles: [{ title: 'Normal', value: 'normal' }],
+              lists: [],
+              marks: {
+                decorators: [
+                  { title: 'Strong', value: 'strong' },
+                  { title: 'Emphasis', value: 'em' },
+                ],
+                annotations: [],
+              },
+            },
+          ],
+        }),
+        // Navigation array types for site settings
+        defineField({
+          name: 'headerNavArray',
+          type: 'array',
+          of: [{ type: 'menuItem' }, { type: 'dropdownMenu' }],
+        }),
+        defineField({
+          name: 'ctaArray',
+          type: 'array',
+          of: [{ type: 'cta' }],
+        }),
+        defineField({
+          name: 'dropdownMenuArray',
+          type: 'array',
+          of: [{ type: 'dropdownMenu' }],
+        }),
+        defineField({
+          name: 'menuItemArray',
+          type: 'array',
+          of: [{ type: 'menuItem' }],
+        }),
+      ],
+      buttonAddAll: false,
+    }),
+    languageFilter({
+      supportedLanguages: routing.locales.map((locale) => ({
+        id: locale,
+        title: localeConfig[locale as Locale].title,
+      })),
+      defaultLanguages: [routing.defaultLocale],
+      documentTypes: [
+        'person',
+        'article.category',
+        'docs.category',
+        'form',
+        'banner',
         'collection.newsletter',
-        'collection.documentation',
         'collection.changelog',
         'collection.events',
+        'site',
       ],
     }),
     ...devOnlyPlugins,
@@ -99,15 +163,7 @@ export default defineConfig({
     templates: (prev) =>
       prev.filter(
         (template) =>
-          ![
-            'page',
-            'site',
-            'collection.article',
-            'collection.newsletter',
-            'collection.documentation',
-            'collection.changelog',
-            'collection.events',
-          ].includes(template.id)
+          !['page', 'site', 'collection.article', 'collection.documentation'].includes(template.id)
       ),
   },
   document: {
@@ -138,7 +194,7 @@ export default defineConfig({
           'collection.events',
         ].includes(document?._type)
       ) {
-        return resolveUrl(document as Sanity.PageBase, { base: true });
+        return resolveUrlSync(document as Sanity.PageBase, { base: true });
       }
 
       return prev;

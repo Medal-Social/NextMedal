@@ -2,13 +2,14 @@ import { Clock } from 'lucide-react';
 import Link from 'next/link';
 import AuthorCard from '@/components/blocks/modules/frontpage/articles/AuthorCard';
 import { Date as DateDisplay, Img } from '@/components/blocks/objects/core';
-import resolveUrl from '@/lib/sanity/resolve-url';
+import { routing } from '@/i18n/routing';
 import { getArticleFallbackImage } from '@/lib/utils/article-helpers';
 import { cn } from '@/lib/utils/index';
 import { createStegaAttribute } from '@/sanity/lib/client';
 
 interface ArticleCardProps {
   post: Sanity.CollectionArticlePost;
+  collectionSlug: string;
   variant?: 'large' | 'wide' | 'standard' | 'horizontal';
   className?: string;
 }
@@ -51,18 +52,24 @@ function ReadTimeDisplay({ readTime }: { readTime?: number }) {
   );
 }
 
-export default function ArticleCard({ post, variant = 'standard', className }: ArticleCardProps) {
-  const href = resolveUrl(
-    { ...post, metadata: post.metadata, language: post.language } as Sanity.PageBase,
-    { base: false }
-  );
+export default function ArticleCard({
+  post,
+  collectionSlug,
+  variant = 'standard',
+  className,
+}: ArticleCardProps) {
+  // Build URL using the actual collection slug from site settings
+  const languagePrefix =
+    post.language && post.language !== routing.defaultLocale ? `/${post.language}` : '';
+  const href = `${languagePrefix}/${collectionSlug}/${post.metadata?.slug?.current}`;
+
   const category = post.categories?.[0];
   const author = post.authors?.[0];
   // Only use Sanity image if it has a valid asset, otherwise use fallback
   const hasValidImage = post.seo?.image?.asset;
   const image = hasValidImage
     ? post.seo?.image
-    : getArticleFallbackImage(post.metadata?.title, post.seo?.description);
+    : getArticleFallbackImage(post.metadata?.title, post.language);
 
   const stega = createStegaAttribute({
     id: post._id,

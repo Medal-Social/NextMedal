@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { stegaClean } from 'next-sanity';
 import { Button, buttonVariants } from '@/components/ui/button';
-import resolveUrl from '@/lib/sanity/resolve-url';
+import { resolveUrlSync } from '@/lib/sanity/resolve-url';
 import { cn } from '@/lib/utils/index';
 import { validateExternalUrl } from '@/lib/validateExternalUrl';
 
@@ -40,6 +40,38 @@ function buildEffectiveLink(props: CTAProps): Sanity.MenuItem | null {
   }
 
   return null;
+}
+
+// Generate descriptive aria-label for generic link text
+function getAriaLabel(
+  linkText: string,
+  internal?: Sanity.MenuItem['internal']
+): string | undefined {
+  const cleanText = stegaClean(linkText).trim().toLowerCase();
+
+  // List of generic/non-descriptive link texts that need enhancement
+  const genericTexts = ['read more', 'click here', 'learn more', 'more', 'continue', 'next'];
+
+  if (!genericTexts.includes(cleanText)) {
+    return undefined; // Text is already descriptive
+  }
+
+  // Try to generate a better description from the linked page
+  if (internal?.metadata?.title) {
+    const pageTitle = stegaClean(internal.metadata.title);
+    return `${linkText}: ${pageTitle}`;
+  }
+
+  // Fallback to link type if we can't determine the page title
+  if (internal?._type) {
+    const typeLabel = internal._type
+      .replace('collection.', '')
+      .replace(/([A-Z])/g, ' $1')
+      .trim();
+    return `${linkText} about ${typeLabel}`;
+  }
+
+  return undefined;
 }
 
 // Get button variant from style
@@ -80,7 +112,9 @@ function InternalLinkButton({
   className?: string;
   buttonContent: React.ReactNode;
 }) {
-  const href = resolveUrl(internal, { base: false, params });
+  const href = resolveUrlSync(internal, { base: false, params });
+  const ariaLabel =
+    typeof buttonContent === 'string' ? getAriaLabel(buttonContent, internal) : undefined;
 
   return (
     <Link
@@ -89,6 +123,7 @@ function InternalLinkButton({
       rel={newTab ? 'noopener noreferrer' : undefined}
       onClick={(e) => handleHashLinkClick(href, e)}
       className={cn(buttonVariants({ variant, size }), className)}
+      aria-label={ariaLabel}
     >
       {buttonContent}
     </Link>
@@ -124,12 +159,22 @@ function ExternalLinkButton({
 
   const shouldOpenNewTab = newTab !== false;
 
+  // For external links, add basic aria-label for generic text
+  const ariaLabel =
+    typeof buttonContent === 'string' ? getAriaLabel(buttonContent, undefined) : undefined;
+
   return (
     <Link
       href={validatedUrl}
       target={shouldOpenNewTab ? '_blank' : undefined}
       rel={shouldOpenNewTab ? 'noopener noreferrer' : undefined}
       className={cn(buttonVariants({ variant, size }), className)}
+      aria-label={
+        ariaLabel ||
+        (typeof buttonContent === 'string' && buttonContent.toLowerCase().includes('read more')
+          ? `${buttonContent} (external link)`
+          : undefined)
+      }
     >
       {buttonContent}
     </Link>

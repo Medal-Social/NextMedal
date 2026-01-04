@@ -7,20 +7,20 @@
 
 import { NextResponse } from 'next/server';
 import { groq } from 'next-sanity';
+import { getCollectionMetadata, getCollectionTypeFromSlug } from '@/lib/collections/registry';
+import type { CollectionType } from '@/lib/collections/types';
 import { BASE_URL } from '@/lib/core/env';
 import { logger } from '@/lib/core/logger';
 import { client } from '@/sanity/lib/client';
 
-// All frontpage module types that support RSS
-const FRONTPAGE_MODULES = [
-  'articles-frontpage',
-  'changelog-frontpage',
-  'docs-frontpage',
-  'events-frontpage',
-  'newsletter-frontpage',
-] as const;
-
-type FrontpageModuleType = (typeof FRONTPAGE_MODULES)[number];
+// Map collection document types to friendly names for RSS
+const COLLECTION_NAMES: Record<CollectionType, string> = {
+  'collection.article': 'Articles',
+  'collection.changelog': 'Changelog',
+  'collection.documentation': 'Documentation',
+  'collection.events': 'Events',
+  'collection.newsletter': 'Newsletter',
+};
 
 interface CollectionItem {
   _id: string;
@@ -34,58 +34,39 @@ interface CollectionItem {
   issueNumber?: number; // For newsletter
 }
 
-interface CollectionPage {
-  _id: string;
-  title: string;
+interface CollectionInfo {
+  type: CollectionType;
   slug: string;
-  description?: string;
-  frontpageType: FrontpageModuleType | null;
+  name: string;
 }
 
-// Check if a page is a collection and get the frontpage module type
-async function getCollectionPage(
-  collectionSlug: string,
-  locale: string
-): Promise<CollectionPage | null> {
-  return await client.withConfig({ stega: false }).fetch(
-    groq`*[
-      _type == 'page' &&
-      metadata.slug.current == $collectionSlug &&
-      (language == $locale || language == null)
-    ][0]{
-      _id,
-      'title': metadata.title,
-      'slug': metadata.slug.current,
-      'description': seo.description,
-      'frontpageType': modules[_type in ['articles-frontpage', 'changelog-frontpage', 'docs-frontpage', 'events-frontpage', 'newsletter-frontpage']][0]._type
-    }`,
-    { collectionSlug, locale }
-  );
+// Check if the requested slug matches a collection from registry
+function getCollectionInfo(requestedSlug: string, locale: string): CollectionInfo | null {
+  // Try to find a collection type that matches this slug
+  const collectionType = getCollectionTypeFromSlug(requestedSlug, locale);
+  if (!collectionType) return null;
+
+  // Get metadata from registry
+  const metadata = getCollectionMetadata(collectionType, locale);
+  if (!metadata || requestedSlug !== metadata.slug) return null;
+
+  return {
+    type: collectionType,
+    slug: metadata.slug,
+    name: COLLECTION_NAMES[collectionType],
+  };
 }
 
-// Map frontpage module type to document type
-const DOCUMENT_TYPE_MAP: Record<FrontpageModuleType, string> = {
-  'articles-frontpage': 'collection.article',
-  'changelog-frontpage': 'collection.changelog',
-  'docs-frontpage': 'collection.documentation',
-  'events-frontpage': 'collection.events',
-  'newsletter-frontpage': 'collection.newsletter',
-};
-
-// Fetch items for a collection based on frontpage type
+// Fetch items for a collection based on document type
 async function getCollectionItems(
-  collectionSlug: string,
   locale: string,
-  frontpageType: FrontpageModuleType
+  collectionType: CollectionType
 ): Promise<CollectionItem[]> {
-  const documentType = DOCUMENT_TYPE_MAP[frontpageType];
-
   // Different queries for different collection types
-  if (frontpageType === 'changelog-frontpage') {
+  if (collectionType === 'collection.changelog') {
     return await client.withConfig({ stega: false }).fetch(
       groq`*[
         _type == $documentType &&
-        collection->metadata.slug.current == $collectionSlug &&
         (language == $locale || language == null) &&
         defined(publishDate)
       ]|order(publishDate desc)[0...50]{
@@ -96,15 +77,14 @@ async function getCollectionItems(
         publishDate,
         version
       }`,
-      { collectionSlug, locale, documentType }
+      { locale, documentType: collectionType }
     );
   }
 
-  if (frontpageType === 'newsletter-frontpage') {
+  if (collectionType === 'collection.newsletter') {
     return await client.withConfig({ stega: false }).fetch(
       groq`*[
         _type == $documentType &&
-        collection->metadata.slug.current == $collectionSlug &&
         (language == $locale || language == null) &&
         defined(publishDate)
       ]|order(publishDate desc)[0...50]{
@@ -115,15 +95,14 @@ async function getCollectionItems(
         publishDate,
         issueNumber
       }`,
-      { collectionSlug, locale, documentType }
+      { locale, documentType: collectionType }
     );
   }
 
-  if (frontpageType === 'docs-frontpage') {
+  if (collectionType === 'collection.documentation') {
     return await client.withConfig({ stega: false }).fetch(
       groq`*[
         _type == $documentType &&
-        collection->metadata.slug.current == $collectionSlug &&
         (language == $locale || language == null)
       ]|order(order asc)[0...50]{
         _id,
@@ -132,15 +111,14 @@ async function getCollectionItems(
         'description': excerpt,
         'publishDate': _updatedAt
       }`,
-      { collectionSlug, locale, documentType }
+      { locale, documentType: collectionType }
     );
   }
 
-  if (frontpageType === 'events-frontpage') {
+  if (collectionType === 'collection.events') {
     return await client.withConfig({ stega: false }).fetch(
       groq`*[
         _type == $documentType &&
-        collection->metadata.slug.current == $collectionSlug &&
         (language == $locale || language == null)
       ]|order(startDateTime desc)[0...50]{
         _id,
@@ -149,15 +127,14 @@ async function getCollectionItems(
         'description': metadata.description,
         'publishDate': startDateTime
       }`,
-      { collectionSlug, locale, documentType }
+      { locale, documentType: collectionType }
     );
   }
 
-  // Default: articles-frontpage (collection.article)
+  // Default: collection.article
   return await client.withConfig({ stega: false }).fetch(
     groq`*[
       _type == $documentType &&
-      collection->metadata.slug.current == $collectionSlug &&
       language == $locale &&
       defined(publishDate)
     ]|order(publishDate desc)[0...50]{
@@ -169,7 +146,7 @@ async function getCollectionItems(
       authors[]->{name},
       categories[]->{title}
     }`,
-    { collectionSlug, locale, documentType }
+    { locale, documentType: collectionType }
   );
 }
 
@@ -185,14 +162,13 @@ function escapeXml(str: string): string {
 
 // Generate RSS XML
 function generateRss(
-  collection: CollectionPage,
+  collectionInfo: CollectionInfo,
   items: CollectionItem[],
-  collectionSlug: string,
   locale: string
 ): string {
   const baseUrl = BASE_URL || 'https://example.com';
   const localePath = locale !== 'en' ? `/${locale}` : '';
-  const collectionUrl = `${baseUrl}${localePath}/${collectionSlug}`;
+  const collectionUrl = `${baseUrl}${localePath}/${collectionInfo.slug}`;
 
   const rssItems = items
     .map((item) => {
@@ -224,9 +200,9 @@ function generateRss(
 <?xml-stylesheet type="text/xsl" href="/rss.xsl"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>${escapeXml(collection.title || collectionSlug)}</title>
+    <title>${escapeXml(collectionInfo.name)}</title>
     <link>${collectionUrl}</link>
-    <description>${escapeXml(collection.description || `Latest updates from ${collection.title || collectionSlug}`)}</description>
+    <description>${escapeXml(`Latest updates from ${collectionInfo.name}`)}</description>
     <language>${locale}</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="${collectionUrl}/rss.xml" rel="self" type="application/rss+xml"/>
@@ -260,34 +236,10 @@ export async function GET(
 ) {
   const { locale, collection: collectionSlug } = await params;
 
-  let collectionPage: CollectionPage | null;
+  // Check if requested slug matches a collection from registry
+  const collectionInfo = getCollectionInfo(collectionSlug, locale);
 
-  // Fetch collection page with error handling
-  try {
-    collectionPage = await getCollectionPage(collectionSlug, locale);
-  } catch (error) {
-    logger.error(
-      { err: error, collectionSlug, locale },
-      'RSS feed: Failed to fetch collection page from CMS'
-    );
-
-    // Return a 503 Service Unavailable with an error RSS feed
-    const errorRss = generateErrorRss(
-      collectionSlug,
-      locale,
-      'Feed temporarily unavailable. Please try again later.'
-    );
-    return new NextResponse(errorRss, {
-      status: 503,
-      headers: {
-        'Content-Type': 'application/xml; charset=utf-8',
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Retry-After': '300', // Suggest retry after 5 minutes
-      },
-    });
-  }
-
-  if (!collectionPage || !collectionPage.frontpageType) {
+  if (!collectionInfo) {
     return new NextResponse('Not Found', { status: 404 });
   }
 
@@ -295,10 +247,10 @@ export async function GET(
 
   // Fetch collection items with error handling
   try {
-    items = await getCollectionItems(collectionSlug, locale, collectionPage.frontpageType);
+    items = await getCollectionItems(locale, collectionInfo.type);
   } catch (error) {
     logger.error(
-      { err: error, collectionSlug, locale, frontpageType: collectionPage.frontpageType },
+      { err: error, collectionSlug, locale, collectionType: collectionInfo.type },
       'RSS feed: Failed to fetch collection items from CMS'
     );
 
@@ -319,7 +271,7 @@ export async function GET(
   }
 
   // Generate RSS XML
-  const rss = generateRss(collectionPage, items, collectionSlug, locale);
+  const rss = generateRss(collectionInfo, items, locale);
 
   return new NextResponse(rss, {
     headers: {
