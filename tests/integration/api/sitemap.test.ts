@@ -4,7 +4,18 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock dependencies
 vi.mock('@/lib/core/env', () => ({
+  env: {
+    NEXT_PUBLIC_BASE_URL: 'https://example.com',
+    NODE_ENV: 'test' as const,
+    NEXT_PUBLIC_SANITY_PROJECT_ID: 'test-project',
+    NEXT_PUBLIC_SANITY_DATASET: 'test',
+    NEXT_PUBLIC_SANITY_API_VERSION: '2025-12-23',
+  },
   BASE_URL: 'https://example.com',
+  dev: false,
+  vercelPreview: false,
+  isStaging: false,
+  isPreview: false,
 }));
 
 vi.mock('@/lib/core/logger', () => ({
@@ -15,6 +26,79 @@ vi.mock('@/lib/core/logger', () => ({
 
 vi.mock('@/sanity/lib/live', () => ({
   fetchSanityLive: vi.fn(),
+}));
+
+// Mock the generated collections file directly (used by getAllCollections)
+vi.mock('@/lib/collections/generated/collections.generated', () => ({
+  COLLECTION_SLUGS_BY_LOCALE: {
+    en: {
+      'collection.article': {
+        type: 'collection.article',
+        slug: 'articles',
+        name: 'Articles',
+      },
+      'collection.changelog': {
+        type: 'collection.changelog',
+        slug: 'changelog',
+        name: 'Changelog',
+      },
+      'collection.documentation': {
+        type: 'collection.documentation',
+        slug: 'docs',
+        name: 'Documentation',
+      },
+      'collection.newsletter': {
+        type: 'collection.newsletter',
+        slug: 'newsletter',
+        name: 'Newsletter',
+      },
+      'collection.events': {
+        type: 'collection.events',
+        slug: 'events',
+        name: 'Events',
+      },
+    },
+    nb: {
+      'collection.article': {
+        type: 'collection.article',
+        slug: 'artikler',
+        name: 'Articles',
+      },
+      'collection.changelog': {
+        type: 'collection.changelog',
+        slug: 'endringslogg',
+        name: 'Changelog',
+      },
+      'collection.documentation': {
+        type: 'collection.documentation',
+        slug: 'dokumentasjon',
+        name: 'Documentation',
+      },
+      'collection.newsletter': {
+        type: 'collection.newsletter',
+        slug: 'nyhetsbrev',
+        name: 'Newsletter',
+      },
+      'collection.events': {
+        type: 'collection.events',
+        slug: 'hendelser',
+        name: 'Events',
+      },
+    },
+  },
+  DEFAULT_COLLECTION_SLUGS: {
+    'collection.article': 'articles',
+    'collection.changelog': 'changelog',
+    'collection.documentation': 'docs',
+    'collection.newsletter': 'newsletter',
+    'collection.events': 'events',
+  },
+  SLUG_TO_TYPE_MAP: {},
+  GENERATION_METADATA: {
+    generatedAt: '2025-01-01T00:00:00.000Z',
+    locales: ['en', 'nb'],
+    source: 'Test mock',
+  },
 }));
 
 // Import from dynamic sitemap route

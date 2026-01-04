@@ -13,6 +13,12 @@ vi.mock('@/lib/sanity/resolve-url', () => ({
     }
     return '/';
   }),
+  resolveUrlSync: vi.fn((internal, _options) => {
+    if (internal?.metadata?.slug?.current) {
+      return `/${internal.metadata.slug.current}`;
+    }
+    return '/';
+  }),
 }));
 
 vi.mock('@/lib/validateExternalUrl', () => ({

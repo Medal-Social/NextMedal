@@ -34,6 +34,60 @@ vi.mock('@/sanity/lib/client', () => ({
   },
 }));
 
+// Mock collection registry to simulate collection lookup
+vi.mock('@/lib/collections/registry', () => ({
+  getCollectionTypeFromSlug: vi.fn((slug: string, _locale: string) => {
+    // Map common test slugs to collection types
+    if (slug === 'articles' || slug === 'now' || slug === 'artikler') {
+      return 'collection.article';
+    }
+    if (slug === 'changelog' || slug === 'endringslogg') {
+      return 'collection.changelog';
+    }
+    if (slug === 'docs' || slug === 'dokumentasjon') {
+      return 'collection.documentation';
+    }
+    if (slug === 'newsletter' || slug === 'nyhetsbrev') {
+      return 'collection.newsletter';
+    }
+    if (slug === 'events' || slug === 'hendelser') {
+      return 'collection.events';
+    }
+    return undefined;
+  }),
+  getCollectionMetadata: vi.fn((type: string, locale: string) => {
+    // Return metadata based on collection type
+    const metadata: Record<string, { type: string; slug: string; name: string }> = {
+      'collection.article': {
+        type: 'collection.article',
+        slug: locale === 'nb' ? 'artikler' : 'articles',
+        name: 'Articles',
+      },
+      'collection.changelog': {
+        type: 'collection.changelog',
+        slug: locale === 'nb' ? 'endringslogg' : 'changelog',
+        name: 'Changelog',
+      },
+      'collection.documentation': {
+        type: 'collection.documentation',
+        slug: locale === 'nb' ? 'dokumentasjon' : 'docs',
+        name: 'Documentation',
+      },
+      'collection.newsletter': {
+        type: 'collection.newsletter',
+        slug: locale === 'nb' ? 'nyhetsbrev' : 'newsletter',
+        name: 'Newsletter',
+      },
+      'collection.events': {
+        type: 'collection.events',
+        slug: locale === 'nb' ? 'hendelser' : 'events',
+        name: 'Events',
+      },
+    };
+    return metadata[type];
+  }),
+}));
+
 import { GET } from '@/app/(frontend)/[locale]/[collection]/rss.xml/route';
 
 describe('RSS Feed Route', () => {
@@ -53,25 +107,17 @@ describe('RSS Feed Route', () => {
 
   describe('Content-Type and Headers', () => {
     it('returns Content-Type application/xml', async () => {
-      mockFetch
-        .mockResolvedValueOnce({
-          _id: 'page-1',
-          title: 'Articles',
-          slug: 'articles',
-          description: 'Our articles',
-          frontpageType: 'articles-frontpage',
-        })
-        .mockResolvedValueOnce([
-          {
-            _id: 'post-1',
-            title: 'Test Post',
-            slug: 'test-post',
-            description: 'A test post',
-            publishDate: '2024-01-01T00:00:00Z',
-            authors: [{ name: 'John Doe' }],
-            categories: [{ title: 'Tech' }],
-          },
-        ]);
+      mockFetch.mockResolvedValueOnce([
+        {
+          _id: 'post-1',
+          title: 'Test Post',
+          slug: 'test-post',
+          description: 'A test post',
+          publishDate: '2024-01-01T00:00:00Z',
+          authors: [{ name: 'John Doe' }],
+          categories: [{ title: 'Tech' }],
+        },
+      ]);
 
       const response = await GET(createMockRequest('en', 'articles'), {
         params: createMockParams('en', 'articles'),
@@ -81,14 +127,7 @@ describe('RSS Feed Route', () => {
     });
 
     it('includes cache headers', async () => {
-      mockFetch
-        .mockResolvedValueOnce({
-          _id: 'page-1',
-          title: 'Articles',
-          slug: 'articles',
-          frontpageType: 'articles-frontpage',
-        })
-        .mockResolvedValueOnce([]);
+      mockFetch.mockResolvedValueOnce([]);
 
       const response = await GET(createMockRequest('en', 'articles'), {
         params: createMockParams('en', 'articles'),
@@ -100,14 +139,7 @@ describe('RSS Feed Route', () => {
 
   describe('XSL Stylesheet Reference', () => {
     it('includes XSL stylesheet reference in XML output', async () => {
-      mockFetch
-        .mockResolvedValueOnce({
-          _id: 'page-1',
-          title: 'Articles',
-          slug: 'articles',
-          frontpageType: 'articles-frontpage',
-        })
-        .mockResolvedValueOnce([]);
+      mockFetch.mockResolvedValueOnce([]);
 
       const response = await GET(createMockRequest('en', 'articles'), {
         params: createMockParams('en', 'articles'),
@@ -120,15 +152,7 @@ describe('RSS Feed Route', () => {
 
   describe('RSS Structure', () => {
     it('returns valid RSS 2.0 structure with channel elements', async () => {
-      mockFetch
-        .mockResolvedValueOnce({
-          _id: 'page-1',
-          title: 'My Articles',
-          slug: 'articles',
-          description: 'Articles description',
-          frontpageType: 'articles-frontpage',
-        })
-        .mockResolvedValueOnce([]);
+      mockFetch.mockResolvedValueOnce([]);
 
       const response = await GET(createMockRequest('en', 'articles'), {
         params: createMockParams('en', 'articles'),
@@ -139,23 +163,16 @@ describe('RSS Feed Route', () => {
       expect(xml).toContain('<rss version="2.0"');
       expect(xml).toContain('xmlns:atom="http://www.w3.org/2005/Atom"');
       expect(xml).toContain('<channel>');
-      expect(xml).toContain('<title>My Articles</title>');
+      expect(xml).toContain('<title>Articles</title>');
       expect(xml).toContain('<link>https://test.example.com/articles</link>');
-      expect(xml).toContain('<description>Articles description</description>');
+      expect(xml).toContain('<description>Latest updates from Articles</description>');
       expect(xml).toContain('<language>en</language>');
       expect(xml).toContain('</channel>');
       expect(xml).toContain('</rss>');
     });
 
     it('includes atom:link self reference', async () => {
-      mockFetch
-        .mockResolvedValueOnce({
-          _id: 'page-1',
-          title: 'Articles',
-          slug: 'articles',
-          frontpageType: 'articles-frontpage',
-        })
-        .mockResolvedValueOnce([]);
+      mockFetch.mockResolvedValueOnce([]);
 
       const response = await GET(createMockRequest('en', 'articles'), {
         params: createMockParams('en', 'articles'),
@@ -170,24 +187,17 @@ describe('RSS Feed Route', () => {
 
   describe('RSS Items', () => {
     it('includes item elements with required fields', async () => {
-      mockFetch
-        .mockResolvedValueOnce({
-          _id: 'page-1',
-          title: 'Articles',
-          slug: 'articles',
-          frontpageType: 'articles-frontpage',
-        })
-        .mockResolvedValueOnce([
-          {
-            _id: 'post-1',
-            title: 'Test Article',
-            slug: 'test-article',
-            description: 'Article description',
-            publishDate: '2024-06-15T10:30:00Z',
-            authors: [{ name: 'Jane Smith' }],
-            categories: [{ title: 'Technology' }],
-          },
-        ]);
+      mockFetch.mockResolvedValueOnce([
+        {
+          _id: 'post-1',
+          title: 'Test Article',
+          slug: 'test-article',
+          description: 'Article description',
+          publishDate: '2024-06-15T10:30:00Z',
+          authors: [{ name: 'Jane Smith' }],
+          categories: [{ title: 'Technology' }],
+        },
+      ]);
 
       const response = await GET(createMockRequest('en', 'articles'), {
         params: createMockParams('en', 'articles'),
@@ -208,21 +218,14 @@ describe('RSS Feed Route', () => {
     });
 
     it('handles items without optional fields', async () => {
-      mockFetch
-        .mockResolvedValueOnce({
-          _id: 'page-1',
-          title: 'Articles',
-          slug: 'articles',
-          frontpageType: 'articles-frontpage',
-        })
-        .mockResolvedValueOnce([
-          {
-            _id: 'post-1',
-            title: 'Minimal Post',
-            slug: 'minimal-post',
-            publishDate: '2024-01-01T00:00:00Z',
-          },
-        ]);
+      mockFetch.mockResolvedValueOnce([
+        {
+          _id: 'post-1',
+          title: 'Minimal Post',
+          slug: 'minimal-post',
+          publishDate: '2024-01-01T00:00:00Z',
+        },
+      ]);
 
       const response = await GET(createMockRequest('en', 'articles'), {
         params: createMockParams('en', 'articles'),
@@ -237,21 +240,14 @@ describe('RSS Feed Route', () => {
 
   describe('Locale Handling', () => {
     it('uses locale prefix for non-English locales', async () => {
-      mockFetch
-        .mockResolvedValueOnce({
-          _id: 'page-1',
-          title: 'Artikler',
-          slug: 'artikler',
-          frontpageType: 'articles-frontpage',
-        })
-        .mockResolvedValueOnce([
-          {
-            _id: 'post-1',
-            title: 'Norsk Innlegg',
-            slug: 'norsk-innlegg',
-            publishDate: '2024-01-01T00:00:00Z',
-          },
-        ]);
+      mockFetch.mockResolvedValueOnce([
+        {
+          _id: 'post-1',
+          title: 'Norsk Innlegg',
+          slug: 'norsk-innlegg',
+          publishDate: '2024-01-01T00:00:00Z',
+        },
+      ]);
 
       const response = await GET(createMockRequest('nb', 'artikler'), {
         params: createMockParams('nb', 'artikler'),
@@ -264,14 +260,7 @@ describe('RSS Feed Route', () => {
     });
 
     it('omits locale prefix for English (default locale)', async () => {
-      mockFetch
-        .mockResolvedValueOnce({
-          _id: 'page-1',
-          title: 'Articles',
-          slug: 'articles',
-          frontpageType: 'articles-frontpage',
-        })
-        .mockResolvedValueOnce([]);
+      mockFetch.mockResolvedValueOnce([]);
 
       const response = await GET(createMockRequest('en', 'articles'), {
         params: createMockParams('en', 'articles'),
@@ -285,13 +274,7 @@ describe('RSS Feed Route', () => {
 
   describe('Collection Type Detection', () => {
     it('returns 404 for non-collection pages', async () => {
-      mockFetch.mockResolvedValueOnce({
-        _id: 'page-1',
-        title: 'About',
-        slug: 'about',
-        frontpageType: null,
-      });
-
+      // No mocks needed - the collection registry will return undefined for 'about'
       const response = await GET(createMockRequest('en', 'about'), {
         params: createMockParams('en', 'about'),
       });
@@ -300,8 +283,7 @@ describe('RSS Feed Route', () => {
     });
 
     it('returns 404 for non-existent pages', async () => {
-      mockFetch.mockResolvedValueOnce(null);
-
+      // No mock needed - 'nonexistent' slug is not in the registry
       const response = await GET(createMockRequest('en', 'nonexistent'), {
         params: createMockParams('en', 'nonexistent'),
       });
@@ -310,65 +292,47 @@ describe('RSS Feed Route', () => {
     });
 
     it.each([
-      ['articles-frontpage', 'collection.article'],
-      ['changelog-frontpage', 'collection.changelog'],
-      ['docs-frontpage', 'collection.documentation'],
-      ['events-frontpage', 'collection.events'],
-      ['newsletter-frontpage', 'collection.newsletter'],
-    ])('handles %s frontpage type correctly', async (frontpageType, _expectedDocType) => {
-      mockFetch
-        .mockResolvedValueOnce({
-          _id: 'page-1',
-          title: 'Collection',
-          slug: 'collection',
-          frontpageType,
-        })
-        .mockResolvedValueOnce([]);
+      ['articles', 'collection.article'],
+      ['changelog', 'collection.changelog'],
+      ['docs', 'collection.documentation'],
+      ['events', 'collection.events'],
+      ['newsletter', 'collection.newsletter'],
+    ])('handles %s frontpage type correctly', async (collectionSlug, _expectedDocType) => {
+      mockFetch.mockResolvedValueOnce([]);
 
-      const response = await GET(createMockRequest('en', 'collection'), {
-        params: createMockParams('en', 'collection'),
+      const response = await GET(createMockRequest('en', collectionSlug), {
+        params: createMockParams('en', collectionSlug),
       });
 
       expect(response.status).toBe(200);
-      // Verify the correct document type was queried
-      expect(mockFetch).toHaveBeenCalledTimes(2);
+      // Verify the collection items were fetched
+      expect(mockFetch).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('XML Escaping', () => {
     it('escapes special XML characters in content', async () => {
-      mockFetch
-        .mockResolvedValueOnce({
-          _id: 'page-1',
-          title: 'Articles & News',
-          slug: 'articles',
-          description: 'Articles about <tech> & "stuff"',
-          frontpageType: 'articles-frontpage',
-        })
-        .mockResolvedValueOnce([
-          {
-            _id: 'post-1',
-            title: "Tom's Guide to A&B <Testing>",
-            slug: 'toms-guide',
-            description: 'A "quoted" description with <brackets>',
-            publishDate: '2024-01-01T00:00:00Z',
-          },
-        ]);
+      mockFetch.mockResolvedValueOnce([
+        {
+          _id: 'post-1',
+          title: "Tom's Guide to A&B <Testing>",
+          slug: 'toms-guide',
+          description: 'A "quoted" description with <brackets>',
+          publishDate: '2024-01-01T00:00:00Z',
+        },
+      ]);
 
       const response = await GET(createMockRequest('en', 'articles'), {
         params: createMockParams('en', 'articles'),
       });
       const xml = await response.text();
 
-      // Channel escaping
-      expect(xml).toContain('Articles &amp; News');
-      expect(xml).toContain('&lt;tech&gt;');
-      expect(xml).toContain('&quot;stuff&quot;');
-
       // Item escaping
       expect(xml).toContain('Tom&apos;s Guide');
       expect(xml).toContain('A&amp;B');
       expect(xml).toContain('&lt;Testing&gt;');
+      expect(xml).toContain('&quot;quoted&quot;');
+      expect(xml).toContain('&lt;brackets&gt;');
     });
   });
 });

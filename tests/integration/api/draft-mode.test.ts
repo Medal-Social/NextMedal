@@ -1,6 +1,14 @@
 import { NextRequest } from 'next/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+// Mock Sanity live client
+vi.mock('@/sanity/lib/live', () => ({
+  sanityFetch: vi.fn(),
+  SanityLive: () => null,
+  fetchSanityLive: vi.fn(),
+  fetchSanityStatic: vi.fn(),
+}));
+
 // Mock draftMode from next/headers
 const mockDraftMode = {
   disable: vi.fn(),
@@ -35,6 +43,13 @@ vi.mock('next-sanity/draft-mode', () => ({
 
 // Mock the env module (must match actual import paths in source files)
 vi.mock('@/lib/core/env', () => ({
+  env: {
+    NEXT_PUBLIC_BASE_URL: 'https://example.com',
+    NODE_ENV: 'test' as const,
+    NEXT_PUBLIC_SANITY_PROJECT_ID: 'test-project',
+    NEXT_PUBLIC_SANITY_DATASET: 'test',
+    NEXT_PUBLIC_SANITY_API_VERSION: '2025-12-23',
+  },
   BASE_URL: 'https://example.com',
   dev: false,
   vercelPreview: false,
@@ -44,6 +59,13 @@ vi.mock('@/lib/core/env', () => ({
 
 // Also mock the re-export file for backward compatibility
 vi.mock('@/lib/env', () => ({
+  env: {
+    NEXT_PUBLIC_BASE_URL: 'https://example.com',
+    NODE_ENV: 'test' as const,
+    NEXT_PUBLIC_SANITY_PROJECT_ID: 'test-project',
+    NEXT_PUBLIC_SANITY_DATASET: 'test',
+    NEXT_PUBLIC_SANITY_API_VERSION: '2025-12-23',
+  },
   BASE_URL: 'https://example.com',
   dev: false,
   vercelPreview: false,

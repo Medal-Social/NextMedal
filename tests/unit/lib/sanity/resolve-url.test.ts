@@ -10,7 +10,7 @@ vi.mock('@/lib/core/env', () => ({
   BASE_URL: 'https://example.com',
 }));
 
-import resolveUrl, { isRelativeUrl, resolveAnyUrl } from '@/lib/sanity/resolve-url';
+import { isRelativeUrl, resolveAnyUrl, resolveUrlSync } from '@/lib/sanity/resolve-url';
 
 // Type for test page fixtures
 interface TestPage {
@@ -49,7 +49,7 @@ function createPage(slug: string, type = 'page', language?: string): TestPage {
   };
 }
 
-function createPageWithCollection(
+function _createPageWithCollection(
   slug: string,
   collectionSlug: string,
   type = 'collection.article'
@@ -126,80 +126,80 @@ describe('resolveAnyUrl', () => {
   });
 });
 
-describe('resolveUrl', () => {
+describe('resolveUrlSync', () => {
   it('returns / for undefined page', () => {
-    expect(resolveUrl(undefined)).toBe('/');
+    expect(resolveUrlSync(undefined)).toBe('/');
   });
 
   it('returns / for null page', () => {
-    expect(resolveUrl(null as unknown as TestPage)).toBe('/');
+    expect(resolveUrlSync(null as unknown as TestPage)).toBe('/');
   });
 
   it('resolves basic page with slug', () => {
     const page = createPage('about');
-    expect(resolveUrl(page)).toBe('https://example.com/about');
+    expect(resolveUrlSync(page)).toBe('https://example.com/about');
   });
 
   it('resolves index page to base URL with trailing slash', () => {
     const page = createPage('index');
-    expect(resolveUrl(page)).toBe('https://example.com/');
+    expect(resolveUrlSync(page)).toBe('https://example.com/');
   });
 
   it('returns relative path when base=false', () => {
     const page = createPage('contact');
-    expect(resolveUrl(page, { base: false })).toBe('/contact');
+    expect(resolveUrlSync(page, { base: false })).toBe('/contact');
   });
 
   it('adds language prefix for non-English pages', () => {
     const page = createPage('about', 'page', 'nb');
-    expect(resolveUrl(page, { base: false })).toBe('/nb/about');
+    expect(resolveUrlSync(page, { base: false })).toBe('/nb/about');
   });
 
   it('does not add language prefix for English pages', () => {
     const page = createPage('about', 'page', 'en');
-    expect(resolveUrl(page, { base: false })).toBe('/about');
+    expect(resolveUrlSync(page, { base: false })).toBe('/about');
   });
 
-  it('resolves article collection with collection slug', () => {
-    const page = createPageWithCollection('my-post', 'articles', 'collection.article');
-    expect(resolveUrl(page, { base: false })).toBe('/articles/my-post');
-  });
-
-  it('resolves changelog collection with collection slug', () => {
-    const page = createPageWithCollection('v1.0', 'changelog', 'collection.changelog');
-    expect(resolveUrl(page, { base: false })).toBe('/changelog/v1.0');
-  });
-
-  it('resolves documentation collection with collection slug', () => {
-    const page = createPageWithCollection('getting-started', 'docs', 'collection.documentation');
-    expect(resolveUrl(page, { base: false })).toBe('/docs/getting-started');
-  });
-
-  it('resolves newsletter collection with collection slug', () => {
-    const page = createPageWithCollection('issue-1', 'newsletter', 'collection.newsletter');
-    expect(resolveUrl(page, { base: false })).toBe('/newsletter/issue-1');
-  });
-
-  it('handles collection without collection reference', () => {
+  it('resolves article collection with default slug', () => {
     const page = createPage('my-post', 'collection.article');
-    expect(resolveUrl(page, { base: false })).toBe('/my-post');
+    expect(resolveUrlSync(page, { base: false })).toBe('/articles/my-post');
+  });
+
+  it('resolves changelog collection with default slug', () => {
+    const page = createPage('v1.0', 'collection.changelog');
+    expect(resolveUrlSync(page, { base: false })).toBe('/changelog/v1.0');
+  });
+
+  it('resolves documentation collection with default slug', () => {
+    const page = createPage('getting-started', 'collection.documentation');
+    expect(resolveUrlSync(page, { base: false })).toBe('/docs/getting-started');
+  });
+
+  it('resolves newsletter collection with default slug', () => {
+    const page = createPage('issue-1', 'collection.newsletter');
+    expect(resolveUrlSync(page, { base: false })).toBe('/newsletter/issue-1');
+  });
+
+  it('resolves events collection with default slug', () => {
+    const page = createPage('conference-2024', 'collection.events');
+    expect(resolveUrlSync(page, { base: false })).toBe('/events/conference-2024');
   });
 
   it('appends query string from params object', () => {
     const page = createPage('search');
-    expect(resolveUrl(page, { base: false, params: { q: 'test' } })).toBe('/search?q=test');
+    expect(resolveUrlSync(page, { base: false, params: { q: 'test' } })).toBe('/search?q=test');
   });
 
   it('appends multiple params', () => {
     const page = createPage('search');
-    expect(resolveUrl(page, { base: false, params: { q: 'test', page: '1' } })).toBe(
+    expect(resolveUrlSync(page, { base: false, params: { q: 'test', page: '1' } })).toBe(
       '/search?q=test&page=1'
     );
   });
 
   it('handles array params', () => {
     const page = createPage('filter');
-    expect(resolveUrl(page, { base: false, params: { tags: ['a', 'b'] } })).toBe(
+    expect(resolveUrlSync(page, { base: false, params: { tags: ['a', 'b'] } })).toBe(
       '/filter?tags=a&tags=b'
     );
   });
@@ -207,7 +207,7 @@ describe('resolveUrl', () => {
   it('filters params by allowList', () => {
     const page = createPage('search');
     expect(
-      resolveUrl(page, {
+      resolveUrlSync(page, {
         base: false,
         params: { q: 'test', secret: 'hidden' },
         allowList: ['q'],
@@ -217,12 +217,14 @@ describe('resolveUrl', () => {
 
   it('handles string params', () => {
     const page = createPage('page');
-    expect(resolveUrl(page, { base: false, params: '?custom=value' })).toBe('/page?custom=value');
+    expect(resolveUrlSync(page, { base: false, params: '?custom=value' })).toBe(
+      '/page?custom=value'
+    );
   });
 
   it('skips undefined and null params', () => {
     const page = createPage('page');
-    expect(resolveUrl(page, { base: false, params: { valid: 'yes', empty: undefined } })).toBe(
+    expect(resolveUrlSync(page, { base: false, params: { valid: 'yes', empty: undefined } })).toBe(
       '/page?valid=yes'
     );
   });
