@@ -87,10 +87,16 @@ function extractTwitterHandle(
 ): string | undefined {
   if (!socialLinks) return undefined;
 
-  // Find Twitter/X link
-  const twitterLink = socialLinks.find(
-    (link) => link.url.includes('twitter.com') || link.url.includes('x.com')
-  );
+  // Find Twitter/X link by checking the URL hostname
+  const twitterLink = socialLinks.find((link) => {
+    try {
+      const parsed = new URL(link.url, BASE_URL);
+      const hostname = parsed.hostname.toLowerCase();
+      return hostname === 'twitter.com' || hostname === 'www.twitter.com' || hostname === 'x.com' || hostname === 'www.x.com';
+    } catch {
+      return false;
+    }
+  });
 
   if (!twitterLink) return undefined;
 
