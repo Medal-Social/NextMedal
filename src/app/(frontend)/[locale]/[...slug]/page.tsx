@@ -483,6 +483,7 @@ async function getCollectionItemMetadata(
   const handler = collectionType ? handlers[collectionType as keyof typeof handlers] : null;
 
   if (handler) {
+    // @ts-expect-error - handler.fetcher is a union type of different collection fetchers
     const item = await fetchAndValidateCollectionItem(
       handler.fetcher,
       handler.type,
@@ -490,7 +491,6 @@ async function getCollectionItemMetadata(
       requestedSlug,
       locale
     );
-    // @ts-expect-error - item is generic but processMetadata expects PageBase
     return item ? processMetadata(item, searchParams) : null;
   }
 
