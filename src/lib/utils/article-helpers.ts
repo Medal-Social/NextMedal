@@ -3,11 +3,11 @@
  */
 export function getArticleFallbackImage(
   title?: string,
-  description?: string
+  locale?: string
 ): { src: string; alt: string; width: number; height: number } {
   const params = new URLSearchParams();
   if (title) params.set('title', title.slice(0, 100));
-  if (description) params.set('description', description.slice(0, 150));
+  if (locale) params.set('locale', locale);
 
   return {
     src: `/api/og/article-fallback?${params.toString()}`,

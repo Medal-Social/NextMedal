@@ -32,6 +32,7 @@
   "TranslationDialog": {
     "title": "Translation Not Available",
     "description": "This page is not available in {locale}. Would you like to go to the {locale} homepage instead?",
+    "availableIn": "This page is available in:",
     "goToHome": "Go to {locale} home",
     "stay": "Stay on this page"
   },

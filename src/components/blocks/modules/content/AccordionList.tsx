@@ -9,11 +9,7 @@ import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/sanity/module-props';
 import { cn } from '@/lib/utils/index';
 
-export default function AccordionList({
-  content,
-  items,
-  ...props
-}: Sanity.AccordionList) {
+export default function AccordionList({ content, items, ...props }: Sanity.AccordionList) {
   const defaultOpenItems = items
     ?.map(({ summary, open }, index) =>
       open

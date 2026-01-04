@@ -2,6 +2,7 @@
 
 import { Copy, Home, LayoutGrid } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import type * as React from 'react';
 import { toast } from 'sonner';
 import {
@@ -22,9 +23,10 @@ interface BrandMenuProps {
 }
 
 export default function BrandMenu({ children, logoData, hasBrandPage }: BrandMenuProps) {
+  const t = useTranslations('brand');
   const image = logoData?.image?.default;
   const extension = (image?.asset as { extension?: string } | undefined)?.extension || 'svg';
-  const label = extension === 'png' ? 'Copy Logo PNG' : 'Copy Logo SVG';
+  const label = extension === 'png' ? t('copyLogoPng') : t('copyLogoSvg');
 
   const handleCopyLogo = async () => {
     try {
@@ -39,17 +41,17 @@ export default function BrandMenu({ children, logoData, hasBrandPage }: BrandMen
         const success = await copyToClipboard(url);
 
         if (success) {
-          toast.success('Logo URL copied to clipboard');
+          toast.success(t('logoCopied'));
         } else {
           logger.error('Failed to copy logo URL');
-          toast.error('Failed to copy logo');
+          toast.error(t('copyFailed'));
         }
       } else {
         throw new Error('Could not generate logo URL');
       }
     } catch (err) {
       logger.error(err);
-      toast.error('Failed to copy logo');
+      toast.error(t('copyFailed'));
     }
   };
 
@@ -63,7 +65,7 @@ export default function BrandMenu({ children, logoData, hasBrandPage }: BrandMen
           render={
             <Link href="/" className="flex items-center cursor-pointer gap-2">
               <Home className="w-4 h-4" />
-              <span>Go to Home</span>
+              <span>{t('goToHome')}</span>
             </Link>
           }
         />
@@ -85,7 +87,7 @@ export default function BrandMenu({ children, logoData, hasBrandPage }: BrandMen
             render={
               <Link href="/brand" className="flex items-center cursor-pointer gap-2 font-medium">
                 <LayoutGrid className="w-4 h-4 text-primary" />
-                <span>Brand Center</span>
+                <span>{t('brandCenter')}</span>
               </Link>
             }
           />

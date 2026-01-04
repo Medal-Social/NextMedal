@@ -92,6 +92,49 @@ project-root/
 - **Safe server actions**: Use `next-safe-action` wrapper in `lib/safe-action.ts`
 - **Article system**: Flexible content publishing with categories, authors, and SEO optimization
 
+## Internationalization (i18n)
+
+### Single Source of Truth
+
+**All language configuration is centralized in `src/i18n/config.ts`**. This is the ONLY file you need to edit to add a new language.
+
+```typescript
+// src/i18n/config.ts
+export const LOCALE_CONFIG = {
+  en: { title: 'English', dateLocale: enUS, dir: 'ltr' },
+  nb: { title: 'Norsk', dateLocale: nb, dir: 'ltr' },
+  ar: { title: 'العربية', dateLocale: ar, dir: 'rtl' },
+} as const;
+```
+
+### Adding a New Language
+
+To add a new language:
+1. Import the date-fns locale in `src/i18n/config.ts`
+2. Add an entry to `LOCALE_CONFIG` with title, dateLocale, and dir
+3. Create a translation file in `src/messages/[locale].json`
+4. Run `pnpm generate:collections`
+
+Everything else (sitemap, routing, language switcher, Sanity Studio) updates automatically.
+
+### Language Configuration Flow
+
+```
+src/i18n/config.ts (LOCALE_CONFIG)
+  ↓
+src/i18n/routing.ts (derives locales automatically)
+  ↓
+All systems (sitemap, routing, UI) use dynamic configuration
+```
+
+**Do NOT** manually update `src/i18n/routing.ts` when adding languages - it derives from `config.ts` automatically.
+
+### Supported Languages
+
+- **English (en)** - Default, LTR
+- **Norwegian Bokmål (nb)** - LTR
+- **Arabic (ar)** - RTL
+
 ### Next.js 16 Middleware Naming
 
 In Next.js 16+, middleware MUST be named `proxy.ts` (not `middleware.ts`) and export a function named `proxy`.

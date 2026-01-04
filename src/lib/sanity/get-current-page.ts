@@ -1,8 +1,9 @@
 import { headers } from 'next/headers';
 import { routing } from '@/i18n/routing';
+import { getCollectionTypeFromSlug } from '@/lib/collections/registry';
 import { logger } from '@/lib/core/logger';
 import { fetchSanityLive } from '@/sanity/lib/fetch';
-import { CURRENT_PAGE_QUERY } from '@/sanity/lib/queries';
+import { CURRENT_PAGE_QUERY, HOMEPAGE_TRANSLATIONS_QUERY } from '@/sanity/lib/queries';
 
 /**
  * Get the current page with translation metadata based on the request URL
@@ -22,6 +23,19 @@ export async function getCurrentPage(): Promise<Sanity.PageBase | undefined> {
       query: CURRENT_PAGE_QUERY,
       params: { slug, locale },
     });
+
+    if (
+      page &&
+      page.metadata?.slug?.current === 'index' &&
+      (!page.translations || page.translations.length === 0)
+    ) {
+      const homepageTranslations = await fetchSanityLive<Sanity.PageBase['translations']>({
+        query: HOMEPAGE_TRANSLATIONS_QUERY,
+        params: { locale },
+      });
+
+      page.translations = homepageTranslations || [];
+    }
 
     return page;
   } catch (error) {
@@ -58,12 +72,15 @@ function parsePathname(pathname: string): { locale: string; slug: string } {
     return { locale, slug: 'index' };
   }
 
-  // Handle /article/slug pattern - strip "article" prefix for articles
-  if (remainingSegments[0] === 'articles' && remainingSegments.length > 1) {
-    return {
-      locale,
-      slug: remainingSegments.slice(1).join('/'),
-    };
+  // If first segment matches a collection slug, strip it for item lookups.
+  if (remainingSegments.length > 1) {
+    const collectionType = getCollectionTypeFromSlug(remainingSegments[0], locale);
+    if (collectionType) {
+      return {
+        locale,
+        slug: remainingSegments.slice(1).join('/'),
+      };
+    }
   }
 
   // Regular page slug

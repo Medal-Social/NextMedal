@@ -1,16 +1,18 @@
 /**
  * Site Settings Schema
- * @version 1.0.1
- * @lastUpdated 2025-12-23
- * @description Defines global site settings including branding, SEO defaults, and social media links.
+ * @version 2.0.0
+ * @lastUpdated 2026-01-03
+ * @description Global site settings with field-level translation support.
+ * Single document contains all language versions for simpler management.
  * @changelog
+ * - 2.0.0: Converted to field-level translation (title, tagline, navigation, copyright internationalized)
  * - 1.0.1: Updated header documentation
  * - 1.0.0: Initial version with core site configuration options
  */
 
 import { CogIcon, ControlsIcon, MenuIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
-import { getBlockText } from '@/sanity/lib/utils';
+import { DEFAULT_LOCALE } from '@/i18n/config';
 // import modules from '../fragments/modules';
 
 export default defineType({
@@ -32,17 +34,19 @@ export default defineType({
     },
   ],
   fields: [
-    // General Group
     defineField({
       name: 'language',
       type: 'string',
       readOnly: true,
       hidden: true,
+      initialValue: DEFAULT_LOCALE,
     }),
+    // General Group
     defineField({
       name: 'banners',
       title: 'Site Banners',
-      description: 'Special banners shown across the site. Useful for promotions or urgent news.',
+      description:
+        'Special banners shown across the site - shared across all languages (banner content is internationalized).',
       type: 'array',
       of: [{ type: 'reference', to: [{ type: 'banner' }] }],
       group: 'advanced',
@@ -51,15 +55,17 @@ export default defineType({
     defineField({
       name: 'title',
       title: 'Site Title',
-      description: 'The name of your website. This appears in the browser tab and search results.',
-      type: 'string',
-      validation: (Rule) => Rule.required().min(3).max(60),
+      description:
+        'The name of your website - localized per language. Appears in browser tab and search results.',
+      type: 'internationalizedArrayString',
+      validation: (Rule) => Rule.required(),
       group: 'general',
     }),
     defineField({
       name: 'logo',
       title: 'Site Logo',
-      description: "Upload your site's logo. Used in the header and for social sharing.",
+      description:
+        "Upload your site's logo - shared across all languages. Used in the header and for social sharing.",
       type: 'reference',
       to: [{ type: 'logo' }],
       group: 'general',
@@ -67,29 +73,10 @@ export default defineType({
     defineField({
       name: 'tagline',
       title: 'Site Tagline',
-      description: 'A short slogan or motto for your site. Shown in meta tags and some layouts.',
-      type: 'array',
-      of: [
-        {
-          type: 'block',
-          styles: [],
-          lists: [],
-          marks: {
-            decorators: [
-              { title: 'Strong', value: 'strong' },
-              { title: 'Emphasis', value: 'em' },
-            ],
-          },
-        },
-      ],
+      description:
+        'A short slogan or motto for your site - localized per language. Shown in meta tags and some layouts.',
+      type: 'internationalizedArrayBlockContent',
       group: 'general',
-      validation: (Rule) =>
-        Rule.custom((blocks) => {
-          const text = getBlockText(blocks as Sanity.BlockContent, ' ');
-          return text.length > 200
-            ? 'Tagline should be concise (recommended max 200 characters)'
-            : true;
-        }).warning(),
     }),
 
     // Navigation Group
@@ -97,16 +84,15 @@ export default defineType({
       name: 'headerNav',
       title: 'Header Navigation',
       description:
-        'Navigation links shown in the site header. Supports both simple links and dropdown menus.',
-      type: 'array',
-      of: [{ type: 'menuItem' }, { type: 'dropdownMenu' }],
+        'Navigation links shown in the site header - localized per language. Each language can have different menu structure.',
+      type: 'internationalizedArrayHeaderNavArray',
       group: 'navigation',
       fieldset: 'header',
     }),
     defineField({
       name: 'enableSearch',
       title: 'Enable Search',
-      description: 'Show the search bar in the header.',
+      description: 'Show the search bar in the header - shared across all languages.',
       type: 'boolean',
       initialValue: true,
       group: 'advanced',
@@ -115,58 +101,35 @@ export default defineType({
       name: 'ctas',
       title: 'Action Buttons',
       description:
-        'Primary action buttons displayed in the header (e.g., "Get Started", "Contact").',
-      type: 'array',
-      of: [{ type: 'cta' }],
+        'Primary action buttons displayed in the header - localized per language (e.g., "Get Started", "Contact").',
+      type: 'internationalizedArrayCtaArray',
       group: 'navigation',
       fieldset: 'header',
-      initialValue: [],
     }),
 
     defineField({
       name: 'footerNav',
       title: 'Footer Navigation',
       description:
-        'Navigation links shown in the site footer. Organized by category groups (use dropdown menus).',
-      type: 'array',
-      of: [{ type: 'dropdownMenu' }],
+        'Navigation links shown in the site footer - localized per language. Each language can have different footer structure.',
+      type: 'internationalizedArrayDropdownMenuArray',
       group: 'navigation',
       fieldset: 'footer',
     }),
     defineField({
       name: 'copyright',
       title: 'Footer Text',
-      description: 'Copyright notice and credits displayed in the footer.',
-      type: 'array',
-      of: [
-        {
-          type: 'block',
-          styles: [],
-          lists: [],
-          marks: {
-            decorators: [
-              { title: 'Strong', value: 'strong' },
-              { title: 'Emphasis', value: 'em' },
-            ],
-          },
-        },
-      ],
+      description: 'Copyright notice and credits displayed in the footer - localized per language.',
+      type: 'internationalizedArrayBlockContent',
       group: 'navigation',
       fieldset: 'footer',
-      validation: (Rule) =>
-        Rule.custom((blocks) => {
-          const text = getBlockText(blocks as Sanity.BlockContent, ' ');
-          return text.length > 500
-            ? 'Footer text should be concise (recommended max 500 characters)'
-            : true;
-        }).warning(),
     }),
     defineField({
       name: 'footerLinks',
       title: 'Additional Links',
-      description: 'Additional links to display in the footer (e.g. Locations, Legal)',
-      type: 'array',
-      of: [{ type: 'menuItem' }],
+      description:
+        'Additional links to display in the footer - localized per language (e.g. Locations, Legal)',
+      type: 'internationalizedArrayMenuItemArray',
       group: 'navigation',
       fieldset: 'footer',
     }),
@@ -259,8 +222,9 @@ export default defineType({
           name: 'privacyPolicy',
           title: 'Privacy Policy Link',
           type: 'reference',
-          to: [{ type: 'page' }], // Assuming 'page' exists, need to verify or use url
-          description: 'Link to the privacy policy page.',
+          to: [{ type: 'page' }],
+          description:
+            'Link to the privacy policy page - shows all pages (page content is internationalized).',
           hidden: ({ parent }) => !parent?.enabled,
           validation: (Rule) =>
             Rule.custom((value, context) => {
@@ -278,22 +242,17 @@ export default defineType({
   preview: {
     select: {
       title: 'title',
-      tagline: 'tagline',
-      language: 'language',
     },
-    prepare: ({ title, tagline, language }) => ({
-      title: [language && `[${language}] `, title || 'Site settings'].filter(Boolean).join(' '),
-      subtitle: [
-        language && `[${language}] `,
-        tagline?.[0]?.children
-          ? tagline[0]?.children
-              .map((c: { text?: string }) => c.text)
-              .filter(Boolean)
-              .join(' ')
-          : '',
-      ]
-        .filter(Boolean)
-        .join(' '),
-    }),
+    prepare: ({ title }) => {
+      // Extract first available language value from internationalized array
+      const titleText =
+        Array.isArray(title) && title.length > 0
+          ? title[0].value || 'Site Settings'
+          : 'Site Settings';
+
+      return {
+        title: titleText,
+      };
+    },
   },
 });

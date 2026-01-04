@@ -1,10 +1,12 @@
 import type { NextRequest } from 'next/server';
 import type { Locale } from '@/i18n/routing';
 import { routing } from '@/i18n/routing';
+import { getAllCollections } from '@/lib/collections/registry';
+import type { CollectionType } from '@/lib/collections/types';
 import { BASE_URL } from '@/lib/core/env';
 import { logger } from '@/lib/core/logger';
 import { fetchSanityLive } from '@/sanity/lib/live';
-import { SITEMAP_WITH_TRANSLATIONS_QUERY } from '@/sanity/lib/queries';
+import { SITEMAP_TRANSLATIONS_QUERY, SITEMAP_WITH_TRANSLATIONS_QUERY } from '@/sanity/lib/queries';
 
 // Type for dynamic route params
 type Params = { locale: string };
@@ -17,19 +19,32 @@ export function generateStaticParams(): Params[] {
 interface TranslationEntry {
   slug: string;
   language: string;
-  collectionSlug?: string;
+  _type?: string;
 }
 
 interface SitemapEntry {
+  _id: string;
+  _type?: string;
   slug: string;
   lastModified: string;
   priority: number;
   language: string;
-  translations: TranslationEntry[];
+  translations?: TranslationEntry[];
 }
 
 interface CollectionSitemapEntry extends SitemapEntry {
-  collectionSlug: string;
+  _type: string;
+}
+
+interface TranslationMetadata {
+  _id: string;
+  documentId: string;
+  translations: Array<{
+    _id: string;
+    _type: string;
+    slug: string;
+    language: string;
+  }>;
 }
 
 interface SitemapData {
@@ -48,11 +63,23 @@ function buildUrl(slug: string, locale: string, prefix: string = ''): string {
   return parts.join('/');
 }
 
-function buildCollectionUrl(slug: string, collectionSlug: string, locale: string): string {
+async function buildCollectionUrl(
+  slug: string,
+  collectionType: string,
+  locale: string,
+  collectionSlugsMap: Map<string, Record<CollectionType, string>>
+): Promise<string> {
   const isDefaultLocale = locale === routing.defaultLocale;
   const parts: string[] = [BASE_URL];
   if (!isDefaultLocale) parts.push(locale);
-  parts.push(collectionSlug);
+
+  // Get collection slug from the map
+  const slugs = collectionSlugsMap.get(locale);
+  const collectionSlug = slugs?.[collectionType as CollectionType];
+  if (collectionSlug) {
+    parts.push(collectionSlug);
+  }
+
   parts.push(slug);
   return parts.join('/');
 }
@@ -63,7 +90,7 @@ function buildHreflangLinks(
 ): { lang: string; url: string }[] {
   const links: { lang: string; url: string }[] = [];
   links.push({ lang: entry.language, url: buildUrl(entry.slug, entry.language, prefix) });
-  for (const translation of entry.translations) {
+  for (const translation of entry.translations || []) {
     if (translation?.language && translation?.slug && translation.language !== entry.language) {
       links.push({
         lang: translation.language,
@@ -74,24 +101,30 @@ function buildHreflangLinks(
   return links;
 }
 
-function buildCollectionHreflangLinks(
-  entry: CollectionSitemapEntry
-): { lang: string; url: string }[] {
+async function buildCollectionHreflangLinks(
+  entry: CollectionSitemapEntry,
+  collectionSlugsMap: Map<string, Record<CollectionType, string>>
+): Promise<{ lang: string; url: string }[]> {
   const links: { lang: string; url: string }[] = [];
   links.push({
     lang: entry.language,
-    url: buildCollectionUrl(entry.slug, entry.collectionSlug, entry.language),
+    url: await buildCollectionUrl(entry.slug, entry._type, entry.language, collectionSlugsMap),
   });
-  for (const translation of entry.translations) {
+  for (const translation of entry.translations || []) {
     if (
       translation?.language &&
       translation?.slug &&
-      translation?.collectionSlug &&
+      translation?._type &&
       translation.language !== entry.language
     ) {
       links.push({
         lang: translation.language,
-        url: buildCollectionUrl(translation.slug, translation.collectionSlug, translation.language),
+        url: await buildCollectionUrl(
+          translation.slug,
+          translation._type,
+          translation.language,
+          collectionSlugsMap
+        ),
       });
     }
   }
@@ -129,9 +162,12 @@ function generateUrlEntry(entry: SitemapEntry, prefix: string = ''): string {
   return xml;
 }
 
-function generateCollectionUrlEntry(entry: CollectionSitemapEntry): string {
-  const url = buildCollectionUrl(entry.slug, entry.collectionSlug, entry.language);
-  const hreflangLinks = buildCollectionHreflangLinks(entry);
+async function generateCollectionUrlEntry(
+  entry: CollectionSitemapEntry,
+  collectionSlugsMap: Map<string, Record<CollectionType, string>>
+): Promise<string> {
+  const url = await buildCollectionUrl(entry.slug, entry._type, entry.language, collectionSlugsMap);
+  const hreflangLinks = await buildCollectionHreflangLinks(entry, collectionSlugsMap);
   const hasTranslations = hreflangLinks.length > 1;
 
   let xml = '  <url>\n';
@@ -151,6 +187,96 @@ function generateCollectionUrlEntry(entry: CollectionSitemapEntry): string {
   return xml;
 }
 
+// Data Fetching Helpers
+
+async function fetchSitemapData() {
+  try {
+    const [data, translationsData] = await Promise.all([
+      fetchSanityLive<SitemapData>({
+        query: SITEMAP_WITH_TRANSLATIONS_QUERY,
+        stega: false,
+      }),
+      fetchSanityLive<TranslationMetadata[]>({
+        query: SITEMAP_TRANSLATIONS_QUERY,
+        stega: false,
+      }),
+    ]);
+    return { data, translationsData };
+  } catch (error) {
+    logger.error({ err: error }, 'Error fetching sitemap data from Sanity');
+    return {
+      errorResponse: new Response('Failed to fetch sitemap data from CMS.', {
+        status: 503,
+        headers: { 'Content-Type': 'text/plain' },
+      }),
+    };
+  }
+}
+
+function buildTranslationsMap(translationsData: TranslationMetadata[] | undefined) {
+  const translationsMap = new Map<string, TranslationEntry[]>();
+  for (const translationMeta of translationsData || []) {
+    if (translationMeta.documentId && translationMeta.translations) {
+      translationsMap.set(
+        translationMeta.documentId,
+        translationMeta.translations.map((t) => ({
+          _type: t._type,
+          slug: t.slug,
+          language: t.language,
+        }))
+      );
+    }
+  }
+  return translationsMap;
+}
+
+function buildCollectionSlugsMap() {
+  const collectionSlugsMap = new Map<string, Record<CollectionType, string>>();
+  for (const loc of routing.locales) {
+    const collections = getAllCollections(loc);
+    if (collections) {
+      const slugsMap: Record<CollectionType, string> = {} as Record<CollectionType, string>;
+      for (const [type, metadata] of Object.entries(collections)) {
+        slugsMap[type as CollectionType] = metadata.slug;
+      }
+      collectionSlugsMap.set(loc, slugsMap);
+    }
+  }
+  return collectionSlugsMap;
+}
+
+// Type Guards & Processors
+
+function isValidEntry(entry: SitemapEntry | null): entry is SitemapEntry {
+  return entry != null && typeof entry.slug === 'string' && typeof entry.language === 'string';
+}
+
+function isValidCollectionEntry(
+  entry: CollectionSitemapEntry | null
+): entry is CollectionSitemapEntry {
+  return (
+    entry != null &&
+    typeof entry.slug === 'string' &&
+    typeof entry.language === 'string' &&
+    typeof entry._type === 'string'
+  );
+}
+
+function processEntries<T extends SitemapEntry>(
+  entries: T[] | undefined,
+  locale: string,
+  validator: (entry: T | null) => entry is T,
+  translationsMap: Map<string, TranslationEntry[]>
+): T[] {
+  const filtered = (entries ?? []).filter(validator).filter((entry) => entry.language === locale);
+  for (const entry of filtered) {
+    entry.translations = translationsMap.get(entry._id) ?? [];
+  }
+  return filtered;
+}
+
+// Main Handler
+
 export async function GET(_req: NextRequest, context: { params: Promise<Params> }) {
   const params = await context.params;
   const locale = params?.locale ?? '';
@@ -160,54 +286,37 @@ export async function GET(_req: NextRequest, context: { params: Promise<Params> 
     return Response.redirect(new URL('/sitemap.xml', BASE_URL), 302);
   }
 
-  let data: SitemapData;
+  const { data, translationsData, errorResponse } = await fetchSitemapData();
+  if (errorResponse) return errorResponse;
 
-  try {
-    data = await fetchSanityLive<SitemapData>({
-      query: SITEMAP_WITH_TRANSLATIONS_QUERY,
-      stega: false,
-    });
-  } catch (error) {
-    logger.error({ err: error }, 'Error fetching sitemap data from Sanity');
-    return new Response('Failed to fetch sitemap data from CMS.', {
-      status: 503,
-      headers: { 'Content-Type': 'text/plain' },
-    });
-  }
+  // Build lookups
+  const translationsMap = buildTranslationsMap(translationsData);
+  const collectionSlugsMap = buildCollectionSlugsMap();
 
-  const isValidEntry = (entry: SitemapEntry | null): entry is SitemapEntry =>
-    entry != null && typeof entry.slug === 'string' && typeof entry.language === 'string';
+  // Process data
+  const pages = processEntries(data?.pages, locale, isValidEntry, translationsMap);
+  const articles = processEntries(data?.articles, locale, isValidEntry, translationsMap);
+  const collections = processEntries(
+    data?.collections,
+    locale,
+    isValidCollectionEntry,
+    translationsMap
+  );
 
-  const isValidCollectionEntry = (
-    entry: CollectionSitemapEntry | null
-  ): entry is CollectionSitemapEntry =>
-    entry != null &&
-    typeof entry.slug === 'string' &&
-    typeof entry.language === 'string' &&
-    typeof entry.collectionSlug === 'string';
-
-  const pages = (data.pages ?? [])
-    .filter(isValidEntry)
-    .filter((entry) => entry.language === locale);
-  const articles = (data.articles ?? [])
-    .filter(isValidEntry)
-    .filter((entry) => entry.language === locale);
-  const collections = (data.collections ?? [])
-    .filter(isValidCollectionEntry)
-    .filter((entry) => entry.language === locale);
-
-  for (const entry of pages) entry.translations = entry.translations ?? [];
-  for (const entry of articles) entry.translations = entry.translations ?? [];
-  for (const entry of collections) entry.translations = entry.translations ?? [];
-
+  // Generate XML
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
   xml += '<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>\n';
   xml +=
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n';
 
   for (const entry of pages) xml += generateUrlEntry(entry, '');
-  for (const entry of articles) xml += generateUrlEntry(entry, 'articles');
-  for (const entry of collections) xml += generateCollectionUrlEntry(entry);
+
+  const articlesSlug = collectionSlugsMap.get(locale)?.['collection.article'] || 'articles';
+  for (const entry of articles) xml += generateUrlEntry(entry, articlesSlug);
+
+  for (const entry of collections) {
+    xml += await generateCollectionUrlEntry(entry, collectionSlugsMap);
+  }
 
   xml += '</urlset>';
 

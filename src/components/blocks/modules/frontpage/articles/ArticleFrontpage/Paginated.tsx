@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import {
   Pagination,
   PaginationContent,
@@ -14,13 +15,16 @@ import ArticleGrid from './ArticleGrid';
 
 export default function Paginated({
   posts,
+  collectionSlug,
   totalCount,
   itemsPerPage = 6,
 }: {
   posts: Sanity.CollectionArticlePost[];
+  collectionSlug: string;
   totalCount: number;
   itemsPerPage?: number;
 }) {
+  const t = useTranslations('article');
   const { page: currentPage, setPage } = usePageState();
 
   // Calculate total pages from server-provided count
@@ -48,10 +52,11 @@ export default function Paginated({
     <div id="article-list" className="space-y-12">
       {posts.length === 0 ? (
         <div className="py-20 text-center">
-          <p className="text-lg text-slate-500">No articles found matching your filters.</p>
+          <p className="text-lg text-slate-500">{t('noArticles')}</p>
+          <p className="text-sm text-slate-400 mt-2">{t('noArticlesDescription')}</p>
         </div>
       ) : (
-        <ArticleGrid posts={posts} />
+        <ArticleGrid posts={posts} collectionSlug={collectionSlug} />
       )}
 
       {totalPages > 1 && (

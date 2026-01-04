@@ -6,13 +6,15 @@
  * Uses server-side pagination and filtering for optimal performance with large datasets (1000+ articles).
  */
 
+import { getTranslations } from 'next-intl/server';
 import { groq } from 'next-sanity';
 import { Suspense } from 'react';
 import ArticleFilterBar from '@/components/blocks/modules/frontpage/articles/ArticleFrontpage/ArticleFilterBar';
-import ArticleHeroWrapper from '@/components/blocks/modules/frontpage/articles/ArticleFrontpage/ArticleHeroWrapper';
+import ArticleHero from '@/components/blocks/modules/frontpage/articles/ArticleFrontpage/ArticleHero';
 import Paginated from '@/components/blocks/modules/frontpage/articles/ArticleFrontpage/Paginated';
 import PostPreview from '@/components/blocks/modules/frontpage/articles/PostPreview';
 import { routing } from '@/i18n/routing';
+import { getCollectionSlugWithFallback } from '@/lib/collections/registry';
 import moduleProps from '@/lib/sanity/module-props';
 import { fetchSanityLive } from '@/sanity/lib/live';
 import { AUTHOR_PREVIEW_QUERY, CATEGORY_PREVIEW_QUERY, IMAGE_QUERY } from '@/sanity/lib/queries';
@@ -34,11 +36,7 @@ function buildArticleFilter(
   _locale: string,
   params?: ArticlesFrontpageProps['searchParams']
 ) {
-  const filters = [
-    '_type == "collection.article"',
-    'collection->metadata.slug.current == $collectionSlug',
-    'language == $locale',
-  ];
+  const filters = ['_type == "collection.article"', 'language == $locale'];
 
   if (params?.category && params.category !== 'All') {
     filters.push('$category in categories[]->slug.current');
@@ -77,9 +75,7 @@ async function fetchCollectionPosts(
         "readTime": math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
         metadata {
           title,
-          description,
-          "slug": { "current": slug.current },
-          image { ${IMAGE_QUERY} }
+          "slug": { "current": slug.current }
         },
         seo {
           description,
@@ -96,7 +92,6 @@ async function fetchCollectionPosts(
       }
     `,
     params: {
-      collectionSlug,
       locale,
       category: params?.category || null,
       author: params?.author || null,
@@ -118,7 +113,6 @@ async function fetchTotalCount(
   const result = await fetchSanityLive<number>({
     query: groq`count(*[${filter}])`,
     params: {
-      collectionSlug,
       locale,
       category: params?.category || null,
       author: params?.author || null,
@@ -130,12 +124,11 @@ async function fetchTotalCount(
 }
 
 // Fetch hero posts (unfiltered, for display above filters)
-async function fetchHeroPosts(collectionSlug: string, locale: string) {
+async function fetchHeroPosts(_collectionSlug: string, locale: string) {
   return await fetchSanityLive<Sanity.CollectionArticlePost[]>({
     query: groq`
       *[
         _type == 'collection.article' &&
-        collection->metadata.slug.current == $collectionSlug &&
         language == $locale
       ]|order(publishDate desc)[0...3]{
         _type,
@@ -146,9 +139,7 @@ async function fetchHeroPosts(collectionSlug: string, locale: string) {
         "readTime": math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
         metadata {
           title,
-          description,
-          "slug": { "current": slug.current },
-          image { ${IMAGE_QUERY} }
+          "slug": { "current": slug.current }
         },
         seo {
           description,
@@ -165,7 +156,6 @@ async function fetchHeroPosts(collectionSlug: string, locale: string) {
       }
     `,
     params: {
-      collectionSlug,
       locale,
     },
   });
@@ -176,21 +166,14 @@ export default async function ArticlesFrontpage({
   displayFilters = true,
   limit = 12,
   showRssLink = true,
-  collectionSlug,
+  collectionSlug: providedSlug,
   locale = 'en',
   searchParams,
   ...props
 }: ArticlesFrontpageProps) {
-  // If no collection slug is provided, we can't fetch posts
-  if (!collectionSlug) {
-    return (
-      <div {...moduleProps(props)}>
-        <div className="text-center py-12 text-muted-foreground">
-          <p>Collection not configured. Add this module to a page to create a collection.</p>
-        </div>
-      </div>
-    );
-  }
+  // Self-determine collection slug from site settings if not provided
+  const collectionSlug =
+    providedSlug || getCollectionSlugWithFallback('collection.article', locale);
 
   // Parse page number from search params
   const currentPage = Math.max(1, Number.parseInt(searchParams?.page || '1', 10));
@@ -228,9 +211,31 @@ export default async function ArticlesFrontpage({
   const languagePrefix = locale && locale !== routing.defaultLocale ? `/${locale}` : '';
   const rssUrl = showRssLink ? `${languagePrefix}/${collectionSlug}/rss.xml` : undefined;
 
+  // Fetch translations for ArticleHero
+  const t = await getTranslations('article');
+
+  // Check if any filters are active
+  const isFiltering =
+    (searchParams?.category && searchParams.category !== 'All') ||
+    searchParams?.author ||
+    searchParams?.search;
+
   return (
     <div {...moduleProps(props)}>
-      <ArticleHeroWrapper heroPost={heroPost} recentPost={recentPost} popularPost={popularPost} />
+      {/* Show hero only when no filters are active */}
+      {!isFiltering && heroPost && (
+        <ArticleHero
+          featuredPost={heroPost}
+          recentPost={recentPost}
+          popularPost={popularPost}
+          collectionSlug={collectionSlug}
+          translations={{
+            featuredInsight: t('featuredInsight'),
+            recent: t('recent'),
+            popular: t('popular'),
+          }}
+        />
+      )}
 
       {displayFilters && (
         <ArticleFilterBar rssUrl={rssUrl} collectionSlug={collectionSlug} locale={locale} />
@@ -249,7 +254,12 @@ export default async function ArticlesFrontpage({
               </ul>
             }
           >
-            <Paginated posts={posts} totalCount={totalCount} itemsPerPage={limit} />
+            <Paginated
+              posts={posts}
+              collectionSlug={collectionSlug}
+              totalCount={totalCount}
+              itemsPerPage={limit}
+            />
           </Suspense>
         </div>
       </section>

@@ -1,9 +1,10 @@
 /**
  * Article Category Schema
- * @version 1.0.1
- * @lastUpdated 2025-12-31
+ * @version 1.1.0
+ * @lastUpdated 2026-01-03
  * @description Defines categories for organizing articles with title and slug.
  * @changelog
+ * - 1.1.0: Added language field for translation support
  * - 1.0.1: Renamed from article.category to article.category
  * - 1.0.0: Initial version with basic category structure
  */
@@ -20,17 +21,21 @@ export default defineType({
     defineField({
       name: 'title',
       title: 'Name',
-      description: 'The name of the category (e.g. "Technology", "Design").',
-      type: 'string',
-      validation: (Rule) => Rule.required(),
+      description:
+        'The name of the category (e.g. "Technology", "Design") - localized per language',
+      type: 'internationalizedArrayString',
     }),
     defineField({
       name: 'slug',
       title: 'Slug',
-      description: 'URL-friendly version of the name.',
+      description: 'URL-friendly version of the name (shared across all languages).',
       type: 'slug',
       options: {
-        source: 'title',
+        source: (doc) => {
+          const document = doc as { title?: Array<{ value?: string }> };
+          // Use first available language value for slug generation
+          return document.title?.[0]?.value || '';
+        },
       },
       validation: (Rule) => Rule.required(),
     }),
@@ -40,9 +45,17 @@ export default defineType({
       title: 'title',
       slug: 'slug.current',
     },
-    prepare: ({ title, slug }) => ({
-      title: title || 'Untitled Category',
-      subtitle: slug ? `/${slug}` : 'No slug',
-    }),
+    prepare: ({ title, slug }) => {
+      // Extract first available language value from internationalized array
+      const titleText =
+        Array.isArray(title) && title.length > 0
+          ? title[0].value || 'Untitled Category'
+          : 'Untitled Category';
+
+      return {
+        title: titleText,
+        subtitle: `/${slug || 'no-slug'}`,
+      };
+    },
   },
 });

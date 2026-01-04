@@ -1,9 +1,10 @@
 import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
+import { getLocale } from 'next-intl/server';
 import { stegaClean } from 'next-sanity';
 import { CTA } from '@/components/blocks/objects/cta';
-import resolveUrl from '@/lib/sanity/resolve-url';
-import { getSite } from '@/sanity/lib/fetch';
+import resolveUrl from '@/lib/sanity/resolve-url-server';
+import { getFooterSettings } from '@/sanity/lib/fetch';
 
 // Extend the type to match PageBase interface
 type InternalLink = {
@@ -64,26 +65,31 @@ function ExternalMenuItem({ href, label }: { href: string; label?: string }) {
 }
 
 // Internal link component
-function InternalMenuItem({ internal, label }: { internal: InternalLink; label?: string }) {
-  const url = resolveUrl(internal, { base: false });
+function InternalMenuItem({ url, label, title }: { url: string; label?: string; title?: string }) {
   return (
     <Link
       href={url}
       className="text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
     >
-      {label || internal.title}
+      {label || title}
     </Link>
   );
 }
 
 // Single menu item renderer
-function MenuItemRenderer({ item }: { item: MenuItemType }) {
+function MenuItemRenderer({
+  item,
+  resolvedUrl,
+}: {
+  item: MenuItemType;
+  resolvedUrl?: string | null;
+}) {
   if (item.external) {
     return <ExternalMenuItem href={item.external} label={item.label} />;
   }
 
-  if (item.internal) {
-    return <InternalMenuItem internal={item.internal} label={item.label} />;
+  if (item.internal && resolvedUrl) {
+    return <InternalMenuItem url={resolvedUrl} label={item.label} title={item.internal.title} />;
   }
 
   return (
@@ -100,7 +106,7 @@ const DROPDOWN_LINK_CLASS =
   'text-muted-foreground text-sm hover:text-foreground motion-safe:transition-all motion-safe:duration-200 motion-safe:hover:translate-x-1 focus:outline-none focus:ring-2 focus:ring-primary';
 
 // Dropdown link renderer
-function DropdownLink({ link }: { link: MenuItemType }) {
+function DropdownLink({ link, resolvedUrl }: { link: MenuItemType; resolvedUrl?: string | null }) {
   if (link.external) {
     return (
       <Link
@@ -118,9 +124,9 @@ function DropdownLink({ link }: { link: MenuItemType }) {
     );
   }
 
-  if (link.internal) {
+  if (link.internal && resolvedUrl) {
     return (
-      <Link href={resolveUrl(link.internal, { base: false })} className={DROPDOWN_LINK_CLASS}>
+      <Link href={resolvedUrl} className={DROPDOWN_LINK_CLASS}>
         {link.label || link.internal.title}
       </Link>
     );
@@ -130,7 +136,13 @@ function DropdownLink({ link }: { link: MenuItemType }) {
 }
 
 // Dropdown menu renderer
-function DropdownMenuRenderer({ item }: { item: DropdownMenuType }) {
+function DropdownMenuRenderer({
+  item,
+  resolvedUrls,
+}: {
+  item: DropdownMenuType;
+  resolvedUrls: Map<string, string>;
+}) {
   return (
     <>
       <div className="font-semibold text-muted-foreground text-xs uppercase tracking-wider mb-1">
@@ -139,11 +151,14 @@ function DropdownMenuRenderer({ item }: { item: DropdownMenuType }) {
 
       {item.links && item.links.length > 0 && (
         <ul className="flex flex-col gap-2">
-          {item.links.map((link, linkIndex) => (
-            <li key={getItemKey(link, linkIndex)}>
-              <DropdownLink link={link} />
-            </li>
-          ))}
+          {item.links.map((link, linkIndex) => {
+            const linkKey = getItemKey(link, linkIndex);
+            return (
+              <li key={linkKey}>
+                <DropdownLink link={link} resolvedUrl={resolvedUrls.get(linkKey)} />
+              </li>
+            );
+          })}
         </ul>
       )}
     </>
@@ -151,21 +166,65 @@ function DropdownMenuRenderer({ item }: { item: DropdownMenuType }) {
 }
 
 // Navigation item wrapper
-function NavigationItem({ item, index }: { item: MenuItem; index: number }) {
+function NavigationItem({
+  item,
+  index,
+  resolvedUrls,
+}: {
+  item: MenuItem;
+  index: number;
+  resolvedUrls: Map<string, string>;
+}) {
   const key = getItemKey(item, index);
 
   return (
     <div className="flex flex-col gap-2" key={key}>
-      {item._type === 'menuItem' && <MenuItemRenderer item={item} />}
-      {item._type === 'dropdownMenu' && <DropdownMenuRenderer item={item} />}
+      {item._type === 'menuItem' && (
+        <MenuItemRenderer item={item} resolvedUrl={resolvedUrls.get(key)} />
+      )}
+      {item._type === 'dropdownMenu' && (
+        <DropdownMenuRenderer item={item} resolvedUrls={resolvedUrls} />
+      )}
     </div>
   );
 }
 
 export default async function Menu() {
-  const { footerNav } = await getSite();
+  const locale = await getLocale();
+  const site = await getFooterSettings(locale);
 
-  if (!footerNav?.length) return null;
+  if (!site?.footerNav?.length) return null;
+
+  const { footerNav } = site;
+
+  // Pre-resolve all internal URLs
+  const resolvedUrls = new Map<string, string>();
+
+  await Promise.all(
+    footerNav.map(async (item, index) => {
+      const menuItem = item as MenuItem;
+      const itemKey = getItemKey(menuItem, index);
+
+      // Handle menu items
+      if (menuItem._type === 'menuItem' && menuItem.internal) {
+        const url = await resolveUrl(menuItem.internal, { base: false });
+        resolvedUrls.set(itemKey, url);
+      }
+
+      // Handle dropdown menus
+      if (menuItem._type === 'dropdownMenu' && menuItem.links) {
+        await Promise.all(
+          menuItem.links.map(async (link, linkIndex) => {
+            if (link.internal) {
+              const linkKey = getItemKey(link, linkIndex);
+              const url = await resolveUrl(link.internal, { base: false });
+              resolvedUrls.set(linkKey, url);
+            }
+          })
+        );
+      }
+    })
+  );
 
   return (
     <nav
@@ -177,6 +236,7 @@ export default async function Menu() {
           key={getItemKey(item as MenuItem, index)}
           item={item as MenuItem}
           index={index}
+          resolvedUrls={resolvedUrls}
         />
       ))}
     </nav>

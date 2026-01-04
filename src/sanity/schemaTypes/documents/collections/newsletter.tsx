@@ -1,20 +1,18 @@
 /**
  * Collection Newsletter Schema
- * @version 1.0.0
- * @lastUpdated 2025-12-30
- * @description Newsletter issues with flexible collection reference for dynamic URLs.
- * Items reference a parent collection page, enabling CMS-configurable collection names/URLs.
+ * @version 2.0.0
+ * @lastUpdated 2026-01-03
+ * @description Newsletter issues with field-level translation support.
+ * Single document contains all language versions for simpler management.
  * @changelog
+ * - 2.0.0: Converted to field-level translation (title, preheader, body internationalized)
  * - 1.0.0: Initial version with collection reference pattern
  */
 
 import { ControlsIcon, EnvelopeIcon, EyeClosedIcon, SearchIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
-import { isUniqueAcrossLocale } from '@/sanity/lib/isUniqueAcrossLocale';
 import PageIdentityField from '@/sanity/ui/PageIdentityField';
 import PageIdentityInput from '@/sanity/ui/PageIdentityInput';
-import { imageBlock } from '../../fragments';
-import link from '../../objects/link';
 
 export default defineType({
   name: 'collection.newsletter',
@@ -27,32 +25,16 @@ export default defineType({
     { name: 'advanced', title: 'Advanced Options', icon: ControlsIcon },
   ],
   fields: [
-    defineField({
-      name: 'language',
-      type: 'string',
-      readOnly: true,
-      hidden: true,
-    }),
-    // Collection Reference - determines the base URL for this item
-    defineField({
-      name: 'collection',
-      title: 'Collection',
-      description: 'The collection page this newsletter belongs to (determines the URL)',
-      type: 'reference',
-      to: [{ type: 'page' }],
-      validation: (Rule) => Rule.required(),
-      group: 'content',
-    }),
-    // Issue Number
+    // Issue Number (shared across languages)
     defineField({
       name: 'issueNumber',
       title: 'Issue Number',
-      description: 'The newsletter issue number (e.g., #42)',
+      description: 'The newsletter issue number - shared across all languages (e.g., #42)',
       type: 'number',
       validation: (Rule) => Rule.integer().positive(),
       group: 'content',
     }),
-    // Newsletter Identity - Title and URL Slug together in Content tab
+    // Newsletter Identity
     defineField({
       name: 'metadata',
       type: 'object',
@@ -65,24 +47,25 @@ export default defineType({
         defineField({
           name: 'title',
           title: 'Subject Line',
-          description: 'The newsletter subject line / title',
-          type: 'string',
+          description: 'The newsletter subject line / title - localized per language',
+          type: 'internationalizedArrayString',
           validation: (Rule) => Rule.required(),
         }),
         defineField({
           name: 'slug',
           title: 'URL Slug',
           type: 'slug',
-          description: 'The URL path for this newsletter issue (appended to collection URL)',
+          description: 'The URL path for this newsletter issue - shared across all languages',
           options: {
             source: (doc) => {
-              const document = doc as { metadata?: { title?: string } };
-              return document.metadata?.title || '';
+              const document = doc as { metadata?: { title?: Array<{ value?: string }> } };
+              // Extract first available language value for slug generation
+              return document.metadata?.title?.[0]?.value || '';
             },
-            isUnique: isUniqueAcrossLocale,
           },
           validation: (Rule) =>
             Rule.required().custom((slug) => {
+              // Only ban system paths - language codes are fine since newsletters are under /newsletter/ prefix
               const reserved = ['studio', 'api', 'monitoring', 'rss.xml'];
               if (slug?.current && reserved.includes(slug.current.toLowerCase())) {
                 return `"${slug.current}" is a reserved path.`;
@@ -99,46 +82,16 @@ export default defineType({
     defineField({
       name: 'preheader',
       title: 'Preview Text',
-      description: 'Short preview text shown in email clients (40-100 characters)',
-      type: 'string',
+      description:
+        'Short preview text shown in email clients - localized per language (40-100 characters)',
+      type: 'internationalizedArrayString',
       group: 'content',
     }),
     defineField({
       name: 'body',
       title: 'Content',
-      description: 'The main content of the newsletter.',
-      type: 'array',
-      of: [
-        {
-          type: 'block',
-          styles: [
-            { title: 'Normal', value: 'normal' },
-            { title: 'Heading 2', value: 'h2' },
-            { title: 'Heading 3', value: 'h3' },
-            { title: 'Heading 4', value: 'h4' },
-            { title: 'Quote', value: 'blockquote' },
-          ],
-          marks: {
-            decorators: [
-              { title: 'Strong', value: 'strong' },
-              { title: 'Emphasis', value: 'em' },
-              { title: 'Underline', value: 'underline' },
-              { title: 'Strike', value: 'strike-through' },
-            ],
-            annotations: [
-              {
-                name: 'link',
-                type: 'object',
-                title: 'Link',
-                fields: link.fields,
-                icon: link.icon,
-              },
-            ],
-          },
-        },
-        imageBlock,
-        { type: 'code' },
-      ],
+      description: 'The main content of the newsletter - localized per language',
+      type: 'internationalizedArrayBlockContent',
       group: 'content',
     }),
     defineField({
@@ -146,6 +99,7 @@ export default defineType({
       title: 'Send Date',
       description: 'Date when the newsletter was sent.',
       type: 'date',
+      initialValue: () => new Date().toISOString().split('T')[0],
       validation: (Rule) => Rule.required(),
       group: 'content',
     }),
@@ -161,29 +115,18 @@ export default defineType({
       issueNumber: 'issueNumber',
       title: 'metadata.title',
       slug: 'metadata.slug.current',
-      collectionSlug: 'collection.metadata.slug.current',
       publishDate: 'publishDate',
       media: 'seo.image',
-      language: 'language',
       noindex: 'seo.noIndex',
     },
-    prepare: ({
-      title,
-      issueNumber,
-      slug,
-      collectionSlug,
-      publishDate,
-      media,
-      language,
-      noindex,
-    }) => {
-      const languageLabel =
-        language === 'en' ? 'EN' : language === 'nb' ? 'NO' : language?.toUpperCase();
+    prepare: ({ title, issueNumber, slug, publishDate, media, noindex }) => {
+      // Extract first available language value from internationalized array
+      const titleText =
+        Array.isArray(title) && title.length > 0 ? title[0].value || 'Untitled' : 'Untitled';
 
-      const fullPath = collectionSlug ? `/${collectionSlug}/${slug}` : `/${slug}`;
-      const subtitle = [languageLabel, publishDate, fullPath].filter(Boolean).join(' - ');
+      const subtitle = [publishDate, `/${slug || 'no-slug'}`].filter(Boolean).join(' - ');
 
-      const displayTitle = [issueNumber && `#${issueNumber}`, title].filter(Boolean).join(' ');
+      const displayTitle = [issueNumber && `#${issueNumber}`, titleText].filter(Boolean).join(' ');
 
       return {
         title: displayTitle,

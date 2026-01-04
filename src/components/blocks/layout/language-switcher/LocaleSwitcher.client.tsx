@@ -2,6 +2,8 @@
 
 import { usePage } from '@/contexts';
 import { routing } from '@/i18n/routing';
+import { getCollectionSlugWithFallback } from '@/lib/collections/registry';
+import type { CollectionType } from '@/lib/collections/types';
 import LocaleSwitcherSelect from './LocaleSwitcherSelect';
 
 export type Translation = {
@@ -32,6 +34,14 @@ export interface LocaleSwitcherClientProps {
   labels: LocaleLabels;
 }
 
+const COLLECTION_TYPES: CollectionType[] = [
+  'collection.article',
+  'collection.documentation',
+  'collection.changelog',
+  'collection.newsletter',
+  'collection.events',
+];
+
 /**
  * Helper to build locale-prefixed URL (default locale has no prefix)
  */
@@ -40,6 +50,10 @@ function buildUrl(lang: string, slug: string, _type: string): string {
   const prefix = isDefaultLocale ? '' : `/${lang}`;
   if (slug === 'index') {
     return isDefaultLocale ? '/' : `/${lang}`;
+  }
+  if (COLLECTION_TYPES.includes(_type as CollectionType)) {
+    const collectionSlug = getCollectionSlugWithFallback(_type as CollectionType, lang);
+    return `${prefix}/${collectionSlug}/${slug}`;
   }
   return `${prefix}/${slug}`;
 }

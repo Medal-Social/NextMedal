@@ -1,5 +1,10 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
+import { routing } from '@/i18n/routing';
+import { useCollectionSlug } from '@/lib/collections/context';
 import { cn } from '@/lib/utils/index';
 import { createStegaAttribute } from '@/sanity/lib/client';
 
@@ -8,12 +13,17 @@ export default function Category({
   label,
   linked,
   badge = false,
+  collectionSlug,
 }: {
   value?: Sanity.ArticleCategory;
   label?: string;
   linked?: boolean;
   badge?: boolean;
+  collectionSlug?: string;
 }) {
+  const pathname = usePathname();
+  const articlesSlug = useCollectionSlug('collection.article');
+
   const stega = value?._id
     ? createStegaAttribute({
         id: value._id,
@@ -21,6 +31,20 @@ export default function Category({
         path: 'title',
       })
     : undefined;
+
+  // Extract collection slug from current pathname or use provided prop or use context
+  const getCollectionPath = () => {
+    if (collectionSlug) return `/${collectionSlug}`;
+
+    // Try to extract from current pathname
+    // Remove locale prefix if present
+    const pathWithoutLocale = pathname?.replace(new RegExp(`^/(${routing.locales.join('|')})`), '');
+
+    // Extract first segment (collection slug)
+    const match = pathWithoutLocale?.match(/^\/([^/?]+)/);
+    // Use matched slug or fall back to articles collection from context
+    return match ? `/${match[1]}` : `/${articlesSlug || 'articles'}`;
+  };
 
   const props = {
     className: cn('before:text-current/50 hover:*:underline', !linked && 'pointer-events-none'),
@@ -40,7 +64,7 @@ export default function Category({
   return linked && value?.slug?.current ? (
     <Link
       href={{
-        pathname: '/articles',
+        pathname: getCollectionPath(),
         query: { category: value?.slug.current },
       }}
       {...props}

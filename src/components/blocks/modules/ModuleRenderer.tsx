@@ -56,7 +56,6 @@ export function ModuleRenderer({
   searchParams,
 }: Props): ReactElement | null {
   const { page, post, isSidebar } = context;
-  const collectionSlug = page?.metadata?.slug?.current;
 
   // Type assertions are needed because Sanity.Module._type is a generic string,
   // and TypeScript switch doesn't narrow to literal types automatically.
@@ -73,7 +72,6 @@ export function ModuleRenderer({
           <ArticlesFrontpage
             {...props}
             {...sidebarProps}
-            collectionSlug={collectionSlug}
             locale={page?.language}
             searchParams={searchParams}
           />
@@ -85,12 +83,7 @@ export function ModuleRenderer({
       const props = module as Sanity.NewsletterFrontpage;
       return (
         <Suspense fallback={<ModuleSkeleton />}>
-          <NewsletterFrontpage
-            {...props}
-            {...sidebarProps}
-            collectionSlug={collectionSlug}
-            locale={page?.language}
-          />
+          <NewsletterFrontpage {...props} {...sidebarProps} locale={page?.language} />
         </Suspense>
       );
     }
@@ -99,12 +92,7 @@ export function ModuleRenderer({
       const props = module as Sanity.ChangelogFrontpage;
       return (
         <Suspense fallback={<ModuleSkeleton />}>
-          <ChangelogFrontpage
-            {...props}
-            {...sidebarProps}
-            collectionSlug={collectionSlug}
-            locale={page?.language}
-          />
+          <ChangelogFrontpage {...props} {...sidebarProps} locale={page?.language} />
         </Suspense>
       );
     }
@@ -113,12 +101,7 @@ export function ModuleRenderer({
       const props = module as Sanity.DocsFrontpage;
       return (
         <Suspense fallback={<ModuleSkeleton />}>
-          <DocsFrontpage
-            {...props}
-            {...sidebarProps}
-            collectionSlug={collectionSlug}
-            locale={page?.language}
-          />
+          <DocsFrontpage {...props} {...sidebarProps} locale={page?.language} />
         </Suspense>
       );
     }
@@ -127,12 +110,7 @@ export function ModuleRenderer({
       const props = module as Sanity.EventsFrontpage;
       return (
         <Suspense fallback={<ModuleSkeleton />}>
-          <EventsFrontpage
-            {...props}
-            {...sidebarProps}
-            collectionSlug={collectionSlug}
-            locale={page?.language}
-          />
+          <EventsFrontpage {...props} {...sidebarProps} locale={page?.language} />
         </Suspense>
       );
     }

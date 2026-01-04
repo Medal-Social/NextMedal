@@ -5,7 +5,7 @@ import '@/styles/globals.css';
 import { notFound } from 'next/navigation';
 import type { Locale } from 'next-intl';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
-import { setRequestLocale } from 'next-intl/server';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { Suspense } from 'react';
 import { Analytics } from '@/components/Analytics';
@@ -14,8 +14,11 @@ import Footer from '@/components/blocks/layout/footer';
 import { SiteJsonLd } from '@/components/blocks/seo';
 import VisualEditingControls from '@/components/blocks/utility/VisualEditingControls';
 import CookieConsentWrapper from '@/components/CookieConsentWrapper';
+import { TranslationDialog } from '@/components/TranslationDialog';
 import { Toaster } from '@/components/ui/sonner';
+import { getLocaleMetadata } from '@/i18n/config';
 import { routing } from '@/i18n/routing';
+import { CollectionProvider } from '@/lib/collections/context';
 import { SanityLive } from '@/sanity/lib/live';
 
 type Props = {
@@ -36,10 +39,16 @@ export default async function RootLayout({ children, params }: Props) {
   // Enable static rendering
   setRequestLocale(locale);
 
+  // Load messages for client components
+  const messages = await getMessages();
+
+  // Get text direction from locale metadata
+  const dir = getLocaleMetadata(locale)?.dir ?? 'ltr';
+
   return (
     <html
       lang={locale}
-      dir={locale === 'ar' ? 'rtl' : 'ltr'}
+      dir={dir}
       className={`${GeistSans.variable} ${GeistMono.variable}`}
       suppressHydrationWarning
     >
@@ -58,29 +67,32 @@ export default async function RootLayout({ children, params }: Props) {
           disableTransitionOnChange
         >
           <NuqsAdapter>
-            <NextIntlClientProvider locale={locale}>
-              <SkipToContent />
-              <SiteHeader />
-              <main
-                id="main-content"
-                className="flex-1 w-full pt-[var(--header-height)] min-h-[calc(100dvh-var(--header-height)-var(--footer-height))]"
-                tabIndex={-1}
-              >
-                {children}
-              </main>
-              <Suspense fallback={null}>
-                <Footer />
-              </Suspense>
-              <VisualEditingControls />
-              <Toaster />
-              <Analytics />
-              <Suspense fallback={null}>
-                <CookieConsentWrapper locale={locale} />
-              </Suspense>
-              <ScrollToTop />
-              <Suspense fallback={null}>
-                <SanityLive />
-              </Suspense>
+            <NextIntlClientProvider locale={locale} messages={messages}>
+              <CollectionProvider locale={locale}>
+                <SkipToContent />
+                <SiteHeader />
+                <main
+                  id="main-content"
+                  className="flex-1 w-full pt-[var(--header-height)] min-h-[calc(100dvh-var(--header-height)-var(--footer-height))]"
+                  tabIndex={-1}
+                >
+                  {children}
+                </main>
+                <Suspense fallback={null}>
+                  <Footer />
+                </Suspense>
+                <VisualEditingControls />
+                <TranslationDialog />
+                <Toaster />
+                <Analytics />
+                <Suspense fallback={null}>
+                  <CookieConsentWrapper locale={locale} />
+                </Suspense>
+                <ScrollToTop />
+                <Suspense fallback={null}>
+                  <SanityLive />
+                </Suspense>
+              </CollectionProvider>
             </NextIntlClientProvider>
           </NuqsAdapter>
         </ThemeProvider>

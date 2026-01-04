@@ -3,6 +3,7 @@
 import { motion } from 'motion/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useCollectionPath } from '@/lib/collections/context';
 import { cn } from '@/lib/utils/index';
 
 type DocsSidebarProps = {
@@ -10,36 +11,40 @@ type DocsSidebarProps = {
   mobile?: boolean;
 };
 
-// Export categories for reuse in mobile navigation
-export const formatCategories = [
-  {
-    title: 'Getting Started',
-    items: [
-      { title: 'Introduction', href: '/docs' },
-      { title: 'Installation', href: '/docs/installation' },
-      { title: 'Project Structure', href: '/docs/project-structure' },
-    ],
-  },
-  {
-    title: 'Components',
-    items: [
-      { title: 'Button', href: '/docs/components/button' },
-      { title: 'Input', href: '/docs/components/input' },
-      { title: 'Card', href: '/docs/components/card' },
-      { title: 'Dialog', href: '/docs/components/dialog' },
-      { title: 'Navigation', href: '/docs/components/navigation' },
-    ],
-  },
-  {
-    title: 'Guides',
-    items: [
-      { title: 'Theming', href: '/docs/guides/theming' },
-      { title: 'Authentication', href: '/docs/guides/authentication' },
-      { title: 'Deploying', href: '/docs/guides/deployment' },
-      { title: 'SEO', href: '/docs/guides/seo' },
-    ],
-  },
-];
+// Hook to get docs categories with dynamic base path
+export function useDocsCategories() {
+  const docsBasePath = useCollectionPath('collection.documentation');
+
+  return [
+    {
+      title: 'Getting Started',
+      items: [
+        { title: 'Introduction', href: docsBasePath },
+        { title: 'Installation', href: `${docsBasePath}/installation` },
+        { title: 'Project Structure', href: `${docsBasePath}/project-structure` },
+      ],
+    },
+    {
+      title: 'Components',
+      items: [
+        { title: 'Button', href: `${docsBasePath}/components/button` },
+        { title: 'Input', href: `${docsBasePath}/components/input` },
+        { title: 'Card', href: `${docsBasePath}/components/card` },
+        { title: 'Dialog', href: `${docsBasePath}/components/dialog` },
+        { title: 'Navigation', href: `${docsBasePath}/components/navigation` },
+      ],
+    },
+    {
+      title: 'Guides',
+      items: [
+        { title: 'Theming', href: `${docsBasePath}/guides/theming` },
+        { title: 'Authentication', href: `${docsBasePath}/guides/authentication` },
+        { title: 'Deploying', href: `${docsBasePath}/guides/deployment` },
+        { title: 'SEO', href: `${docsBasePath}/guides/seo` },
+      ],
+    },
+  ];
+}
 
 export function DocsSidebarContent({
   mobile,
@@ -48,9 +53,11 @@ export function DocsSidebarContent({
   mobile?: boolean;
   onClick?: () => void;
 }) {
+  const categories = useDocsCategories();
+
   return (
     <div className={cn('pb-8', mobile ? 'pt-4' : '')}>
-      {formatCategories.map((category, index) => (
+      {categories.map((category, index) => (
         <div key={index} className="pb-6">
           <h4 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
             {category.title}

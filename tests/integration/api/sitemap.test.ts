@@ -133,22 +133,16 @@ describe('sitemap-[locale].xml route', () => {
     });
 
     it('accepts valid English locale', async () => {
-      mockFetchSanityLive.mockResolvedValueOnce({
-        pages: [],
-        articles: [],
-        collections: [],
-      });
+      mockFetchSanityLive.mockResolvedValueOnce({ pages: [], articles: [], collections: [] });
+      mockFetchSanityLive.mockResolvedValueOnce([]);
 
       const response = await GET(mockRequest, { params: createParams('en') });
       expect(response.status).toBe(200);
     });
 
     it('accepts valid Norwegian locale', async () => {
-      mockFetchSanityLive.mockResolvedValueOnce({
-        pages: [],
-        articles: [],
-        collections: [],
-      });
+      mockFetchSanityLive.mockResolvedValueOnce({ pages: [], articles: [], collections: [] });
+      mockFetchSanityLive.mockResolvedValueOnce([]);
 
       const response = await GET(mockRequest, { params: createParams('nb') });
       expect(response.status).toBe(200);
@@ -160,27 +154,25 @@ describe('sitemap-[locale].xml route', () => {
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [
           {
+            _id: 'page-1',
             slug: 'index',
             lastModified: '2024-01-01T00:00:00Z',
             priority: 1,
             language: 'en',
-            translations: [],
           },
         ],
         articles: [],
         collections: [],
       });
+      mockFetchSanityLive.mockResolvedValueOnce([]);
 
       const response = await GET(mockRequest, { params: createParams('en') });
       expect(response.headers.get('Content-Type')).toContain('application/xml');
     });
 
     it('includes cache headers', async () => {
-      mockFetchSanityLive.mockResolvedValueOnce({
-        pages: [],
-        articles: [],
-        collections: [],
-      });
+      mockFetchSanityLive.mockResolvedValueOnce({ pages: [], articles: [], collections: [] });
+      mockFetchSanityLive.mockResolvedValueOnce([]);
 
       const response = await GET(mockRequest, { params: createParams('en') });
       expect(response.headers.get('Cache-Control')).toContain('max-age=3600');
@@ -192,16 +184,17 @@ describe('sitemap-[locale].xml route', () => {
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [
           {
+            _id: 'page-1',
             slug: 'index',
             lastModified: '2024-01-01T00:00:00Z',
             priority: 1,
             language: 'en',
-            translations: [],
           },
         ],
         articles: [],
         collections: [],
       });
+      mockFetchSanityLive.mockResolvedValueOnce([]);
 
       const response = await GET(mockRequest, { params: createParams('en') });
       const xml = await response.text();
@@ -215,23 +208,24 @@ describe('sitemap-[locale].xml route', () => {
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [
           {
+            _id: 'page-1',
             slug: 'index',
             lastModified: '2024-01-01T00:00:00Z',
             priority: 1,
             language: 'en',
-            translations: [],
           },
           {
+            _id: 'page-2',
             slug: 'about',
             lastModified: '2024-01-02T00:00:00Z',
             priority: 0.5,
             language: 'en',
-            translations: [],
           },
         ],
         articles: [],
         collections: [],
       });
+      mockFetchSanityLive.mockResolvedValueOnce([]);
 
       const response = await GET(mockRequest, { params: createParams('en') });
       const xml = await response.text();
@@ -249,15 +243,16 @@ describe('sitemap-[locale].xml route', () => {
         pages: [],
         articles: [
           {
+            _id: 'article-1',
             slug: 'test-post',
             lastModified: '2024-01-03T00:00:00Z',
             priority: 0.4,
             language: 'en',
-            translations: [],
           },
         ],
         collections: [],
       });
+      mockFetchSanityLive.mockResolvedValueOnce([]);
 
       const response = await GET(mockRequest, { params: createParams('en') });
       const xml = await response.text();
@@ -270,23 +265,24 @@ describe('sitemap-[locale].xml route', () => {
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [
           {
+            _id: 'page-about',
             slug: 'about',
             lastModified: '2024-01-01T00:00:00Z',
             priority: 0.8,
             language: 'en',
-            translations: [],
           },
           {
+            _id: 'page-om-oss',
             slug: 'om-oss',
             lastModified: '2024-01-01T00:00:00Z',
             priority: 0.8,
             language: 'nb',
-            translations: [],
           },
         ],
         articles: [],
         collections: [],
       });
+      mockFetchSanityLive.mockResolvedValueOnce([]);
 
       const response = await GET(mockRequest, { params: createParams('en') });
       const xml = await response.text();

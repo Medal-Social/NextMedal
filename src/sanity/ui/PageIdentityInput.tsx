@@ -1,22 +1,60 @@
 'use client';
 
-import { EyeOpenIcon, LaunchIcon } from '@sanity/icons';
-import { Box, Button, Flex, Stack, Text, TextInput } from '@sanity/ui';
+import { ClipboardIcon, EyeOpenIcon, LaunchIcon } from '@sanity/icons';
+import { Box, Button, Card, Flex, Stack, Text, TextInput, useToast } from '@sanity/ui';
 import { useCallback, useMemo, useState } from 'react';
 import { type ObjectInputProps, set, useFormValue } from 'sanity';
 import { BASE_URL } from '@/lib/core/env.client';
+
+// Collection type identifiers
+type CollectionType =
+  | 'collection.article'
+  | 'collection.documentation'
+  | 'collection.changelog'
+  | 'collection.newsletter'
+  | 'collection.events';
+
+// Collection slugs (source of truth)
+const DEFAULT_COLLECTION_SLUGS: Record<CollectionType, string> = {
+  'collection.article': 'articles',
+  'collection.documentation': 'docs',
+  'collection.changelog': 'changelog',
+  'collection.newsletter': 'newsletter',
+  'collection.events': 'events',
+};
+
+const COLLECTION_TYPES: CollectionType[] = [
+  'collection.article',
+  'collection.documentation',
+  'collection.changelog',
+  'collection.newsletter',
+  'collection.events',
+];
 
 /**
  * Custom input component for Page/Post Identity (title + slug)
  * Renders both fields with minimal spacing and integrated preview buttons
  */
 export default function PageIdentityInput(props: ObjectInputProps) {
-  const { value, onChange } = props;
+  const { value, onChange, members } = props;
   const [isGenerating, setIsGenerating] = useState(false);
+
+  // Get validation markers for slug field
+  const slugMember = members.find((member) => member.name === 'slug');
+  // Access validation markers (not validation rules) - these are the actual errors/warnings
+  const slugValidation = Array.isArray(slugMember?.field?.validation)
+    ? slugMember.field.validation
+    : [];
 
   // Get document type for URL construction
   const documentType = useFormValue(['_type']) as string | undefined;
   const language = useFormValue(['language']) as string | undefined;
+  const toast = useToast();
+
+  // Derived state
+  const isCollectionDocument = documentType
+    ? COLLECTION_TYPES.includes(documentType as CollectionType)
+    : false;
 
   // Current values
   const currentTitle = (value as { title?: string })?.title || '';
@@ -43,15 +81,23 @@ export default function PageIdentityInput(props: ObjectInputProps) {
     setIsGenerating(false);
   }, [currentTitle, value, onChange]);
 
-  // Build preview URL
+  // Build collection segment (for collection documents only)
+  const collectionSegment = useMemo(() => {
+    if (!isCollectionDocument || !documentType) return '';
+
+    const slug = DEFAULT_COLLECTION_SLUGS[documentType as CollectionType];
+    return slug ? `/${slug}` : '';
+  }, [isCollectionDocument, documentType]);
+
+  // Build full preview URL
   const previewUrl = useMemo(() => {
     if (!currentSlug) return null;
 
     const langPrefix = language && language !== 'en' ? `/${language}` : '';
-    const slugPath = currentSlug === 'index' ? '' : `/${currentSlug}`;
+    const slugPath = currentSlug === 'index' ? '' : `${collectionSegment}/${currentSlug}`;
 
     return `${BASE_URL}${langPrefix}${slugPath}` || `${BASE_URL}/`;
-  }, [currentSlug, language]);
+  }, [currentSlug, language, collectionSegment]);
 
   // Open preview in new tab
   const openPreview = useCallback(() => {
@@ -67,6 +113,24 @@ export default function PageIdentityInput(props: ObjectInputProps) {
     const editorPath = `/studio/editor?preview=${encodeURIComponent(path)}`;
     window.location.href = editorPath;
   }, [previewUrl]);
+
+  // Copy preview URL to clipboard
+  const copyUrl = useCallback(async () => {
+    if (!previewUrl) return;
+
+    try {
+      await navigator.clipboard.writeText(previewUrl);
+      toast.push({
+        status: 'success',
+        title: 'URL copied to clipboard',
+      });
+    } catch (_error) {
+      toast.push({
+        status: 'error',
+        title: 'Failed to copy URL',
+      });
+    }
+  }, [previewUrl, toast]);
 
   // Handle title change
   const handleTitleChange = useCallback(
@@ -107,39 +171,16 @@ export default function PageIdentityInput(props: ObjectInputProps) {
     ? 'The main title of this item'
     : 'The main title of the page';
   const slugDescription = isCollectionItem
-    ? 'The URL path for this item (e.g., my-article-title)'
+    ? `The URL path for this item. Will be appended to the collection URL (e.g., ${collectionSegment || '/collection'}/my-slug)`
     : 'The URL path for this page (e.g., about-us)';
 
   return (
     <Stack space={4}>
       {/* Title field */}
       <Stack space={3}>
-        <Flex align="center" justify="space-between">
-          <Text size={1} weight="medium">
-            {titleLabel}
-          </Text>
-          {previewUrl && (
-            <Flex gap={2} align="center">
-              <Button
-                icon={EyeOpenIcon}
-                text="Preview"
-                mode="bleed"
-                tone="primary"
-                onClick={openInVisualEditor}
-                title="Open in Visual Editor"
-                fontSize={1}
-                padding={2}
-              />
-              <Button
-                icon={LaunchIcon}
-                mode="bleed"
-                onClick={openPreview}
-                title="Open in new tab"
-                padding={2}
-              />
-            </Flex>
-          )}
-        </Flex>
+        <Text size={1} weight="medium">
+          {titleLabel}
+        </Text>
         <Text size={1} muted>
           {titleDescription}
         </Text>
@@ -174,6 +215,63 @@ export default function PageIdentityInput(props: ObjectInputProps) {
             title="Generate slug from title"
           />
         </Flex>
+
+        {/* Inline validation display - matches Sanity's native style */}
+        {slugValidation.length > 0 && (
+          <Card
+            tone={slugValidation[0].level === 'error' ? 'critical' : 'caution'}
+            padding={2}
+            radius={2}
+            border
+          >
+            <Text size={1}>{slugValidation[0].message}</Text>
+          </Card>
+        )}
+
+        {/* Preview box - only shown when slug is valid */}
+        {previewUrl && slugValidation.length === 0 && (
+          <Card padding={4} radius={2} tone="primary" border>
+            <Stack space={3}>
+              <Text size={1} muted>
+                Preview URL
+              </Text>
+              <Card padding={3} radius={2} shadow={1} tone="transparent">
+                <Text size={1} style={{ wordBreak: 'break-all', fontFamily: 'monospace' }}>
+                  {previewUrl}
+                </Text>
+              </Card>
+              <Flex gap={2}>
+                <Button
+                  icon={ClipboardIcon}
+                  text="Copy URL"
+                  mode="ghost"
+                  tone="default"
+                  onClick={copyUrl}
+                  fontSize={1}
+                  style={{ border: '1px solid var(--card-border-color)' }}
+                />
+                <Button
+                  icon={EyeOpenIcon}
+                  text="Visual Editor"
+                  mode="ghost"
+                  tone="default"
+                  onClick={openInVisualEditor}
+                  fontSize={1}
+                  style={{ border: '1px solid var(--card-border-color)' }}
+                />
+                <Button
+                  icon={LaunchIcon}
+                  text="Open in New Tab"
+                  mode="ghost"
+                  tone="default"
+                  onClick={openPreview}
+                  fontSize={1}
+                  style={{ border: '1px solid var(--card-border-color)' }}
+                />
+              </Flex>
+            </Stack>
+          </Card>
+        )}
       </Stack>
     </Stack>
   );

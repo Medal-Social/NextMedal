@@ -10,6 +10,7 @@ import { groq, stegaClean } from 'next-sanity';
 import { Suspense } from 'react';
 import SharedPortableText from '@/components/blocks/modules/SharedPortableText';
 import { Section } from '@/components/ui/section';
+import { getCollectionSlugWithFallback } from '@/lib/collections/registry';
 import moduleProps from '@/lib/sanity/module-props';
 import { fetchSanityLive } from '@/sanity/lib/live';
 import { IMAGE_QUERY, PERSON_PREVIEW_QUERY } from '@/sanity/lib/queries';
@@ -311,19 +312,26 @@ export default async function EventsFrontpage({
   hidePastEvents = false,
   limit = 50,
   showRssLink,
-  collectionSlug,
+  collectionSlug: providedSlug,
   locale = 'en',
   ...props
 }: EventsFrontpageProps) {
-  // If no collection slug is provided, we can't fetch events
+  // Self-determine collection slug from site settings if not provided
+  let collectionSlug = providedSlug;
+
   if (!collectionSlug) {
-    return (
-      <Section className="space-y-8" {...moduleProps(props)}>
-        <div className="text-center py-12 text-muted-foreground">
-          <p>Collection not configured. Add this module to a page to create an events hub.</p>
-        </div>
-      </Section>
-    );
+    const result = await getCollectionSlugWithFallback('collection.events', locale);
+    if (!result.success) {
+      return (
+        <Section className="space-y-8" {...moduleProps(props)}>
+          <div className="text-center py-12 text-muted-foreground">
+            <p>Events collection not configured for this language.</p>
+            <p className="text-sm mt-2">Configure the events frontpage in site settings.</p>
+          </div>
+        </Section>
+      );
+    }
+    collectionSlug = result.slug;
   }
 
   const cleanLayout = stegaClean(layout) as 'calendar' | 'cards' | 'list' | 'timeline';

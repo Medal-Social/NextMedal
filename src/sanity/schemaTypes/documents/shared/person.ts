@@ -28,71 +28,14 @@ export default defineType({
     defineField({
       name: 'title',
       title: 'Job Title',
-      type: 'string',
-      description: 'Professional title or role that appears under the name',
-    }),
-    defineField({
-      name: 'slug',
-      title: 'Slug',
-      description: 'URL-friendly version of the name.',
-      type: 'slug',
-      options: {
-        source: 'name',
-      },
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'image',
-      title: 'Profile Picture',
-      description: 'Image of the person.',
-      type: 'image',
-      options: {
-        hotspot: true,
-      },
-      validation: (Rule) => Rule.warning('Profile pictures help readers identify team members.'),
-    }),
-    defineField({
-      name: 'banner',
-      title: 'Banner Image',
-      description:
-        'Optional banner image for author cards and pages. If not set, a gradient will be used.',
-      type: 'image',
-      options: {
-        hotspot: true,
-      },
+      description: 'Professional title or role that appears under the name (localized)',
+      type: 'internationalizedArrayString',
     }),
     defineField({
       name: 'bio',
       title: 'Biography',
-      type: 'array',
-      of: [
-        {
-          type: 'block',
-          styles: [{ title: 'Normal', value: 'normal' }],
-          lists: [],
-          marks: {
-            decorators: [
-              { title: 'Strong', value: 'strong' },
-              { title: 'Emphasis', value: 'em' },
-            ],
-            annotations: [
-              {
-                title: 'Link',
-                name: 'link',
-                type: 'object',
-                fields: [
-                  {
-                    title: 'URL',
-                    name: 'href',
-                    type: 'url',
-                  },
-                ],
-              },
-            ],
-          },
-        },
-      ],
-      description: 'A short biography or description of the person',
+      description: 'A short biography or description of the person (localized per language)',
+      type: 'internationalizedArrayBlockContent',
     }),
     defineField({
       name: 'socialLinks',
@@ -153,6 +96,26 @@ export default defineType({
         }),
       ],
     }),
+    defineField({
+      name: 'image',
+      title: 'Profile Picture',
+      description: 'Image of the person.',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+      validation: (Rule) => Rule.warning('Profile pictures help readers identify team members.'),
+    }),
+    defineField({
+      name: 'banner',
+      title: 'Banner Image',
+      description:
+        'Optional banner image for author cards and pages. If not set, a gradient will be used.',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+    }),
   ],
   preview: {
     select: {
@@ -160,10 +123,15 @@ export default defineType({
       subtitle: 'title',
       media: 'image',
     },
-    prepare: ({ title, subtitle, media }) => ({
-      title: title || 'Untitled',
-      subtitle: subtitle || '',
-      media: media || UserIcon,
-    }),
+    prepare: ({ title, subtitle, media }) => {
+      // Extract first available language value from internationalized array
+      const subtitleText = Array.isArray(subtitle) && subtitle.length > 0 ? subtitle[0].value : '';
+
+      return {
+        title: title || 'Untitled',
+        subtitle: subtitleText,
+        media: media || UserIcon,
+      };
+    },
   },
 });

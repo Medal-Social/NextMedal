@@ -67,17 +67,10 @@ function Author({
     <div
       className={cn(
         'relative flex items-center gap-[.5ch]',
-        linked && 'group',
-        !linked && !socialLinks && !stega && 'pointer-events-none'
+        !socialLinks && !stega && 'pointer-events-none'
       )}
       data-sanity={stega?.scope('name').toString()}
     >
-      {linked && author?.slug?.current && (
-        <Link href={`/articles?author=${author.slug.current}`} className="absolute inset-0 z-0">
-          <span className="sr-only">View author {author.name}</span>
-        </Link>
-      )}
-
       <div className="flex items-center gap-x-3">
         {author?.image ? (
           <Img

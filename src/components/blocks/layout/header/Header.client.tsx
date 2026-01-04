@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { CommandMenu } from '@/components/blocks/utility/CommandMenu';
+import { useCollections } from '@/lib/collections/context';
 import { cn } from '@/lib/utils/index';
 import { DESKTOP_BREAKPOINT, SCROLL_THRESHOLD } from './constants';
 import MobileDocsNavigation from './mobile-docs-navigation';
@@ -29,11 +30,13 @@ export default function HeaderClient({
   const [isDarkHero, setIsDarkHero] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const { getSlug } = useCollections();
 
-  const isDocs = pathname?.includes('/docs');
-  const isDocsRoot = pathname?.endsWith('/docs');
+  const docsSlug = getSlug('collection.documentation');
+  const isDocs = docsSlug && pathname?.includes(`/${docsSlug}`);
+  const isDocsRoot = docsSlug && pathname?.endsWith(`/${docsSlug}`);
 
-  const _backHref = isDocsRoot ? '/' : '/docs';
+  const _backHref = isDocsRoot ? '/' : `/${docsSlug || 'docs'}`;
 
   isOpenRef.current = isOpen;
 

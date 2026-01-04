@@ -1,9 +1,10 @@
 /**
  * Form Schema
- * @version 2.0.0
- * @lastUpdated 2025-12-31
- * @description Simplified form schema with pre-built templates for common use cases.
+ * @version 3.0.0
+ * @lastUpdated 2026-01-03
+ * @description Simplified form schema with localized fields and i18n-based UI text.
  * @changelog
+ * - 3.0.0: Major simplification - removed templates, localized fields, simplified consent, removed redirects
  * - 2.0.0: Added template selector with 3 pre-configured forms (Contact, Newsletter, Event)
  * - 1.0.1: Added header documentation
  * - 1.0.0: Initial version
@@ -22,30 +23,20 @@ export default defineType({
       name: 'formTitle',
       title: 'Form Title',
       description:
-        'The title shown to the user on the form and used for identification in the studio',
-      type: 'string',
-      validation: (Rule) => Rule.required(),
+        'The title shown to the user on the form and used for identification in the studio - localized per language',
+      type: 'internationalizedArrayString',
     }),
     defineField({
-      name: 'template',
-      title: 'Form Template',
-      description:
-        'Select a pre-configured form template. This auto-populates fields with sensible defaults.',
+      name: 'intent',
+      title: 'Form Intent',
+      description: 'How should this form submission be processed?',
       type: 'string',
       options: {
         list: [
-          {
-            title: '📧 Contact Form',
-            value: 'contact',
-          },
-          {
-            title: '📰 Newsletter Signup',
-            value: 'newsletter',
-          },
-          {
-            title: '🎫 Event Registration',
-            value: 'event',
-          },
+          { title: 'Contact / Lead Generation', value: 'contact' },
+          { title: 'Newsletter Subscription', value: 'newsletter' },
+          { title: 'Event Registration', value: 'event' },
+          { title: 'Resource Download', value: 'download' },
         ],
         layout: 'radio',
       },
@@ -53,25 +44,9 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'intent',
-      title: 'Intent',
-      description: 'How the form data should be processed (auto-set based on template)',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Lead Generation', value: 'lead' },
-          { title: 'Newsletter Subscription', value: 'newsletter' },
-          { title: 'Event Registration', value: 'event' },
-        ],
-      },
-      readOnly: true,
-      hidden: ({ parent }) => !parent?.template,
-    }),
-    defineField({
       name: 'fields',
-      title: 'Form Fields (Auto-configured)',
-      description:
-        'Fields are automatically configured based on the selected template. Advanced: expand to customize field configuration.',
+      title: 'Form Fields',
+      description: 'Add and configure form fields with localized labels and placeholders.',
       type: 'array',
       of: [
         defineArrayMember({
@@ -81,7 +56,7 @@ export default defineType({
             defineField({
               name: 'label',
               title: 'Label',
-              type: 'string',
+              type: 'internationalizedArrayString',
               validation: (Rule) => Rule.required(),
             }),
             defineField({
@@ -90,7 +65,13 @@ export default defineType({
               description: 'The key used when submitting the data. Use "email", "name", etc.',
               type: 'slug',
               options: {
-                source: 'label',
+                source: (doc) => {
+                  const label = doc?.label;
+                  if (Array.isArray(label) && label.length > 0) {
+                    return label[0].value || '';
+                  }
+                  return '';
+                },
               },
               validation: (Rule) => Rule.required(),
             }),
@@ -112,7 +93,7 @@ export default defineType({
             defineField({
               name: 'placeholder',
               title: 'Placeholder',
-              type: 'string',
+              type: 'internationalizedArrayString',
             }),
             defineField({
               name: 'required',
@@ -123,8 +104,16 @@ export default defineType({
           ],
           preview: {
             select: {
-              title: 'label',
-              subtitle: 'type',
+              label: 'label',
+              type: 'type',
+            },
+            prepare({ label, type }) {
+              const labelText =
+                Array.isArray(label) && label.length > 0 ? label[0].value : 'Untitled Field';
+              return {
+                title: labelText,
+                subtitle: type,
+              };
             },
           },
         }),
@@ -133,116 +122,104 @@ export default defineType({
         {
           _type: 'form-field',
           _key: 'name-field',
-          label: 'Name',
+          label: [
+            { _key: 'en', value: 'Name' },
+            { _key: 'nb', value: 'Navn' },
+            { _key: 'ar', value: 'الاسم' },
+          ],
           name: { _type: 'slug', current: 'name' },
           type: 'text',
-          placeholder: 'Your name',
+          placeholder: [
+            { _key: 'en', value: 'Your name' },
+            { _key: 'nb', value: 'Ditt navn' },
+            { _key: 'ar', value: 'اسمك' },
+          ],
           required: true,
         },
         {
           _type: 'form-field',
           _key: 'email-field',
-          label: 'Email',
+          label: [
+            { _key: 'en', value: 'Email' },
+            { _key: 'nb', value: 'E-post' },
+            { _key: 'ar', value: 'البريد الإلكتروني' },
+          ],
           name: { _type: 'slug', current: 'email' },
           type: 'email',
-          placeholder: 'your@email.com',
+          placeholder: [
+            { _key: 'en', value: 'your@email.com' },
+            { _key: 'nb', value: 'din@epost.no' },
+            { _key: 'ar', value: 'email@example.com' },
+          ],
           required: true,
         },
         {
           _type: 'form-field',
           _key: 'phone-field',
-          label: 'Phone',
+          label: [
+            { _key: 'en', value: 'Phone' },
+            { _key: 'nb', value: 'Telefon' },
+            { _key: 'ar', value: 'الهاتف' },
+          ],
           name: { _type: 'slug', current: 'phone' },
           type: 'tel',
-          placeholder: 'Your phone number',
+          placeholder: [
+            { _key: 'en', value: 'Your phone number' },
+            { _key: 'nb', value: 'Ditt telefonnummer' },
+            { _key: 'ar', value: 'رقم هاتفك' },
+          ],
           required: false,
         },
         {
           _type: 'form-field',
           _key: 'message-field',
-          label: 'Message',
+          label: [
+            { _key: 'en', value: 'Message' },
+            { _key: 'nb', value: 'Melding' },
+            { _key: 'ar', value: 'الرسالة' },
+          ],
           name: { _type: 'slug', current: 'message' },
           type: 'textarea',
-          placeholder: 'Your message',
+          placeholder: [
+            { _key: 'en', value: 'Your message' },
+            { _key: 'nb', value: 'Din melding' },
+            { _key: 'ar', value: 'رسالتك' },
+          ],
           required: false,
         },
       ],
       validation: (Rule) => Rule.min(1),
     }),
     defineField({
-      name: 'acceptance',
-      title: 'Acceptance / Consent',
-      type: 'object',
-      description: 'Require users to agree to terms or privacy policy',
-      fields: [
-        defineField({
-          name: 'required',
-          title: 'Is Required?',
-          type: 'boolean',
-          initialValue: false,
-        }),
-        defineField({
-          name: 'text',
-          title: 'Checkbox Text',
-          description: 'e.g. "I agree to the privacy policy"',
-          type: 'string',
-        }),
-        defineField({
-          name: 'link',
-          title: 'Link (Optional)',
-          description: 'Link to privacy policy or terms',
-          type: 'menuItem',
-        }),
-      ],
-    }),
-    defineField({
-      name: 'submitButtonText',
-      title: 'Submit Button Text',
-      type: 'string',
-      initialValue: 'Submit',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'successMessage',
-      title: 'Success Message',
-      description: 'Message shown after successful submission',
-      type: 'array',
-      of: [{ type: 'block' }],
-      initialValue: [
-        {
-          _type: 'block',
-          children: [
-            {
-              _type: 'span',
-              text: 'Thank you! We have received your submission and will get back to you shortly.',
-            },
-          ],
-          markDefs: [],
-          style: 'normal',
-        },
-      ],
-    }),
-    defineField({
-      name: 'redirect',
-      title: 'Redirect after submission',
-      description: 'Optional destination to redirect the user to after a successful submission',
-      type: 'menuItem',
+      name: 'requireConsent',
+      title: 'Require Privacy Consent?',
+      description:
+        'If enabled, users must accept the privacy policy before submitting. Consent text comes from translation files.',
+      type: 'boolean',
+      initialValue: false,
     }),
   ],
   preview: {
     select: {
       title: 'formTitle',
-      template: 'template',
+      intent: 'intent',
     },
-    prepare({ title, template }) {
-      const templateLabels = {
-        contact: '📧 Contact Form',
-        newsletter: '📰 Newsletter Signup',
-        event: '🎫 Event Registration',
+    prepare({ title, intent }) {
+      // Extract first available language value from internationalized array
+      const titleText =
+        Array.isArray(title) && title.length > 0
+          ? title[0].value || 'Untitled Form'
+          : 'Untitled Form';
+
+      const intentLabels = {
+        contact: '📧 Contact',
+        newsletter: '📰 Newsletter',
+        event: '🎫 Event',
+        download: '📥 Download',
       };
       return {
-        title: title || 'Untitled Form',
-        subtitle: templateLabels[template as keyof typeof templateLabels] || template,
+        title: titleText,
+        subtitle: intentLabels[intent as keyof typeof intentLabels] || intent,
       };
     },
   },

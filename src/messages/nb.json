@@ -32,6 +32,7 @@
   "TranslationDialog": {
     "title": "Oversettelse ikke tilgjengelig",
     "description": "Denne siden er ikke tilgjengelig på {locale}. Vil du gå til {locale} hjemmeside i stedet?",
+    "availableIn": "Denne siden er tilgjengelig på:",
     "goToHome": "Gå til {locale} hjemmeside",
     "stay": "Bli på denne siden"
   },

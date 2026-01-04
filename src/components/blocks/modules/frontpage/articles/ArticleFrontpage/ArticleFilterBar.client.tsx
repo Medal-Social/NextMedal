@@ -2,6 +2,7 @@
 
 import { LayoutGrid, List, Rss } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useArticleFilters } from '@/components/blocks/modules/frontpage/articles/store';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
@@ -17,6 +18,7 @@ export default function ArticleFilterBarClient({
   categories,
   rssUrl,
 }: ArticleFilterBarClientProps) {
+  const t = useTranslations('article');
   const { category, setCategory, view, setView } = useArticleFilters();
   const { setPage } = usePageState();
 
@@ -39,7 +41,7 @@ export default function ArticleFilterBarClient({
               : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700 dark:text-slate-400 dark:hover:border-slate-600 dark:hover:text-slate-200'
           )}
         >
-          All Stories
+          {t('allArticles')}
         </button>
         {categories?.map((cat) => (
           <button

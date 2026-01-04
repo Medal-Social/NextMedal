@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Date as ArticleDate, Img } from '@/components/blocks/objects/core';
-import resolveUrl from '@/lib/sanity/resolve-url';
+import { resolveUrlSync } from '@/lib/sanity/resolve-url';
 import { getArticleFallbackImage } from '@/lib/utils/article-helpers';
 import { createStegaAttribute } from '@/sanity/lib/client';
 import Authors from './Authors';
@@ -26,9 +26,10 @@ function PostImage({
   href: string;
   dataAttribute?: ReturnType<typeof createStegaAttribute>;
 }) {
-  // Only use Sanity image if it has a valid asset, otherwise use fallback
-  const hasValidImage = seo?.image?.asset;
-  const image = hasValidImage ? seo?.image : fallbackImage;
+  // Only use Sanity image if it has a valid asset with URL, otherwise use fallback
+  const hasValidImage = seo?.image?.asset?.url;
+  // biome-ignore lint/suspicious/noExplicitAny: Fallback image object structure differs from Sanity.Image
+  const image = hasValidImage ? seo?.image : (fallbackImage as any);
 
   const imageElement = (
     <Img
@@ -65,11 +66,13 @@ export default function PostPreview({
   const metadata = skeleton ? undefined : post?.metadata;
   const seo = skeleton ? undefined : post?.seo;
   const href =
-    hrefOverride || (skeleton || !post?.metadata ? '' : resolveUrl(post, { base: false }));
+    hrefOverride || (skeleton || !post?.metadata ? '' : resolveUrlSync(post, { base: false }));
+
+  // Generate fallback image if no valid Sanity image exists
   const fallbackImage =
-    skeleton || seo?.image?.asset
+    skeleton || seo?.image?.asset?.url
       ? undefined
-      : getArticleFallbackImage(metadata?.title, seo?.description);
+      : getArticleFallbackImage(metadata?.title, post?.language);
 
   const dataAttribute = post?._id
     ? createStegaAttribute({

@@ -4,7 +4,7 @@ import { Languages } from 'lucide-react';
 import { useRouter as useNextRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { type ReactNode, useEffect, useState, useTransition } from 'react';
-import { toast } from 'sonner';
+import { checkTranslationAvailability } from '@/app/actions/check-translation';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -15,7 +15,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Spinner } from '@/components/ui/spinner';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { routing } from '@/i18n/routing';
 import { cn } from '@/lib/utils/index';
 
 type Props = {
@@ -24,8 +23,6 @@ type Props = {
   label: string;
   translationUrls?: Record<string, string>;
   className?: string;
-  translationNotAvailable?: string;
-  goToHome?: string;
 };
 
 interface LocaleOption {
@@ -37,11 +34,9 @@ export default function LocaleSwitcherSelect({
   children,
   defaultValue,
   label,
-  translationUrls = {},
+  _translationUrls = {},
   className,
   dropdownAlign = 'end',
-  translationNotAvailable = 'This page is not available in {locale}',
-  goToHome = 'Go to {locale} home',
 }: Props & { dropdownAlign?: 'start' | 'end' | 'center' }) {
   const nextRouter = useNextRouter();
   const [isPending, startTransition] = useTransition();
@@ -64,24 +59,28 @@ export default function LocaleSwitcherSelect({
 
   function onSelectLocale(nextLocale: string) {
     setIsOpen(false);
-    startTransition(() => {
-      // Use translated URL if available
-      const translatedUrl = translationUrls[nextLocale];
+    startTransition(async () => {
+      const pathname = window.location.pathname;
 
-      if (translatedUrl) {
-        // Navigate directly to the translated URL using Next.js router
-        nextRouter.push(translatedUrl);
+      // Check translation availability via server action
+      const result = await checkTranslationAvailability(pathname, defaultValue, nextLocale);
+
+      if (result.found && result.redirectUrl) {
+        // Translation exists - auto-redirect
+        nextRouter.push(result.redirectUrl);
       } else {
-        // Show toast notification that translation doesn't exist
+        // No translation - show dialog with available locales
         const localeLabel = options.find((opt) => opt.value === nextLocale)?.label || nextLocale;
-        const homeUrl = nextLocale === routing.defaultLocale ? '/' : `/${nextLocale}`;
+        const request = {
+          targetLocale: nextLocale,
+          targetLocaleName: localeLabel,
+          availableLocales: result.availableLocales, // NEW: Include available locales
+          timestamp: Date.now(),
+        };
+        sessionStorage.setItem('translation-request', JSON.stringify(request));
 
-        toast.info(translationNotAvailable.replace('{locale}', localeLabel), {
-          action: {
-            label: goToHome.replace('{locale}', localeLabel),
-            onClick: () => nextRouter.push(homeUrl),
-          },
-        });
+        // Trigger dialog (dialog component will detect this custom event)
+        window.dispatchEvent(new Event('translation-request'));
       }
     });
   }

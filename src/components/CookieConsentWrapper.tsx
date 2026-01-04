@@ -6,7 +6,7 @@ interface CookieConsentWrapperProps {
 }
 
 export default async function CookieConsentWrapper({ locale }: CookieConsentWrapperProps) {
-  const site = await getSiteOptional();
+  const site = await getSiteOptional(locale);
 
   if (!site?.cookieConsent) {
     return null;

@@ -13,9 +13,10 @@ import { UidInputComponent } from './UidInputComponent';
 
 export function createUidField() {
   return defineField({
-    name: 'uid',
-    title: 'Unique identifier',
-    description: 'Used for anchor/jump links (HTML `id` attribute).',
+    name: 'anchorId',
+    title: 'Anchor ID',
+    description:
+      'Custom URL identifier (e.g., #pricing). If left empty, a system-generated ID will be used.',
     type: 'string',
     validation: (Rule) =>
       Rule.regex(/^[a-zA-Z0-9-]+$/g).error('Must not contain spaces or special characters'),

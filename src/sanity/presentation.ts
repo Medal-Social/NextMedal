@@ -2,6 +2,7 @@
 
 import { groq } from 'next-sanity';
 import { defineLocations, presentationTool } from 'sanity/presentation';
+import { DEFAULT_COLLECTION_SLUGS } from '@/lib/collections/generated/collections.generated';
 
 export const presentation = presentationTool({
   name: 'editor',
@@ -116,7 +117,9 @@ export const presentation = presentationTool({
           locations: [
             {
               title: doc?.title || 'Untitled',
-              href: doc?.slug ? `/articles?category=${doc.slug}` : '/articles',
+              href: doc?.slug
+                ? `/${DEFAULT_COLLECTION_SLUGS['collection.article']}?category=${doc.slug}`
+                : `/${DEFAULT_COLLECTION_SLUGS['collection.article']}`,
             },
           ],
         }),
@@ -166,7 +169,9 @@ export const presentation = presentationTool({
           locations: [
             {
               title: doc?.title || 'Untitled',
-              href: doc?.slug ? `/events/${doc.slug}` : '/events',
+              href: doc?.slug
+                ? `/${DEFAULT_COLLECTION_SLUGS['collection.events']}/${doc.slug}`
+                : `/${DEFAULT_COLLECTION_SLUGS['collection.events']}`,
             },
           ],
         }),

@@ -1,7 +1,7 @@
 'use client';
 
 import { CheckCircle2 } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { stegaClean } from 'next-sanity';
 import { useState } from 'react';
 import { Form } from '@/components/blocks/forms';
@@ -97,6 +97,7 @@ export default function LeadMagnet({
   style: styleProp = 'featured',
   ...props
 }: Sanity.LeadMagnet) {
+  const locale = useLocale();
   const t = useTranslations('modules.leadMagnet');
   const style = stegaClean(styleProp);
   const [isModalOpen, setIsOpen] = useState(false);
@@ -163,7 +164,7 @@ export default function LeadMagnet({
                     </DialogHeader>
                   </div>
                   <div className="p-8">
-                    <Form form={form} />
+                    <Form form={form} locale={locale} />
                   </div>
                 </DialogContent>
               </Dialog>

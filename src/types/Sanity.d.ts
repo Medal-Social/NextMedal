@@ -49,7 +49,7 @@ declare global {
       _type: 'code';
       _key: string;
       code?: string;
-      language?: string;
+      language?: 'mermaid' | 'javascript' | 'typescript' | 'python' | 'bash' | string;
       filename?: string;
     }
 
@@ -72,22 +72,34 @@ declare global {
       PortableTextBlock | ImageBlock | SocialEmbedBlock | CodeBlock | VideoBlock | UnknownBlock
     >;
 
+    // Internationalized field types (sanity-plugin-internationalized-array)
+    // Generic internationalized array structure
+    type InternationalizedArray<T> = Array<{
+      _key: string;
+      value: T;
+    }>;
+
+    // Convenience types for common internationalized fields
+    type InternationalizedArrayString = InternationalizedArray<string>;
+    type InternationalizedArrayText = InternationalizedArray<string>;
+    type InternationalizedArrayBlockContent = InternationalizedArray<BlockContent>;
+
     // documents
 
     interface Site extends SanityDocument {
       // branding
-      title: string;
-      tagline?: BlockContent;
+      title: InternationalizedArrayString;
+      tagline?: InternationalizedArrayBlockContent;
       logo?: Logo;
       // info
       banners?: Banner[];
-      copyright?: BlockContent;
+      copyright?: InternationalizedArrayBlockContent;
       ogimage?: string;
       // navigation
-      ctas?: CTA[];
-      headerNav?: (MenuItem | DropdownMenu)[];
-      footerNav?: (MenuItem | DropdownMenu)[];
-      footerLinks?: MenuItem[];
+      ctas?: InternationalizedArray<CTA[]>;
+      headerNav?: InternationalizedArray<(MenuItem | DropdownMenu)[]>;
+      footerNav?: InternationalizedArray<(MenuItem | DropdownMenu)[]>;
+      footerLinks?: InternationalizedArray<MenuItem[]>;
       systemStatus?: {
         title: string;
         url: string;
@@ -777,6 +789,20 @@ declare global {
       intro?: BlockContent;
       people?: Person[]; // Resolved
       layout?: 'grid' | 'split';
+    }
+
+    interface Testimonials extends Module<'testimonials'> {
+      intro?: BlockContent;
+      reviews?: {
+        _key: string;
+        authorName: string;
+        authorTitle?: string;
+        authorImage?: Image;
+        rating: number;
+        reviewText: string;
+        reviewDate?: string;
+        embed?: SocialEmbed;
+      }[];
     }
 
     interface Richtext extends Module<'richtext'> {

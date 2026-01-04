@@ -10,6 +10,7 @@
 
 import { ControlsIcon, EditIcon, EyeClosedIcon, SearchIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
+import { DEFAULT_LOCALE } from '@/i18n/config';
 import { isUniqueAcrossLocale } from '@/sanity/lib/isUniqueAcrossLocale';
 import PageIdentityField from '@/sanity/ui/PageIdentityField';
 import PageIdentityInput from '@/sanity/ui/PageIdentityInput';
@@ -32,16 +33,7 @@ export default defineType({
       type: 'string',
       readOnly: true,
       hidden: true,
-    }),
-    // Collection Reference - determines the base URL for this item
-    defineField({
-      name: 'collection',
-      title: 'Collection',
-      description: 'The collection page this article belongs to (determines the URL)',
-      type: 'reference',
-      to: [{ type: 'page' }],
-      validation: (Rule) => Rule.required(),
-      group: 'content',
+      initialValue: DEFAULT_LOCALE,
     }),
     // Post Identity - Title and URL Slug together in Content tab
     defineField({
@@ -74,6 +66,7 @@ export default defineType({
           },
           validation: (Rule) =>
             Rule.required().custom((slug) => {
+              // Only ban system paths - language codes are fine since articles are under /articles/ prefix
               const reserved = ['studio', 'api', 'monitoring', 'rss.xml'];
               if (slug?.current && reserved.includes(slug.current.toLowerCase())) {
                 return `"${slug.current}" is a reserved path.`;
@@ -142,7 +135,8 @@ export default defineType({
     defineField({
       name: 'authors',
       title: 'Authors',
-      description: 'People who contributed to this article.',
+      description:
+        'People who contributed to this article (localized fields handled per language).',
       type: 'array',
       of: [
         {
@@ -157,6 +151,7 @@ export default defineType({
       title: 'Publish Date',
       description: 'Date when the article is published.',
       type: 'date',
+      initialValue: () => new Date().toISOString().split('T')[0],
       validation: (Rule) => Rule.required(),
       group: 'content',
     }),
@@ -171,18 +166,18 @@ export default defineType({
     select: {
       title: 'metadata.title',
       slug: 'metadata.slug.current',
-      collectionSlug: 'collection.metadata.slug.current',
       publishDate: 'publishDate',
       media: 'seo.image',
       language: 'language',
       noindex: 'seo.noIndex',
+      categoryTitle: 'categories.0.title',
     },
-    prepare: ({ title, slug, collectionSlug, publishDate, media, language, noindex }) => {
+    prepare: ({ title, slug, _publishDate, _media, language, _noindex, categoryTitle }) => {
       const languageLabel =
         language === 'en' ? 'EN' : language === 'nb' ? 'NO' : language?.toUpperCase();
 
-      const fullPath = collectionSlug ? `/${collectionSlug}/${slug}` : `/${slug}`;
-      const subtitle = [languageLabel, publishDate, fullPath].filter(Boolean).join(' - ');
+      // Collection slug will be determined from site settings at runtime
+      const subtitle = [languageLabel, categoryTitle, `/${slug}`].filter(Boolean).join(' • ');
 
       return {
         title,

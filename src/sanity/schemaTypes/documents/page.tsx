@@ -21,6 +21,7 @@ import {
   SearchIcon,
 } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/i18n/config';
 import { isUniqueAcrossLocale } from '@/sanity/lib/isUniqueAcrossLocale';
 import CharacterCount from '@/sanity/ui/CharacterCount';
 import PageIdentityField from '@/sanity/ui/PageIdentityField';
@@ -44,6 +45,7 @@ export default defineType({
       type: 'string',
       readOnly: true,
       hidden: true,
+      initialValue: DEFAULT_LOCALE,
     }),
     // Page Identity - Title and URL Slug together in Content tab
     defineField({
@@ -76,7 +78,7 @@ export default defineType({
           },
           validation: (Rule) =>
             Rule.required().custom((slug) => {
-              const reserved = ['studio', 'api', 'monitoring'];
+              const reserved = ['studio', 'api', 'monitoring', ...SUPPORTED_LOCALES];
               if (slug?.current && reserved.includes(slug.current.toLowerCase())) {
                 return `"${slug.current}" is a reserved path used by the system.`;
               }
