@@ -410,7 +410,7 @@ export const COLLECTION_EVENTS_QUERY = groq`
 	*[
 		_type == 'collection.events' &&
 		metadata.slug.current == $itemSlug &&
-		(language == $locale || language == null)
+		language == $locale
 	][0]{
 		...,
 		body[]{
@@ -476,7 +476,6 @@ export const PAGE_404_QUERY = groq`
 `;
 
 // Current page for translation switching
-// Note: Events use field-level translations (no language field), others use document-level
 export const CURRENT_PAGE_QUERY = groq`
 	*[
 		(_type == 'page' ||
@@ -486,7 +485,7 @@ export const CURRENT_PAGE_QUERY = groq`
 			_type == 'collection.newsletter' ||
 			_type == 'collection.events') &&
 		metadata.slug.current == $slug &&
-		(_type == 'collection.events' || language == $locale)
+		language == $locale
 	][0]{
 		_type,
 		_id,

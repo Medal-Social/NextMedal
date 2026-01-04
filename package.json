@@ -24,7 +24,7 @@
     "manifest": "SANITY_CLI_EXTRACT_MANIFEST_ENABLED=false echo 'Manifest extraction disabled'",
     "typecheck": "tsc --noEmit",
     "validate": "sanity-template-validate",
-    "docker:build": "./src/scripts/docker-build.sh",
+    "docker:build": "./scripts/docker-build.sh",
     "test": "vitest --run",
     "test:watch": "vitest",
     "test:coverage": "vitest --run --coverage",

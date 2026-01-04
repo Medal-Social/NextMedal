@@ -6,7 +6,12 @@
  */
 
 import { describe, expect, test } from 'vitest';
-import { apiResponseTimes } from '../../../performance-budget.config';
+
+const apiResponseTimes = {
+  '/api/search': { p50: 200, p95: 500, p99: 1000 },
+  '/api/draft-mode/enable': { p50: 200, p95: 500, p99: 1000 },
+  '/api/draft-mode/disable': { p50: 200, p95: 500, p99: 1000 },
+};
 
 /**
  * Measure API response time

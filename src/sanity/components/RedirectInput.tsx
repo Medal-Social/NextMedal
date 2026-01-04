@@ -9,10 +9,9 @@ export function RedirectInput(props: ObjectInputProps) {
 
   const handleToggleLinkType = useCallback(() => {
     const nextType = isInternal ? 'external' : 'internal';
-    onChange(set(nextType, ['type']));
+    const fieldToClear = isInternal ? 'internal' : 'external';
 
-    // Optional: Clear the other field when switching?
-    // Usually better to keep it in case they switch back.
+    onChange([set(nextType, ['type']), unset([fieldToClear])]);
   }, [isInternal, onChange]);
 
   const handleFieldChange = useCallback(

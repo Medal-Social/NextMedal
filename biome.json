@@ -15,7 +15,8 @@
       "!**/public/",
       "!**/migration/",
       "!**/*.config.js",
-      "!**/*.config.ts"
+      "!**/*.config.ts",
+      "!src/lib/collections/generated"
     ]
   },
   "formatter": {

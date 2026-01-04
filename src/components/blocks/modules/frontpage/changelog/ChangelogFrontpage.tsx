@@ -405,8 +405,8 @@ export default async function ChangelogFrontpage({
   let collectionSlug = providedSlug;
 
   if (!collectionSlug) {
-    const result = await getCollectionSlugWithFallback('collection.changelog', locale);
-    if (!result.success) {
+    collectionSlug = getCollectionSlugWithFallback('collection.changelog', locale);
+    if (!collectionSlug) {
       return (
         <Section className="space-y-8" {...moduleProps(props)}>
           <div className="text-center py-12 text-muted-foreground">
@@ -416,7 +416,6 @@ export default async function ChangelogFrontpage({
         </Section>
       );
     }
-    collectionSlug = result.slug;
   }
 
   const entries = await fetchChangelogEntries(collectionSlug, locale, {

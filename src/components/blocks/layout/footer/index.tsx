@@ -27,13 +27,15 @@ async function FooterInner() {
     return <FooterFallback />;
   }
 
-  const { title, tagline, logo, copyright, footerLinks, systemStatus } = site;
+  // biome-ignore lint/suspicious/noExplicitAny: footerLinks and other fields are flattened by GROQ but not by generated types
+  const { title, tagline, logo, copyright, footerLinks, systemStatus } = site as any;
 
   const logoImageDark = logo?.image?.dark || logo?.image?.default || logo?.image?.light;
   const logoImageLight = logo?.image?.light || logo?.image?.default || logo?.image?.dark;
 
   // Pre-resolve footer link URLs
   const resolvedFooterLinks = await Promise.all(
+    // @ts-expect-error - footerLinks is flattened by the GROQ query but the type definition suggests a nested structure
     (footerLinks || []).map(async (link) => ({
       ...link,
       resolvedUrl:

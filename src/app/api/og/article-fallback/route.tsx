@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
     let siteName = 'NextMedal';
     try {
       const site = await getSiteOptional(locale);
-      if (site?.title) siteName = site.title;
+      if (site?.title) siteName = site.title as unknown as string;
     } catch (_e) {
       // Fallback
     }

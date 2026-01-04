@@ -34,7 +34,6 @@ export default function LocaleSwitcherSelect({
   children,
   defaultValue,
   label,
-  _translationUrls = {},
   className,
   dropdownAlign = 'end',
 }: Props & { dropdownAlign?: 'start' | 'end' | 'center' }) {

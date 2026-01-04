@@ -17,7 +17,8 @@ async function HeaderInner() {
     return <HeaderFallback />;
   }
 
-  const { title, logo, ctas, headerNav, brandPage, enableSearch } = site;
+  // biome-ignore lint/suspicious/noExplicitAny: title and other fields are flattened by GROQ but not by generated types
+  const { title, logo, ctas, headerNav, brandPage, enableSearch } = site as any;
 
   const logoNode = <Logo title={title} logo={logo} brandPage={brandPage} locale={locale} />;
 
