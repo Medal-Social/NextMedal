@@ -300,19 +300,31 @@ describe('sitemap-[locale].xml route', () => {
 
   describe('Multi-language support (hreflang)', () => {
     it('includes xhtml:link alternates for pages with translations', async () => {
+      // First call: sitemap data (pages, articles, collections)
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [
           {
+            _id: 'page-about',
             slug: 'about',
             lastModified: '2024-01-01T00:00:00Z',
             priority: 0.8,
             language: 'en',
-            translations: [{ slug: 'om-oss', language: 'nb' }],
           },
         ],
         articles: [],
         collections: [],
       });
+      // Second call: translation metadata
+      mockFetchSanityLive.mockResolvedValueOnce([
+        {
+          _id: 'translation-about',
+          documentId: 'page-about',
+          translations: [
+            { _id: 'page-about', _type: 'page', slug: 'about', language: 'en' },
+            { _id: 'page-about-nb', _type: 'page', slug: 'om-oss', language: 'nb' },
+          ],
+        },
+      ]);
 
       const response = await GET(mockRequest, { params: createParams('en') });
       const xml = await response.text();
@@ -327,19 +339,31 @@ describe('sitemap-[locale].xml route', () => {
     });
 
     it('includes hreflang self-reference for English pages with Norwegian translation', async () => {
+      // First call: sitemap data
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [
           {
+            _id: 'page-about',
             slug: 'about',
             lastModified: '2024-01-01T00:00:00Z',
             priority: 0.8,
             language: 'en',
-            translations: [{ slug: 'om-oss', language: 'nb' }],
           },
         ],
         articles: [],
         collections: [],
       });
+      // Second call: translation metadata
+      mockFetchSanityLive.mockResolvedValueOnce([
+        {
+          _id: 'translation-about',
+          documentId: 'page-about',
+          translations: [
+            { _id: 'page-about', _type: 'page', slug: 'about', language: 'en' },
+            { _id: 'page-about-nb', _type: 'page', slug: 'om-oss', language: 'nb' },
+          ],
+        },
+      ]);
 
       const response = await GET(mockRequest, { params: createParams('en') });
       const xml = await response.text();
@@ -357,19 +381,22 @@ describe('sitemap-[locale].xml route', () => {
     });
 
     it('does not include alternates for pages without translations', async () => {
+      // First call: sitemap data
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [
           {
+            _id: 'page-solo',
             slug: 'solo-page',
             lastModified: '2024-01-01T00:00:00Z',
             priority: 0.5,
             language: 'en',
-            translations: [],
           },
         ],
         articles: [],
         collections: [],
       });
+      // Second call: translation metadata (empty - no translations)
+      mockFetchSanityLive.mockResolvedValueOnce([]);
 
       const response = await GET(mockRequest, { params: createParams('en') });
       const xml = await response.text();
@@ -378,19 +405,31 @@ describe('sitemap-[locale].xml route', () => {
     });
 
     it('handles index page for default locale without prefix', async () => {
+      // First call: sitemap data
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [
           {
+            _id: 'page-index',
             slug: 'index',
             lastModified: '2024-01-01T00:00:00Z',
             priority: 1,
             language: 'en',
-            translations: [{ slug: 'index', language: 'nb' }],
           },
         ],
         articles: [],
         collections: [],
       });
+      // Second call: translation metadata
+      mockFetchSanityLive.mockResolvedValueOnce([
+        {
+          _id: 'translation-index',
+          documentId: 'page-index',
+          translations: [
+            { _id: 'page-index', _type: 'page', slug: 'index', language: 'en' },
+            { _id: 'page-index-nb', _type: 'page', slug: 'index', language: 'nb' },
+          ],
+        },
+      ]);
 
       const response = await GET(mockRequest, { params: createParams('en') });
       const xml = await response.text();
@@ -407,19 +446,31 @@ describe('sitemap-[locale].xml route', () => {
 
   describe('Norwegian locale sitemap', () => {
     it('includes Norwegian pages with /nb prefix', async () => {
+      // First call: sitemap data
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [
           {
+            _id: 'page-om-oss',
             slug: 'om-oss',
             lastModified: '2024-01-01T00:00:00Z',
             priority: 0.8,
             language: 'nb',
-            translations: [{ slug: 'about', language: 'en' }],
           },
         ],
         articles: [],
         collections: [],
       });
+      // Second call: translation metadata
+      mockFetchSanityLive.mockResolvedValueOnce([
+        {
+          _id: 'translation-om-oss',
+          documentId: 'page-om-oss',
+          translations: [
+            { _id: 'page-about', _type: 'page', slug: 'about', language: 'en' },
+            { _id: 'page-om-oss', _type: 'page', slug: 'om-oss', language: 'nb' },
+          ],
+        },
+      ]);
 
       const response = await GET(mockRequest, { params: createParams('nb') });
       const xml = await response.text();
@@ -434,19 +485,31 @@ describe('sitemap-[locale].xml route', () => {
     });
 
     it('handles Norwegian index page', async () => {
+      // First call: sitemap data
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [
           {
+            _id: 'page-index-nb',
             slug: 'index',
             lastModified: '2024-01-01T00:00:00Z',
             priority: 1,
             language: 'nb',
-            translations: [{ slug: 'index', language: 'en' }],
           },
         ],
         articles: [],
         collections: [],
       });
+      // Second call: translation metadata
+      mockFetchSanityLive.mockResolvedValueOnce([
+        {
+          _id: 'translation-index',
+          documentId: 'page-index-nb',
+          translations: [
+            { _id: 'page-index', _type: 'page', slug: 'index', language: 'en' },
+            { _id: 'page-index-nb', _type: 'page', slug: 'index', language: 'nb' },
+          ],
+        },
+      ]);
 
       const response = await GET(mockRequest, { params: createParams('nb') });
       const xml = await response.text();
@@ -457,19 +520,22 @@ describe('sitemap-[locale].xml route', () => {
 
   describe('XML structure', () => {
     it('returns valid XML with urlset root element', async () => {
+      // First call: sitemap data
       mockFetchSanityLive.mockResolvedValueOnce({
         pages: [
           {
+            _id: 'page-index',
             slug: 'index',
             lastModified: '2024-01-01T00:00:00Z',
             priority: 1,
             language: 'en',
-            translations: [],
           },
         ],
         articles: [],
         collections: [],
       });
+      // Second call: translation metadata (empty - no translations)
+      mockFetchSanityLive.mockResolvedValueOnce([]);
 
       const response = await GET(mockRequest, { params: createParams('en') });
       const xml = await response.text();

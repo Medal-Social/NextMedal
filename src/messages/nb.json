@@ -29,6 +29,12 @@
     "toggleTheme": "Bytt tema",
     "changeLanguage": "Endre språk"
   },
+  "TranslationDialog": {
+    "title": "Oversettelse ikke tilgjengelig",
+    "description": "Denne siden er ikke tilgjengelig på {locale}. Vil du gå til {locale} hjemmeside i stedet?",
+    "goToHome": "Gå til {locale} hjemmeside",
+    "stay": "Bli på denne siden"
+  },
   "search": {
     "placeholder": "Søk...",
     "commandPlaceholder": "Søk i sider, artikler, dokumentasjon...",
@@ -47,6 +53,14 @@
     "copyCode": "Kopier kode",
     "copiedState": "Kopiert"
   },
+  "brand": {
+    "copyLogoPng": "Kopier logo PNG",
+    "copyLogoSvg": "Kopier logo SVG",
+    "logoCopied": "Logo-URL kopiert til utklippstavle",
+    "copyFailed": "Kunne ikke kopiere logo",
+    "goToHome": "Gå til forsiden",
+    "brandCenter": "Merkevaresenter"
+  },
   "article": {
     "home": "Hjem",
     "shareArticle": "Del artikkel",
@@ -62,7 +76,16 @@
     "popular": "Populær",
     "gridView": "Rutenettvisning",
     "listView": "Listevisning",
-    "rssFeed": "RSS-feed"
+    "rssFeed": "RSS-feed",
+    "allArticles": "Alle artikler",
+    "noArticles": "Ingen artikler ennå",
+    "noArticlesDescription": "Artikler vil vises her når de publiseres.",
+    "filterByCategory": "Filtrer etter kategori",
+    "allCategories": "Alle kategorier",
+    "sortBy": "Sorter etter",
+    "sortNewest": "Nyeste først",
+    "sortOldest": "Eldste først",
+    "sortTitle": "Etter tittel"
   },
   "video": {
     "preparing": "Forbereder video...",
@@ -118,12 +141,15 @@
     "email": "E-post",
     "phone": "Telefon",
     "privacy-link": "personvernerklæring",
+    "privacy-consent-label": "Jeg godtar {privacyLink}",
+    "privacy-aria-label": "Les vår personvernerklæring",
     "address": "Adresse",
     "opening-hours": "Åpningstider",
     "success-title": "Takk!",
     "success-message": "Vi har mottatt meldingen din og svarer innen 1 virkedag.",
-    "submitting": "Sender meldingen din...",
-    "validationFailed": "Vennligst sjekk skjemafeltene og prøv igjen.",
+    "submitting": "Sender...",
+    "submit-button": "Send inn",
+    "validationFailed": "Vennligst sjekk skjemaet og prøv igjen.",
     "acceptTerms": "Du må godta personvernerklæringen for å fortsette."
   },
   "cookies": {
@@ -236,5 +262,23 @@
       "configureHint": "Konfigurer i Studio → Nettstedsinnstillinger",
       "copyright": "NextMedal • Laget av <link>Medal Social</link> © {year}"
     }
+  },
+  "collectionSetup": {
+    "siteSettingsMissing": {
+      "title": "Nettstedsinnstillinger ikke funnet",
+      "description": "Konfigurer nettstedsinnstillinger for dette språket for å aktivere samlinger.",
+      "step1": "Gå til Sanity Studio",
+      "step2": "Opprett eller oversett nettstedsinnstillinger for {locale}",
+      "step3": "Konfigurer samlingsforsider",
+      "step4": "Publiser innstillingene"
+    },
+    "frontpageMissing": {
+      "title": "Samlingsforside mangler",
+      "description": "Konfigurer {collection}-forsiden for dette språket.",
+      "step1": "Gå til Nettstedsinnstillinger ({locale}) → Samlingsforsider",
+      "step2": "Velg en side for {collection}",
+      "step3": "Publiser innstillingene"
+    },
+    "openStudio": "Åpne Sanity Studio"
   }
 }

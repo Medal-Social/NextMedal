@@ -36,6 +36,12 @@
     "toggleTheme": "تبديل الوضع",
     "changeLanguage": "تغيير اللغة"
   },
+  "TranslationDialog": {
+    "title": "الترجمة غير متوفرة",
+    "description": "هذه الصفحة غير متوفرة بـ {locale}. هل تريد الانتقال إلى الصفحة الرئيسية بـ {locale} بدلاً من ذلك؟",
+    "goToHome": "الانتقال إلى الصفحة الرئيسية بـ {locale}",
+    "stay": "البقاء في هذه الصفحة"
+  },
   "search": {
     "placeholder": "بحث...",
     "commandPlaceholder": "ابحث عن الصفحات، المقالات، الوثائق...",
@@ -57,6 +63,14 @@
     "copyCode": "نسخ الكود",
     "copiedState": "تم النسخ"
   },
+  "brand": {
+    "copyLogoPng": "نسخ الشعار PNG",
+    "copyLogoSvg": "نسخ الشعار SVG",
+    "logoCopied": "تم نسخ رابط الشعار إلى الحافظة",
+    "copyFailed": "فشل نسخ الشعار",
+    "goToHome": "الانتقال إلى الرئيسية",
+    "brandCenter": "مركز العلامة التجارية"
+  },
   "article": {
     "home": "الرئيسية",
     "shareArticle": "مشاركة المقال",
@@ -73,6 +87,7 @@
     "gridView": "عرض شبكي",
     "listView": "عرض قائمة",
     "rssFeed": "خلاصة RSS",
+    "allArticles": "جميع المقالات",
     "readingTime": "{minutes} دقائق قراءة",
     "publishedOn": "نُشر في {date}",
     "updatedOn": "تم التحديث في {date}",
@@ -154,12 +169,15 @@
     "company": "الشركة",
     "sendMessage": "إرسال الرسالة",
     "privacy-link": "سياسة الخصوصية",
+    "privacy-consent-label": "أوافق على {privacyLink}",
+    "privacy-aria-label": "اقرأ سياسة الخصوصية",
     "address": "العنوان",
     "opening-hours": "ساعات العمل",
     "success-title": "شكراً لك!",
     "success-message": "تلقينا رسالتك وسنرد عليك خلال يوم عمل واحد.",
-    "submitting": "جارٍ إرسال رسالتك...",
-    "validationFailed": "يرجى التحقق من حقول النموذج والمحاولة مرة أخرى.",
+    "submitting": "جارٍ الإرسال...",
+    "submit-button": "إرسال",
+    "validationFailed": "يرجى التحقق من النموذج والمحاولة مرة أخرى.",
     "acceptTerms": "يرجى قبول سياسة الخصوصية للمتابعة.",
     "required": "هذا الحقل مطلوب",
     "invalidEmail": "يرجى إدخال بريد إلكتروني صالح"
@@ -368,5 +386,23 @@
       "configureHint": "قم بالتكوين في Studio ← إعدادات الموقع",
       "copyright": "NextMedal • تم الإنشاء بواسطة <link>Medal Social</link> © {year}"
     }
+  },
+  "collectionSetup": {
+    "siteSettingsMissing": {
+      "title": "إعدادات الموقع غير موجودة",
+      "description": "قم بتكوين إعدادات الموقع لهذه اللغة لتفعيل المجموعات.",
+      "step1": "انتقل إلى Sanity Studio",
+      "step2": "أنشئ أو ترجم إعدادات الموقع لـ {locale}",
+      "step3": "قم بتكوين الصفحات الأمامية للمجموعات",
+      "step4": "انشر الإعدادات"
+    },
+    "frontpageMissing": {
+      "title": "الصفحة الأمامية للمجموعة مفقودة",
+      "description": "قم بتكوين الصفحة الأمامية لـ {collection} لهذه اللغة.",
+      "step1": "انتقل إلى إعدادات الموقع ({locale}) ← الصفحات الأمامية للمجموعات",
+      "step2": "اختر صفحة لـ {collection}",
+      "step3": "انشر الإعدادات"
+    },
+    "openStudio": "افتح Sanity Studio"
   }
 }

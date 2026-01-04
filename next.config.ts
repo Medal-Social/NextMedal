@@ -89,8 +89,9 @@ const config = {
     if (!client) {
       return [];
     }
+
     const cmsRedirects = await client.fetch(groq`*[_type == 'redirect']{
-            'source': select(source match "/*" => source, "/" + source),
+            source,
             'destination': select(
                 destination.type == 'internal' => '/' + destination.internal->.metadata.slug.current,
                 destination.external
@@ -98,7 +99,13 @@ const config = {
             permanent
         }`);
 
-    return [...cmsRedirects];
+    // Auto-fix: Add leading "/" if missing (assume root level)
+    return cmsRedirects.map(
+      (r: { source: string; destination: string; permanent: boolean }) => ({
+        ...r,
+        source: r.source.startsWith('/') ? r.source : `/${r.source}`,
+      }),
+    );
   },
 
   // Rewrite sitemap URLs to use internal dynamic route
