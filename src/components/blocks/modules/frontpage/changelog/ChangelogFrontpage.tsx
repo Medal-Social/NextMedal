@@ -13,6 +13,7 @@ import { Suspense } from 'react';
 import SharedPortableText from '@/components/blocks/modules/SharedPortableText';
 import { Date as DateDisplay } from '@/components/blocks/objects/core';
 import { Section } from '@/components/ui/section';
+import { getCollectionSlugWithFallback } from '@/lib/collections/registry';
 import moduleProps from '@/lib/sanity/module-props';
 import { cn } from '@/lib/utils/index';
 import { fetchSanityLive } from '@/sanity/lib/live';
@@ -396,19 +397,26 @@ export default async function ChangelogFrontpage({
   groupByYear = true,
   limit = 0,
   showRssLink,
-  collectionSlug,
+  collectionSlug: providedSlug,
   locale = 'en',
   ...props
 }: ChangelogFrontpageProps) {
-  // If no collection slug is provided, we can't fetch entries
+  // Self-determine collection slug from site settings if not provided
+  let collectionSlug = providedSlug;
+
   if (!collectionSlug) {
-    return (
-      <Section className="space-y-8" {...moduleProps(props)}>
-        <div className="text-center py-12 text-muted-foreground">
-          <p>Collection not configured. Add this module to a page to create a collection.</p>
-        </div>
-      </Section>
-    );
+    const result = await getCollectionSlugWithFallback('collection.changelog', locale);
+    if (!result.success) {
+      return (
+        <Section className="space-y-8" {...moduleProps(props)}>
+          <div className="text-center py-12 text-muted-foreground">
+            <p>Changelog collection not configured for this language.</p>
+            <p className="text-sm mt-2">Configure the changelog frontpage in site settings.</p>
+          </div>
+        </Section>
+      );
+    }
+    collectionSlug = result.slug;
   }
 
   const entries = await fetchChangelogEntries(collectionSlug, locale, {

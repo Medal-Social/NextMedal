@@ -1,8 +1,14 @@
 'use server';
 
 import type { QueryParams } from 'next-sanity';
+import { DEFAULT_LOCALE } from '@/i18n/config';
 import { fetchSanityLive } from './live';
-import { SITE_QUERY } from './queries';
+import {
+  FOOTER_SETTINGS_QUERY,
+  HEADER_SETTINGS_QUERY,
+  SITE_QUERY,
+  SOCIAL_LINKS_QUERY,
+} from './queries';
 export { fetchSanityLive };
 
 export async function fetchSanity<T = unknown>({
@@ -19,28 +25,42 @@ export async function fetchSanity<T = unknown>({
   return fetchSanityLive<T>({ query, params, tags, stega });
 }
 
-// Site settings - uses fetchSanityLive for SanityLive revalidation support
-export async function getSite() {
+// Full site settings - returns null if missing
+// Use for metadata, manifest, and other cases that need complete site settings
+export async function getSiteOptional(locale: string = DEFAULT_LOCALE) {
   const site = await fetchSanityLive<Sanity.Site>({
     query: SITE_QUERY,
-  });
-
-  if (!site)
-    throw new Error(
-      'Missing Site settings: 🫠 Your website might be having an identity crisis...\n\n' +
-        'Solution: Publish the Site document in your Medal Social Studio.\n\n' +
-        '💁‍♂️ https://www.medalsocial.com'
-    );
-
-  return site;
-}
-
-// Optional site settings - returns null instead of throwing when site is missing
-// Useful for setup/onboarding flows where we want to handle missing site gracefully
-export async function getSiteOptional() {
-  const site = await fetchSanityLive<Sanity.Site>({
-    query: SITE_QUERY,
+    params: { language: locale },
   });
 
   return site ?? null;
+}
+
+// Header settings - optimized query for header component
+export async function getHeaderSettings(locale: string = DEFAULT_LOCALE) {
+  const settings = await fetchSanityLive<Sanity.Site>({
+    query: HEADER_SETTINGS_QUERY,
+    params: { language: locale },
+  });
+
+  return settings ?? null;
+}
+
+// Footer settings - optimized query for footer components
+export async function getFooterSettings(locale: string = DEFAULT_LOCALE) {
+  const settings = await fetchSanityLive<Sanity.Site>({
+    query: FOOTER_SETTINGS_QUERY,
+    params: { language: locale },
+  });
+
+  return settings ?? null;
+}
+
+// Social links - optimized query for social links component
+export async function getSocialLinks(_locale: string = DEFAULT_LOCALE) {
+  const links = await fetchSanityLive<Sanity.Site['socialLinks']>({
+    query: SOCIAL_LINKS_QUERY,
+  });
+
+  return links ?? null;
 }

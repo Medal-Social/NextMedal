@@ -1,6 +1,9 @@
 import '@testing-library/jest-dom/vitest';
-import { expect } from 'vitest';
+import { expect, vi } from 'vitest';
 import * as matchers from 'vitest-axe/matchers';
+
+// Mock server-only package (throws error in client-side code)
+vi.mock('server-only', () => ({}));
 
 // Extend Vitest's expect with axe matchers for accessibility testing
 expect.extend(matchers);

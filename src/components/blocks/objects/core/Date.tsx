@@ -1,5 +1,6 @@
 'use client';
 
+import { useLocale } from 'next-intl';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { formatFullDate, formatRelativeDate } from '@/lib/utils/index';
 
@@ -13,11 +14,13 @@ export default function DateDisplay({
   relative?: boolean;
   className?: string;
 } & React.ComponentProps<'time'>) {
+  const locale = useLocale();
+
   if (!value) return null;
 
   const dateStr = value.includes('T') ? value.split('T')[0] : value;
-  const fullDate = formatFullDate(value);
-  const display = relative ? formatRelativeDate(value) : fullDate;
+  const fullDate = formatFullDate(value, locale);
+  const display = relative ? formatRelativeDate(value, locale) : fullDate;
 
   // If showing relative date, wrap in tooltip to show full date on hover
   if (relative) {

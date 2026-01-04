@@ -296,6 +296,7 @@ export default function SocialEmbed({ platform, url }: SocialEmbedProps) {
   }, [isVisible]);
 
   const embedUrl = getEmbedUrl(platform, url);
+  const youtubeId = platform === 'youtube' ? extractYouTubeId(url) : null;
 
   // Handle error cases
   if (!embedUrl || hasError) {
@@ -322,34 +323,52 @@ export default function SocialEmbed({ platform, url }: SocialEmbedProps) {
   const config = platformConfig[platform];
 
   return (
-    <div ref={containerRef} className="my-6 w-full max-w-full flex justify-center">
-      {!isVisible ? (
-        <LoadingSkeleton platform={platform} />
-      ) : (
-        <div
-          className="relative w-full"
-          style={{
-            maxWidth: config.maxWidth,
-            minHeight: config.minHeight,
-            overflow: 'hidden',
+    <>
+      {platform === 'youtube' && youtubeId && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            // Validated YouTube ID from regex extraction, XSS-escaped with .replace(/</g, '\\u003c')
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'VideoObject',
+              name: 'YouTube Video',
+              embedUrl: `https://www.youtube.com/embed/${youtubeId}`,
+              thumbnailUrl: `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`,
+              uploadDate: new Date().toISOString(),
+            }).replace(/</g, '\\u003c'),
           }}
-        >
-          <iframe
-            src={embedUrl}
-            title={`${getPlatformName(platform)} embed`}
-            className="absolute inset-0 w-full h-full bg-transparent"
+        />
+      )}
+      <div ref={containerRef} className="my-6 w-full max-w-full flex justify-center">
+        {!isVisible ? (
+          <LoadingSkeleton platform={platform} />
+        ) : (
+          <div
+            className="relative w-full"
             style={{
-              aspectRatio: config.aspectRatio,
-              border: 'none',
+              maxWidth: config.maxWidth,
+              minHeight: config.minHeight,
               overflow: 'hidden',
             }}
-            scrolling="no"
-            sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms"
-            loading="lazy"
-            onError={() => setHasError(true)}
-          />
-        </div>
-      )}
-    </div>
+          >
+            <iframe
+              src={embedUrl}
+              title={`${getPlatformName(platform)} embed`}
+              className="absolute inset-0 w-full h-full bg-transparent"
+              style={{
+                aspectRatio: config.aspectRatio,
+                border: 'none',
+                overflow: 'hidden',
+              }}
+              scrolling="no"
+              sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms"
+              loading="lazy"
+              onError={() => setHasError(true)}
+            />
+          </div>
+        )}
+      </div>
+    </>
   );
 }

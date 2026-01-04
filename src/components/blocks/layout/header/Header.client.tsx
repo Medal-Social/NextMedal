@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { CommandMenu } from '@/components/blocks/utility/CommandMenu';
+import { useCollections } from '@/lib/collections/context';
 import { cn } from '@/lib/utils/index';
 import { DESKTOP_BREAKPOINT, SCROLL_THRESHOLD } from './constants';
 import MobileDocsNavigation from './mobile-docs-navigation';
@@ -29,11 +30,13 @@ export default function HeaderClient({
   const [isDarkHero, setIsDarkHero] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const { getSlug } = useCollections();
 
-  const isDocs = pathname?.includes('/docs');
-  const isDocsRoot = pathname?.endsWith('/docs');
+  const docsSlug = getSlug('collection.documentation');
+  const isDocs = docsSlug && pathname?.includes(`/${docsSlug}`);
+  const isDocsRoot = docsSlug && pathname?.endsWith(`/${docsSlug}`);
 
-  const _backHref = isDocsRoot ? '/' : '/docs';
+  const _backHref = isDocsRoot ? '/' : `/${docsSlug || 'docs'}`;
 
   isOpenRef.current = isOpen;
 
@@ -179,17 +182,15 @@ export default function HeaderClient({
         >
           {isDocs ? (
             <div className="flex flex-1 items-center justify-between w-full">
-              <div className="flex items-center min-w-0">
+              <div className="flex items-center gap-2 sm:gap-4 min-w-0">
                 {/* Identity: Logo | Docs */}
+                <div className="flex items-center shrink-0">{logoNode}</div>
+                <div className="hidden sm:block h-6 w-px bg-border/60 rotate-12 shrink-0" />
                 <Link
                   href="/docs"
-                  className="flex items-center gap-2 sm:gap-4 hover:opacity-80 transition-opacity min-w-0"
+                  className="hidden sm:block font-semibold text-lg tracking-tight truncate hover:opacity-80 transition-opacity"
                 >
-                  <div className="flex items-center shrink-0">{logoNode}</div>
-                  <div className="hidden sm:block h-6 w-px bg-border/60 rotate-12 shrink-0" />
-                  <span className="hidden sm:block font-semibold text-lg tracking-tight truncate">
-                    Docs
-                  </span>
+                  Docs
                 </Link>
               </div>
 

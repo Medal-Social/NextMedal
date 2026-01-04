@@ -13,7 +13,7 @@
 import { EyeClosedIcon, SearchIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
 import CharacterCount from '@/sanity/ui/CharacterCount';
-import PreviewOG from '@/sanity/ui/PreviewOG';
+import SocialImageInput from '@/sanity/ui/SocialImageInput';
 
 export default defineType({
   name: 'seo-metadata',
@@ -36,11 +36,7 @@ export default defineType({
         Rule.max(60).warning('Keep under 60 characters to avoid truncation'),
       ],
       components: {
-        input: (props) => (
-          <CharacterCount max={60} {...props}>
-            <PreviewOG title={props.elementProps.value} />
-          </CharacterCount>
-        ),
+        input: (props) => <CharacterCount max={60} {...props} />,
       },
     }),
     defineField({
@@ -62,9 +58,13 @@ export default defineType({
       name: 'image',
       title: 'Social Sharing Image',
       type: 'image',
-      description: 'Image displayed when sharing on social media (1200×630px recommended)',
+      description:
+        'Image displayed when sharing on social media (1200×630px recommended). If not provided, an auto-generated image will be created from your SEO title.',
       options: {
         hotspot: true,
+      },
+      components: {
+        input: SocialImageInput,
       },
     }),
     defineField({

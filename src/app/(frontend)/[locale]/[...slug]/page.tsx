@@ -9,11 +9,17 @@ import {
 } from '@/components/blocks/modules/frontpage';
 import { BreadcrumbJsonLd, JsonLd } from '@/components/blocks/seo';
 import { PageProvider } from '@/contexts';
+import { routing } from '@/i18n/routing';
+import { getAllCollections, getCollectionSlugWithFallback } from '@/lib/collections/registry';
+import type { CollectionType } from '@/lib/collections/types';
+import { BASE_URL } from '@/lib/core/env';
+import { logger } from '@/lib/core/logger';
 import { groupPlacements, type Placement } from '@/lib/sanity/placement';
 import processMetadata from '@/lib/sanity/process-metadata';
-import resolveUrl from '@/lib/sanity/resolve-url';
+import resolveUrl from '@/lib/sanity/resolve-url-server';
 import { parseFilterParams } from '@/lib/utils/url';
 import { client } from '@/sanity/lib/client';
+import { getSiteOptional } from '@/sanity/lib/fetch';
 import { fetchSanityLive } from '@/sanity/lib/live';
 import {
   COLLECTION_ARTICLE_POST_QUERY,
@@ -68,7 +74,7 @@ function buildNewsletterBreadcrumbs(
 ): BreadcrumbItem[] {
   const localePath = locale !== 'en' ? `/${locale}` : '';
   return [
-    ...buildBaseBreadcrumbs(locale, collectionSlug, issue.collection?.metadata?.title),
+    ...buildBaseBreadcrumbs(locale, collectionSlug, undefined),
     {
       name: issue.metadata?.title || 'Issue',
       path: `${localePath}/${collectionSlug}/${issue.metadata?.slug?.current}`,
@@ -82,7 +88,7 @@ function buildDocsBreadcrumbs(
   doc: Sanity.CollectionDocumentation
 ): BreadcrumbItem[] {
   const localePath = locale !== 'en' ? `/${locale}` : '';
-  const base = buildBaseBreadcrumbs(locale, collectionSlug, doc.collection?.metadata?.title);
+  const base = buildBaseBreadcrumbs(locale, collectionSlug, undefined);
 
   if (doc.parent?.metadata?.title) {
     base.push({
@@ -106,7 +112,7 @@ function buildEventsBreadcrumbs(
 ): BreadcrumbItem[] {
   const localePath = locale !== 'en' ? `/${locale}` : '';
   return [
-    ...buildBaseBreadcrumbs(locale, collectionSlug, event.collection?.metadata?.title),
+    ...buildBaseBreadcrumbs(locale, collectionSlug, undefined),
     {
       name: event.metadata?.title || 'Event',
       path: `${localePath}/${collectionSlug}/${event.metadata?.slug?.current}`,
@@ -120,7 +126,7 @@ function buildArticleBreadcrumbs(
   post: Sanity.CollectionArticlePost
 ): BreadcrumbItem[] {
   const localePath = locale !== 'en' ? `/${locale}` : '';
-  const base = buildBaseBreadcrumbs(locale, collectionSlug, post.collection?.metadata?.title);
+  const base = buildBaseBreadcrumbs(locale, collectionSlug, undefined);
 
   if (post.categories?.[0]) {
     base.push({
@@ -141,7 +147,9 @@ function buildArticleBreadcrumbs(
 // JSON-LD Builders
 // ============================================================================
 
-function buildNewsletterJsonLd(issue: Sanity.CollectionNewsletter) {
+async function buildNewsletterJsonLd(issue: Sanity.CollectionNewsletter) {
+  const site = await getSiteOptional();
+
   return {
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
@@ -150,6 +158,15 @@ function buildNewsletterJsonLd(issue: Sanity.CollectionNewsletter) {
     image: issue.seo?.ogimage,
     datePublished: issue.publishDate,
     dateModified: issue._updatedAt,
+    publisher: {
+      '@type': 'Organization',
+      name: site?.title || 'NextMedal',
+      url: BASE_URL,
+      logo: {
+        '@type': 'ImageObject',
+        url: site?.logo?.asset?.url || `${BASE_URL}/logo.png`,
+      },
+    },
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': resolveUrl(
@@ -160,7 +177,9 @@ function buildNewsletterJsonLd(issue: Sanity.CollectionNewsletter) {
   };
 }
 
-function buildDocsJsonLd(doc: Sanity.CollectionDocumentation) {
+async function buildDocsJsonLd(doc: Sanity.CollectionDocumentation) {
+  const site = await getSiteOptional();
+
   return {
     '@context': 'https://schema.org',
     '@type': 'TechArticle',
@@ -168,6 +187,15 @@ function buildDocsJsonLd(doc: Sanity.CollectionDocumentation) {
     description: doc.seo?.description || doc.excerpt,
     image: doc.seo?.ogimage,
     dateModified: doc._updatedAt,
+    publisher: {
+      '@type': 'Organization',
+      name: site?.title || 'NextMedal',
+      url: BASE_URL,
+      logo: {
+        '@type': 'ImageObject',
+        url: site?.logo?.asset?.url || `${BASE_URL}/logo.png`,
+      },
+    },
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': resolveUrl(
@@ -234,7 +262,9 @@ function buildEventsJsonLd(event: Sanity.CollectionEvents) {
   };
 }
 
-function buildArticleJsonLd(post: Sanity.CollectionArticlePost) {
+async function buildArticleJsonLd(post: Sanity.CollectionArticlePost) {
+  const site = await getSiteOptional();
+
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -247,6 +277,15 @@ function buildArticleJsonLd(post: Sanity.CollectionArticlePost) {
       '@type': 'Person',
       name: author.name,
     })),
+    publisher: {
+      '@type': 'Organization',
+      name: site?.title || 'NextMedal',
+      url: BASE_URL,
+      logo: {
+        '@type': 'ImageObject',
+        url: site?.logo?.asset?.url || `${BASE_URL}/logo.png`,
+      },
+    },
     mainEntityOfPage: {
       '@type': 'WebPage',
       '@id': resolveUrl({ ...post, _type: 'collection.article' } as unknown as Sanity.PageBase, {
@@ -260,31 +299,33 @@ function buildArticleJsonLd(post: Sanity.CollectionArticlePost) {
 // Collection Item Renderers
 // ============================================================================
 
-function renderNewsletterItem(
+async function renderNewsletterItem(
   issue: Sanity.CollectionNewsletter,
   collectionSlug: string,
   locale: string
 ) {
   const breadcrumbs = buildNewsletterBreadcrumbs(locale, collectionSlug, issue);
+  const newsletterJsonLd = await buildNewsletterJsonLd(issue);
   return (
     <>
       <BreadcrumbJsonLd items={breadcrumbs} />
-      <JsonLd data={buildNewsletterJsonLd(issue)} />
+      <JsonLd data={newsletterJsonLd} />
       <NewsletterDetail issue={issue} collectionSlug={collectionSlug} locale={locale} />
     </>
   );
 }
 
-function renderDocsItem(
+async function renderDocsItem(
   doc: Sanity.CollectionDocumentation,
   collectionSlug: string,
   locale: string
 ) {
   const breadcrumbs = buildDocsBreadcrumbs(locale, collectionSlug, doc);
+  const docsJsonLd = await buildDocsJsonLd(doc);
   return (
     <>
       <BreadcrumbJsonLd items={breadcrumbs} />
-      <JsonLd data={buildDocsJsonLd(doc)} />
+      <JsonLd data={docsJsonLd} />
       <DocDetail doc={doc} />
     </>
   );
@@ -301,16 +342,17 @@ function renderEventsItem(event: Sanity.CollectionEvents, collectionSlug: string
   );
 }
 
-function renderArticleItem(
+async function renderArticleItem(
   post: Sanity.CollectionArticlePost,
   collectionSlug: string,
   locale: string
 ) {
   const breadcrumbs = buildArticleBreadcrumbs(locale, collectionSlug, post);
+  const articleJsonLd = await buildArticleJsonLd(post);
   return (
     <>
       <BreadcrumbJsonLd items={breadcrumbs} />
-      <JsonLd data={buildArticleJsonLd(post)} />
+      <JsonLd data={articleJsonLd} />
       <ArticleDetail post={post} collectionSlug={collectionSlug} />
     </>
   );
@@ -321,33 +363,33 @@ function renderArticleItem(
 // ============================================================================
 
 async function handleCollectionItem(
-  collectionSlug: string,
+  requestedSlug: string,
   itemSlug: string,
   locale: string,
   collectionType: string | null
 ) {
   if (collectionType === 'newsletter-frontpage') {
-    const issue = await getCollectionNewsletterIssue(collectionSlug, itemSlug, locale);
+    const issue = await getCollectionNewsletterIssue(itemSlug, locale);
     if (!issue) return null;
-    return renderNewsletterItem(issue, collectionSlug, locale);
+    return renderNewsletterItem(issue, requestedSlug, locale);
   }
 
   if (collectionType === 'docs-frontpage') {
-    const doc = await getCollectionDocumentationArticle(collectionSlug, itemSlug, locale);
+    const doc = await getCollectionDocumentationArticle(itemSlug, locale);
     if (!doc) return null;
-    return renderDocsItem(doc, collectionSlug, locale);
+    return renderDocsItem(doc, requestedSlug, locale);
   }
 
   if (collectionType === 'events-frontpage') {
-    const event = await getCollectionEvent(collectionSlug, itemSlug, locale);
+    const event = await getCollectionEvent(itemSlug, locale);
     if (!event) return null;
-    return renderEventsItem(event, collectionSlug, locale);
+    return renderEventsItem(event, requestedSlug, locale);
   }
 
   // Default: article collection
-  const post = await getCollectionArticlePost(collectionSlug, itemSlug, locale);
+  const post = await getCollectionArticlePost(itemSlug, locale);
   if (!post) return null;
-  return renderArticleItem(post, collectionSlug, locale);
+  return renderArticleItem(post, requestedSlug, locale);
 }
 
 // ============================================================================
@@ -399,34 +441,74 @@ export default async function Page({ params, searchParams }: Props) {
 // Metadata Generation
 // ============================================================================
 
+async function fetchAndValidateCollectionItem<T>(
+  fetcher: (slug: string, locale: string, stega?: boolean) => Promise<T | null>,
+  collectionType: CollectionType,
+  itemSlug: string,
+  requestedSlug: string,
+  locale: string
+): Promise<T | null> {
+  const item = await fetcher(itemSlug, locale, false);
+  if (!item) return null;
+
+  // Validate collection slug matches site settings
+  const collectionSlug = getCollectionSlugWithFallback(collectionType, locale);
+  if (requestedSlug !== collectionSlug) return null;
+
+  return item;
+}
+
 async function getCollectionItemMetadata(
-  collectionSlug: string,
+  requestedSlug: string,
   itemSlug: string,
   locale: string,
   collectionType: string | null,
   searchParams: Record<string, string | string[] | undefined>
 ) {
-  if (collectionType === 'newsletter-frontpage') {
-    const issue = await getCollectionNewsletterIssue(collectionSlug, itemSlug, locale, false);
-    if (!issue) return null;
-    return processMetadata(issue, searchParams);
+  const handlers = {
+    'newsletter-frontpage': {
+      type: 'collection.newsletter' as CollectionType,
+      fetcher: getCollectionNewsletterIssue,
+    },
+    'docs-frontpage': {
+      type: 'collection.documentation' as CollectionType,
+      fetcher: getCollectionDocumentationArticle,
+    },
+    'events-frontpage': {
+      type: 'collection.events' as CollectionType,
+      fetcher: getCollectionEvent,
+    },
+  };
+
+  const handler = collectionType ? handlers[collectionType as keyof typeof handlers] : null;
+
+  if (handler) {
+    // @ts-expect-error - handler.fetcher is a union type of different collection fetchers
+    const item = await fetchAndValidateCollectionItem(
+      handler.fetcher,
+      handler.type,
+      itemSlug,
+      requestedSlug,
+      locale
+    );
+    return item ? processMetadata(item, searchParams) : null;
   }
 
-  if (collectionType === 'docs-frontpage') {
-    const doc = await getCollectionDocumentationArticle(collectionSlug, itemSlug, locale, false);
-    if (!doc) return null;
-    return processMetadata(doc, searchParams);
-  }
+  const post = await fetchAndValidateCollectionItem(
+    getCollectionArticlePost,
+    'collection.article',
+    itemSlug,
+    requestedSlug,
+    locale
+  );
 
-  if (collectionType === 'events-frontpage') {
-    const event = await getCollectionEvent(collectionSlug, itemSlug, locale, false);
-    if (!event) return null;
-    return processMetadata(event, searchParams);
-  }
-
-  const post = await getCollectionArticlePost(collectionSlug, itemSlug, locale, false);
   if (!post) return null;
-  return processMetadata(post, searchParams);
+
+  // Build RSS feed URL using the dynamic collection slug
+  const languagePrefix = locale !== 'en' ? `/${locale}` : '';
+  const rssUrl = `${languagePrefix}/${requestedSlug}/rss.xml`;
+
+  return processMetadata(post, searchParams, { rssUrl });
 }
 
 export async function generateMetadata({ params, searchParams }: Props) {
@@ -476,22 +558,22 @@ export async function generateStaticParams() {
         {},
         fetchOptions
       ),
-      clientWithoutStega.fetch<{ slug: string; collectionSlug: string }[]>(
+      clientWithoutStega.fetch<{ slug: string; _type: string; language: string }[]>(
         COLLECTION_ARTICLE_SLUGS_QUERY,
         {},
         fetchOptions
       ),
-      clientWithoutStega.fetch<{ slug: string; collectionSlug: string }[]>(
+      clientWithoutStega.fetch<{ slug: string; _type: string; language: string }[]>(
         COLLECTION_NEWSLETTER_SLUGS_QUERY,
         {},
         fetchOptions
       ),
-      clientWithoutStega.fetch<{ slug: string; collectionSlug: string }[]>(
+      clientWithoutStega.fetch<{ slug: string; _type: string; language: string }[]>(
         COLLECTION_DOCUMENTATION_SLUGS_QUERY,
         {},
         fetchOptions
       ),
-      clientWithoutStega.fetch<{ slug: string; collectionSlug: string }[]>(
+      clientWithoutStega.fetch<{ slug: string; _type: string; language: string }[]>(
         COLLECTION_EVENTS_SLUGS_QUERY,
         {},
         fetchOptions
@@ -501,18 +583,66 @@ export async function generateStaticParams() {
   // Transform to params format
   const pageParams = pages.map(({ slug }) => ({ slug: slug.split('/') }));
 
-  const toCollectionParams = (items: { slug: string; collectionSlug: string }[]) =>
-    items
-      .filter((item) => item.slug && item.collectionSlug)
-      .map((item) => ({ slug: [item.collectionSlug, item.slug] }));
+  // Get collection slugs for all languages
+  const collectionSlugsMap = await Promise.all(
+    routing.locales.map(async (locale) => {
+      const collections = getAllCollections(locale);
+      const slugs: Record<string, string> = {};
+      if (collections) {
+        for (const [type, metadata] of Object.entries(collections)) {
+          slugs[type] = metadata.slug;
+        }
+      }
 
-  return [
-    ...pageParams,
-    ...toCollectionParams(collectionPosts),
-    ...toCollectionParams(collectionNewsletters),
-    ...toCollectionParams(collectionDocs),
-    ...toCollectionParams(collectionEvents),
-  ];
+      // Log warning if collection config is incomplete (helps with debugging during build)
+      const missingCollections = [
+        !slugs['collection.article'] && 'articles',
+        !slugs['collection.documentation'] && 'documentation',
+        !slugs['collection.changelog'] && 'changelog',
+        !slugs['collection.newsletter'] && 'newsletter',
+        !slugs['collection.events'] && 'events',
+      ].filter(Boolean);
+
+      if (missingCollections.length > 0) {
+        logger.warn(
+          { locale, missing: missingCollections },
+          `[generateStaticParams] Missing collection config`
+        );
+      }
+
+      return { locale, slugs };
+    })
+  );
+
+  // Helper to transform collection items to params using site settings
+  const toCollectionParams = async (items: { slug: string; _type: string; language: string }[]) => {
+    const params: { slug: string[] }[] = [];
+
+    for (const item of items) {
+      if (!item.slug) continue;
+
+      // Find the collection slugs for this document's language
+      const languageSlugs = collectionSlugsMap.find((m) => m.locale === item.language);
+      if (!languageSlugs) continue;
+
+      // Get the collection slug for this document type
+      const collectionSlug = languageSlugs.slugs[item._type as CollectionType];
+      if (!collectionSlug) continue;
+
+      params.push({ slug: [collectionSlug, item.slug] });
+    }
+
+    return params;
+  };
+
+  const [postsParams, newslettersParams, docsParams, eventsParams] = await Promise.all([
+    toCollectionParams(collectionPosts),
+    toCollectionParams(collectionNewsletters),
+    toCollectionParams(collectionDocs),
+    toCollectionParams(collectionEvents),
+  ]);
+
+  return [...pageParams, ...postsParams, ...newslettersParams, ...docsParams, ...eventsParams];
 }
 
 // ============================================================================
@@ -530,54 +660,38 @@ async function checkCollectionPage(
   });
 }
 
-async function getCollectionArticlePost(
-  collectionSlug: string,
-  itemSlug: string,
-  locale: string,
-  stega?: boolean
-) {
+async function getCollectionArticlePost(itemSlug: string, locale: string, stega?: boolean) {
   return await fetchSanityLive<Sanity.CollectionArticlePost>({
     query: COLLECTION_ARTICLE_POST_QUERY,
-    params: { collectionSlug, itemSlug, locale },
+    params: { itemSlug, locale },
     stega,
   });
 }
 
-async function getCollectionNewsletterIssue(
-  collectionSlug: string,
-  itemSlug: string,
-  locale: string,
-  stega?: boolean
-) {
+async function getCollectionNewsletterIssue(itemSlug: string, locale: string, stega?: boolean) {
   return await fetchSanityLive<Sanity.CollectionNewsletter>({
     query: COLLECTION_NEWSLETTER_QUERY,
-    params: { collectionSlug, itemSlug, locale },
+    params: { itemSlug, locale },
     stega,
   });
 }
 
 async function getCollectionDocumentationArticle(
-  collectionSlug: string,
   itemSlug: string,
   locale: string,
   stega?: boolean
 ) {
   return await fetchSanityLive<Sanity.CollectionDocumentation>({
     query: COLLECTION_DOCUMENTATION_QUERY,
-    params: { collectionSlug, itemSlug, locale },
+    params: { itemSlug, locale },
     stega,
   });
 }
 
-async function getCollectionEvent(
-  collectionSlug: string,
-  itemSlug: string,
-  locale: string,
-  stega?: boolean
-) {
+async function getCollectionEvent(itemSlug: string, locale: string, stega?: boolean) {
   return await fetchSanityLive<Sanity.CollectionEvents>({
     query: COLLECTION_EVENTS_QUERY,
-    params: { collectionSlug, itemSlug, locale },
+    params: { itemSlug, locale },
     stega,
   });
 }
@@ -601,6 +715,12 @@ async function getPage(slugParts: string[] | undefined, locale: string, stega?: 
       metadata {
         ...,
         'ogimage': image.asset->url + '?w=1200'
+      },
+      seo {
+        title,
+        description,
+        ogimage,
+        noIndex
       },
       ${TRANSLATIONS_QUERY}
     }`,

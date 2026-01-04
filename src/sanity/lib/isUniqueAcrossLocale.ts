@@ -57,6 +57,11 @@ export async function isUniqueAcrossLocale(
     return defaultIsUnique(slug, context);
   }
 
+  // If document doesn't have an ID yet (new document), use default behavior
+  if (!document._id) {
+    return defaultIsUnique(slug, context);
+  }
+
   const client = getClient({ apiVersion: '2025-12-23' });
   const id = document._id.replace(/^drafts\./, '');
   const params = {
@@ -71,16 +76,34 @@ export async function isUniqueAcrossLocale(
     const fieldPath = toSafeGroqPath(path || []);
     const slugField = `${fieldPath}.current`;
 
+    // Query: find documents with same language and slug, excluding current document
+    // Returns true if no duplicates found (i.e., the slug is unique)
     const query = `!defined(*[
       language == $language &&
       ${slugField} == $slug &&
       !(_id in [$draft, $published])
     ][0]._id)`;
 
-    return await client.fetch(query, params);
+    const result = await client.fetch(query, params);
+
+    // Debug logging (only in development)
+    if (process.env.NODE_ENV === 'development' && !result) {
+      logger.warn(
+        {
+          slug,
+          language: document.language,
+          documentId: document._id,
+          fieldPath,
+        },
+        'Slug uniqueness check failed'
+      );
+    }
+
+    return result;
   } catch (error) {
-    // Fail safe: if path construction fails, reject the slug
-    logger.error({ err: error }, 'GROQ path safety check failed');
-    return false;
+    // Fail safe: if there's an error, use default validation
+    logger.error({ err: error, slug, documentId: document._id }, 'Slug uniqueness check error');
+    // Fall back to default instead of rejecting
+    return defaultIsUnique(slug, context);
   }
 }

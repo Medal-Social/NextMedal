@@ -241,6 +241,59 @@ Configure CORS in your Sanity project:
 
 ---
 
+## Language Switcher Refactor Plan
+
+### Current Findings (What's Broken)
+
+- Translation detection is inconsistent across page types, especially for collection items and the homepage.
+- The "translation exists" signal is not unified between Sanity page links (manual relationships) and collection translation metadata (generated/derived).
+- URL construction for translated collection items is not always aligned with collection slugs, which can cause false "translation missing" results.
+- Homepage translations are often not linked in Sanity metadata, so the switcher lacks reliable translation data even when a localized homepage exists.
+- Fallback behavior (dialog) works, but it is triggered too often due to incomplete translation lookup.
+
+### Refactor Goals
+
+- Guarantee auto-switch to a translated page when a translation exists.
+- Preserve the dialog fallback only when a translation truly does not exist.
+- Use a single, well-defined translation lookup contract for pages, collections, and homepage.
+- Ensure URL generation is consistent with collection slugs for all locales.
+
+### Investigation Plan
+
+1. Map the current language switcher flow (data sources, lookups, URL building).
+2. Define a unified translation contract: input page type + locale -> translation URL or "missing".
+3. Identify where translation data lives for:
+   - Standard pages (Sanity translation metadata links).
+   - Collection items (generated translation metadata).
+   - Homepage (index pages per locale).
+4. Determine required data additions or fallbacks to avoid false negatives.
+5. Validate logic against real content scenarios (index, collection item, standard page).
+
+### Test Plan (Unit + Integration)
+
+Unit tests:
+
+- `buildTranslationUrls` returns correct URLs for:
+  - Home page with translations.
+  - Standard page (about, contact).
+  - Collection item (articles/docs/newsletter/events).
+- Missing translation triggers "missing" result (no URL).
+- Default locale prefix handling is correct.
+
+Integration tests:
+
+- Homepage: switching to a translated homepage auto-navigates.
+- Collection item: switching to a translated item auto-navigates with correct collection slug.
+- Standard page: switching to a translated page auto-navigates.
+- Missing translation: opens dialog and does not navigate.
+
+### Proposed Fixes (High-Level)
+
+- Normalize translation discovery into a single server-side function that returns a map of locale -> URL.
+- For homepage, detect localized index pages even without translation metadata links.
+- For collections, resolve collection slugs from the registry before building URLs.
+- Ensure the language switcher uses this unified map (no per-type branching in the client).
+
 ### Deployment
 
 NextMedal is configured for `output: "standalone"`, making it compatible with Vercel, Coolify, and any Docker-based deployment.

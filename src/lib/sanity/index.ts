@@ -1,4 +1,6 @@
 // URL resolution
+export { isRelativeUrl, resolveAnyUrl, resolveUrlSync } from './resolve-url';
+// NOTE: Server Components should import resolveUrl from './resolve-url-server' directly
 
 // Current page fetching
 export { getCurrentPage } from './get-current-page';
@@ -10,4 +12,3 @@ export type { Placement, PlacementLocation, Placements } from './placement';
 export { groupPlacements } from './placement';
 // SEO metadata
 export { default as processMetadata } from './process-metadata';
-export { default as resolveUrl, isRelativeUrl, resolveAnyUrl } from './resolve-url';

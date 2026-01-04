@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { renderWithProviders as render, screen } from '@tests/setup/providers';
 import { describe, expect, it, vi } from 'vitest';
 
 // Mock the date utility functions

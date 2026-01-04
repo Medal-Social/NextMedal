@@ -31,6 +31,88 @@ const components = {
   },
 };
 
+const AnimatedNumber = ({ value }: { value: number }) => {
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (latest) => Math.round(latest));
+  useEffect(() => {
+    animate(count, value, { duration: 0.5 });
+  }, [value, count]);
+  return <motion.span>{rounded}</motion.span>;
+};
+
+function PricingPrice({
+  tier,
+  isYearly,
+}: {
+  tier: NonNullable<Sanity.PricingList['tiers']>[number];
+  isYearly: boolean;
+}) {
+  if (tier.monthlyPrice === undefined) return null;
+
+  const priceValue = isYearly && tier.yearlyPrice ? tier.yearlyPrice : tier.monthlyPrice;
+  const priceNum = Number.parseInt(priceValue || '0', 10);
+  const isValidPrice = !Number.isNaN(priceNum) && priceNum > 0;
+
+  return (
+    <div
+      className="flex flex-wrap items-end gap-x-1"
+      aria-live="polite"
+      itemScope
+      itemProp="offers"
+      itemType="https://schema.org/Offer"
+    >
+      <meta itemProp="price" content={priceValue?.toString()} />
+      <meta itemProp="priceCurrency" content={tier.currency || 'USD'} />
+      {tier.monthlyPrice && (
+        <span className="text-4xl text-foreground font-semibold font-numeric">
+          {tier.currency} {isValidPrice ? <AnimatedNumber value={priceNum} /> : tier.monthlyPrice}
+        </span>
+      )}
+      {tier.priceSuffix && (
+        <span className="text-sm font-normal text-foreground">{tier.priceSuffix}</span>
+      )}
+    </div>
+  );
+}
+
+function PricingTier({
+  tier,
+  isYearly,
+}: {
+  tier: NonNullable<Sanity.PricingList['tiers']>[number];
+  isYearly: boolean;
+}) {
+  if (!tier) return null;
+
+  return (
+    <article
+      className="backdrop-blur-sm bg-card/30 p-8 rounded-lg border border-primary/10 hover:border-primary/20 transition-colors duration-300 flex flex-col gap-6"
+      itemScope
+      itemType="https://schema.org/Product"
+    >
+      <meta itemProp="name" content={tier.title || ''} />
+      {tier.description && <meta itemProp="description" content={tier.description} />}
+
+      <div className="flex flex-col gap-2">
+        <div className="text-2xl flex items-center justify-between">
+          {tier.title}
+          {tier.highlight && (
+            <Badge className="text-xs text-primary-foreground ">{tier.highlight}</Badge>
+          )}
+        </div>
+        {tier.description && <p className="text-sm text-muted-foreground">{tier.description}</p>}
+      </div>
+
+      <PricingPrice tier={tier} isYearly={isYearly} />
+
+      <CTAList className="grid" ctas={tier.ctas} />
+      <div className="prose prose-slate dark:prose-invert max-w-none">
+        <SharedPortableText components={components} value={tier.content} />
+      </div>
+    </article>
+  );
+}
+
 export default function PricingList({ intro, tiers, ...props }: Sanity.PricingList) {
   const t = useTranslations('modules.pricing');
   const [isYearly, setIsYearly] = useState(false);
@@ -71,70 +153,9 @@ export default function PricingList({ intro, tiers, ...props }: Sanity.PricingLi
         style={{ '--col': tiers?.length } as React.CSSProperties}
       >
         {tiers?.map(
-          (tier) =>
-            !!tier && (
-              <article
-                className="backdrop-blur-sm bg-card/30 p-8 rounded-lg border border-primary/10 hover:border-primary/20 transition-colors duration-300 flex flex-col gap-6"
-                key={tier._id}
-              >
-                <div className="flex flex-col gap-2">
-                  <div className="text-2xl flex items-center justify-between">
-                    {tier.title}
-                    {tier.highlight && (
-                      <Badge className="text-xs text-primary-foreground ">{tier.highlight}</Badge>
-                    )}
-                  </div>
-                  {tier.description && (
-                    <p className="text-sm text-muted-foreground">{tier.description}</p>
-                  )}
-                </div>
-
-                {tier.monthlyPrice !== undefined && (
-                  <div className="flex flex-wrap items-end gap-x-1" aria-live="polite">
-                    {tier.monthlyPrice !== undefined && tier.monthlyPrice && (
-                      <span className="text-4xl text-foreground font-semibold font-numeric">
-                        {tier.currency}{' '}
-                        {!Number.isNaN(Number.parseInt(tier.monthlyPrice, 10)) &&
-                        Number.parseInt(tier.monthlyPrice, 10) > 0 &&
-                        !Number.isNaN(Number.parseInt(tier.yearlyPrice || '0', 10)) &&
-                        Number.parseInt(tier.yearlyPrice || '0', 10) > 0 ? (
-                          <AnimatedNumber
-                            value={
-                              isYearly && tier.yearlyPrice
-                                ? Number.parseInt(tier.yearlyPrice, 10)
-                                : Number.parseInt(tier.monthlyPrice, 10)
-                            }
-                          />
-                        ) : (
-                          tier.monthlyPrice
-                        )}
-                      </span>
-                    )}
-                    {tier.priceSuffix && (
-                      <span className="text-sm font-normal text-foreground">
-                        {tier.priceSuffix}
-                      </span>
-                    )}
-                  </div>
-                )}
-
-                <CTAList className="grid" ctas={tier.ctas} />
-                <div className="prose prose-slate dark:prose-invert max-w-none">
-                  <SharedPortableText components={components} value={tier.content} />
-                </div>
-              </article>
-            )
+          (tier) => !!tier && <PricingTier key={tier._id} tier={tier} isYearly={isYearly} />
         )}
       </div>
     </Section>
   );
 }
-
-const AnimatedNumber = ({ value }: { value: number }) => {
-  const count = useMotionValue(0);
-  const rounded = useTransform(count, (latest) => Math.round(latest));
-  useEffect(() => {
-    animate(count, value, { duration: 0.5 });
-  }, [value, count]);
-  return <motion.span>{rounded}</motion.span>;
-};

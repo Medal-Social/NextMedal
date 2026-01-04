@@ -6,9 +6,9 @@ import { Img } from '@/components/blocks/objects/core';
 import { Social } from '@/components/blocks/utility';
 import CookiePreferencesTrigger from '@/components/CookiePreferencesTrigger';
 import { Section } from '@/components/ui/section';
-import resolveUrl from '@/lib/sanity/resolve-url';
+import resolveUrl from '@/lib/sanity/resolve-url-server';
 import { cn } from '@/lib/utils/index';
-import { getSiteOptional } from '@/sanity/lib/fetch';
+import { getFooterSettings } from '@/sanity/lib/fetch';
 import { ErrorBoundary } from '../ErrorBoundary';
 import { FooterFallback } from './FooterFallback';
 import Navigation from './Navigation';
@@ -19,7 +19,8 @@ const footerLinkStyles =
   'relative hover:text-foreground motion-safe:transition-all motion-safe:duration-200 focus:outline-none focus:ring-2 focus:ring-primary after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-current motion-safe:after:transition-all motion-safe:after:duration-200 motion-safe:hover:after:w-full';
 
 async function FooterInner() {
-  const [site, locale] = await Promise.all([getSiteOptional(), getLocale()]);
+  const locale = await getLocale();
+  const site = await getFooterSettings(locale);
 
   // If no site settings, return fallback (build-time and runtime safe)
   if (!site) {
@@ -30,6 +31,17 @@ async function FooterInner() {
 
   const logoImageDark = logo?.image?.dark || logo?.image?.default || logo?.image?.light;
   const logoImageLight = logo?.image?.light || logo?.image?.default || logo?.image?.dark;
+
+  // Pre-resolve footer link URLs
+  const resolvedFooterLinks = await Promise.all(
+    (footerLinks || []).map(async (link) => ({
+      ...link,
+      resolvedUrl:
+        link.external ||
+        (link.internal && (await resolveUrl(link.internal, { base: false }))) ||
+        null,
+    }))
+  );
 
   return (
     <Wrapper className="bg-background text-foreground">
@@ -92,15 +104,13 @@ async function FooterInner() {
                 © {new Date().getFullYear()} {title}. All rights reserved.
               </span>
             )}
-            {footerLinks?.map((link) => {
-              const url =
-                link.external || (link.internal && resolveUrl(link.internal, { base: false }));
-              if (!url) return null;
+            {resolvedFooterLinks?.map((link) => {
+              if (!link.resolvedUrl) return null;
               const isExternal = link.newTab || !!link.external;
               return (
                 <Link
                   key={link.label}
-                  href={url}
+                  href={link.resolvedUrl}
                   className={footerLinkStyles}
                   target={isExternal ? '_blank' : undefined}
                   rel={isExternal ? 'noopener noreferrer' : undefined}

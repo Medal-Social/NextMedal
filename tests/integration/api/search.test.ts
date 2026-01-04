@@ -18,6 +18,101 @@ vi.mock('@/sanity/lib/client', () => ({
   },
 }));
 
+// Mock i18n routing
+vi.mock('@/i18n/routing', () => ({
+  routing: {
+    defaultLocale: 'en',
+    locales: ['en', 'nb'],
+  },
+}));
+
+// Mock withRetry to just call the function directly without retries
+vi.mock('@/lib/utils', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    withRetry: vi.fn(async (fn) => await fn()),
+  };
+});
+
+// Mock Next.js unstable_cache to bypass caching in tests
+vi.mock('next/cache', () => ({
+  unstable_cache: vi.fn((fn) => fn),
+}));
+
+// Mock the generated collections file directly (used by getAllCollections)
+vi.mock('@/lib/collections/generated/collections.generated', () => ({
+  COLLECTION_SLUGS_BY_LOCALE: {
+    en: {
+      'collection.article': {
+        type: 'collection.article',
+        slug: 'articles',
+        name: 'Articles',
+      },
+      'collection.changelog': {
+        type: 'collection.changelog',
+        slug: 'changelog',
+        name: 'Changelog',
+      },
+      'collection.documentation': {
+        type: 'collection.documentation',
+        slug: 'docs',
+        name: 'Documentation',
+      },
+      'collection.newsletter': {
+        type: 'collection.newsletter',
+        slug: 'newsletter',
+        name: 'Newsletter',
+      },
+      'collection.events': {
+        type: 'collection.events',
+        slug: 'events',
+        name: 'Events',
+      },
+    },
+    nb: {
+      'collection.article': {
+        type: 'collection.article',
+        slug: 'artikler',
+        name: 'Articles',
+      },
+      'collection.changelog': {
+        type: 'collection.changelog',
+        slug: 'endringslogg',
+        name: 'Changelog',
+      },
+      'collection.documentation': {
+        type: 'collection.documentation',
+        slug: 'dokumentasjon',
+        name: 'Documentation',
+      },
+      'collection.newsletter': {
+        type: 'collection.newsletter',
+        slug: 'nyhetsbrev',
+        name: 'Newsletter',
+      },
+      'collection.events': {
+        type: 'collection.events',
+        slug: 'hendelser',
+        name: 'Events',
+      },
+    },
+  },
+  DEFAULT_COLLECTION_SLUGS: {
+    'collection.article': 'articles',
+    'collection.changelog': 'changelog',
+    'collection.documentation': 'docs',
+    'collection.newsletter': 'newsletter',
+    'collection.events': 'events',
+  },
+  SLUG_TO_TYPE_MAP: {},
+  GENERATION_METADATA: {
+    generatedAt: '2025-01-01T00:00:00.000Z',
+    locales: ['en', 'nb'],
+    source: 'Test mock',
+  },
+}));
+
 import { GET } from '@/app/api/search/route';
 import { client } from '@/sanity/lib/client';
 
@@ -76,7 +171,6 @@ describe('Search API', () => {
           _type: 'collection.article',
           title: 'Article',
           slug: 'my-post',
-          collectionSlug: 'articles',
           description: 'A article',
           language: 'en',
         },
@@ -100,7 +194,6 @@ describe('Search API', () => {
           _type: 'collection.changelog',
           title: 'Version 1.0',
           slug: 'v1',
-          collectionSlug: 'changelog',
           language: 'en',
         },
       ],
@@ -121,7 +214,6 @@ describe('Search API', () => {
           _type: 'collection.documentation',
           title: 'Getting Started',
           slug: 'getting-started',
-          collectionSlug: 'docs',
           language: 'en',
         },
       ],
@@ -142,7 +234,6 @@ describe('Search API', () => {
           _type: 'collection.newsletter',
           title: 'Weekly Update',
           slug: 'weekly-1',
-          collectionSlug: 'newsletter',
           language: 'en',
         },
       ],
@@ -154,7 +245,7 @@ describe('Search API', () => {
     expect(data[0].type).toBe('Newsletter');
   });
 
-  it('handles unknown collection type as Article', async () => {
+  it('filters out unknown collection types', async () => {
     mockFetch.mockResolvedValueOnce({
       pages: [],
       collections: [
@@ -163,7 +254,6 @@ describe('Search API', () => {
           _type: 'collection.unknown',
           title: 'Unknown Type',
           slug: 'unknown',
-          collectionSlug: 'unknown',
           language: 'en',
         },
       ],
@@ -172,10 +262,11 @@ describe('Search API', () => {
     const response = await GET(createMockRequest());
     const data = await response.json();
 
-    expect(data[0].type).toBe('Article');
+    // Unknown collection types are filtered out (no collection slug in registry)
+    expect(data).toHaveLength(0);
   });
 
-  it('handles collection without collectionSlug', async () => {
+  it('handles collection without item slug', async () => {
     mockFetch.mockResolvedValueOnce({
       pages: [],
       collections: [
@@ -183,8 +274,7 @@ describe('Search API', () => {
           _id: 'item-1',
           _type: 'collection.article',
           title: 'Item',
-          slug: 'item',
-          collectionSlug: null,
+          slug: null,
           language: 'en',
         },
       ],
@@ -193,7 +283,7 @@ describe('Search API', () => {
     const response = await GET(createMockRequest());
     const data = await response.json();
 
-    // Item will be filtered out because collectionSlug is null
+    // Item will be filtered out because item slug is null
     expect(data).toHaveLength(0);
   });
 
@@ -216,7 +306,6 @@ describe('Search API', () => {
           _type: 'collection.article',
           title: 'Post',
           slug: 'post',
-          collectionSlug: 'articles',
           language: 'en',
         },
       ],
@@ -236,7 +325,6 @@ describe('Search API', () => {
           _type: 'collection.article',
           title: 'Post',
           slug: 'post',
-          collectionSlug: 'articles',
           language: 'en',
         },
       ],

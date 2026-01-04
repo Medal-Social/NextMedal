@@ -1,26 +1,23 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { submitForm } from '@/actions/forms/submit-form';
-import SharedPortableText from '@/components/blocks/modules/SharedPortableText';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils/index';
-import { validateExternalUrl } from '@/lib/validateExternalUrl';
-import resolveSlug from '@/sanity/lib/resolveSlug';
 
 interface FormField {
   _key: string;
-  label: string;
+  label: Array<{ _key: string; value: string }> | string;
   name: { current: string };
   type: 'text' | 'email' | 'tel' | 'textarea' | 'checkbox';
-  placeholder?: string;
+  placeholder?: Array<{ _key: string; value: string }> | string;
   required?: boolean;
 }
 
@@ -29,43 +26,50 @@ interface FormProps {
     intent: string;
     formTitle?: string;
     fields: FormField[];
-    submitButtonText: string;
+    requireConsent?: boolean;
+    // Legacy fields for backward compatibility
+    submitButtonText?: string;
     successMessage?: Sanity.BlockContent;
     acceptance?: {
       required: boolean;
       text: string;
-      link?: {
-        type: 'internal' | 'external';
-        internal?: {
-          _type: string;
-          metadata?: { slug?: { current: string } };
-        };
-        external?: string;
-        params?: string;
-      };
+      link?: unknown;
     };
-    redirect?: {
-      type: 'internal' | 'external';
-      internal?: {
-        _type: string;
-        metadata?: { slug?: { current: string } };
-      };
-      external?: string;
-      params?: string;
-    };
+    redirect?: unknown;
   };
   className?: string;
+  locale: string;
 }
 
-// Helper to resolve link from form config
-function resolveFormLink(link?: FormProps['form']['redirect']) {
-  if (!link) return undefined;
-  return resolveSlug({
-    _type: link.internal?._type,
-    internal: link.internal?.metadata?.slug?.current,
-    external: link.external,
-    params: link.params,
-  });
+// Helper to extract localized value from internationalized array
+function getLocalizedValue(
+  arr: Array<{ _key: string; value: string }> | string | undefined,
+  locale: string,
+  fallback = ''
+): string {
+  if (!arr) return fallback;
+  if (typeof arr === 'string') return arr; // Backward compatibility
+  if (!Array.isArray(arr)) return fallback;
+
+  const item = arr.find((i) => i._key === locale) || arr.find((i) => i._key === 'en') || arr[0];
+
+  return item?.value || fallback;
+}
+
+// Backward compatibility adapter
+function adaptLegacyForm(form: FormProps['form'], locale: string): FormProps['form'] {
+  return {
+    ...form,
+    fields: form.fields.map((field) => ({
+      ...field,
+      label: typeof field.label === 'string' ? [{ _key: locale, value: field.label }] : field.label,
+      placeholder:
+        field.placeholder && typeof field.placeholder === 'string'
+          ? [{ _key: locale, value: field.placeholder }]
+          : field.placeholder,
+    })),
+    requireConsent: form.acceptance?.required || form.requireConsent || false,
+  };
 }
 
 // Get autocomplete value based on field type
@@ -81,14 +85,18 @@ function FormFieldRenderer({
   value,
   onChange,
   error,
+  locale,
 }: {
   field: FormField;
   value: string | boolean;
   onChange: (name: string, value: string | boolean) => void;
   error?: string;
+  locale: string;
 }) {
   const fieldId = `field-${field._key}`;
   const hasError = !!error;
+  const label = getLocalizedValue(field.label, locale);
+  const placeholder = getLocalizedValue(field.placeholder, locale);
 
   if (field.type === 'checkbox') {
     return (
@@ -101,7 +109,7 @@ function FormFieldRenderer({
           aria-invalid={hasError}
         />
         <FieldLabel htmlFor={fieldId} className="cursor-pointer">
-          {field.label} {field.required && <span className="text-destructive">*</span>}
+          {label} {field.required && <span className="text-destructive">*</span>}
         </FieldLabel>
         {error && <FieldError>{error}</FieldError>}
       </Field>
@@ -112,11 +120,11 @@ function FormFieldRenderer({
     return (
       <Field className="col-span-1 sm:col-span-2">
         <FieldLabel htmlFor={fieldId}>
-          {field.label} {field.required && <span className="text-destructive">*</span>}
+          {label} {field.required && <span className="text-destructive">*</span>}
         </FieldLabel>
         <Textarea
           id={fieldId}
-          placeholder={field.placeholder}
+          placeholder={placeholder}
           required={field.required}
           value={String(value || '')}
           onChange={(e) => onChange(field.name.current, e.target.value)}
@@ -133,12 +141,12 @@ function FormFieldRenderer({
   return (
     <Field className="col-span-1">
       <FieldLabel htmlFor={fieldId}>
-        {field.label} {field.required && <span className="text-destructive">*</span>}
+        {label} {field.required && <span className="text-destructive">*</span>}
       </FieldLabel>
       <Input
         id={fieldId}
         type={field.type}
-        placeholder={field.placeholder}
+        placeholder={placeholder}
         required={field.required}
         autoComplete={getAutoComplete(field.type)}
         value={String(value || '')}
@@ -154,11 +162,9 @@ function FormFieldRenderer({
 
 // Success message component
 function SuccessMessage({
-  form,
   className,
   t,
 }: {
-  form: FormProps['form'];
   className?: string;
   t: ReturnType<typeof useTranslations>;
 }) {
@@ -167,75 +173,53 @@ function SuccessMessage({
       <div className="inline-flex items-center justify-center size-20 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 mb-8 shadow-inner">
         <span className="text-3xl font-bold">&#10003;</span>
       </div>
-      <h3 className="text-3xl font-bold text-foreground mb-4">
-        {t('success-title') || 'Thank you!'}
-      </h3>
-      <div className="text-muted-foreground max-w-md mx-auto px-6">
-        {form.successMessage ? (
-          <SharedPortableText value={form.successMessage} />
-        ) : (
-          <p className="text-lg">{t('success-message') || 'We have received your submission.'}</p>
-        )}
-      </div>
+      <h3 className="text-3xl font-bold text-foreground mb-4">{t('success-title')}</h3>
+      <p className="text-muted-foreground text-lg max-w-md mx-auto px-6">{t('success-message')}</p>
     </div>
   );
 }
 
 // Acceptance checkbox component
 function AcceptanceCheckbox({
-  form,
   accepted,
   onAcceptedChange,
-  acceptanceUrl,
-  router,
   t,
 }: {
-  form: FormProps['form'];
   accepted: boolean;
   onAcceptedChange: (accepted: boolean) => void;
-  acceptanceUrl?: string;
-  router: ReturnType<typeof useRouter>;
   t: ReturnType<typeof useTranslations>;
 }) {
-  if (!form.acceptance?.text) return null;
-
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (form.acceptance?.link?.type === 'internal' && acceptanceUrl) {
-      e.preventDefault();
-      router.push(acceptanceUrl);
-    }
-  };
+  const consentLabel = t.rich('privacy-consent-label', {
+    privacyLink: (_chunks) => (
+      <a
+        href="/privacy"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-primary hover:underline font-semibold"
+        aria-label={t('privacy-aria-label')}
+      >
+        {t('privacy-link')}
+      </a>
+    ),
+  });
 
   return (
     <Field orientation="horizontal">
       <Checkbox
         id="form-acceptance"
-        required={form.acceptance?.required}
+        required
         checked={accepted}
         onCheckedChange={(checked) => onAcceptedChange(checked)}
       />
       <FieldLabel htmlFor="form-acceptance" className="cursor-pointer font-normal">
-        {form.acceptance?.text}{' '}
-        {form.acceptance?.required && <span className="text-destructive">*</span>}
-        {acceptanceUrl && (
-          <a
-            href={acceptanceUrl}
-            target={form.acceptance.link?.type === 'external' ? '_blank' : undefined}
-            rel={form.acceptance.link?.type === 'external' ? 'noopener noreferrer' : undefined}
-            className="text-primary hover:underline ml-1 font-semibold"
-            onClick={handleLinkClick}
-            aria-label={t('privacy-policy-aria-label') || 'Read our privacy policy'}
-          >
-            {t('privacy-link') || 'Read more'}
-          </a>
-        )}
+        {consentLabel} <span className="text-destructive">*</span>
       </FieldLabel>
     </Field>
   );
 }
 
-export default function Form({ form, className }: FormProps) {
-  const router = useRouter();
+export default function Form({ form: rawForm, className, locale }: FormProps) {
+  const form = adaptLegacyForm(rawForm, locale);
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState<Record<string, string | boolean>>({});
   const [accepted, setAccepted] = useState(false);
@@ -277,18 +261,6 @@ export default function Form({ form, className }: FormProps) {
         delete next[name];
         return next;
       });
-    }
-  };
-
-  const handleRedirect = (redirect: FormProps['form']['redirect']) => {
-    const url = resolveFormLink(redirect);
-    if (!url) return;
-
-    if (redirect?.type === 'external') {
-      const validatedUrl = validateExternalUrl(url);
-      if (validatedUrl) window.location.href = validatedUrl;
-    } else {
-      router.push(url);
     }
   };
 
@@ -343,8 +315,8 @@ export default function Form({ form, className }: FormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (form.acceptance?.required && !accepted) {
-      setError('Please accept the terms to continue.');
+    if (form.requireConsent && !accepted) {
+      setError(t('acceptTerms'));
       return;
     }
 
@@ -359,7 +331,6 @@ export default function Form({ form, className }: FormProps) {
 
     if (result?.data?.success) {
       setSubmitted(true);
-      if (form.redirect) handleRedirect(form.redirect);
     } else {
       setError(getErrorMessage(result));
     }
@@ -367,10 +338,8 @@ export default function Form({ form, className }: FormProps) {
   };
 
   if (submitted) {
-    return <SuccessMessage form={form} className={className} t={t} />;
+    return <SuccessMessage className={className} t={t} />;
   }
-
-  const acceptanceUrl = resolveFormLink(form.acceptance?.link);
 
   return (
     <div className={cn('p-8 sm:p-10 rounded-lg bg-card border shadow-sm', className)}>
@@ -398,18 +367,14 @@ export default function Form({ form, className }: FormProps) {
               value={formData[field.name.current] ?? ''}
               onChange={handleChange}
               error={fieldErrors[field.name.current]}
+              locale={locale}
             />
           ))}
         </FieldGroup>
 
-        <AcceptanceCheckbox
-          form={form}
-          accepted={accepted}
-          onAcceptedChange={setAccepted}
-          acceptanceUrl={acceptanceUrl}
-          router={router}
-          t={t}
-        />
+        {form.requireConsent && (
+          <AcceptanceCheckbox accepted={accepted} onAcceptedChange={setAccepted} t={t} />
+        )}
 
         {error && <FieldError>{error}</FieldError>}
 
@@ -417,10 +382,10 @@ export default function Form({ form, className }: FormProps) {
           {loading ? (
             <div className="flex items-center gap-3">
               <span className="size-5 animate-spin rounded-full border-2 border-background border-t-transparent" />
-              <span>{t('submitting') || 'Processing...'}</span>
+              <span>{t('submitting')}</span>
             </div>
           ) : (
-            form.submitButtonText
+            t('submit-button')
           )}
         </Button>
       </form>

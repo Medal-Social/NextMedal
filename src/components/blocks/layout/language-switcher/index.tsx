@@ -1,4 +1,5 @@
 import { getLocale, getTranslations } from 'next-intl/server';
+import { LOCALE_CONFIG } from '@/i18n/config';
 import { routing } from '@/i18n/routing';
 import { getCurrentPage } from '@/lib/sanity/get-current-page';
 import LocaleSwitcherClient from './LocaleSwitcher.client';
@@ -26,10 +27,18 @@ export default async function LocaleSwitcher({ className, dropdownAlign }: Local
       }
     : undefined;
 
-  // Build locale labels
+  // Build locale labels - AUTOMATIC from LOCALE_CONFIG!
+  // Falls back to translation file for backwards compatibility
   const locales: Record<string, string> = {};
   for (const loc of routing.locales) {
-    locales[loc] = t('locale', { locale: loc });
+    // First try to get from LOCALE_CONFIG (automatic)
+    const config = LOCALE_CONFIG[loc as keyof typeof LOCALE_CONFIG];
+    if (config) {
+      locales[loc] = config.title;
+    } else {
+      // Fallback to translation file (manual)
+      locales[loc] = t('locale', { locale: loc });
+    }
   }
 
   const labels = {

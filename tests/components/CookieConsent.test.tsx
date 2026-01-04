@@ -23,6 +23,7 @@ vi.mock('next-themes', () => ({
 // Mock resolveUrl
 vi.mock('@/lib/sanity/resolve-url', () => ({
   default: (page: { slug?: { current: string } }) => `/${page?.slug?.current || 'page'}`,
+  resolveUrlSync: (page: { slug?: { current: string } }) => `/${page?.slug?.current || 'page'}`,
 }));
 
 import CookieConsentComponent from '@/components/CookieConsent';

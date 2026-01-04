@@ -1,164 +1,188 @@
-import { promises as fs } from 'node:fs';
-import path from 'node:path';
 import { ImageResponse } from 'next/og';
 import type { NextRequest } from 'next/server';
 import { BASE_URL } from '@/lib/core/env';
-import { logger } from '@/lib/core/logger';
 import { getSiteOptional } from '@/sanity/lib/fetch';
 
-const domain = BASE_URL.replace(/https?:\/\//, '');
-const FALLBACK_SITE_TITLE = 'Your Site';
+export const runtime = 'edge';
 
-const MAX_TITLE_LENGTH = 200;
+// Brand Constants
+const BRAND_COLORS = {
+  navy: '#1A1035', // brand-900
+  purple: '#3B1D6C', // brand-700
+  vibrant: '#7E3FAC', // brand-500
+  lavender: '#D4CCE0', // brand-200
+  muted: '#B9A8CC', // brand-300
+  white: '#FFFFFF',
+};
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const site = await getSiteOptional();
+const FALLBACK_SITE_TITLE = 'NextMedal';
+const MAX_TITLE_LENGTH = 140; // Tighter limit for large typography
 
-  // Fallback site title if no site settings
-  const siteTitle = site?.title || FALLBACK_SITE_TITLE;
+async function loadFonts(): Promise<
+  {
+    name: string;
+    data: ArrayBuffer;
+    style?: 'normal' | 'italic';
+    weight?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
+  }[]
+> {
+  try {
+    const interData = await fetch(
+      new URL('../../../assets/Inter-SemiBold.ttf', import.meta.url)
+    ).then((res) => res.arrayBuffer());
 
-  // remove divider and site.title in metadata.title
-  const regex = new RegExp(` [-—|] ${siteTitle}$`);
-  const rawTitle = searchParams.get('title')?.replace(regex, '');
-  const title = rawTitle?.slice(0, MAX_TITLE_LENGTH);
-
-  // Create a noise pattern SVG for texture
-  const noiseSvg = `
-    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-      <filter id="noise">
-        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
-        <feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.15 0"/>
-      </filter>
-      <rect width="100%" height="100%" filter="url(#noise)"/>
-    </svg>
-  `;
-
-  // Convert SVG to data URL for use in CSS
-  const noiseDataUrl = `data:image/svg+xml,${encodeURIComponent(noiseSvg)}`;
-
-  // Create a grid pattern SVG
-  const gridSvg = `
-    <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
-      <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-        <path d="M 50 0 L 0 0 0 50" fill="none" stroke="black" strokeWidth="0.2" strokeOpacity="1"/>
-      </pattern>
-      <rect width="100%" height="100%" fill="url(#grid)" filter="blur(0.5px)"/>
-    </svg>
-  `;
-
-  // Convert SVG to data URL for use in CSS
-  const gridDataUrl = `data:image/svg+xml,${encodeURIComponent(gridSvg)}`;
-
-  return new ImageResponse(
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        width: '100%',
-        height: '100%',
-        padding: '4rem',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Gradient background */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'linear-gradient(to right top, #f5a9f2, #a5a9f9)',
-          zIndex: -3,
-        }}
-      />
-
-      {/* Grid overlay */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundImage: `url("${gridDataUrl}")`,
-          backgroundSize: '40px 40px',
-          opacity: 0.2,
-          zIndex: -2,
-          maskImage: 'radial-gradient(circle at center, black 30%, transparent 70%)',
-          WebkitMaskImage: 'radial-gradient(circle at center, black 30%, transparent 70%)',
-        }}
-      />
-
-      {/* Noise texture */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundImage: `url("${noiseDataUrl}")`,
-          backgroundSize: '200px 200px',
-          opacity: 0.15,
-          zIndex: -1,
-        }}
-      />
-
-      {/* Title */}
-      <div
-        style={{
-          display: 'block',
-          fontSize: '5rem',
-          lineHeight: 1.15,
-          lineClamp: 4,
-          color: 'white',
-          textShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-          position: 'absolute',
-          alignSelf: 'center',
-          justifyContent: 'center',
-          width: '100%',
-          textAlign: 'center',
-          textWrap: 'pretty',
-          zIndex: 1,
-        }}
-      >
-        {title || siteTitle}
-      </div>
-      <div
-        style={{
-          display: 'block',
-          fontSize: '2rem',
-          lineHeight: 1.15,
-          lineClamp: 4,
-          color: 'white',
-          textShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-          zIndex: 1,
-          position: 'absolute',
-          bottom: '40px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-        }}
-      >
-        {domain || siteTitle}
-      </div>
-    </div>,
-    {
-      fonts: await loadFonts(),
-    }
-  );
+    return [{ name: 'Inter', data: interData, style: 'normal', weight: 600 }];
+  } catch (_error) {
+    return [];
+  }
 }
 
-async function loadFonts(): Promise<{ name: string; data: Buffer }[]> {
+export async function GET(request: NextRequest) {
   try {
-    const fontPath = path.join(process.cwd(), 'src/assets/Inter-SemiBold.ttf');
-    const fontData = await fs.readFile(fontPath);
-    return [{ name: 'serif', data: fontData }];
-  } catch (error) {
-    logger.error({ err: error }, 'Failed to load OG image font, using system font');
-    return [];
+    const { searchParams } = new URL(request.url);
+    const site = await getSiteOptional().catch(() => null);
+
+    const siteTitle = site?.title || FALLBACK_SITE_TITLE;
+    const domain = new URL(BASE_URL).hostname;
+
+    const regex = new RegExp(` [-—|] ${siteTitle}$`);
+    const rawTitle = searchParams.get('title')?.replace(regex, '') || siteTitle;
+    const title = rawTitle.slice(0, MAX_TITLE_LENGTH);
+
+    const fonts = await loadFonts();
+
+    return new ImageResponse(
+      <div
+        style={{
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          backgroundImage: `radial-gradient(circle at 50% 50%, ${BRAND_COLORS.purple} 0%, ${BRAND_COLORS.navy} 100%)`,
+          color: BRAND_COLORS.white,
+          fontFamily: '"Inter"',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Content Container */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            padding: '80px',
+            width: '100%',
+            height: '100%',
+            zIndex: 10,
+          }}
+        >
+          {/* Header */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <span
+                style={{
+                  fontSize: '32px',
+                  color: BRAND_COLORS.lavender,
+                  fontWeight: 600,
+                  letterSpacing: '-0.02em',
+                }}
+              >
+                {siteTitle}
+              </span>
+            </div>
+
+            {/* Optional Tag/pill */}
+            {searchParams.get('category') && (
+              <div
+                style={{
+                  padding: '8px 20px',
+                  borderRadius: '50px',
+                  border: `1px solid ${BRAND_COLORS.muted}`,
+                  color: BRAND_COLORS.lavender,
+                  fontSize: '20px',
+                  fontWeight: 500,
+                  backgroundColor: 'rgba(255,255,255,0.05)',
+                }}
+              >
+                {searchParams.get('category')}
+              </div>
+            )}
+          </div>
+
+          {/* Main Title */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '100%' }}>
+            <div
+              style={{
+                fontSize: title.length > 50 ? '60px' : '84px',
+                fontWeight: 700,
+                color: BRAND_COLORS.white,
+                lineHeight: 1.05,
+                letterSpacing: '-0.03em',
+                textShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                lineClamp: 3,
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+              }}
+            >
+              {title}
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              borderTop: `2px solid rgba(255,255,255,0.08)`,
+              paddingTop: '40px',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '24px',
+                color: BRAND_COLORS.muted,
+                fontWeight: 500,
+                letterSpacing: '-0.01em',
+              }}
+            >
+              {domain}
+            </div>
+
+            {/* Call to action visual */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                color: BRAND_COLORS.lavender,
+              }}
+            >
+              <span style={{ fontSize: '24px', fontWeight: 600 }}>Read more</span>
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                role="img"
+                aria-label="Arrow"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>,
+      {
+        width: 1200,
+        height: 630,
+        fonts,
+      }
+    );
+  } catch (_error) {
+    return new Response('Error generating image', { status: 500 });
   }
 }

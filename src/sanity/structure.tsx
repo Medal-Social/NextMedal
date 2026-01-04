@@ -14,7 +14,7 @@ import {
 import type { ComponentType } from 'react';
 import type { ListItemBuilder, StructureBuilder } from 'sanity/structure';
 import { structureTool } from 'sanity/structure';
-import { group, singleton } from './lib/utils';
+import { group } from './lib/utils';
 
 // Document type configuration for Content Health views
 interface DocumentTypeConfig {
@@ -51,6 +51,7 @@ function createDocTypeListItems(
   );
 }
 export const structure = structureTool({
+  name: 'structure',
   structure: (S) =>
     S.list()
       .title('Content')
@@ -134,7 +135,11 @@ export const structure = structureTool({
         ]).icon(SearchIcon),
         S.divider(),
 
-        singleton(S, 'site', 'Site Settings').icon(CogIcon),
+        // Site Settings - single document with field-level translation
+        S.listItem()
+          .title('Site Settings')
+          .icon(CogIcon)
+          .child(S.editor().id('site').schemaType('site').documentId('site')),
         S.divider(),
 
         group(S, 'Shared Content', [

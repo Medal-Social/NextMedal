@@ -2,13 +2,14 @@ import type { Metadata } from 'next';
 import { stegaClean } from 'next-sanity';
 import { type Locale, routing } from '@/i18n/routing';
 import { BASE_URL, dev, isPreview, isStaging, vercelPreview } from '@/lib/core/env';
-import resolveUrl from './resolve-url';
+import { getSiteOptional } from '@/sanity/lib/fetch';
+import resolveUrl from './resolve-url-server';
 
 // Generate hreflang alternate URLs for all supported locales
-function generateAlternateLanguages(
+async function generateAlternateLanguages(
   page: Sanity.PageBase,
   translations?: Array<{ slug: string; language: string; _type: string }>
-): Record<string, string> {
+): Promise<Record<string, string>> {
   const alternates: Record<string, string> = {};
   const defaultLocale = routing.defaultLocale;
   const locales = routing.locales as Locale[];
@@ -24,7 +25,7 @@ function generateAlternateLanguages(
       alternates[locale] = `${BASE_URL}${langPrefix}${slugPath}`;
     } else if (locale === page.language) {
       // Current page's locale
-      alternates[locale] = resolveUrl(page, { base: true });
+      alternates[locale] = await resolveUrl(page, { base: true });
     }
   }
 
@@ -81,26 +82,92 @@ function getEnvironmentPrefix(): string {
   return '';
 }
 
+function extractTwitterHandle(
+  socialLinks?: Array<{ text: string; url: string }>
+): string | undefined {
+  if (!socialLinks) return undefined;
+
+  // Find Twitter/X link by checking the URL hostname
+  const twitterLink = socialLinks.find((link) => {
+    try {
+      const parsed = new URL(link.url, BASE_URL);
+      const hostname = parsed.hostname.toLowerCase();
+      return hostname === 'twitter.com' || hostname === 'www.twitter.com' || hostname === 'x.com' || hostname === 'www.x.com';
+    } catch {
+      return false;
+    }
+  });
+
+  if (!twitterLink) return undefined;
+
+  // Extract username from URL (e.g., https://twitter.com/username or https://x.com/username)
+  const match = twitterLink.url.match(/(?:twitter\.com|x\.com)\/(@?\w+)/);
+  return match ? `@${match[1].replace('@', '')}` : undefined;
+}
+
+function getOpenGraphLocale(language: string): string {
+  // Map language codes to OpenGraph locale format
+  const localeMap: Record<string, string> = {
+    en: 'en_US',
+    nb: 'nb_NO',
+    ar: 'ar_SA',
+  };
+  return localeMap[language] || 'en_US';
+}
+
+type ProcessMetadataPage = (
+  | Sanity.Page
+  | Sanity.ComponentLibrary
+  | Sanity.CollectionArticlePost
+  | Sanity.CollectionDocumentation
+  | Sanity.CollectionEvents
+  | Sanity.CollectionNewsletter
+) & {
+  seo?: SeoFields;
+  translations?: Array<{ slug: string; language: string; _type: string }>;
+};
+
+function getMetadataBase(): URL {
+  try {
+    return new URL(BASE_URL);
+  } catch (_error) {
+    // Fallback to localhost if BASE_URL is invalid during build
+    return new URL('http://localhost:3000');
+  }
+}
+
+function getOgImage(page: ProcessMetadataPage, cleanTitle: string): string {
+  const uploadedOg = page.seo?.ogimage || page.metadata?.ogimage;
+  if (uploadedOg) return uploadedOg;
+
+  const isArticleType = ARTICLE_TYPES.includes(page._type);
+  const isArticlesFrontpage =
+    page._type === 'page' &&
+    'collectionType' in page &&
+    (page as { collectionType?: string }).collectionType === 'articles-frontpage';
+  const useArticleFallback = isArticleType || isArticlesFrontpage;
+
+  return useArticleFallback
+    ? `${BASE_URL}/api/og/article-fallback?title=${encodeURIComponent(cleanTitle)}&locale=${page.language || 'en'}`
+    : `${BASE_URL}/api/og?title=${encodeURIComponent(cleanTitle)}`;
+}
+
 export default async function processMetadata(
-  page: (
-    | Sanity.Page
-    | Sanity.ComponentLibrary
-    | Sanity.CollectionArticlePost
-    | Sanity.CollectionDocumentation
-    | Sanity.CollectionEvents
-    | Sanity.CollectionNewsletter
-  ) & {
-    seo?: SeoFields;
-    translations?: Array<{ slug: string; language: string; _type: string }>;
-  },
-  searchParams?: Record<string, string | string[] | undefined>
+  page: ProcessMetadataPage,
+  searchParams?: Record<string, string | string[] | undefined>,
+  options?: {
+    rssUrl?: string;
+  }
 ): Promise<Metadata> {
   // Require either seo or metadata to be present
   if (!page.seo && !page.metadata) {
     throw new Error('Page SEO metadata is required');
   }
 
-  const url = resolveUrl(page as Sanity.PageBase, {
+  // Fetch site settings for enhanced metadata
+  const site = await getSiteOptional();
+
+  const url = await resolveUrl(page as Sanity.PageBase, {
     params: searchParams,
     allowList: ['page', 'category'],
   });
@@ -109,23 +176,18 @@ export default async function processMetadata(
   const title = page.seo?.title || page.metadata?.title;
   const description = page.seo?.description || page.metadata?.description;
   const noIndex = page.seo?.noIndex ?? page.metadata?.noIndex;
-  const uploadedOg = page.seo?.ogimage || page.metadata?.ogimage;
 
   // Clean metadata values for SEO and browser display
   const envPrefix = getEnvironmentPrefix();
   const cleanTitle = `${envPrefix}${stegaClean(title ?? '')}`;
   const cleanDescription = stegaClean(description ?? '');
-  const autogeneratedOg = `${BASE_URL}/api/og?title=${encodeURIComponent(cleanTitle)}`;
 
-  let metadataBase: URL | undefined;
-  try {
-    metadataBase = new URL(BASE_URL);
-  } catch (_error) {
-    // Fallback to localhost if BASE_URL is invalid during build
-    metadataBase = new URL('http://localhost:3000');
-  }
+  const ogImage = getOgImage(page, cleanTitle);
+  const metadataBase = getMetadataBase();
 
   const publishedTime = getPublishedTime(page);
+  const twitterSite = extractTwitterHandle(site?.socialLinks);
+  const ogLocale = getOpenGraphLocale(page.language || 'en');
 
   return {
     metadataBase,
@@ -136,7 +198,9 @@ export default async function processMetadata(
       url,
       title: cleanTitle,
       description: cleanDescription,
-      images: uploadedOg || autogeneratedOg,
+      images: ogImage,
+      siteName: site?.title,
+      locale: ogLocale,
       ...(publishedTime && { publishedTime }),
     },
     robots: {
@@ -144,13 +208,16 @@ export default async function processMetadata(
     },
     alternates: {
       canonical: url,
-      languages: generateAlternateLanguages(page as Sanity.PageBase, page.translations),
-      types: {
-        'application/rss+xml': '/articles/rss.xml',
-      },
+      languages: await generateAlternateLanguages(page as Sanity.PageBase, page.translations),
+      ...(options?.rssUrl && {
+        types: {
+          'application/rss+xml': options.rssUrl,
+        },
+      }),
     },
     twitter: {
       card: 'summary_large_image',
+      ...(twitterSite && { site: twitterSite }),
     },
   };
 }

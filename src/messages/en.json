@@ -29,6 +29,13 @@
     "toggleTheme": "Toggle mode",
     "changeLanguage": "Change language"
   },
+  "TranslationDialog": {
+    "title": "Translation Not Available",
+    "description": "This page is not available in {locale}. Would you like to go to the {locale} homepage instead?",
+    "availableIn": "This page is available in:",
+    "goToHome": "Go to {locale} home",
+    "stay": "Stay on this page"
+  },
   "search": {
     "placeholder": "Search...",
     "commandPlaceholder": "Search pages, articles, docs...",
@@ -47,6 +54,14 @@
     "copyCode": "Copy code",
     "copiedState": "Copied"
   },
+  "brand": {
+    "copyLogoPng": "Copy Logo PNG",
+    "copyLogoSvg": "Copy Logo SVG",
+    "logoCopied": "Logo URL copied to clipboard",
+    "copyFailed": "Failed to copy logo",
+    "goToHome": "Go to Home",
+    "brandCenter": "Brand Center"
+  },
   "article": {
     "home": "Home",
     "shareArticle": "Share Article",
@@ -62,7 +77,16 @@
     "popular": "Popular",
     "gridView": "Grid view",
     "listView": "List view",
-    "rssFeed": "RSS Feed"
+    "rssFeed": "RSS Feed",
+    "allArticles": "All Articles",
+    "noArticles": "No articles yet",
+    "noArticlesDescription": "Articles will appear here once published.",
+    "filterByCategory": "Filter by category",
+    "allCategories": "All categories",
+    "sortBy": "Sort by",
+    "sortNewest": "Newest first",
+    "sortOldest": "Oldest first",
+    "sortTitle": "By title"
   },
   "video": {
     "preparing": "Preparing your video...",
@@ -118,12 +142,15 @@
     "email": "Email",
     "phone": "Phone",
     "privacy-link": "privacy policy",
+    "privacy-consent-label": "I agree to the {privacyLink}",
+    "privacy-aria-label": "Read our privacy policy",
     "address": "Address",
     "opening-hours": "Opening hours",
     "success-title": "Thank you!",
     "success-message": "We've received your message and will respond within 1 business day.",
-    "submitting": "Sending your message...",
-    "validationFailed": "Please check your form fields and try again.",
+    "submitting": "Sending...",
+    "submit-button": "Submit",
+    "validationFailed": "Please check the form and try again.",
     "acceptTerms": "Please accept the privacy policy to continue."
   },
   "cookies": {
@@ -236,5 +263,23 @@
       "configureHint": "Configure in Studio → Site Settings",
       "copyright": "NextMedal • Created by <link>Medal Social</link> © {year}"
     }
+  },
+  "collectionSetup": {
+    "siteSettingsMissing": {
+      "title": "Site Settings Not Found",
+      "description": "Configure site settings for this language to enable collections.",
+      "step1": "Go to Sanity Studio",
+      "step2": "Create or translate Site Settings for {locale}",
+      "step3": "Configure Collection Frontpages",
+      "step4": "Publish the settings"
+    },
+    "frontpageMissing": {
+      "title": "Collection Frontpage Missing",
+      "description": "Configure the {collection} frontpage for this language.",
+      "step1": "Go to Site Settings ({locale}) → Collection Frontpages",
+      "step2": "Select a page for {collection}",
+      "step3": "Publish the settings"
+    },
+    "openStudio": "Open Sanity Studio"
   }
 }

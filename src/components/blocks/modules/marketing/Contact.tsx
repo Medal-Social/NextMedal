@@ -2,7 +2,7 @@
 
 import type { LucideIcon } from 'lucide-react';
 import { Clock, Mail, MapPin, Phone, Smartphone } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { Form } from '@/components/blocks/forms';
 import { Img } from '@/components/blocks/objects/core';
@@ -152,6 +152,7 @@ export default function Contact({
   contactPerson,
   ...props
 }: Sanity.Contact) {
+  const locale = useLocale();
   const [mounted, setMounted] = useState(false);
   const isSidebar = props.spacing === 'none';
 
@@ -177,7 +178,7 @@ export default function Contact({
           )}
         >
           <div className="w-full">
-            <Form form={form} className="shadow-lg border-primary/10" />
+            <Form form={form} locale={locale} className="shadow-lg border-primary/10" />
           </div>
 
           {!isSidebar && (

@@ -10,7 +10,10 @@
 
 import { ControlsIcon, EditIcon, EyeClosedIcon, SearchIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
+import { DEFAULT_LOCALE } from '@/i18n/config';
 import { isUniqueAcrossLocale } from '@/sanity/lib/isUniqueAcrossLocale';
+import ArticleImageInput from '@/sanity/ui/ArticleImageInput';
+import CharacterCount from '@/sanity/ui/CharacterCount';
 import PageIdentityField from '@/sanity/ui/PageIdentityField';
 import PageIdentityInput from '@/sanity/ui/PageIdentityInput';
 import { imageBlock, socialEmbedBlock } from '../../fragments';
@@ -32,16 +35,7 @@ export default defineType({
       type: 'string',
       readOnly: true,
       hidden: true,
-    }),
-    // Collection Reference - determines the base URL for this item
-    defineField({
-      name: 'collection',
-      title: 'Collection',
-      description: 'The collection page this article belongs to (determines the URL)',
-      type: 'reference',
-      to: [{ type: 'page' }],
-      validation: (Rule) => Rule.required(),
-      group: 'content',
+      initialValue: DEFAULT_LOCALE,
     }),
     // Post Identity - Title and URL Slug together in Content tab
     defineField({
@@ -74,6 +68,7 @@ export default defineType({
           },
           validation: (Rule) =>
             Rule.required().custom((slug) => {
+              // Only ban system paths - language codes are fine since articles are under /articles/ prefix
               const reserved = ['studio', 'api', 'monitoring', 'rss.xml'];
               if (slug?.current && reserved.includes(slug.current.toLowerCase())) {
                 return `"${slug.current}" is a reserved path.`;
@@ -142,7 +137,8 @@ export default defineType({
     defineField({
       name: 'authors',
       title: 'Authors',
-      description: 'People who contributed to this article.',
+      description:
+        'People who contributed to this article (localized fields handled per language).',
       type: 'array',
       of: [
         {
@@ -157,32 +153,96 @@ export default defineType({
       title: 'Publish Date',
       description: 'Date when the article is published.',
       type: 'date',
+      initialValue: () => new Date().toISOString().split('T')[0],
       validation: (Rule) => Rule.required(),
       group: 'content',
     }),
-    // SEO Settings
+    // SEO Settings (custom for articles with preview button)
     defineField({
       name: 'seo',
-      type: 'seo-metadata',
+      type: 'object',
       group: 'seo',
+      options: {
+        collapsible: true,
+        collapsed: false,
+      },
+      fields: [
+        defineField({
+          name: 'title',
+          title: 'SEO Title',
+          type: 'string',
+          description: 'Title shown in search results (50-60 characters recommended)',
+          validation: (Rule) => [
+            Rule.required().warning('SEO title helps improve search visibility'),
+            Rule.min(50).warning('Aim for at least 50 characters'),
+            Rule.max(60).warning('Keep under 60 characters to avoid truncation'),
+          ],
+          components: {
+            input: (props) => <CharacterCount max={60} {...props} />,
+          },
+        }),
+        defineField({
+          name: 'description',
+          title: 'SEO Description',
+          type: 'text',
+          rows: 3,
+          description: 'Description shown in search results (70-160 characters recommended)',
+          validation: (Rule) => [
+            Rule.required().warning('SEO description helps improve click-through rates'),
+            Rule.min(70).warning('Aim for at least 70 characters'),
+            Rule.max(160).warning('Keep under 160 characters to avoid truncation'),
+          ],
+          components: {
+            input: (props) => <CharacterCount as="textarea" max={160} {...props} />,
+          },
+        }),
+        defineField({
+          name: 'image',
+          title: 'Article Hero Image',
+          type: 'image',
+          description:
+            'Main image displayed at the top of the article page and when sharing on social media (1200×630px recommended). If not provided, an auto-generated image will be created from the article title.',
+          options: {
+            hotspot: true,
+          },
+          components: {
+            input: ArticleImageInput,
+          },
+        }),
+        defineField({
+          name: 'noIndex',
+          title: 'Hide from search engines',
+          type: 'boolean',
+          description:
+            'Prevents this page from appearing in search results and removes it from the sitemap.',
+          initialValue: false,
+          components: {
+            field: (props) => (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <EyeClosedIcon style={{ opacity: 0.5 }} />
+                {props.renderDefault(props)}
+              </div>
+            ),
+          },
+        }),
+      ],
     }),
   ],
   preview: {
     select: {
       title: 'metadata.title',
       slug: 'metadata.slug.current',
-      collectionSlug: 'collection.metadata.slug.current',
-      publishDate: 'publishDate',
       media: 'seo.image',
       language: 'language',
       noindex: 'seo.noIndex',
+      categoryTitle: 'categories.0.title',
     },
-    prepare: ({ title, slug, collectionSlug, publishDate, media, language, noindex }) => {
+    prepare: ({ title, slug, media, language, noindex, categoryTitle }) => {
       const languageLabel =
         language === 'en' ? 'EN' : language === 'nb' ? 'NO' : language?.toUpperCase();
 
-      const fullPath = collectionSlug ? `/${collectionSlug}/${slug}` : `/${slug}`;
-      const subtitle = [languageLabel, publishDate, fullPath].filter(Boolean).join(' - ');
+      // Collection slug will be determined from site settings at runtime
+      const subtitle = [languageLabel, categoryTitle, `/${slug}`].filter(Boolean).join(' • ');
 
       return {
         title,

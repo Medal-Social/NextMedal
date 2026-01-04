@@ -5,7 +5,7 @@ import * as CookieConsent from 'vanilla-cookieconsent';
 import 'vanilla-cookieconsent/dist/cookieconsent.css';
 import '@/styles/cookieconsent.css';
 import { useTheme } from 'next-themes';
-import resolveUrl from '@/lib/sanity/resolve-url';
+import { resolveUrlSync } from '@/lib/sanity/resolve-url';
 
 interface CookieConsentProps {
   config: Sanity.Site['cookieConsent'];
@@ -23,7 +23,9 @@ export default function CookieConsentComponent({ config, locale = 'en' }: Cookie
       ? (config.privacyPolicy as Sanity.Page)
       : null;
 
-  const privacyPolicyUrl = privacyPolicy ? resolveUrl(privacyPolicy, { base: false }) : undefined;
+  const privacyPolicyUrl = privacyPolicy
+    ? resolveUrlSync(privacyPolicy, { base: false })
+    : undefined;
 
   useEffect(() => {
     if (!config?.enabled) return;

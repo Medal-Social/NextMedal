@@ -337,11 +337,13 @@ function getRelativeDateColor(status: string): string {
 function RelativeDate({
   startDateTime,
   status,
+  locale,
   className,
   stegaPath,
 }: {
   startDateTime: string;
   status: string;
+  locale?: string;
   className?: string;
   stegaPath?: string;
 }) {
@@ -350,7 +352,7 @@ function RelativeDate({
       className={cn('font-semibold', getRelativeDateColor(status), className)}
       data-sanity={stegaPath}
     >
-      {formatRelativeDateTime(startDateTime)}
+      {formatRelativeDateTime(startDateTime, locale)}
     </span>
   );
 }
@@ -691,7 +693,7 @@ function _EventSlotItem({
             )}
             data-sanity={stega.scope('startDateTime').toString()}
           >
-            {formatRelativeDateTime(event.startDateTime)}
+            {formatRelativeDateTime(event.startDateTime, locale)}
           </span>
         </div>
         <Link href={href}>
@@ -783,6 +785,7 @@ function CalendarEventCard({
             <RelativeDate
               startDateTime={event.startDateTime}
               status={event.status}
+              locale={locale}
               className="text-xs"
               stegaPath={stega.scope('startDateTime').toString()}
             />
@@ -1142,6 +1145,7 @@ function EventSlot({ event, collectionSlug }: { event: CollectionEvent; collecti
             <RelativeDate
               startDateTime={event.startDateTime}
               status={event.status}
+              locale={locale}
               className="ml-auto text-sm"
             />
           </div>
@@ -1217,6 +1221,7 @@ function EventCard({ event, collectionSlug }: { event: CollectionEvent; collecti
           <RelativeDate
             startDateTime={event.startDateTime}
             status={event.status}
+            locale={locale}
             className="text-xs"
             stegaPath={stega.scope('startDateTime').toString()}
           />
@@ -1430,6 +1435,7 @@ function TimelineEventCard({
             <RelativeDate
               startDateTime={event.startDateTime}
               status={event.status}
+              locale={locale}
               className="ml-auto"
             />
           </div>

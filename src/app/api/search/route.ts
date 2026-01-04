@@ -1,5 +1,7 @@
+import { unstable_cache } from 'next/cache';
 import { NextResponse } from 'next/server';
 import { routing } from '@/i18n/routing';
+import { getAllCollections } from '@/lib/collections/registry';
 import { logger } from '@/lib/core/logger';
 import { withRetry } from '@/lib/utils';
 import { client } from '@/sanity/lib/client';
@@ -14,7 +16,6 @@ interface SearchItem {
 }
 
 interface CollectionSearchItem extends SearchItem {
-  collectionSlug: string | null;
   language?: string;
 }
 
@@ -34,17 +35,45 @@ function getCollectionType(docType: string): string {
   }
 }
 
+/**
+ * Fetch search index data with caching and automatic revalidation
+ * Cache expires after 5 minutes - no webhooks needed
+ */
+function getSearchIndexData(locale: string) {
+  return unstable_cache(
+    async () => {
+      // Fetch search index (collection slugs from generated registry, no API call needed)
+      const searchData = await withRetry(() => client.fetch(SEARCH_INDEX_QUERY), {
+        retries: 3,
+        delay: 1000,
+      });
+
+      // Get collection slugs from registry (synchronous, no API call)
+      const collections = getAllCollections(locale);
+      const collectionSlugs: Record<string, string> = {};
+      if (collections) {
+        for (const [type, metadata] of Object.entries(collections)) {
+          collectionSlugs[type] = metadata.slug;
+        }
+      }
+
+      return { searchData, collectionSlugs };
+    },
+    [`search-index-${locale}`],
+    {
+      revalidate: 300, // Auto-refresh every 5 minutes (no webhooks needed)
+    }
+  )();
+}
+
 export async function GET(request: Request) {
   try {
     // Get locale from query params, fallback to default locale from routing config
     const { searchParams } = new URL(request.url);
     const locale = searchParams.get('locale') || routing.defaultLocale;
 
-    // Fetch search index with retry for network resilience
-    const data = await withRetry(() => client.fetch(SEARCH_INDEX_QUERY), {
-      retries: 3,
-      delay: 1000,
-    });
+    // Fetch search index and collection slugs (cached with on-demand revalidation)
+    const { searchData: data, collectionSlugs } = await getSearchIndexData(locale);
 
     // Helper to add locale prefix to URLs (follows next-intl routing rules)
     const getLocalePath = (path: string, itemLocale: string) => {
@@ -67,9 +96,12 @@ export async function GET(request: Request) {
           return item.language === locale;
         })
         .map((item: CollectionSearchItem) => {
-          if (!item.slug || !item.collectionSlug) {
+          // Look up collection slug from collectionSlugs map (resolved in parallel query)
+          const collectionSlug = collectionSlugs[item._type];
+
+          if (!item.slug || !collectionSlug) {
             logger.warn(
-              { item },
+              { item, collectionSlugs },
               'Search result missing slug or collectionSlug - skipping construction'
             );
             return null;
@@ -80,7 +112,7 @@ export async function GET(request: Request) {
             title: item.title,
             description: item.description,
             type: getCollectionType(item._type),
-            href: getLocalePath(`/${item.collectionSlug}/${item.slug}`, item.language || locale),
+            href: getLocalePath(`/${collectionSlug}/${item.slug}`, item.language || locale),
           };
         })
         .filter(

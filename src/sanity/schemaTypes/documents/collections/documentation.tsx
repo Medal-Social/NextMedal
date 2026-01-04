@@ -1,5 +1,7 @@
 import { BookIcon } from '@sanity/icons';
 import { defineField, defineType } from 'sanity';
+import { DEFAULT_LOCALE } from '@/i18n/config';
+import { createLocaleFilter } from '@/sanity/lib/createLocaleFilter';
 import { isUniqueAcrossLocale } from '@/sanity/lib/isUniqueAcrossLocale';
 import PageIdentityField from '@/sanity/ui/PageIdentityField';
 
@@ -19,16 +21,6 @@ export default defineType({
     { name: 'seo', title: 'SEO' },
   ],
   fields: [
-    defineField({
-      name: 'collection',
-      title: 'Collection',
-      type: 'reference',
-      to: [{ type: 'page' }],
-      description: 'The documentation root page this article belongs to (determines URL base)',
-      validation: (Rule) => Rule.required(),
-      group: 'content',
-    }),
-
     defineField({
       name: 'category',
       title: 'Category',
@@ -62,6 +54,7 @@ export default defineType({
           },
           validation: (Rule) =>
             Rule.required().custom((slug) => {
+              // Only ban system paths - language codes are fine since docs are under /docs/ prefix
               const reserved = ['studio', 'api', 'monitoring', 'rss.xml'];
               if (slug?.current && reserved.includes(slug.current.toLowerCase())) {
                 return `"${slug.current}" is a reserved path.`;
@@ -114,7 +107,12 @@ export default defineType({
           ],
         },
         { type: 'image', options: { hotspot: true } },
-        { type: 'code' },
+        {
+          type: 'code',
+          options: {
+            languageAlternatives: [{ title: 'Mermaid', value: 'mermaid' }],
+          },
+        },
       ],
       group: 'content',
     }),
@@ -124,7 +122,13 @@ export default defineType({
       name: 'relatedDocs',
       title: 'Related Articles',
       type: 'array',
-      of: [{ type: 'reference', to: [{ type: 'collection.documentation' }] }],
+      of: [
+        {
+          type: 'reference',
+          to: [{ type: 'collection.documentation' }],
+          options: createLocaleFilter(),
+        },
+      ],
       description: 'Related documentation articles shown at the bottom',
       group: 'navigation',
     }),
@@ -141,6 +145,7 @@ export default defineType({
       type: 'string',
       readOnly: true,
       hidden: true,
+      initialValue: DEFAULT_LOCALE,
     }),
   ],
 
