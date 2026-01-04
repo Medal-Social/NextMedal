@@ -476,6 +476,18 @@ describe('HeaderClient Component - State Management Logic', () => {
   });
 
   describe('Header Styling Logic', () => {
+    const getShouldBeDark = ({
+      isScrolled,
+      isDarkHero,
+      isOpen,
+      isDocs,
+    }: {
+      isScrolled: boolean;
+      isDarkHero: boolean;
+      isOpen: boolean;
+      isDocs: boolean;
+    }) => !isScrolled && isDarkHero && !isOpen && !isDocs;
+
     it('should add background when scrolled', () => {
       const isScrolled = true;
       const shouldHaveBackground = isScrolled;
@@ -495,29 +507,32 @@ describe('HeaderClient Component - State Management Logic', () => {
     });
 
     it('should apply dark mode for dark hero when not scrolled', () => {
-      const isScrolled = false;
-      const isDarkHero = true;
-      const isOpen = false;
-      const isDocs = false;
-      const shouldBeDark = !isScrolled && isDarkHero && !isOpen && !isDocs;
+      const shouldBeDark = getShouldBeDark({
+        isScrolled: false,
+        isDarkHero: true,
+        isOpen: false,
+        isDocs: false,
+      });
       expect(shouldBeDark).toBe(true);
     });
 
     it('should not apply dark mode when scrolled', () => {
-      const isScrolled = true;
-      const isDarkHero = true;
-      const isOpen = false;
-      const isDocs = false;
-      const shouldBeDark = !isScrolled && isDarkHero && !isOpen && !isDocs;
+      const shouldBeDark = getShouldBeDark({
+        isScrolled: true,
+        isDarkHero: true,
+        isOpen: false,
+        isDocs: false,
+      });
       expect(shouldBeDark).toBe(false);
     });
 
     it('should not apply dark mode when menu is open', () => {
-      const isScrolled = false;
-      const isDarkHero = true;
-      const isOpen = true;
-      const isDocs = false;
-      const shouldBeDark = !isScrolled && isDarkHero && !isOpen && !isDocs;
+      const shouldBeDark = getShouldBeDark({
+        isScrolled: false,
+        isDarkHero: true,
+        isOpen: true,
+        isDocs: false,
+      });
       expect(shouldBeDark).toBe(false);
     });
   });
