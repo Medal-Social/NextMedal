@@ -107,7 +107,12 @@ export default defineType({
           ],
         },
         { type: 'image', options: { hotspot: true } },
-        { type: 'code' },
+        {
+          type: 'code',
+          options: {
+            languageAlternatives: [{ title: 'Mermaid', value: 'mermaid' }],
+          },
+        },
       ],
       group: 'content',
     }),

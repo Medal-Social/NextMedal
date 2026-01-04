@@ -27,7 +27,7 @@ export const presentation = presentationTool({
       },
       {
         route: '/:collection/:slug',
-        filter: groq`_type in ['collection.article', 'collection.newsletter', 'collection.documentation'] && collection->metadata.slug.current == $collection && metadata.slug.current == $slug`,
+        filter: groq`_type in ['collection.article', 'collection.newsletter', 'collection.documentation'] && metadata.slug.current == $slug`,
       },
     ],
     locations: {
@@ -67,13 +67,14 @@ export const presentation = presentationTool({
         select: {
           title: 'metadata.title',
           slug: 'metadata.slug.current',
-          collectionSlug: 'collection.metadata.slug.current',
         },
         resolve: (doc) => ({
           locations: [
             {
               title: doc?.title || 'Untitled',
-              href: doc?.collectionSlug && doc?.slug ? `/${doc.collectionSlug}/${doc.slug}` : '/',
+              href: doc?.slug
+                ? `/${DEFAULT_COLLECTION_SLUGS['collection.article']}/${doc.slug}`
+                : `/${DEFAULT_COLLECTION_SLUGS['collection.article']}`,
             },
           ],
         }),
@@ -82,13 +83,14 @@ export const presentation = presentationTool({
         select: {
           title: 'metadata.title',
           slug: 'metadata.slug.current',
-          collectionSlug: 'collection.metadata.slug.current',
         },
         resolve: (doc) => ({
           locations: [
             {
               title: doc?.title || 'Untitled',
-              href: doc?.collectionSlug && doc?.slug ? `/${doc.collectionSlug}/${doc.slug}` : '/',
+              href: doc?.slug
+                ? `/${DEFAULT_COLLECTION_SLUGS['collection.newsletter']}/${doc.slug}`
+                : `/${DEFAULT_COLLECTION_SLUGS['collection.newsletter']}`,
             },
           ],
         }),
@@ -97,13 +99,14 @@ export const presentation = presentationTool({
         select: {
           title: 'metadata.title',
           slug: 'metadata.slug.current',
-          collectionSlug: 'collection.metadata.slug.current',
         },
         resolve: (doc) => ({
           locations: [
             {
               title: doc?.title || 'Untitled',
-              href: doc?.collectionSlug && doc?.slug ? `/${doc.collectionSlug}/${doc.slug}` : '/',
+              href: doc?.slug
+                ? `/${DEFAULT_COLLECTION_SLUGS['collection.documentation']}/${doc.slug}`
+                : `/${DEFAULT_COLLECTION_SLUGS['collection.documentation']}`,
             },
           ],
         }),

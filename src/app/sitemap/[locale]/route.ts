@@ -40,10 +40,12 @@ interface TranslationMetadata {
   _id: string;
   documentId: string;
   translations: Array<{
-    _id: string;
-    _type: string;
-    slug: string;
-    language: string;
+    value: {
+      _id: string;
+      _type: string;
+      slug: string;
+      language: string;
+    } | null;
   }>;
 }
 
@@ -219,11 +221,14 @@ function buildTranslationsMap(translationsData: TranslationMetadata[] | undefine
     if (translationMeta.documentId && translationMeta.translations) {
       translationsMap.set(
         translationMeta.documentId,
-        translationMeta.translations.map((t) => ({
-          _type: t._type,
-          slug: t.slug,
-          language: t.language,
-        }))
+        translationMeta.translations
+          .map((t) => t.value)
+          .filter((v) => v != null)
+          .map((v) => ({
+            _type: v._type,
+            slug: v.slug,
+            language: v.language,
+          }))
       );
     }
   }

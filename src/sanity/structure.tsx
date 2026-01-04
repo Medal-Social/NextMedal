@@ -51,6 +51,7 @@ function createDocTypeListItems(
   );
 }
 export const structure = structureTool({
+  name: 'structure',
   structure: (S) =>
     S.list()
       .title('Content')

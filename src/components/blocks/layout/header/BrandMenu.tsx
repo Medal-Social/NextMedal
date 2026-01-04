@@ -2,7 +2,8 @@
 
 import { Copy, Home, LayoutGrid } from 'lucide-react';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { usePathname } from 'next/navigation';
+import { useLocale, useTranslations } from 'next-intl';
 import type * as React from 'react';
 import { toast } from 'sonner';
 import {
@@ -12,6 +13,7 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
+import { DEFAULT_LOCALE } from '@/i18n/config';
 import { logger } from '@/lib/core/logger';
 import { copyToClipboard } from '@/lib/utils/clipboard';
 import { urlFor } from '@/sanity/lib/image';
@@ -24,9 +26,23 @@ interface BrandMenuProps {
 
 export default function BrandMenu({ children, logoData, hasBrandPage }: BrandMenuProps) {
   const t = useTranslations('brand');
+  const locale = useLocale();
+  const pathname = usePathname();
   const image = logoData?.image?.default;
   const extension = (image?.asset as { extension?: string } | undefined)?.extension || 'svg';
   const label = extension === 'png' ? t('copyLogoPng') : t('copyLogoSvg');
+
+  // Generate locale-aware links
+  const homeHref = locale === DEFAULT_LOCALE ? '/' : `/${locale}`;
+  const brandHref = locale === DEFAULT_LOCALE ? '/brand' : `/${locale}/brand`;
+
+  // Scroll to top when clicking "Go to Home" while already on homepage
+  const handleHomeClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (pathname === homeHref) {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   const handleCopyLogo = async () => {
     try {
@@ -63,7 +79,11 @@ export default function BrandMenu({ children, logoData, hasBrandPage }: BrandMen
       <ContextMenuContent className="w-56 p-2 z-[200]">
         <ContextMenuItem
           render={
-            <Link href="/" className="flex items-center cursor-pointer gap-2">
+            <Link
+              href={homeHref}
+              onClick={handleHomeClick}
+              className="flex items-center cursor-pointer gap-2"
+            >
               <Home className="w-4 h-4" />
               <span>{t('goToHome')}</span>
             </Link>
@@ -85,7 +105,7 @@ export default function BrandMenu({ children, logoData, hasBrandPage }: BrandMen
         {hasBrandPage && (
           <ContextMenuItem
             render={
-              <Link href="/brand" className="flex items-center cursor-pointer gap-2 font-medium">
+              <Link href={brandHref} className="flex items-center cursor-pointer gap-2 font-medium">
                 <LayoutGrid className="w-4 h-4 text-primary" />
                 <span>{t('brandCenter')}</span>
               </Link>

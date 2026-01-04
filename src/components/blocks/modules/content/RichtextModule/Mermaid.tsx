@@ -19,6 +19,7 @@ export function Mermaid({ value }: MermaidProps) {
   useEffect(() => {
     let isMounted = true;
 
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Mermaid rendering requires complex error handling and state management
     async function renderMermaid() {
       if (!value?.code || !containerRef.current) return;
 
@@ -89,9 +90,8 @@ export function Mermaid({ value }: MermaidProps) {
 
   return (
     <div className="mermaid-diagram">
-      <div ref={containerRef} className={isRendered ? '' : 'animate-pulse'}>
-        {!isRendered && <div className="text-sm text-zinc-400">Loading diagram...</div>}
-      </div>
+      {!isRendered && <div className="animate-pulse text-sm text-zinc-400">Loading diagram...</div>}
+      <div ref={containerRef} className={isRendered ? '' : 'hidden'} />
     </div>
   );
 }

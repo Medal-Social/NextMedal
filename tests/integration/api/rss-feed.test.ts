@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { NextRequest } from 'next/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/i18n/config';
 
 // Cache XSL files at module level (read once, not per test)
 const publicDir = join(process.cwd(), 'public');
@@ -239,36 +240,49 @@ describe('RSS Feed Route', () => {
   });
 
   describe('Locale Handling', () => {
-    it('uses locale prefix for non-English locales', async () => {
-      mockFetch.mockResolvedValueOnce([
-        {
-          _id: 'post-1',
-          title: 'Norsk Innlegg',
-          slug: 'norsk-innlegg',
-          publishDate: '2024-01-01T00:00:00Z',
-        },
-      ]);
+    // Map locales to their collection slugs (from the mock)
+    const localeCollectionSlugs: Record<string, string> = {
+      en: 'articles',
+      nb: 'artikler',
+      ar: 'articles', // Arabic uses 'articles' in the mock
+    };
 
-      const response = await GET(createMockRequest('nb', 'artikler'), {
-        params: createMockParams('nb', 'artikler'),
+    // Test each non-default locale explicitly
+    SUPPORTED_LOCALES.filter((locale) => locale !== DEFAULT_LOCALE).forEach((locale) => {
+      it(`uses locale prefix for ${locale} (non-default locale)`, async () => {
+        mockFetch.mockResolvedValueOnce([
+          {
+            _id: 'post-1',
+            title: 'Test Post',
+            slug: 'test-post',
+            publishDate: '2024-01-01T00:00:00Z',
+          },
+        ]);
+
+        const collectionSlug = localeCollectionSlugs[locale] || 'articles';
+        const response = await GET(createMockRequest(locale, collectionSlug), {
+          params: createMockParams(locale, collectionSlug),
+        });
+        const xml = await response.text();
+
+        expect(xml).toContain(`<link>https://test.example.com/${locale}/${collectionSlug}</link>`);
+        expect(xml).toContain(
+          `<link>https://test.example.com/${locale}/${collectionSlug}/test-post</link>`
+        );
+        expect(xml).toContain(`<language>${locale}</language>`);
       });
-      const xml = await response.text();
-
-      expect(xml).toContain('<link>https://test.example.com/nb/artikler</link>');
-      expect(xml).toContain('<link>https://test.example.com/nb/artikler/norsk-innlegg</link>');
-      expect(xml).toContain('<language>nb</language>');
     });
 
-    it('omits locale prefix for English (default locale)', async () => {
+    it('omits locale prefix for default locale', async () => {
       mockFetch.mockResolvedValueOnce([]);
 
-      const response = await GET(createMockRequest('en', 'articles'), {
-        params: createMockParams('en', 'articles'),
+      const response = await GET(createMockRequest(DEFAULT_LOCALE, 'articles'), {
+        params: createMockParams(DEFAULT_LOCALE, 'articles'),
       });
       const xml = await response.text();
 
       expect(xml).toContain('<link>https://test.example.com/articles</link>');
-      expect(xml).not.toContain('/en/articles');
+      expect(xml).not.toContain(`/${DEFAULT_LOCALE}/articles`);
     });
   });
 
@@ -405,12 +419,9 @@ describe('XSL Stylesheet Validation', () => {
   });
 
   describe('Sitemap Index XSL Stylesheet', () => {
-    it('sitemap-index.xsl file exists and is valid XML', () => {
-      const xslContent = getXslContent('sitemap-index');
-
-      expect(xslContent).toContain('<?xml version="1.0"');
-      expect(xslContent).toContain('<xsl:stylesheet');
-      expect(xslContent).toContain('</xsl:stylesheet>');
+    it.skip('sitemap-index.xsl is now a dynamic route, not a static file', () => {
+      // This test is skipped because sitemap-index.xsl is now generated
+      // dynamically via /sitemap-index.xsl/route.ts instead of being a static file
     });
   });
 });

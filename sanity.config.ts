@@ -32,6 +32,7 @@ export default defineConfig({
   projectId,
   dataset,
   basePath: '/studio',
+  apiVersion,
 
   announcements: { enabled: false },
   tasks: { enabled: false },

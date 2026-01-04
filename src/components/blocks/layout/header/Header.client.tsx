@@ -182,17 +182,15 @@ export default function HeaderClient({
         >
           {isDocs ? (
             <div className="flex flex-1 items-center justify-between w-full">
-              <div className="flex items-center min-w-0">
+              <div className="flex items-center gap-2 sm:gap-4 min-w-0">
                 {/* Identity: Logo | Docs */}
+                <div className="flex items-center shrink-0">{logoNode}</div>
+                <div className="hidden sm:block h-6 w-px bg-border/60 rotate-12 shrink-0" />
                 <Link
                   href="/docs"
-                  className="flex items-center gap-2 sm:gap-4 hover:opacity-80 transition-opacity min-w-0"
+                  className="hidden sm:block font-semibold text-lg tracking-tight truncate hover:opacity-80 transition-opacity"
                 >
-                  <div className="flex items-center shrink-0">{logoNode}</div>
-                  <div className="hidden sm:block h-6 w-px bg-border/60 rotate-12 shrink-0" />
-                  <span className="hidden sm:block font-semibold text-lg tracking-tight truncate">
-                    Docs
-                  </span>
+                  Docs
                 </Link>
               </div>
 

@@ -476,6 +476,7 @@ export const PAGE_404_QUERY = groq`
 `;
 
 // Current page for translation switching
+// Note: Events use field-level translations (no language field), others use document-level
 export const CURRENT_PAGE_QUERY = groq`
 	*[
 		(_type == 'page' ||
@@ -485,7 +486,7 @@ export const CURRENT_PAGE_QUERY = groq`
 			_type == 'collection.newsletter' ||
 			_type == 'collection.events') &&
 		metadata.slug.current == $slug &&
-		language == $locale
+		(_type == 'collection.events' || language == $locale)
 	][0]{
 		_type,
 		_id,
@@ -569,7 +570,15 @@ export const SITEMAP_WITH_TRANSLATIONS_QUERY = groq`{
 		),
 		language
 	},
-	'collections': *[_type in ['collection.article', 'collection.changelog', 'collection.documentation', 'collection.newsletter'] && seo.noIndex != true]|order(_updatedAt desc){
+	'articles': *[_type == 'collection.article' && seo.noIndex != true]|order(_updatedAt desc){
+		_id,
+		_type,
+		'slug': metadata.slug.current,
+		'lastModified': _updatedAt,
+		'priority': 0.6,
+		language
+	},
+	'collections': *[_type in ['collection.changelog', 'collection.documentation', 'collection.newsletter'] && seo.noIndex != true]|order(_updatedAt desc){
 		_id,
 		_type,
 		'slug': metadata.slug.current,
@@ -584,11 +593,13 @@ export const SITEMAP_TRANSLATIONS_QUERY = groq`
 	*[_type == 'translation.metadata']{
 		_id,
 		'documentId': references(*._id)[0]._id,
-		translations[].value->{
-			_id,
-			_type,
-			'slug': metadata.slug.current,
-			language
+		'translations': translations[]{
+			'value': value->{
+				_id,
+				_type,
+				'slug': metadata.slug.current,
+				language
+			}
 		}
 	}
 `;

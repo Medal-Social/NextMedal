@@ -3,14 +3,21 @@
 import { EyeOpenIcon } from '@sanity/icons';
 import { Box, Button, Card, Dialog, Flex, Spinner, Stack, Text } from '@sanity/ui';
 import { useState } from 'react';
+import type { ObjectInputProps } from 'sanity';
+import { useFormValue } from 'sanity';
 import { BASE_URL } from '@/lib/core/env.client';
 
-export default function PreviewOG({ title }: { title?: string }) {
+/**
+ * Custom input for social sharing images with preview button for auto-generated fallback
+ */
+export default function SocialImageInput(props: ObjectInputProps) {
+  const { renderDefault } = props;
   const [showPreview, setShowPreview] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
-  const url = `${BASE_URL}/api/og?title=${encodeURIComponent(title ?? '')}`;
+  // Get the SEO title from the form
+  const seoTitle = useFormValue(['seo', 'title']) as string | undefined;
 
   const handlePreview = () => {
     setShowPreview(true);
@@ -18,22 +25,42 @@ export default function PreviewOG({ title }: { title?: string }) {
     setHasError(false);
   };
 
+  // Build the preview URL with the current SEO title
+  const previewUrl = seoTitle
+    ? `${BASE_URL}/api/og?title=${encodeURIComponent(seoTitle)}`
+    : `${BASE_URL}/api/og`;
+
   return (
-    <>
-      <Button
-        mode="bleed"
-        padding={2}
-        style={{ marginTop: -4 }}
-        icon={EyeOpenIcon}
-        title="Preview social sharing image"
-        onClick={handlePreview}
-        disabled={!title}
-      />
+    <Stack space={3}>
+      {renderDefault(props)}
+
+      {!props.value && (
+        <Card padding={3} radius={2} shadow={1} tone="primary">
+          <Flex align="center" gap={3}>
+            <EyeOpenIcon />
+            <Box flex={1}>
+              <Text size={1}>
+                No image provided. An auto-generated image will be created from your SEO title and
+                shown when this page is shared on social media.
+              </Text>
+            </Box>
+            <Button
+              fontSize={1}
+              icon={EyeOpenIcon}
+              mode="ghost"
+              onClick={handlePreview}
+              text="Preview"
+              tone="primary"
+              disabled={!seoTitle}
+            />
+          </Flex>
+        </Card>
+      )}
 
       {showPreview && (
         <Dialog
           header="Social Sharing Image Preview"
-          id="og-image-preview"
+          id="social-image-preview"
           onClose={() => setShowPreview(false)}
           width={2}
         >
@@ -96,8 +123,8 @@ export default function PreviewOG({ title }: { title?: string }) {
 
                   {/* biome-ignore lint/performance/noImgElement: Sanity admin preview */}
                   <img
-                    src={url}
-                    alt={`Social sharing preview for ${title || 'untitled page'}`}
+                    src={previewUrl}
+                    alt={`Social sharing preview for ${seoTitle || 'this page'}`}
                     style={{
                       width: '100%',
                       height: '100%',
@@ -119,17 +146,16 @@ export default function PreviewOG({ title }: { title?: string }) {
 
               <Stack space={2}>
                 <Text size={1} weight="semibold">
-                  Need a custom image?
+                  Want to use your own image?
                 </Text>
                 <Text size={1} muted>
-                  You can upload a custom "Social Sharing Image" below if you prefer. Recommended
-                  size: 1200×630px.
+                  Upload a custom image above if you prefer. Recommended size: 1200×630px.
                 </Text>
               </Stack>
             </Stack>
           </Card>
         </Dialog>
       )}
-    </>
+    </Stack>
   );
 }

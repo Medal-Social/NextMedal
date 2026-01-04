@@ -19,7 +19,7 @@ async function HeaderInner() {
 
   const { title, logo, ctas, headerNav, brandPage, enableSearch } = site;
 
-  const logoNode = <Logo title={title} logo={logo} brandPage={brandPage} />;
+  const logoNode = <Logo title={title} logo={logo} brandPage={brandPage} locale={locale} />;
 
   const navNode = (
     <nav className="max-lg:hidden flex items-center" aria-label="Main navigation">

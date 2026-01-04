@@ -73,6 +73,8 @@ export interface LogoProps {
   logo: HeaderLogo | undefined;
   /** Brand page slug for context menu */
   brandPage: string | undefined;
+  /** Current locale for generating locale-aware homepage link */
+  locale: string;
 }
 
 /**
