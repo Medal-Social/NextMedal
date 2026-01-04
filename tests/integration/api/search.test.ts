@@ -28,7 +28,7 @@ vi.mock('@/i18n/routing', () => ({
 
 // Mock withRetry to just call the function directly without retries
 vi.mock('@/lib/utils', async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = (await importOriginal()) as any;
   return {
     ...actual,
     withRetry: vi.fn(async (fn) => await fn()),

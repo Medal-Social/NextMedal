@@ -35,12 +35,12 @@ vi.mock('next/link', () => ({
 
 // Mock lucide-react icons
 vi.mock('lucide-react', () => ({
-  ExternalLink: ({ className, ...props }: React.ComponentProps<'svg'>) => (
+  ExternalLink: ({ className, ...props }: any) => (
     <span data-testid="external-link-icon" className={className} {...props}>
       External
     </span>
   ),
-  ChevronDown: ({ className, ...props }: React.ComponentProps<'svg'>) => (
+  ChevronDown: ({ className, ...props }: any) => (
     <span data-testid="chevron-down-icon" className={className} {...props}>
       ChevronDown
     </span>
@@ -49,8 +49,8 @@ vi.mock('lucide-react', () => ({
 
 // Mock resolveUrl
 vi.mock('@/lib/sanity/resolve-url', () => ({
-  default: (doc: Sanity.PageBase) => `/${doc.metadata.slug.current}`,
-  resolveUrlSync: (doc: Sanity.PageBase) => `/${doc.metadata.slug.current}`,
+  default: (doc: any) => `/${doc.metadata?.slug?.current || ''}`,
+  resolveUrlSync: (doc: any) => `/${doc.metadata?.slug?.current || ''}`,
 }));
 
 // Mock next-sanity stegaClean
@@ -78,11 +78,12 @@ describe('NavLink Component', () => {
           _createdAt: '2024-01-01',
           _updatedAt: '2024-01-01',
           _rev: 'rev-1',
+          language: 'en',
           metadata: {
             slug: { current: 'about' },
             title: 'About',
-            language: 'en',
             noIndex: false,
+            description: '',
           },
         },
       };
@@ -108,11 +109,12 @@ describe('NavLink Component', () => {
           _createdAt: '2024-01-01',
           _updatedAt: '2024-01-01',
           _rev: 'rev-1',
+          language: 'en',
           metadata: {
             slug: { current: 'contact' },
             title: 'Contact',
-            language: 'en',
             noIndex: false,
+            description: '',
           },
         },
       };
@@ -137,11 +139,12 @@ describe('NavLink Component', () => {
           _createdAt: '2024-01-01',
           _updatedAt: '2024-01-01',
           _rev: 'rev-1',
+          language: 'en',
           metadata: {
             slug: { current: 'search' },
             title: 'Search',
-            language: 'en',
             noIndex: false,
+            description: '',
           },
         },
       };
@@ -220,11 +223,12 @@ describe('NavLink Component', () => {
           _createdAt: '2024-01-01',
           _updatedAt: '2024-01-01',
           _rev: 'rev-1',
+          language: 'en',
           metadata: {
             slug: { current: 'services' },
             title: 'Services',
-            language: 'en',
             noIndex: false,
+            description: '',
           },
         },
       };
@@ -247,11 +251,12 @@ describe('NavLink Component', () => {
           _createdAt: '2024-01-01',
           _updatedAt: '2024-01-01',
           _rev: 'rev-1',
+          language: 'en',
           metadata: {
             slug: { current: 'products' },
             title: 'Products',
-            language: 'en',
             noIndex: false,
+            description: '',
           },
         },
       };

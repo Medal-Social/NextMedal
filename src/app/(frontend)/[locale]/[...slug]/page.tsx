@@ -483,8 +483,8 @@ async function getCollectionItemMetadata(
   const handler = collectionType ? handlers[collectionType as keyof typeof handlers] : null;
 
   if (handler) {
-    // @ts-expect-error - handler.fetcher is a union type of different collection fetchers
     const item = await fetchAndValidateCollectionItem(
+      // @ts-expect-error - handler.fetcher is a union type of different collection fetchers
       handler.fetcher,
       handler.type,
       itemSlug,

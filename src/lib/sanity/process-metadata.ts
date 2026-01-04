@@ -193,7 +193,7 @@ export default async function processMetadata(
       title: cleanTitle,
       description: cleanDescription,
       images: ogImage,
-      siteName: site?.title,
+      siteName: site?.title as unknown as string,
       locale: ogLocale,
       ...(publishedTime && { publishedTime }),
     },

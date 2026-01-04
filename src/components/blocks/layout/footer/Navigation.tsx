@@ -195,7 +195,7 @@ export default async function Menu() {
 
   if (!site?.footerNav?.length) return null;
 
-  const { footerNav } = site;
+  const footerNav = site.footerNav as unknown as MenuItem[];
 
   // Pre-resolve all internal URLs
   const resolvedUrls = new Map<string, string>();

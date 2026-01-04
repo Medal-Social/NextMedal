@@ -320,8 +320,8 @@ export default async function EventsFrontpage({
   let collectionSlug = providedSlug;
 
   if (!collectionSlug) {
-    const result = await getCollectionSlugWithFallback('collection.events', locale);
-    if (!result.success) {
+    collectionSlug = getCollectionSlugWithFallback('collection.events', locale);
+    if (!collectionSlug) {
       return (
         <Section className="space-y-8" {...moduleProps(props)}>
           <div className="text-center py-12 text-muted-foreground">
@@ -331,7 +331,6 @@ export default async function EventsFrontpage({
         </Section>
       );
     }
-    collectionSlug = result.slug;
   }
 
   const cleanLayout = stegaClean(layout) as 'calendar' | 'cards' | 'list' | 'timeline';

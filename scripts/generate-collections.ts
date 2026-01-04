@@ -188,6 +188,7 @@ function generateFileContent(
   detectedSlugs: Record<CollectionType, string>
 ): string {
   return `// AUTO-GENERATED FILE - DO NOT EDIT
+// biome-ignore lint: Auto-generated file
 // Generated at: ${new Date().toISOString()}
 // Source: Sanity CMS (pages with frontpage modules)
 //

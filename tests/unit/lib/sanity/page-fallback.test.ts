@@ -82,6 +82,6 @@ describe('hasIndexInDefaultLocale', () => {
     const call = mockFetchSanity.mock.calls[0][0];
     expect(call.query).toContain("metadata.slug.current == 'index'");
     expect(call.query).toContain('language == $locale');
-    expect(call.params.locale).toBe('en');
+    expect(call.params!.locale).toBe('en');
   });
 });
