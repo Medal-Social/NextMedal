@@ -51,31 +51,40 @@ project-root/
 │   │   ├── (frontend)/     # Main website routes with [locale] parameter
 │   │   ├── (studio)/       # Sanity CMS Studio at /studio
 │   │   └── api/            # API routes (search, draft-mode)
-│   ├── ui/                 # 30+ page-level UI components and modules
-│   ├── components/ui/      # Reusable base UI primitives
-│   ├── sanity/schemaTypes/ # 38 Sanity schema definitions
+│   ├── components/         # React components
+│   │   ├── ui/             # Reusable base UI primitives (41 components)
+│   │   ├── blocks/         # Content modules and page-level components (130+ files)
+│   │   │   ├── modules/    # Content modules (hero, features, testimonials, etc.)
+│   │   │   ├── objects/    # Reusable objects (CTA, icons, video, etc.)
+│   │   │   ├── layout/     # Layout components (header, footer, banner)
+│   │   │   └── seo/        # SEO components (JSON-LD, breadcrumbs)
+│   │   ├── layout/         # Additional layout utilities
+│   │   ├── icons/          # Icon components
+│   │   └── dashboard/      # Sanity Studio dashboard components
+│   ├── sanity/schemaTypes/ # 66 Sanity schema definitions
 │   ├── lib/                # Core utilities (logger, env, utils, safe-action)
 │   └── i18n/               # Internationalization config
 │
-└── tests/                  # All tests (enterprise standard)
-    ├── unit/               # Pure function tests (Vitest)
+└── tests/                  # All tests (85+ test files)
+    ├── unit/               # Pure function tests (Vitest, ~30 files)
     │   ├── lib/            # Utils, helpers, pure logic
     │   ├── sanity/         # Sanity utilities
     │   └── config/         # Configuration validation
-    ├── components/         # React component tests (Vitest + Testing Library)
-    │   └── ui/             # Base UI primitives
-    ├── integration/        # Multi-module tests (Vitest)
+    ├── components/         # React component tests (Vitest + Testing Library, ~41 files)
+    │   ├── ui/             # Base UI primitives
+    │   ├── blocks/         # Block components
+    │   └── layout/         # Layout components
+    ├── integration/        # Multi-module tests (Vitest, ~14 files)
     │   ├── api/            # API route integration
     │   ├── hooks/          # Custom hooks
     │   └── forms/          # Form validation
     ├── contracts/          # API contract tests (Vitest + Zod)
-    ├── e2e/                # End-to-end tests (Playwright)
+    ├── e2e/                # End-to-end tests (Playwright, ~13 files)
     │   ├── smoke/          # Quick critical path tests
     │   ├── specs/          # Full E2E test specs
     │   ├── visual/         # Visual regression tests
     │   ├── performance/    # Lighthouse performance tests
     │   └── accessibility/  # WCAG compliance tests
-    ├── load/               # Load testing (k6)
     ├── fixtures/           # Shared test data
     │   ├── sanity/         # Sanity mock data
     │   └── playwright/     # Playwright fixtures
@@ -357,7 +366,7 @@ The article system is the primary content publishing mechanism, replacing the le
 - **Inline objects in arrays MUST have a `name` property** - required for copy/paste, GraphQL, and TypeGen
   - Bad: `defineArrayMember({ type: 'object', fields: [...] })`
   - Good: `defineArrayMember({ name: 'my-item', type: 'object', fields: [...] })`
-  - Run `pnpm lint:sanity` to check for missing names
+  - Run `npx tsx scripts/lint-sanity-schemas.ts` to check for missing names
 - GROQ variables: SCREAMING_SNAKE_CASE (e.g., `ARTICLE_QUERY`)
 - After schema changes: `npx sanity@latest schema extract`
 
@@ -419,7 +428,6 @@ We follow Martin Fowler's testing pyramid approach:
 | **Visual** | Catch unintended UI changes | Playwright screenshots | `tests/e2e/visual/` |
 | **Performance** | Core Web Vitals, Lighthouse | Playwright + Lighthouse | `tests/e2e/performance/` |
 | **Accessibility** | WCAG compliance | Playwright + axe-core | `tests/e2e/accessibility/` |
-| **Load** | Performance under concurrent users | k6 | `tests/load/` |
 
 ### Configuration
 
@@ -454,7 +462,6 @@ We follow Martin Fowler's testing pyramid approach:
 |----------|----------|---------|----------|
 | README.md | Root | Project overview, setup, deployment | All |
 | CLAUDE.md | Root | Developer guide, standards, architecture | Developers |
-| SECURITY.md | Root | Vulnerability reporting | Security researchers |
 | CODE_OF_CONDUCT.md | .github/ | Community standards | Contributors |
 | .env.example | Root | Environment configuration | Developers |
 | Workflow YAMLs | .github/workflows/ | CI/CD documentation | DevOps |
@@ -468,7 +475,6 @@ We follow Martin Fowler's testing pyramid approach:
 | API endpoints | Inline JSDoc + OpenAPI (future) |
 | Component props and usage | JSDoc/TSDoc in component file |
 | Architecture decisions | Live site at /docs |
-| Security vulnerabilities | SECURITY.md |
 | Schema definitions | Inline comments in schemaTypes/ |
 
 ### Documentation Maintenance
