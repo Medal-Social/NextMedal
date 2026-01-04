@@ -115,8 +115,6 @@ export default function LocaleSwitcherClient({
       translationUrls={translationUrls}
       className={className}
       dropdownAlign={dropdownAlign}
-      translationNotAvailable={labels.translationNotAvailable}
-      goToHome={labels.goToHome}
     >
       {routing.locales.map((cur) => (
         <option key={cur} value={cur}>

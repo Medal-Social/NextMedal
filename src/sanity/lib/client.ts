@@ -23,7 +23,7 @@ export const client = createClient({
   useCdn: !dev,
   stega: {
     enabled: true,
-    studioUrl: '/studio',
+    studioUrl: studioBasePath,
   },
 });
 

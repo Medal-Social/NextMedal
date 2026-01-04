@@ -166,29 +166,31 @@ export function CtaInput(props: ObjectInputProps) {
             maxWidth: '300px',
           }}
         >
-          <Button
-            flex={1}
-            mode={isInternal ? 'default' : 'bleed'}
-            tone={isInternal ? 'primary' : 'default'}
-            icon={LinkIcon}
-            text="Internal"
-            fontSize={1}
-            padding={2}
-            onClick={() => handleToggleLinkType('internal')}
-            style={{ borderRadius: '2px' }}
-          />
+          <Box flex={1}>
+            <Button
+              mode={isInternal ? 'default' : 'bleed'}
+              tone={isInternal ? 'primary' : 'default'}
+              icon={LinkIcon}
+              text="Internal"
+              fontSize={1}
+              padding={2}
+              onClick={() => handleToggleLinkType('internal')}
+              style={{ borderRadius: '2px', width: '100%' }}
+            />
+          </Box>
           <Box style={{ width: '1px', background: 'var(--card-border-color)', margin: '4px 0' }} />
-          <Button
-            flex={1}
-            mode={!isInternal ? 'default' : 'bleed'}
-            tone={!isInternal ? 'primary' : 'default'}
-            icon={EarthGlobeIcon}
-            text="External"
-            fontSize={1}
-            padding={2}
-            onClick={() => handleToggleLinkType('external')}
-            style={{ borderRadius: '2px' }}
-          />
+          <Box flex={1}>
+            <Button
+              mode={!isInternal ? 'default' : 'bleed'}
+              tone={!isInternal ? 'primary' : 'default'}
+              icon={EarthGlobeIcon}
+              text="External"
+              fontSize={1}
+              padding={2}
+              onClick={() => handleToggleLinkType('external')}
+              style={{ borderRadius: '2px', width: '100%' }}
+            />
+          </Box>
         </Flex>
       </Box>
 

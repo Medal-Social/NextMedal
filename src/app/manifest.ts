@@ -9,11 +9,12 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
   const BACKGROUND_COLOR = '#ffffff';
 
   const site = await getSiteOptional(DEFAULT_LOCALE);
-  const description = site?.tagline ? getBlockText(site.tagline, ' ') : undefined;
+  const siteTitle = site?.title as unknown as string;
+  const description = site?.tagline ? getBlockText(site.tagline as unknown, ' ') : undefined;
 
   return {
-    name: site?.title || 'NextMedal',
-    short_name: site?.title?.slice(0, 12) || 'NextMedal',
+    name: siteTitle || 'NextMedal',
+    short_name: siteTitle?.slice(0, 12) || 'NextMedal',
     description:
       description || 'A high-performance website template built with Next.js and Sanity.',
     start_url: '/',

@@ -220,7 +220,7 @@ export async function findAvailableTranslation(
 
   // Build URLs for all available locales
   const availableLocales = uniqueTranslations.map((translation) => {
-    const translatedPage: Sanity.PageBase = {
+    const translatedPage = {
       _type: translation._type,
       language: translation.language,
       metadata: {
@@ -228,7 +228,8 @@ export async function findAvailableTranslation(
           current: translation.slug,
         },
       },
-    };
+      // biome-ignore lint/suspicious/noExplicitAny: resolveUrl only needs type, language, and slug
+    } as any;
 
     return {
       locale: translation.language,

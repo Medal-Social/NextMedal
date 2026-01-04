@@ -107,8 +107,8 @@ export default async function NewsletterFrontpage({
   let collectionSlug = providedSlug;
 
   if (!collectionSlug) {
-    const result = await getCollectionSlugWithFallback('collection.newsletter', locale);
-    if (!result.success) {
+    collectionSlug = getCollectionSlugWithFallback('collection.newsletter', locale);
+    if (!collectionSlug) {
       return (
         <Section className="space-y-8" {...moduleProps(props)}>
           <div className="text-center py-12 text-muted-foreground">
@@ -118,7 +118,6 @@ export default async function NewsletterFrontpage({
         </Section>
       );
     }
-    collectionSlug = result.slug;
   }
 
   // Fetch more newsletters than the page limit to enable pagination

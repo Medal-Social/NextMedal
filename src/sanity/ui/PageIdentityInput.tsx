@@ -40,7 +40,8 @@ export default function PageIdentityInput(props: ObjectInputProps) {
   const [isGenerating, setIsGenerating] = useState(false);
 
   // Get validation markers for slug field
-  const slugMember = members.find((member) => member.name === 'slug');
+  // biome-ignore lint/suspicious/noExplicitAny: Safely searching through mixed field/fieldset members
+  const slugMember = members.find((member: any) => member.name === 'slug') as any;
   // Access validation markers (not validation rules) - these are the actual errors/warnings
   const slugValidation = Array.isArray(slugMember?.field?.validation)
     ? slugMember.field.validation

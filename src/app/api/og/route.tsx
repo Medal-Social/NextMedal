@@ -42,14 +42,31 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const site = await getSiteOptional().catch(() => null);
 
-    const siteTitle = site?.title || FALLBACK_SITE_TITLE;
+    const siteTitle = (site?.title as unknown as string) || FALLBACK_SITE_TITLE;
     const domain = new URL(BASE_URL).hostname;
 
-    const regex = new RegExp(` [-—|] ${siteTitle}$`);
-    const rawTitle = searchParams.get('title')?.replace(regex, '') || siteTitle;
-    const title = rawTitle.slice(0, MAX_TITLE_LENGTH);
+    // Remove site branding from the end of the title if present
+    let title = (searchParams.get('title') as string) || siteTitle;
+    const suffixes = [` - ${siteTitle}`, ` — ${siteTitle}`, ` | ${siteTitle}`];
+    for (const suffix of suffixes) {
+      if (title.endsWith(suffix)) {
+        title = title.slice(0, -suffix.length);
+        break;
+      }
+    }
+    title = title.slice(0, MAX_TITLE_LENGTH);
 
     const fonts = await loadFonts();
+
+    // Determine font size based on title length for better visual balance
+    const getFontSize = (text: string) => {
+      const length = text.length;
+      if (length > 100) return '48px';
+      if (length > 60) return '64px';
+      return '84px';
+    };
+
+    const category = searchParams.get('category');
 
     return new ImageResponse(
       <div
@@ -93,7 +110,7 @@ export async function GET(request: NextRequest) {
             </div>
 
             {/* Optional Tag/pill */}
-            {searchParams.get('category') && (
+            {category && (
               <div
                 style={{
                   padding: '8px 20px',
@@ -105,7 +122,7 @@ export async function GET(request: NextRequest) {
                   backgroundColor: 'rgba(255,255,255,0.05)',
                 }}
               >
-                {searchParams.get('category')}
+                {category}
               </div>
             )}
           </div>
@@ -114,14 +131,15 @@ export async function GET(request: NextRequest) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '100%' }}>
             <div
               style={{
-                fontSize: title.length > 50 ? '60px' : '84px',
+                fontSize: getFontSize(title),
                 fontWeight: 700,
                 color: BRAND_COLORS.white,
                 lineHeight: 1.05,
                 letterSpacing: '-0.03em',
                 textShadow: '0 10px 30px rgba(0,0,0,0.5)',
-                lineClamp: 3,
-                textOverflow: 'ellipsis',
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
                 overflow: 'hidden',
               }}
             >
