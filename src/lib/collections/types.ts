@@ -14,6 +14,19 @@ export type CollectionType =
   | 'collection.events';
 
 /**
+ * All collection types as a runtime array
+ * This is the SINGLE SOURCE OF TRUTH for collection types.
+ * Import this instead of defining your own array.
+ */
+export const COLLECTION_TYPES: CollectionType[] = [
+  'collection.article',
+  'collection.documentation',
+  'collection.changelog',
+  'collection.newsletter',
+  'collection.events',
+] as const satisfies readonly CollectionType[];
+
+/**
  * Collection metadata interface
  */
 export interface CollectionMetadata {

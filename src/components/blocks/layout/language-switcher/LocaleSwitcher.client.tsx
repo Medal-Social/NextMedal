@@ -3,7 +3,7 @@
 import { usePage } from '@/contexts';
 import { routing } from '@/i18n/routing';
 import { getCollectionSlugWithFallback } from '@/lib/collections/registry';
-import type { CollectionType } from '@/lib/collections/types';
+import { COLLECTION_TYPES, type CollectionType } from '@/lib/collections/types';
 import LocaleSwitcherSelect from './LocaleSwitcherSelect';
 
 export type Translation = {
@@ -33,14 +33,6 @@ export interface LocaleSwitcherClientProps {
   locale: string;
   labels: LocaleLabels;
 }
-
-const COLLECTION_TYPES: CollectionType[] = [
-  'collection.article',
-  'collection.documentation',
-  'collection.changelog',
-  'collection.newsletter',
-  'collection.events',
-];
 
 /**
  * Helper to build locale-prefixed URL (default locale has no prefix)
