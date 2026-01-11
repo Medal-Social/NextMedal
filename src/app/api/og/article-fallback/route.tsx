@@ -29,6 +29,16 @@ function getLocalizedText(locale: string) {
   return TRANSLATIONS[normalizedLocale] || TRANSLATIONS.en;
 }
 
+/**
+ * Extract resolved site title from GROQ query result.
+ * GROQ coalesces internationalized arrays to strings at query time,
+ * but TypeScript types still expect the array structure.
+ */
+function getSiteName(site: Sanity.Site | null, fallback = 'NextMedal'): string {
+  if (!site?.title) return fallback;
+  return (site.title as unknown as string) || fallback;
+}
+
 function isRTL(locale: string): boolean {
   return locale.toLowerCase().startsWith('ar');
 }
@@ -92,9 +102,9 @@ export async function GET(request: NextRequest) {
     let siteName = 'NextMedal';
     try {
       const site = await getSiteOptional(locale);
-      if (site?.title) siteName = site.title as unknown as string;
+      siteName = getSiteName(site, 'NextMedal');
     } catch (_e) {
-      // Fallback
+      // Fallback to default
     }
 
     const t = getLocalizedText(locale);
