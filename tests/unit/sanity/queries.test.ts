@@ -188,7 +188,7 @@ describe('GROQ Queries - Security & Best Practices', () => {
 
       // Category preview should include minimal fields
       expect(CATEGORY_PREVIEW_QUERY).toContain('_id,');
-      expect(CATEGORY_PREVIEW_QUERY).toContain('title,');
+      expect(CATEGORY_PREVIEW_QUERY).toContain('"title":');
 
       // Person preview should include role
       expect(PERSON_PREVIEW_QUERY).toContain('_id,');
@@ -300,7 +300,7 @@ describe('GROQ Queries - Security & Best Practices', () => {
       );
 
       expect(LOGOS_QUERY).toContain('|order(title)');
-      expect(ARTICLE_CATEGORIES_WITH_POSTS_QUERY).toContain('|order(title)');
+      expect(ARTICLE_CATEGORIES_WITH_POSTS_QUERY).toContain('|order(coalesce(');
     });
 
     it('SITEMAP_WITH_TRANSLATIONS_QUERY should order by different fields', async () => {
