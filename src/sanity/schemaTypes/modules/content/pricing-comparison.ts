@@ -148,12 +148,10 @@ export default defineType({
                       validation: (Rule) =>
                         Rule.custom((featureTiers, context) => {
                           // Look for the root document's pricing-comparison module
-                          // @ts-expect-error - Sanity's validation context.document is typed as unknown but contains the full document with modules array
                           const modules = context.document?.modules as
                             | Array<{ _key: string; tiers?: unknown[] }>
                             | undefined;
-                          // @ts-expect-error - Sanity's validation context.path contains path segments with _key but is typed as PathSegment[]
-                          const moduleKey = context.path[1]?._key as string | undefined;
+                          const moduleKey = (context.path?.[1] as { _key?: string } | undefined)?._key;
 
                           const doc = modules?.find((module) => module._key === moduleKey);
                           // Ensure document tiers is an array before accessing length
@@ -207,12 +205,10 @@ export default defineType({
                               validation: (Rule) =>
                                 Rule.custom((featureTiers, context) => {
                                   // Look for the root document's pricing-comparison module
-                                  // @ts-expect-error - Sanity's validation context.document is typed as unknown but contains the full document with modules array
                                   const modules = context.document?.modules as
                                     | Array<{ _key: string; tiers?: unknown[] }>
                                     | undefined;
-                                  // @ts-expect-error - Sanity's validation context.path contains path segments with _key but is typed as PathSegment[]
-                                  const moduleKey = context.path[1]?._key as string | undefined;
+                                  const moduleKey = (context.path?.[1] as { _key?: string } | undefined)?._key;
 
                                   const doc = modules?.find((module) => module._key === moduleKey);
                                   // Ensure document tiers is an array before accessing length
