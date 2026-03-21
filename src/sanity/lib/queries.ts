@@ -250,7 +250,7 @@ export const ARTICLE_CATEGORIES_WITH_POSTS_QUERY = groq`
 		($locale == '' || language == $locale) &&
 		defined(categories) &&
 		count(categories) > 0
-	].categories[]->._id)]|order(title[0].value){
+	].categories[]->._id)]|order(coalesce(title[_key == $locale][0].value, title[0].value, '')){
 		_id,
 		_type,
 		"title": coalesce(title[_key == $locale][0].value, title[0].value, ''),

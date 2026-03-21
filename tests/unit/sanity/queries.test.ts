@@ -300,7 +300,7 @@ describe('GROQ Queries - Security & Best Practices', () => {
       );
 
       expect(LOGOS_QUERY).toContain('|order(title)');
-      expect(ARTICLE_CATEGORIES_WITH_POSTS_QUERY).toContain('|order(title)');
+      expect(ARTICLE_CATEGORIES_WITH_POSTS_QUERY).toContain('|order(coalesce(');
     });
 
     it('SITEMAP_WITH_TRANSLATIONS_QUERY should order by different fields', async () => {
