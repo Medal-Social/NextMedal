@@ -151,7 +151,8 @@ export default defineType({
                           const modules = context.document?.modules as
                             | Array<{ _key: string; tiers?: unknown[] }>
                             | undefined;
-                          const moduleKey = (context.path?.[1] as { _key?: string } | undefined)?._key;
+                          const moduleKey = (context.path?.[1] as { _key?: string } | undefined)
+                            ?._key;
 
                           const doc = modules?.find((module) => module._key === moduleKey);
                           // Ensure document tiers is an array before accessing length
@@ -208,7 +209,9 @@ export default defineType({
                                   const modules = context.document?.modules as
                                     | Array<{ _key: string; tiers?: unknown[] }>
                                     | undefined;
-                                  const moduleKey = (context.path?.[1] as { _key?: string } | undefined)?._key;
+                                  const moduleKey = (
+                                    context.path?.[1] as { _key?: string } | undefined
+                                  )?._key;
 
                                   const doc = modules?.find((module) => module._key === moduleKey);
                                   // Ensure document tiers is an array before accessing length

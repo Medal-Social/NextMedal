@@ -9,6 +9,7 @@ import {
   SITE_QUERY,
   SOCIAL_LINKS_QUERY,
 } from './queries';
+
 export { fetchSanityLive };
 
 export async function fetchSanity<T = unknown>({

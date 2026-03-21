@@ -188,7 +188,7 @@ describe('GROQ Queries - Security & Best Practices', () => {
 
       // Category preview should include minimal fields
       expect(CATEGORY_PREVIEW_QUERY).toContain('_id,');
-      expect(CATEGORY_PREVIEW_QUERY).toContain('title,');
+      expect(CATEGORY_PREVIEW_QUERY).toContain('"title":');
 
       // Person preview should include role
       expect(PERSON_PREVIEW_QUERY).toContain('_id,');

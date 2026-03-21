@@ -105,7 +105,12 @@ function extractTwitterHandle(
     try {
       const parsed = new URL(link.url, BASE_URL);
       const hostname = parsed.hostname.toLowerCase();
-      return hostname === 'twitter.com' || hostname === 'www.twitter.com' || hostname === 'x.com' || hostname === 'www.x.com';
+      return (
+        hostname === 'twitter.com' ||
+        hostname === 'www.twitter.com' ||
+        hostname === 'x.com' ||
+        hostname === 'www.x.com'
+      );
     } catch {
       return false;
     }
