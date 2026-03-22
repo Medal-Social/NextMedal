@@ -3,9 +3,10 @@ import { fetchSanityLive } from '@/sanity/lib/live';
 import { ARTICLE_CATEGORIES_WITH_POSTS_QUERY } from '@/sanity/lib/queries';
 import Filter from './Filter';
 
-export default async function FilterList() {
+export default async function FilterList({ locale }: { locale: string }) {
   const categories = await fetchSanityLive<Sanity.ArticleCategory[]>({
     query: ARTICLE_CATEGORIES_WITH_POSTS_QUERY,
+    params: { locale },
   });
 
   if (!categories) return null;

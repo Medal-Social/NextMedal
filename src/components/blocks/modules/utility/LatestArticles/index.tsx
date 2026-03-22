@@ -79,7 +79,7 @@ export default async function LatestArticles({
         </header>
       )}
 
-      {displayFilters && !filteredCategory && <FilterList />}
+      {displayFilters && !filteredCategory && <FilterList locale={locale} />}
 
       <Suspense
         fallback={
