@@ -4,17 +4,14 @@ import { ClipboardIcon, EyeOpenIcon, LaunchIcon } from '@sanity/icons';
 import { Box, Button, Card, Flex, Stack, Text, TextInput, useToast } from '@sanity/ui';
 import { useCallback, useMemo, useState } from 'react';
 import { type ObjectInputProps, set, useFormValue } from 'sanity';
+import { COLLECTION_TYPES, type CollectionType } from '@/lib/collections/types';
 import { BASE_URL } from '@/lib/core/env.client';
 
-// Collection type identifiers
-type CollectionType =
-  | 'collection.article'
-  | 'collection.documentation'
-  | 'collection.changelog'
-  | 'collection.newsletter'
-  | 'collection.events';
-
-// Collection slugs (source of truth)
+/**
+ * Default collection slugs for URL preview in Sanity Studio.
+ * Note: These are fallback values. The actual slugs may vary per locale
+ * and are defined in the generated collections.generated.ts file.
+ */
 const DEFAULT_COLLECTION_SLUGS: Record<CollectionType, string> = {
   'collection.article': 'articles',
   'collection.documentation': 'docs',
@@ -22,14 +19,6 @@ const DEFAULT_COLLECTION_SLUGS: Record<CollectionType, string> = {
   'collection.newsletter': 'newsletter',
   'collection.events': 'events',
 };
-
-const COLLECTION_TYPES: CollectionType[] = [
-  'collection.article',
-  'collection.documentation',
-  'collection.changelog',
-  'collection.newsletter',
-  'collection.events',
-];
 
 /**
  * Custom input component for Page/Post Identity (title + slug)

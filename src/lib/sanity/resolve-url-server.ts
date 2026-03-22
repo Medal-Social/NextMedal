@@ -2,17 +2,8 @@ import 'server-only';
 import { stegaClean } from 'next-sanity';
 import { routing } from '@/i18n/routing';
 import { getCollectionSlugWithFallback } from '@/lib/collections/registry';
-import type { CollectionType } from '@/lib/collections/types';
+import { COLLECTION_TYPES, type CollectionType } from '@/lib/collections/types';
 import { BASE_URL } from '@/lib/core/env';
-
-// Collection types that need collection slugs
-const COLLECTION_TYPES: CollectionType[] = [
-  'collection.article',
-  'collection.documentation',
-  'collection.changelog',
-  'collection.newsletter',
-  'collection.events',
-];
 
 // Build query string from params object
 function buildQueryString(

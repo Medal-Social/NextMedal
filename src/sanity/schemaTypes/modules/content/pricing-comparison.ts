@@ -147,14 +147,16 @@ export default defineType({
                       ],
                       validation: (Rule) =>
                         Rule.custom((featureTiers, context) => {
-                          // Look for the root document
-                          //@ts-expect-error
-                          const doc = context.document.modules.find(
-                            //@ts-expect-error
-                            (module) => module._key === context.path[1]._key
-                          );
+                          // Look for the root document's pricing-comparison module
+                          const modules = context.document?.modules as
+                            | Array<{ _key: string; tiers?: unknown[] }>
+                            | undefined;
+                          const moduleKey = (context.path?.[1] as { _key?: string } | undefined)
+                            ?._key;
+
+                          const doc = modules?.find((module) => module._key === moduleKey);
                           // Ensure document tiers is an array before accessing length
-                          const docTiers = Array.isArray(doc.tiers) ? doc.tiers : [];
+                          const docTiers = Array.isArray(doc?.tiers) ? doc.tiers : [];
                           const tierCount = docTiers.length;
 
                           if (!featureTiers)
@@ -203,16 +205,17 @@ export default defineType({
                               ],
                               validation: (Rule) =>
                                 Rule.custom((featureTiers, context) => {
-                                  // Look for the root document
-                                  //@ts-expect-error
-                                  const doc = context.document.modules.find(
-                                    //@ts-expect-error
-                                    (module) =>
-                                      //@ts-expect-error
-                                      module._key === context.path[1]._key
-                                  );
+                                  // Look for the root document's pricing-comparison module
+                                  const modules = context.document?.modules as
+                                    | Array<{ _key: string; tiers?: unknown[] }>
+                                    | undefined;
+                                  const moduleKey = (
+                                    context.path?.[1] as { _key?: string } | undefined
+                                  )?._key;
+
+                                  const doc = modules?.find((module) => module._key === moduleKey);
                                   // Ensure document tiers is an array before accessing length
-                                  const docTiers = Array.isArray(doc.tiers) ? doc.tiers : [];
+                                  const docTiers = Array.isArray(doc?.tiers) ? doc.tiers : [];
                                   const tierCount = docTiers.length;
 
                                   if (!featureTiers)

@@ -52,7 +52,7 @@ export const AUTHOR_PREVIEW_QUERY = groq`{
 
 export const CATEGORY_PREVIEW_QUERY = groq`{
 	_id,
-	title,
+	"title": coalesce(title[_key == $locale][0].value, title[0].value, ''),
 	"slug": { "current": slug.current }
 }`;
 
@@ -250,10 +250,10 @@ export const ARTICLE_CATEGORIES_WITH_POSTS_QUERY = groq`
 		($locale == '' || language == $locale) &&
 		defined(categories) &&
 		count(categories) > 0
-	].categories[]->._id)]|order(title){
+	].categories[]->._id)]|order(coalesce(title[_key == $locale][0].value, title[0].value, '')){
 		_id,
 		_type,
-		title,
+		"title": coalesce(title[_key == $locale][0].value, title[0].value, ''),
 		"slug": { "current": slug.current }
 	}
 `;

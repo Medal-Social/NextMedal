@@ -17,15 +17,6 @@ export interface TranslationDetectionResult {
   strategy: 'exact-match' | 'not-found';
 }
 
-// Collection types that need collection slugs
-const _COLLECTION_TYPES: CollectionType[] = [
-  'collection.article',
-  'collection.documentation',
-  'collection.changelog',
-  'collection.newsletter',
-  'collection.events',
-];
-
 /**
  * Parse pathname to extract locale and slug
  * Patterns: /, /en, /nb, /en/slug, /nb/slug, /slug, /article/slug, /nb/article/slug

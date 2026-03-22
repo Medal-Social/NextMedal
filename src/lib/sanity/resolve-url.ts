@@ -1,17 +1,8 @@
 import { stegaClean } from 'next-sanity';
 import { routing } from '@/i18n/routing';
 import { getCollectionSlugWithFallback } from '@/lib/collections/registry';
-import type { CollectionType } from '@/lib/collections/types';
+import { COLLECTION_TYPES, type CollectionType } from '@/lib/collections/types';
 import { BASE_URL } from '@/lib/core/env';
-
-// Collection types that need collection slugs
-const COLLECTION_TYPES: CollectionType[] = [
-  'collection.article',
-  'collection.documentation',
-  'collection.changelog',
-  'collection.newsletter',
-  'collection.events',
-];
 
 // Helper function to detect if a URL is relative (starts with / or doesn't have a protocol)
 export function isRelativeUrl(url: string): boolean {

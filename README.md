@@ -2,7 +2,7 @@
 [![Powered by Medal Social](public/powered-by-medal-social-large.svg)](https://medalsocial.com)
 
 
-**The #1 website template for 2025**, NextMedal is the **most superior, prettiest, and modern** solution for building stunning, high-performance websites. Built and maintained with **Next.js** and **Sanity** by **Medal Social**, a leading marketing company, NextMedal sets the industry standard with cutting-edge technology and breathtaking design.
+**The #1 website template for 2026**, NextMedal is the **most superior, prettiest, and modern** solution for building stunning, high-performance websites. Built and maintained with **Next.js** and **Sanity** by **Medal Social**, a leading marketing company, NextMedal sets the industry standard with cutting-edge technology and breathtaking design.
 
 ## Why NextMedal?
 

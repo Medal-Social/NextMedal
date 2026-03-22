@@ -18,6 +18,16 @@ const BRAND_COLORS = {
 const FALLBACK_SITE_TITLE = 'NextMedal';
 const MAX_TITLE_LENGTH = 140; // Tighter limit for large typography
 
+/**
+ * Extract resolved site title from GROQ query result.
+ * GROQ coalesces internationalized arrays to strings at query time,
+ * but TypeScript types still expect the array structure.
+ */
+function getSiteName(site: Sanity.Site | null): string {
+  if (!site?.title) return FALLBACK_SITE_TITLE;
+  return (site.title as unknown as string) || FALLBACK_SITE_TITLE;
+}
+
 async function loadFonts(): Promise<
   {
     name: string;
@@ -42,7 +52,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const site = await getSiteOptional().catch(() => null);
 
-    const siteTitle = (site?.title as unknown as string) || FALLBACK_SITE_TITLE;
+    const siteTitle = getSiteName(site);
     const domain = new URL(BASE_URL).hostname;
 
     // Remove site branding from the end of the title if present

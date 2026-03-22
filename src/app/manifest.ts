@@ -3,13 +3,23 @@ import { DEFAULT_LOCALE } from '@/i18n/config';
 import { getSiteOptional } from '@/sanity/lib/fetch';
 import { getBlockText } from '@/sanity/lib/utils';
 
+/**
+ * Extract resolved site title from GROQ query result.
+ * GROQ coalesces internationalized arrays to strings at query time,
+ * but TypeScript types still expect the array structure.
+ */
+function getSiteName(site: Sanity.Site | null): string | undefined {
+  if (!site?.title) return undefined;
+  return site.title as unknown as string;
+}
+
 export default async function manifest(): Promise<MetadataRoute.Manifest> {
   // Colors from globals.css
   const THEME_COLOR = '#5B2D8C'; // --color-brand-600
   const BACKGROUND_COLOR = '#ffffff';
 
   const site = await getSiteOptional(DEFAULT_LOCALE);
-  const siteTitle = site?.title as unknown as string;
+  const siteTitle = getSiteName(site);
   const description = site?.tagline ? getBlockText(site.tagline as unknown, ' ') : undefined;
 
   return {

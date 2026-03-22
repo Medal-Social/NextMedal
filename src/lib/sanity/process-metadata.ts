@@ -5,6 +5,19 @@ import { BASE_URL, dev, isPreview, isStaging, vercelPreview } from '@/lib/core/e
 import { getSiteOptional } from '@/sanity/lib/fetch';
 import resolveUrl from './resolve-url-server';
 
+/**
+ * Extract site title from GROQ-resolved site settings.
+ * GROQ queries resolve internationalized arrays to simple strings,
+ * but TypeScript types still expect the array structure.
+ * This helper safely extracts the resolved string value.
+ */
+function getSiteName(site: Sanity.Site | null): string | undefined {
+  if (!site?.title) return undefined;
+  // GROQ coalesces the i18n array to a string at query time
+  // Type assertion needed because TS sees InternationalizedArrayString but runtime is string
+  return site.title as unknown as string;
+}
+
 // Generate hreflang alternate URLs for all supported locales
 async function generateAlternateLanguages(
   page: Sanity.PageBase,
@@ -92,7 +105,12 @@ function extractTwitterHandle(
     try {
       const parsed = new URL(link.url, BASE_URL);
       const hostname = parsed.hostname.toLowerCase();
-      return hostname === 'twitter.com' || hostname === 'www.twitter.com' || hostname === 'x.com' || hostname === 'www.x.com';
+      return (
+        hostname === 'twitter.com' ||
+        hostname === 'www.twitter.com' ||
+        hostname === 'x.com' ||
+        hostname === 'www.x.com'
+      );
     } catch {
       return false;
     }
@@ -199,7 +217,7 @@ export default async function processMetadata(
       title: cleanTitle,
       description: cleanDescription,
       images: ogImage,
-      siteName: site?.title as unknown as string,
+      siteName: getSiteName(site),
       locale: ogLocale,
       ...(publishedTime && { publishedTime }),
     },

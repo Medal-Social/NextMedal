@@ -1,3 +1,4 @@
+import { getLocale } from 'next-intl/server';
 import { groq, stegaClean } from 'next-sanity';
 import { Suspense } from 'react';
 import { Section } from '@/components/ui/section';
@@ -20,6 +21,7 @@ export default async function LatestArticles({
   posts: postsProp,
   ...props
 }: Sanity.LatestArticles & { posts?: Sanity.CollectionArticlePost[] }) {
+  const locale = await getLocale();
   const posts =
     postsProp ||
     (await fetchSanityLive<Sanity.CollectionArticlePost[]>({
@@ -53,6 +55,7 @@ export default async function LatestArticles({
       params: {
         filteredCategory: filteredCategory?._id || '',
         limit: limit ?? 0,
+        locale,
       },
     }));
 
