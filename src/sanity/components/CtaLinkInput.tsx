@@ -1,5 +1,5 @@
 import { Box } from '@sanity/ui';
-import { type FieldMember, MemberField, type ObjectInputProps } from 'sanity';
+import { type FieldMember, type FieldSetMember, MemberField, type ObjectInputProps } from 'sanity';
 
 /**
  * This component is used specifically for the 'link' field inside the CTA.
@@ -10,13 +10,28 @@ import { type FieldMember, MemberField, type ObjectInputProps } from 'sanity';
  * It purposely ignores all other fields (label, type, external, params)
  * because they are already rendered by the parent CtaInput.
  */
+const findMember = (members: ObjectInputProps['members'], memberName: string) => {
+  if (!members || !Array.isArray(members)) return undefined;
+
+  const direct = members.find((m) => m.kind === 'field' && m.name === memberName) as
+    | FieldMember
+    | undefined;
+  if (direct) return direct;
+
+  const fieldsets = members.filter((m) => m.kind === 'fieldSet') as FieldSetMember[];
+  for (const fs of fieldsets) {
+    const nested = fs.fieldSet.members.find((m) => m.kind === 'field' && m.name === memberName) as
+      | FieldMember
+      | undefined;
+    if (nested) return nested;
+  }
+  return undefined;
+};
+
 export function CtaLinkInput(props: ObjectInputProps) {
   const { members, renderInput, renderItem, renderPreview, renderField } = props;
 
-  // We only want to render the 'internal' field (the reference picker)
-  const internalMember = members.find((m) => m.kind === 'field' && m.name === 'internal') as
-    | FieldMember
-    | undefined;
+  const internalMember = findMember(members, 'internal');
 
   if (!internalMember) {
     return null;
