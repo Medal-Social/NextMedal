@@ -15,7 +15,10 @@ export default function resolveSlug({
     const path = internal === 'index' ? null : internal;
 
     // Ensure params (anchor) starts with # if provided
-    const anchor = params ? (params.startsWith('#') ? params : `#${params}`) : null;
+    let anchor: string | null = null;
+    if (params) {
+      anchor = params.startsWith('#') ? params : `#${params}`;
+    }
 
     return ['/', path, anchor].filter(Boolean).join('');
   }

@@ -29,14 +29,14 @@ export default function Sidebar({
       <div className="space-y-8">
         {/* Table of Contents */}
         {headings && headings.length > 0 && (
-          <div className="bg-card rounded-2xl p-6 border shadow-sm">
+          <div className="rounded-2xl border bg-card p-6 shadow-sm">
             <TableOfContents headings={headings} onThisPageLabel={onThisPageLabel} />
           </div>
         )}
 
         {/* Share Article */}
-        <div className="bg-card rounded-2xl p-6 border shadow-sm">
-          <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4">
+        <div className="rounded-2xl border bg-card p-6 shadow-sm">
+          <h4 className="mb-4 font-bold text-muted-foreground text-xs uppercase tracking-widest">
             {shareLabel}
           </h4>
           <SocialShare title={title} slug={slug} />

@@ -36,8 +36,8 @@ export default function Team({ intro, people, layout = 'grid', ...props }: Sanit
       )}
 
       {layout === 'split' && (
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-20 xl:grid-cols-5 items-start">
-          <div className="max-w-2xl xl:col-span-2 xl:sticky xl:top-24">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-20 xl:grid-cols-5">
+          <div className="max-w-2xl xl:sticky xl:top-24 xl:col-span-2">
             {intro && (
               <div className="prose dark:prose-invert [&>:first-child]:mt-0">
                 <SharedPortableText value={intro} />
@@ -67,28 +67,28 @@ function TeamMember({
 }) {
   if (layout === 'list') {
     return (
-      <li className="flex gap-4 sm:gap-10 py-6 sm:py-12 first:pt-0 last:pb-0">
+      <li className="flex gap-4 py-6 first:pt-0 last:pb-0 sm:gap-10 sm:py-12">
         {person.image ? (
           <Img
-            className="aspect-[4/5] w-24 sm:w-52 flex-none rounded-2xl object-cover"
+            className="aspect-[4/5] w-24 flex-none rounded-2xl object-cover sm:w-52"
             image={person.image}
             width={208}
             height={260}
           />
         ) : (
-          <div className="flex aspect-[4/5] w-24 sm:w-52 flex-none items-center justify-center rounded-2xl bg-muted">
-            <IconUser className="h-8 w-8 sm:h-16 sm:w-16 text-muted-foreground" />
+          <div className="flex aspect-[4/5] w-24 flex-none items-center justify-center rounded-2xl bg-muted sm:w-52">
+            <IconUser className="h-8 w-8 text-muted-foreground sm:h-16 sm:w-16" />
           </div>
         )}
 
         <div className="max-w-xl flex-auto">
-          <h3 className="text-lg font-semibold tracking-tight text-foreground">{person.name}</h3>
+          <h3 className="font-semibold text-foreground text-lg tracking-tight">{person.name}</h3>
           {person.title && (
-            <p className="text-sm sm:text-base/7 text-muted-foreground">{person.title}</p>
+            <p className="text-muted-foreground text-sm sm:text-base/7">{person.title}</p>
           )}
 
           {person.bio && (
-            <div className="mt-2 sm:mt-6 text-sm sm:text-base/7 text-muted-foreground">
+            <div className="mt-2 text-muted-foreground text-sm sm:mt-6 sm:text-base/7">
               <SharedPortableText value={person.bio} />
             </div>
           )}
@@ -115,11 +115,11 @@ function TeamMember({
       )}
 
       <div className="flex flex-col gap-2">
-        <h3 className="text-lg font-semibold tracking-tight text-foreground">{person.name}</h3>
+        <h3 className="font-semibold text-foreground text-lg tracking-tight">{person.name}</h3>
         {person.title && <p className="text-base text-muted-foreground">{person.title}</p>}
 
         {person.bio && (
-          <div className="text-base text-muted-foreground line-clamp-4">
+          <div className="line-clamp-4 text-base text-muted-foreground">
             <SharedPortableText value={person.bio} />
           </div>
         )}

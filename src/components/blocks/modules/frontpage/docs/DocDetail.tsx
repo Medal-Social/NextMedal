@@ -7,11 +7,11 @@
  */
 
 import { Book, ChevronRight, Clock } from 'lucide-react';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Code from '@/components/blocks/modules/content/RichtextModule/Code';
 import SharedPortableText from '@/components/blocks/modules/SharedPortableText';
 import { Section } from '@/components/ui/section';
+import { Link } from '@/i18n/navigation';
 import { cn } from '@/lib/utils/index';
 
 interface DocDetailProps {
@@ -25,18 +25,18 @@ function TableOfContents({ headings }: { headings: { style: string; text: string
   if (!headings || headings.length === 0) return null;
 
   return (
-    <nav className="hidden xl:block sticky top-24 w-64 shrink-0">
+    <nav className="sticky top-24 hidden w-64 shrink-0 xl:block">
       <div className="border-l pl-4">
-        <h4 className="text-sm font-semibold text-foreground mb-3">On this page</h4>
+        <h4 className="mb-3 font-semibold text-foreground text-sm">On this page</h4>
         <ul className="space-y-2">
-          {headings.map((heading, index) => {
+          {headings.map((heading) => {
             const id = heading.text.toLowerCase().replace(/\s+/g, '-');
             return (
-              <li key={`toc-${index}`}>
+              <li key={heading.text}>
                 <a
                   href={`#${id}`}
                   className={cn(
-                    'text-sm text-muted-foreground hover:text-foreground transition-colors block',
+                    'block text-muted-foreground text-sm transition-colors hover:text-foreground',
                     heading.style === 'h3' && 'pl-3'
                   )}
                 >
@@ -62,22 +62,22 @@ function RelatedDocs({
   if (!docs || docs.length === 0) return null;
 
   return (
-    <div className="border-t pt-8 mt-12">
-      <h3 className="text-lg font-semibold text-foreground mb-4">Related Articles</h3>
+    <div className="mt-12 border-t pt-8">
+      <h3 className="mb-4 font-semibold text-foreground text-lg">Related Articles</h3>
       <div className="grid gap-4 md:grid-cols-2">
         {docs.map((doc) => (
           <Link
             key={doc._id}
             href={`/${collectionSlug}/${doc.metadata?.slug?.current}`}
-            className="group flex items-start gap-3 p-4 rounded-lg border hover:bg-muted transition-colors"
+            className="group flex items-start gap-3 rounded-lg border p-4 transition-colors hover:bg-muted"
           >
-            <Book className="w-5 h-5 text-primary mt-0.5" />
+            <Book className="mt-0.5 h-5 w-5 text-primary" />
             <div>
-              <h4 className="font-medium text-foreground group-hover:text-primary transition-colors">
+              <h4 className="font-medium text-foreground transition-colors group-hover:text-primary">
                 {doc.metadata?.title}
               </h4>
               {doc.excerpt && (
-                <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{doc.excerpt}</p>
+                <p className="mt-1 line-clamp-2 text-muted-foreground text-sm">{doc.excerpt}</p>
               )}
             </div>
           </Link>
@@ -102,44 +102,44 @@ export default function DocDetail({
   return (
     <Section className="py-8 md:py-12">
       {/* Breadcrumbs */}
-      <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
+      <nav className="mb-8 flex items-center gap-2 text-muted-foreground text-sm">
         {collectionSlug && (
           <>
-            <Link href={`/${collectionSlug}`} className="hover:text-foreground transition-colors">
+            <Link href={`/${collectionSlug}`} className="transition-colors hover:text-foreground">
               {collectionTitle || 'Documentation'}
             </Link>
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="h-4 w-4" />
           </>
         )}
         {doc.parent && (
           <>
             <Link
               href={`/${collectionSlug}/${doc.parent.metadata?.slug?.current}`}
-              className="hover:text-foreground transition-colors"
+              className="transition-colors hover:text-foreground"
             >
               {doc.parent.metadata?.title}
             </Link>
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="h-4 w-4" />
           </>
         )}
-        <span className="text-foreground font-medium truncate">{doc.metadata?.title}</span>
+        <span className="truncate font-medium text-foreground">{doc.metadata?.title}</span>
       </nav>
 
       <div className="flex gap-12">
         {/* Main content */}
-        <article className="flex-1 min-w-0">
+        <article className="min-w-0 flex-1">
           {/* Header */}
           <header className="mb-8">
-            <div className="flex items-center gap-3 mb-4">
+            <div className="mb-4 flex items-center gap-3">
               {doc.icon && <span className="text-3xl">{doc.icon}</span>}
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+              <h1 className="font-bold text-3xl text-foreground md:text-4xl">
                 {doc.metadata?.title}
               </h1>
             </div>
             {doc.excerpt && <p className="text-lg text-muted-foreground">{doc.excerpt}</p>}
             {doc.readTime && (
-              <div className="flex items-center gap-1.5 mt-4 text-sm text-muted-foreground">
-                <Clock className="w-4 h-4" />
+              <div className="mt-4 flex items-center gap-1.5 text-muted-foreground text-sm">
+                <Clock className="h-4 w-4" />
                 <span>{doc.readTime} min read</span>
               </div>
             )}

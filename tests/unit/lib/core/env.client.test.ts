@@ -23,7 +23,7 @@ describe('env.client', () => {
     });
 
     it('has NEXT_PUBLIC_BASE_URL with default empty string', async () => {
-      delete process.env.NEXT_PUBLIC_BASE_URL;
+      process.env.NEXT_PUBLIC_BASE_URL = undefined;
       const { env } = await import('@/lib/core/env.client');
       expect(env.NEXT_PUBLIC_BASE_URL).toBe('');
     });
@@ -47,19 +47,19 @@ describe('env.client', () => {
     });
 
     it('has NEXT_PUBLIC_SANITY_PROJECT_ID with default empty string', async () => {
-      delete process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+      process.env.NEXT_PUBLIC_SANITY_PROJECT_ID = undefined;
       const { env } = await import('@/lib/core/env.client');
       expect(env.NEXT_PUBLIC_SANITY_PROJECT_ID).toBe('');
     });
 
     it('has NEXT_PUBLIC_SANITY_DATASET with default empty string', async () => {
-      delete process.env.NEXT_PUBLIC_SANITY_DATASET;
+      process.env.NEXT_PUBLIC_SANITY_DATASET = undefined;
       const { env } = await import('@/lib/core/env.client');
       expect(env.NEXT_PUBLIC_SANITY_DATASET).toBe('');
     });
 
     it('has NEXT_PUBLIC_SANITY_API_VERSION with default value', async () => {
-      delete process.env.NEXT_PUBLIC_SANITY_API_VERSION;
+      process.env.NEXT_PUBLIC_SANITY_API_VERSION = undefined;
       const { env } = await import('@/lib/core/env.client');
       expect(env.NEXT_PUBLIC_SANITY_API_VERSION).toBe('2025-12-23');
     });
@@ -119,7 +119,7 @@ describe('env.client', () => {
 
     it('uses VERCEL_PROJECT_PRODUCTION_URL as second priority', async () => {
       (process.env as Record<string, string>).NODE_ENV = 'production';
-      delete process.env.NEXT_PUBLIC_BASE_URL;
+      process.env.NEXT_PUBLIC_BASE_URL = undefined;
       process.env.VERCEL_PROJECT_PRODUCTION_URL = 'https://prod.vercel.app';
       const { BASE_URL } = await import('@/lib/core/env.client');
       expect(BASE_URL).toContain('vercel.app');
@@ -127,8 +127,8 @@ describe('env.client', () => {
 
     it('uses VERCEL_URL as third priority', async () => {
       (process.env as Record<string, string>).NODE_ENV = 'production';
-      delete process.env.NEXT_PUBLIC_BASE_URL;
-      delete process.env.VERCEL_PROJECT_PRODUCTION_URL;
+      process.env.NEXT_PUBLIC_BASE_URL = undefined;
+      process.env.VERCEL_PROJECT_PRODUCTION_URL = undefined;
       process.env.VERCEL_URL = 'https://preview.vercel.app';
       const { BASE_URL } = await import('@/lib/core/env.client');
       expect(BASE_URL).toContain('vercel.app');
@@ -136,9 +136,9 @@ describe('env.client', () => {
 
     it('falls back to localhost when no URLs are set', async () => {
       (process.env as Record<string, string>).NODE_ENV = 'production';
-      delete process.env.NEXT_PUBLIC_BASE_URL;
-      delete process.env.VERCEL_PROJECT_PRODUCTION_URL;
-      delete process.env.VERCEL_URL;
+      process.env.NEXT_PUBLIC_BASE_URL = undefined;
+      process.env.VERCEL_PROJECT_PRODUCTION_URL = undefined;
+      process.env.VERCEL_URL = undefined;
       const { BASE_URL } = await import('@/lib/core/env.client');
       expect(BASE_URL).toBe('http://localhost:3000');
     });

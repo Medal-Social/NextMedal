@@ -247,6 +247,7 @@ export default async function ArticlesFrontpage({
             fallback={
               <ul className="grid gap-6 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
                 {Array.from({ length: limit }).map((_, i) => (
+                  // biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholder, no semantic identity
                   <li key={`skeleton-${i}`}>
                     <PostPreview skeleton />
                   </li>

@@ -132,7 +132,7 @@ export default function EventRegistrationModal({
             <DialogHeader className="text-center">
               <DialogTitle className="text-xl">{t('title')}</DialogTitle>
               {form.successMessage ? (
-                <div className="mt-2 text-sm text-muted-foreground">
+                <div className="mt-2 text-muted-foreground text-sm">
                   <SharedPortableText value={form.successMessage} />
                 </div>
               ) : (
@@ -172,7 +172,7 @@ export default function EventRegistrationModal({
 
                 if (field.type === 'checkbox') {
                   return (
-                    <label key={field._key} className="flex items-start gap-2 cursor-pointer">
+                    <label key={field._key} className="flex cursor-pointer items-start gap-2">
                       <input
                         type="checkbox"
                         checked={!!formData[fieldName]}
@@ -180,9 +180,9 @@ export default function EventRegistrationModal({
                         disabled={isLoading}
                         className="mt-1 size-4 rounded border-border accent-primary"
                       />
-                      <span className="text-sm text-muted-foreground leading-tight">
+                      <span className="text-muted-foreground text-sm leading-tight">
                         {field.label}
-                        {field.required && <span className="text-destructive ml-1">*</span>}
+                        {field.required && <span className="ml-1 text-destructive">*</span>}
                       </span>
                     </label>
                   );
@@ -193,7 +193,7 @@ export default function EventRegistrationModal({
                     <div key={field._key} className="space-y-2">
                       <Label htmlFor={fieldName}>
                         {field.label}
-                        {field.required && <span className="text-destructive ml-1">*</span>}
+                        {field.required && <span className="ml-1 text-destructive">*</span>}
                       </Label>
                       <Textarea
                         id={fieldName}
@@ -212,7 +212,7 @@ export default function EventRegistrationModal({
                   <div key={field._key} className="space-y-2">
                     <Label htmlFor={fieldName}>
                       {field.label}
-                      {field.required && <span className="text-destructive ml-1">*</span>}
+                      {field.required && <span className="ml-1 text-destructive">*</span>}
                     </Label>
                     <Input
                       id={fieldName}
@@ -229,7 +229,7 @@ export default function EventRegistrationModal({
 
               {/* Acceptance/Consent checkbox */}
               {form.acceptance?.text && (
-                <label className="flex items-start gap-2 cursor-pointer">
+                <label className="flex cursor-pointer items-start gap-2">
                   <input
                     type="checkbox"
                     checked={!!formData.consent}
@@ -238,16 +238,16 @@ export default function EventRegistrationModal({
                     disabled={isLoading}
                     className="mt-1 size-4 rounded border-border accent-primary"
                   />
-                  <span className="text-sm text-muted-foreground leading-tight">
+                  <span className="text-muted-foreground text-sm leading-tight">
                     {form.acceptance.text}
-                    {form.acceptance.required && <span className="text-destructive ml-1">*</span>}
+                    {form.acceptance.required && <span className="ml-1 text-destructive">*</span>}
                   </span>
                 </label>
               )}
 
               {/* Error message */}
               {result.serverError && (
-                <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                <div className="rounded-md bg-destructive/10 p-3 text-destructive text-sm">
                   {result.serverError}
                 </div>
               )}

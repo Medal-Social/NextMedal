@@ -7,11 +7,11 @@
  */
 
 import { Rss } from 'lucide-react';
-import Link from 'next/link';
 import { groq, stegaClean } from 'next-sanity';
 import { Suspense } from 'react';
 import SharedPortableText from '@/components/blocks/modules/SharedPortableText';
 import { Section } from '@/components/ui/section';
+import { Link } from '@/i18n/navigation';
 import { getCollectionSlugWithFallback } from '@/lib/collections/registry';
 import moduleProps from '@/lib/sanity/module-props';
 import { cn } from '@/lib/utils/index';
@@ -74,17 +74,18 @@ function ListSkeleton({ count = 6, className }: { count?: number; className?: st
   return (
     <ul className={className}>
       {Array.from({ length: count }).map((_, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholder, no semantic identity
         <li key={`skeleton-${i}`}>
-          <div className="bg-card rounded-xl border shadow-sm animate-pulse">
-            <div className="aspect-video bg-muted rounded-t-xl" />
-            <div className="p-5 space-y-3">
+          <div className="animate-pulse rounded-xl border bg-card shadow-sm">
+            <div className="aspect-video rounded-t-xl bg-muted" />
+            <div className="space-y-3 p-5">
               <div className="flex gap-3">
-                <div className="h-4 w-16 bg-muted rounded" />
-                <div className="h-4 w-20 bg-muted rounded" />
+                <div className="h-4 w-16 rounded bg-muted" />
+                <div className="h-4 w-20 rounded bg-muted" />
               </div>
-              <div className="h-6 w-3/4 bg-muted rounded" />
-              <div className="h-4 w-full bg-muted rounded" />
-              <div className="h-4 w-2/3 bg-muted rounded" />
+              <div className="h-6 w-3/4 rounded bg-muted" />
+              <div className="h-4 w-full rounded bg-muted" />
+              <div className="h-4 w-2/3 rounded bg-muted" />
             </div>
           </div>
         </li>
@@ -111,9 +112,9 @@ export default async function NewsletterFrontpage({
     if (!collectionSlug) {
       return (
         <Section className="space-y-8" {...moduleProps(props)}>
-          <div className="text-center py-12 text-muted-foreground">
+          <div className="py-12 text-center text-muted-foreground">
             <p>Newsletter collection not configured for this language.</p>
-            <p className="text-sm mt-2">Configure the newsletter frontpage in site settings.</p>
+            <p className="mt-2 text-sm">Configure the newsletter frontpage in site settings.</p>
           </div>
         </Section>
       );
@@ -158,10 +159,10 @@ export default async function NewsletterFrontpage({
               href={`/${collectionSlug}/rss.xml`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="inline-flex items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-foreground"
               title="RSS Feed"
             >
-              <Rss className="w-4 h-4" />
+              <Rss className="h-4 w-4" />
               <span>RSS Feed</span>
             </Link>
           )}

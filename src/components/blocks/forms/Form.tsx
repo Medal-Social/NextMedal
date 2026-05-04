@@ -169,12 +169,12 @@ function SuccessMessage({
   t: ReturnType<typeof useTranslations>;
 }) {
   return (
-    <div className={cn('py-12 text-center bg-card rounded-lg border shadow-sm', className)}>
-      <div className="inline-flex items-center justify-center size-20 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 mb-8 shadow-inner">
-        <span className="text-3xl font-bold">&#10003;</span>
+    <div className={cn('rounded-lg border bg-card py-12 text-center shadow-sm', className)}>
+      <div className="mb-8 inline-flex size-20 items-center justify-center rounded-full bg-green-100 text-green-600 shadow-inner dark:bg-green-900/30 dark:text-green-400">
+        <span className="font-bold text-3xl">&#10003;</span>
       </div>
-      <h3 className="text-3xl font-bold text-foreground mb-4">{t('success-title')}</h3>
-      <p className="text-muted-foreground text-lg max-w-md mx-auto px-6">{t('success-message')}</p>
+      <h3 className="mb-4 font-bold text-3xl text-foreground">{t('success-title')}</h3>
+      <p className="mx-auto max-w-md px-6 text-lg text-muted-foreground">{t('success-message')}</p>
     </div>
   );
 }
@@ -195,7 +195,7 @@ function AcceptanceCheckbox({
         href="/privacy"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-primary hover:underline font-semibold"
+        className="font-semibold text-primary hover:underline"
         aria-label={t('privacy-aria-label')}
       >
         {t('privacy-link')}
@@ -342,9 +342,9 @@ export default function Form({ form: rawForm, className, locale }: FormProps) {
   }
 
   return (
-    <div className={cn('p-8 sm:p-10 rounded-lg bg-card border shadow-sm', className)}>
+    <div className={cn('rounded-lg border bg-card p-8 shadow-sm sm:p-10', className)}>
       {form.formTitle && (
-        <h3 className="text-2xl font-bold mb-8 text-foreground">{form.formTitle}</h3>
+        <h3 className="mb-8 font-bold text-2xl text-foreground">{form.formTitle}</h3>
       )}
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Security: Invisible Honeypot */}
@@ -359,7 +359,7 @@ export default function Form({ form: rawForm, className, locale }: FormProps) {
           />
         </div>
 
-        <FieldGroup className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <FieldGroup className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           {form.fields.map((field) => (
             <FormFieldRenderer
               key={field._key}
@@ -378,7 +378,7 @@ export default function Form({ form: rawForm, className, locale }: FormProps) {
 
         {error && <FieldError>{error}</FieldError>}
 
-        <Button type="submit" disabled={loading} className="w-full mt-4">
+        <Button type="submit" disabled={loading} className="mt-4 w-full">
           {loading ? (
             <div className="flex items-center gap-3">
               <span className="size-5 animate-spin rounded-full border-2 border-background border-t-transparent" />

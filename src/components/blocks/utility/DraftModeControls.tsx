@@ -43,7 +43,7 @@ export default function DraftModeControls() {
     <div
       className={cn(
         // Position
-        'fixed bottom-0 inset-x-0 z-[9999]',
+        'fixed inset-x-0 bottom-0 z-[9999]',
         // Layout
         'flex items-center justify-center',
         // Padding
@@ -52,28 +52,28 @@ export default function DraftModeControls() {
         'bg-brand-vibrant',
         'dark:bg-brand-900',
         // Top border
-        'border-t border-white/20',
+        'border-white/20 border-t',
         // Shadow
         'shadow-[0_-4px_20px_rgba(0,0,0,0.15)]'
       )}
       role="status"
       aria-live="polite"
     >
-      <div className="flex items-center justify-between gap-4 w-full max-w-screen-xl">
+      <div className="flex w-full max-w-screen-xl items-center justify-between gap-4">
         {/* Left: Status indicator */}
         <div className="flex items-center gap-3">
           <div
             className={cn(
-              'flex items-center justify-center size-8 rounded-full shrink-0',
+              'flex size-8 shrink-0 items-center justify-center rounded-full',
               'bg-white/20 dark:bg-white/10'
             )}
           >
             <Eye className="size-4 text-white" aria-hidden="true" />
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-            <span className="font-semibold text-white text-sm">{t('title')}</span>
-            <span className="hidden sm:inline text-white/60">·</span>
-            <span className="text-white/80 text-sm">{t('description')}</span>
+            <span className="font-semibold text-sm text-white">{t('title')}</span>
+            <span className="hidden text-white/60 sm:inline">·</span>
+            <span className="text-sm text-white/80">{t('description')}</span>
           </div>
         </div>
 
@@ -86,7 +86,7 @@ export default function DraftModeControls() {
             rel="noopener"
             className={cn(
               buttonVariants({ variant: 'ghost', size: 'sm' }),
-              'text-white/80 hover:text-white hover:bg-white/10'
+              'text-white/80 hover:bg-white/10 hover:text-white'
             )}
           >
             <span className="hidden sm:inline">{t('learnMore')}</span>
@@ -101,7 +101,7 @@ export default function DraftModeControls() {
             className="bg-white text-brand-vibrant hover:bg-white/90 dark:bg-white dark:text-brand-900"
           >
             {pending && (
-              <span className="size-3.5 border-2 border-brand-vibrant/30 border-t-brand-vibrant rounded-full animate-spin" />
+              <span className="size-3.5 animate-spin rounded-full border-2 border-brand-vibrant/30 border-t-brand-vibrant" />
             )}
             {pending ? t('exiting') : t('exit')}
           </Button>

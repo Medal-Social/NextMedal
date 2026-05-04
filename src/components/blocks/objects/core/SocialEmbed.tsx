@@ -193,23 +193,23 @@ function getPlatformName(platform: Platform): string {
 // Loading skeleton
 function LoadingSkeleton({ platform }: { platform: Platform }) {
   return (
-    <div className="w-full bg-muted rounded-lg overflow-hidden animate-pulse">
-      <div className="p-4 space-y-3">
+    <div className="w-full animate-pulse overflow-hidden rounded-lg bg-muted">
+      <div className="space-y-3 p-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-muted-foreground/20 rounded-full" />
+          <div className="h-10 w-10 rounded-full bg-muted-foreground/20" />
           <div className="flex-1 space-y-2">
-            <div className="h-3 bg-muted-foreground/20 rounded w-1/3" />
-            <div className="h-2 bg-muted-foreground/20 rounded w-1/4" />
+            <div className="h-3 w-1/3 rounded bg-muted-foreground/20" />
+            <div className="h-2 w-1/4 rounded bg-muted-foreground/20" />
           </div>
         </div>
         <div className="space-y-2">
-          <div className="h-2 bg-muted-foreground/20 rounded w-full" />
-          <div className="h-2 bg-muted-foreground/20 rounded w-5/6" />
-          <div className="h-2 bg-muted-foreground/20 rounded w-4/6" />
+          <div className="h-2 w-full rounded bg-muted-foreground/20" />
+          <div className="h-2 w-5/6 rounded bg-muted-foreground/20" />
+          <div className="h-2 w-4/6 rounded bg-muted-foreground/20" />
         </div>
       </div>
       <div className="px-4 pb-4">
-        <p className="text-xs text-muted-foreground text-center">
+        <p className="text-center text-muted-foreground text-xs">
           Loading {getPlatformName(platform)}...
         </p>
       </div>
@@ -220,10 +220,10 @@ function LoadingSkeleton({ platform }: { platform: Platform }) {
 // Error fallback
 function EmbedError({ platform, url }: { platform: Platform; url: string }) {
   return (
-    <div className="border border-destructive/50 rounded-lg p-6 bg-destructive/5">
+    <div className="rounded-lg border border-destructive/50 bg-destructive/5 p-6">
       <div className="flex items-start gap-3">
         <svg
-          className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0"
+          className="mt-0.5 h-5 w-5 flex-shrink-0 text-destructive"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -234,18 +234,18 @@ function EmbedError({ platform, url }: { platform: Platform; url: string }) {
           <line x1="12" y1="16" x2="12.01" y2="16" />
         </svg>
         <div className="flex-1 space-y-2">
-          <p className="text-sm font-medium">Unable to load {getPlatformName(platform)} embed</p>
-          <p className="text-xs text-muted-foreground">
+          <p className="font-medium text-sm">Unable to load {getPlatformName(platform)} embed</p>
+          <p className="text-muted-foreground text-xs">
             The embed could not be loaded. You can view the original post using the link below.
           </p>
           <a
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-primary hover:underline mt-2"
+            className="mt-2 inline-flex items-center gap-2 text-primary text-sm hover:underline"
           >
             View on {getPlatformName(platform)}
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <title>External link</title>
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" />
             </svg>
@@ -340,7 +340,7 @@ export default function SocialEmbed({ platform, url }: SocialEmbedProps) {
           }}
         />
       )}
-      <div ref={containerRef} className="my-6 w-full max-w-full flex justify-center">
+      <div ref={containerRef} className="my-6 flex w-full max-w-full justify-center">
         {!isVisible ? (
           <LoadingSkeleton platform={platform} />
         ) : (
@@ -355,7 +355,7 @@ export default function SocialEmbed({ platform, url }: SocialEmbedProps) {
             <iframe
               src={embedUrl}
               title={`${getPlatformName(platform)} embed`}
-              className="absolute inset-0 w-full h-full bg-transparent"
+              className="absolute inset-0 h-full w-full bg-transparent"
               style={{
                 aspectRatio: config.aspectRatio,
                 border: 'none',

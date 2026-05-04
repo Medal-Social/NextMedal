@@ -64,18 +64,18 @@ export function EmptyPage({ type = 'page', error }: EmptyPageProps = {}) {
       error?.type === 'FRONTPAGE_MISSING' ? error.collectionType.replace('collection.', '') : '';
 
     return (
-      <Section className="min-h-[50vh] flex items-center justify-center">
-        <Empty className="border-none max-w-2xl mx-auto">
+      <Section className="flex min-h-[50vh] items-center justify-center">
+        <Empty className="mx-auto max-w-2xl border-none">
           <EmptyHeader>
             <EmptyMedia variant="icon">
               <Library />
             </EmptyMedia>
             <EmptyTitle>{t(`${errorKey}.title`)}</EmptyTitle>
-            <EmptyDescription className="text-left space-y-4">
+            <EmptyDescription className="space-y-4 text-left">
               <p className="text-center">{t(`${errorKey}.description`, { locale, collection })}</p>
 
-              <div className="bg-muted/50 p-4 rounded-lg space-y-3 text-sm">
-                <ol className="list-decimal list-inside space-y-2">
+              <div className="space-y-3 rounded-lg bg-muted/50 p-4 text-sm">
+                <ol className="list-inside list-decimal space-y-2">
                   <li>
                     <strong>{t(`${errorKey}.step1`)}</strong>
                   </li>
@@ -111,30 +111,30 @@ export function EmptyPage({ type = 'page', error }: EmptyPageProps = {}) {
 
   // Default page setup instructions
   return (
-    <Section className="min-h-[50vh] flex items-center justify-center">
-      <Empty className="border-none max-w-2xl mx-auto">
+    <Section className="flex min-h-[50vh] items-center justify-center">
+      <Empty className="mx-auto max-w-2xl border-none">
         <EmptyHeader>
           <EmptyMedia variant="icon">
             <LayoutTemplate />
           </EmptyMedia>
           <EmptyTitle>{setupT('title')}</EmptyTitle>
-          <EmptyDescription className="text-left space-y-4">
+          <EmptyDescription className="space-y-4 text-left">
             <p className="text-center">{setupT('description')}</p>
 
-            <div className="bg-muted/50 p-4 rounded-lg space-y-3 text-sm">
+            <div className="space-y-3 rounded-lg bg-muted/50 p-4 text-sm">
               <p className="font-medium">{setupT('quickSetup')}</p>
 
-              <ol className="list-decimal list-inside space-y-2">
+              <ol className="list-inside list-decimal space-y-2">
                 <li>
                   <strong>{setupT('step1.title')}</strong>
                   <br />
-                  <span className="text-muted-foreground ml-6">
+                  <span className="ml-6 text-muted-foreground">
                     {setupT('step1.description', { studioUrl: '' })}{' '}
                     <a
                       href={studioUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-primary hover:underline inline-flex items-center gap-1"
+                      className="inline-flex items-center gap-1 text-primary hover:underline"
                     >
                       {studioUrl}
                       <ExternalLink className="size-3" />
@@ -145,16 +145,16 @@ export function EmptyPage({ type = 'page', error }: EmptyPageProps = {}) {
                 <li>
                   <strong>{setupT('step2.title')}</strong>
                   <br />
-                  <span className="text-muted-foreground ml-6">{setupT('step2.description')}</span>
+                  <span className="ml-6 text-muted-foreground">{setupT('step2.description')}</span>
                 </li>
 
                 <li>
                   <strong>{setupT('step3.title')}</strong>
                   <br />
-                  <span className="text-muted-foreground ml-6">
+                  <span className="ml-6 text-muted-foreground">
                     {setupT.rich('step3.description', {
                       slug: (children) => (
-                        <code className="bg-background px-1 py-0.5 rounded">{children}</code>
+                        <code className="rounded bg-background px-1 py-0.5">{children}</code>
                       ),
                     })}
                   </span>
@@ -162,7 +162,7 @@ export function EmptyPage({ type = 'page', error }: EmptyPageProps = {}) {
               </ol>
             </div>
 
-            <p className="text-xs text-muted-foreground text-center pt-2">
+            <p className="pt-2 text-center text-muted-foreground text-xs">
               {setupT.rich('needHelp', {
                 readme: (children) => (
                   <a

@@ -17,7 +17,7 @@ export default function SystemStatus({ status, className }: SystemStatusProps) {
   const content = (
     <span
       className={cn(
-        'text-xs font-semibold tracking-wide text-foreground hover:opacity-80 transition-opacity uppercase',
+        'font-semibold text-foreground text-xs uppercase tracking-wide transition-opacity hover:opacity-80',
         className
       )}
     >

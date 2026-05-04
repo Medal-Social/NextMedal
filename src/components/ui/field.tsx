@@ -121,7 +121,7 @@ function FieldTitle({ className, ...props }: React.ComponentProps<'p'>) {
   return (
     <p
       data-slot="field-title"
-      className={cn('text-foreground text-sm font-medium', className)}
+      className={cn('font-medium text-foreground text-sm', className)}
       {...props}
     />
   );

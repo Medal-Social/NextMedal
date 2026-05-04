@@ -1,8 +1,9 @@
 'use client';
 
-import Link from 'next/link';
+import ExternalLink from 'next/link';
 import { stegaClean } from 'next-sanity';
 import { Button, buttonVariants } from '@/components/ui/button';
+import { Link } from '@/i18n/navigation';
 import { resolveUrlSync } from '@/lib/sanity/resolve-url';
 import { cn } from '@/lib/utils/index';
 import { validateExternalUrl } from '@/lib/validateExternalUrl';
@@ -164,7 +165,7 @@ function ExternalLinkButton({
     typeof buttonContent === 'string' ? getAriaLabel(buttonContent, undefined) : undefined;
 
   return (
-    <Link
+    <ExternalLink
       href={validatedUrl}
       target={shouldOpenNewTab ? '_blank' : undefined}
       rel={shouldOpenNewTab ? 'noopener noreferrer' : undefined}
@@ -177,7 +178,7 @@ function ExternalLinkButton({
       }
     >
       {buttonContent}
-    </Link>
+    </ExternalLink>
   );
 }
 

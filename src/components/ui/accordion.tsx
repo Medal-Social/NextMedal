@@ -36,7 +36,7 @@ function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.
       <AccordionPrimitive.Trigger
         data-slot="accordion-trigger"
         className={cn(
-          'group/accordion-trigger w-full flex items-center justify-between gap-4 p-5 text-left outline-none',
+          'group/accordion-trigger flex w-full items-center justify-between gap-4 p-5 text-left outline-none',
           'transition-colors duration-200',
           'hover:bg-muted/30',
           'focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-inset',
@@ -45,7 +45,7 @@ function AccordionTrigger({ className, children, ...props }: AccordionPrimitive.
         )}
         {...props}
       >
-        <span className="text-base font-semibold text-foreground">{children}</span>
+        <span className="font-semibold text-base text-foreground">{children}</span>
         <ChevronDownIcon
           data-slot="accordion-trigger-icon"
           className={cn(
@@ -64,16 +64,16 @@ function AccordionContent({ className, children, ...props }: AccordionPrimitive.
   return (
     <AccordionPrimitive.Panel
       data-slot="accordion-content"
-      className="overflow-hidden data-[open]:animate-accordion-expand data-[closed]:animate-accordion-collapse"
+      className="overflow-hidden data-[closed]:animate-accordion-collapse data-[open]:animate-accordion-expand"
       {...props}
     >
       <div
         className={cn(
-          'border-t border-border/30 px-5 pb-5 pt-4',
+          'border-border/30 border-t px-5 pt-4 pb-5',
           'text-muted-foreground leading-relaxed',
           '[&_a]:text-primary [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-primary/80',
           '[&_p:not(:last-child)]:mb-4',
-          '[&_ul]:space-y-2 [&_li]:flex [&_li]:items-start [&_li]:gap-2',
+          '[&_li]:flex [&_li]:items-start [&_li]:gap-2 [&_ul]:space-y-2',
           className
         )}
       >

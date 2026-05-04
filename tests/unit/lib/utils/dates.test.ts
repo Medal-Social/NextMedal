@@ -24,7 +24,7 @@ describe('date utilities', () => {
     });
 
     it('formats large numbers with thousands separator', () => {
-      expect(formatCurrency(1000000)).toBe('$1,000,000.00');
+      expect(formatCurrency(1_000_000)).toBe('$1,000,000.00');
     });
 
     it('formats zero', () => {

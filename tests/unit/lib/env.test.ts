@@ -47,7 +47,7 @@ describe('env', () => {
     });
 
     it('sets default SANITY_API_VERSION', async () => {
-      delete process.env.NEXT_PUBLIC_SANITY_API_VERSION;
+      process.env.NEXT_PUBLIC_SANITY_API_VERSION = undefined;
 
       const { env } = await import('@/lib/core/env');
 
@@ -109,7 +109,7 @@ describe('env', () => {
     });
 
     it('is false when VERCEL_ENV is not set', async () => {
-      delete process.env.VERCEL_ENV;
+      process.env.VERCEL_ENV = undefined;
 
       const { vercelPreview } = await import('@/lib/core/env');
 
@@ -135,7 +135,7 @@ describe('env', () => {
     });
 
     it('is false when NEXT_PUBLIC_APP_ENV is not set', async () => {
-      delete process.env.NEXT_PUBLIC_APP_ENV;
+      process.env.NEXT_PUBLIC_APP_ENV = undefined;
 
       const { isStaging } = await import('@/lib/core/env');
 
@@ -161,7 +161,7 @@ describe('env', () => {
     });
 
     it('is false when NEXT_PUBLIC_APP_ENV is not set', async () => {
-      delete process.env.NEXT_PUBLIC_APP_ENV;
+      process.env.NEXT_PUBLIC_APP_ENV = undefined;
 
       const { isPreview } = await import('@/lib/core/env');
 
@@ -204,13 +204,13 @@ describe('env', () => {
     });
 
     it('validates required NEXT_PUBLIC_SANITY_PROJECT_ID', async () => {
-      delete process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+      process.env.NEXT_PUBLIC_SANITY_PROJECT_ID = undefined;
 
       await expect(import('@/lib/core/env')).rejects.toThrow();
     });
 
     it('validates required NEXT_PUBLIC_SANITY_DATASET', async () => {
-      delete process.env.NEXT_PUBLIC_SANITY_DATASET;
+      process.env.NEXT_PUBLIC_SANITY_DATASET = undefined;
 
       await expect(import('@/lib/core/env')).rejects.toThrow();
     });
@@ -253,7 +253,7 @@ describe('env', () => {
   describe('build-time behavior', () => {
     it('does not throw during build phase with invalid env', async () => {
       process.env.NEXT_PHASE = 'phase-production-build';
-      delete process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+      process.env.NEXT_PUBLIC_SANITY_PROJECT_ID = undefined;
 
       // During build time, it should warn but not throw
       // The module should load without throwing

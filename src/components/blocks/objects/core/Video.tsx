@@ -89,9 +89,9 @@ function useMuxVideo(data: Sanity.Video) {
 // Play button overlay
 function PlayButton() {
   return (
-    <div className="absolute inset-0 bg-background/30 flex items-center justify-center">
-      <div className="w-16 h-16 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
-        <svg className="w-8 h-8" viewBox="0 0 24 24">
+    <div className="absolute inset-0 flex items-center justify-center bg-background/30">
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
+        <svg className="h-8 w-8" viewBox="0 0 24 24">
           <title>Play video</title>
           <path d="M8 5v14l11-7z" fill="currentColor" />
         </svg>
@@ -120,7 +120,7 @@ function VideoThumbnail({
   return (
     <button
       type="button"
-      className="relative w-full h-full cursor-pointer bg-muted"
+      className="relative h-full w-full cursor-pointer bg-muted"
       onClick={onPlay}
       aria-label="Play video"
       onKeyDown={handleKeyDown}
@@ -199,11 +199,11 @@ export default function Video({ data, onClick }: { data: Sanity.Video; onClick?:
     (data?.type === 'mux' ? mux.error : null);
 
   return (
-    <div className="relative w-full h-full bg-muted">
+    <div className="relative h-full w-full bg-muted">
       {!isPlaying ? (
         <VideoThumbnail thumbnailUrl={thumbnailUrl} title={data?.title} onPlay={handlePlayClick} />
       ) : (
-        <div className="relative w-full h-full overflow-hidden bg-muted">
+        <div className="relative h-full w-full overflow-hidden bg-muted">
           <VideoPlayer
             data={data}
             youtube={youtube}

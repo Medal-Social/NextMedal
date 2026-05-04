@@ -23,10 +23,10 @@ describe('logger', () => {
       const { logger } = await import('@/lib/core/logger');
 
       expect(logger.level).toBe('debug');
-    }, 10000);
+    }, 10_000);
 
     it('uses error level in test environment', async () => {
-      delete process.env.LOG_LEVEL;
+      process.env.LOG_LEVEL = undefined;
       vi.stubEnv('NODE_ENV', 'test');
 
       const { logger } = await import('@/lib/core/logger');
@@ -35,7 +35,7 @@ describe('logger', () => {
     });
 
     it('uses info level by default in non-test environment', async () => {
-      delete process.env.LOG_LEVEL;
+      process.env.LOG_LEVEL = undefined;
       vi.stubEnv('NODE_ENV', 'development');
 
       const { logger } = await import('@/lib/core/logger');
@@ -80,7 +80,7 @@ describe('logger', () => {
 
     it('has no transport in production', async () => {
       vi.stubEnv('NODE_ENV', 'production');
-      delete process.env.LOG_LEVEL;
+      process.env.LOG_LEVEL = undefined;
 
       const { logger } = await import('@/lib/core/logger');
 

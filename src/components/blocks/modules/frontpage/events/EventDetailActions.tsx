@@ -58,9 +58,9 @@ export default function EventDetailActions({
   const eventUrl = `/${collectionSlug}/${eventSlug}`;
 
   return (
-    <div className="flex flex-wrap gap-3 mb-8">
+    <div className="mb-8 flex flex-wrap gap-3">
       <Button size="lg" onClick={() => setModalOpen(true)}>
-        <Users className="w-4 h-4 mr-2" />
+        <Users className="mr-2 h-4 w-4" />
         {status === 'live' ? 'Join Now' : 'Register Now'}
       </Button>
 

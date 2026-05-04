@@ -23,15 +23,15 @@ export default function MobileSidebar({
   className?: string;
 }) {
   return (
-    <div className={cn('lg:hidden mb-12 space-y-8', className)}>
+    <div className={cn('mb-12 space-y-8 lg:hidden', className)}>
       {/* Table of Contents Accordion */}
       {headings && headings.length > 0 && (
-        <div className="bg-card rounded-2xl border shadow-sm overflow-hidden">
+        <div className="overflow-hidden rounded-2xl border bg-card shadow-sm">
           <Accordion className="w-full">
             <AccordionItem value="toc" className="border-b-0">
               <AccordionTrigger className="px-6 py-4 hover:no-underline">
-                <span className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase tracking-widest">
-                  <List className="w-4 h-4" />
+                <span className="flex items-center gap-2 font-bold text-muted-foreground text-xs uppercase tracking-widest">
+                  <List className="h-4 w-4" />
                   {onThisPageLabel || 'On This Page'}
                 </span>
               </AccordionTrigger>

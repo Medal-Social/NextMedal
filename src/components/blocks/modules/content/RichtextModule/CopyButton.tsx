@@ -30,7 +30,7 @@ export default function CopyButton({ code, className }: { code: string; classNam
     <Button
       variant="ghost"
       size="icon-sm"
-      className={cn('text-white hover:bg-white/10 hover:text-white transition-all', className)}
+      className={cn('text-white transition-all hover:bg-white/10 hover:text-white', className)}
       onClick={onCopy}
       aria-label={copied ? 'Copied' : 'Copy code'}
     >

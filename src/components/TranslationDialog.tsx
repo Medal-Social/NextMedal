@@ -49,7 +49,7 @@ export function TranslationDialog() {
         try {
           const data = JSON.parse(stored) as TranslationRequest;
           // Only show if less than 10 seconds old (prevent stale dialogs)
-          const isRecent = Date.now() - data.timestamp < 10000;
+          const isRecent = Date.now() - data.timestamp < 10_000;
           if (isRecent) {
             setRequest(data);
           } else {
@@ -96,8 +96,8 @@ export function TranslationDialog() {
 
             {/* Show available locales with quick-switch buttons */}
             {request.availableLocales && request.availableLocales.length > 0 && (
-              <div className="mt-4 pt-4 border-t">
-                <p className="text-sm font-medium mb-2">{t('availableIn')}</p>
+              <div className="mt-4 border-t pt-4">
+                <p className="mb-2 font-medium text-sm">{t('availableIn')}</p>
                 <div className="flex flex-wrap gap-2">
                   {request.availableLocales.map(({ locale, url }) => (
                     <Button

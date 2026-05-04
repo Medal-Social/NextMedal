@@ -5,10 +5,10 @@ import '@mux/mux-player/themes/classic';
 
 const MuxPlayerReact = dynamic(() => import('@mux/mux-player-react').then((mod) => mod.default), {
   loading: () => (
-    <div className="w-full h-full bg-muted flex flex-col items-center justify-center">
-      <div className="w-16 h-16 rounded-full border-4 border-transparent border-t-primary animate-spin mb-4" />
-      <p className="text-foreground font-medium text-lg">Preparing your video...</p>
-      <p className="text-muted-foreground text-sm mt-1">High quality experience loading</p>
+    <div className="flex h-full w-full flex-col items-center justify-center bg-muted">
+      <div className="mb-4 h-16 w-16 animate-spin rounded-full border-4 border-transparent border-t-primary" />
+      <p className="font-medium text-foreground text-lg">Preparing your video...</p>
+      <p className="mt-1 text-muted-foreground text-sm">High quality experience loading</p>
     </div>
   ),
   ssr: false,

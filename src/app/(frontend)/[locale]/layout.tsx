@@ -56,7 +56,7 @@ export default async function RootLayout({ children, params }: Props) {
         {/* Preconnect to critical external origins for faster resource loading */}
         <link rel="preconnect" href="https://cdn.sanity.io" crossOrigin="anonymous" />
       </head>
-      <body className="bg-background text-foreground dark:bg-background dark:text-foreground font-sans flex flex-col min-h-screen">
+      <body className="flex min-h-screen flex-col bg-background font-sans text-foreground dark:bg-background dark:text-foreground">
         <Suspense fallback={null}>
           <SiteJsonLd />
         </Suspense>
@@ -73,7 +73,7 @@ export default async function RootLayout({ children, params }: Props) {
                 <SiteHeader />
                 <main
                   id="main-content"
-                  className="flex-1 w-full pt-[var(--header-height)] min-h-[calc(100dvh-var(--header-height)-var(--footer-height))]"
+                  className="min-h-[calc(100dvh-var(--header-height)-var(--footer-height))] w-full flex-1 pt-[var(--header-height)]"
                   tabIndex={-1}
                 >
                   {children}

@@ -2,12 +2,12 @@
 
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import { motion, type Variants } from 'motion/react';
-import Link from 'next/link';
 import { stegaClean } from 'next-sanity';
 import { useCallback, useEffect, useRef } from 'react';
 import { CTAList } from '@/components/blocks/objects/cta';
 import { CommandMenu } from '@/components/blocks/utility';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Link } from '@/i18n/navigation';
 import { resolveUrlSync } from '@/lib/sanity/resolve-url';
 import { ANIMATION_DURATION, ANIMATION_EASING } from './constants';
 import type { MobileNavigationProps } from './types';
@@ -34,7 +34,7 @@ export const NavLink = ({
 }) => (
   <Link
     href={getNavLinkHref(link)}
-    className="flex items-center gap-4 rounded-lg p-4 min-h-11 text-lg font-medium hover:bg-accent hover:text-primary text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+    className="flex min-h-11 items-center gap-4 rounded-lg p-4 font-medium text-foreground text-lg transition-colors hover:bg-accent hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary"
     target={link.external ? '_blank' : undefined}
     aria-label={link.external ? `${link.label} (opens in new tab)` : undefined}
     onClick={onClick}
@@ -140,12 +140,13 @@ export default function MobileNavigation({ menu, ctas, enableSearch }: MobileNav
       aria-label="Mobile navigation menu"
     >
       <nav className="flex-1 overflow-y-auto pb-safe" aria-label="Mobile navigation">
-        <div className="mx-auto max-w-screen-xl px-4 py-6 space-y-8">
+        <div className="mx-auto max-w-screen-xl space-y-8 px-4 py-6">
           <ul className="space-y-2">
-            {menu?.items?.map((item, index: number) => {
+            {menu?.items?.map((item) => {
+              const itemKey = (item as { _key?: string })._key;
               if (item._type === 'menuItem') {
                 return (
-                  <motion.li key={`mobile-${item.label}-${index}`} variants={itemVariants}>
+                  <motion.li key={itemKey ?? `mobile-${item.label}`} variants={itemVariants}>
                     <NavLink link={item} />
                   </motion.li>
                 );
@@ -153,10 +154,10 @@ export default function MobileNavigation({ menu, ctas, enableSearch }: MobileNav
 
               if (item._type === 'dropdownMenu') {
                 return (
-                  <motion.li key={`mobile-${item.title}-${index}`} variants={itemVariants}>
+                  <motion.li key={itemKey ?? `mobile-${item.title}`} variants={itemVariants}>
                     <Collapsible>
                       <CollapsibleTrigger
-                        className="flex w-full items-center justify-between rounded-lg p-4 min-h-11 text-lg font-medium hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+                        className="flex min-h-11 w-full items-center justify-between rounded-lg p-4 font-medium text-lg transition-colors hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary"
                         aria-label={`${item.title} submenu`}
                       >
                         <span className="font-medium">{item.title}</span>
@@ -166,12 +167,15 @@ export default function MobileNavigation({ menu, ctas, enableSearch }: MobileNav
                         />
                       </CollapsibleTrigger>
                       <CollapsibleContent>
-                        <ul className="ml-4 mt-2 space-y-2 border-l-2 border-border pl-4">
-                          {item.links?.map((link, linkIndex: number) => (
-                            <li key={`mobile-${link.label}-${index}-${linkIndex}`}>
-                              <NavLink link={link} />
-                            </li>
-                          ))}
+                        <ul className="mt-2 ml-4 space-y-2 border-border border-l-2 pl-4">
+                          {item.links?.map((link) => {
+                            const linkKey = (link as { _key?: string })._key;
+                            return (
+                              <li key={linkKey ?? `mobile-${itemKey}-${link.label}`}>
+                                <NavLink link={link} />
+                              </li>
+                            );
+                          })}
                         </ul>
                       </CollapsibleContent>
                     </Collapsible>
@@ -182,13 +186,13 @@ export default function MobileNavigation({ menu, ctas, enableSearch }: MobileNav
             })}
           </ul>
 
-          <motion.div variants={itemVariants} className="space-y-6 pt-6 border-t border-border">
+          <motion.div variants={itemVariants} className="space-y-6 border-border border-t pt-6">
             {enableSearch && (
               <div className="px-4">
                 <CommandMenu variant="mobile" className="w-full justify-start" />
               </div>
             )}
-            <CTAList ctas={ctas} className="grid gap-4 px-4 *:w-full *:text-lg *:py-6" />
+            <CTAList ctas={ctas} className="grid gap-4 px-4 *:w-full *:py-6 *:text-lg" />
           </motion.div>
         </div>
       </nav>

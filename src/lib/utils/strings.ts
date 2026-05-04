@@ -28,7 +28,7 @@ export function slug(str: string) {
  * count(null, "result") // "0 results"
  */
 export function count(
-  arr: Array<unknown> | number | null | undefined,
+  arr: unknown[] | number | null | undefined,
   singular = 'item',
   plural?: string
 ) {

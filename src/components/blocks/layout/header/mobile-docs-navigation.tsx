@@ -85,7 +85,7 @@ export default function MobileDocsNavigation({ closeMenu }: { closeMenu: () => v
       aria-label="Mobile documentation navigation menu"
     >
       <nav
-        className="flex-1 overflow-y-auto pb-safe px-4 py-6"
+        className="flex-1 overflow-y-auto px-4 py-6 pb-safe"
         aria-label="Mobile documentation navigation"
       >
         <div className="mx-auto max-w-screen-xl">

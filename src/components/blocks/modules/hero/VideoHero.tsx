@@ -12,8 +12,8 @@ import '@mux/mux-player/themes/classic';
 const MuxPlayerReact = dynamic(() => import('@mux/mux-player-react').then((mod) => mod.default), {
   // Static loading state - translations applied when component mounts
   loading: () => (
-    <div className="w-full h-full bg-muted flex flex-col items-center justify-center">
-      <div className="w-16 h-16 rounded-full border-4 border-transparent border-t-primary animate-spin mb-4" />
+    <div className="flex h-full w-full flex-col items-center justify-center bg-muted">
+      <div className="mb-4 h-16 w-16 animate-spin rounded-full border-4 border-transparent border-t-primary" />
     </div>
   ),
   ssr: false,
@@ -180,11 +180,11 @@ function YouTubePlayer({
   const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
 
   return (
-    <div className="w-full h-full">
+    <div className="h-full w-full">
       <iframe
         src={embedUrl}
         title={title || translations.youtubePlayer}
-        className="w-full h-full border-0"
+        className="h-full w-full border-0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowFullScreen
       />
@@ -235,14 +235,14 @@ function VideoError({
   translations: VideoTranslations;
 }) {
   return (
-    <div className="flex items-center justify-center h-full bg-muted text-foreground text-center p-4">
+    <div className="flex h-full items-center justify-center bg-muted p-4 text-center text-foreground">
       <div>
-        <p className="text-xl font-semibold mb-2">{translations.error}</p>
+        <p className="mb-2 font-semibold text-xl">{translations.error}</p>
         <p>{errorMessage}</p>
         <button
           type="button"
           onClick={onBackClick}
-          className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded"
+          className="mt-4 rounded bg-primary px-4 py-2 text-primary-foreground"
         >
           {translations.backToThumbnail}
         </button>
@@ -254,9 +254,9 @@ function VideoError({
 // Play button overlay
 function PlayButtonOverlay() {
   return (
-    <div className="absolute inset-0 bg-brand-navy/30 flex items-center justify-center">
-      <span className="w-16 h-16 bg-brand-vibrant text-white rounded-full flex items-center justify-center transition-transform hover:scale-110">
-        <svg className="w-8 h-8" viewBox="0 0 24 24">
+    <div className="absolute inset-0 flex items-center justify-center bg-brand-navy/30">
+      <span className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-vibrant text-white transition-transform hover:scale-110">
+        <svg className="h-8 w-8" viewBox="0 0 24 24">
           <title>Play video icon</title>
           <path d="M8 5v14l11-7z" fill="currentColor" />
         </svg>
@@ -287,7 +287,7 @@ function ThumbnailView({
   return (
     <button
       type="button"
-      className="relative w-full h-full cursor-pointer bg-muted"
+      className="relative h-full w-full cursor-pointer bg-muted"
       onClick={onPlay}
       aria-label={translations.play}
       onKeyDown={handleKeyDown}
@@ -392,8 +392,11 @@ export default function VideoHero({ data }: { data: Sanity.VideoHero }) {
   const getErrorMessage = (): string | null => {
     if (playerError) return playerError;
 
-    const errorCode =
-      data?.type === 'youtube' ? youtube.errorCode : data?.type === 'mux' ? mux.errorCode : null;
+    const errorCode = (() => {
+      if (data?.type === 'youtube') return youtube.errorCode;
+      if (data?.type === 'mux') return mux.errorCode;
+      return null;
+    })();
 
     if (errorCode) {
       return t(errorCode);
@@ -407,7 +410,7 @@ export default function VideoHero({ data }: { data: Sanity.VideoHero }) {
     <Section
       width="full"
       spacing="none"
-      className="relative w-full h-[80dvh] bg-muted"
+      className="relative h-[80dvh] w-full bg-muted"
       {...moduleProps(data)}
     >
       {/* SEO-friendly metadata */}
@@ -423,7 +426,7 @@ export default function VideoHero({ data }: { data: Sanity.VideoHero }) {
           translations={translations}
         />
       ) : (
-        <div className="relative w-full h-full overflow-hidden bg-muted">
+        <div className="relative h-full w-full overflow-hidden bg-muted">
           <PlayerView
             data={data}
             youtube={youtube}

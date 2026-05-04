@@ -17,13 +17,13 @@ interface BlockChildrenProps {
 
 const components = {
   list: {
-    bullet: ({ children }: BlockChildrenProps) => <ul className="space-y-2 my-4">{children}</ul>,
+    bullet: ({ children }: BlockChildrenProps) => <ul className="my-4 space-y-2">{children}</ul>,
   },
   listItem: {
     bullet: ({ children }: BlockChildrenProps) => (
       <li className="flex items-start gap-2">
-        <div className="h-5 w-5 mr-4 mt-1.5">
-          <CircleCheckBig className="h-5 w-5 text-primary " />
+        <div className="mt-1.5 mr-4 h-5 w-5">
+          <CircleCheckBig className="h-5 w-5 text-primary" />
         </div>
         <span className="mt-0">{children}</span>
       </li>
@@ -64,12 +64,12 @@ function PricingPrice({
       <meta itemProp="price" content={priceValue?.toString()} />
       <meta itemProp="priceCurrency" content={tier.currency || 'USD'} />
       {tier.monthlyPrice && (
-        <span className="text-4xl text-foreground font-semibold font-numeric">
+        <span className="font-numeric font-semibold text-4xl text-foreground">
           {tier.currency} {isValidPrice ? <AnimatedNumber value={priceNum} /> : tier.monthlyPrice}
         </span>
       )}
       {tier.priceSuffix && (
-        <span className="text-sm font-normal text-foreground">{tier.priceSuffix}</span>
+        <span className="font-normal text-foreground text-sm">{tier.priceSuffix}</span>
       )}
     </div>
   );
@@ -86,7 +86,7 @@ function PricingTier({
 
   return (
     <article
-      className="backdrop-blur-sm bg-card/30 p-8 rounded-lg border border-primary/10 hover:border-primary/20 transition-colors duration-300 flex flex-col gap-6"
+      className="flex flex-col gap-6 rounded-lg border border-primary/10 bg-card/30 p-8 backdrop-blur-sm transition-colors duration-300 hover:border-primary/20"
       itemScope
       itemType="https://schema.org/Product"
     >
@@ -94,13 +94,13 @@ function PricingTier({
       {tier.description && <meta itemProp="description" content={tier.description} />}
 
       <div className="flex flex-col gap-2">
-        <div className="text-2xl flex items-center justify-between">
+        <div className="flex items-center justify-between text-2xl">
           {tier.title}
           {tier.highlight && (
-            <Badge className="text-xs text-primary-foreground ">{tier.highlight}</Badge>
+            <Badge className="text-primary-foreground text-xs">{tier.highlight}</Badge>
           )}
         </div>
-        {tier.description && <p className="text-sm text-muted-foreground">{tier.description}</p>}
+        {tier.description && <p className="text-muted-foreground text-sm">{tier.description}</p>}
       </div>
 
       <PricingPrice tier={tier} isYearly={isYearly} />
@@ -119,26 +119,26 @@ export default function PricingList({ intro, tiers, ...props }: Sanity.PricingLi
   return (
     <Section className="space-y-8" {...moduleProps(props)}>
       {intro && (
-        <header className="section-intro text-center items-center flex flex-col gap-4">
+        <header className="section-intro flex flex-col items-center gap-4 text-center">
           <SharedPortableText value={intro} />
         </header>
       )}
       {tiers?.find((tier) => tier.yearlyPrice !== undefined) && (
-        <div className="flex justify-center items-center space-x-4 rounded-full">
+        <div className="flex items-center justify-center space-x-4 rounded-full">
           <Tabs
             onValueChange={(value) => setIsYearly(value === 'yearly')}
             defaultValue="monthly"
-            className="border border-muted rounded-full"
+            className="rounded-full border border-muted"
           >
-            <TabsList className="bg-background rounded-full">
+            <TabsList className="rounded-full bg-background">
               <TabsTrigger
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full"
+                className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                 value="monthly"
               >
                 {t('monthly')}
               </TabsTrigger>
               <TabsTrigger
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full"
+                className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
                 value="yearly"
               >
                 {t('yearlyDiscount', { discount: 20 })}
@@ -149,7 +149,7 @@ export default function PricingList({ intro, tiers, ...props }: Sanity.PricingLi
       )}
 
       <div
-        className="max-md:carousel max-md:full-bleed max-md:flex max-md:flex-col grid grid-cols-[repeat(var(--col,1),1fr)] items-stretch gap-6 max-md:px-4"
+        className="max-md:carousel max-md:full-bleed grid grid-cols-[repeat(var(--col,1),1fr)] items-stretch gap-6 max-md:flex max-md:flex-col max-md:px-4"
         style={{ '--col': tiers?.length } as React.CSSProperties}
       >
         {tiers?.map(

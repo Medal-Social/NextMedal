@@ -26,14 +26,14 @@ export default function DocsLayoutClient({ children }: DocsLayoutClientProps) {
 
   return (
     <div
-      className="w-full h-full flex-1 items-start md:grid md:gap-6 lg:gap-10 px-4 sm:px-6 lg:px-8 transition-all duration-300 ease-in-out"
+      className="h-full w-full flex-1 items-start px-4 transition-all duration-300 ease-in-out sm:px-6 md:grid md:gap-6 lg:gap-10 lg:px-8"
       style={{
         gridTemplateColumns: isCollapsed ? '48px minmax(0,1fr)' : '240px minmax(0,1fr)',
       }}
     >
       <div
         className={cn(
-          'fixed top-[var(--header-height)] z-30 hidden h-[calc(100vh-var(--header-height))] w-full shrink-0 md:sticky md:block border-r transition-all duration-300 ease-in-out pr-2',
+          'fixed top-[var(--header-height)] z-30 hidden h-[calc(100vh-var(--header-height))] w-full shrink-0 border-r pr-2 transition-all duration-300 ease-in-out md:sticky md:block',
           isCollapsed ? 'w-[48px]' : 'w-[240px] pr-4',
           !isCollapsed && 'lg:w-[280px]'
         )}
@@ -41,8 +41,8 @@ export default function DocsLayoutClient({ children }: DocsLayoutClientProps) {
           width: isCollapsed ? '48px' : undefined,
         }}
       >
-        <div className="relative h-full flex flex-col">
-          <div className={cn('flex-1 overflow-hidden', isCollapsed && 'opacity-0 invisible')}>
+        <div className="relative flex h-full flex-col">
+          <div className={cn('flex-1 overflow-hidden', isCollapsed && 'invisible opacity-0')}>
             <DocsSidebar className="h-full py-6 pr-2 lg:py-8" />
           </div>
 
@@ -50,8 +50,8 @@ export default function DocsLayoutClient({ children }: DocsLayoutClientProps) {
             variant="outline"
             size="icon-sm"
             className={cn(
-              'absolute -right-3 top-8 z-50 h-8 w-8 rounded-full bg-background shadow-xs hover:bg-accent',
-              'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary',
+              'absolute top-8 -right-3 z-50 h-8 w-8 rounded-full bg-background shadow-xs hover:bg-accent',
+              'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
               isCollapsed && '-right-6'
             )}
             onClick={() => setIsCollapsed(!isCollapsed)}
@@ -61,13 +61,13 @@ export default function DocsLayoutClient({ children }: DocsLayoutClientProps) {
           </Button>
 
           {isCollapsed && (
-            <div className="absolute inset-0 pt-6 flex flex-col items-center gap-4">
+            <div className="absolute inset-0 flex flex-col items-center gap-4 pt-6">
               <span className="sr-only">Sidebar collapsed</span>
             </div>
           )}
         </div>
       </div>
-      <main className="relative py-6 lg:gap-10 lg:py-8 pl-2 md:pl-0">{children}</main>
+      <main className="relative py-6 pl-2 md:pl-0 lg:gap-10 lg:py-8">{children}</main>
     </div>
   );
 }
