@@ -81,7 +81,7 @@ export default function AuthorCard({ author, variant = 'light' }: AuthorCardProp
           e.stopPropagation();
           setIsOpen(!isOpen);
         }}
-        className={`relative z-10 text-sm font-medium transition-colors ${
+        className={`relative z-10 font-medium text-sm transition-colors ${
           isDark
             ? 'text-white hover:text-purple-300'
             : 'text-slate-700 hover:text-purple-500 dark:text-slate-300 dark:hover:text-purple-300'
@@ -92,7 +92,7 @@ export default function AuthorCard({ author, variant = 'light' }: AuthorCardProp
 
       {/* Card popup - z-[9999] to appear above Sanity's visual editing overlays */}
       {isOpen && hasExtraContent && (
-        <div className="absolute bottom-full left-0 z-[9999] mb-2 w-80 animate-in fade-in slide-in-from-bottom-2 duration-200">
+        <div className="fade-in slide-in-from-bottom-2 absolute bottom-full left-0 z-[9999] mb-2 w-80 animate-in duration-200">
           <div className="overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-700">
             {/* Banner area - custom image or gradient */}
             <div className="relative h-24 overflow-hidden">
@@ -109,7 +109,7 @@ export default function AuthorCard({ author, variant = 'light' }: AuthorCardProp
             </div>
 
             {/* Content area */}
-            <div className="relative px-5 pb-5 pt-14">
+            <div className="relative px-5 pt-14 pb-5">
               {/* Floating avatar */}
               {author.image && (
                 <div className="absolute -top-10 left-5">
@@ -126,10 +126,10 @@ export default function AuthorCard({ author, variant = 'light' }: AuthorCardProp
 
               {/* Name, title and social links */}
               <div className="mb-3">
-                <h4 className="text-lg font-bold text-slate-900 dark:text-white">{author.name}</h4>
+                <h4 className="font-bold text-lg text-slate-900 dark:text-white">{author.name}</h4>
                 <div className="flex items-center gap-3">
                   {author.title && (
-                    <span className="text-sm text-slate-500 dark:text-slate-400">
+                    <span className="text-slate-500 text-sm dark:text-slate-400">
                       {author.title}
                     </span>
                   )}
@@ -162,7 +162,7 @@ export default function AuthorCard({ author, variant = 'light' }: AuthorCardProp
 
               {/* Bio - show full text */}
               {bioText && (
-                <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                <p className="text-slate-600 text-sm leading-relaxed dark:text-slate-400">
                   {bioText}
                 </p>
               )}

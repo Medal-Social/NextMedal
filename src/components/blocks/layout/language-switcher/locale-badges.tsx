@@ -17,7 +17,7 @@ export function LocaleBadge({ locale, className }: LocaleBadgeProps) {
     <span
       className={cn(
         'inline-flex items-center justify-center',
-        'h-5 min-w-5 px-1.5 rounded text-[10px] font-bold uppercase tracking-wide',
+        'h-5 min-w-5 rounded px-1.5 font-bold text-[10px] uppercase tracking-wide',
         'bg-muted text-muted-foreground',
         className
       )}

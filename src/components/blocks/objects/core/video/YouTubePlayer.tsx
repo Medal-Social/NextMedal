@@ -17,10 +17,10 @@ const ReactPlayer = dynamic(
   () => import('react-player') as Promise<{ default: ComponentType<ReactPlayerProps> }>,
   {
     loading: () => (
-      <div className="w-full h-full bg-muted flex flex-col items-center justify-center">
-        <div className="w-16 h-16 rounded-full border-4 border-transparent border-t-primary animate-spin mb-4" />
-        <p className="text-foreground font-medium text-lg">Loading your content...</p>
-        <p className="text-muted-foreground text-sm mt-1">YouTube player is being prepared</p>
+      <div className="flex h-full w-full flex-col items-center justify-center bg-muted">
+        <div className="mb-4 h-16 w-16 animate-spin rounded-full border-4 border-transparent border-t-primary" />
+        <p className="font-medium text-foreground text-lg">Loading your content...</p>
+        <p className="mt-1 text-muted-foreground text-sm">YouTube player is being prepared</p>
       </div>
     ),
     ssr: false,
@@ -34,7 +34,7 @@ interface YouTubePlayerProps {
 
 export const YouTubePlayer = ({ url, onError }: YouTubePlayerProps) => {
   return (
-    <div className="w-full h-full">
+    <div className="h-full w-full">
       <ReactPlayer url={url} width="100%" height="100%" playing controls onError={onError} />
     </div>
   );

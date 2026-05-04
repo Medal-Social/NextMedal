@@ -125,7 +125,7 @@ describe('LocaleSwitcherSelect', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    delete (window as any).location;
+    (window as any).location = undefined;
     (window as any).location = { pathname: '/about' };
     sessionStorage.clear();
   });
@@ -236,7 +236,7 @@ describe('TranslationDialog', () => {
       targetLocale: 'nb',
       targetLocaleName: 'Norsk',
       availableLocales: [],
-      timestamp: Date.now() - 11000,
+      timestamp: Date.now() - 11_000,
     };
 
     sessionStorage.setItem('translation-request', JSON.stringify(request));

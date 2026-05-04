@@ -57,9 +57,9 @@ export function DocsSidebarContent({
 
   return (
     <div className={cn('pb-8', mobile ? 'pt-4' : '')}>
-      {categories.map((category, index) => (
-        <div key={index} className="pb-6">
-          <h4 className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+      {categories.map((category) => (
+        <div key={category.title} className="pb-6">
+          <h4 className="mb-2 px-3 font-semibold text-muted-foreground/70 text-xs uppercase tracking-wider">
             {category.title}
           </h4>
           {category.items?.length && (
@@ -73,7 +73,7 @@ export function DocsSidebarContent({
 
 export function DocsSidebar({ className }: DocsSidebarProps) {
   return (
-    <aside className={cn('hidden md:block w-full h-full overflow-y-auto no-scrollbar', className)}>
+    <aside className={cn('no-scrollbar hidden h-full w-full overflow-y-auto md:block', className)}>
       <DocsSidebarContent />
     </aside>
   );
@@ -86,9 +86,9 @@ interface DocsSidebarNavItemsProps {
 
 function DocsSidebarNavItems({ items, onClick }: DocsSidebarNavItemsProps) {
   return (
-    <div className="grid grid-flow-row auto-rows-max text-sm gap-0.5">
-      {items.map((item, index) => (
-        <DocsSidebarNavItem key={index} item={item} onClick={onClick} />
+    <div className="grid grid-flow-row auto-rows-max gap-0.5 text-sm">
+      {items.map((item) => (
+        <DocsSidebarNavItem key={item.href} item={item} onClick={onClick} />
       ))}
     </div>
   );
@@ -113,14 +113,14 @@ function DocsSidebarNavItem({
       className={cn(
         'relative flex w-full items-center rounded-md px-3 py-2.5 transition-all duration-200',
         'hover:bg-accent/50 hover:text-accent-foreground',
-        'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary',
-        isActive ? 'font-medium text-foreground bg-accent/10' : 'text-muted-foreground'
+        'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+        isActive ? 'bg-accent/10 font-medium text-foreground' : 'text-muted-foreground'
       )}
     >
       {isActive && (
         <motion.div
           layoutId="active-nav-item"
-          className="absolute inset-0 rounded-md bg-accent/40 border border-accent/60"
+          className="absolute inset-0 rounded-md border border-accent/60 bg-accent/40"
           initial={false}
           transition={{ type: 'spring', stiffness: 400, damping: 30 }}
         />

@@ -48,7 +48,7 @@ check(
   'Node.js Version',
   majorVersion >= 24,
   `Node.js ${nodeVersion} is installed`,
-  `Please upgrade to Node.js 24 or later. Visit https://nodejs.org/`
+  'Please upgrade to Node.js 24 or later. Visit https://nodejs.org/'
 );
 
 // Check 2: .env.local exists

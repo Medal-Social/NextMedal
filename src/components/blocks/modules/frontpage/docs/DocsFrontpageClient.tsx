@@ -213,17 +213,17 @@ function DocLink({
       <Link
         href={`/${collectionSlug}/${doc.metadata.slug.current}`}
         className={cn(
-          'group flex items-center gap-2 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors',
-          level > 0 && 'pl-4 border-l border-border ml-2'
+          'group flex items-center gap-2 py-2 text-muted-foreground text-sm transition-colors hover:text-foreground',
+          level > 0 && 'ml-2 border-border border-l pl-4'
         )}
       >
         {doc.icon ? (
           <span className="text-base">{doc.icon}</span>
         ) : (
-          <Book className="w-4 h-4 opacity-50" />
+          <Book className="h-4 w-4 opacity-50" />
         )}
         <span className="flex-1">{doc.metadata.title}</span>
-        {hasChildren && <ChevronRight className="w-4 h-4 opacity-50" />}
+        {hasChildren && <ChevronRight className="h-4 w-4 opacity-50" />}
       </Link>
       {hasChildren && doc.children && (
         <div className="mt-1">
@@ -276,21 +276,21 @@ function CategorySection({
         type="button"
         onClick={() => style === 'collapsible' && setIsOpen(!isOpen)}
         className={cn(
-          'flex items-center gap-2 w-full text-left py-2 font-medium text-foreground',
+          'flex w-full items-center gap-2 py-2 text-left font-medium text-foreground',
           style === 'collapsible' && 'cursor-pointer hover:text-primary'
         )}
         disabled={style !== 'collapsible'}
       >
         {style === 'collapsible' && (
-          <ChevronDown className={cn('w-4 h-4 transition-transform', !isOpen && '-rotate-90')} />
+          <ChevronDown className={cn('h-4 w-4 transition-transform', !isOpen && '-rotate-90')} />
         )}
         {showIcon && category.icon && <span className="text-lg">{category.icon}</span>}
         <span>{category.title}</span>
-        <span className="text-xs text-muted-foreground ml-auto">({docs.length})</span>
+        <span className="ml-auto text-muted-foreground text-xs">({docs.length})</span>
       </button>
 
       {showDescription && category.description && (
-        <p className="text-sm text-muted-foreground mb-2 ml-6">{category.description}</p>
+        <p className="mb-2 ml-6 text-muted-foreground text-sm">{category.description}</p>
       )}
 
       {(style === 'expanded' || isOpen) && (
@@ -356,12 +356,12 @@ function CardsLayout({
           <div key={category?._id || 'uncategorized'}>
             {category && (
               <div className="mb-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
+                <h2 className="flex items-center gap-2 font-semibold text-xl">
                   {showIcon && category.icon && <span>{category.icon}</span>}
                   {category.title}
                 </h2>
                 {showDescription && category.description && (
-                  <p className="text-sm text-muted-foreground mt-1">{category.description}</p>
+                  <p className="mt-1 text-muted-foreground text-sm">{category.description}</p>
                 )}
               </div>
             )}
@@ -370,20 +370,20 @@ function CardsLayout({
                 <Link
                   key={doc._id}
                   href={`/${collectionSlug}/${doc.metadata.slug.current}`}
-                  className="group block p-6 bg-card rounded-xl border shadow-sm hover:shadow-md transition-shadow"
+                  className="group block rounded-xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
                 >
                   <div className="flex items-start gap-3">
                     {doc.icon ? (
                       <span className="text-2xl">{doc.icon}</span>
                     ) : (
-                      <Book className="w-6 h-6 text-primary" />
+                      <Book className="h-6 w-6 text-primary" />
                     )}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-foreground transition-colors group-hover:text-primary">
                         {doc.metadata.title}
                       </h3>
                       {doc.excerpt && (
-                        <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
+                        <p className="mt-1 line-clamp-2 text-muted-foreground text-sm">
                           {doc.excerpt}
                         </p>
                       )}
@@ -420,12 +420,12 @@ function CategorizedLayout({
           <div key={category?._id || 'uncategorized'}>
             {category && (
               <div className="mb-4">
-                <h2 className="text-lg font-semibold flex items-center gap-2">
+                <h2 className="flex items-center gap-2 font-semibold text-lg">
                   {showIcon && category.icon && <span className="text-xl">{category.icon}</span>}
                   {category.title}
                 </h2>
                 {showDescription && category.description && (
-                  <p className="text-sm text-muted-foreground">{category.description}</p>
+                  <p className="text-muted-foreground text-sm">{category.description}</p>
                 )}
               </div>
             )}
@@ -434,14 +434,14 @@ function CategorizedLayout({
                 <Link
                   key={doc._id}
                   href={`/${collectionSlug}/${doc.metadata.slug.current}`}
-                  className="group flex items-center gap-2 p-3 rounded-lg hover:bg-muted transition-colors"
+                  className="group flex items-center gap-2 rounded-lg p-3 transition-colors hover:bg-muted"
                 >
                   {doc.icon ? (
                     <span>{doc.icon}</span>
                   ) : (
-                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
                   )}
-                  <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                  <span className="text-muted-foreground text-sm transition-colors group-hover:text-foreground">
                     {doc.metadata.title}
                   </span>
                 </Link>
@@ -458,11 +458,11 @@ function CategorizedLayout({
 function SearchInput() {
   return (
     <div className="relative">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+      <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
       <input
         type="search"
         placeholder="Search docs..."
-        className="pl-9 pr-4 py-2 text-sm border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
+        className="rounded-lg border bg-background py-2 pr-4 pl-9 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
       />
     </div>
   );
@@ -488,7 +488,7 @@ export default function DocsFrontpageClient({
     return (
       <>
         {(intro || showSearch) && (
-          <header className="flex flex-wrap items-start justify-between gap-4 mb-8">
+          <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
             {intro}
             {showSearch && <SearchInput />}
           </header>
@@ -514,7 +514,7 @@ export default function DocsFrontpageClient({
   return (
     <>
       {(intro || showSearch) && (
-        <header className="flex flex-wrap items-start justify-between gap-4 mb-8">
+        <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
           {intro}
           {showSearch && <SearchInput />}
         </header>

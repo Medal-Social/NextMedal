@@ -79,12 +79,13 @@ export default async function LatestArticles({
         </header>
       )}
 
-      {displayFilters && !filteredCategory && <FilterList />}
+      {displayFilters && !filteredCategory && <FilterList locale={locale} />}
 
       <Suspense
         fallback={
           <ul className={listClassName}>
             {Array.from({ length: limit ?? 6 }).map((_, i) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholder, no semantic identity
               <li key={`skeleton-${i}`}>
                 <PostPreview skeleton />
               </li>

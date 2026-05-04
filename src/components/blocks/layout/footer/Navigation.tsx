@@ -33,7 +33,7 @@ type DropdownMenuType = {
   _type: 'dropdownMenu';
   _key?: string;
   title?: string;
-  links?: Array<MenuItemType>;
+  links?: MenuItemType[];
 };
 
 type MenuItem = MenuItemType | DropdownMenuType;
@@ -53,7 +53,7 @@ function ExternalMenuItem({ href, label }: { href: string; label?: string }) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+      className="font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary"
       aria-label={`${label} (opens in new tab)`}
     >
       <div className="flex items-center gap-2">
@@ -69,7 +69,7 @@ function InternalMenuItem({ url, label, title }: { url: string; label?: string; 
   return (
     <Link
       href={url}
-      className="text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+      className="font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary"
     >
       {label || title}
     </Link>
@@ -94,7 +94,7 @@ function MenuItemRenderer({
 
   return (
     <CTA
-      className="text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+      className="font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary"
       link={item as Sanity.MenuItem}
       style="link"
     />
@@ -145,7 +145,7 @@ function DropdownMenuRenderer({
 }) {
   return (
     <>
-      <div className="font-semibold text-muted-foreground text-xs uppercase tracking-wider mb-1">
+      <div className="mb-1 font-semibold text-muted-foreground text-xs uppercase tracking-wider">
         {item.title}
       </div>
 
@@ -228,7 +228,7 @@ export default async function Menu() {
 
   return (
     <nav
-      className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+      className="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-4"
       aria-label="Footer navigation"
     >
       {footerNav.map((item, index) => (

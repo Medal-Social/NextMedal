@@ -58,12 +58,7 @@ export const ContentOverview = memo(function ContentOverview() {
       count: stats.seoIssuesCount,
       icon: <SearchIcon />,
       tone: stats.seoIssuesCount > 0 ? ('critical' as const) : ('positive' as const),
-      subtitle:
-        stats.seoIssuesCount === 0
-          ? 'All pages optimized!'
-          : stats.seoIssuesCount === 1
-            ? 'missing SEO metadata'
-            : 'missing SEO metadata',
+      subtitle: stats.seoIssuesCount === 0 ? 'All pages optimized!' : 'missing SEO metadata',
       path: '/studio/structure/contentHealth;seo-issues',
     },
     {

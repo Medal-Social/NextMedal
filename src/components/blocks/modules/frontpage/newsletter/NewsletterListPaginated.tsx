@@ -49,7 +49,7 @@ function NewsletterCard({
       {/* Content */}
       <div className="flex flex-1 flex-col p-5">
         {/* Meta */}
-        <div className="mb-3 flex items-center gap-3 text-xs text-muted-foreground">
+        <div className="mb-3 flex items-center gap-3 text-muted-foreground text-xs">
           {issue.issueNumber && (
             <span className="inline-flex items-center gap-1">
               <Hash className="h-3 w-3" />
@@ -65,7 +65,7 @@ function NewsletterCard({
         </div>
 
         {/* Title */}
-        <h3 className="mb-2 line-clamp-2 text-lg font-semibold text-foreground">
+        <h3 className="mb-2 line-clamp-2 font-semibold text-foreground text-lg">
           <Link href={href} className="transition-colors hover:text-primary">
             {issue.metadata?.title}
           </Link>
@@ -73,14 +73,14 @@ function NewsletterCard({
 
         {/* Preheader / Description */}
         {(issue.preheader || issue.metadata?.description) && (
-          <p className="line-clamp-3 flex-1 text-sm text-muted-foreground">
+          <p className="line-clamp-3 flex-1 text-muted-foreground text-sm">
             {issue.preheader || issue.metadata?.description}
           </p>
         )}
 
         {/* Featured badge */}
         {issue.featured === 'featured' && (
-          <span className="absolute right-3 top-3 rounded-full bg-primary px-2 py-1 text-xs font-medium text-primary-foreground">
+          <span className="absolute top-3 right-3 rounded-full bg-primary px-2 py-1 font-medium text-primary-foreground text-xs">
             Featured
           </span>
         )}
@@ -137,7 +137,7 @@ export default function NewsletterListPaginated({
       </ul>
 
       {totalPages > 1 && (
-        <div className="mt-12 border-t border-slate-200 pt-8 dark:border-slate-800">
+        <div className="mt-12 border-slate-200 border-t pt-8 dark:border-slate-800">
           <Pagination>
             <PaginationContent>
               <PaginationItem>
@@ -151,7 +151,10 @@ export default function NewsletterListPaginated({
 
               {pageNumbers.map((page, index) =>
                 page === 'ellipsis' ? (
-                  <PaginationItem key={`ellipsis-${index}`}>
+                  <PaginationItem
+                    // biome-ignore lint/suspicious/noArrayIndexKey: ellipsis position has no semantic identity
+                    key={`ellipsis-${index}`}
+                  >
                     <PaginationEllipsis />
                   </PaginationItem>
                 ) : (

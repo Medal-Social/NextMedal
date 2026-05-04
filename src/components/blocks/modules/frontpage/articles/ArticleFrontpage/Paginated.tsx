@@ -53,14 +53,14 @@ export default function Paginated({
       {posts.length === 0 ? (
         <div className="py-20 text-center">
           <p className="text-lg text-slate-500">{t('noArticles')}</p>
-          <p className="text-sm text-slate-400 mt-2">{t('noArticlesDescription')}</p>
+          <p className="mt-2 text-slate-400 text-sm">{t('noArticlesDescription')}</p>
         </div>
       ) : (
         <ArticleGrid posts={posts} collectionSlug={collectionSlug} />
       )}
 
       {totalPages > 1 && (
-        <div className="mt-12 border-t border-slate-200 pt-8 dark:border-slate-800">
+        <div className="mt-12 border-slate-200 border-t pt-8 dark:border-slate-800">
           <Pagination>
             <PaginationContent>
               <PaginationItem>
@@ -74,7 +74,10 @@ export default function Paginated({
 
               {pageNumbers.map((page, index) =>
                 page === 'ellipsis' ? (
-                  <PaginationItem key={`ellipsis-${index}`}>
+                  <PaginationItem
+                    // biome-ignore lint/suspicious/noArrayIndexKey: ellipsis position has no semantic identity
+                    key={`ellipsis-${index}`}
+                  >
                     <PaginationEllipsis />
                   </PaginationItem>
                 ) : (

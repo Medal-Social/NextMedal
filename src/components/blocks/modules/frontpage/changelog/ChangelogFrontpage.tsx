@@ -190,7 +190,7 @@ function ChangeCategory({
   return (
     <div key={category._key}>
       <h4
-        className={cn('inline-flex items-center gap-1.5 text-sm font-semibold mb-2', config.color)}
+        className={cn('mb-2 inline-flex items-center gap-1.5 font-semibold text-sm', config.color)}
       >
         <span>{config.emoji}</span>
         {config.label}
@@ -198,8 +198,8 @@ function ChangeCategory({
       {category.items && category.items.length > 0 && (
         <ul className="space-y-1.5">
           {category.items.map((item) => (
-            <li key={item._key} className="flex items-start gap-2 text-sm text-muted-foreground">
-              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-current flex-shrink-0" />
+            <li key={item._key} className="flex items-start gap-2 text-muted-foreground text-sm">
+              <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-current" />
               <span>{item.description}</span>
               {item.link && (
                 <a
@@ -207,9 +207,9 @@ function ChangeCategory({
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="View related issue or documentation"
-                  className="inline-flex items-center text-primary hover:underline ml-1"
+                  className="ml-1 inline-flex items-center text-primary hover:underline"
                 >
-                  <ExternalLink className="w-3 h-3" />
+                  <ExternalLink className="h-3 w-3" />
                 </a>
               )}
             </li>
@@ -225,10 +225,10 @@ function CompactEntry({ entry }: { entry: Sanity.CollectionChangelog }) {
   const releaseInfo = entry.releaseType ? releaseTypeBadge[entry.releaseType] : null;
 
   return (
-    <div className="border-b border-border py-4 first:pt-0 last:border-0">
-      <div className="flex flex-wrap items-center gap-3 mb-2">
+    <div className="border-border border-b py-4 first:pt-0 last:border-0">
+      <div className="mb-2 flex flex-wrap items-center gap-3">
         <EntryBadges version={entry.version} releaseInfo={releaseInfo} compact />
-        <span className="text-sm text-muted-foreground">
+        <span className="text-muted-foreground text-sm">
           <DateDisplay value={entry.publishDate} />
         </span>
       </div>
@@ -252,29 +252,29 @@ function FullEntry({
   return (
     <article
       className={cn(
-        layout === 'timeline' && 'relative pl-8 pb-10 border-l-2 border-border last:pb-0',
-        layout === 'cards' && 'bg-card rounded-xl border shadow-sm p-6'
+        layout === 'timeline' && 'relative border-border border-l-2 pb-10 pl-8 last:pb-0',
+        layout === 'cards' && 'rounded-xl border bg-card p-6 shadow-sm'
       )}
     >
       {layout === 'timeline' && (
-        <div className="absolute left-0 -translate-x-1/2 w-4 h-4 rounded-full bg-primary border-4 border-background" />
+        <div className="absolute left-0 h-4 w-4 -translate-x-1/2 rounded-full border-4 border-background bg-primary" />
       )}
 
-      <div className="flex flex-wrap items-center gap-3 mb-4">
+      <div className="mb-4 flex flex-wrap items-center gap-3">
         <EntryBadges version={entry.version} releaseInfo={releaseInfo} />
       </div>
 
       <div className="mb-4">
         {entry.metadata?.title && (
-          <h3 className="text-lg font-semibold text-foreground mb-1">{entry.metadata.title}</h3>
+          <h3 className="mb-1 font-semibold text-foreground text-lg">{entry.metadata.title}</h3>
         )}
-        <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-          <Calendar className="w-4 h-4" />
+        <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
+          <Calendar className="h-4 w-4" />
           <DateDisplay value={entry.publishDate} />
         </div>
       </div>
 
-      {entry.summary && <p className="text-muted-foreground mb-4">{entry.summary}</p>}
+      {entry.summary && <p className="mb-4 text-muted-foreground">{entry.summary}</p>}
 
       {entry.changes && entry.changes.length > 0 && (
         <div className="space-y-4">
@@ -319,18 +319,19 @@ function groupByYear(
 // Loading skeleton
 function ListSkeleton({ count = 3, layout }: { count?: number; layout: string }) {
   return (
-    <div className={cn(layout === 'timeline' && 'border-l-2 border-border pl-8')}>
+    <div className={cn(layout === 'timeline' && 'border-border border-l-2 pl-8')}>
       {Array.from({ length: count }).map((_, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholder, no semantic identity
         <div key={`skeleton-${i}`} className="animate-pulse pb-10">
-          <div className="flex gap-3 mb-4">
-            <div className="h-6 w-16 bg-muted rounded" />
-            <div className="h-6 w-12 bg-muted rounded-full" />
+          <div className="mb-4 flex gap-3">
+            <div className="h-6 w-16 rounded bg-muted" />
+            <div className="h-6 w-12 rounded-full bg-muted" />
           </div>
-          <div className="h-5 w-48 bg-muted rounded mb-2" />
-          <div className="h-4 w-24 bg-muted rounded mb-4" />
+          <div className="mb-2 h-5 w-48 rounded bg-muted" />
+          <div className="mb-4 h-4 w-24 rounded bg-muted" />
           <div className="space-y-2">
-            <div className="h-4 w-full bg-muted rounded" />
-            <div className="h-4 w-3/4 bg-muted rounded" />
+            <div className="h-4 w-full rounded bg-muted" />
+            <div className="h-4 w-3/4 rounded bg-muted" />
           </div>
         </div>
       ))}
@@ -366,7 +367,7 @@ function ChangelogList({
       <div className="space-y-12">
         {years.map((year) => (
           <div key={year}>
-            <h2 className="text-2xl font-bold text-foreground mb-6 sticky top-20 bg-background/95 backdrop-blur py-2 z-10">
+            <h2 className="sticky top-20 z-10 mb-6 bg-background/95 py-2 font-bold text-2xl text-foreground backdrop-blur">
               {year}
             </h2>
             <div className={cn(layout === 'cards' && 'grid gap-6 md:grid-cols-2')}>
@@ -412,9 +413,9 @@ export default async function ChangelogFrontpage({
     if (!collectionSlug) {
       return (
         <Section className="space-y-8" {...moduleProps(props)}>
-          <div className="text-center py-12 text-muted-foreground">
+          <div className="py-12 text-center text-muted-foreground">
             <p>Changelog collection not configured for this language.</p>
-            <p className="text-sm mt-2">Configure the changelog frontpage in site settings.</p>
+            <p className="mt-2 text-sm">Configure the changelog frontpage in site settings.</p>
           </div>
         </Section>
       );
@@ -441,10 +442,10 @@ export default async function ChangelogFrontpage({
               href={`/${collectionSlug}/rss.xml`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="inline-flex items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-foreground"
               title="RSS Feed"
             >
-              <Rss className="w-4 h-4" />
+              <Rss className="h-4 w-4" />
               <span>RSS Feed</span>
             </Link>
           )}

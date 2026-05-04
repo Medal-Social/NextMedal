@@ -84,7 +84,7 @@ export default function PostPreview({
   return (
     <article
       key={skeleton ? 'skeleton' : post?._id}
-      className="flex group flex-col items-start justify-between"
+      className="group flex flex-col items-start justify-between"
     >
       <div className="relative w-full">
         <PostImage
@@ -111,13 +111,13 @@ export default function PostPreview({
         </div>
         <div className="relative">
           <h3
-            className="mt-3 text-lg/6 font-semibold group-hover:text-primary"
+            className="mt-3 font-semibold text-lg/6 group-hover:text-primary"
             data-sanity={dataAttribute?.scope('metadata.title').toString()}
           >
             <Link href={href}>{metadata?.title}</Link>
           </h3>
           <p
-            className="mt-5 line-clamp-3 text-sm/6 text-muted-foreground"
+            className="mt-5 line-clamp-3 text-muted-foreground text-sm/6"
             data-sanity={dataAttribute?.scope('seo.description').toString()}
           >
             {seo?.description}

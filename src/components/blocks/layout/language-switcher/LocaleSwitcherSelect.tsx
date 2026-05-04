@@ -122,7 +122,7 @@ export default function LocaleSwitcherSelect({
                   aria-label={label}
                   className={cn(
                     'hover:bg-accent/50',
-                    isPending && 'opacity-60 pointer-events-none',
+                    isPending && 'pointer-events-none opacity-60',
                     className
                   )}
                   disabled={isPending}
@@ -136,7 +136,7 @@ export default function LocaleSwitcherSelect({
         {!isOpen && (
           <TooltipContent side="bottom" className="flex items-center gap-2">
             <span>{t('changeLanguage')}</span>
-            <kbd className="pointer-events-none inline-flex h-4 select-none items-center gap-1 rounded border bg-muted px-1 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+            <kbd className="pointer-events-none inline-flex h-4 select-none items-center gap-1 rounded border bg-muted px-1 font-medium font-mono text-[10px] text-muted-foreground opacity-100">
               L
             </kbd>
           </TooltipContent>
@@ -145,10 +145,10 @@ export default function LocaleSwitcherSelect({
 
       <DropdownMenuContent
         className={cn(
-          'w-40 z-[200] p-1.5',
-          'backdrop-blur-xl bg-popover/95',
+          'z-[200] w-40 p-1.5',
+          'bg-popover/95 backdrop-blur-xl',
           'border-border/50',
-          'shadow-xl shadow-black/10 dark:shadow-black/30',
+          'shadow-black/10 shadow-xl dark:shadow-black/30',
           'rounded-xl'
         )}
         align={dropdownAlign}
@@ -160,10 +160,10 @@ export default function LocaleSwitcherSelect({
               key={option.value}
               value={option.value}
               className={cn(
-                'py-2 px-3 mx-0.5 rounded-lg cursor-pointer text-sm',
+                'mx-0.5 cursor-pointer rounded-lg px-3 py-2 text-sm',
                 'transition-colors duration-150',
                 'hover:bg-accent/80',
-                'data-[checked]:bg-primary/5 data-[checked]:text-primary data-[checked]:font-medium'
+                'data-[checked]:bg-primary/5 data-[checked]:font-medium data-[checked]:text-primary'
               )}
             >
               {option.label}

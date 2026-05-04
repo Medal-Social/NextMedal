@@ -88,8 +88,8 @@ export default async function DocsPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(techArticleSchema) }}
       />
       <div className="space-y-4">
-        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">Documentation</h1>
-        <p className="text-xl text-muted-foreground text-balance">
+        <h1 className="font-extrabold text-4xl tracking-tight lg:text-5xl">Documentation</h1>
+        <p className="text-balance text-muted-foreground text-xl">
           Welcome to the Medal Social documentation. Everything you need to build amazing apps.
         </p>
       </div>
@@ -98,9 +98,9 @@ export default async function DocsPage({ params }: Props) {
         <article>
           <Link
             href="/docs/installation"
-            className="group flex flex-col gap-2 rounded-xl border p-6 hover:bg-muted/50 hover:shadow-sm transition-all"
+            className="group flex flex-col gap-2 rounded-xl border p-6 transition-all hover:bg-muted/50 hover:shadow-sm"
           >
-            <div className="mb-2 rounded-md bg-primary/10 p-2 w-fit text-primary">
+            <div className="mb-2 w-fit rounded-md bg-primary/10 p-2 text-primary">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -120,7 +120,7 @@ export default async function DocsPage({ params }: Props) {
               </svg>
             </div>
             <h3 className="font-semibold text-lg group-hover:text-primary">Getting Started</h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Installation, configuration, and project structure.
             </p>
           </Link>
@@ -129,9 +129,9 @@ export default async function DocsPage({ params }: Props) {
         <article>
           <Link
             href="/docs/components"
-            className="group flex flex-col gap-2 rounded-xl border p-6 hover:bg-muted/50 hover:shadow-sm transition-all"
+            className="group flex flex-col gap-2 rounded-xl border p-6 transition-all hover:bg-muted/50 hover:shadow-sm"
           >
-            <div className="mb-2 rounded-md bg-primary/10 p-2 w-fit text-primary">
+            <div className="mb-2 w-fit rounded-md bg-primary/10 p-2 text-primary">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -148,7 +148,7 @@ export default async function DocsPage({ params }: Props) {
               </svg>
             </div>
             <h3 className="font-semibold text-lg group-hover:text-primary">Components</h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Pre-built accessible components for your app.
             </p>
           </Link>
@@ -157,9 +157,9 @@ export default async function DocsPage({ params }: Props) {
         <article>
           <Link
             href="/docs/guides"
-            className="group flex flex-col gap-2 rounded-xl border p-6 hover:bg-muted/50 hover:shadow-sm transition-all"
+            className="group flex flex-col gap-2 rounded-xl border p-6 transition-all hover:bg-muted/50 hover:shadow-sm"
           >
-            <div className="mb-2 rounded-md bg-primary/10 p-2 w-fit text-primary">
+            <div className="mb-2 w-fit rounded-md bg-primary/10 p-2 text-primary">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -177,7 +177,7 @@ export default async function DocsPage({ params }: Props) {
               </svg>
             </div>
             <h3 className="font-semibold text-lg group-hover:text-primary">Guides</h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Best practices, theming, and deployment.
             </p>
           </Link>

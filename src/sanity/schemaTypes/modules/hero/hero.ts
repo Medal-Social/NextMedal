@@ -183,8 +183,11 @@ export default defineType({
       description: 'content',
     },
     prepare: ({ media, videoType, description }) => {
-      const mediaLabel =
-        videoType === 'mux' ? 'Mux Video' : videoType === 'url' ? 'Video URL' : 'Image';
+      const mediaLabel = (() => {
+        if (videoType === 'mux') return 'Mux Video';
+        if (videoType === 'url') return 'Video URL';
+        return 'Image';
+      })();
       return {
         title: getBlockText(description) || 'Hero',
         subtitle: `Hero • ${mediaLabel}`,

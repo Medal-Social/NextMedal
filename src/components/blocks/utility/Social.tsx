@@ -63,7 +63,7 @@ export default async function Social({ className }: React.ComponentProps<'div'>)
             aria-label={item.text}
             className={cn(
               buttonVariants({ variant: 'ghost', size: 'icon' }),
-              'h-9 w-9 rounded-full motion-safe:transition-all motion-safe:duration-200 motion-safe:hover:scale-110 hover:bg-primary/10'
+              'h-9 w-9 rounded-full hover:bg-primary/10 motion-safe:transition-all motion-safe:duration-200 motion-safe:hover:scale-110'
             )}
           >
             <IconComponent aria-hidden="true" className="h-4 w-4" />

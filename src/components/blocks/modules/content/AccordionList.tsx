@@ -26,22 +26,22 @@ export default function AccordionList({ content, items, ...props }: Sanity.Accor
       {...moduleProps(props)}
     >
       {content && (
-        <div className="mx-auto text-muted-foreground text-left">
+        <div className="mx-auto text-left text-muted-foreground">
           <SharedPortableText
             value={content}
             components={{
               block: {
                 normal: ({ children }) => (
-                  <p className="text-muted-foreground text-lg text-center">{children}</p>
+                  <p className="text-center text-lg text-muted-foreground">{children}</p>
                 ),
                 h2: ({ children }) => (
-                  <h2 className="text-2xl font-bold md:text-3xl mb-3 text-center">{children}</h2>
+                  <h2 className="mb-3 text-center font-bold text-2xl md:text-3xl">{children}</h2>
                 ),
                 h3: ({ children }) => (
-                  <h3 className="text-xl font-semibold md:text-2xl mb-3 text-center">{children}</h3>
+                  <h3 className="mb-3 text-center font-semibold text-xl md:text-2xl">{children}</h3>
                 ),
                 h4: ({ children }) => (
-                  <h4 className="text-lg font-semibold mb-2 text-center">{children}</h4>
+                  <h4 className="mb-2 text-center font-semibold text-lg">{children}</h4>
                 ),
               },
             }}

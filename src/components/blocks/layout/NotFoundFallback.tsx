@@ -18,8 +18,8 @@ export default function NotFoundFallback() {
   const t = useTranslations('NotFound');
 
   return (
-    <Section className="min-h-[50vh] flex items-center justify-center">
-      <Empty className="border-none max-w-md mx-auto">
+    <Section className="flex min-h-[50vh] items-center justify-center">
+      <Empty className="mx-auto max-w-md border-none">
         <EmptyHeader>
           <EmptyMedia variant="icon">
             <FileQuestion />

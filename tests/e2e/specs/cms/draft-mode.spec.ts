@@ -242,7 +242,7 @@ test.describe('Performance', () => {
     const loadTime = Date.now() - startTime;
 
     // Should load within 10 seconds (generous for dev server)
-    expect(loadTime).toBeLessThan(10000);
+    expect(loadTime).toBeLessThan(10_000);
   });
 
   test('no console errors on page load', async ({ page }) => {

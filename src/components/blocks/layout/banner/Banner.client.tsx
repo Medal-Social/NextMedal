@@ -93,10 +93,10 @@ export default function BannerClient({ banner }: { banner: Sanity.Banner & Sanit
   return (
     <div
       ref={containerRef}
-      className="relative flex items-center justify-center bg-brand-700 text-white min-h-10 px-10 py-2 sm:px-12"
+      className="relative flex min-h-10 items-center justify-center bg-brand-700 px-10 py-2 text-white sm:px-12"
     >
       <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-center">
-        <div className="text-sm font-medium [&_p]:m-0 [&_p]:leading-normal">
+        <div className="font-medium text-sm [&_p]:m-0 [&_p]:leading-normal">
           <PortableText
             value={content}
             components={{
@@ -107,29 +107,32 @@ export default function BannerClient({ banner }: { banner: Sanity.Banner & Sanit
           />
         </div>
 
-        {cta?.label && (
-          <Link
-            href={
-              cta?.type === 'internal'
-                ? resolveUrlSync(cta.internal, { base: false })
-                : cta?.external
-                  ? cta.external
-                  : '#'
+        {cta?.label &&
+          (() => {
+            let href = '#';
+            if (cta?.type === 'internal') {
+              href = resolveUrlSync(cta.internal, { base: false });
+            } else if (cta?.external) {
+              href = cta.external;
             }
-            target={cta?.external ? '_blank' : undefined}
-            className="inline-flex items-center justify-center rounded-md border border-transparent bg-white px-2.5 h-7 text-xs font-semibold text-brand-700 hover:bg-white/90 transition-all focus-visible:ring-[3px] focus-visible:ring-white/50 outline-none shrink-0"
-            aria-label={getAriaLabel(cta.label, cta.internal, cta.type)}
-          >
-            {cta.label}
-          </Link>
-        )}
+            return (
+              <Link
+                href={href}
+                target={cta?.external ? '_blank' : undefined}
+                className="inline-flex h-7 shrink-0 items-center justify-center rounded-md border border-transparent bg-white px-2.5 font-semibold text-brand-700 text-xs outline-none transition-all hover:bg-white/90 focus-visible:ring-[3px] focus-visible:ring-white/50"
+                aria-label={getAriaLabel(cta.label, cta.internal, cta.type)}
+              >
+                {cta.label}
+              </Link>
+            );
+          })()}
       </div>
-      <div className="absolute right-1 top-1/2 -translate-y-1/2 sm:right-2">
+      <div className="absolute top-1/2 right-1 -translate-y-1/2 sm:right-2">
         <Button
           variant="ghost"
           size="icon-xs"
           onClick={handleClose}
-          className="text-white/80 hover:text-white hover:bg-white/10 rounded-full"
+          className="rounded-full text-white/80 hover:bg-white/10 hover:text-white"
         >
           <span className="sr-only">Dismiss</span>
           <X aria-hidden="true" className="size-3.5" />

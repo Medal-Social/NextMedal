@@ -52,7 +52,7 @@ export default function Category({
     children: badge ? (
       <Badge
         variant="secondary"
-        className="bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:hover:bg-purple-900/50 rounded-full px-3 py-1 font-semibold"
+        className="rounded-full bg-purple-100 px-3 py-1 font-semibold text-purple-800 hover:bg-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:hover:bg-purple-900/50"
       >
         {label || value?.title}
       </Badge>

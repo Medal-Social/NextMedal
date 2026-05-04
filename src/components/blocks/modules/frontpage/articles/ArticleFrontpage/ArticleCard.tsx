@@ -88,18 +88,16 @@ export default function ArticleCard({
           image={image}
           className="h-full w-full object-cover opacity-90 transition-transform duration-500 group-hover/card:scale-105"
           width={variant === 'large' ? 800 : 600}
-          sizes={
-            variant === 'large'
-              ? '(min-width: 1024px) 66vw, 100vw'
-              : variant === 'wide'
-                ? '(min-width: 1024px) 50vw, 100vw'
-                : '(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 100vw'
-          }
+          sizes={(() => {
+            if (variant === 'large') return '(min-width: 1024px) 66vw, 100vw';
+            if (variant === 'wide') return '(min-width: 1024px) 50vw, 100vw';
+            return '(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 100vw';
+          })()}
           alt={post.metadata?.title}
         />
         {category?.title && (
           <div className="absolute top-4 left-4">
-            <span className="inline-flex items-center rounded-full bg-[#1a0b2e]/90 px-3 py-1 text-xs font-bold tracking-wide text-white uppercase backdrop-blur-md shadow-sm">
+            <span className="inline-flex items-center rounded-full bg-[#1a0b2e]/90 px-3 py-1 font-bold text-white text-xs uppercase tracking-wide shadow-sm backdrop-blur-md">
               {category.title}
             </span>
           </div>
@@ -110,7 +108,7 @@ export default function ArticleCard({
       <div className={cn('flex flex-1 flex-col', variant === 'large' ? 'p-6' : 'p-5')}>
         <h3
           className={cn(
-            'mb-3 font-serif font-bold leading-snug text-slate-900 transition-colors group-hover/card:text-purple-500 dark:text-white dark:group-hover/card:text-purple-300',
+            'mb-3 font-bold font-serif text-slate-900 leading-snug transition-colors group-hover/card:text-purple-500 dark:text-white dark:group-hover/card:text-purple-300',
             variant === 'large' ? 'text-2xl' : 'text-xl'
           )}
           data-sanity={stega.scope('metadata.title').toString()}
@@ -118,15 +116,15 @@ export default function ArticleCard({
           <Link href={href}>{post.metadata?.title}</Link>
         </h3>
         <p
-          className="mb-4 flex-1 text-base leading-relaxed text-slate-600 line-clamp-3 dark:text-slate-400"
+          className="mb-4 line-clamp-3 flex-1 text-base text-slate-600 leading-relaxed dark:text-slate-400"
           data-sanity={stega.scope('seo.description').toString()}
         >
           {post.seo?.description}
         </p>
 
-        <div className="mt-auto flex items-center gap-4 border-t border-slate-100 pt-4 dark:border-slate-700/50">
+        <div className="mt-auto flex items-center gap-4 border-slate-100 border-t pt-4 dark:border-slate-700/50">
           {author && <AuthorCard author={author} />}
-          <div className="ml-auto flex shrink-0 items-center gap-2 whitespace-nowrap text-xs font-medium tracking-wide text-slate-400">
+          <div className="ml-auto flex shrink-0 items-center gap-2 whitespace-nowrap font-medium text-slate-400 text-xs tracking-wide">
             <DateDisplay
               value={post.publishDate}
               data-sanity={stega.scope('publishDate').toString()}

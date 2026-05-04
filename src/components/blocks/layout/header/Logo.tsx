@@ -33,7 +33,7 @@ export default function Logo({ title, logo, brandPage, locale }: LogoProps) {
     <BrandMenu logoData={logo} hasBrandPage={!!brandPage}>
       <Link
         className={cn(
-          'flex items-center gap-2 cursor-pointer text-lg lg:text-xl font-semibold leading-none',
+          'flex cursor-pointer items-center gap-2 font-semibold text-lg leading-none lg:text-xl',
           logo?.image && 'max-w-3xs'
         )}
         href={homeHref}
@@ -47,19 +47,17 @@ export default function Logo({ title, logo, brandPage, locale }: LogoProps) {
               <Source image={logoImageDark} media="(prefers-color-scheme: dark)" />
             )}
             {/* Light mode / default image */}
-            {logoImageLight ? (
-              <Img
-                className="h-8 lg:h-9 w-auto transition-transform duration-200 group-hover:scale-105"
-                image={logoImageLight}
-                alt={`${logo?.name || title} logo`}
-              />
-            ) : logoImageDark ? (
-              <Img
-                className="h-8 lg:h-9 w-auto transition-transform duration-200 group-hover:scale-105"
-                image={logoImageDark}
-                alt={`${logo?.name || title} logo`}
-              />
-            ) : null}
+            {(() => {
+              const fallbackImage = logoImageLight ?? logoImageDark;
+              if (!fallbackImage) return null;
+              return (
+                <Img
+                  className="h-8 w-auto transition-transform duration-200 group-hover:scale-105 lg:h-9"
+                  image={fallbackImage}
+                  alt={`${logo?.name || title} logo`}
+                />
+              );
+            })()}
           </picture>
         )}
         <span className={cn('leading-none', hasLogoImages && 'hidden sm:block')}>{title}</span>

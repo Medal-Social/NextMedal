@@ -106,12 +106,13 @@ function ListSkeleton({ layout }: { layout: string }) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={`skeleton-${i}`} className="animate-pulse p-6 bg-muted rounded-xl">
+          // biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholder, no semantic identity
+          <div key={`skeleton-${i}`} className="animate-pulse rounded-xl bg-muted p-6">
             <div className="flex items-start gap-3">
-              <div className="w-6 h-6 bg-muted-foreground/20 rounded" />
+              <div className="h-6 w-6 rounded bg-muted-foreground/20" />
               <div className="flex-1 space-y-2">
-                <div className="h-5 w-3/4 bg-muted-foreground/20 rounded" />
-                <div className="h-4 w-full bg-muted-foreground/20 rounded" />
+                <div className="h-5 w-3/4 rounded bg-muted-foreground/20" />
+                <div className="h-4 w-full rounded bg-muted-foreground/20" />
               </div>
             </div>
           </div>
@@ -124,20 +125,22 @@ function ListSkeleton({ layout }: { layout: string }) {
     <div className="space-y-4">
       {/* Category skeleton */}
       <div className="space-y-2">
-        <div className="animate-pulse h-6 w-32 bg-muted-foreground/20 rounded" />
+        <div className="h-6 w-32 animate-pulse rounded bg-muted-foreground/20" />
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={`skeleton-${i}`} className="animate-pulse flex items-center gap-2 py-2 ml-4">
-            <div className="w-4 h-4 bg-muted-foreground/20 rounded" />
-            <div className="h-4 w-48 bg-muted-foreground/20 rounded" />
+          // biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholder, no semantic identity
+          <div key={`skeleton-${i}`} className="ml-4 flex animate-pulse items-center gap-2 py-2">
+            <div className="h-4 w-4 rounded bg-muted-foreground/20" />
+            <div className="h-4 w-48 rounded bg-muted-foreground/20" />
           </div>
         ))}
       </div>
       <div className="space-y-2">
-        <div className="animate-pulse h-6 w-40 bg-muted-foreground/20 rounded" />
+        <div className="h-6 w-40 animate-pulse rounded bg-muted-foreground/20" />
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={`skeleton-2-${i}`} className="animate-pulse flex items-center gap-2 py-2 ml-4">
-            <div className="w-4 h-4 bg-muted-foreground/20 rounded" />
-            <div className="h-4 w-36 bg-muted-foreground/20 rounded" />
+          // biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholder, no semantic identity
+          <div key={`skeleton-2-${i}`} className="ml-4 flex animate-pulse items-center gap-2 py-2">
+            <div className="h-4 w-4 rounded bg-muted-foreground/20" />
+            <div className="h-4 w-36 rounded bg-muted-foreground/20" />
           </div>
         ))}
       </div>
@@ -220,9 +223,9 @@ export default async function DocsFrontpageServer({
     if (!collectionSlug) {
       return (
         <Section className="space-y-8" {...moduleProps(props)}>
-          <div className="text-center py-12 text-muted-foreground">
+          <div className="py-12 text-center text-muted-foreground">
             <p>Documentation collection not configured for this language.</p>
-            <p className="text-sm mt-2">Configure the documentation frontpage in site settings.</p>
+            <p className="mt-2 text-sm">Configure the documentation frontpage in site settings.</p>
           </div>
         </Section>
       );

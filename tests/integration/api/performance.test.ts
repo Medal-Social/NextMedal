@@ -83,7 +83,7 @@ describe('API Performance Budgets', () => {
     expect(results.p50).toBeLessThan(budget.p50);
     expect(results.p95).toBeLessThan(budget.p95);
     expect(results.p99).toBeLessThan(budget.p99);
-  }, 30000);
+  }, 30_000);
 
   test.skip('Draft mode enable API meets performance budget', async () => {
     const url = '/api/draft-mode/enable';
@@ -100,7 +100,7 @@ describe('API Performance Budgets', () => {
     expect(results.p50).toBeLessThan(budget.p50);
     expect(results.p95).toBeLessThan(budget.p95);
     expect(results.p99).toBeLessThan(budget.p99);
-  }, 30000);
+  }, 30_000);
 
   test.skip('Draft mode disable API meets performance budget', async () => {
     const url = '/api/draft-mode/disable';
@@ -117,7 +117,7 @@ describe('API Performance Budgets', () => {
     expect(results.p50).toBeLessThan(budget.p50);
     expect(results.p95).toBeLessThan(budget.p95);
     expect(results.p99).toBeLessThan(budget.p99);
-  }, 30000);
+  }, 30_000);
 });
 
 describe('API Response Time Monitoring', () => {

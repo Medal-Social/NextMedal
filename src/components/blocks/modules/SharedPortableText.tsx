@@ -12,7 +12,7 @@ interface SharedPortableTextProps {
 
 const defaultComponents: PortableTextComponents = {
   marks: {
-    em: ({ children }) => <span className="text-primary font-bold">{children}</span>,
+    em: ({ children }) => <span className="font-bold text-primary">{children}</span>,
     link: ({ children, value }) => {
       const { type, internal, external, params, newTab } = value || {};
       const href = resolveSlug({
@@ -30,7 +30,7 @@ const defaultComponents: PortableTextComponents = {
             href={href}
             target={newTab ? '_blank' : undefined}
             rel={newTab ? 'noopener noreferrer' : undefined}
-            className="text-primary hover:underline font-medium"
+            className="font-medium text-primary hover:underline"
           >
             {children}
           </a>
@@ -38,7 +38,7 @@ const defaultComponents: PortableTextComponents = {
       }
 
       return (
-        <Link href={href} className="text-primary hover:underline font-medium">
+        <Link href={href} className="font-medium text-primary hover:underline">
           {children}
         </Link>
       );
@@ -50,17 +50,17 @@ const introComponents: PortableTextComponents = {
   ...defaultComponents,
   block: {
     h2: ({ children }) => (
-      <h2 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] text-foreground mb-6">
+      <h2 className="mb-6 font-extrabold text-4xl text-foreground leading-[1.1] tracking-tight md:text-5xl lg:text-7xl">
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-4 mt-8">
+      <h3 className="mt-8 mb-4 font-bold text-2xl text-foreground tracking-tight md:text-3xl">
         {children}
       </h3>
     ),
     normal: ({ children }) => (
-      <p className="text-lg md:text-xl text-muted-foreground font-normal max-w-2xl mx-auto">
+      <p className="mx-auto max-w-2xl font-normal text-lg text-muted-foreground md:text-xl">
         {children}
       </p>
     ),

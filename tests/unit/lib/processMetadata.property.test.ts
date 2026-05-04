@@ -39,7 +39,7 @@ vi.mock('@/lib/sanity/resolve-url-server', () => ({
 describe('processMetadata Property Tests', () => {
   // Valid date range for ISO string generation using integer timestamps
   const validDateArb = fc
-    .integer({ min: 946684800000, max: 1924905600000 })
+    .integer({ min: 946_684_800_000, max: 1_924_905_600_000 })
     .map((ts) => new Date(ts));
 
   // Arbitrary for generating valid page metadata

@@ -606,7 +606,7 @@ export async function generateStaticParams() {
       if (missingCollections.length > 0) {
         logger.warn(
           { locale, missing: missingCollections },
-          `[generateStaticParams] Missing collection config`
+          '[generateStaticParams] Missing collection config'
         );
       }
 

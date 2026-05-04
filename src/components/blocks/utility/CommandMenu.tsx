@@ -85,15 +85,15 @@ export function CommandMenu({ variant = 'default', className }: CommandMenuProps
               onClick={() => setOpen(true)}
               className={cn(
                 variant === 'default' && [
-                  'inline-flex h-9 items-center justify-between rounded-md border border-solid border-input bg-transparent px-3 py-2 text-sm shadow-sm',
+                  'inline-flex h-9 items-center justify-between rounded-md border border-input border-solid bg-transparent px-3 py-2 text-sm shadow-sm',
                   'ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring',
-                  'disabled:cursor-not-allowed disabled:opacity-50 w-full md:w-[200px] lg:w-[240px] text-muted-foreground hover:bg-muted/50 transition-colors',
+                  'w-full text-muted-foreground transition-colors hover:bg-muted/50 disabled:cursor-not-allowed disabled:opacity-50 md:w-[200px] lg:w-[240px]',
                 ],
                 variant === 'mobile' && [
-                  'flex items-center gap-4 rounded-lg p-4 text-lg font-medium hover:bg-accent hover:text-primary text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-colors h-14',
+                  'flex h-14 items-center gap-4 rounded-lg p-4 font-medium text-foreground text-lg transition-colors hover:bg-accent hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary',
                 ],
                 variant === 'icon' && [
-                  'inline-flex h-10 w-10 items-center justify-center rounded-md hover:bg-accent/50 text-foreground transition-colors outline-none',
+                  'inline-flex h-10 w-10 items-center justify-center rounded-md text-foreground outline-none transition-colors hover:bg-accent/50',
                 ],
                 className
               )}
@@ -112,7 +112,7 @@ export function CommandMenu({ variant = 'default', className }: CommandMenuProps
                 {variant === 'mobile' && <span>{t('placeholder').replace('...', '')}</span>}
               </span>
               {variant === 'default' && (
-                <kbd className="pointer-events-none hidden lg:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+                <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-medium font-mono text-[10px] text-muted-foreground opacity-100 lg:inline-flex">
                   <span className="text-xs">⌘</span>K
                 </kbd>
               )}
@@ -121,7 +121,7 @@ export function CommandMenu({ variant = 'default', className }: CommandMenuProps
         />
         <TooltipContent side="bottom" className="flex items-center gap-2">
           <span>{tA11y('openSearch')}</span>
-          <kbd className="pointer-events-none inline-flex h-4 select-none items-center gap-1 rounded border bg-muted px-1 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+          <kbd className="pointer-events-none inline-flex h-4 select-none items-center gap-1 rounded border bg-muted px-1 font-medium font-mono text-[10px] text-muted-foreground opacity-100">
             ⌘K
           </kbd>
         </TooltipContent>
@@ -133,12 +133,12 @@ export function CommandMenu({ variant = 'default', className }: CommandMenuProps
           <CommandEmpty>{t('noResults')}</CommandEmpty>
 
           {isLoading ? (
-            <div className="p-4 space-y-3">
-              <div className="h-4 w-20 bg-muted rounded animate-pulse" />
-              <div className="h-8 w-full bg-muted rounded animate-pulse" />
-              <div className="h-8 w-full bg-muted rounded animate-pulse" />
-              <div className="h-4 w-16 bg-muted rounded animate-pulse mt-4" />
-              <div className="h-8 w-full bg-muted rounded animate-pulse" />
+            <div className="space-y-3 p-4">
+              <div className="h-4 w-20 animate-pulse rounded bg-muted" />
+              <div className="h-8 w-full animate-pulse rounded bg-muted" />
+              <div className="h-8 w-full animate-pulse rounded bg-muted" />
+              <div className="mt-4 h-4 w-16 animate-pulse rounded bg-muted" />
+              <div className="h-8 w-full animate-pulse rounded bg-muted" />
             </div>
           ) : (
             <>

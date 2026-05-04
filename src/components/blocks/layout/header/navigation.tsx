@@ -49,9 +49,9 @@ function ListItem({
             href={href}
             className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
-            <div className="text-sm font-medium leading-none">{title}</div>
+            <div className="font-medium text-sm leading-none">{title}</div>
             {children && (
-              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{children}</p>
+              <p className="line-clamp-2 text-muted-foreground text-sm leading-snug">{children}</p>
             )}
           </Link>
         }
@@ -88,7 +88,7 @@ export default function Navigation({ items }: NavigationProps) {
                     >
                       {item.external ? (
                         <p className="flex items-center gap-2">
-                          {item.label} <ExternalLink className="w-3 h-3" aria-hidden="true" />
+                          {item.label} <ExternalLink className="h-3 w-3" aria-hidden="true" />
                         </p>
                       ) : (
                         item.label

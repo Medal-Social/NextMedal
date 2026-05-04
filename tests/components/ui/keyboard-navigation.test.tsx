@@ -742,9 +742,11 @@ describe('Keyboard Navigation Tests', () => {
                 <div>
                   {componentTypes.map((type, index) =>
                     type === 'button' ? (
-                      <Button key={index}>Button {index}</Button>
+                      // biome-ignore lint/suspicious/noArrayIndexKey: synthetic property-based test, stable identity
+                      <Button key={`comp-${index}`}>Button {index}</Button>
                     ) : (
-                      <Switch key={index} aria-label={`Switch ${index}`} />
+                      // biome-ignore lint/suspicious/noArrayIndexKey: synthetic property-based test, stable identity
+                      <Switch key={`comp-${index}`} aria-label={`Switch ${index}`} />
                     )
                   )}
                 </div>
@@ -982,7 +984,8 @@ describe('Keyboard Navigation Tests', () => {
                     <DialogDescription>Testing focus order</DialogDescription>
                   </DialogHeader>
                   {Array.from({ length: numElements }, (_, i) => (
-                    <Button key={i} data-testid={`button-${i}`} data-index={i}>
+                    // biome-ignore lint/suspicious/noArrayIndexKey: synthetic property-based test, stable identity
+                    <Button key={`btn-${i}`} data-testid={`button-${i}`} data-index={i}>
                       Button {i}
                     </Button>
                   ))}
@@ -1037,7 +1040,8 @@ describe('Keyboard Navigation Tests', () => {
             const { unmount } = render(
               <Accordion>
                 {Array.from({ length: numItems }, (_, i) => (
-                  <AccordionItem key={i} value={`item-${i}`}>
+                  // biome-ignore lint/suspicious/noArrayIndexKey: synthetic property-based test, stable identity
+                  <AccordionItem key={`acc-${i}`} value={`item-${i}`}>
                     <AccordionTrigger
                       onFocus={() => focusOrder.push(i)}
                       data-testid={`trigger-${i}`}
@@ -1087,7 +1091,8 @@ describe('Keyboard Navigation Tests', () => {
                 <DropdownMenuContent>
                   {Array.from({ length: numItems }, (_, i) => (
                     <DropdownMenuItem
-                      key={i}
+                      // biome-ignore lint/suspicious/noArrayIndexKey: synthetic property-based test, stable identity
+                      key={`dd-${i}`}
                       onFocus={() => focusOrder.push(i)}
                       data-testid={`item-${i}`}
                     >
@@ -1138,7 +1143,8 @@ describe('Keyboard Navigation Tests', () => {
                 <TabsList>
                   {Array.from({ length: numTabs }, (_, i) => (
                     <TabsTrigger
-                      key={i}
+                      // biome-ignore lint/suspicious/noArrayIndexKey: synthetic property-based test, stable identity
+                      key={`tab-trig-${i}`}
                       value={`tab-${i}`}
                       onFocus={() => focusOrder.push(i)}
                       data-testid={`tab-${i}`}
@@ -1148,7 +1154,8 @@ describe('Keyboard Navigation Tests', () => {
                   ))}
                 </TabsList>
                 {Array.from({ length: numTabs }, (_, i) => (
-                  <TabsContent key={i} value={`tab-${i}`}>
+                  // biome-ignore lint/suspicious/noArrayIndexKey: synthetic property-based test, stable identity
+                  <TabsContent key={`tab-cont-${i}`} value={`tab-${i}`}>
                     Content {i}
                   </TabsContent>
                 ))}
@@ -1200,7 +1207,8 @@ describe('Keyboard Navigation Tests', () => {
                     <DialogDescription>Testing focus visibility</DialogDescription>
                   </DialogHeader>
                   {Array.from({ length: numButtons }, (_, i) => (
-                    <Button key={i} data-testid={`button-${i}`}>
+                    // biome-ignore lint/suspicious/noArrayIndexKey: synthetic property-based test, stable identity
+                    <Button key={`btn-${i}`} data-testid={`button-${i}`}>
                       Button {i}
                     </Button>
                   ))}
@@ -1247,7 +1255,8 @@ describe('Keyboard Navigation Tests', () => {
             const { unmount } = render(
               <Accordion>
                 {Array.from({ length: numItems }, (_, i) => (
-                  <AccordionItem key={i} value={`item-${i}`}>
+                  // biome-ignore lint/suspicious/noArrayIndexKey: synthetic property-based test, stable identity
+                  <AccordionItem key={`acc-${i}`} value={`item-${i}`}>
                     <AccordionTrigger data-testid={`trigger-${i}`}>Item {i}</AccordionTrigger>
                     <AccordionContent>Content {i}</AccordionContent>
                   </AccordionItem>
@@ -1293,7 +1302,8 @@ describe('Keyboard Navigation Tests', () => {
                 <DropdownMenuTrigger render={<Button>Open Menu</Button>} />
                 <DropdownMenuContent>
                   {Array.from({ length: numItems }, (_, i) => (
-                    <DropdownMenuItem key={i} data-testid={`item-${i}`}>
+                    // biome-ignore lint/suspicious/noArrayIndexKey: synthetic property-based test, stable identity
+                    <DropdownMenuItem key={`dd-${i}`} data-testid={`item-${i}`}>
                       Item {i}
                     </DropdownMenuItem>
                   ))}
@@ -1345,13 +1355,15 @@ describe('Keyboard Navigation Tests', () => {
               <Tabs defaultValue="tab-0">
                 <TabsList>
                   {Array.from({ length: numTabs }, (_, i) => (
-                    <TabsTrigger key={i} value={`tab-${i}`} data-testid={`tab-${i}`}>
+                    // biome-ignore lint/suspicious/noArrayIndexKey: synthetic property-based test, stable identity
+                    <TabsTrigger key={`tab-trig-${i}`} value={`tab-${i}`} data-testid={`tab-${i}`}>
                       Tab {i}
                     </TabsTrigger>
                   ))}
                 </TabsList>
                 {Array.from({ length: numTabs }, (_, i) => (
-                  <TabsContent key={i} value={`tab-${i}`}>
+                  // biome-ignore lint/suspicious/noArrayIndexKey: synthetic property-based test, stable identity
+                  <TabsContent key={`tab-cont-${i}`} value={`tab-${i}`}>
                     Content {i}
                   </TabsContent>
                 ))}
@@ -1527,7 +1539,8 @@ describe('Keyboard Navigation Tests', () => {
             const { unmount } = render(
               <Accordion>
                 {Array.from({ length: numItems }, (_, i) => (
-                  <AccordionItem key={i} value={`item-${i}`}>
+                  // biome-ignore lint/suspicious/noArrayIndexKey: synthetic property-based test, stable identity
+                  <AccordionItem key={`acc-${i}`} value={`item-${i}`}>
                     <AccordionTrigger>Item {i}</AccordionTrigger>
                     <AccordionContent>Content {i}</AccordionContent>
                   </AccordionItem>
@@ -1560,13 +1573,15 @@ describe('Keyboard Navigation Tests', () => {
               <Tabs defaultValue="tab-0">
                 <TabsList>
                   {Array.from({ length: numTabs }, (_, i) => (
-                    <TabsTrigger key={i} value={`tab-${i}`}>
+                    // biome-ignore lint/suspicious/noArrayIndexKey: synthetic property-based test, stable identity
+                    <TabsTrigger key={`tab-trig-${i}`} value={`tab-${i}`}>
                       Tab {i}
                     </TabsTrigger>
                   ))}
                 </TabsList>
                 {Array.from({ length: numTabs }, (_, i) => (
-                  <TabsContent key={i} value={`tab-${i}`}>
+                  // biome-ignore lint/suspicious/noArrayIndexKey: synthetic property-based test, stable identity
+                  <TabsContent key={`tab-cont-${i}`} value={`tab-${i}`}>
                     Content {i}
                   </TabsContent>
                 ))}
@@ -1641,7 +1656,8 @@ describe('Keyboard Navigation Tests', () => {
                 <DropdownMenuTrigger render={<Button>Open Menu</Button>} />
                 <DropdownMenuContent>
                   {Array.from({ length: numItems }, (_, i) => (
-                    <DropdownMenuItem key={i}>Item {i}</DropdownMenuItem>
+                    // biome-ignore lint/suspicious/noArrayIndexKey: synthetic property-based test, stable identity
+                    <DropdownMenuItem key={`dd-${i}`}>Item {i}</DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>

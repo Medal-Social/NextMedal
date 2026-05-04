@@ -75,12 +75,12 @@ export function Mermaid({ value }: MermaidProps) {
     return (
       <div className="my-6 rounded-lg border border-red-700 bg-red-950/20 p-4">
         <div className="mb-2 font-medium text-red-400">Mermaid Diagram Error</div>
-        <div className="text-sm text-red-300">{error}</div>
+        <div className="text-red-300 text-sm">{error}</div>
         <details className="mt-3">
-          <summary className="cursor-pointer text-xs text-red-400 hover:text-red-300">
+          <summary className="cursor-pointer text-red-400 text-xs hover:text-red-300">
             Show diagram code
           </summary>
-          <pre className="mt-2 overflow-x-auto rounded bg-black/30 p-3 text-xs text-red-200">
+          <pre className="mt-2 overflow-x-auto rounded bg-black/30 p-3 text-red-200 text-xs">
             <code>{value.code}</code>
           </pre>
         </details>

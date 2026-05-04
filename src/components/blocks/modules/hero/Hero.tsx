@@ -55,7 +55,7 @@ function buildPortableTextComponents(hasMedia: boolean) {
       h1: ({ children }: { children?: ReactNode }) => (
         <h1
           className={cn(
-            'text-5xl font-black tracking-tighter md:text-6xl lg:text-7xl mb-6 text-balance text-foreground',
+            'mb-6 text-balance font-black text-5xl text-foreground tracking-tighter md:text-6xl lg:text-7xl',
             !hasMedia && 'mx-auto'
           )}
         >
@@ -65,7 +65,7 @@ function buildPortableTextComponents(hasMedia: boolean) {
       normal: ({ children }: { children?: ReactNode }) => (
         <p
           className={cn(
-            'text-lg md:text-xl text-muted-foreground leading-relaxed font-normal text-pretty max-w-2xl',
+            'max-w-2xl text-pretty font-normal text-lg text-muted-foreground leading-relaxed md:text-xl',
             !hasMedia && 'mx-auto'
           )}
         >
@@ -75,12 +75,12 @@ function buildPortableTextComponents(hasMedia: boolean) {
     },
     marks: {
       gradient: ({ children }: { children?: ReactNode }) => (
-        <span className="inline-block bg-gradient-to-r from-brand-vibrant to-brand-purple bg-clip-text text-transparent dark:text-brand-400 font-extrabold">
+        <span className="inline-block bg-gradient-to-r from-brand-vibrant to-brand-purple bg-clip-text font-extrabold text-transparent dark:text-brand-400">
           {children}
         </span>
       ),
       primary: ({ children }: { children?: ReactNode }) => (
-        <span className="text-primary font-medium">{children}</span>
+        <span className="font-medium text-primary">{children}</span>
       ),
     },
   };
@@ -89,9 +89,9 @@ function buildPortableTextComponents(hasMedia: boolean) {
 // Decorative background elements
 function HeroBackground({ hasMedia }: { hasMedia: boolean }) {
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-      <div className="absolute -top-[30%] -right-[10%] w-[70%] h-[70%] rounded-full bg-gradient-to-br from-[var(--hero-from)]/20 to-[var(--hero-to)]/20 blur-3xl opacity-70 dark:from-[var(--hero-from)]/5 dark:to-[var(--hero-to)]/5" />
-      <div className="absolute -bottom-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-gradient-to-tr from-brand-cyan/20 to-brand-rich/20 blur-3xl opacity-70 dark:from-brand-cyan/5 dark:to-brand-rich/5" />
+    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+      <div className="absolute -top-[30%] -right-[10%] h-[70%] w-[70%] rounded-full bg-gradient-to-br from-[var(--hero-from)]/20 to-[var(--hero-to)]/20 opacity-70 blur-3xl dark:from-[var(--hero-from)]/5 dark:to-[var(--hero-to)]/5" />
+      <div className="absolute -bottom-[20%] -left-[10%] h-[60%] w-[60%] rounded-full bg-gradient-to-tr from-brand-cyan/20 to-brand-rich/20 opacity-70 blur-3xl dark:from-brand-cyan/5 dark:to-brand-rich/5" />
       {!hasMedia && (
         <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-5 mix-blend-soft-light" />
       )}
@@ -104,7 +104,7 @@ function HeroImage({ image }: { image: Sanity.Image }) {
   return (
     <Img
       image={image}
-      className="absolute inset-0 w-full h-full object-contain"
+      className="absolute inset-0 h-full w-full object-contain"
       loading="eager"
       fetchPriority="high"
       fill
@@ -283,7 +283,7 @@ export default function Hero(props: Sanity.Hero & { className?: string }) {
         <div
           className={cn(
             'grid grid-cols-1 gap-12',
-            hasMedia ? 'lg:grid-cols-12 lg:items-start lg:gap-20' : 'max-w-5xl mx-auto text-center'
+            hasMedia ? 'lg:grid-cols-12 lg:items-start lg:gap-20' : 'mx-auto max-w-5xl text-center'
           )}
         >
           <HeroContent

@@ -238,8 +238,11 @@ export default defineType({
       categoryTitle: 'categories.0.title',
     },
     prepare: ({ title, slug, media, language, noindex, categoryTitle }) => {
-      const languageLabel =
-        language === 'en' ? 'EN' : language === 'nb' ? 'NO' : language?.toUpperCase();
+      const languageLabel = (() => {
+        if (language === 'en') return 'EN';
+        if (language === 'nb') return 'NO';
+        return language?.toUpperCase();
+      })();
 
       // Collection slug will be determined from site settings at runtime
       const subtitle = [languageLabel, categoryTitle, `/${slug}`].filter(Boolean).join(' • ');

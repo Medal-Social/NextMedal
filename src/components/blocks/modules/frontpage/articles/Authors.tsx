@@ -74,14 +74,14 @@ function Author({
       <div className="flex items-center gap-x-3">
         {author?.image ? (
           <Img
-            className="aspect-square rounded-full object-cover relative z-0 w-10 h-10"
+            className="relative z-0 aspect-square h-10 w-10 rounded-full object-cover"
             image={author.image}
             width={80}
             alt={author.name}
             data-sanity={stega?.scope('image').toString()}
           />
         ) : (
-          <IconUser className="text-primary/20 text-xl relative z-0" />
+          <IconUser className="relative z-0 text-primary/20 text-xl" />
         )}
         <div className="relative z-0">
           <div className={cn('font-semibold', linked && 'group-hover:underline')}>
@@ -94,7 +94,7 @@ function Author({
             >{`${author?.title}`}</div>
           )}
           {socialLinks && Array.isArray(author?.socialLinks) ? (
-            <ul className="mt-1 flex items-center gap-x-6 relative z-10">
+            <ul className="relative z-10 mt-1 flex items-center gap-x-6">
               {author.socialLinks.map((link, index) => {
                 const Icon =
                   {
@@ -113,7 +113,7 @@ function Author({
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-muted-foreground hover:text-foreground h-auto w-fit block"
+                      className="block h-auto w-fit text-muted-foreground hover:text-foreground"
                       aria-label={`${link.platform} profile for ${author.name}`}
                     >
                       <span className="sr-only">{link.platform}</span>

@@ -8,7 +8,7 @@ export default function Testimonials({ intro, reviews, ...props }: Sanity.Testim
   return (
     <Section className="space-y-8" {...moduleProps(props)}>
       {intro && (
-        <header className="section-intro text-center items-center flex flex-col gap-4">
+        <header className="section-intro flex flex-col items-center gap-4 text-center">
           <SharedPortableText value={intro} />
         </header>
       )}
@@ -34,11 +34,12 @@ export default function Testimonials({ intro, reviews, ...props }: Sanity.Testim
               <div className="flex gap-0.5">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <svg
-                    key={i}
+                    // biome-ignore lint/suspicious/noArrayIndexKey: 5 fixed-position rating stars
+                    key={`star-${i}`}
                     className={`h-5 w-5 ${
                       i < (review.rating || 5)
-                        ? 'text-yellow-400 fill-yellow-400'
-                        : 'text-gray-300 fill-gray-300'
+                        ? 'fill-yellow-400 text-yellow-400'
+                        : 'fill-gray-300 text-gray-300'
                     }`}
                     viewBox="0 0 24 24"
                     aria-hidden="true"
@@ -48,12 +49,12 @@ export default function Testimonials({ intro, reviews, ...props }: Sanity.Testim
                   </svg>
                 ))}
               </div>
-              <span className="text-sm text-muted-foreground">{review.rating || 5}/5</span>
+              <span className="text-muted-foreground text-sm">{review.rating || 5}/5</span>
             </div>
 
             {/* Review text */}
             <blockquote
-              className="flex-1 text-sm leading-relaxed text-foreground"
+              className="flex-1 text-foreground text-sm leading-relaxed"
               itemProp="reviewBody"
             >
               {review.reviewText}
@@ -68,7 +69,7 @@ export default function Testimonials({ intro, reviews, ...props }: Sanity.Testim
 
             {/* Review author */}
             <div
-              className="flex items-center gap-3 pt-4 border-t border-border"
+              className="flex items-center gap-3 border-border border-t pt-4"
               itemScope
               itemProp="author"
               itemType="https://schema.org/Person"
@@ -82,7 +83,7 @@ export default function Testimonials({ intro, reviews, ...props }: Sanity.Testim
                 />
               ) : (
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <span className="text-lg font-semibold text-primary">
+                  <span className="font-semibold text-lg text-primary">
                     {review.authorName?.charAt(0).toUpperCase() || '?'}
                   </span>
                 </div>
@@ -92,7 +93,7 @@ export default function Testimonials({ intro, reviews, ...props }: Sanity.Testim
                   {review.authorName}
                 </span>
                 {review.authorTitle && (
-                  <span className="text-xs text-muted-foreground" itemProp="jobTitle">
+                  <span className="text-muted-foreground text-xs" itemProp="jobTitle">
                     {review.authorTitle}
                   </span>
                 )}
