@@ -1,7 +1,8 @@
 'use client';
 
-import { Calendar, Hash } from 'lucide-react';
+import { Calendar, Hash, Inbox } from 'lucide-react';
 import { Date as DateDisplay, Img } from '@/components/blocks/objects/core';
+import { EmptyState } from '@/components/ui/empty-state';
 import {
   Pagination,
   PaginationContent,
@@ -117,9 +118,11 @@ export default function NewsletterListPaginated({
 
   if (!newsletters || newsletters.length === 0) {
     return (
-      <div className="py-12 text-center text-muted-foreground">
-        <p>No newsletter issues found in this collection.</p>
-      </div>
+      <EmptyState
+        icon={Inbox}
+        title="No newsletter issues yet"
+        description="No newsletter issues have been published in this collection yet. Check back soon."
+      />
     );
   }
 

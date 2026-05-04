@@ -6,11 +6,12 @@
  * List-only display - no individual detail pages.
  */
 
-import { Calendar, ExternalLink, Rss } from 'lucide-react';
+import { Calendar, ExternalLink, History, Rss } from 'lucide-react';
 import { groq, stegaClean } from 'next-sanity';
 import { Suspense } from 'react';
 import SharedPortableText from '@/components/blocks/modules/SharedPortableText';
 import { Date as DateDisplay } from '@/components/blocks/objects/core';
+import { EmptyState } from '@/components/ui/empty-state';
 import { Section } from '@/components/ui/section';
 import { Link } from '@/i18n/navigation';
 import { getCollectionSlugWithFallback } from '@/lib/collections/registry';
@@ -349,9 +350,11 @@ function ChangelogList({
 }) {
   if (!entries || entries.length === 0) {
     return (
-      <div className="text-center py-12 text-muted-foreground">
-        <p>No changelog entries found in this collection.</p>
-      </div>
+      <EmptyState
+        icon={History}
+        title="No changelog entries yet"
+        description="No changelog entries have been published in this collection yet."
+      />
     );
   }
 

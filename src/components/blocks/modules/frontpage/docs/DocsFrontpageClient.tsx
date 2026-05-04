@@ -10,6 +10,7 @@
 
 import { Book, ChevronDown, ChevronRight, Search } from 'lucide-react';
 import { useState } from 'react';
+import { EmptyState } from '@/components/ui/empty-state';
 import { Link } from '@/i18n/navigation';
 import { cn } from '@/lib/utils/index';
 
@@ -467,16 +468,6 @@ function SearchInput() {
   );
 }
 
-// Empty state
-function EmptyState() {
-  return (
-    <div className="text-center py-12 text-muted-foreground">
-      <Book className="w-12 h-12 mx-auto mb-4 opacity-50" />
-      <p>No documentation articles found in this collection.</p>
-    </div>
-  );
-}
-
 // Main client component
 export default function DocsFrontpageClient({
   docs,
@@ -502,7 +493,11 @@ export default function DocsFrontpageClient({
             {showSearch && <SearchInput />}
           </header>
         )}
-        <EmptyState />
+        <EmptyState
+          icon={Book}
+          title="No documentation yet"
+          description="No documentation articles have been added to this collection."
+        />
       </>
     );
   }

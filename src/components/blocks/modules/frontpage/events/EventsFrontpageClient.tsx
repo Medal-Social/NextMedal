@@ -29,6 +29,7 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { EmptyState } from '@/components/ui/empty-state';
 import {
   Select,
   SelectContent,
@@ -1527,20 +1528,6 @@ function TimelineView({
   );
 }
 
-// Empty state
-function EmptyState() {
-  const t = useTranslations('modules.events');
-  return (
-    <Card>
-      <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-        <CalendarIcon className="mb-4 size-12 text-muted-foreground/50" />
-        <h3 className="text-lg font-semibold">{t('noEvents')}</h3>
-        <p className="mt-1 text-muted-foreground">{t('noEventsInCollection')}</p>
-      </CardContent>
-    </Card>
-  );
-}
-
 // Main component
 export default function EventsFrontpageClient({
   events,
@@ -1598,7 +1585,11 @@ export default function EventsFrontpageClient({
 
         {/* Content */}
         {!eventsWithStatus || eventsWithStatus.length === 0 ? (
-          <EmptyState />
+          <EmptyState
+            icon={CalendarIcon}
+            title={t('noEvents')}
+            description={t('noEventsInCollection')}
+          />
         ) : (
           <>
             {layout === 'calendar' && (
