@@ -45,7 +45,9 @@
     "perf:budget": "npx tsx src/scripts/validate-performance-budget.ts",
     "perf:budget:verbose": "npx tsx src/scripts/validate-performance-budget.ts --verbose",
     "perf:validate": "pnpm build && pnpm perf:budget && pnpm e2e:perf",
-    "prepare": "husky"
+    "prepare": "husky",
+    "changeset": "changeset",
+    "version": "changeset version"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
@@ -97,6 +99,8 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
     "@biomejs/biome": "2.4.14",
+    "@changesets/changelog-github": "^0.5.2",
+    "@changesets/cli": "^2.31.0",
     "@playwright/test": "^1.59.1",
     "@sanity/language-filter": "^5.0.1",
     "@sanity/template-validator": "^3.1.0",

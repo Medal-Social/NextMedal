@@ -1,0 +1,68 @@
+name: Request changeset
+
+# When a non-draft PR opens against dev or prod, check whether it touches
+# package-affecting paths AND lacks a changeset. If so, post a friendly
+# comment pointing the contributor at the workflow in .changeset/README.md.
+
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+    branches: [dev, prod]
+
+permissions: {}
+
+jobs:
+  request:
+    if: |
+      !github.event.pull_request.draft &&
+      !startsWith(github.head_ref, 'changeset-release/') &&
+      github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Check if changeset needed
+        id: check
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.sha }} --depth=1
+          CHANGED=$(git diff --name-only ${{ github.event.pull_request.base.sha }} HEAD)
+
+          HAS_CHANGESET=$(echo "$CHANGED" | grep -c '^\.changeset/.*\.md$' || true)
+
+          # Repo-meta paths that do NOT require a changeset even if they change.
+          # If a PR ONLY touches these, no changeset is needed.
+          NON_PKG=$(echo "$CHANGED" | grep -cE '^(\.github/|\.husky/|\.changeset/|docs/|\.gitignore$|\.editorconfig$|\.npmrc$|CODEOWNERS$|[^/]*\.md$|LICENSE$|NOTICE$|biome\.json$|pnpm-lock\.yaml$)' || true)
+
+          # Everything else (src/, scripts/, package.json, tsconfig*.json, etc.) is package-affecting.
+          TOTAL_CHANGED=$(echo "$CHANGED" | grep -c . || true)
+          PKG_AFFECTING=$((TOTAL_CHANGED - NON_PKG))
+
+          if [[ "$HAS_CHANGESET" -eq 0 && "$PKG_AFFECTING" -gt 0 ]]; then
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Comment on PR
+        if: steps.check.outputs.needed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: [
+                'This PR touches package-affecting paths but doesn\'t include a changeset.',
+                '',
+                'Run `pnpm changeset` locally, pick a bump type, and commit the resulting `.changeset/*.md` file.',
+                '',
+                'See `.changeset/README.md` for the workflow. If this PR is purely repo-meta (CI, hooks, docs, etc.) and the bot got it wrong, ignore this comment.',
+              ].join('\n')
+            });
