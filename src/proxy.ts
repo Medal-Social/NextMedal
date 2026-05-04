@@ -23,9 +23,12 @@ export function proxy(request: NextRequest) {
     : NextResponse.next({ request: forwardedRequest });
 
   // Preserve every response header next-intl set (locale cookie, etc.)
-  // except the rewrite directive, which we've already consumed.
+  // except the rewrite directive, which we've already consumed. Use
+  // append() so multi-value headers like set-cookie aren't collapsed —
+  // forEach yields one (key, value) per repeated header, and rebuilt
+  // starts with an empty header set, so append never duplicates.
   response.headers.forEach((value, key) => {
-    if (key !== 'x-middleware-rewrite') rebuilt.headers.set(key, value);
+    if (key !== 'x-middleware-rewrite') rebuilt.headers.append(key, value);
   });
 
   return rebuilt;
