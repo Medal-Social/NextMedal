@@ -1,6 +1,6 @@
 'use server';
 
-import MedalSocialClient from '@medalsocial/sdk';
+import { Medal } from '@medalsocial/sdk';
 import { z } from 'zod';
 import { env } from '@/lib/core/env';
 import { logger } from '@/lib/core/logger';
@@ -26,6 +26,14 @@ function getStringOrUndefined(value: unknown): string | undefined {
   return String(value);
 }
 
+// Split a "Full Name" into first/last for the Contacts API.
+function splitName(input: string): { first_name?: string; last_name?: string } {
+  const parts = input.trim().split(/\s+/);
+  if (parts.length === 0 || !parts[0]) return {};
+  if (parts.length === 1) return { first_name: parts[0] };
+  return { first_name: parts[0], last_name: parts.slice(1).join(' ') };
+}
+
 export const submitForm = actionClient
   .schema(submissionSchema)
   .action(async ({ parsedInput: { intent, data, metadata = {} } }) => {
@@ -37,78 +45,82 @@ export const submitForm = actionClient
       return { success: true };
     }
 
-    const clientId = env.MEDAL_SOCIAL_CLIENT_ID;
-    const clientSecret = env.MEDAL_SOCIAL_CLIENT_SECRET;
+    const token = env.MEDAL_API_TOKEN;
     const baseUrl = env.MEDAL_API_ENDPOINT;
 
-    if (!clientId || !clientSecret) {
-      logger.error('Missing Medal Social credentials');
+    if (!token) {
+      logger.error('Missing MEDAL_API_TOKEN');
       return { error: 'This form is temporarily unavailable. Please try again later.' };
     }
 
-    const client = new MedalSocialClient({
-      auth: {
-        kind: 'basic',
-        clientId,
-        clientSecret,
-      },
-      baseUrl,
-    });
+    const medal = new Medal(token, baseUrl ? { baseUrl } : undefined);
+
+    // Map every form intent to a contacts.create call. The SDK's
+    // CreateContactInput accepts inline notes, so a single create
+    // covers what the legacy createNote() endpoint did.
+    function buildContactInput(opts: {
+      defaultName: string;
+      noteContent: string;
+      labels?: string[];
+    }) {
+      const fullName = getString(data.name || data.fullname) || opts.defaultName;
+      return {
+        email: getString(data.email),
+        ...splitName(fullName),
+        company: getStringOrUndefined(data.company),
+        phone: getStringOrUndefined(data.phone || data.tel),
+        labels: opts.labels,
+        notes: { content: opts.noteContent },
+        custom_fields: {
+          ...metadata,
+          ...data,
+          intent,
+        },
+      };
+    }
 
     try {
       switch (intent) {
         case 'lead':
         case 'contact':
-          // Handle lead generation via Medal Social SDK (with retry for network resilience)
           await withRetry(
             () =>
-              client.createNote({
-                name: getString(data.name || data.fullname) || 'Anonymous',
-                email: getString(data.email),
-                company: getStringOrUndefined(data.company),
-                phone: getStringOrUndefined(data.phone || data.tel),
-                content: getString(data.message || data.content) || 'Form submission (no message)',
-                metadata: {
-                  ...metadata,
-                  ...data,
-                },
-              }),
+              medal.contacts.create(
+                buildContactInput({
+                  defaultName: 'Anonymous',
+                  noteContent:
+                    getString(data.message || data.content) || 'Form submission (no message)',
+                  labels: ['lead'],
+                })
+              ),
             { retries: 3, delay: 1000 }
           );
           break;
 
         case 'newsletter':
-          // Handle newsletter subscription (with retry for network resilience)
           await withRetry(
             () =>
-              client.createNote({
-                name: getString(data.name || data.fullname) || 'Subscriber',
-                email: getString(data.email),
-                content: 'Newsletter Subscription',
-                metadata: {
-                  ...metadata,
-                  ...data,
-                  intent: 'newsletter',
-                },
-              }),
+              medal.contacts.create(
+                buildContactInput({
+                  defaultName: 'Subscriber',
+                  noteContent: 'Newsletter Subscription',
+                  labels: ['newsletter'],
+                })
+              ),
             { retries: 3, delay: 1000 }
           );
           break;
 
         case 'download':
-          // Handle resource download (with retry for network resilience)
           await withRetry(
             () =>
-              client.createNote({
-                name: getString(data.name || data.fullname) || 'Downloader',
-                email: getString(data.email),
-                content: `Resource Download: ${getString(data.resource) || 'Unknown'}`,
-                metadata: {
-                  ...metadata,
-                  ...data,
-                  intent: 'download',
-                },
-              }),
+              medal.contacts.create(
+                buildContactInput({
+                  defaultName: 'Downloader',
+                  noteContent: `Resource Download: ${getString(data.resource) || 'Unknown'}`,
+                  labels: ['download'],
+                })
+              ),
             { retries: 3, delay: 1000 }
           );
           break;

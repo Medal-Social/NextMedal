@@ -61,7 +61,7 @@ export default function PostPreview({
   href?: string;
 }) {
   // Early return for non-skeleton mode without valid post data
-  if (!skeleton && (!post || !post.metadata)) return null;
+  if (!skeleton && !post?.metadata) return null;
 
   const metadata = skeleton ? undefined : post?.metadata;
   const seo = skeleton ? undefined : post?.seo;
