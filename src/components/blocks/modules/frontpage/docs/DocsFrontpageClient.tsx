@@ -9,8 +9,8 @@
 'use client';
 
 import { Book, ChevronDown, ChevronRight, Search } from 'lucide-react';
-import Link from 'next/link';
 import { useState } from 'react';
+import { Link } from '@/i18n/navigation';
 import { cn } from '@/lib/utils/index';
 
 // Types

@@ -1,11 +1,11 @@
 import { ExternalLink } from 'lucide-react';
-import Link from 'next/link';
 import { getLocale } from 'next-intl/server';
 import { PortableText } from 'next-sanity';
 import { Img } from '@/components/blocks/objects/core';
 import { Social } from '@/components/blocks/utility';
 import CookiePreferencesTrigger from '@/components/CookiePreferencesTrigger';
 import { Section } from '@/components/ui/section';
+import { Link } from '@/i18n/navigation';
 import resolveUrl from '@/lib/sanity/resolve-url-server';
 import { cn } from '@/lib/utils/index';
 import { getFooterSettings } from '@/sanity/lib/fetch';

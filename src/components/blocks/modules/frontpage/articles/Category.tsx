@@ -1,8 +1,8 @@
 'use client';
 
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
+import { Link } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 import { useCollectionSlug } from '@/lib/collections/context';
 import { cn } from '@/lib/utils/index';

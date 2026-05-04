@@ -1,7 +1,6 @@
 'use client';
 
 import { FileQuestion } from 'lucide-react';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { buttonVariants } from '@/components/ui/button';
 import {
@@ -13,6 +12,7 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 import { Section } from '@/components/ui/section';
+import { Link } from '@/i18n/navigation';
 
 export default function NotFoundFallback() {
   const t = useTranslations('NotFound');

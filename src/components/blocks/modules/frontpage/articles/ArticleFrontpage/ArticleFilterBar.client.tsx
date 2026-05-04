@@ -1,11 +1,11 @@
 'use client';
 
 import { LayoutGrid, List, Rss } from 'lucide-react';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useArticleFilters } from '@/components/blocks/modules/frontpage/articles/store';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
+import { Link } from '@/i18n/navigation';
 import { usePageState } from '@/lib/hooks/use-pagination';
 import { cn } from '@/lib/utils/index';
 

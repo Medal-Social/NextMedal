@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import { Date as ArticleDate, Img } from '@/components/blocks/objects/core';
+import { Link } from '@/i18n/navigation';
 import { resolveUrlSync } from '@/lib/sanity/resolve-url';
 import { getArticleFallbackImage } from '@/lib/utils/article-helpers';
 import { createStegaAttribute } from '@/sanity/lib/client';

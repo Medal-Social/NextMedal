@@ -1,8 +1,8 @@
 import { Settings } from 'lucide-react';
-import Link from 'next/link';
 import { getLocale, getTranslations } from 'next-intl/server';
 import LocaleSwitcher from '@/components/blocks/layout/language-switcher';
 import { DEFAULT_LOCALE } from '@/i18n/config';
+import { Link } from '@/i18n/navigation';
 import ThemeToggle from './ThemeToggle';
 
 export async function HeaderFallback() {

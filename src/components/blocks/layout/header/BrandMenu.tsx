@@ -1,7 +1,6 @@
 'use client';
 
 import { Copy, Home, LayoutGrid } from 'lucide-react';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import type * as React from 'react';
@@ -14,6 +13,7 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
 import { DEFAULT_LOCALE } from '@/i18n/config';
+import { Link } from '@/i18n/navigation';
 import { logger } from '@/lib/core/logger';
 import { copyToClipboard } from '@/lib/utils/clipboard';
 import { urlFor } from '@/sanity/lib/image';

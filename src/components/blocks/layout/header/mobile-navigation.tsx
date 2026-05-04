@@ -2,12 +2,12 @@
 
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import { motion, type Variants } from 'motion/react';
-import Link from 'next/link';
 import { stegaClean } from 'next-sanity';
 import { useCallback, useEffect, useRef } from 'react';
 import { CTAList } from '@/components/blocks/objects/cta';
 import { CommandMenu } from '@/components/blocks/utility';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Link } from '@/i18n/navigation';
 import { resolveUrlSync } from '@/lib/sanity/resolve-url';
 import { ANIMATION_DURATION, ANIMATION_EASING } from './constants';
 import type { MobileNavigationProps } from './types';

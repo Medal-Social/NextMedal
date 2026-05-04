@@ -1,7 +1,7 @@
 import { Settings } from 'lucide-react';
-import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { Section } from '@/components/ui/section';
+import { Link } from '@/i18n/navigation';
 import Wrapper from './wrapper';
 
 export async function FooterFallback() {

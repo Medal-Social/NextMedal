@@ -1,10 +1,10 @@
 'use client';
 
 import { AnimatePresence } from 'motion/react';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { CommandMenu } from '@/components/blocks/utility/CommandMenu';
+import { Link } from '@/i18n/navigation';
 import { useCollections } from '@/lib/collections/context';
 import { cn } from '@/lib/utils/index';
 import { DESKTOP_BREAKPOINT, SCROLL_THRESHOLD } from './constants';

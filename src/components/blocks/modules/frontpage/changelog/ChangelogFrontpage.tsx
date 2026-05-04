@@ -7,12 +7,12 @@
  */
 
 import { Calendar, ExternalLink, Rss } from 'lucide-react';
-import Link from 'next/link';
 import { groq, stegaClean } from 'next-sanity';
 import { Suspense } from 'react';
 import SharedPortableText from '@/components/blocks/modules/SharedPortableText';
 import { Date as DateDisplay } from '@/components/blocks/objects/core';
 import { Section } from '@/components/ui/section';
+import { Link } from '@/i18n/navigation';
 import { getCollectionSlugWithFallback } from '@/lib/collections/registry';
 import moduleProps from '@/lib/sanity/module-props';
 import { cn } from '@/lib/utils/index';

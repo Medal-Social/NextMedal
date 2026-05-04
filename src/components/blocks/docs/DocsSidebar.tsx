@@ -1,8 +1,8 @@
 'use client';
 
 import { motion } from 'motion/react';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Link } from '@/i18n/navigation';
 import { useCollectionPath } from '@/lib/collections/context';
 import { cn } from '@/lib/utils/index';
 

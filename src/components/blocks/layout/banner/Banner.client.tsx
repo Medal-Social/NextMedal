@@ -1,9 +1,9 @@
 'use client';
 import { X } from 'lucide-react';
-import Link from 'next/link';
 import { PortableText, stegaClean } from 'next-sanity';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Link } from '@/i18n/navigation';
 import { resolveUrlSync } from '@/lib/sanity/resolve-url';
 
 /**

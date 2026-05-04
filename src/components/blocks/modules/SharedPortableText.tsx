@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import { PortableText, type PortableTextComponents, stegaClean } from 'next-sanity';
+import { Link } from '@/i18n/navigation';
 import { cn, slug } from '@/lib/utils/index';
 import resolveSlug from '@/sanity/lib/resolveSlug';
 

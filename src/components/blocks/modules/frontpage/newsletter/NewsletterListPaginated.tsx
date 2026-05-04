@@ -1,7 +1,6 @@
 'use client';
 
 import { Calendar, Hash } from 'lucide-react';
-import Link from 'next/link';
 import { Date as DateDisplay, Img } from '@/components/blocks/objects/core';
 import {
   Pagination,
@@ -12,6 +11,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import { Link } from '@/i18n/navigation';
 import { getPageNumbers, usePagination } from '@/lib/hooks/use-pagination';
 import { cn } from '@/lib/utils/index';
 

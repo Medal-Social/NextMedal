@@ -1,9 +1,9 @@
 'use client';
 
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Img, Source } from '@/components/blocks/objects/core';
 import { DEFAULT_LOCALE } from '@/i18n/config';
+import { Link } from '@/i18n/navigation';
 import { cn } from '@/lib/utils/index';
 import BrandMenu from './BrandMenu';
 import type { LogoProps } from './types';

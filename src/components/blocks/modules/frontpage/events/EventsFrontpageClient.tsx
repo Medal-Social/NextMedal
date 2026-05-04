@@ -22,7 +22,6 @@ import {
   Users,
   Video,
 } from 'lucide-react';
-import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { Img } from '@/components/blocks/objects/core';
@@ -37,6 +36,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Link } from '@/i18n/navigation';
 import {
   cn,
   formatEventDate,

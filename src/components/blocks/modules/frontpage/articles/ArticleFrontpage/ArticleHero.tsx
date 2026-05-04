@@ -1,6 +1,6 @@
-import Link from 'next/link';
 import AuthorCard from '@/components/blocks/modules/frontpage/articles/AuthorCard';
 import { Date as DateDisplay } from '@/components/blocks/objects/core';
+import { Link } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 import { cn } from '@/lib/utils/index';
 import { createStegaAttribute } from '@/sanity/lib/client';

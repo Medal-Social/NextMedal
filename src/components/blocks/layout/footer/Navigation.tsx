@@ -1,8 +1,8 @@
 import { ExternalLink } from 'lucide-react';
-import Link from 'next/link';
 import { getLocale } from 'next-intl/server';
 import { stegaClean } from 'next-sanity';
 import { CTA } from '@/components/blocks/objects/cta';
+import { Link } from '@/i18n/navigation';
 import resolveUrl from '@/lib/sanity/resolve-url-server';
 import { getFooterSettings } from '@/sanity/lib/fetch';
 

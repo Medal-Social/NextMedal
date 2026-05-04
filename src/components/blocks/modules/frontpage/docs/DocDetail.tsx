@@ -7,11 +7,11 @@
  */
 
 import { Book, ChevronRight, Clock } from 'lucide-react';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Code from '@/components/blocks/modules/content/RichtextModule/Code';
 import SharedPortableText from '@/components/blocks/modules/SharedPortableText';
 import { Section } from '@/components/ui/section';
+import { Link } from '@/i18n/navigation';
 import { cn } from '@/lib/utils/index';
 
 interface DocDetailProps {

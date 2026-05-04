@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { Img } from '@/components/blocks/objects/core';
 import {
   IconFacebook,
@@ -8,6 +7,7 @@ import {
   IconUser,
   IconYoutube,
 } from '@/components/icons/social-icons';
+import { Link } from '@/i18n/navigation';
 import { cn } from '@/lib/utils/index';
 import { createStegaAttribute } from '@/sanity/lib/client';
 

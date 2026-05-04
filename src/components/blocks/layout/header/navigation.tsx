@@ -1,7 +1,6 @@
 'use client';
 
 import { ExternalLink } from 'lucide-react';
-import Link from 'next/link';
 import { stegaClean } from 'next-sanity';
 import type * as React from 'react';
 import {
@@ -13,6 +12,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
+import { Link } from '@/i18n/navigation';
 import { resolveUrlSync } from '@/lib/sanity/resolve-url';
 
 type NavMenuItem = Sanity.MenuItem | Sanity.DropdownMenu;
