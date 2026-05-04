@@ -33,6 +33,11 @@ const config = {
   reactStrictMode: true,
   poweredByHeader: false,
   output: "standalone",
+  // @medalsocial/sdk is loaded via dynamic import at runtime (workaround
+  // for Turbopack's static-import tree-shaking bug). Marking it as a
+  // server-external package ensures Next's standalone tracer copies the
+  // module into .next/standalone so Docker images pick it up.
+  serverExternalPackages: ['@medalsocial/sdk'],
 
   // Next.js 16 optimizations
   reactCompiler: true,

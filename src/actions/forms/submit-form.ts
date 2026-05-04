@@ -1,5 +1,6 @@
 'use server';
 
+import type { Medal } from '@medalsocial/sdk';
 import { z } from 'zod';
 import { logger } from '@/lib/core/logger';
 import { actionClient, withSecurity } from '@/lib/core/safe-action';
@@ -25,6 +26,69 @@ function getStringOrUndefined(value: unknown): string | undefined {
   return str.length > 0 ? str : undefined;
 }
 
+interface SubmissionContext {
+  medal: Medal;
+  email: string;
+  firstName?: string;
+  company?: string;
+  phone?: string;
+  message?: string;
+  metadata: Record<string, unknown>;
+  data: Record<string, unknown>;
+  intent: string;
+}
+
+async function handleLeadOrContact(ctx: SubmissionContext): Promise<void> {
+  try {
+    const { data: contact } = await ctx.medal.contacts.create({
+      email: ctx.email,
+      first_name: ctx.firstName,
+      company: ctx.company,
+      phone: ctx.phone,
+      status: 'lead',
+      labels: [ctx.intent],
+      custom_fields: { ...ctx.metadata, source: ctx.metadata.url || 'contact-form' },
+    });
+    if (ctx.message && contact?.id) {
+      await ctx.medal.contacts.addNote(contact.id, { content: ctx.message });
+    }
+  } catch (err) {
+    logger.error({ err, intent: ctx.intent }, '[medal-sdk] contacts.create failed (non-fatal)');
+  }
+}
+
+async function handleNewsletter(ctx: SubmissionContext): Promise<void> {
+  try {
+    await ctx.medal.contacts.create({
+      email: ctx.email,
+      first_name: ctx.firstName,
+      status: 'lead',
+      email_status: 'subscribed',
+      labels: ['newsletter'],
+      custom_fields: { source: 'newsletter-form' },
+    });
+  } catch (err) {
+    logger.error({ err, intent: ctx.intent }, '[medal-sdk] contacts.create failed (non-fatal)');
+  }
+}
+
+async function handleDownload(ctx: SubmissionContext): Promise<void> {
+  try {
+    await ctx.medal.contacts.create({
+      email: ctx.email,
+      first_name: ctx.firstName,
+      status: 'lead',
+      labels: ['download'],
+      custom_fields: {
+        source: 'download-form',
+        resource: getString(ctx.data.resource) || 'unknown',
+      },
+    });
+  } catch (err) {
+    logger.error({ err, intent: ctx.intent }, '[medal-sdk] contacts.create failed (non-fatal)');
+  }
+}
+
 export const submitForm = actionClient
   .schema(submissionSchema)
   .action(async ({ parsedInput: { intent, data, metadata = {} } }) => {
@@ -38,76 +102,37 @@ export const submitForm = actionClient
       return { error: 'Email is required.' };
     }
 
-    const firstName = getStringOrUndefined(data.name || data.fullname);
-    const company = getStringOrUndefined(data.company);
-    const phone = getStringOrUndefined(data.phone || data.tel);
-    const message = getStringOrUndefined(data.message || data.content);
-
     try {
       const medal = await getMedal();
+      if (!medal) {
+        // Sanity is the source of truth — SDK is best-effort and may
+        // be unconfigured. Acknowledge the submission either way.
+        return { success: true };
+      }
+
+      const ctx: SubmissionContext = {
+        medal,
+        email,
+        firstName: getStringOrUndefined(data.name || data.fullname),
+        company: getStringOrUndefined(data.company),
+        phone: getStringOrUndefined(data.phone || data.tel),
+        message: getStringOrUndefined(data.message || data.content),
+        metadata,
+        data,
+        intent,
+      };
 
       switch (intent) {
         case 'lead':
-        case 'contact': {
-          if (medal) {
-            try {
-              const { data: contact } = await medal.contacts.create({
-                email,
-                first_name: firstName,
-                company,
-                phone,
-                status: 'lead',
-                labels: [intent],
-                custom_fields: { ...metadata, source: metadata.url || 'contact-form' },
-              });
-              if (message && contact?.id) {
-                await medal.contacts.addNote(contact.id, { content: message });
-              }
-            } catch (err) {
-              logger.error({ err, intent }, '[medal-sdk] contacts.create failed (non-fatal)');
-            }
-          }
+        case 'contact':
+          await handleLeadOrContact(ctx);
           break;
-        }
-
-        case 'newsletter': {
-          if (medal) {
-            try {
-              await medal.contacts.create({
-                email,
-                first_name: firstName,
-                status: 'lead',
-                email_status: 'subscribed',
-                labels: ['newsletter'],
-                custom_fields: { source: 'newsletter-form' },
-              });
-            } catch (err) {
-              logger.error({ err, intent }, '[medal-sdk] contacts.create failed (non-fatal)');
-            }
-          }
+        case 'newsletter':
+          await handleNewsletter(ctx);
           break;
-        }
-
-        case 'download': {
-          if (medal) {
-            try {
-              await medal.contacts.create({
-                email,
-                first_name: firstName,
-                status: 'lead',
-                labels: ['download'],
-                custom_fields: {
-                  source: 'download-form',
-                  resource: getString(data.resource) || 'unknown',
-                },
-              });
-            } catch (err) {
-              logger.error({ err, intent }, '[medal-sdk] contacts.create failed (non-fatal)');
-            }
-          }
+        case 'download':
+          await handleDownload(ctx);
           break;
-        }
-
         default:
           logger.warn(`Unknown submission intent: ${intent}`);
           return { error: 'This form is not set up correctly. Please contact support.' };

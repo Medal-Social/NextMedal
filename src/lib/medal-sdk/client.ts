@@ -36,15 +36,25 @@ export async function getMedal(): Promise<MedalType | null> {
   if (_medal) return _medal;
 
   if (!_medalPromise) {
-    _medalPromise = (async () => {
-      const moduleName = ['@medalsocial', 'sdk'].join('/');
-      const sdk = (await import(/* webpackIgnore: true */ moduleName)) as Record<string, unknown>;
-      const MedalClass =
-        (sdk.Medal as typeof MedalType | undefined) ??
-        (sdk.default as typeof MedalType | undefined);
-      if (!MedalClass) return null;
-      _medal = new MedalClass(apiKey, { baseUrl: baseUrl || undefined });
-      return _medal;
+    _medalPromise = (async (): Promise<MedalType | null> => {
+      try {
+        const moduleName = ['@medalsocial', 'sdk'].join('/');
+        const sdk = (await import(/* webpackIgnore: true */ moduleName)) as Record<string, unknown>;
+        const MedalClass =
+          (sdk.Medal as typeof MedalType | undefined) ??
+          (sdk.default as typeof MedalType | undefined);
+        if (!MedalClass) return null;
+        _medal = new MedalClass(apiKey, { baseUrl: baseUrl || undefined });
+        return _medal;
+      } catch {
+        // Forms must NEVER fail because the SDK is unavailable —
+        // contract is "return null on any failure". Reset the memo
+        // so a subsequent call can retry (transient failures, e.g.
+        // module not yet ready post-deploy, shouldn't permanently
+        // disable the SDK across the worker's lifetime).
+        _medalPromise = null;
+        return null;
+      }
     })();
   }
 
