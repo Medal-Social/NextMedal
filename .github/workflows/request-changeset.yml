@@ -6,7 +6,9 @@ name: Request changeset
 
 on:
   pull_request:
-    types: [opened, ready_for_review]
+    # Cover the full PR lifecycle so a PR that starts as docs-only and
+    # later adds package-affecting commits still gets checked.
+    types: [opened, ready_for_review, reopened, synchronize]
     branches: [dev, prod]
 
 permissions: {}
@@ -29,9 +31,19 @@ jobs:
 
       - name: Check if changeset needed
         id: check
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
         run: |
-          git fetch origin ${{ github.event.pull_request.base.sha }} --depth=1
-          CHANGED=$(git diff --name-only ${{ github.event.pull_request.base.sha }} HEAD)
+          # Fetch the base branch by ref (not by SHA — fetching arbitrary
+          # SHAs depends on uploadpack.allowReachableSHA1InWant being on).
+          git fetch origin "$BASE_REF" --quiet
+
+          # Diff from the merge-base, not the base tip. Diffing against
+          # base.sha directly produces false positives when the PR is
+          # behind base (commits ON base that aren't on the PR show up
+          # as "changed" files).
+          MERGE_BASE=$(git merge-base "origin/$BASE_REF" HEAD)
+          CHANGED=$(git diff --name-only "$MERGE_BASE" HEAD)
 
           HAS_CHANGESET=$(echo "$CHANGED" | grep -c '^\.changeset/.*\.md$' || true)
 
@@ -49,20 +61,74 @@ jobs:
             echo "needed=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Comment on PR
-        if: steps.check.outputs.needed == 'true'
+      - name: Find existing bot comment
+        id: find
+        if: steps.check.outputs.needed == 'true' || steps.check.outputs.needed == 'false'
         uses: actions/github-script@v7
         with:
           script: |
-            await github.rest.issues.createComment({
+            const marker = '<!-- request-changeset-bot -->';
+            const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: [
-                'This PR touches package-affecting paths but doesn\'t include a changeset.',
-                '',
-                'Run `pnpm changeset` locally, pick a bump type, and commit the resulting `.changeset/*.md` file.',
-                '',
-                'See `.changeset/README.md` for the workflow. If this PR is purely repo-meta (CI, hooks, docs, etc.) and the bot got it wrong, ignore this comment.',
-              ].join('\n')
+              per_page: 100,
+            });
+            const existing = comments.find((c) => c.body && c.body.includes(marker));
+            core.setOutput('id', existing ? existing.id : '');
+
+      - name: Upsert nudge comment
+        if: steps.check.outputs.needed == 'true'
+        uses: actions/github-script@v7
+        env:
+          EXISTING_ID: ${{ steps.find.outputs.id }}
+        with:
+          script: |
+            const marker = '<!-- request-changeset-bot -->';
+            const body = [
+              marker,
+              'This PR touches package-affecting paths but doesn\'t include a changeset.',
+              '',
+              'Run `pnpm changeset` locally, pick the affected app(s) and bump type, and commit the resulting `.changeset/*.md` file.',
+              '',
+              'See `.changeset/README.md` for the workflow. If this PR is purely repo-meta (CI, hooks, docs, etc.) and the bot got it wrong, ignore this comment.',
+            ].join('\n');
+
+            const existingId = process.env.EXISTING_ID;
+            if (existingId) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: Number(existingId),
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+      - name: Resolve nudge once changeset is added
+        if: steps.check.outputs.needed == 'false' && steps.find.outputs.id != ''
+        uses: actions/github-script@v7
+        env:
+          EXISTING_ID: ${{ steps.find.outputs.id }}
+        with:
+          script: |
+            // The PR previously needed a changeset and got nagged; the
+            // contributor has now added one (or removed package-affecting
+            // changes). Update the comment so it doesn't keep saying
+            // "missing changeset" when there is one.
+            const body = [
+              '<!-- request-changeset-bot -->',
+              '✓ Changeset present. Thanks!',
+            ].join('\n');
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: Number(process.env.EXISTING_ID),
+              body,
             });
