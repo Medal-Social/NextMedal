@@ -61,7 +61,19 @@ jobs:
     # prerender call sanityFetch at build time). Environment-scoped secrets
     # live under "Staging" — same place preview.yml reads them from.
     environment: Staging
-    if: github.event.pull_request.head.repo.full_name == github.repository || github.event_name != 'pull_request'
+    # Skip:
+    # - Fork PRs (head.repo != github.repository) — secrets aren't exposed.
+    # - Dependabot PRs (github.actor == 'dependabot[bot]') — GitHub treats
+    #   Dependabot-triggered pull_request runs like forked PRs and does not
+    #   expose normal Actions secrets, so the build would run with empty
+    #   NEXT_PUBLIC_SANITY_* and prebuild's generate-collections script
+    #   would fail on the missing env vars. (NextMedal currently doesn't
+    #   use Dependabot for version updates — empty .github/dependabot.yml
+    #   — but this guard keeps the workflow correct if that changes.)
+    if: >-
+      github.actor != 'dependabot[bot]' &&
+      (github.event.pull_request.head.repo.full_name == github.repository
+        || github.event_name != 'pull_request')
 
     env:
       NEXT_PUBLIC_BASE_URL: https://ci.example.com
