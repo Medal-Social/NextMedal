@@ -5,7 +5,7 @@
  */
 
 import { render, screen, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import SocialEmbed from '@/components/blocks/objects/core/SocialEmbed';
 
 // Mock IntersectionObserver with proper class constructor
@@ -198,6 +198,16 @@ describe('SocialEmbed Component', () => {
   });
 
   describe('Snapshot Tests', () => {
+    // Pin Date so JSON-LD `uploadDate: new Date().toISOString()` is stable across runs.
+    beforeEach(() => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2026-01-03T15:42:14.282Z'));
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
     it('should match snapshot for Twitter embed (loading state)', () => {
       const { container } = render(
         <SocialEmbed platform="twitter" url="https://x.com/user/status/123456" />
