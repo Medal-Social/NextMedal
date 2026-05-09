@@ -39,7 +39,6 @@ export default function DraftModeControls() {
   if (!mounted) return null;
 
   const banner = (
-    // biome-ignore lint/a11y/useSemanticElements: No semantic element exists for status banners, role="status" is correct
     <div
       className={cn(
         // Position

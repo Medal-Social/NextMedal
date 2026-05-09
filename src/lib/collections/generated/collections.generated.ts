@@ -1,5 +1,4 @@
 // AUTO-GENERATED FILE - DO NOT EDIT
-// biome-ignore lint: Auto-generated file
 // Generated at: 2026-05-04T14:19:19.146Z
 // Source: Sanity CMS (pages with frontpage modules)
 //
