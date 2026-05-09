@@ -48,8 +48,8 @@ const sharedTestConfig = {
     deps: {
       // Inline packages so they go through Vite's transform pipeline:
       // - `server-only` is mocked.
-      // - `next-intl`, `next-themes` import bare-specifier Next subpaths
-      //   (e.g. `next/server`) without `.js`; Vite 8's stricter ESM resolver
+      // - `next-intl` imports bare-specifier Next subpaths (e.g.
+      //   `next/server`) without `.js`; Vite 8's stricter ESM resolver
       //   trips on these, so we let Vite rewrite them.
       // - `sanity` and `@sanity/...` eager-load `.css` bundles that Node's
       //   loader can't handle; running them through Vite lets the css-stub

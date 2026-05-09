@@ -19,7 +19,7 @@ jobs:
   # require real Sanity credentials — Sanity calls in tests are mocked.
   quality:
     name: Lint + Typecheck + Test
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 15
 
     steps:
@@ -55,7 +55,7 @@ jobs:
   # to validate them via deployment.
   build:
     name: Next Build
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 20
     if: github.event.pull_request.head.repo.full_name == github.repository || github.event_name != 'pull_request'
 
