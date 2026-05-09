@@ -71,15 +71,21 @@ describe('isUniqueAcrossLocale', () => {
     expect(query).not.toContain('_type == $type');
   });
 
-  it('should return false if toSafeGroqPath fails', async () => {
+  it('should fail safe to defaultIsUnique if toSafeGroqPath throws', async () => {
+    // Returning false from a uniqueness validator on a transient/internal error
+    // would falsely block a valid slug. The fail-safe behavior is to delegate
+    // back to Sanity's default validator.
+    const defaultIsUnique = vi.fn().mockResolvedValue(true);
     const contextWithInvalidPath = {
       ...mockContext,
+      defaultIsUnique,
       path: ['invalid segment!'],
     } as unknown as SlugValidationContext;
 
     const result = await isUniqueAcrossLocale('my-slug', contextWithInvalidPath);
 
-    expect(result).toBe(false);
+    expect(defaultIsUnique).toHaveBeenCalledWith('my-slug', contextWithInvalidPath);
+    expect(result).toBe(true);
   });
 
   it('should fallback to defaultIsUnique if no language is present', async () => {

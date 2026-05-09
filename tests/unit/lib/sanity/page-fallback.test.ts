@@ -9,10 +9,16 @@ vi.mock('@/i18n/config', () => ({
   DEFAULT_LOCALE: 'en',
 }));
 
+vi.mock('@/lib/core/logger', () => ({
+  logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn() },
+}));
+
+import { logger } from '@/lib/core/logger';
 import { hasIndexInDefaultLocale } from '@/lib/sanity/page-fallback';
 import { fetchSanity } from '@/sanity/lib/fetch';
 
 const mockFetchSanity = vi.mocked(fetchSanity);
+const mockLoggerError = vi.mocked(logger.error);
 
 describe('hasIndexInDefaultLocale', () => {
   beforeEach(() => {
@@ -46,21 +52,17 @@ describe('hasIndexInDefaultLocale', () => {
   });
 
   it('handles Sanity query errors gracefully', async () => {
-    // Mock console.error to avoid test output noise
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
     // Mock query failure
     mockFetchSanity.mockRejectedValueOnce(new Error('Network error'));
 
     const result = await hasIndexInDefaultLocale();
 
     expect(result).toBe(false);
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      'Error checking for default locale index:',
-      expect.any(Error)
+    // The implementation logs via the structured logger, not console.error.
+    expect(mockLoggerError).toHaveBeenCalledWith(
+      expect.objectContaining({ err: expect.any(Error) }),
+      'Error checking for default locale index'
     );
-
-    consoleErrorSpy.mockRestore();
   });
 
   it('uses minimal query to check existence (only _id field)', async () => {
