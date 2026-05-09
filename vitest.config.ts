@@ -10,6 +10,22 @@ const aliases = {
   'server-only': resolve(__dirname, './tests/setup/server-only-mock.ts'),
 };
 
+// CSS-style imports (real .css, .scss, .module.css) that some libraries (sanity,
+// @sanity/ui) eager-load. jsdom has no CSS engine and Node's import() fails on
+// these extensions, so we shim them to an empty module via a Vite plugin.
+const stubCssPlugin = {
+  name: 'stub-css-imports',
+  enforce: 'pre' as const,
+  resolveId(id: string) {
+    if (/\.(css|scss|sass|less)$/.test(id)) return '\0virtual:empty-css';
+    return null;
+  },
+  load(id: string) {
+    if (id === '\0virtual:empty-css') return 'export default {}';
+    return null;
+  },
+};
+
 // Shared test configuration
 const sharedTestConfig = {
   environment: 'jsdom' as const,
@@ -30,14 +46,22 @@ const sharedTestConfig = {
   },
   server: {
     deps: {
-      inline: ['server-only'],
+      // Inline packages so they go through Vite's transform pipeline:
+      // - `server-only` is mocked.
+      // - `next-intl`, `next-themes` import bare-specifier Next subpaths
+      //   (e.g. `next/server`) without `.js`; Vite 8's stricter ESM resolver
+      //   trips on these, so we let Vite rewrite them.
+      // - `sanity` and `@sanity/...` eager-load `.css` bundles that Node's
+      //   loader can't handle; running them through Vite lets the css-stub
+      //   plugin (above) shim those imports.
+      inline: ['server-only', 'next-intl', 'sanity', /^@sanity\//],
     },
   },
 };
 
 // Helper to create a project configuration
 const createProject = (name: string, include: string[]) => ({
-  plugins: [react() as any],
+  plugins: [stubCssPlugin, react() as any],
   test: {
     ...sharedTestConfig,
     name,
@@ -49,7 +73,7 @@ const createProject = (name: string, include: string[]) => ({
 });
 
 export default defineConfig({
-  plugins: [react() as any],
+  plugins: [stubCssPlugin, react() as any],
   test: {
     ...sharedTestConfig,
     // Define projects for categorized test output
