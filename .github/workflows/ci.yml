@@ -57,6 +57,10 @@ jobs:
     name: Next Build
     runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 20
+    # Build needs real Sanity creds (next.config.ts redirects() and static
+    # prerender call sanityFetch at build time). Environment-scoped secrets
+    # live under "Staging" — same place preview.yml reads them from.
+    environment: Staging
     if: github.event.pull_request.head.repo.full_name == github.repository || github.event_name != 'pull_request'
 
     env:
