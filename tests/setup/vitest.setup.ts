@@ -5,6 +5,33 @@ import * as matchers from 'vitest-axe/matchers';
 // Mock server-only package (throws error in client-side code)
 vi.mock('server-only', () => ({}));
 
+// Mock @/i18n/navigation so component tests don't need to wrap render() in
+// <NextIntlClientProvider>. Without this, every Link/usePathname/useRouter
+// call from `next-intl/navigation` throws "No intl context found" in jsdom.
+// Tests that need locale-aware behavior can `vi.unmock('@/i18n/navigation')`.
+vi.mock('@/i18n/navigation', async () => {
+  const React = await import('react');
+  return {
+    Link: React.forwardRef<HTMLAnchorElement, React.ComponentProps<'a'> & { href: string }>(
+      ({ href, children, ...props }, ref) =>
+        React.createElement('a', { href, ref, ...props }, children)
+    ),
+    redirect: vi.fn(),
+    usePathname: () => '/',
+    useRouter: () => ({
+      push: vi.fn(),
+      replace: vi.fn(),
+      back: vi.fn(),
+      forward: vi.fn(),
+      refresh: vi.fn(),
+      prefetch: vi.fn(),
+    }),
+    getPathname: ({ href }: { href: string | { pathname: string } }) =>
+      typeof href === 'string' ? href : href.pathname,
+    buildLocaleHref: (path: string, _locale: string) => path,
+  };
+});
+
 // Extend Vitest's expect with axe matchers for accessibility testing
 expect.extend(matchers);
 

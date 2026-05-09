@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select';
 
 describe('Select', () => {
-  it('renders trigger with value placeholder as attribute', () => {
+  it('renders trigger with value placeholder as text content', () => {
     render(
       <Select>
         <SelectTrigger>
@@ -20,9 +20,11 @@ describe('Select', () => {
         </SelectTrigger>
       </Select>
     );
-    // The placeholder is set as an attribute, not as text content
+    // Base UI's Select.Value renders the placeholder as the element's children
+    // when nothing is selected, and exposes a `data-placeholder` marker.
     const value = screen.getByRole('combobox').querySelector('[data-slot="select-value"]');
-    expect(value).toHaveAttribute('placeholder', 'Select an option');
+    expect(value).toHaveTextContent('Select an option');
+    expect(value).toHaveAttribute('data-placeholder');
   });
 });
 
@@ -259,9 +261,9 @@ describe('Select composition', () => {
       </Select>
     );
 
-    // Check placeholder is set
+    // Check placeholder is set (rendered as text content by Base UI's Select.Value)
     const value = container.querySelector('[data-slot="select-value"]');
-    expect(value).toHaveAttribute('placeholder', 'Select a fruit');
+    expect(value).toHaveTextContent('Select a fruit');
     // Check other elements
     expect(screen.getByText('Fruits')).toBeInTheDocument();
     expect(screen.getByText('Apple')).toBeInTheDocument();

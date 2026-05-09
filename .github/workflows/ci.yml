@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [dev, prod]
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # Lint, typecheck, and unit/integration/component/contract tests do not
+  # require real Sanity credentials — Sanity calls in tests are mocked.
+  quality:
+    name: Lint + Typecheck + Test
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
+        with:
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4
+        with:
+          node-version: '24'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test
+
+  # `pnpm build` does compile-time Sanity fetches (redirects, generateStaticParams,
+  # sitemap pre-rendering, etc.) and therefore needs real read-only credentials
+  # for a real dataset. Forks won't have access to the repo secrets, so we skip
+  # the build job for fork PRs and rely on the preview workflow (Docker-based)
+  # to validate them via deployment.
+  build:
+    name: Next Build
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 20
+    # Build needs real Sanity creds (next.config.ts redirects() and static
+    # prerender call sanityFetch at build time). Environment-scoped secrets
+    # live under "Staging" — same place preview.yml reads them from.
+    environment: Staging
+    # Skip:
+    # - Fork PRs (head.repo != github.repository) — secrets aren't exposed.
+    # - Dependabot PRs (github.actor == 'dependabot[bot]') — GitHub treats
+    #   Dependabot-triggered pull_request runs like forked PRs and does not
+    #   expose normal Actions secrets, so the build would run with empty
+    #   NEXT_PUBLIC_SANITY_* and prebuild's generate-collections script
+    #   would fail on the missing env vars. (NextMedal currently doesn't
+    #   use Dependabot for version updates — empty .github/dependabot.yml
+    #   — but this guard keeps the workflow correct if that changes.)
+    if: >-
+      github.actor != 'dependabot[bot]' &&
+      (github.event.pull_request.head.repo.full_name == github.repository
+        || github.event_name != 'pull_request')
+
+    env:
+      NEXT_PUBLIC_BASE_URL: https://ci.example.com
+      NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+      NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+      NEXT_PUBLIC_SANITY_API_VERSION: '2024-12-01'
+      NEXT_PUBLIC_SANITY_BROWSER_TOKEN: ${{ secrets.NEXT_PUBLIC_SANITY_BROWSER_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
+        with:
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4
+        with:
+          node-version: '24'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build

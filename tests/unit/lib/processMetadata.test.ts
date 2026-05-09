@@ -264,12 +264,21 @@ describe('processMetadata', () => {
       expect(result.alternates?.canonical).toContain('test-article-post');
     });
 
-    it('should include RSS feed type in alternates', async () => {
+    it('should include RSS feed type in alternates when rssUrl option is set', async () => {
       const page = createMockPage();
-      const result = await processMetadata(page);
+      const result = await processMetadata(page, undefined, {
+        rssUrl: '/articles/rss.xml',
+      });
 
       expect(result.alternates?.types).toBeDefined();
       expect(result.alternates?.types?.['application/rss+xml']).toBe('/articles/rss.xml');
+    });
+
+    it('should omit alternates.types when no rssUrl option is provided', async () => {
+      const page = createMockPage();
+      const result = await processMetadata(page);
+
+      expect(result.alternates?.types).toBeUndefined();
     });
 
     it('should pass searchParams and allowList to resolveUrl', async () => {

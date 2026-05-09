@@ -20,6 +20,17 @@ import { client } from '@/sanity/lib/client';
 
 const mockWithConfig = vi.mocked(client.withConfig);
 
+// The route's `getCollectionInfo` is synchronous (looks up a static registry),
+// so the only Sanity call is `getCollectionItems`. Tests previously mocked a
+// non-existent first "getCollectionPage" fetch which then consumed the items
+// payload — leaving the real items call returning undefined. This helper
+// makes mocking less error-prone.
+function mockItems(items: unknown[]) {
+  const mockFetch = vi.fn().mockResolvedValueOnce(items);
+  mockWithConfig.mockReturnValue({ fetch: mockFetch } as any);
+  return mockFetch;
+}
+
 describe('RSS Feed API Contract', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -27,20 +38,7 @@ describe('RSS Feed API Contract', () => {
 
   describe('Response Schema Validation', () => {
     it('response matches RSS 2.0 schema with items', async () => {
-      const mockFetch = vi.fn();
-      mockWithConfig.mockReturnValue({ fetch: mockFetch } as any);
-
-      // First call: getCollectionPage
-      mockFetch.mockResolvedValueOnce({
-        _id: 'page-1',
-        title: 'Articles',
-        slug: 'articles',
-        description: 'Our articles',
-        frontpageType: 'articles-frontpage',
-      });
-
-      // Second call: getCollectionItems
-      mockFetch.mockResolvedValueOnce([
+      mockItems([
         {
           _id: 'post-1',
           title: 'First Post',
@@ -67,16 +65,7 @@ describe('RSS Feed API Contract', () => {
     });
 
     it('returns application/xml content type', async () => {
-      const mockFetch = vi.fn();
-      mockWithConfig.mockReturnValue({ fetch: mockFetch } as any);
-
-      mockFetch.mockResolvedValueOnce({
-        _id: 'page-1',
-        title: 'Articles',
-        slug: 'articles',
-        frontpageType: 'articles-frontpage',
-      });
-      mockFetch.mockResolvedValueOnce([]);
+      mockItems([]);
 
       const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
         params: Promise.resolve({ locale: 'en', collection: 'articles' }),
@@ -88,16 +77,7 @@ describe('RSS Feed API Contract', () => {
 
   describe('RSS 2.0 Structure', () => {
     it('has XML declaration', async () => {
-      const mockFetch = vi.fn();
-      mockWithConfig.mockReturnValue({ fetch: mockFetch } as any);
-
-      mockFetch.mockResolvedValueOnce({
-        _id: 'page-1',
-        title: 'Articles',
-        slug: 'articles',
-        frontpageType: 'articles-frontpage',
-      });
-      mockFetch.mockResolvedValueOnce([]);
+      mockItems([]);
 
       const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
         params: Promise.resolve({ locale: 'en', collection: 'articles' }),
@@ -108,16 +88,7 @@ describe('RSS Feed API Contract', () => {
     });
 
     it('has XSL stylesheet reference', async () => {
-      const mockFetch = vi.fn();
-      mockWithConfig.mockReturnValue({ fetch: mockFetch } as any);
-
-      mockFetch.mockResolvedValueOnce({
-        _id: 'page-1',
-        title: 'Articles',
-        slug: 'articles',
-        frontpageType: 'articles-frontpage',
-      });
-      mockFetch.mockResolvedValueOnce([]);
+      mockItems([]);
 
       const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
         params: Promise.resolve({ locale: 'en', collection: 'articles' }),
@@ -129,16 +100,7 @@ describe('RSS Feed API Contract', () => {
     });
 
     it('has Atom namespace for self link', async () => {
-      const mockFetch = vi.fn();
-      mockWithConfig.mockReturnValue({ fetch: mockFetch } as any);
-
-      mockFetch.mockResolvedValueOnce({
-        _id: 'page-1',
-        title: 'Articles',
-        slug: 'articles',
-        frontpageType: 'articles-frontpage',
-      });
-      mockFetch.mockResolvedValueOnce([]);
+      mockItems([]);
 
       const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
         params: Promise.resolve({ locale: 'en', collection: 'articles' }),
@@ -152,17 +114,7 @@ describe('RSS Feed API Contract', () => {
 
   describe('Channel Elements', () => {
     it('channel has required elements', async () => {
-      const mockFetch = vi.fn();
-      mockWithConfig.mockReturnValue({ fetch: mockFetch } as any);
-
-      mockFetch.mockResolvedValueOnce({
-        _id: 'page-1',
-        title: 'Tech Articles',
-        slug: 'articles',
-        description: 'Latest tech updates',
-        frontpageType: 'articles-frontpage',
-      });
-      mockFetch.mockResolvedValueOnce([]);
+      mockItems([]);
 
       const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
         params: Promise.resolve({ locale: 'en', collection: 'articles' }),
@@ -177,38 +129,22 @@ describe('RSS Feed API Contract', () => {
     });
 
     it('channel title uses collection title', async () => {
-      const mockFetch = vi.fn();
-      mockWithConfig.mockReturnValue({ fetch: mockFetch } as any);
-
-      mockFetch.mockResolvedValueOnce({
-        _id: 'page-1',
-        title: 'My Awesome Articles',
-        slug: 'articles',
-        frontpageType: 'articles-frontpage',
-      });
-      mockFetch.mockResolvedValueOnce([]);
+      mockItems([]);
 
       const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
         params: Promise.resolve({ locale: 'en', collection: 'articles' }),
       });
       const xml = await response.text();
 
-      expect(xml).toContain('<title>My Awesome Articles</title>');
+      // Title comes from the static collection registry, not from a CMS fetch.
+      // For `articles`, the registry name is "Articles".
+      expect(xml).toContain('<title>Articles</title>');
     });
   });
 
   describe('Item Elements', () => {
     it('items have required RSS elements', async () => {
-      const mockFetch = vi.fn();
-      mockWithConfig.mockReturnValue({ fetch: mockFetch } as any);
-
-      mockFetch.mockResolvedValueOnce({
-        _id: 'page-1',
-        title: 'Articles',
-        slug: 'articles',
-        frontpageType: 'articles-frontpage',
-      });
-      mockFetch.mockResolvedValueOnce([
+      mockItems([
         {
           _id: 'post-1',
           title: 'Great Article',
@@ -231,16 +167,7 @@ describe('RSS Feed API Contract', () => {
     });
 
     it('guid has isPermaLink attribute', async () => {
-      const mockFetch = vi.fn();
-      mockWithConfig.mockReturnValue({ fetch: mockFetch } as any);
-
-      mockFetch.mockResolvedValueOnce({
-        _id: 'page-1',
-        title: 'Articles',
-        slug: 'articles',
-        frontpageType: 'articles-frontpage',
-      });
-      mockFetch.mockResolvedValueOnce([
+      mockItems([
         {
           _id: 'post-1',
           title: 'Post',
@@ -260,10 +187,8 @@ describe('RSS Feed API Contract', () => {
 
   describe('Error Responses', () => {
     it('returns 404 for non-collection pages', async () => {
-      const mockFetch = vi.fn();
+      const mockFetch = vi.fn().mockResolvedValueOnce(null);
       mockWithConfig.mockReturnValue({ fetch: mockFetch } as any);
-
-      mockFetch.mockResolvedValueOnce(null);
 
       const response = await GET(new Request('http://localhost:3000/en/about/rss.xml'), {
         params: Promise.resolve({ locale: 'en', collection: 'about' }),
@@ -273,10 +198,8 @@ describe('RSS Feed API Contract', () => {
     });
 
     it('error response is still valid RSS', async () => {
-      const mockFetch = vi.fn();
+      const mockFetch = vi.fn().mockRejectedValueOnce(new Error('CMS unavailable'));
       mockWithConfig.mockReturnValue({ fetch: mockFetch } as any);
-
-      mockFetch.mockRejectedValueOnce(new Error('CMS unavailable'));
 
       const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
         params: Promise.resolve({ locale: 'en', collection: 'articles' }),
@@ -290,10 +213,8 @@ describe('RSS Feed API Contract', () => {
     });
 
     it('503 response has Retry-After header', async () => {
-      const mockFetch = vi.fn();
+      const mockFetch = vi.fn().mockRejectedValueOnce(new Error('Network error'));
       mockWithConfig.mockReturnValue({ fetch: mockFetch } as any);
-
-      mockFetch.mockRejectedValueOnce(new Error('Network error'));
 
       const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
         params: Promise.resolve({ locale: 'en', collection: 'articles' }),
@@ -306,16 +227,7 @@ describe('RSS Feed API Contract', () => {
 
   describe('Backward Compatibility', () => {
     it('maintains RSS 2.0 version attribute', async () => {
-      const mockFetch = vi.fn();
-      mockWithConfig.mockReturnValue({ fetch: mockFetch } as any);
-
-      mockFetch.mockResolvedValueOnce({
-        _id: 'page-1',
-        title: 'Articles',
-        slug: 'articles',
-        frontpageType: 'articles-frontpage',
-      });
-      mockFetch.mockResolvedValueOnce([]);
+      mockItems([]);
 
       const response = await GET(new Request('http://localhost:3000/en/articles/rss.xml'), {
         params: Promise.resolve({ locale: 'en', collection: 'articles' }),

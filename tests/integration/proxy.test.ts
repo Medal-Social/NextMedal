@@ -18,23 +18,28 @@ describe('proxy middleware', () => {
     expect(response).toBeInstanceOf(NextResponse);
   });
 
-  it('preserves the rebuilt response body for non-redirect, non-rewrite paths', () => {
+  it('returns a NextResponse for paths that next-intl rewrites', () => {
+    // Even at `/` next-intl rewrites to its locale-prefixed canonical
+    // (e.g. `/en`) — that's the whole reason a rewrite exists. The proxy
+    // re-emits the rewrite so forwarded request headers are attached, so
+    // x-middleware-rewrite is expected to be present (re-set by
+    // NextResponse.rewrite).
     const request = buildRequest('/');
     const response = proxy(request);
 
     expect(response).toBeInstanceOf(NextResponse);
-    expect(response.headers.get('x-middleware-rewrite')).toBeNull();
+    expect(response.headers.get('x-middleware-rewrite')).toBe('https://example.com/en');
   });
 
-  it('preserves response headers other than x-middleware-rewrite when re-emitting', () => {
-    // The whole point of the rewrite is forwarding request headers AND
-    // copying every response header next-intl set (locale cookie, etc.)
-    // except the rewrite directive (which we consume).
+  it('forwards request headers via the rebuilt rewrite for nested paths', () => {
+    // The whole point of the rebuild is forwarding x-pathname to downstream
+    // Server Components while preserving the next-intl rewrite directive.
     const request = buildRequest('/articles/hello');
     const response = proxy(request);
 
-    expect(response.headers.get('x-middleware-rewrite')).toBeNull();
-    // request still carries the forwarded x-pathname for downstream readers
+    expect(response.headers.get('x-middleware-rewrite')).toBe(
+      'https://example.com/en/articles/hello'
+    );
     expect(request.headers.get('x-pathname')).toBe('/articles/hello');
   });
 });

@@ -10,11 +10,19 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock only external dependencies
 vi.mock('@/lib/core/logger', () => ({
-  logger: { error: vi.fn() },
+  logger: { error: vi.fn(), warn: vi.fn() },
 }));
 
 vi.mock('@/sanity/lib/client', () => ({
   client: { fetch: vi.fn() },
+}));
+
+// Bypass `unstable_cache` so each test sees a fresh fetch result. Without this,
+// the first test's mocked payload is cached and reused for every subsequent test.
+vi.mock('next/cache', () => ({
+  unstable_cache: <T extends (...args: unknown[]) => unknown>(fn: T) => fn,
+  revalidateTag: vi.fn(),
+  revalidatePath: vi.fn(),
 }));
 
 import { GET } from '@/app/api/search/route';

@@ -49,9 +49,11 @@ describe('Server Actions - Security Audit', () => {
       expect(submitFormSource).toContain('Bot submission blocked via honeypot');
     });
 
-    it('should handle missing credentials', () => {
-      expect(submitFormSource).toContain('if (!clientId || !clientSecret)');
-      expect(submitFormSource).toContain('Missing Medal Social credentials');
+    it('should handle missing credentials gracefully via getMedal()', () => {
+      // The action delegates credential checking to `getMedal()`, which returns
+      // null when env vars aren't set. We verify the null-check is present.
+      expect(submitFormSource).toContain('await getMedal()');
+      expect(submitFormSource).toContain('if (!medal)');
     });
 
     it('should use safe string conversion helpers', () => {
@@ -59,10 +61,11 @@ describe('Server Actions - Security Audit', () => {
       expect(submitFormSource).toContain('function getStringOrUndefined(value: unknown)');
     });
 
-    it('should use retry logic for network resilience', () => {
-      expect(submitFormSource).toContain('import { withRetry }');
-      expect(submitFormSource).toContain('withRetry(');
-      expect(submitFormSource).toContain('retries: 3');
+    it('should swallow non-fatal SDK errors instead of crashing the request', () => {
+      // The Medal SDK is best-effort (Sanity is the source of truth), so each
+      // intent handler wraps the SDK call in try/catch and logs at error level.
+      expect(submitFormSource).toContain('contacts.create failed (non-fatal)');
+      expect(submitFormSource).toContain('logger.error');
     });
 
     it('should handle unknown intents', () => {
@@ -71,7 +74,6 @@ describe('Server Actions - Security Audit', () => {
     });
 
     it('should have generic error messages (no sensitive data leakage)', () => {
-      expect(submitFormSource).toContain('temporarily unavailable');
       expect(submitFormSource).toContain("couldn't process your submission");
       expect(submitFormSource).toContain('not set up correctly');
       // Should NOT contain actual error details in user-facing messages
@@ -93,9 +95,10 @@ describe('Server Actions - Security Audit', () => {
     });
 
     it('should include metadata in all submissions', () => {
-      expect(submitFormSource).toContain('metadata: {');
-      expect(submitFormSource).toContain('...metadata,');
-      expect(submitFormSource).toContain('...data,');
+      // Metadata is part of the schema and the SubmissionContext, and is
+      // forwarded into per-intent handlers via the spread `...ctx.metadata`.
+      expect(submitFormSource).toContain('metadata: z.record');
+      expect(submitFormSource).toContain('...ctx.metadata');
     });
   });
 
