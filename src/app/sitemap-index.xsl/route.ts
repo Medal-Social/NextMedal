@@ -93,6 +93,7 @@ function getLocaleDisplay(locale: SupportedLocale) {
  * Dynamically generate sitemap-index.xsl based on LOCALE_CONFIG
  * This ensures the sitemap index automatically updates when languages are added/removed
  */
+// biome-ignore lint/suspicious/useAwait: required by Next.js route handler signature
 export async function GET(_req: NextRequest) {
   const locales = Object.keys(LOCALE_CONFIG) as SupportedLocale[];
 

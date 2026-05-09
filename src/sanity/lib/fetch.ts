@@ -12,6 +12,7 @@ import {
 
 export { fetchSanityLive };
 
+// biome-ignore lint/suspicious/useAwait: required by Next.js 'use server' Server Action signature
 export async function fetchSanity<T = unknown>({
   query,
   params = {},

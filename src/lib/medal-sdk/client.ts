@@ -25,15 +25,15 @@ let _medalPromise: Promise<MedalType | null> | null = null;
  * Reads directly from process.env so this file stays Studio-bundle-safe
  * (the strict env validator throws when env vars aren't loaded).
  */
-export async function getMedal(): Promise<MedalType | null> {
+export function getMedal(): Promise<MedalType | null> {
   const apiKey = typeof process !== 'undefined' ? process.env?.MEDAL_API_KEY : undefined;
   const baseUrl = typeof process !== 'undefined' ? process.env?.MEDAL_API_ENDPOINT : undefined;
 
   if (!apiKey || apiKey.startsWith('pending')) {
-    return null;
+    return Promise.resolve(null);
   }
 
-  if (_medal) return _medal;
+  if (_medal) return Promise.resolve(_medal);
 
   if (!_medalPromise) {
     _medalPromise = (async (): Promise<MedalType | null> => {

@@ -65,12 +65,12 @@ function buildUrl(slug: string, locale: string, prefix: string = ''): string {
   return parts.join('/');
 }
 
-async function buildCollectionUrl(
+function buildCollectionUrl(
   slug: string,
   collectionType: string,
   locale: string,
   collectionSlugsMap: Map<string, Record<CollectionType, string>>
-): Promise<string> {
+): string {
   const isDefaultLocale = locale === routing.defaultLocale;
   const parts: string[] = [BASE_URL];
   if (!isDefaultLocale) parts.push(locale);
