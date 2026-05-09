@@ -30,7 +30,7 @@ export default function SkipToContent() {
       onClick={handleClick}
       className={cn(
         // Position centered at top of viewport - hidden by default
-        'fixed top-4 left-1/2 -translate-x-1/2 z-[100]',
+        'fixed top-4 left-1/2 z-[100] -translate-x-1/2',
         // Start off-screen
         '-translate-y-24 opacity-0',
         // CSS transition with spring-like easing
@@ -45,11 +45,11 @@ export default function SkipToContent() {
         // Glassmorphism with brand color
         'bg-brand-600/95 backdrop-blur-sm',
         // Typography
-        'text-white font-semibold text-sm',
+        'font-semibold text-sm text-white',
         // Subtle border for depth
         'ring-1 ring-white/20',
         // Shadow with brand color tint
-        'shadow-lg shadow-brand-600/30',
+        'shadow-brand-600/30 shadow-lg',
         // Focus states
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-600'
       )}

@@ -83,7 +83,7 @@ describe('API Performance Budgets', () => {
     expect(results.p50).toBeLessThan(budget.p50);
     expect(results.p95).toBeLessThan(budget.p95);
     expect(results.p99).toBeLessThan(budget.p99);
-  }, 30000);
+  }, 30_000);
 
   test.skip('Draft mode enable API meets performance budget', async () => {
     const url = '/api/draft-mode/enable';
@@ -100,7 +100,7 @@ describe('API Performance Budgets', () => {
     expect(results.p50).toBeLessThan(budget.p50);
     expect(results.p95).toBeLessThan(budget.p95);
     expect(results.p99).toBeLessThan(budget.p99);
-  }, 30000);
+  }, 30_000);
 
   test.skip('Draft mode disable API meets performance budget', async () => {
     const url = '/api/draft-mode/disable';
@@ -117,10 +117,18 @@ describe('API Performance Budgets', () => {
     expect(results.p50).toBeLessThan(budget.p50);
     expect(results.p95).toBeLessThan(budget.p95);
     expect(results.p99).toBeLessThan(budget.p99);
-  }, 30000);
+  }, 30_000);
 });
 
-describe('API Response Time Monitoring', () => {
+// These tests hit a real running dev server on http://localhost:3000 and so
+// only run when one is detected (e.g. in CI behind a `pnpm dev` background
+// step, or locally with `pnpm dev` already running). In a normal `pnpm test`
+// run there is no server, so we skip with a clear reason rather than failing
+// the suite with ECONNREFUSED.
+const SERVER_AVAILABLE =
+  process.env.PERF_API_SERVER_AVAILABLE === '1' || process.env.CI_PERF === '1';
+
+describe.skipIf(!SERVER_AVAILABLE)('API Response Time Monitoring', () => {
   test('Search API responds within reasonable time', async () => {
     const time = await measureResponseTime('/api/search?q=test');
 

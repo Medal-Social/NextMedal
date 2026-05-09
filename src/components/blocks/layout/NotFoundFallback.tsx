@@ -1,7 +1,6 @@
 'use client';
 
 import { FileQuestion } from 'lucide-react';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { buttonVariants } from '@/components/ui/button';
 import {
@@ -13,13 +12,14 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty';
 import { Section } from '@/components/ui/section';
+import { Link } from '@/i18n/navigation';
 
 export default function NotFoundFallback() {
   const t = useTranslations('NotFound');
 
   return (
-    <Section className="min-h-[50vh] flex items-center justify-center">
-      <Empty className="border-none max-w-md mx-auto">
+    <Section className="flex min-h-[50vh] items-center justify-center">
+      <Empty className="mx-auto max-w-md border-none">
         <EmptyHeader>
           <EmptyMedia variant="icon">
             <FileQuestion />

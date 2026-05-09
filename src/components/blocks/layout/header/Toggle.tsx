@@ -27,7 +27,7 @@ export default function Toggle({ isOpen, setIsOpen, className }: ToggleProps) {
       variant="ghost"
       size="icon-lg"
       className={cn(
-        'rounded-md hover:bg-accent/50 transition-colors z-[101]',
+        'z-[101] rounded-md transition-colors hover:bg-accent/50',
         className || 'lg:hidden'
       )}
       onClick={() => setIsOpen(!isOpen)}

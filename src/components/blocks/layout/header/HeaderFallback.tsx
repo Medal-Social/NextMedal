@@ -1,8 +1,8 @@
 import { Settings } from 'lucide-react';
-import Link from 'next/link';
 import { getLocale, getTranslations } from 'next-intl/server';
 import LocaleSwitcher from '@/components/blocks/layout/language-switcher';
 import { DEFAULT_LOCALE } from '@/i18n/config';
+import { Link } from '@/i18n/navigation';
 import ThemeToggle from './ThemeToggle';
 
 export async function HeaderFallback() {
@@ -13,18 +13,18 @@ export async function HeaderFallback() {
 
     return (
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="mx-auto flex min-h-16 items-center w-full px-4 sm:px-6 lg:px-8 max-w-7xl">
-          <div className="flex flex-1 items-center justify-between w-full">
+        <div className="mx-auto flex min-h-16 w-full max-w-7xl items-center px-4 sm:px-6 lg:px-8">
+          <div className="flex w-full flex-1 items-center justify-between">
             {/* Logo / Site Title */}
             <div className="flex items-center gap-3">
-              <Link href={homeHref} className="text-lg font-semibold">
+              <Link href={homeHref} className="font-semibold text-lg">
                 {t('yourSite')}
               </Link>
               <Link
                 href="/studio/structure/site"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden md:inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-md hover:bg-muted hover:text-foreground transition-colors"
+                className="hidden items-center gap-1.5 rounded-md bg-muted/50 px-2 py-1 text-muted-foreground text-xs transition-colors hover:bg-muted hover:text-foreground md:inline-flex"
               >
                 <Settings className="size-3" />
                 {t('configureHint')}
@@ -32,13 +32,13 @@ export async function HeaderFallback() {
             </div>
 
             {/* Right side controls */}
-            <div className="flex items-center gap-2 md:gap-4 relative z-[101] shrink-0">
+            <div className="relative z-[101] flex shrink-0 items-center gap-2 md:gap-4">
               {/* Complete Setup CTA */}
               <Link
                 href="/studio/structure/site"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden sm:inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                className="hidden items-center justify-center rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground text-sm transition-colors hover:bg-primary/90 sm:inline-flex"
               >
                 {t('completeSetup')}
               </Link>
@@ -58,29 +58,29 @@ export async function HeaderFallback() {
     // Note: Using "/" for homepage since this is an emergency fallback
     return (
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="mx-auto flex min-h-16 items-center w-full px-4 sm:px-6 lg:px-8 max-w-7xl">
-          <div className="flex flex-1 items-center justify-between w-full">
+        <div className="mx-auto flex min-h-16 w-full max-w-7xl items-center px-4 sm:px-6 lg:px-8">
+          <div className="flex w-full flex-1 items-center justify-between">
             <div className="flex items-center gap-3">
-              <Link href="/" className="text-lg font-semibold">
+              <Link href="/" className="font-semibold text-lg">
                 NextMedal
               </Link>
               <Link
                 href="/studio/structure/site"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden md:inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-md hover:bg-muted hover:text-foreground transition-colors"
+                className="hidden items-center gap-1.5 rounded-md bg-muted/50 px-2 py-1 text-muted-foreground text-xs transition-colors hover:bg-muted hover:text-foreground md:inline-flex"
               >
                 <Settings className="size-3" />
                 Configure Site
               </Link>
             </div>
 
-            <div className="flex items-center gap-2 md:gap-4 relative z-[101] shrink-0">
+            <div className="relative z-[101] flex shrink-0 items-center gap-2 md:gap-4">
               <Link
                 href="/studio/structure/site"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden sm:inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                className="hidden items-center justify-center rounded-md bg-primary px-4 py-2 font-medium text-primary-foreground text-sm transition-colors hover:bg-primary/90 sm:inline-flex"
               >
                 Complete Setup
               </Link>

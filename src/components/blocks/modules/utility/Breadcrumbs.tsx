@@ -20,14 +20,15 @@ export default async function Breadcrumbs({
 }: Sanity.Breadcrumbs) {
   // Pre-resolve all internal URLs
   const resolvedCrumbs = await Promise.all(
-    (crumbs || []).map(async (crumb) => ({
-      ...crumb,
-      resolvedUrl: crumb.internal
-        ? await resolveUrl(crumb.internal as Sanity.PageBase, { base: false })
-        : crumb.external
-          ? stegaClean(crumb.external)
-          : '/',
-    }))
+    (crumbs || []).map(async (crumb) => {
+      let resolvedUrl: string = '/';
+      if (crumb.internal) {
+        resolvedUrl = await resolveUrl(crumb.internal as Sanity.PageBase, { base: false });
+      } else if (crumb.external) {
+        resolvedUrl = stegaClean(crumb.external);
+      }
+      return { ...crumb, resolvedUrl };
+    })
   );
 
   return (

@@ -1,6 +1,6 @@
-import Link from 'next/link';
 import AuthorCard from '@/components/blocks/modules/frontpage/articles/AuthorCard';
 import { Date as DateDisplay } from '@/components/blocks/objects/core';
+import { Link } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 import { cn } from '@/lib/utils/index';
 import { createStegaAttribute } from '@/sanity/lib/client';
@@ -41,37 +41,37 @@ export default function ArticleHero({
 
   return (
     <section
-      className="relative overflow-hidden bg-[#1a0b2e] pb-12 pt-28 text-white lg:pb-16 lg:pt-32"
+      className="relative overflow-hidden bg-[#1a0b2e] pt-28 pb-12 text-white lg:pt-32 lg:pb-16"
       data-theme="dark"
     >
       {/* Background gradients */}
       <div className="pointer-events-none absolute inset-0 opacity-10">
-        <div className="animate-blob absolute -top-24 -left-24 h-96 w-96 rounded-full bg-purple-600 blur-3xl mix-blend-multiply filter" />
-        <div className="animation-delay-2000 absolute top-0 -right-4 h-96 w-96 rounded-full bg-indigo-600 blur-3xl mix-blend-multiply filter" />
+        <div className="absolute -top-24 -left-24 h-96 w-96 animate-blob rounded-full bg-purple-600 mix-blend-multiply blur-3xl filter" />
+        <div className="animation-delay-2000 absolute top-0 -right-4 h-96 w-96 rounded-full bg-indigo-600 mix-blend-multiply blur-3xl filter" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:gap-16">
           {/* Main Feature */}
           <div className="flex flex-col items-start space-y-4 lg:w-5/12">
-            <span className="inline-block rounded-full border border-white/10 bg-white/10 px-2.5 py-1 text-[10px] font-bold tracking-widest text-purple-200 uppercase backdrop-blur-sm">
+            <span className="inline-block rounded-full border border-white/10 bg-white/10 px-2.5 py-1 font-bold text-[10px] text-purple-200 uppercase tracking-widest backdrop-blur-sm">
               {t.featuredInsight}
             </span>
             <h1
-              className="font-serif text-3xl font-bold leading-tight tracking-tight text-white md:text-4xl lg:text-5xl"
+              className="font-bold font-serif text-3xl text-white leading-tight tracking-tight md:text-4xl lg:text-5xl"
               data-sanity={stega.scope('metadata.title').toString()}
             >
-              <Link href={featuredHref} className="hover:text-purple-200 transition-colors">
+              <Link href={featuredHref} className="transition-colors hover:text-purple-200">
                 {featuredPost.metadata?.title}
               </Link>
             </h1>
             <p
-              className="max-w-lg text-base leading-relaxed text-slate-300 md:text-lg"
+              className="max-w-lg text-base text-slate-300 leading-relaxed md:text-lg"
               data-sanity={stega.scope('seo.description').toString()}
             >
               {featuredPost.seo?.description}
             </p>
-            <div className="flex items-center gap-2 pt-2 text-sm text-slate-400">
+            <div className="flex items-center gap-2 pt-2 text-slate-400 text-sm">
               {featuredPost.authors?.[0] && (
                 <>
                   <AuthorCard author={featuredPost.authors[0]} variant="dark" />
@@ -150,19 +150,19 @@ function SidebarCard({
       )}
       data-sanity={stega.scope('metadata.title').toString()}
     >
-      <span className={cn('mb-2 block text-xs font-semibold tracking-wider uppercase', labelColor)}>
+      <span className={cn('mb-2 block font-semibold text-xs uppercase tracking-wider', labelColor)}>
         {label}
       </span>
       <h3
         className={cn(
-          'font-serif font-semibold text-white transition-colors line-clamp-2',
+          'line-clamp-2 font-semibold font-serif text-white transition-colors',
           hoverColor
         )}
       >
         {post.metadata?.title}
       </h3>
       <p
-        className="mt-2 text-sm text-slate-400 line-clamp-2"
+        className="mt-2 line-clamp-2 text-slate-400 text-sm"
         data-sanity={stega.scope('seo.description').toString()}
       >
         {post.seo?.description}

@@ -163,7 +163,7 @@ export async function GET(request: NextRequest) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              borderTop: `2px solid rgba(255,255,255,0.08)`,
+              borderTop: '2px solid rgba(255,255,255,0.08)',
               paddingTop: '40px',
             }}
           >

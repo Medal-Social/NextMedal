@@ -182,8 +182,11 @@ export default defineType({
         DocumentIcon;
 
       // Format language display
-      const languageLabel =
-        language === 'en' ? '🇺🇸 EN' : language === 'nb' ? '🇳🇴 NO' : language?.toUpperCase();
+      const languageLabel = (() => {
+        if (language === 'en') return '🇺🇸 EN';
+        if (language === 'nb') return '🇳🇴 NO';
+        return language?.toUpperCase();
+      })();
 
       // Build subtitle with language and slug
       const urlPath = slug === 'index' ? '/' : `/${slug}`;

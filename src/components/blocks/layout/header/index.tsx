@@ -23,13 +23,13 @@ async function HeaderInner() {
   const logoNode = <Logo title={title} logo={logo} brandPage={brandPage} locale={locale} />;
 
   const navNode = (
-    <nav className="max-lg:hidden flex items-center" aria-label="Main navigation">
+    <nav className="flex items-center max-lg:hidden" aria-label="Main navigation">
       <Navigation items={headerNav} />
     </nav>
   );
 
   const ctaNode = (
-    <div className="hidden lg:flex items-center gap-4">
+    <div className="hidden items-center gap-4 lg:flex">
       <CTAList ctas={ctas} />
     </div>
   );

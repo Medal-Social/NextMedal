@@ -22,7 +22,6 @@ import {
   Users,
   Video,
 } from 'lucide-react';
-import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { Img } from '@/components/blocks/objects/core';
@@ -30,6 +29,7 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { EmptyState } from '@/components/ui/empty-state';
 import {
   Select,
   SelectContent,
@@ -37,12 +37,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Link } from '@/i18n/navigation';
 import {
   cn,
   formatEventDate,
   formatEventDateFull,
   formatRelativeDateTime,
-  formatTime,
   formatTimeRange,
 } from '@/lib/utils/index';
 import { createStegaAttribute } from '@/sanity/lib/client';
@@ -258,7 +258,7 @@ function SpeakerAvatars({
   if (!speakers || speakers.length === 0) return null;
 
   return (
-    <div className="flex items-center gap-2 min-w-0">
+    <div className="flex min-w-0 items-center gap-2">
       <div className="flex -space-x-1.5">
         {speakers.slice(0, maxShow).map((speaker) =>
           speaker.image ? (
@@ -272,14 +272,14 @@ function SpeakerAvatars({
           ) : (
             <div
               key={speaker._id}
-              className="size-6 rounded-full bg-muted flex items-center justify-center ring-2 ring-background"
+              className="flex size-6 items-center justify-center rounded-full bg-muted ring-2 ring-background"
             >
               <Users className="size-3 text-muted-foreground" />
             </div>
           )
         )}
       </div>
-      <span className="text-xs text-muted-foreground truncate">
+      <span className="truncate text-muted-foreground text-xs">
         {speakers.length === 1 ? speakers[0].name : t('speakers', { count: speakers.length })}
       </span>
     </div>
@@ -303,7 +303,7 @@ function EventActions({
     event.registrationForm && (event.status === 'upcoming' || event.status === 'live');
 
   return (
-    <div className="flex items-center gap-2 shrink-0">
+    <div className="flex shrink-0 items-center gap-2">
       {showViewDetails && (
         <Link href={href} className={buttonVariants({ variant: 'ghost', size: 'sm' })}>
           {t('viewDetails')}
@@ -374,7 +374,7 @@ function DateBox({
   if (image) {
     return (
       <div
-        className="relative shrink-0 w-16 h-16 rounded-lg overflow-hidden"
+        className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg"
         data-sanity={stegaPath}
       >
         <Img
@@ -385,8 +385,8 @@ function DateBox({
         />
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative flex h-full flex-col items-center justify-center text-white">
-          <span className="text-xl font-bold leading-none">{date.getDate()}</span>
-          <span className="text-[10px] font-medium uppercase tracking-wide mt-0.5">
+          <span className="font-bold text-xl leading-none">{date.getDate()}</span>
+          <span className="mt-0.5 font-medium text-[10px] uppercase tracking-wide">
             {date.toLocaleDateString(locale, { month: 'short' })}
           </span>
         </div>
@@ -403,13 +403,13 @@ function DateBox({
     >
       <span
         className={cn(
-          'text-xl font-bold leading-none',
+          'font-bold text-xl leading-none',
           isPast ? 'text-muted-foreground' : 'text-primary'
         )}
       >
         {date.getDate()}
       </span>
-      <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground mt-0.5">
+      <span className="mt-0.5 font-medium text-[10px] text-muted-foreground uppercase tracking-wide">
         {date.toLocaleDateString(locale, { month: 'short' })}
       </span>
     </div>
@@ -435,7 +435,7 @@ function CompactRegisterButton({
   return (
     <Button
       size="sm"
-      className="mt-3 w-full h-8 text-xs"
+      className="mt-3 h-8 w-full text-xs"
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -451,9 +451,9 @@ function CompactRegisterButton({
 // Date badge overlay for grid cards
 function DateBadgeOverlay({ date, locale }: { date: Date; locale: string }) {
   return (
-    <div className="absolute left-2 top-2 rounded-md bg-background/90 backdrop-blur px-2 py-1 text-center shadow-sm">
-      <div className="text-lg font-bold leading-none">{date.getDate()}</div>
-      <div className="text-[10px] font-medium uppercase text-muted-foreground">
+    <div className="absolute top-2 left-2 rounded-md bg-background/90 px-2 py-1 text-center shadow-sm backdrop-blur">
+      <div className="font-bold text-lg leading-none">{date.getDate()}</div>
+      <div className="font-medium text-[10px] text-muted-foreground uppercase">
         {date.toLocaleDateString(locale, { month: 'short' })}
       </div>
     </div>
@@ -479,7 +479,7 @@ function TimeLocationRow({
   stegaLocationPath?: string;
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground text-xs">
       {showCalendarIcon && (
         <span className="inline-flex items-center gap-1" data-sanity={stegaDatePath}>
           <CalendarIcon className="size-3.5" />
@@ -497,52 +497,6 @@ function TimeLocationRow({
         </span>
       )}
     </div>
-  );
-}
-
-// Event CTA button - handles registration modal or view details
-function _EventCTA({
-  event,
-  collectionSlug,
-  size = 'default',
-  variant = 'default',
-  className,
-}: {
-  event: CollectionEvent;
-  collectionSlug: string;
-  size?: 'default' | 'sm';
-  variant?: 'default' | 'secondary';
-  className?: string;
-}) {
-  const t = useTranslations('modules.events');
-  const registration = useRegistration();
-  const eventUrl = `/${collectionSlug}/${event.metadata?.slug?.current}`;
-  const isUpcoming = event.status === 'upcoming' || event.status === 'live';
-
-  // For upcoming events with registration form, show register modal
-  if (event.registrationForm && isUpcoming && registration) {
-    return (
-      <Button
-        size={size}
-        variant={variant}
-        className={className}
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          registration.openRegistration(event, eventUrl);
-        }}
-      >
-        <Users className="mr-1.5 size-3.5" />
-        {t('registerNow')}
-      </Button>
-    );
-  }
-
-  // For all events (no registration, completed, etc.), show view details
-  return (
-    <Link href={eventUrl} className={buttonVariants({ variant: 'ghost', size, className })}>
-      {t('viewDetails')}
-    </Link>
   );
 }
 
@@ -588,7 +542,7 @@ function LayoutSelector({
       </div>
 
       {/* Desktop: Button group */}
-      <ButtonGroup className="hidden sm:inline-flex rounded-lg border bg-card p-1">
+      <ButtonGroup className="hidden rounded-lg border bg-card p-1 sm:inline-flex">
         {layouts.map(({ value, icon, labelKey }) => {
           const label = t(`layouts.${labelKey}`);
           return (
@@ -610,140 +564,6 @@ function LayoutSelector({
         })}
       </ButtonGroup>
     </>
-  );
-}
-
-// Event slot item for calendar view (calendar-31 style) - with image support
-function _EventSlotItem({
-  event,
-  collectionSlug,
-}: {
-  event: CollectionEvent;
-  collectionSlug: string;
-}) {
-  const t = useTranslations('modules.events');
-  const locale = useLocale();
-  const href = `/${collectionSlug}/${event.metadata?.slug?.current}`;
-  const type = eventTypeConfig[event.eventType] || eventTypeConfig.webinar;
-  const isPast = event.status === 'completed';
-  const registration = useRegistration();
-  const canRegister =
-    event.registrationForm && (event.status === 'upcoming' || event.status === 'live');
-
-  // Visual editing support
-  const stega = createStegaAttribute({
-    id: event._id,
-    type: event._type,
-  });
-
-  // Get accent color based on status - use brand primary for upcoming
-  const accentColor =
-    event.status === 'live'
-      ? 'after:bg-red-500'
-      : event.status === 'upcoming'
-        ? 'after:bg-primary'
-        : 'after:bg-muted-foreground/50';
-
-  return (
-    <div
-      className={cn(
-        'group relative flex gap-3 rounded-lg border bg-card p-3 transition-all hover:border-primary/50 hover:shadow-sm after:absolute after:inset-y-3 after:left-0 after:w-1 after:rounded-full',
-        accentColor,
-        isPast && 'opacity-70 hover:opacity-100'
-      )}
-    >
-      {/* Image thumbnail */}
-      {event.metadata?.image && (
-        <Link
-          href={href}
-          className="relative shrink-0 w-16 h-16 rounded-md overflow-hidden"
-          data-sanity={stega.scope('metadata.image').toString()}
-        >
-          <Img
-            image={event.metadata.image}
-            className={cn(
-              'size-full object-cover transition-transform duration-300 group-hover:scale-105',
-              isPast && 'grayscale-[30%]'
-            )}
-            sizes="64px"
-            alt={event.metadata?.title || ''}
-          />
-        </Link>
-      )}
-
-      {/* Content */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between gap-2 mb-1">
-          <div className="flex items-center gap-2">
-            <span
-              className={cn(
-                'inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium',
-                type.color
-              )}
-            >
-              {type.icon}
-              {type.label}
-            </span>
-          </div>
-          {/* Relative date - prominent */}
-          <span
-            className={cn(
-              'text-xs font-medium',
-              event.status === 'live' ? 'text-red-600 dark:text-red-400' : 'text-primary'
-            )}
-            data-sanity={stega.scope('startDateTime').toString()}
-          >
-            {formatRelativeDateTime(event.startDateTime, locale)}
-          </span>
-        </div>
-        <Link href={href}>
-          <div
-            className={cn(
-              'font-medium line-clamp-1 group-hover:text-primary',
-              isPast && 'text-muted-foreground'
-            )}
-            data-sanity={stega.scope('metadata.title').toString()}
-          >
-            {event.metadata?.title}
-          </div>
-        </Link>
-        <div className="text-muted-foreground text-xs mt-0.5 flex items-center gap-2">
-          <span className="inline-flex items-center gap-1">
-            <Clock className="size-3" />
-            {formatEventDate(event.startDateTime, locale)} ·{' '}
-            {formatTime(event.startDateTime, locale)}
-          </span>
-          {event.location?.city && (
-            <span
-              className="inline-flex items-center gap-1"
-              data-sanity={stega.scope('location').toString()}
-            >
-              <MapPin className="size-3" />
-              {event.location.city}
-            </span>
-          )}
-        </div>
-
-        {/* Registration button for upcoming events */}
-        {canRegister && registration && (
-          <div className="mt-2">
-            <Button
-              size="sm"
-              variant="default"
-              className="h-7 text-xs"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                registration.openRegistration(event, href);
-              }}
-            >
-              <Users className="mr-1 size-3" />
-              {t('registerNow')}
-            </Button>
-          </div>
-        )}
-      </div>
-    </div>
   );
 }
 
@@ -779,7 +599,7 @@ function CalendarEventCard({
             stegaPath={stega.scope('metadata.image').toString()}
           />
         </Link>
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="mb-1.5 flex flex-wrap items-center justify-between gap-1.5">
             <EventTypeBadge eventType={event.eventType} size="small" />
             <RelativeDate
@@ -793,7 +613,7 @@ function CalendarEventCard({
           <Link href={href}>
             <h4
               className={cn(
-                'font-semibold transition-colors group-hover:text-primary line-clamp-1',
+                'line-clamp-1 font-semibold transition-colors group-hover:text-primary',
                 isPast ? 'text-muted-foreground' : 'text-foreground'
               )}
               data-sanity={stega.scope('metadata.title').toString()}
@@ -814,13 +634,13 @@ function CalendarEventCard({
       </div>
       {event.metadata?.description && (
         <p
-          className="mt-3 text-sm text-muted-foreground line-clamp-2"
+          className="mt-3 line-clamp-2 text-muted-foreground text-sm"
           data-sanity={stega.scope('metadata.description').toString()}
         >
           {event.metadata.description}
         </p>
       )}
-      <div className="mt-3 pt-3 border-t flex items-center justify-between gap-4">
+      <div className="mt-3 flex items-center justify-between gap-4 border-t pt-3">
         {event.speakers && event.speakers.length > 0 ? (
           <SpeakerAvatars speakers={event.speakers} />
         ) : (
@@ -931,7 +751,7 @@ function CalendarView({
   const monthLabel = calendarMonth.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
 
   return (
-    <div className="grid gap-4 md:gap-6 md:grid-cols-[280px_1fr] lg:grid-cols-[320px_1fr]">
+    <div className="grid gap-4 md:grid-cols-[280px_1fr] md:gap-6 lg:grid-cols-[320px_1fr]">
       {/* Left side: Calendar - collapsible on mobile */}
       <div className="space-y-4">
         {/* Mobile toggle button - only visible below md breakpoint */}
@@ -941,10 +761,10 @@ function CalendarView({
           onClick={() => setShowCalendar(!showCalendar)}
           className="w-full md:hidden"
         >
-          <CalendarIcon className="size-4 mr-2" />
+          <CalendarIcon className="mr-2 size-4" />
           {showCalendar ? t('hideCalendar') : t('showCalendar')}
           <ChevronRight
-            className={cn('size-4 ml-auto transition-transform', showCalendar && 'rotate-90')}
+            className={cn('ml-auto size-4 transition-transform', showCalendar && 'rotate-90')}
           />
         </Button>
 
@@ -952,20 +772,20 @@ function CalendarView({
         <Card className={cn('md:block', showCalendar ? 'block' : 'hidden')}>
           <CardContent className="p-3 md:p-4">
             {/* Month navigation header */}
-            <div className="flex items-center justify-between mb-3 md:mb-4">
+            <div className="mb-3 flex items-center justify-between md:mb-4">
               <button
                 type="button"
                 onClick={goToPreviousMonth}
-                className="p-1.5 rounded-md hover:bg-muted transition-colors"
+                className="rounded-md p-1.5 transition-colors hover:bg-muted"
                 aria-label={t('previousMonth')}
               >
                 <ChevronLeft className="size-4 md:size-5" />
               </button>
-              <span className="text-sm font-semibold">{monthLabel}</span>
+              <span className="font-semibold text-sm">{monthLabel}</span>
               <button
                 type="button"
                 onClick={goToNextMonth}
-                className="p-1.5 rounded-md hover:bg-muted transition-colors"
+                className="rounded-md p-1.5 transition-colors hover:bg-muted"
                 aria-label={t('nextMonth')}
               >
                 <ChevronRight className="size-4 md:size-5" />
@@ -978,7 +798,7 @@ function CalendarView({
               onSelect={(date) => date && setSelectedDate(date)}
               month={calendarMonth}
               onMonthChange={setCalendarMonth}
-              className="bg-transparent p-0 w-full"
+              className="w-full bg-transparent p-0"
               hideNavigation
               classNames={{
                 month_caption: 'hidden', // Hide default caption, using custom header
@@ -995,23 +815,23 @@ function CalendarView({
           </CardContent>
 
           {/* Quick navigation */}
-          <CardFooter className="flex flex-col gap-2 md:gap-3 border-t px-3 md:px-4 py-3 md:py-4">
+          <CardFooter className="flex flex-col gap-2 border-t px-3 py-3 md:gap-3 md:px-4 md:py-4">
             {/* Event count */}
             <div className="flex w-full items-center justify-between">
-              <span className="text-xs md:text-sm font-medium text-muted-foreground">
+              <span className="font-medium text-muted-foreground text-xs md:text-sm">
                 {t('upcomingEventCount', { count: upcomingEventsList.length })}
               </span>
             </div>
 
             {/* Today + Next Event buttons */}
-            <ButtonGroup className="w-full pt-2 border-t">
+            <ButtonGroup className="w-full border-t pt-2">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={jumpToToday}
                 className={cn('flex-1 text-xs', isSameDay(selectedDate, today) && 'bg-accent')}
               >
-                <CalendarIcon className="size-3 mr-1" />
+                <CalendarIcon className="mr-1 size-3" />
                 {t('today')}
               </Button>
               {upcomingEventsList.length > 0 && (
@@ -1021,7 +841,7 @@ function CalendarView({
                   onClick={cycleToNextEvent}
                   className="flex-1 text-xs"
                 >
-                  <Clock className="size-3 mr-1" />
+                  <Clock className="mr-1 size-3" />
                   {t('nextEvent')}
                 </Button>
               )}
@@ -1034,48 +854,66 @@ function CalendarView({
       <div className="space-y-6">
         {/* Header shows selected date or next event date */}
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-semibold">
-            {selectedDateEvents.length > 0 ? (
-              <>
-                {formatEventDateFull(selectedDate.toISOString(), locale)}
-                {isSameDay(selectedDate, today) && (
-                  <span className="ml-2 text-sm text-primary font-medium">({t('today')})</span>
-                )}
-              </>
-            ) : nextEventFromDate ? (
-              <>
-                {t('nextEvent')}: {formatEventDateFull(nextEventFromDate.startDateTime, locale)}
-              </>
-            ) : (
-              formatEventDateFull(selectedDate.toISOString(), locale)
-            )}
+          <h3 className="font-semibold text-xl">
+            {(() => {
+              if (selectedDateEvents.length > 0) {
+                return (
+                  <>
+                    {formatEventDateFull(selectedDate.toISOString(), locale)}
+                    {isSameDay(selectedDate, today) && (
+                      <span className="ml-2 font-medium text-primary text-sm">({t('today')})</span>
+                    )}
+                  </>
+                );
+              }
+              if (nextEventFromDate) {
+                return (
+                  <>
+                    {t('nextEvent')}: {formatEventDateFull(nextEventFromDate.startDateTime, locale)}
+                  </>
+                );
+              }
+              return formatEventDateFull(selectedDate.toISOString(), locale);
+            })()}
           </h3>
           {selectedDateEvents.length > 0 && (
-            <span className="text-sm text-muted-foreground">
+            <span className="text-muted-foreground text-sm">
               {t('eventCount', { count: selectedDateEvents.length })}
             </span>
           )}
         </div>
 
         {/* Events for selected date OR next event from that date */}
-        {selectedDateEvents.length > 0 ? (
-          <div className="space-y-4">
-            {selectedDateEvents.map((event) => (
-              <CalendarEventCard key={event._id} event={event} collectionSlug={collectionSlug} />
-            ))}
-          </div>
-        ) : nextEventFromDate ? (
-          <div className="space-y-4">
-            <CalendarEventCard event={nextEventFromDate} collectionSlug={collectionSlug} />
-          </div>
-        ) : (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-              <CalendarIcon className="mb-3 size-10 text-muted-foreground/30" />
-              <p className="font-medium text-muted-foreground">{t('noEventsOnDate')}</p>
-            </CardContent>
-          </Card>
-        )}
+        {(() => {
+          if (selectedDateEvents.length > 0) {
+            return (
+              <div className="space-y-4">
+                {selectedDateEvents.map((event) => (
+                  <CalendarEventCard
+                    key={event._id}
+                    event={event}
+                    collectionSlug={collectionSlug}
+                  />
+                ))}
+              </div>
+            );
+          }
+          if (nextEventFromDate) {
+            return (
+              <div className="space-y-4">
+                <CalendarEventCard event={nextEventFromDate} collectionSlug={collectionSlug} />
+              </div>
+            );
+          }
+          return (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+                <CalendarIcon className="mb-3 size-10 text-muted-foreground/30" />
+                <p className="font-medium text-muted-foreground">{t('noEventsOnDate')}</p>
+              </CardContent>
+            </Card>
+          );
+        })()}
       </div>
     </div>
   );
@@ -1091,14 +929,14 @@ function EventSlot({ event, collectionSlug }: { event: CollectionEvent; collecti
   return (
     <div
       className={cn(
-        'group flex flex-col sm:flex-row items-stretch gap-4 rounded-lg border bg-card overflow-hidden transition-all hover:border-primary/50 hover:shadow-sm',
+        'group flex flex-col items-stretch gap-4 overflow-hidden rounded-lg border bg-card transition-all hover:border-primary/50 hover:shadow-sm sm:flex-row',
         isPast && 'opacity-75 hover:opacity-100'
       )}
     >
       {event.metadata?.image && (
         <Link
           href={href}
-          className="relative shrink-0 sm:w-48 aspect-video sm:aspect-[4/3]"
+          className="relative aspect-video shrink-0 sm:aspect-[4/3] sm:w-48"
           data-sanity={stega.scope('metadata.image').toString()}
         >
           <Img
@@ -1110,7 +948,7 @@ function EventSlot({ event, collectionSlug }: { event: CollectionEvent; collecti
             sizes="(min-width: 640px) 192px, 100vw"
             alt={event.metadata?.title || ''}
           />
-          <div className="absolute left-2 top-2">
+          <div className="absolute top-2 left-2">
             <StatusBadge status={event.status} size="small" />
           </div>
         </Link>
@@ -1132,7 +970,7 @@ function EventSlot({ event, collectionSlug }: { event: CollectionEvent; collecti
               {event.metadata?.title}
             </h4>
           </Link>
-          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground text-sm">
             <TimeLocationRow
               startDateTime={event.startDateTime}
               duration={event.duration}
@@ -1151,7 +989,7 @@ function EventSlot({ event, collectionSlug }: { event: CollectionEvent; collecti
           </div>
           {event.metadata?.description && (
             <p
-              className="mt-2 line-clamp-2 text-sm text-muted-foreground"
+              className="mt-2 line-clamp-2 text-muted-foreground text-sm"
               data-sanity={stega.scope('metadata.description').toString()}
             >
               {event.metadata.description}
@@ -1183,7 +1021,7 @@ function EventCard({ event, collectionSlug }: { event: CollectionEvent; collecti
     <Link
       href={href}
       className={cn(
-        'group block rounded-lg border bg-card overflow-hidden transition-all hover:border-primary/50 hover:shadow-sm',
+        'group block overflow-hidden rounded-lg border bg-card transition-all hover:border-primary/50 hover:shadow-sm',
         isPast && 'opacity-70 hover:opacity-100'
       )}
     >
@@ -1202,13 +1040,13 @@ function EventCard({ event, collectionSlug }: { event: CollectionEvent; collecti
             alt={event.metadata?.title || ''}
           />
         ) : (
-          <div className="size-full flex items-center justify-center">
+          <div className="flex size-full items-center justify-center">
             <CalendarIcon className="size-8 text-muted-foreground/30" />
           </div>
         )}
         <DateBadgeOverlay date={eventDate} locale={locale} />
         {event.status !== 'completed' && (
-          <div className="absolute right-2 top-2">
+          <div className="absolute top-2 right-2">
             <StatusBadge status={event.status} size="small" />
           </div>
         )}
@@ -1217,7 +1055,7 @@ function EventCard({ event, collectionSlug }: { event: CollectionEvent; collecti
         </div>
       </div>
       <div className="p-3">
-        <div className="flex items-center justify-between mb-1.5">
+        <div className="mb-1.5 flex items-center justify-between">
           <RelativeDate
             startDateTime={event.startDateTime}
             status={event.status}
@@ -1228,7 +1066,7 @@ function EventCard({ event, collectionSlug }: { event: CollectionEvent; collecti
         </div>
         <h4
           className={cn(
-            'font-medium line-clamp-2 text-sm group-hover:text-primary transition-colors',
+            'line-clamp-2 font-medium text-sm transition-colors group-hover:text-primary',
             isPast && 'text-muted-foreground'
           )}
           data-sanity={stega.scope('metadata.title').toString()}
@@ -1237,7 +1075,7 @@ function EventCard({ event, collectionSlug }: { event: CollectionEvent; collecti
         </h4>
         {event.metadata?.description && (
           <p
-            className="mt-1.5 text-xs text-muted-foreground line-clamp-2"
+            className="mt-1.5 line-clamp-2 text-muted-foreground text-xs"
             data-sanity={stega.scope('metadata.description').toString()}
           >
             {event.metadata.description}
@@ -1299,10 +1137,10 @@ function CardsGrid({
     <div className="space-y-6 md:space-y-8">
       {eventsByMonth.map(({ key, label, events: monthEvents }) => (
         <div key={key}>
-          <h3 className="text-base md:text-lg font-semibold text-foreground mb-3 md:mb-4 sticky top-20 bg-background/95 backdrop-blur py-2 z-10 border-b border-border">
+          <h3 className="sticky top-20 z-10 mb-3 border-border border-b bg-background/95 py-2 font-semibold text-base text-foreground backdrop-blur md:mb-4 md:text-lg">
             {label}
           </h3>
-          <div className="grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
             {monthEvents.map((event) => (
               <EventCard key={event._id} event={event} collectionSlug={collectionSlug} />
             ))}
@@ -1350,7 +1188,7 @@ function ListView({
     <div className="space-y-6 md:space-y-8">
       {eventsByMonth.map(({ key, label, events: monthEvents }) => (
         <div key={key}>
-          <h3 className="text-base md:text-lg font-semibold text-foreground mb-3 md:mb-4 sticky top-20 bg-background/95 backdrop-blur py-2 z-10 border-b border-border">
+          <h3 className="sticky top-20 z-10 mb-3 border-border border-b bg-background/95 py-2 font-semibold text-base text-foreground backdrop-blur md:mb-4 md:text-lg">
             {label}
           </h3>
           <div className="space-y-3">
@@ -1369,7 +1207,7 @@ function TimelineDot({ status, isPast }: { status: string; isPast: boolean }) {
   return (
     <div
       className={cn(
-        'absolute left-0 -translate-x-1/2 w-4 h-4 rounded-full border-4 border-background',
+        'absolute left-0 h-4 w-4 -translate-x-1/2 rounded-full border-4 border-background',
         status === 'live' && 'animate-pulse bg-red-500',
         status === 'upcoming' && 'bg-primary',
         isPast && 'bg-muted-foreground/50'
@@ -1396,7 +1234,7 @@ function TimelineEventCard({
       <TimelineDot status={event.status} isPast={isPast} />
       <div
         className={cn(
-          'group rounded-xl border bg-card overflow-hidden transition-all hover:border-primary/50 hover:shadow-md',
+          'group overflow-hidden rounded-xl border bg-card transition-all hover:border-primary/50 hover:shadow-md',
           isPast && 'opacity-75 hover:opacity-100'
         )}
       >
@@ -1418,11 +1256,11 @@ function TimelineEventCard({
           </Link>
         )}
         <div className="p-5">
-          <div className="flex flex-wrap items-center gap-2 mb-3">
+          <div className="mb-3 flex flex-wrap items-center gap-2">
             <StatusBadge status={event.status} />
             <EventTypeBadge eventType={event.eventType} />
           </div>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground mb-3">
+          <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground text-sm">
             <TimeLocationRow
               startDateTime={event.startDateTime}
               duration={event.duration}
@@ -1452,7 +1290,7 @@ function TimelineEventCard({
           </Link>
           {event.metadata?.description && (
             <p
-              className="mt-2 line-clamp-2 text-sm text-muted-foreground"
+              className="mt-2 line-clamp-2 text-muted-foreground text-sm"
               data-sanity={stega.scope('metadata.description').toString()}
             >
               {event.metadata.description}
@@ -1463,7 +1301,7 @@ function TimelineEventCard({
               <SpeakerAvatars speakers={event.speakers} />
             </div>
           )}
-          <div className="mt-4 pt-4 border-t">
+          <div className="mt-4 border-t pt-4">
             <EventActions event={event} collectionSlug={collectionSlug} />
           </div>
         </div>
@@ -1511,12 +1349,12 @@ function TimelineView({
       {eventsByMonth.map(({ key, label, events: monthEvents }) => (
         <div key={key}>
           {/* Sticky month header */}
-          <h3 className="text-base md:text-lg font-semibold text-foreground mb-4 md:mb-6 sticky top-20 bg-background/95 backdrop-blur py-2 z-10 border-b border-border">
+          <h3 className="sticky top-20 z-10 mb-4 border-border border-b bg-background/95 py-2 font-semibold text-base text-foreground backdrop-blur md:mb-6 md:text-lg">
             {label}
           </h3>
 
           {/* Timeline with left border - responsive padding */}
-          <div className="relative border-l-2 border-border pl-4 sm:pl-6 md:pl-8">
+          <div className="relative border-border border-l-2 pl-4 sm:pl-6 md:pl-8">
             {monthEvents.map((event) => (
               <TimelineEventCard key={event._id} event={event} collectionSlug={collectionSlug} />
             ))}
@@ -1524,20 +1362,6 @@ function TimelineView({
         </div>
       ))}
     </div>
-  );
-}
-
-// Empty state
-function EmptyState() {
-  const t = useTranslations('modules.events');
-  return (
-    <Card>
-      <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-        <CalendarIcon className="mb-4 size-12 text-muted-foreground/50" />
-        <h3 className="text-lg font-semibold">{t('noEvents')}</h3>
-        <p className="mt-1 text-muted-foreground">{t('noEventsInCollection')}</p>
-      </CardContent>
-    </Card>
   );
 }
 
@@ -1579,7 +1403,7 @@ export default function EventsFrontpageClient({
           {intro && <div>{intro}</div>}
 
           {/* Controls - centered on mobile, right-aligned on desktop */}
-          <div className="flex items-center justify-between sm:justify-end gap-3">
+          <div className="flex items-center justify-between gap-3 sm:justify-end">
             <LayoutSelector current={layout} onChange={setLayout} />
             {showRssLink && (
               <Link
@@ -1598,7 +1422,11 @@ export default function EventsFrontpageClient({
 
         {/* Content */}
         {!eventsWithStatus || eventsWithStatus.length === 0 ? (
-          <EmptyState />
+          <EmptyState
+            icon={CalendarIcon}
+            title={t('noEvents')}
+            description={t('noEventsInCollection')}
+          />
         ) : (
           <>
             {layout === 'calendar' && (

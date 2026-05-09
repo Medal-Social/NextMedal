@@ -17,7 +17,7 @@ import LeadMagnet from './marketing/LeadMagnet';
 function ModuleSkeleton() {
   return (
     <div className="animate-pulse">
-      <div className="h-64 bg-muted rounded-lg" />
+      <div className="h-64 rounded-lg bg-muted" />
     </div>
   );
 }
@@ -27,7 +27,7 @@ function ModuleSkeleton() {
  */
 function ServerOnlyPlaceholder({ moduleType }: { moduleType: string }) {
   return (
-    <div className="flex items-center justify-center p-8 bg-muted/50 rounded-lg border border-dashed border-border">
+    <div className="flex items-center justify-center rounded-lg border border-border border-dashed bg-muted/50 p-8">
       <p className="text-muted-foreground text-sm">
         <span className="font-medium">{moduleType}</span> requires server-side rendering and cannot
         be previewed in the gallery.

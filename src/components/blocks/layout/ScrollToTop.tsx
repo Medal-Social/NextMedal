@@ -218,7 +218,7 @@ export default function ScrollToTop() {
     <AnimatePresence mode="wait">
       {isVisible && (
         <motion.div
-          className="fixed right-4 md:right-8 z-[60]"
+          className="fixed right-4 z-[60] md:right-8"
           animate={{ bottom: bottomOffset }}
           transition={prefersReducedMotion ? { duration: 0 } : positionSpring}
         >
@@ -242,10 +242,10 @@ export default function ScrollToTop() {
               // Size and layout
               'relative flex h-[52px] w-[52px] items-center justify-center rounded-full',
               // Glassmorphism
-              'bg-white/70 backdrop-blur-md border border-white/30',
-              'dark:bg-brand-900/60 dark:border-white/10',
+              'border border-white/30 bg-white/70 backdrop-blur-md',
+              'dark:border-white/10 dark:bg-brand-900/60',
               // Shadow
-              'shadow-lg shadow-brand-vibrant/15 dark:shadow-brand-vibrant/25',
+              'shadow-brand-vibrant/15 shadow-lg dark:shadow-brand-vibrant/25',
               // Icon color
               'text-brand-vibrant dark:text-white',
               // Hover state

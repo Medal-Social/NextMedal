@@ -111,7 +111,7 @@ export const lighthouseConfig = {
     },
     throttling: {
       rttMs: 40,
-      throughputKbps: 10240,
+      throughputKbps: 10_240,
       cpuSlowdownMultiplier: 1,
     },
   },

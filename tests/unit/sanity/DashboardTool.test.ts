@@ -146,7 +146,7 @@ describe('DashboardTool - Greeting Algorithm', () => {
     it('should generate correct seed format (year * 10000 + month * 100 + day)', () => {
       const date = new Date(2024, 0, 15); // Jan 15, 2024
       // Month is 0-indexed, so month = 0 for January
-      const expectedSeed = 2024 * 10000 + 0 * 100 + 15; // 20240015
+      const expectedSeed = 2024 * 10_000 + 0 * 100 + 15; // 20240015
 
       expect(getDailySeed(date)).toBe(expectedSeed);
     });
@@ -154,7 +154,7 @@ describe('DashboardTool - Greeting Algorithm', () => {
 
   describe('seededRandom', () => {
     it('should return consistent values for the same seed', () => {
-      const seed = 12345;
+      const seed = 12_345;
 
       const random1 = seededRandom(seed);
       const random2 = seededRandom(seed);
@@ -162,13 +162,13 @@ describe('DashboardTool - Greeting Algorithm', () => {
     });
 
     it('should return different values for different seeds', () => {
-      const random1 = seededRandom(12345);
-      const random2 = seededRandom(54321);
+      const random1 = seededRandom(12_345);
+      const random2 = seededRandom(54_321);
       expect(random1).not.toBe(random2);
     });
 
     it('should return values between 0 and 1', () => {
-      const seeds = [100, 1000, 10000, 20240115, 20251231];
+      const seeds = [100, 1000, 10_000, 20_240_115, 20_251_231];
 
       for (const seed of seeds) {
         const random = seededRandom(seed);

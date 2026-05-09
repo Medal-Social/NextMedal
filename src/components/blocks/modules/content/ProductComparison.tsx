@@ -26,22 +26,27 @@ export default function ProductComparison({
   features,
   ...props
 }: Sanity.ProductComparison) {
-  const sortedProducts = products
-    ? [...products]
-        .map((product, index) => ({ ...product, originalIndex: index }))
-        .sort((a, b) => (a.highlight === b.highlight ? 0 : a.highlight ? -1 : 1))
-    : [];
+  const sortedProducts = (() => {
+    if (!products) return [];
+    const compareHighlight = (a: { highlight?: boolean }, b: { highlight?: boolean }) => {
+      if (a.highlight === b.highlight) return 0;
+      return a.highlight ? -1 : 1;
+    };
+    return [...products]
+      .map((product, index) => ({ ...product, originalIndex: index }))
+      .sort(compareHighlight);
+  })();
 
   return (
     <Section className="space-y-8" width="wide" {...moduleProps(props)}>
-      <div className="section-intro text-center items-center flex flex-col gap-4">
+      <div className="section-intro flex flex-col items-center gap-4 text-center">
         {intro && (
           <>
-            <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-center ">
+            <div className="text-center font-bold text-4xl md:text-5xl lg:text-6xl">
               <SharedPortableText value={[intro[0]]} />
             </div>
             {intro[1] && (
-              <div className="text-lg md:text-xl text-center font-normal mx-auto max-w-2xl">
+              <div className="mx-auto max-w-2xl text-center font-normal text-lg md:text-xl">
                 <SharedPortableText value={[intro[1]]} />
               </div>
             )}
@@ -50,27 +55,27 @@ export default function ProductComparison({
         )}
       </div>
 
-      <div className="md:hidden space-y-8">
+      <div className="space-y-8 md:hidden">
         {sortedProducts.map((product) => (
           <div
             key={product._key || `mobile-product-${product.originalIndex}`}
             className={cn(
-              'rounded-xl border p-6 space-y-6',
+              'space-y-6 rounded-xl border p-6',
               product.highlight
-                ? 'border-primary bg-primary/5 shadow-lg relative overflow-hidden'
+                ? 'relative overflow-hidden border-primary bg-primary/5 shadow-lg'
                 : 'bg-card'
             )}
           >
             {product.highlight && (
-              <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-bl-lg">
+              <div className="absolute top-0 right-0 rounded-bl-lg bg-primary px-3 py-1 font-bold text-primary-foreground text-xs">
                 Recommended
               </div>
             )}
 
-            <div className="text-center pb-4 border-b border-border/50">
+            <div className="border-border/50 border-b pb-4 text-center">
               <h3
                 className={cn(
-                  'text-2xl font-bold',
+                  'font-bold text-2xl',
                   product.highlight ? 'text-highlight-foreground' : ''
                 )}
               >
@@ -82,11 +87,11 @@ export default function ProductComparison({
               {features?.map((feature, featureIndex) => (
                 <div
                   key={feature._key || `mobile-feature-${featureIndex}`}
-                  className="flex justify-between items-start gap-4 text-sm"
+                  className="flex items-start justify-between gap-4 text-sm"
                 >
                   <span
                     className={cn(
-                      'font-medium shrink-0 max-w-[40%]',
+                      'max-w-[40%] shrink-0 font-medium',
                       product.highlight ? 'text-foreground/70' : 'text-muted-foreground'
                     )}
                   >
@@ -110,21 +115,21 @@ export default function ProductComparison({
         ))}
       </div>
 
-      <div className="hidden md:block overflow-x-auto rounded-xl border border-border dark:border-border/80 bg-card/50 dark:bg-card/80 backdrop-blur-sm">
-        <table className="w-full border-collapse min-w-[600px]">
+      <div className="hidden overflow-x-auto rounded-xl border border-border bg-card/50 backdrop-blur-sm md:block dark:border-border/80 dark:bg-card/80">
+        <table className="w-full min-w-[600px] border-collapse">
           <thead>
             <tr>
-              <th className="p-6 text-left w-1/4 bg-muted/50 dark:bg-muted/30">
+              <th className="w-1/4 bg-muted/50 p-6 text-left dark:bg-muted/30">
                 <span className="sr-only">Feature</span>
               </th>
               {products?.map((product, index) => (
                 <th
                   key={product._key || `product-${product.name}-${index}`}
                   className={cn(
-                    'p-6 text-center text-lg font-bold',
+                    'p-6 text-center font-bold text-lg',
                     product.highlight
-                      ? 'text-primary bg-primary/10 dark:bg-primary/20 border-b-2 border-primary'
-                      : 'text-foreground border-b border-border dark:border-border/70 bg-muted/50 dark:bg-muted/30'
+                      ? 'border-primary border-b-2 bg-primary/10 text-primary dark:bg-primary/20'
+                      : 'border-border border-b bg-muted/50 text-foreground dark:border-border/70 dark:bg-muted/30'
                   )}
                 >
                   {product.name}
@@ -135,7 +140,7 @@ export default function ProductComparison({
           <tbody>
             {features?.map((feature, index) => (
               <tr
-                className="border-b border-border/50 last:border-0 hover:bg-muted/30 transition-colors"
+                className="border-border/50 border-b transition-colors last:border-0 hover:bg-muted/30"
                 key={feature._key || `feature-${feature.name}-${index}`}
               >
                 <td className="p-6 font-medium text-foreground">{feature.name}</td>
@@ -145,11 +150,12 @@ export default function ProductComparison({
 
                   return (
                     <td
+                      // biome-ignore lint/suspicious/noArrayIndexKey: product detail aligns with column position
                       key={`${feature._key || feature.name}-detail-${idx}`}
                       className={cn(
                         'p-6 text-center font-medium',
                         isHighlighted
-                          ? 'bg-primary/5 text-foreground font-bold'
+                          ? 'bg-primary/5 font-bold text-foreground'
                           : 'text-muted-foreground'
                       )}
                     >

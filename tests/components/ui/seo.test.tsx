@@ -665,7 +665,7 @@ describe('Heading Hierarchy Tests', () => {
       ];
 
       // Helper to extract level from style
-      const getLevel = (style: string): number => parseInt(style.replace('h', ''), 10);
+      const getLevel = (style: string): number => Number.parseInt(style.replace('h', ''), 10);
 
       // Check for skipped levels
       let hasSkippedLevel = false;
@@ -691,7 +691,7 @@ describe('Heading Hierarchy Tests', () => {
         { style: 'h3', text: 'Subsection 2.1' },
       ];
 
-      const getLevel = (style: string): number => parseInt(style.replace('h', ''), 10);
+      const getLevel = (style: string): number => Number.parseInt(style.replace('h', ''), 10);
 
       let hasSkippedLevel = false;
       for (let i = 1; i < validHeadings.length; i++) {
@@ -725,7 +725,7 @@ describe('Heading Hierarchy Tests', () => {
         { style: 'h2', text: 'Main Content' },
       ];
 
-      const getLevel = (style: string): number => parseInt(style.replace('h', ''), 10);
+      const getLevel = (style: string): number => Number.parseInt(style.replace('h', ''), 10);
 
       // First body heading should be h2 (following h1 title)
       expect(getLevel(bodyHeadings[0].style)).toBe(2);

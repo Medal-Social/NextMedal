@@ -41,22 +41,22 @@ export default function ComponentGalleryClient({
   return (
     <div className="min-h-screen">
       {intro && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
-          <div className="richtext text-center mx-auto max-w-3xl">
+        <div className="mx-auto max-w-7xl px-4 pt-8 pb-4 sm:px-6 lg:px-8">
+          <div className="richtext mx-auto max-w-3xl text-center">
             <PortableText value={intro} />
           </div>
         </div>
       )}
 
-      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-lg border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+      <div className="sticky top-0 z-40 border-border border-b bg-background/95 backdrop-blur-lg">
+        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-stretch gap-4 sm:flex-row sm:items-center">
             {/* Category Pills - Horizontal Scroll */}
-            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1 no-scrollbar">
+            <div className="scrollbar-hide no-scrollbar flex items-center gap-2 overflow-x-auto pb-1">
               <button
                 type="button"
                 onClick={() => setSelectedCategory(null)}
-                className={`px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-all ${
+                className={`whitespace-nowrap rounded-md px-4 py-2 font-medium text-sm transition-all ${
                   selectedCategory === null
                     ? 'bg-primary/5 text-primary'
                     : 'bg-transparent text-muted-foreground hover:bg-primary/5 hover:text-primary'
@@ -69,7 +69,7 @@ export default function ComponentGalleryClient({
                   type="button"
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-all ${
+                  className={`whitespace-nowrap rounded-md px-4 py-2 font-medium text-sm transition-all ${
                     selectedCategory === category
                       ? 'bg-primary/5 text-primary'
                       : 'bg-transparent text-muted-foreground hover:bg-primary/5 hover:text-primary'
@@ -81,8 +81,8 @@ export default function ComponentGalleryClient({
             </div>
 
             {/* Search */}
-            <div className="relative w-full sm:w-64 sm:ml-auto">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <div className="relative w-full sm:ml-auto sm:w-64">
+              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder="Search components..."
@@ -96,30 +96,30 @@ export default function ComponentGalleryClient({
       </div>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
         <div className="space-y-16">
           {filteredComponents.map((item) => (
             <div key={item.id} id={item.id} className="scroll-mt-32">
               <div className="mb-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-xl font-semibold capitalize">
+                    <h3 className="font-semibold text-xl capitalize">
                       {item.name.replace(/-/g, ' ')}
                     </h3>
-                    <p className="text-sm text-muted-foreground">{item.category}</p>
+                    <p className="text-muted-foreground text-sm">{item.category}</p>
                   </div>
                 </div>
                 {item.description && (
-                  <p className="mt-2 text-sm text-muted-foreground max-w-2xl">{item.description}</p>
+                  <p className="mt-2 max-w-2xl text-muted-foreground text-sm">{item.description}</p>
                 )}
               </div>
 
-              <div className="rounded-xl border border-border bg-background shadow-sm overflow-hidden ring-1 ring-border/50 relative">
+              <div className="relative overflow-hidden rounded-xl border border-border bg-background shadow-sm ring-1 ring-border/50">
                 <ComponentPreview
                   moduleType={item.moduleType}
                   componentData={item.moduleData as unknown as Record<string, unknown>}
                 >
-                  <div className="bg-checkered absolute inset-0 opacity-[0.03] pointer-events-none" />
+                  <div className="pointer-events-none absolute inset-0 bg-checkered opacity-[0.03]" />
                   <div className="relative">
                     <GalleryModuleRenderer module={item.moduleData} />
                   </div>
@@ -130,8 +130,8 @@ export default function ComponentGalleryClient({
         </div>
 
         {filteredComponents.length === 0 && (
-          <div className="text-center py-16">
-            <p className="text-muted-foreground text-lg">No components found</p>
+          <div className="py-16 text-center">
+            <p className="text-lg text-muted-foreground">No components found</p>
             <Button
               variant="outline"
               className="mt-4 bg-transparent"

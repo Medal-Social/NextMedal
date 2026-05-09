@@ -212,7 +212,7 @@ export async function GET(request: NextRequest) {
             style={{
               display: 'flex',
               alignItems: 'center',
-              borderTop: `1px solid rgba(212, 204, 224, 0.2)`,
+              borderTop: '1px solid rgba(212, 204, 224, 0.2)',
               paddingTop: '32px',
               justifyContent: 'space-between',
             }}

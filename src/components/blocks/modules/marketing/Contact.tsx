@@ -14,8 +14,8 @@ import SharedPortableText from '../SharedPortableText';
 // Icon wrapper component
 function InfoIcon({ icon: Icon }: { icon: LucideIcon }) {
   return (
-    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-4 mt-0.5">
-      <Icon className="w-5 h-5" aria-hidden="true" />
+    <div className="mt-0.5 mr-4 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+      <Icon className="h-5 w-5" aria-hidden="true" />
     </div>
   );
 }
@@ -34,7 +34,7 @@ function InfoRow({
     <div className="flex items-start">
       <InfoIcon icon={icon} />
       <div>
-        <p className="font-bold text-foreground mb-1">{label}</p>
+        <p className="mb-1 font-bold text-foreground">{label}</p>
         <div className="text-muted-foreground">{children}</div>
       </div>
     </div>
@@ -46,8 +46,8 @@ function OfficeInfoCard({ officeInfo }: { officeInfo: NonNullable<Sanity.Contact
   const t = useTranslations('contact-form');
 
   return (
-    <div className="p-8 rounded-3xl bg-card border border-border shadow-sm">
-      <h3 className="text-2xl font-bold mb-8 text-foreground">{officeInfo.title}</h3>
+    <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+      <h3 className="mb-8 font-bold text-2xl text-foreground">{officeInfo.title}</h3>
       <div className="space-y-6">
         <InfoRow icon={MapPin} label={t('address')}>
           <p className="leading-relaxed">
@@ -86,27 +86,27 @@ function ContactPersonCard({
   contactPerson: NonNullable<Sanity.Contact['contactPerson']>;
 }) {
   return (
-    <div className="p-8 rounded-3xl bg-card border border-border shadow-sm">
-      <h3 className="text-2xl font-bold mb-8 text-foreground">{contactPerson.title}</h3>
-      <div className="flex flex-col sm:flex-row items-start gap-6">
+    <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
+      <h3 className="mb-8 font-bold text-2xl text-foreground">{contactPerson.title}</h3>
+      <div className="flex flex-col items-start gap-6 sm:flex-row">
         {contactPerson.image && (
-          <div className="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 border-2 border-primary/5">
+          <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-2xl border-2 border-primary/5">
             <Img
               image={contactPerson.image}
               alt={contactPerson.name}
               width={96}
               height={96}
-              className="w-full h-full object-cover"
+              className="h-full w-full object-cover"
             />
           </div>
         )}
         <div className="flex-1">
-          <h4 className="text-xl font-bold mb-1 text-foreground">{contactPerson.name}</h4>
-          <p className="text-primary font-semibold mb-3 tracking-wide text-sm uppercase">
+          <h4 className="mb-1 font-bold text-foreground text-xl">{contactPerson.name}</h4>
+          <p className="mb-3 font-semibold text-primary text-sm uppercase tracking-wide">
             {contactPerson.position}
           </p>
           {contactPerson.description && (
-            <p className="text-muted-foreground leading-relaxed mb-4">
+            <p className="mb-4 text-muted-foreground leading-relaxed">
               {contactPerson.description}
             </p>
           )}
@@ -126,18 +126,18 @@ function ContactLinks({ email, phone }: { email?: string; phone?: string }) {
       {email && (
         <a
           href={`mailto:${email}`}
-          className="flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+          className="flex items-center font-medium text-muted-foreground text-sm transition-colors hover:text-primary"
         >
-          <Mail className="w-4 h-4 mr-2" aria-hidden="true" />
+          <Mail className="mr-2 h-4 w-4" aria-hidden="true" />
           {email}
         </a>
       )}
       {phone && (
         <a
           href={`tel:${phone}`}
-          className="flex items-center text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+          className="flex items-center font-medium text-muted-foreground text-sm transition-colors hover:text-primary"
         >
-          <Smartphone className="w-4 h-4 mr-2" aria-hidden="true" />
+          <Smartphone className="mr-2 h-4 w-4" aria-hidden="true" />
           {phone}
         </a>
       )}
@@ -166,19 +166,19 @@ export default function Contact({
     <Section {...moduleProps(props)} className={cn(!isSidebar && 'py-24')}>
       <div className={cn('mx-auto', !isSidebar && 'container')}>
         {intro && (
-          <div className={cn('max-w-3xl mx-auto text-center', isSidebar ? 'mb-8' : 'mb-16')}>
+          <div className={cn('mx-auto max-w-3xl text-center', isSidebar ? 'mb-8' : 'mb-16')}>
             <SharedPortableText value={intro} variant="intro" />
           </div>
         )}
 
         <div
           className={cn(
-            'grid items-start max-w-6xl mx-auto',
+            'mx-auto grid max-w-6xl items-start',
             isSidebar ? 'grid-cols-1 gap-8' : 'gap-16 lg:grid-cols-2'
           )}
         >
           <div className="w-full">
-            <Form form={form} locale={locale} className="shadow-lg border-primary/10" />
+            <Form form={form} locale={locale} className="border-primary/10 shadow-lg" />
           </div>
 
           {!isSidebar && (

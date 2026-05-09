@@ -107,14 +107,14 @@ export function getDailySeed(date: Date): number {
   const year = date.getFullYear();
   const month = date.getMonth();
   const day = date.getDate();
-  return year * 10000 + month * 100 + day;
+  return year * 10_000 + month * 100 + day;
 }
 
 /**
  * Seeded random number generator for consistent daily greetings
  */
 export function seededRandom(seed: number): number {
-  const x = Math.sin(seed) * 10000;
+  const x = Math.sin(seed) * 10_000;
   return x - Math.floor(x);
 }
 

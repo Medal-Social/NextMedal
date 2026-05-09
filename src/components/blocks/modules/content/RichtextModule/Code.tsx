@@ -18,9 +18,9 @@ export default async function Code({ value }: { value: { code: string; language?
     });
 
     return (
-      <div className="relative my-6 overflow-hidden rounded-lg border border-zinc-700 group bg-[#0C1117]">
+      <div className="group relative my-6 overflow-hidden rounded-lg border border-zinc-700 bg-[#0C1117]">
         {value.language && value.language !== 'text' && (
-          <div className="absolute top-0 left-0 rounded-br-lg border-b border-r border-zinc-700 bg-[#161b22] px-3 py-1 font-mono text-xs font-medium text-zinc-400">
+          <div className="absolute top-0 left-0 rounded-br-lg border-zinc-700 border-r border-b bg-[#161b22] px-3 py-1 font-medium font-mono text-xs text-zinc-400">
             {value.language}
           </div>
         )}
@@ -36,7 +36,7 @@ export default async function Code({ value }: { value: { code: string; language?
   } catch (error) {
     logger.error({ err: error }, 'Code highlighting failed');
     return (
-      <div className="relative my-6 overflow-hidden rounded-lg border border-zinc-700 group bg-[#0C1117] p-4">
+      <div className="group relative my-6 overflow-hidden rounded-lg border border-zinc-700 bg-[#0C1117] p-4">
         <CopyButton code={value.code} className="absolute top-3 right-3 z-10" />
         <pre className="m-0 overflow-x-auto text-sm text-zinc-100">
           <code>{value.code}</code>

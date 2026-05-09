@@ -1,7 +1,6 @@
 'use client';
 
 import { Copy, Home, LayoutGrid } from 'lucide-react';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import type * as React from 'react';
@@ -14,6 +13,7 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
 import { DEFAULT_LOCALE } from '@/i18n/config';
+import { Link } from '@/i18n/navigation';
 import { logger } from '@/lib/core/logger';
 import { copyToClipboard } from '@/lib/utils/clipboard';
 import { urlFor } from '@/sanity/lib/image';
@@ -74,30 +74,30 @@ export default function BrandMenu({ children, logoData, hasBrandPage }: BrandMen
   return (
     <ContextMenu>
       <ContextMenuTrigger
-        render={<div className="cursor-pointer flex items-center">{children}</div>}
+        render={<div className="flex cursor-pointer items-center">{children}</div>}
       />
-      <ContextMenuContent className="w-56 p-2 z-[200]">
+      <ContextMenuContent className="z-[200] w-56 p-2">
         <ContextMenuItem
           render={
             <Link
               href={homeHref}
               onClick={handleHomeClick}
-              className="flex items-center cursor-pointer gap-2"
+              className="flex cursor-pointer items-center gap-2"
             >
-              <Home className="w-4 h-4" />
+              <Home className="h-4 w-4" />
               <span>{t('goToHome')}</span>
             </Link>
           }
         />
         <ContextMenuItem onClick={handleCopyLogo} className="cursor-pointer gap-2">
-          <Copy className="w-4 h-4" />
+          <Copy className="h-4 w-4" />
           <span>{label}</span>
         </ContextMenuItem>
 
         {hasBrandPage && <ContextMenuSeparator />}
 
         {hasBrandPage && (
-          <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-muted/50 rounded-sm mb-1">
+          <div className="mb-1 rounded-sm bg-muted/50 px-2 py-1.5 font-semibold text-muted-foreground text-xs">
             Medal Social
           </div>
         )}
@@ -105,8 +105,8 @@ export default function BrandMenu({ children, logoData, hasBrandPage }: BrandMen
         {hasBrandPage && (
           <ContextMenuItem
             render={
-              <Link href={brandHref} className="flex items-center cursor-pointer gap-2 font-medium">
-                <LayoutGrid className="w-4 h-4 text-primary" />
+              <Link href={brandHref} className="flex cursor-pointer items-center gap-2 font-medium">
+                <LayoutGrid className="h-4 w-4 text-primary" />
                 <span>{t('brandCenter')}</span>
               </Link>
             }

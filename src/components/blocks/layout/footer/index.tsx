@@ -1,11 +1,11 @@
 import { ExternalLink } from 'lucide-react';
-import Link from 'next/link';
 import { getLocale } from 'next-intl/server';
 import { PortableText } from 'next-sanity';
 import { Img } from '@/components/blocks/objects/core';
 import { Social } from '@/components/blocks/utility';
 import CookiePreferencesTrigger from '@/components/CookiePreferencesTrigger';
 import { Section } from '@/components/ui/section';
+import { Link } from '@/i18n/navigation';
 import resolveUrl from '@/lib/sanity/resolve-url-server';
 import { cn } from '@/lib/utils/index';
 import { getFooterSettings } from '@/sanity/lib/fetch';
@@ -47,20 +47,20 @@ async function FooterInner() {
 
   return (
     <Wrapper className="bg-background text-foreground">
-      <Section className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-x-12 gap-y-6 pb-8">
+      <Section className="grid grid-cols-1 gap-x-12 gap-y-6 pb-8 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
         <div className="flex flex-col gap-4">
           <Link
             className={cn(
               'h3 md:h2 max-w-max',
-              'motion-safe:transition-all motion-safe:duration-200 hover:text-primary motion-safe:hover:scale-105 origin-left',
-              'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-sm'
+              'origin-left hover:text-primary motion-safe:transition-all motion-safe:duration-200 motion-safe:hover:scale-105',
+              'rounded-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2'
             )}
             href="/"
             aria-label={`Return to ${title} homepage`}
           >
             {logoImageDark ? (
               <Img
-                className="hidden dark:inline-block max-h-[1.5em] w-auto"
+                className="hidden max-h-[1.5em] w-auto dark:inline-block"
                 image={logoImageDark}
                 alt={`${logo?.name || title} logo - dark version`}
               />
@@ -69,7 +69,7 @@ async function FooterInner() {
             )}
             {logoImageLight ? (
               <Img
-                className="inline-block dark:hidden max-h-[1.5em] w-auto"
+                className="inline-block max-h-[1.5em] w-auto dark:hidden"
                 image={logoImageLight}
                 alt={`${logo?.name || title} logo - light version`}
               />
@@ -79,7 +79,7 @@ async function FooterInner() {
           </Link>
 
           {tagline && (
-            <div className="max-w-sm text-sm text-muted-foreground text-balance">
+            <div className="max-w-sm text-balance text-muted-foreground text-sm">
               <PortableText value={tagline} />
             </div>
           )}
@@ -94,11 +94,11 @@ async function FooterInner() {
         {/* Gradient separator */}
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
 
-        <Section className="flex flex-wrap justify-between items-center py-4 gap-4" spacing="none">
+        <Section className="flex flex-wrap items-center justify-between gap-4 py-4" spacing="none">
           {/* Left: Copyright + Links */}
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-muted-foreground text-sm">
             {copyright ? (
-              <span className="[&_p]:inline [&_p]:m-0 [&_a]:underline hover:[&_a]:text-foreground [&_a]:transition-colors">
+              <span className="[&_a]:underline [&_a]:transition-colors hover:[&_a]:text-foreground [&_p]:m-0 [&_p]:inline">
                 <PortableText value={copyright} />
               </span>
             ) : (

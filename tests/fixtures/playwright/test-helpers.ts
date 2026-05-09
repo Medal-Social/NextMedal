@@ -124,7 +124,7 @@ export async function getZIndex(page: Page, selector: string): Promise<number> {
     if (!element) return 0;
 
     const zIndex = window.getComputedStyle(element).zIndex;
-    return zIndex === 'auto' ? 0 : parseInt(zIndex, 10);
+    return zIndex === 'auto' ? 0 : Number.parseInt(zIndex, 10);
   }, selector);
 }
 

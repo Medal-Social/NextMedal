@@ -1,10 +1,10 @@
 'use client';
 
 import { AnimatePresence } from 'motion/react';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { CommandMenu } from '@/components/blocks/utility/CommandMenu';
+import { Link } from '@/i18n/navigation';
 import { useCollections } from '@/lib/collections/context';
 import { cn } from '@/lib/utils/index';
 import { DESKTOP_BREAKPOINT, SCROLL_THRESHOLD } from './constants';
@@ -62,7 +62,7 @@ export default function HeaderClient({
     }
 
     return () => observer.disconnect();
-  }, [pathname]);
+  }, []);
 
   // Handle scroll state with throttling
   useEffect(() => {
@@ -120,7 +120,7 @@ export default function HeaderClient({
   // Close mobile menu on route change
   useEffect(() => {
     setIsOpen(false);
-  }, [pathname]);
+  }, []);
 
   // Close mobile menu on resize to desktop
   useEffect(() => {
@@ -169,38 +169,38 @@ export default function HeaderClient({
           className,
           'relative z-50 transition-colors duration-200 ease-in-out',
           isScrolled || isOpen || isDocs
-            ? 'bg-background border-b border-border/40 shadow-sm'
-            : 'bg-transparent border-transparent',
+            ? 'border-border/40 border-b bg-background shadow-sm'
+            : 'border-transparent bg-transparent',
           !isScrolled && isDarkHero && !isOpen && !isDocs && 'dark text-white'
         )}
       >
         <div
           className={cn(
-            'mx-auto flex min-h-16 items-center w-full p-4 px-4 sm:px-6 lg:px-8',
+            'mx-auto flex min-h-16 w-full items-center p-4 px-4 sm:px-6 lg:px-8',
             isDocs ? 'max-w-none' : 'max-w-7xl'
           )}
         >
           {isDocs ? (
-            <div className="flex flex-1 items-center justify-between w-full">
-              <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+            <div className="flex w-full flex-1 items-center justify-between">
+              <div className="flex min-w-0 items-center gap-2 sm:gap-4">
                 {/* Identity: Logo | Docs */}
-                <div className="flex items-center shrink-0">{logoNode}</div>
-                <div className="hidden sm:block h-6 w-px bg-border/60 rotate-12 shrink-0" />
+                <div className="flex shrink-0 items-center">{logoNode}</div>
+                <div className="hidden h-6 w-px shrink-0 rotate-12 bg-border/60 sm:block" />
                 <Link
                   href="/docs"
-                  className="hidden sm:block font-semibold text-lg tracking-tight truncate hover:opacity-80 transition-opacity"
+                  className="hidden truncate font-semibold text-lg tracking-tight transition-opacity hover:opacity-80 sm:block"
                 >
                   Docs
                 </Link>
               </div>
 
-              <div className="flex items-center gap-1 sm:gap-2 md:gap-4 relative z-[101] shrink-0">
+              <div className="relative z-[101] flex shrink-0 items-center gap-1 sm:gap-2 md:gap-4">
                 {enableSearch && (
                   <>
                     <div className="hidden md:block">
                       <CommandMenu
                         variant="default"
-                        className="w-[180px] lg:w-[240px] bg-muted/40 border-transparent hover:bg-muted/60"
+                        className="w-[180px] border-transparent bg-muted/40 hover:bg-muted/60 lg:w-[240px]"
                       />
                     </div>
                     <div className="md:hidden">
@@ -215,26 +215,26 @@ export default function HeaderClient({
                 </div>
 
                 {/* Mobile Toggle Trigger */}
-                <Toggle isOpen={isOpen} setIsOpen={setIsOpen} className="md:hidden ml-1" />
+                <Toggle isOpen={isOpen} setIsOpen={setIsOpen} className="ml-1 md:hidden" />
               </div>
             </div>
           ) : (
-            <div className="flex flex-1 items-center justify-between w-full">
+            <div className="flex w-full flex-1 items-center justify-between">
               {/* Left: Logo + Navigation */}
-              <div className="flex items-center gap-4 lg:gap-10 min-w-0">
+              <div className="flex min-w-0 items-center gap-4 lg:gap-10">
                 <div className="shrink-0">{logoNode}</div>
                 <div className="hidden lg:block">{navNode}</div>
               </div>
 
               {/* Right: Search + Controls + CTA */}
-              <div className="flex items-center gap-2 md:gap-4 relative z-[101] shrink-0">
+              <div className="relative z-[101] flex shrink-0 items-center gap-2 md:gap-4">
                 {/* Search */}
                 {enableSearch && (
                   <>
                     <div className="hidden md:block">
                       <CommandMenu
                         variant="default"
-                        className="w-[150px] lg:w-[200px] bg-muted/40 border-transparent hover:bg-muted/60"
+                        className="w-[150px] border-transparent bg-muted/40 hover:bg-muted/60 lg:w-[200px]"
                       />
                     </div>
                     <div className="md:hidden">
@@ -251,13 +251,13 @@ export default function HeaderClient({
 
                 {/* Marketing CTAs */}
                 {ctaNode && (
-                  <div className="hidden md:flex items-center border-l border-border/40 pl-4 lg:pl-6 h-6">
+                  <div className="hidden h-6 items-center border-border/40 border-l pl-4 md:flex lg:pl-6">
                     {ctaNode}
                   </div>
                 )}
 
                 {/* Mobile Toggle */}
-                <div className="flex items-center lg:hidden ml-1">
+                <div className="ml-1 flex items-center lg:hidden">
                   <Toggle isOpen={isOpen} setIsOpen={setIsOpen} />
                 </div>
               </div>

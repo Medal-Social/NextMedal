@@ -92,9 +92,9 @@ function EventTypeBadge({ type }: { type: Sanity.CollectionEvents['eventType'] }
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-white ${config.color}`}
+      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-medium text-white text-xs ${config.color}`}
     >
-      <Icon className="w-3.5 h-3.5" />
+      <Icon className="h-3.5 w-3.5" />
       {config.label}
     </span>
   );
@@ -106,7 +106,7 @@ function StatusBadge({ status }: { status: 'upcoming' | 'live' | 'completed' }) 
 
   return (
     <Badge variant={config.variant} className="text-xs">
-      {status === 'live' && <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse mr-1" />}
+      {status === 'live' && <span className="mr-1 h-2 w-2 animate-pulse rounded-full bg-red-500" />}
       {config.label}
     </Badge>
   );
@@ -127,20 +127,20 @@ function EventHeader({
   const crumbs = buildBreadcrumbs(event, collectionSlug);
 
   return (
-    <section className="bg-background pt-24 md:pt-32 pb-8 border-b border-border relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <section className="relative border-border border-b bg-background pt-24 pb-8 md:pt-32">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <EventBreadcrumbs crumbs={crumbs} currentTitle={event.metadata?.title} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-12">
           <div className="lg:col-span-8">
             {/* Badges */}
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="mb-4 flex flex-wrap gap-2">
               {event.eventType && <EventTypeBadge type={event.eventType} />}
               <StatusBadge status={status} />
             </div>
 
             <h1
-              className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground leading-tight mb-6"
+              className="mb-6 font-bold text-3xl text-foreground leading-tight tracking-tight md:text-4xl lg:text-5xl"
               data-sanity={stega.scope('metadata.title').toString()}
             >
               {event.metadata?.title}
@@ -163,11 +163,11 @@ function EventMeta({
   stega: ReturnType<typeof createStegaAttribute>;
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-y-4 gap-x-6 text-muted-foreground text-sm">
+    <div className="flex flex-wrap items-center gap-x-6 gap-y-4 text-muted-foreground text-sm">
       {/* Date */}
       {event.startDateTime && (
         <div className="flex items-center gap-1.5">
-          <Calendar className="w-4 h-4" />
+          <Calendar className="h-4 w-4" />
           <DateDisplay
             value={event.startDateTime}
             data-sanity={stega.scope('startDateTime').toString()}
@@ -178,7 +178,7 @@ function EventMeta({
       {/* Time */}
       {event.startDateTime && (
         <div className="flex items-center gap-1.5">
-          <Clock className="w-4 h-4" />
+          <Clock className="h-4 w-4" />
           <Time value={event.startDateTime} />
           {event.endDateTime && (
             <>
@@ -194,7 +194,7 @@ function EventMeta({
       {event.location?.venue &&
         (event.eventType === 'physical' || event.eventType === 'hybrid') && (
           <div className="flex items-center gap-1.5">
-            <MapPin className="w-4 h-4" />
+            <MapPin className="h-4 w-4" />
             <span>{event.location.venue}</span>
             {event.location.city && <span>, {event.location.city}</span>}
           </div>
@@ -222,12 +222,12 @@ function EventImage({
 
   return (
     <div
-      className="w-full rounded-xl overflow-hidden shadow-md mb-8 bg-muted aspect-video"
+      className="mb-8 aspect-video w-full overflow-hidden rounded-xl bg-muted shadow-md"
       data-sanity={stega.scope('seo.image').toString()}
     >
       <Img
         image={event.seo?.image || fallbackImage}
-        className="w-full h-full object-cover"
+        className="h-full w-full object-cover"
         sizes="(max-width: 768px) 100vw, 900px"
         priority
         fetchPriority="high"
@@ -260,16 +260,16 @@ function SpeakersSection({ speakers }: { speakers?: Sanity.CollectionEvents['spe
   if (!speakers || speakers.length === 0) return null;
 
   return (
-    <div className="bg-card rounded-2xl p-6 border shadow-sm mb-8">
-      <h3 className="text-lg font-semibold mb-4">Speakers</h3>
+    <div className="mb-8 rounded-2xl border bg-card p-6 shadow-sm">
+      <h3 className="mb-4 font-semibold text-lg">Speakers</h3>
       <div className="space-y-4">
         {speakers.map((speaker) => (
           <div key={speaker._id} className="flex items-center gap-4">
             {speaker.image && (
-              <div className="w-12 h-12 rounded-full overflow-hidden bg-muted flex-shrink-0">
+              <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-full bg-muted">
                 <Img
                   image={speaker.image}
-                  className="w-full h-full object-cover"
+                  className="h-full w-full object-cover"
                   sizes="48px"
                   alt={speaker.name || ''}
                 />
@@ -277,7 +277,7 @@ function SpeakersSection({ speakers }: { speakers?: Sanity.CollectionEvents['spe
             )}
             <div>
               <p className="font-medium text-foreground">{speaker.name}</p>
-              {speaker.role && <p className="text-sm text-muted-foreground">{speaker.role}</p>}
+              {speaker.role && <p className="text-muted-foreground text-sm">{speaker.role}</p>}
             </div>
           </div>
         ))}
@@ -293,15 +293,15 @@ function LocationDetails({ location }: { location?: Sanity.CollectionEvents['loc
   const hasAddress = location.address || location.city || location.country;
 
   return (
-    <div className="bg-card rounded-2xl p-6 border shadow-sm mb-8">
-      <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-        <MapPin className="w-5 h-5" />
+    <div className="mb-8 rounded-2xl border bg-card p-6 shadow-sm">
+      <h3 className="mb-4 flex items-center gap-2 font-semibold text-lg">
+        <MapPin className="h-5 w-5" />
         Location
       </h3>
       <div className="space-y-2">
         <p className="font-medium text-foreground">{location.venue}</p>
         {hasAddress && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {location.address && <span>{location.address}</span>}
             {location.city && (
               <span>
@@ -322,10 +322,10 @@ function LocationDetails({ location }: { location?: Sanity.CollectionEvents['loc
             href={location.mapUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline mt-2"
+            className="mt-2 inline-flex items-center gap-1.5 text-primary text-sm hover:underline"
           >
             View on Map
-            <ExternalLink className="w-3.5 h-3.5" />
+            <ExternalLink className="h-3.5 w-3.5" />
           </a>
         )}
       </div>
@@ -344,8 +344,8 @@ function EventSidebar({ event }: { event: Sanity.CollectionEvents }) {
       )}
 
       {/* Event details card */}
-      <div className="bg-card rounded-2xl p-6 border shadow-sm">
-        <h3 className="text-lg font-semibold mb-4">Event Details</h3>
+      <div className="rounded-2xl border bg-card p-6 shadow-sm">
+        <h3 className="mb-4 font-semibold text-lg">Event Details</h3>
         <dl className="space-y-3 text-sm">
           <div>
             <dt className="text-muted-foreground">Event Type</dt>
@@ -397,8 +397,8 @@ export default function EventDetail({ event, collectionSlug }: EventDetailProps)
       <EventHeader event={event} collectionSlug={collectionSlug} stega={stega} status={status} />
 
       {/* Main Content Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
           {/* Content Column */}
           <div className="lg:col-span-8">
             <EventImage event={event} stega={stega} />
@@ -413,19 +413,19 @@ export default function EventDetail({ event, collectionSlug }: EventDetailProps)
             {event.body && (
               <Content
                 value={event.body}
-                className="prose prose-slate dark:prose-invert prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary prose-img:rounded-xl"
+                className="prose prose-slate dark:prose-invert prose-lg max-w-none prose-img:rounded-xl prose-headings:font-bold prose-a:text-primary prose-headings:tracking-tight"
                 data-sanity={stega.scope('body').toString()}
               />
             )}
 
             {/* Mobile sidebar content */}
-            <div className="lg:hidden mt-12">
+            <div className="mt-12 lg:hidden">
               <EventSidebar event={event} />
             </div>
           </div>
 
           {/* Sidebar Column */}
-          <div className="hidden lg:block lg:col-span-4 sticky top-24 self-start">
+          <div className="sticky top-24 hidden self-start lg:col-span-4 lg:block">
             <EventSidebar event={event} />
           </div>
         </div>

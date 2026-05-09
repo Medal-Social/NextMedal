@@ -25,7 +25,7 @@ import LatestArticles from './utility/LatestArticles';
 function ModuleSkeleton() {
   return (
     <div className="animate-pulse">
-      <div className="h-64 bg-muted rounded-lg" />
+      <div className="h-64 rounded-lg bg-muted" />
     </div>
   );
 }

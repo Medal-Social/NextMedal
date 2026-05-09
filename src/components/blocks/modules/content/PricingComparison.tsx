@@ -16,34 +16,34 @@ export default function PricingComparison({
 }: Sanity.PricingComparison) {
   return (
     <Section className="space-y-12" width="wide" {...moduleProps(props)}>
-      <div className="text-center space-y-4">
-        {title && <h2 className="text-3xl font-bold md:text-4xl">{title}</h2>}
-        {description && <p className="text-muted-foreground max-w-2xl mx-auto">{description}</p>}
+      <div className="space-y-4 text-center">
+        {title && <h2 className="font-bold text-3xl md:text-4xl">{title}</h2>}
+        {description && <p className="mx-auto max-w-2xl text-muted-foreground">{description}</p>}
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse min-w-[800px]">
+        <table className="w-full min-w-[800px] border-collapse">
           <thead>
             <tr>
-              <th className="p-4 text-left w-1/4"></th>
+              <th className="w-1/4 p-4 text-left"></th>
               {tiers?.map((tier) => (
                 <th
                   key={tier._key}
                   className={cn(
-                    'p-4 text-center align-top min-w-[200px]',
-                    tier.popular && 'bg-muted/30 rounded-t-xl relative'
+                    'min-w-[200px] p-4 text-center align-top',
+                    tier.popular && 'relative rounded-t-xl bg-muted/30'
                   )}
                 >
                   {tier.popular && (
-                    <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 mb-2">
+                    <Badge className="absolute -top-3 left-1/2 mb-2 -translate-x-1/2">
                       Most Popular
                     </Badge>
                   )}
-                  <div className="space-y-2 mt-2">
+                  <div className="mt-2 space-y-2">
                     <div className="font-bold text-xl">{tier.name}</div>
-                    <div className="text-2xl font-bold">{tier.price || 'Custom'}</div>
+                    <div className="font-bold text-2xl">{tier.price || 'Custom'}</div>
                     {tier.description && (
-                      <div className="text-sm text-muted-foreground font-normal">
+                      <div className="font-normal text-muted-foreground text-sm">
                         {tier.description}
                       </div>
                     )}
@@ -58,7 +58,7 @@ export default function PricingComparison({
                 <tr className="bg-muted/50">
                   <td
                     colSpan={(tiers?.length || 0) + 1}
-                    className="p-3 font-semibold text-sm uppercase tracking-wider pl-4"
+                    className="p-3 pl-4 font-semibold text-sm uppercase tracking-wider"
                   >
                     {category.category}
                   </td>
@@ -93,7 +93,7 @@ function FeatureRow({
   return (
     <>
       <tr className="border-b hover:bg-muted/5">
-        <td className="p-4 flex items-center gap-2">
+        <td className="flex items-center gap-2 p-4">
           <span
             style={{ marginLeft: `${level * 1.5}rem` }}
             className={cn(level > 0 && 'text-muted-foreground')}
@@ -104,7 +104,7 @@ function FeatureRow({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
-                  <HelpCircle className="w-4 h-4 text-muted-foreground" />
+                  <HelpCircle className="h-4 w-4 text-muted-foreground" />
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="max-w-xs text-sm">{feature.tooltip}</p>
@@ -114,14 +114,22 @@ function FeatureRow({
           )}
         </td>
         {feature.tiers?.slice(0, tiersCount).map((value, i) => (
-          <td key={i} className="p-4 text-center">
+          <td
+            // biome-ignore lint/suspicious/noArrayIndexKey: pricing tier columns have stable position
+            key={`tier-${i}`}
+            className="p-4 text-center"
+          >
             {renderValue(value)}
           </td>
         ))}
         {/* Fill remaining cells if feature.tiers is shorter than tiersCount (shouldn't happen with valid data) */}
         {Array.from({ length: Math.max(0, tiersCount - (feature.tiers?.length || 0)) }).map(
           (_, i) => (
-            <td key={`empty-${i}`} className="p-4 text-center text-muted-foreground">
+            <td
+              // biome-ignore lint/suspicious/noArrayIndexKey: empty cell placeholders
+              key={`empty-${i}`}
+              className="p-4 text-center text-muted-foreground"
+            >
               -
             </td>
           )
@@ -159,15 +167,15 @@ function renderValue(value: string | boolean | null | undefined) {
 
   // Render based on type
   if (resolved === true) {
-    return <Check className="w-5 h-5 text-primary mx-auto" />;
+    return <Check className="mx-auto h-5 w-5 text-primary" />;
   }
 
   if (resolved === false) {
-    return <X className="w-5 h-5 text-muted-foreground/30 mx-auto" />;
+    return <X className="mx-auto h-5 w-5 text-muted-foreground/30" />;
   }
 
   if (typeof resolved === 'string' && resolved.trim().length > 0) {
-    return <span className="text-sm font-medium">{resolved}</span>;
+    return <span className="font-medium text-sm">{resolved}</span>;
   }
 
   // Default fallback for null, undefined, empty strings, or unhandled types

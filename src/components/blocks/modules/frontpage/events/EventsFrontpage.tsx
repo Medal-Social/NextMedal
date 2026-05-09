@@ -93,7 +93,7 @@ async function fetchCollectionEvents(
 
   const typeFilter =
     filterByType && filterByType !== 'all' ? `&& eventType == "${filterByType}"` : '';
-  const pastFilter = hidePastEvents ? `&& startDateTime >= now()` : '';
+  const pastFilter = hidePastEvents ? '&& startDateTime >= now()' : '';
 
   return await fetchSanityLive<RawCollectionEvent[]>({
     query: groq`
@@ -157,16 +157,18 @@ async function fetchCollectionEvents(
 function ListSkeleton({ count = 6, layout }: { count?: number; layout: string }) {
   if (layout === 'calendar') {
     return (
-      <div className="bg-card rounded-xl border shadow-sm overflow-hidden animate-pulse">
-        <div className="h-14 bg-muted border-b" />
+      <div className="animate-pulse overflow-hidden rounded-xl border bg-card shadow-sm">
+        <div className="h-14 border-b bg-muted" />
         <div className="grid grid-cols-7">
           {Array.from({ length: 7 }).map((_, i) => (
-            <div key={`header-${i}`} className="h-10 bg-muted/50 border-r border-b" />
+            // biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholder, no semantic identity
+            <div key={`header-${i}`} className="h-10 border-r border-b bg-muted/50" />
           ))}
         </div>
         <div className="grid grid-cols-7">
           {Array.from({ length: 35 }).map((_, i) => (
-            <div key={`cell-${i}`} className="h-24 bg-muted/20 border-r border-b" />
+            // biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholder, no semantic identity
+            <div key={`cell-${i}`} className="h-24 border-r border-b bg-muted/20" />
           ))}
         </div>
       </div>
@@ -178,17 +180,18 @@ function ListSkeleton({ count = 6, layout }: { count?: number; layout: string })
       <div className="space-y-4">
         {Array.from({ length: count }).map((_, i) => (
           <div
+            // biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholder, no semantic identity
             key={`skeleton-${i}`}
-            className="flex gap-4 p-4 bg-card rounded-lg border animate-pulse"
+            className="flex animate-pulse gap-4 rounded-lg border bg-card p-4"
           >
-            <div className="w-32 h-24 bg-muted rounded-lg" />
+            <div className="h-24 w-32 rounded-lg bg-muted" />
             <div className="flex-1 space-y-2">
               <div className="flex gap-2">
-                <div className="h-5 w-16 bg-muted rounded" />
-                <div className="h-5 w-20 bg-muted rounded" />
+                <div className="h-5 w-16 rounded bg-muted" />
+                <div className="h-5 w-20 rounded bg-muted" />
               </div>
-              <div className="h-5 w-3/4 bg-muted rounded" />
-              <div className="h-4 w-1/2 bg-muted rounded" />
+              <div className="h-5 w-3/4 rounded bg-muted" />
+              <div className="h-4 w-1/2 rounded bg-muted" />
             </div>
           </div>
         ))}
@@ -198,14 +201,15 @@ function ListSkeleton({ count = 6, layout }: { count?: number; layout: string })
 
   if (layout === 'timeline') {
     return (
-      <div className="border-l-2 border-border pl-8 space-y-8">
+      <div className="space-y-8 border-border border-l-2 pl-8">
         {Array.from({ length: count }).map((_, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholder, no semantic identity
           <div key={`skeleton-${i}`} className="animate-pulse">
-            <div className="h-4 w-24 bg-muted rounded mb-2" />
-            <div className="p-4 bg-card rounded-lg border space-y-2">
-              <div className="h-5 w-16 bg-muted rounded" />
-              <div className="h-5 w-3/4 bg-muted rounded" />
-              <div className="h-4 w-full bg-muted rounded" />
+            <div className="mb-2 h-4 w-24 rounded bg-muted" />
+            <div className="space-y-2 rounded-lg border bg-card p-4">
+              <div className="h-5 w-16 rounded bg-muted" />
+              <div className="h-5 w-3/4 rounded bg-muted" />
+              <div className="h-4 w-full rounded bg-muted" />
             </div>
           </div>
         ))}
@@ -217,16 +221,17 @@ function ListSkeleton({ count = 6, layout }: { count?: number; layout: string })
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: count }).map((_, i) => (
-        <div key={`skeleton-${i}`} className="bg-card rounded-xl border shadow-sm animate-pulse">
-          <div className="aspect-video bg-muted rounded-t-xl" />
-          <div className="p-5 space-y-3">
+        // biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholder, no semantic identity
+        <div key={`skeleton-${i}`} className="animate-pulse rounded-xl border bg-card shadow-sm">
+          <div className="aspect-video rounded-t-xl bg-muted" />
+          <div className="space-y-3 p-5">
             <div className="flex gap-2">
-              <div className="h-5 w-16 bg-muted rounded" />
-              <div className="h-5 w-20 bg-muted rounded" />
+              <div className="h-5 w-16 rounded bg-muted" />
+              <div className="h-5 w-20 rounded bg-muted" />
             </div>
-            <div className="h-4 w-48 bg-muted rounded" />
-            <div className="h-6 w-3/4 bg-muted rounded" />
-            <div className="h-4 w-full bg-muted rounded" />
+            <div className="h-4 w-48 rounded bg-muted" />
+            <div className="h-6 w-3/4 rounded bg-muted" />
+            <div className="h-4 w-full rounded bg-muted" />
           </div>
         </div>
       ))}
@@ -324,9 +329,9 @@ export default async function EventsFrontpage({
     if (!collectionSlug) {
       return (
         <Section className="space-y-8" {...moduleProps(props)}>
-          <div className="text-center py-12 text-muted-foreground">
+          <div className="py-12 text-center text-muted-foreground">
             <p>Events collection not configured for this language.</p>
-            <p className="text-sm mt-2">Configure the events frontpage in site settings.</p>
+            <p className="mt-2 text-sm">Configure the events frontpage in site settings.</p>
           </div>
         </Section>
       );

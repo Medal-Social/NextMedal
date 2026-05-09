@@ -66,34 +66,19 @@ describe('ContentOverview Component - Logic Documentation', () => {
     describe('SEO Health', () => {
       it('should show "All pages optimized!" when count is 0', () => {
         const seoIssuesCount = 0;
-        const subtitle =
-          seoIssuesCount === 0
-            ? 'All pages optimized!'
-            : seoIssuesCount === 1
-              ? 'missing SEO metadata'
-              : 'missing SEO metadata';
+        const subtitle = seoIssuesCount === 0 ? 'All pages optimized!' : 'missing SEO metadata';
         expect(subtitle).toBe('All pages optimized!');
       });
 
       it('should show singular "missing SEO metadata" when count is 1', () => {
         const seoIssuesCount: number = 1;
-        const subtitle =
-          seoIssuesCount === 0
-            ? 'All pages optimized!'
-            : seoIssuesCount === 1
-              ? 'missing SEO metadata'
-              : 'missing SEO metadata';
+        const subtitle = seoIssuesCount === 0 ? 'All pages optimized!' : 'missing SEO metadata';
         expect(subtitle).toBe('missing SEO metadata');
       });
 
       it('should show plural "missing SEO metadata" when count > 1', () => {
         const seoIssuesCount: number = 5;
-        const subtitle =
-          seoIssuesCount === 0
-            ? 'All pages optimized!'
-            : seoIssuesCount === 1
-              ? 'missing SEO metadata'
-              : 'missing SEO metadata';
+        const subtitle = seoIssuesCount === 0 ? 'All pages optimized!' : 'missing SEO metadata';
         expect(subtitle).toBe('missing SEO metadata');
       });
     });

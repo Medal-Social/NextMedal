@@ -89,18 +89,18 @@ function IssueHeader({
   const crumbs = buildBreadcrumbs(issue, collectionSlug);
 
   return (
-    <section className="bg-background pt-24 md:pt-32 pb-8 border-b border-border relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <section className="relative border-border border-b bg-background pt-24 pb-8 md:pt-32">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <IssueBreadcrumbs
           crumbs={crumbs}
           currentTitle={issue.metadata?.title}
           homeLabel={homeLabel}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-12">
           <div className="lg:col-span-8">
             <h1
-              className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground leading-tight mb-6"
+              className="mb-6 font-bold text-3xl text-foreground leading-tight tracking-tight md:text-4xl lg:text-5xl"
               data-sanity={stega.scope('metadata.title').toString()}
             >
               {issue.metadata?.title}
@@ -123,20 +123,20 @@ function IssueMeta({
   stega: ReturnType<typeof createStegaAttribute>;
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-y-4 gap-x-6 text-muted-foreground text-sm">
+    <div className="flex flex-wrap items-center gap-x-6 gap-y-4 text-muted-foreground text-sm">
       {issue.issueNumber && (
         <div className="flex items-center gap-1.5">
-          <Hash className="w-4 h-4" />
+          <Hash className="h-4 w-4" />
           <span data-sanity={stega.scope('issueNumber').toString()}>
             Issue #{issue.issueNumber}
           </span>
         </div>
       )}
 
-      <div className="hidden sm:block w-px h-8 bg-border" />
+      <div className="hidden h-8 w-px bg-border sm:block" />
 
       <div className="flex items-center gap-1.5">
-        <Calendar className="w-4 h-4" />
+        <Calendar className="h-4 w-4" />
         <DateDisplay
           value={issue.publishDate}
           data-sanity={stega.scope('publishDate').toString()}
@@ -173,12 +173,12 @@ function HeroImage({
 
   return (
     <div
-      className="w-full rounded-xl overflow-hidden shadow-md mb-8 bg-muted aspect-video"
+      className="mb-8 aspect-video w-full overflow-hidden rounded-xl bg-muted shadow-md"
       data-sanity={stega.scope('seo.image').toString()}
     >
       <Img
         image={issue.seo?.image || fallbackImage}
-        className="w-full h-full object-cover"
+        className="h-full w-full object-cover"
         sizes="(max-width: 768px) 100vw, 900px"
         priority
         fetchPriority="high"
@@ -200,9 +200,9 @@ function MobileBottomContent({
   shareLabel: string;
 }) {
   return (
-    <div className="lg:hidden mt-12 space-y-12">
-      <div className="bg-card rounded-2xl p-6 border shadow-sm">
-        <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4">
+    <div className="mt-12 space-y-12 lg:hidden">
+      <div className="rounded-2xl border bg-card p-6 shadow-sm">
+        <h4 className="mb-4 font-bold text-muted-foreground text-xs uppercase tracking-widest">
           {shareLabel}
         </h4>
         <SocialShare
@@ -232,8 +232,8 @@ export default async function NewsletterDetail({ issue, collectionSlug }: Newsle
       />
 
       {/* Main Content Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
           {/* Content Column */}
           <div className="lg:col-span-8">
             <HeroImage issue={issue} stega={stega} />
@@ -242,7 +242,7 @@ export default async function NewsletterDetail({ issue, collectionSlug }: Newsle
             {issue.body && (
               <Content
                 value={issue.body}
-                className="prose prose-slate dark:prose-invert prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary prose-img:rounded-xl"
+                className="prose prose-slate dark:prose-invert prose-lg max-w-none prose-img:rounded-xl prose-headings:font-bold prose-a:text-primary prose-headings:tracking-tight"
                 data-sanity={stega.scope('body').toString()}
               />
             )}
@@ -255,7 +255,7 @@ export default async function NewsletterDetail({ issue, collectionSlug }: Newsle
           </div>
 
           {/* Sidebar Column */}
-          <div className="hidden lg:block lg:col-span-4 sticky top-24 self-start">
+          <div className="sticky top-24 hidden self-start lg:col-span-4 lg:block">
             <Sidebar
               headings={issue.headings}
               title={issue.metadata?.title || ''}

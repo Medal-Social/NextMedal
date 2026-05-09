@@ -3,7 +3,7 @@
 import { Moon, Sun } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils/index';
@@ -19,9 +19,9 @@ export default function HeaderThemeToggle({ className }: { className?: string })
   }, []);
 
   // Define toggleTheme BEFORE keyboard effect (needed as dependency)
-  const toggleTheme = () => {
+  const toggleTheme = useCallback(() => {
     setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
-  };
+  }, [resolvedTheme, setTheme]);
 
   // Keyboard shortcut handler - 'D' key to toggle theme
   useEffect(() => {
@@ -46,7 +46,7 @@ export default function HeaderThemeToggle({ className }: { className?: string })
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [resolvedTheme, setTheme]);
+  }, [toggleTheme]);
 
   if (!mounted) {
     return (
@@ -81,7 +81,7 @@ export default function HeaderThemeToggle({ className }: { className?: string })
       />
       <TooltipContent side="bottom" className="flex items-center gap-2">
         <span>{t('toggleTheme')}</span>
-        <kbd className="pointer-events-none inline-flex h-4 select-none items-center gap-1 rounded border bg-muted px-1 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+        <kbd className="pointer-events-none inline-flex h-4 select-none items-center gap-1 rounded border bg-muted px-1 font-medium font-mono text-[10px] text-muted-foreground opacity-100">
           D
         </kbd>
       </TooltipContent>

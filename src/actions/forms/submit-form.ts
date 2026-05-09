@@ -1,11 +1,10 @@
 'use server';
 
-import MedalSocialClient from '@medalsocial/sdk';
+import type { Medal } from '@medalsocial/sdk';
 import { z } from 'zod';
-import { env } from '@/lib/core/env';
 import { logger } from '@/lib/core/logger';
 import { actionClient, withSecurity } from '@/lib/core/safe-action';
-import { withRetry } from '@/lib/utils';
+import { getMedal } from '@/lib/medal-sdk/client';
 
 const submissionSchema = withSecurity(
   z.object({
@@ -23,96 +22,117 @@ function getString(value: unknown): string {
 
 function getStringOrUndefined(value: unknown): string | undefined {
   if (value === null || value === undefined) return undefined;
-  return String(value);
+  const str = String(value).trim();
+  return str.length > 0 ? str : undefined;
+}
+
+interface SubmissionContext {
+  medal: Medal;
+  email: string;
+  firstName?: string;
+  company?: string;
+  phone?: string;
+  message?: string;
+  metadata: Record<string, unknown>;
+  data: Record<string, unknown>;
+  intent: string;
+}
+
+async function handleLeadOrContact(ctx: SubmissionContext): Promise<void> {
+  try {
+    const { data: contact } = await ctx.medal.contacts.create({
+      email: ctx.email,
+      first_name: ctx.firstName,
+      company: ctx.company,
+      phone: ctx.phone,
+      status: 'lead',
+      labels: [ctx.intent],
+      custom_fields: { ...ctx.metadata, source: ctx.metadata.url || 'contact-form' },
+    });
+    if (ctx.message && contact?.id) {
+      await ctx.medal.contacts.addNote(contact.id, { content: ctx.message });
+    }
+  } catch (err) {
+    logger.error({ err, intent: ctx.intent }, '[medal-sdk] contacts.create failed (non-fatal)');
+  }
+}
+
+async function handleNewsletter(ctx: SubmissionContext): Promise<void> {
+  try {
+    await ctx.medal.contacts.create({
+      email: ctx.email,
+      first_name: ctx.firstName,
+      status: 'lead',
+      email_status: 'subscribed',
+      labels: ['newsletter'],
+      custom_fields: { source: 'newsletter-form' },
+    });
+  } catch (err) {
+    logger.error({ err, intent: ctx.intent }, '[medal-sdk] contacts.create failed (non-fatal)');
+  }
+}
+
+async function handleDownload(ctx: SubmissionContext): Promise<void> {
+  try {
+    await ctx.medal.contacts.create({
+      email: ctx.email,
+      first_name: ctx.firstName,
+      status: 'lead',
+      labels: ['download'],
+      custom_fields: {
+        source: 'download-form',
+        resource: getString(ctx.data.resource) || 'unknown',
+      },
+    });
+  } catch (err) {
+    logger.error({ err, intent: ctx.intent }, '[medal-sdk] contacts.create failed (non-fatal)');
+  }
 }
 
 export const submitForm = actionClient
   .schema(submissionSchema)
   .action(async ({ parsedInput: { intent, data, metadata = {} } }) => {
-    // If honeypot is filled, return fake success (already handled by Zod refinement,
-    // but we can add extra logic here if we want to return a specific "success" message
-    // without doing any work).
     if (data._honeypot) {
       logger.warn('Bot submission blocked via honeypot');
       return { success: true };
     }
 
-    const clientId = env.MEDAL_SOCIAL_CLIENT_ID;
-    const clientSecret = env.MEDAL_SOCIAL_CLIENT_SECRET;
-    const baseUrl = env.MEDAL_API_ENDPOINT;
-
-    if (!clientId || !clientSecret) {
-      logger.error('Missing Medal Social credentials');
-      return { error: 'This form is temporarily unavailable. Please try again later.' };
+    const email = getString(data.email);
+    if (!email) {
+      return { error: 'Email is required.' };
     }
 
-    const client = new MedalSocialClient({
-      auth: {
-        kind: 'basic',
-        clientId,
-        clientSecret,
-      },
-      baseUrl,
-    });
-
     try {
+      const medal = await getMedal();
+      if (!medal) {
+        // Sanity is the source of truth — SDK is best-effort and may
+        // be unconfigured. Acknowledge the submission either way.
+        return { success: true };
+      }
+
+      const ctx: SubmissionContext = {
+        medal,
+        email,
+        firstName: getStringOrUndefined(data.name || data.fullname),
+        company: getStringOrUndefined(data.company),
+        phone: getStringOrUndefined(data.phone || data.tel),
+        message: getStringOrUndefined(data.message || data.content),
+        metadata,
+        data,
+        intent,
+      };
+
       switch (intent) {
         case 'lead':
         case 'contact':
-          // Handle lead generation via Medal Social SDK (with retry for network resilience)
-          await withRetry(
-            () =>
-              client.createNote({
-                name: getString(data.name || data.fullname) || 'Anonymous',
-                email: getString(data.email),
-                company: getStringOrUndefined(data.company),
-                phone: getStringOrUndefined(data.phone || data.tel),
-                content: getString(data.message || data.content) || 'Form submission (no message)',
-                metadata: {
-                  ...metadata,
-                  ...data,
-                },
-              }),
-            { retries: 3, delay: 1000 }
-          );
+          await handleLeadOrContact(ctx);
           break;
-
         case 'newsletter':
-          // Handle newsletter subscription (with retry for network resilience)
-          await withRetry(
-            () =>
-              client.createNote({
-                name: getString(data.name || data.fullname) || 'Subscriber',
-                email: getString(data.email),
-                content: 'Newsletter Subscription',
-                metadata: {
-                  ...metadata,
-                  ...data,
-                  intent: 'newsletter',
-                },
-              }),
-            { retries: 3, delay: 1000 }
-          );
+          await handleNewsletter(ctx);
           break;
-
         case 'download':
-          // Handle resource download (with retry for network resilience)
-          await withRetry(
-            () =>
-              client.createNote({
-                name: getString(data.name || data.fullname) || 'Downloader',
-                email: getString(data.email),
-                content: `Resource Download: ${getString(data.resource) || 'Unknown'}`,
-                metadata: {
-                  ...metadata,
-                  ...data,
-                  intent: 'download',
-                },
-              }),
-            { retries: 3, delay: 1000 }
-          );
+          await handleDownload(ctx);
           break;
-
         default:
           logger.warn(`Unknown submission intent: ${intent}`);
           return { error: 'This form is not set up correctly. Please contact support.' };

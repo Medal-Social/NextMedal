@@ -74,7 +74,7 @@ export default async function ComponentGallery({
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center">
+        <div className="flex min-h-screen items-center justify-center">
           <Loading>{t('loading')}</Loading>
         </div>
       }

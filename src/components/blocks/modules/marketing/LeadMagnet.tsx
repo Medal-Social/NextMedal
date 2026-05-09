@@ -26,17 +26,17 @@ interface BlockChildrenProps {
 const portableTextComponents = (style: 'sidebar' | 'featured') => ({
   list: {
     bullet: ({ children }: BlockChildrenProps) => (
-      <ul className={cn('space-y-3 mb-8', style === 'sidebar' && 'mb-6')}>{children}</ul>
+      <ul className={cn('mb-8 space-y-3', style === 'sidebar' && 'mb-6')}>{children}</ul>
     ),
   },
   listItem: {
     bullet: ({ children }: BlockChildrenProps) => (
-      <li className="flex items-start gap-3 group">
+      <li className="group flex items-start gap-3">
         <div className="mt-1 flex-shrink-0">
           <CheckCircle2
             className={cn(
               'h-5 w-5 text-primary transition-transform group-hover:scale-110',
-              style === 'sidebar' && 'h-4 w-4 mt-1 text-white'
+              style === 'sidebar' && 'mt-1 h-4 w-4 text-white'
             )}
           />
         </div>
@@ -55,10 +55,10 @@ const portableTextComponents = (style: 'sidebar' | 'featured') => ({
     h2: ({ children }: BlockChildrenProps) => (
       <h2
         className={cn(
-          'font-extrabold tracking-tight mb-4',
+          'mb-4 font-extrabold tracking-tight',
           style === 'featured'
-            ? 'text-3xl md:text-4xl text-foreground'
-            : 'text-2xl md:text-3xl text-white'
+            ? 'text-3xl text-foreground md:text-4xl'
+            : 'text-2xl text-white md:text-3xl'
         )}
       >
         {children}
@@ -67,10 +67,10 @@ const portableTextComponents = (style: 'sidebar' | 'featured') => ({
     h3: ({ children }: BlockChildrenProps) => (
       <h3
         className={cn(
-          'font-bold tracking-tight mb-4',
+          'mb-4 font-bold tracking-tight',
           style === 'featured'
-            ? 'text-xl md:text-2xl text-foreground'
-            : 'text-lg md:text-xl text-white'
+            ? 'text-foreground text-xl md:text-2xl'
+            : 'text-lg text-white md:text-xl'
         )}
       >
         {children}
@@ -108,16 +108,16 @@ export default function LeadMagnet({
         className={cn(
           'relative overflow-hidden transition-all duration-300',
           style === 'sidebar'
-            ? 'w-full p-6 bg-[#1a0b2e] border-none shadow-xl rounded-2xl'
-            : 'bg-background p-8 md:p-12 rounded-[2rem]'
+            ? 'w-full rounded-2xl border-none bg-[#1a0b2e] p-6 shadow-xl'
+            : 'rounded-[2rem] bg-background p-8 md:p-12'
         )}
       >
         <div
           className={cn(
             'flex flex-col',
             style === 'featured'
-              ? 'lg:flex-row lg:items-center gap-12'
-              : 'items-start text-left gap-6'
+              ? 'gap-12 lg:flex-row lg:items-center'
+              : 'items-start gap-6 text-left'
           )}
         >
           {/* Image Side (Only for Featured) */}
@@ -126,12 +126,12 @@ export default function LeadMagnet({
               <div className="relative z-10 overflow-hidden rounded-xl shadow-2xl transition-transform duration-500 hover:scale-[1.02]">
                 <Img image={image.image} className="h-auto w-full object-cover" />
               </div>
-              <div className="absolute -inset-4 z-0 bg-primary/10 blur-3xl rounded-full opacity-50" />
+              <div className="absolute -inset-4 z-0 rounded-full bg-primary/10 opacity-50 blur-3xl" />
             </div>
           )}
 
           {/* Content Side */}
-          <div className={cn('flex-1 text-left w-full')}>
+          <div className={cn('w-full flex-1 text-left')}>
             <SharedPortableText
               value={content}
               components={portableTextComponents(style)}
@@ -148,17 +148,17 @@ export default function LeadMagnet({
                         'font-extrabold transition-all hover:scale-[1.02] active:scale-[0.98]',
                         style === 'featured'
                           ? 'h-14 px-8 text-lg shadow-lg shadow-primary/10'
-                          : 'h-12 w-full text-base bg-white text-[#1a0b2e] hover:bg-white/95 border-none shadow-xl rounded-lg'
+                          : 'h-12 w-full rounded-lg border-none bg-white text-[#1a0b2e] text-base shadow-xl hover:bg-white/95'
                       )}
                     >
                       {buttonText || t('defaultButtonText')}
                     </Button>
                   }
                 />
-                <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-none shadow-2xl">
+                <DialogContent className="overflow-hidden border-none p-0 shadow-2xl sm:max-w-[500px]">
                   <div className="bg-primary px-8 py-6 text-primary-foreground">
                     <DialogHeader>
-                      <DialogTitle className="text-2xl font-bold">
+                      <DialogTitle className="font-bold text-2xl">
                         {form?.formTitle || t('defaultFormTitle')}
                       </DialogTitle>
                     </DialogHeader>

@@ -35,7 +35,7 @@ export default function CTAListCallout({
 
         return (
           <CTA
-            className={cn('max-sm:w-full px-6', calloutStyle)}
+            className={cn('px-6 max-sm:w-full', calloutStyle)}
             size="lg"
             {...props}
             key={cta._key || i}

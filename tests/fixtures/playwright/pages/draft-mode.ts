@@ -80,7 +80,7 @@ export class DraftModePage {
    * Wait for the banner to be visible
    */
   async waitForBanner() {
-    await this.banner.waitFor({ state: 'visible', timeout: 10000 });
+    await this.banner.waitFor({ state: 'visible', timeout: 10_000 });
   }
 
   /**
