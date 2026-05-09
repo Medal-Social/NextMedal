@@ -585,7 +585,7 @@ export async function generateStaticParams() {
 
   // Get collection slugs for all languages
   const collectionSlugsMap = await Promise.all(
-    routing.locales.map(async (locale) => {
+    routing.locales.map((locale) => {
       const collections = getAllCollections(locale);
       const slugs: Record<string, string> = {};
       if (collections) {
@@ -615,7 +615,7 @@ export async function generateStaticParams() {
   );
 
   // Helper to transform collection items to params using site settings
-  const toCollectionParams = async (items: { slug: string; _type: string; language: string }[]) => {
+  const toCollectionParams = (items: { slug: string; _type: string; language: string }[]) => {
     const params: { slug: string[] }[] = [];
 
     for (const item of items) {
