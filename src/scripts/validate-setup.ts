@@ -38,7 +38,6 @@ function warn(name: string, condition: boolean, message: string, suggestion?: st
   }
 }
 
-// biome-ignore lint/suspicious/noConsole: CLI script requires console output
 console.log('🔍 Validating NextMedal setup...\n');
 
 // Check 1: Node version
@@ -133,7 +132,6 @@ const sanityConfigPath = path.join(process.cwd(), 'sanity.config.ts');
 check('Sanity Config', fs.existsSync(sanityConfigPath), 'Sanity configuration exists');
 
 // Print results
-// biome-ignore lint/suspicious/noConsole: CLI script requires console output
 console.log('════════════════════════════════════════\n');
 
 const passed = results.filter((r) => r.status === 'pass').length;
@@ -141,34 +139,23 @@ const failed = results.filter((r) => r.status === 'fail').length;
 const warned = results.filter((r) => r.status === 'warn').length;
 
 for (const result of results) {
-  // biome-ignore lint/suspicious/noConsole: CLI script requires console output
   console.log(result.message);
   if (result.fix) {
-    // biome-ignore lint/suspicious/noConsole: CLI script requires console output
     console.log(`   → ${result.fix}\n`);
   }
 }
 
-// biome-ignore lint/suspicious/noConsole: CLI script requires console output
 console.log('\n════════════════════════════════════════');
-// biome-ignore lint/suspicious/noConsole: CLI script requires console output
 console.log(`\n📊 Summary: ${passed} passed, ${failed} failed, ${warned} warnings\n`);
 
 if (failed === 0) {
-  // biome-ignore lint/suspicious/noConsole: CLI script requires console output
   console.log('✨ Setup looks good! Run `pnpm dev` to start the development server.\n');
-  // biome-ignore lint/suspicious/noConsole: CLI script requires console output
   console.log('📝 Next steps:');
-  // biome-ignore lint/suspicious/noConsole: CLI script requires console output
   console.log('   1. Run: pnpm dev');
-  // biome-ignore lint/suspicious/noConsole: CLI script requires console output
   console.log('   2. Open: http://localhost:3000/studio');
-  // biome-ignore lint/suspicious/noConsole: CLI script requires console output
   console.log('   3. Create a Page document with slug "index"');
-  // biome-ignore lint/suspicious/noConsole: CLI script requires console output
   console.log('   4. Publish it and visit http://localhost:3000\n');
   process.exit(0);
 }
-// biome-ignore lint/suspicious/noConsole: CLI script requires console output
 console.log('❌ Please fix the failed checks above before running the dev server.\n');
 process.exit(1);

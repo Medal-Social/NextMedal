@@ -9,7 +9,6 @@ import { cn } from '@/lib/utils/index';
 
 function InputGroup({ className, ...props }: React.ComponentProps<'div'>) {
   return (
-    // biome-ignore lint/a11y/useSemanticElements: input group pattern
     <div
       data-slot="input-group"
       role="group"
@@ -47,7 +46,6 @@ function InputGroupAddon({
   ...props
 }: React.ComponentProps<'div'> & VariantProps<typeof inputGroupAddonVariants>) {
   return (
-    // biome-ignore lint/a11y/useSemanticElements: input group addon
     // biome-ignore lint/a11y/useKeyWithClickEvents: handled by input focus
     <div
       role="group"

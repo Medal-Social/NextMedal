@@ -200,6 +200,7 @@ async function DocsContent({
   );
 }
 
+// biome-ignore lint/suspicious/useAwait: async Server Component signature kept for consistency with sibling frontpage modules
 export default async function DocsFrontpageServer({
   intro,
   layout = 'sidebar',

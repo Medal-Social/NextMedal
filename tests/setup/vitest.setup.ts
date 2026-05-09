@@ -37,7 +37,6 @@ expect.extend(matchers);
 
 // Extend Vitest's expect types for TypeScript
 declare module 'vitest' {
-  // biome-ignore lint/suspicious/noExplicitAny: Required by vitest-axe matcher types
   interface Assertion<T = any> {
     toHaveNoViolations(): T;
   }

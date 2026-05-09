@@ -19,7 +19,6 @@ export function Mermaid({ value }: MermaidProps) {
   useEffect(() => {
     let isMounted = true;
 
-    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Mermaid rendering requires complex error handling and state management
     async function renderMermaid() {
       if (!value?.code || !containerRef.current) return;
 

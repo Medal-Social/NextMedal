@@ -21,6 +21,7 @@ function getLocaleDisplayName(locale: string): string {
   return localeConfig[locale as Locale]?.title ?? locale;
 }
 
+// biome-ignore lint/suspicious/useAwait: required by Next.js route handler signature
 export async function GET(_req: NextRequest) {
   const now = new Date().toISOString();
 

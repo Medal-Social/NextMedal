@@ -271,7 +271,6 @@ test.describe('Core Web Vitals', () => {
 
         const observer = new PerformanceObserver((entryList) => {
           for (const entry of entryList.getEntries()) {
-            // biome-ignore lint/suspicious/noExplicitAny: LayoutShiftEntry types not available in DOM lib
             const layoutEntry = entry as any;
             if (!layoutEntry.hadRecentInput) {
               clsValue += layoutEntry.value;

@@ -86,7 +86,7 @@ export async function withRetry<T>(fn: () => Promise<T>, options: RetryOptions =
  * @example
  * const data = await withTimeout(fetchData(), 5000, 'Fetch timed out');
  */
-export async function withTimeout<T>(
+export function withTimeout<T>(
   promise: Promise<T>,
   ms: number,
   message = 'Operation timed out'

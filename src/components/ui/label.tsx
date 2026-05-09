@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils/index';
 
 function Label({ className, ...props }: React.ComponentProps<'label'>) {
   return (
-    // biome-ignore lint/a11y/noLabelWithoutControl: generic label component
     <label
       data-slot="label"
       className={cn(

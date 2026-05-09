@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { BASE_URL, isPreview, isStaging, vercelPreview } from '@/lib/core/env';
 
+// biome-ignore lint/suspicious/useAwait: required by Next.js route handler signature
 export async function GET() {
   const siteUrl = BASE_URL;
 
