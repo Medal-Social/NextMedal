@@ -226,7 +226,6 @@ Your site will be available at:
 ### Add More Features
 
 - Enable **analytics** (Umami) - see `.env.example`
-- Add **error monitoring** (Sentry) - see `.env.example`
 - Configure **i18n** - already set up for Norwegian and English!
 
 ---

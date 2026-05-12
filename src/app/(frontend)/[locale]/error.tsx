@@ -1,9 +1,7 @@
 'use client';
 
-import * as Sentry from '@sentry/nextjs';
 import { AlertCircle, RefreshCcw } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 
 export default function ErrorComponent({
@@ -14,10 +12,6 @@ export default function ErrorComponent({
   reset: () => void;
 }) {
   const t = useTranslations('Error');
-
-  useEffect(() => {
-    Sentry.captureException(error);
-  }, [error]);
 
   return (
     <div className="flex min-h-[60vh] items-center justify-center p-4">

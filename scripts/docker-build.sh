@@ -31,15 +31,11 @@ REQUIRED_ARGS=(
   "NEXT_PUBLIC_UMAMI_SCRIPT_URL"
   "NEXT_PUBLIC_UMAMI_WEBSITE_ID"
   "NEXT_PUBLIC_APP_ENV"
-  "NEXT_PUBLIC_SENTRY_DSN"
-  "SENTRY_ORG"
-  "SENTRY_PROJECT"
 )
 
 # Secrets that should be passed via --secret to avoid leaking them in image layers
 SECRET_ARGS=(
   "NEXT_PUBLIC_SANITY_BROWSER_TOKEN"
-  "SENTRY_AUTH_TOKEN"
 )
 
 BUILD_ARGS=""
@@ -77,4 +73,3 @@ else
   echo "❌ Build failed."
   exit 1
 fi
-

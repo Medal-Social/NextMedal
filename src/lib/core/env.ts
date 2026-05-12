@@ -20,9 +20,6 @@ const envSchema = z.object({
   // Optional: Analytics
   NEXT_PUBLIC_UMAMI_SCRIPT_URL: z.url().optional(),
   NEXT_PUBLIC_UMAMI_WEBSITE_ID: z.string().optional(),
-  NEXT_PUBLIC_SENTRY_DSN: z.url().optional(),
-  SENTRY_ORG: z.string().optional(),
-  SENTRY_PROJECT: z.string().optional(),
 
   // Optional: Image Optimization
   NEXT_PUBLIC_IMAGE_PROXY_URL: z.url().optional(),
@@ -47,9 +44,6 @@ const parsedEnv = envSchema.safeParse({
   SANITY_WRITE_TOKEN: process.env.SANITY_WRITE_TOKEN,
   NEXT_PUBLIC_UMAMI_SCRIPT_URL: process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL,
   NEXT_PUBLIC_UMAMI_WEBSITE_ID: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID,
-  NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
-  SENTRY_ORG: process.env.SENTRY_ORG,
-  SENTRY_PROJECT: process.env.SENTRY_PROJECT,
   NEXT_PUBLIC_IMAGE_PROXY_URL: process.env.NEXT_PUBLIC_IMAGE_PROXY_URL,
   MEDAL_API_KEY: process.env.MEDAL_API_KEY,
   MEDAL_API_ENDPOINT: process.env.MEDAL_API_ENDPOINT,
