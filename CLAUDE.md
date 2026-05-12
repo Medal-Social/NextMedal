@@ -97,7 +97,7 @@ project-root/
 - **Sanity integration**: Schemas in `sanity/schemaTypes/`, Studio at `/studio`
 - **i18n routing**: `[locale]` dynamic segment for Norwegian (nb), English (en), and Arabic (ar)
 - **Environment validation**: Zod-validated env vars in `lib/env.ts`
-- **Structured logging**: Pino logger in `lib/logger.ts` with Sentry hooks (production-only)
+- **Structured logging**: Pino logger in `lib/logger.ts`
 - **Safe server actions**: Use `next-safe-action` wrapper in `lib/safe-action.ts`
 - **Article system**: Flexible content publishing with categories, authors, and SEO optimization
 
@@ -509,7 +509,6 @@ NEXT_PUBLIC_BASE_URL             # Site base URL
 Optional:
 ```
 NEXT_PUBLIC_SANITY_BROWSER_TOKEN # Sanity API token for live preview/draft mode (CLIENT-EXPOSED, MUST be read-only/Viewer permissions)
-NEXT_PUBLIC_SENTRY_DSN           # Enables Sentry error tracking (production-only)
 NEXT_PUBLIC_UMAMI_SCRIPT_URL     # Umami analytics script URL
 NEXT_PUBLIC_IMAGE_PROXY_URL      # Custom image proxy (enables custom loader)
 ```
@@ -532,12 +531,3 @@ SVGs are allowed via `dangerouslyAllowSVG`. Custom image proxy can be enabled vi
 ## CMS-Managed Redirects
 
 Redirects are fetched from Sanity at build time using the `redirect` document type. To add a redirect, create a new redirect document in Sanity Studio rather than hardcoding in `next.config.ts`.
-
-## Error Monitoring (Sentry)
-
-- Sentry initializes **only in production** (see `instrumentation.ts`)
-- Uses `/monitoring` tunnel route to bypass ad-blockers
-- Source maps are uploaded during build then deleted
-- PII transmission is disabled for privacy
-- Integrates with Pino logger - error-level logs auto-report to Sentry
-

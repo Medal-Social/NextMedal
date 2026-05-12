@@ -1,6 +1,5 @@
 'use client';
 
-import * as Sentry from '@sentry/nextjs';
 import { Component, type ReactNode } from 'react';
 import { logger } from '@/lib/core/logger';
 
@@ -8,7 +7,7 @@ type ErrorType = 'site-missing' | 'sanity-down' | 'other';
 
 interface ErrorCategory {
   type: ErrorType;
-  reportToSentry: boolean;
+  reportAsError: boolean;
 }
 
 interface ErrorBoundaryProps {
@@ -35,7 +34,7 @@ function categorizeError(error: Error): ErrorCategory {
       'FETCH_ERROR',
     ];
     if (networkErrorCodes.includes(errorWithCode.code)) {
-      return { type: 'sanity-down', reportToSentry: false };
+      return { type: 'sanity-down', reportAsError: false };
     }
   }
 
@@ -44,7 +43,7 @@ function categorizeError(error: Error): ErrorCategory {
 
   // Expected state - site not configured yet
   if (message.includes('missing site settings') || message.includes('identity crisis')) {
-    return { type: 'site-missing', reportToSentry: false };
+    return { type: 'site-missing', reportAsError: false };
   }
 
   // Transient failure - Sanity API down or network issues
@@ -54,11 +53,10 @@ function categorizeError(error: Error): ErrorCategory {
     message.includes('econnreset') ||
     message.includes('timeout')
   ) {
-    return { type: 'sanity-down', reportToSentry: false };
+    return { type: 'sanity-down', reportAsError: false };
   }
 
-  // Unexpected error - report to Sentry
-  return { type: 'other', reportToSentry: true };
+  return { type: 'other', reportAsError: true };
 }
 
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
@@ -77,11 +75,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    const { type, reportToSentry } = categorizeError(error);
+    const { type, reportAsError } = categorizeError(error);
     const { componentName = 'Unknown' } = this.props;
 
     // Log expected errors as warnings, unexpected errors as errors
-    const logLevel = reportToSentry ? logger.error : logger.warn;
+    const logLevel = reportAsError ? logger.error : logger.warn;
     logLevel(
       {
         error,
@@ -91,21 +89,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       },
       `Error boundary caught ${type} error in ${componentName}`
     );
-
-    // Only report unexpected errors to Sentry
-    if (reportToSentry) {
-      Sentry.captureException(error, {
-        contexts: {
-          react: {
-            componentStack: errorInfo.componentStack,
-          },
-        },
-        tags: {
-          errorBoundary: componentName,
-          errorType: type,
-        },
-      });
-    }
   }
 
   render() {

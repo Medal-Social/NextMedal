@@ -241,12 +241,10 @@ describe('env', () => {
 
     it('accepts valid optional URL fields', async () => {
       process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL = 'https://analytics.example.com/script.js';
-      process.env.NEXT_PUBLIC_SENTRY_DSN = 'https://key@sentry.io/123';
 
       const { env } = await import('@/lib/core/env');
 
       expect(env.NEXT_PUBLIC_UMAMI_SCRIPT_URL).toBe('https://analytics.example.com/script.js');
-      expect(env.NEXT_PUBLIC_SENTRY_DSN).toBe('https://key@sentry.io/123');
     });
   });
 
