@@ -6,7 +6,7 @@
 //
 // A fresh isolated Next 16 + SDK 1.1.5 repro DOES NOT reproduce this,
 // so the trigger is something specific to this app's plugin/workspace
-// stack (Sentry + next-intl + OpenTelemetry transitive deps + pnpm
+// stack (next-intl + OpenTelemetry transitive deps + pnpm
 // monorepo) — not pinned down. Tracking: Medal-Social/MedalSocial-SDK#49.
 //
 // Hiding the module name behind `Array.join()` defeats Turbopack's

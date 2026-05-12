@@ -89,17 +89,6 @@ describe('logger', () => {
     });
   });
 
-  describe('Sentry integration behavior', () => {
-    it('is configured with hooks for error logging', async () => {
-      const { logger } = await import('@/lib/core/logger');
-
-      // The logger should have the hooks configured
-      // We can verify this by checking the logger is a valid pino instance
-      expect(logger).toBeDefined();
-      expect(typeof logger.error).toBe('function');
-    });
-  });
-
   describe('logging functionality', () => {
     it('can log info messages', async () => {
       process.env.LOG_LEVEL = 'info';
