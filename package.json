@@ -13,6 +13,7 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "clean": "rimraf .next ",
+    "intent": "tsx scripts/setup.ts",
     "dev": "next dev",
     "prebuild": "pnpm generate:collections",
     "build": "next build",
