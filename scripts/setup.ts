@@ -10,15 +10,15 @@
  * Idempotent — safe to re-run after bumping any intent-enabled
  * dependency (e.g. @medalsocial/sdk, @medalsocial/meda).
  */
-import { execSync } from "node:child_process";
+import { execSync } from 'node:child_process';
 
 const run = (cmd: string): void => {
   console.log(`> ${cmd}`);
-  execSync(cmd, { stdio: "inherit" });
+  execSync(cmd, { stdio: 'inherit' });
 };
 
-console.log("Setting up NextMedal — pulling agent skills from dependencies...\n");
-run("npx --yes @tanstack/intent install");
+console.log('Setting up NextMedal — pulling agent skills from dependencies...\n');
+run('npx --yes @tanstack/intent install');
 
-console.log("\n✓ Done. AGENTS.md now contains skill-loading guidance for your agent.");
-console.log("  Re-run `pnpm intent` after bumping any intent-enabled dependency.");
+console.log('\n✓ Done. AGENTS.md now contains skill-loading guidance for your agent.');
+console.log('  Re-run `pnpm intent` after bumping any intent-enabled dependency.');
