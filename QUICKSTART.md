@@ -68,7 +68,12 @@ cd NextMedal
 
 # Install dependencies
 pnpm install
+
+# Pull agent skills from dependencies (writes AGENTS.md)
+pnpm intent
 ```
+
+The `pnpm intent` step runs [`@tanstack/intent install`](https://tanstack.com/intent), which writes a small managed block to `AGENTS.md` instructing your AI coding agent (Claude Code, Cursor, Copilot, etc.) how to discover and load skills shipped by your dependencies (e.g. `@medalsocial/sdk` ships skills for the `Medal` client + resources). Re-run after bumping any intent-enabled dependency.
 
 ---
 
