@@ -1,0 +1,59 @@
+# intent-sync.yml — PR freshness gate for AGENTS.md.
+#
+# Runs `pnpm intent` (which invokes `@tanstack/intent install`) and
+# fails the PR if AGENTS.md ends up different from the committed
+# version. Forces contributors to regenerate the intent-managed block
+# whenever a dependency that ships agent skills (e.g. @medalsocial/sdk)
+# is bumped — otherwise AGENTS.md silently drifts from what consumers
+# of the cloned template will see after running `pnpm intent` locally.
+#
+# The check intentionally runs on every PR (not path-filtered): an SDK
+# bump on its own may not touch AGENTS.md, but the freshness check
+# still must run because the underlying skill content could have
+# changed.
+
+name: intent-sync
+
+on:
+  pull_request:
+    branches: [dev, prod]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-agents-md:
+    name: AGENTS.md is in sync with installed skills
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
+        with:
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4
+        with:
+          node-version: '24'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Regenerate intent-managed block
+        run: pnpm intent
+
+      - name: Fail if AGENTS.md drifted
+        run: |
+          if ! git diff --exit-code AGENTS.md; then
+            echo "::error::AGENTS.md is out of sync with installed intent-enabled dependencies."
+            echo "::error::Run 'pnpm intent' locally and commit the result."
+            exit 1
+          fi
