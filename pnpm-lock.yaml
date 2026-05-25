@@ -24,8 +24,8 @@ importers:
         specifier: ^1.4.1
         version: 1.4.1(@date-fns/tz@1.4.1)(@types/react@19.2.14)(date-fns@4.1.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@medalsocial/sdk':
-        specifier: ^1.1.5
-        version: 1.1.5
+        specifier: ^1.2.1
+        version: 1.2.1
       '@mux/mux-player':
         specifier: ^3.13.0
         version: 3.13.0(react@19.2.5)
@@ -177,6 +177,9 @@ importers:
       '@tailwindcss/typography':
         specifier: ^0.5.19
         version: 0.5.19(tailwindcss@4.2.4)
+      '@tanstack/intent':
+        specifier: 0.0.41
+        version: 0.0.41
       '@testing-library/jest-dom':
         specifier: ^6.9.1
         version: 6.9.1
@@ -3005,8 +3008,8 @@ packages:
       markdown-it:
         optional: true
 
-  '@medalsocial/sdk@1.1.5':
-    resolution: {integrity: sha512-3LtQIU/4qhCo/POdLK6Xw7qkiNH0tdejHnpKpuAp/eF21sMQBlHUjYOqCIMwsSN2fvXhlt5qqWq+mXP1ie2VaA==}
+  '@medalsocial/sdk@1.2.1':
+    resolution: {integrity: sha512-gscHR9b9aR9ASudQlSZtAnUX0Sx4C5hPHaMjONhxH48dEglPF0zJC1qMJwLjxpgjKZrmiCV64iwVD5i8aA/Xgg==}
     engines: {node: '>=24'}
 
   '@mermaid-js/parser@1.1.1':
@@ -5220,6 +5223,10 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  '@tanstack/intent@0.0.41':
+    resolution: {integrity: sha512-Psl+oDiidLvtctswkTQ1P6sQIihwrMLcdfQVfkLpO42oKwxWEr1lodWUHiOG5jFXsGwDDvpUv/WAdlmJF+yGpw==}
+    hasBin: true
 
   '@tanstack/react-table@8.21.3':
     resolution: {integrity: sha512-5nNMTSETP4ykGegmVkhjcS8tTLW6Vl4axfEGQN3v0zdHYbK4UfoqfPChclTrJ4EoK9QynqAu9oUf8VEmrpZ5Ww==}
@@ -10020,6 +10027,9 @@ packages:
   third-party-web@0.29.0:
     resolution: {integrity: sha512-nBDSJw5B7Sl1YfsATG2XkW5qgUPODbJhXw++BKygi9w6O/NKS98/uY/nR/DxDq2axEjL6halHW1v+jhm/j1DBQ==}
 
+  third-party-web@0.29.2:
+    resolution: {integrity: sha512-fegtha91tq2DHphyoiBXVHjVi2YG9zFaRnboT9C28tO1en9Y3wJsfspuy40F+u5wl3hHVbw7cnd1b67kEGHb8g==}
+
   thread-stream@4.0.0:
     resolution: {integrity: sha512-4iMVL6HAINXWf1ZKZjIPcz5wYaOdPhtO8ATvZ+Xqp3BTdaqtAwQkNmKORqcIo5YkQqGXq5cwfswDwMqqQNrpJA==}
     engines: {node: '>=20'}
@@ -14266,7 +14276,7 @@ snapshots:
     optionalDependencies:
       markdown-it: 14.1.1
 
-  '@medalsocial/sdk@1.1.5':
+  '@medalsocial/sdk@1.2.1':
     dependencies:
       zod: 3.25.76
 
@@ -14882,7 +14892,7 @@ snapshots:
   '@paulirish/trace_engine@0.0.64':
     dependencies:
       legacy-javascript: 0.0.1
-      third-party-web: 0.29.0
+      third-party-web: 0.29.2
 
   '@pinojs/redact@0.4.0': {}
 
@@ -17057,6 +17067,13 @@ snapshots:
       hoist-non-react-statics: 3.3.2
       react: 19.2.5
       react-dom: 19.2.5(react@19.2.5)
+
+  '@tanstack/intent@0.0.41':
+    dependencies:
+      cac: 6.7.14
+      jsonc-parser: 3.3.1
+      semver: 7.7.4
+      yaml: 2.8.4
 
   '@tanstack/react-table@8.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
@@ -22640,6 +22657,8 @@ snapshots:
       - react-native-b4a
 
   third-party-web@0.29.0: {}
+
+  third-party-web@0.29.2: {}
 
   thread-stream@4.0.0:
     dependencies:
