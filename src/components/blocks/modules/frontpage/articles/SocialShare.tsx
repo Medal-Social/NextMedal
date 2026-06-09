@@ -1,6 +1,7 @@
 'use client';
 
 import { Check, Link } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -20,16 +21,20 @@ export default function SocialShare({
   className?: string;
 }) {
   const t = useTranslations('article');
+  const pathname = usePathname();
   const [copied, setCopied] = useState(false);
   // Default to empty string on server to match initial client state
   const [url, setUrl] = useState('');
 
   useEffect(() => {
-    // Share the current article URL. The page is already locale-prefixed and at
-    // the correct `/[collection]/[slug]` route, so use the live pathname directly
-    // rather than hardcoding an `/articles/` segment that doesn't match the route.
-    setUrl(`${window.location.origin}${window.location.pathname}`);
-  }, []);
+    // Share the current article URL. The pathname is already locale-prefixed and
+    // at the correct `/[collection]/[slug]` route, so use it directly rather than
+    // hardcoding an `/articles/` segment that doesn't match the route. Reading the
+    // reactive pathname (not window.location) also refreshes the URL when
+    // navigating client-side between detail pages, where this component is
+    // reconciled in place rather than remounted.
+    setUrl(`${window.location.origin}${pathname}`);
+  }, [pathname]);
 
   const handleCopy = async () => {
     const success = await copyToClipboard(url);
