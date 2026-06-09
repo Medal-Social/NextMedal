@@ -167,6 +167,13 @@ const BASE_MODULES_QUERY = groq`
 	_type == 'hero' => {
 		...,
 		content[]{ ${PT_BLOCK_QUERY} },
+		muxVideo{
+			...,
+			asset->{
+				...,
+				"playbackId": playback_ids[0].id
+			}
+		},
 		image {
 			image {
 				${IMAGE_QUERY}
@@ -270,7 +277,7 @@ export const COLLECTION_ARTICLE_POST_QUERY = groq`
 			${PT_BLOCK_QUERY},
 			_type == 'image' => { ${IMAGE_QUERY} },
 			_type == 'socialEmbed' => { _type, platform, url },
-			_type == 'video' => { _type, type, videoId, muxVideo, thumbnail, title }
+			_type == 'video' => { _type, type, videoId, muxVideo{ ..., asset->{ ..., "playbackId": playback_ids[0].id } }, thumbnail, title }
 		},
 		'readTime': math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
 		'headings': body[style in ['h2', 'h3']]{
@@ -326,7 +333,7 @@ export const COLLECTION_NEWSLETTER_QUERY = groq`
 			${PT_BLOCK_QUERY},
 			_type == 'image' => { ${IMAGE_QUERY} },
 			_type == 'socialEmbed' => { _type, platform, url },
-			_type == 'video' => { _type, type, videoId, muxVideo, thumbnail, title }
+			_type == 'video' => { _type, type, videoId, muxVideo{ ..., asset->{ ..., "playbackId": playback_ids[0].id } }, thumbnail, title }
 		},
 		'readTime': math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
 		'headings': body[style in ['h2', 'h3']]{
@@ -367,7 +374,7 @@ export const COLLECTION_DOCUMENTATION_QUERY = groq`
 			${PT_BLOCK_QUERY},
 			_type == 'image' => { ${IMAGE_QUERY} },
 			_type == 'socialEmbed' => { _type, platform, url },
-			_type == 'video' => { _type, type, videoId, muxVideo, thumbnail, title }
+			_type == 'video' => { _type, type, videoId, muxVideo{ ..., asset->{ ..., "playbackId": playback_ids[0].id } }, thumbnail, title }
 		},
 		'readTime': math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
 		'headings': body[style in ['h2', 'h3']]{
@@ -417,7 +424,7 @@ export const COLLECTION_EVENTS_QUERY = groq`
 			${PT_BLOCK_QUERY},
 			_type == 'image' => { ${IMAGE_QUERY} },
 			_type == 'socialEmbed' => { _type, platform, url },
-			_type == 'video' => { _type, type, videoId, muxVideo, thumbnail, title }
+			_type == 'video' => { _type, type, videoId, muxVideo{ ..., asset->{ ..., "playbackId": playback_ids[0].id } }, thumbnail, title }
 		},
 		speakers[]->{
 			_id,

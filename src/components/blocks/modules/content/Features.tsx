@@ -61,8 +61,9 @@ export default function Features({ intro, items, ...props }: Sanity.Features) {
               ))}
         </div>
 
-        {/* Mobile/Tablet Simple Grid */}
-        <div className={cn('grid grid-cols-1 gap-6 md:grid-cols-2', !isSidebar && 'lg:hidden')}>
+        {/* Mobile/Tablet Simple Grid — always hidden at lg+, where the desktop
+            grid above takes over (in both sidebar and full-width modes). */}
+        <div className={cn('grid grid-cols-1 gap-6 md:grid-cols-2 lg:hidden')}>
           {items?.map((item, index) => (
             <FeatureCard key={item._key || index} item={item} index={index} />
           ))}

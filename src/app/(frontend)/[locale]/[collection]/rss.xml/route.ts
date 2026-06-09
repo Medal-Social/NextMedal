@@ -186,8 +186,8 @@ function generateRss(
       return `
     <item>
       <title>${escapeXml(title)}</title>
-      <link>${itemUrl}</link>
-      <guid isPermaLink="true">${itemUrl}</guid>
+      <link>${escapeXml(itemUrl)}</link>
+      <guid isPermaLink="true">${escapeXml(itemUrl)}</guid>
       <pubDate>${pubDate}</pubDate>
       ${item.description ? `<description>${escapeXml(item.description)}</description>` : ''}
       ${author ? `<author>${escapeXml(author)}</author>` : ''}
@@ -201,11 +201,11 @@ function generateRss(
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>${escapeXml(collectionInfo.name)}</title>
-    <link>${collectionUrl}</link>
+    <link>${escapeXml(collectionUrl)}</link>
     <description>${escapeXml(`Latest updates from ${collectionInfo.name}`)}</description>
     <language>${locale}</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-    <atom:link href="${collectionUrl}/rss.xml" rel="self" type="application/rss+xml"/>
+    <atom:link href="${escapeXml(`${collectionUrl}/rss.xml`)}" rel="self" type="application/rss+xml"/>
     ${rssItems}
   </channel>
 </rss>`;
@@ -221,11 +221,11 @@ function generateErrorRss(collectionSlug: string, locale: string, errorMessage: 
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>${escapeXml(collectionSlug)}</title>
-    <link>${collectionUrl}</link>
+    <link>${escapeXml(collectionUrl)}</link>
     <description>${escapeXml(errorMessage)}</description>
     <language>${locale}</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-    <atom:link href="${collectionUrl}/rss.xml" rel="self" type="application/rss+xml"/>
+    <atom:link href="${escapeXml(`${collectionUrl}/rss.xml`)}" rel="self" type="application/rss+xml"/>
   </channel>
 </rss>`;
 }

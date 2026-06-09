@@ -8,7 +8,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install pnpm via corepack
-RUN corepack enable && corepack prepare pnpm@10.26.2 --activate
+RUN corepack enable && corepack prepare pnpm@10.32.1 --activate
 
 # Copy only dependency files
 COPY pnpm-lock.yaml ./
@@ -28,7 +28,7 @@ FROM base AS builder
 WORKDIR /app
 
 # Install pnpm via corepack
-RUN corepack enable && corepack prepare pnpm@10.26.2 --activate
+RUN corepack enable && corepack prepare pnpm@10.32.1 --activate
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .

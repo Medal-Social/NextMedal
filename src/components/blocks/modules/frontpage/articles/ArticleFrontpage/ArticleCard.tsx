@@ -2,7 +2,6 @@ import { Clock } from 'lucide-react';
 import AuthorCard from '@/components/blocks/modules/frontpage/articles/AuthorCard';
 import { Date as DateDisplay, Img } from '@/components/blocks/objects/core';
 import { Link } from '@/i18n/navigation';
-import { routing } from '@/i18n/routing';
 import { getArticleFallbackImage } from '@/lib/utils/article-helpers';
 import { cn } from '@/lib/utils/index';
 import { createStegaAttribute } from '@/sanity/lib/client';
@@ -58,10 +57,9 @@ export default function ArticleCard({
   variant = 'standard',
   className,
 }: ArticleCardProps) {
-  // Build URL using the actual collection slug from site settings
-  const languagePrefix =
-    post.language && post.language !== routing.defaultLocale ? `/${post.language}` : '';
-  const href = `${languagePrefix}/${collectionSlug}/${post.metadata?.slug?.current}`;
+  // Build URL using the actual collection slug from site settings. The i18n
+  // <Link> prepends the active locale automatically, so the href is unprefixed.
+  const href = `/${collectionSlug}/${post.metadata?.slug?.current}`;
 
   const category = post.categories?.[0];
   const author = post.authors?.[0];

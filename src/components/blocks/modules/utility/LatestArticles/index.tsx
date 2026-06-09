@@ -28,6 +28,7 @@ export default async function LatestArticles({
       query: groq`
 			*[
 				_type == 'collection.article'
+				&& language == $locale
 				${filteredCategory ? '&& $filteredCategory in categories[]->._id' : ''}
 			]|order(
 				publishDate desc
@@ -53,7 +54,9 @@ export default async function LatestArticles({
 			}
 		`,
       params: {
-        filteredCategory: filteredCategory?._id || '',
+        // filteredCategory is an undereferenced reference here (the module query
+        // spreads it raw), so its id is in `_ref`, not `_id`.
+        filteredCategory: filteredCategory?._ref || '',
         limit: limit ?? 0,
         locale,
       },

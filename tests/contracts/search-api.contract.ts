@@ -40,8 +40,8 @@ describe('Search API Contract', () => {
     it('response matches SearchResponse schema with pages', async () => {
       mockFetch.mockResolvedValueOnce({
         pages: [
-          { _id: 'page-1', _type: 'page', title: 'About', slug: 'about' },
-          { _id: 'page-2', _type: 'page', title: 'Contact', slug: 'contact' },
+          { _id: 'page-1', _type: 'page', title: 'About', slug: 'about', language: 'en' },
+          { _id: 'page-2', _type: 'page', title: 'Contact', slug: 'contact', language: 'en' },
         ],
         collections: [],
       });
@@ -107,7 +107,7 @@ describe('Search API Contract', () => {
   describe('Schema Field Types', () => {
     it('_id is always a string', async () => {
       mockFetch.mockResolvedValueOnce({
-        pages: [{ _id: 'page-123', _type: 'page', title: 'Test', slug: 'test' }],
+        pages: [{ _id: 'page-123', _type: 'page', title: 'Test', slug: 'test', language: 'en' }],
         collections: [],
       });
 
@@ -120,7 +120,7 @@ describe('Search API Contract', () => {
 
     it('title is always a string', async () => {
       mockFetch.mockResolvedValueOnce({
-        pages: [{ _id: 'page-1', _type: 'page', title: 'My Title', slug: 'test' }],
+        pages: [{ _id: 'page-1', _type: 'page', title: 'My Title', slug: 'test', language: 'en' }],
         collections: [],
       });
 
@@ -133,7 +133,7 @@ describe('Search API Contract', () => {
 
     it('href is always a valid path', async () => {
       mockFetch.mockResolvedValueOnce({
-        pages: [{ _id: 'page-1', _type: 'page', title: 'Test', slug: 'my-page' }],
+        pages: [{ _id: 'page-1', _type: 'page', title: 'Test', slug: 'my-page', language: 'en' }],
         collections: [
           {
             _id: 'post-1',
@@ -163,7 +163,7 @@ describe('Search API Contract', () => {
       const requiredFields = ['_id', '_type', 'title', 'type', 'href'];
 
       mockFetch.mockResolvedValueOnce({
-        pages: [{ _id: 'page-1', _type: 'page', title: 'Test', slug: 'test' }],
+        pages: [{ _id: 'page-1', _type: 'page', title: 'Test', slug: 'test', language: 'en' }],
         collections: [],
       });
 

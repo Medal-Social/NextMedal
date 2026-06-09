@@ -44,7 +44,13 @@ export function validateExternalUrl(url: string): string | null {
     // Return the sanitized URL
     return urlObject.toString();
   } catch (_error) {
-    // If URL parsing fails, check if it's a relative URL or anchor that didn't start with #
+    // If URL parsing fails, check if it's a same-origin relative path or a bare
+    // query string. Reject protocol-relative ("//evil.com") and backslash
+    // ("/\evil.com", which browsers normalize to "//evil.com") forms, which
+    // navigate off-site and would otherwise slip through as "relative".
+    if (url.startsWith('//') || url.startsWith('/\\')) {
+      return null;
+    }
     if (url.startsWith('/') || url.startsWith('?')) {
       return url;
     }
