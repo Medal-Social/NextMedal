@@ -1,5 +1,10 @@
 import { createClient, groq } from "next-sanity";
 import { projectId, dataset, apiVersion } from "./src/sanity/lib/project";
+import { DEFAULT_LOCALE } from "./src/i18n/config";
+import {
+  COLLECTION_SLUGS_BY_LOCALE,
+  DEFAULT_COLLECTION_SLUGS,
+} from "./src/lib/collections/generated/collections.generated";
 // import { token } from '@/lib/sanity/token'
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
@@ -110,40 +115,67 @@ const config = {
     const cmsRedirects = await client.fetch(groq`*[_type == 'redirect']{
             source,
             'destinationType': destination.type,
-            'destination': select(
-                destination.type == 'internal' => destination.internal->.metadata.slug.current,
-                destination.external
-            ),
+            'target': destination.internal->{
+                _type,
+                language,
+                'slug': metadata.slug.current
+            },
+            'external': destination.external,
             permanent
         }`);
 
+    type RedirectTarget = { _type?: string; language?: string; slug?: string | null };
     type CmsRedirect = {
       source?: string | null;
       destinationType?: 'internal' | 'external' | null;
-      destination?: string | null;
+      target?: RedirectTarget | null;
+      external?: string | null;
       permanent?: boolean;
     };
 
+    // Resolve an internal redirect target to a full path, including the locale
+    // prefix and the collection path segment (e.g. /articles). Redirect targets
+    // can be `collection.article` documents whose slug is only the final path
+    // component, so a bare `/${slug}` would 404. Mirrors src/lib/sanity/resolve-url.
+    const resolveInternalDestination = (target: RedirectTarget): string | null => {
+      const slug = target.slug;
+      if (!slug) return null;
+      const language = target.language || DEFAULT_LOCALE;
+      const localePrefix = language === DEFAULT_LOCALE ? '' : `/${language}`;
+      if (slug === 'index') return localePrefix || '/';
+
+      let collectionSegment = '';
+      if (target._type?.startsWith('collection.')) {
+        const collectionKey = target._type as keyof typeof DEFAULT_COLLECTION_SLUGS;
+        const collectionSlug =
+          COLLECTION_SLUGS_BY_LOCALE[language]?.[collectionKey]?.slug ||
+          DEFAULT_COLLECTION_SLUGS[collectionKey];
+        if (collectionSlug) collectionSegment = `/${collectionSlug}`;
+      }
+      return `${localePrefix}${collectionSegment}/${slug}`;
+    };
+
     return (cmsRedirects as CmsRedirect[])
-      .filter(
+      .map((r) => {
+        const destination =
+          r.destinationType === 'internal'
+            ? r.target
+              ? resolveInternalDestination(r.target)
+              : null
+            : (r.external ?? null);
         // Drop redirects with a missing source or destination. An internal
         // target that was deleted/unpublished yields a null destination, which
         // would otherwise make next.config throw and break every build.
-        (r): r is CmsRedirect & { source: string; destination: string } =>
-          Boolean(r?.source) && Boolean(r?.destination),
-      )
-      .map((r) => {
-        let destination = r.destination;
-        if (r.destinationType === 'internal') {
-          // Internal slugs are stored bare; "index" is the homepage root.
-          destination = destination === 'index' ? '/' : `/${destination}`;
-        }
+        if (!r.source || !destination) return null;
         return {
           source: r.source.startsWith('/') ? r.source : `/${r.source}`,
           destination,
           permanent: Boolean(r.permanent),
         };
-      });
+      })
+      .filter(
+        (r): r is { source: string; destination: string; permanent: boolean } => r !== null,
+      );
   },
 
   // Rewrite sitemap URLs to use internal dynamic route
