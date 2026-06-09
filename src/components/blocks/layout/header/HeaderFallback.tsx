@@ -1,15 +1,12 @@
 import { Settings } from 'lucide-react';
-import { getLocale, getTranslations } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import LocaleSwitcher from '@/components/blocks/layout/language-switcher';
-import { DEFAULT_LOCALE } from '@/i18n/config';
 import { Link } from '@/i18n/navigation';
 import ThemeToggle from './ThemeToggle';
 
 export async function HeaderFallback() {
   try {
     const t = await getTranslations('setup.header');
-    const locale = await getLocale();
-    const homeHref = locale === DEFAULT_LOCALE ? '/' : `/${locale}`;
 
     return (
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -17,7 +14,7 @@ export async function HeaderFallback() {
           <div className="flex w-full flex-1 items-center justify-between">
             {/* Logo / Site Title */}
             <div className="flex items-center gap-3">
-              <Link href={homeHref} className="font-semibold text-lg">
+              <Link href="/" className="font-semibold text-lg">
                 {t('yourSite')}
               </Link>
               <Link

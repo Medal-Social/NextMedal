@@ -85,11 +85,15 @@ export async function GET(request: Request) {
     };
 
     const results = [
-      ...(Array.isArray(data.pages) ? data.pages : []).map((item: SearchItem) => ({
-        ...item,
-        type: 'Page',
-        href: getLocalePath(`/${item.slug}`, locale),
-      })),
+      ...(Array.isArray(data.pages) ? data.pages : [])
+        // Only show pages in the requested locale, and build the href from the
+        // page's own language — the index returns pages of every language.
+        .filter((item: CollectionSearchItem) => item.language === locale)
+        .map((item: CollectionSearchItem) => ({
+          ...item,
+          type: 'Page',
+          href: getLocalePath(`/${item.slug}`, item.language || locale),
+        })),
       ...(Array.isArray(data.collections) ? data.collections : [])
         .filter((item: CollectionSearchItem) => {
           // Only show items that match the current locale

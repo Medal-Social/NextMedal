@@ -12,11 +12,11 @@ import { cn } from '@/lib/utils/index';
 
 export default function SocialShare({
   title,
-  slug,
   className,
 }: {
   title: string;
-  slug: string;
+  /** Retained for caller compatibility; the share URL now comes from the live pathname. */
+  slug?: string;
   className?: string;
 }) {
   const t = useTranslations('article');
@@ -25,9 +25,11 @@ export default function SocialShare({
   const [url, setUrl] = useState('');
 
   useEffect(() => {
-    // Only set URL on client side
-    setUrl(`${window.location.origin}/articles/${slug}`);
-  }, [slug]);
+    // Share the current article URL. The page is already locale-prefixed and at
+    // the correct `/[collection]/[slug]` route, so use the live pathname directly
+    // rather than hardcoding an `/articles/` segment that doesn't match the route.
+    setUrl(`${window.location.origin}${window.location.pathname}`);
+  }, []);
 
   const handleCopy = async () => {
     const success = await copyToClipboard(url);

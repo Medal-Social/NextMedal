@@ -11,7 +11,7 @@ import { Box, Card, Flex, Grid, Label, Stack, Text } from '@sanity/ui';
 import { memo, useEffect, useState } from 'react';
 import { useClient } from 'sanity';
 import { useRouter } from 'sanity/router';
-import type { ContentStats } from './types';
+import { type ContentStats, handleCardKeyDown } from './types';
 
 export const ContentOverview = memo(function ContentOverview() {
   const client = useClient({ apiVersion: '2024-01-01' });
@@ -31,9 +31,11 @@ export const ContentOverview = memo(function ContentOverview() {
           client.fetch<number>('count(*[_id in path("drafts.**")])'),
           // Count published pages
           client.fetch<number>('count(*[_type == "page" && !(_id in path("drafts.**"))])'),
-          // Count pages missing SEO metadata (excluding noindex pages)
+          // Count pages missing SEO metadata (excluding noindex pages).
+          // SEO fields live under `seo.*` (seo.noIndex/seo.description/seo.image),
+          // not the legacy `metadata.*` paths.
           client.fetch<number>(
-            'count(*[_type == "page" && !(_id in path("drafts.**")) && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))])'
+            'count(*[_type == "page" && !(_id in path("drafts.**")) && seo.noIndex != true && (!defined(seo.description) || !defined(seo.image))])'
           ),
         ]);
 
@@ -93,6 +95,9 @@ export const ContentOverview = memo(function ContentOverview() {
             tone={stat.tone}
             style={{ cursor: 'pointer' }}
             onClick={() => router.navigateUrl({ path: stat.path })}
+            onKeyDown={(event) =>
+              handleCardKeyDown(event, () => router.navigateUrl({ path: stat.path }))
+            }
             tabIndex={0}
             role="button"
             aria-label={`${stat.title}: ${stat.count} ${stat.subtitle}`}

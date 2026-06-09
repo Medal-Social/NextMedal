@@ -719,7 +719,7 @@ async function getPage(slugParts: string[] | undefined, locale: string, stega?: 
       seo {
         title,
         description,
-        ogimage,
+        'ogimage': image.asset->url + '?w=1200',
         noIndex
       },
       ${TRANSLATIONS_QUERY}

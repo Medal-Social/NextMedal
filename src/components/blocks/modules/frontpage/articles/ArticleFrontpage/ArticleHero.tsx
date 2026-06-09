@@ -1,7 +1,6 @@
 import AuthorCard from '@/components/blocks/modules/frontpage/articles/AuthorCard';
 import { Date as DateDisplay } from '@/components/blocks/objects/core';
 import { Link } from '@/i18n/navigation';
-import { routing } from '@/i18n/routing';
 import { cn } from '@/lib/utils/index';
 import { createStegaAttribute } from '@/sanity/lib/client';
 
@@ -27,12 +26,9 @@ export default function ArticleHero({
   const t = translations;
   if (!featuredPost) return null;
 
-  // Build URL using the actual collection slug from site settings
-  const languagePrefix =
-    featuredPost.language && featuredPost.language !== routing.defaultLocale
-      ? `/${featuredPost.language}`
-      : '';
-  const featuredHref = `${languagePrefix}/${collectionSlug}/${featuredPost.metadata?.slug?.current}`;
+  // Build URL using the actual collection slug from site settings. The i18n
+  // <Link> prepends the active locale automatically, so the href is unprefixed.
+  const featuredHref = `/${collectionSlug}/${featuredPost.metadata?.slug?.current}`;
 
   const stega = createStegaAttribute({
     id: featuredPost._id,
@@ -131,10 +127,9 @@ function SidebarCard({
   hoverColor: string;
   borderColor?: string;
 }) {
-  // Build URL using the actual collection slug from site settings
-  const languagePrefix =
-    post.language && post.language !== routing.defaultLocale ? `/${post.language}` : '';
-  const href = `${languagePrefix}/${collectionSlug}/${post.metadata?.slug?.current}`;
+  // The i18n <Link> prepends the active locale automatically, so the href is
+  // unprefixed.
+  const href = `/${collectionSlug}/${post.metadata?.slug?.current}`;
 
   const stega = createStegaAttribute({
     id: post._id,

@@ -50,8 +50,10 @@ function PricingPrice({
   if (tier.monthlyPrice === undefined) return null;
 
   const priceValue = isYearly && tier.yearlyPrice ? tier.yearlyPrice : tier.monthlyPrice;
-  const priceNum = Number.parseInt(priceValue || '0', 10);
-  const isValidPrice = !Number.isNaN(priceNum) && priceNum > 0;
+  const priceNum = Number.parseFloat(priceValue || '0');
+  // Only animate whole-number prices (AnimatedNumber rounds). Decimal prices
+  // ("29.99") and non-numeric values ("Contact us") render as the exact string.
+  const isWholeNumber = Number.isInteger(priceNum) && priceNum > 0;
 
   return (
     <div
@@ -65,7 +67,7 @@ function PricingPrice({
       <meta itemProp="priceCurrency" content={tier.currency || 'USD'} />
       {tier.monthlyPrice && (
         <span className="font-numeric font-semibold text-4xl text-foreground">
-          {tier.currency} {isValidPrice ? <AnimatedNumber value={priceNum} /> : tier.monthlyPrice}
+          {tier.currency} {isWholeNumber ? <AnimatedNumber value={priceNum} /> : priceValue}
         </span>
       )}
       {tier.priceSuffix && (

@@ -61,6 +61,8 @@ export interface MobileNavigationProps {
   ctas: HeaderCTA[];
   /** Whether search is enabled */
   enableSearch?: boolean;
+  /** Close the mobile menu (e.g. after tapping a link or pressing Escape) */
+  closeMenu?: () => void;
 }
 
 /**

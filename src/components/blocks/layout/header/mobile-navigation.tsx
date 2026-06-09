@@ -48,30 +48,43 @@ export const NavLink = ({
   </Link>
 );
 
-export default function MobileNavigation({ menu, ctas, enableSearch }: MobileNavigationProps) {
+export default function MobileNavigation({
+  menu,
+  ctas,
+  enableSearch,
+  closeMenu,
+}: MobileNavigationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Focus trap implementation
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.key !== 'Tab') return;
+  // Focus trap implementation. Escape closes the menu so keyboard users aren't
+  // stuck (the close toggle lives in the header, outside this focus trap).
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeMenu?.();
+        return;
+      }
+      if (e.key !== 'Tab') return;
 
-    const focusableElements = containerRef.current?.querySelectorAll<HTMLElement>(
-      'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
-    );
+      const focusableElements = containerRef.current?.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
 
-    if (!focusableElements || focusableElements.length === 0) return;
+      if (!focusableElements || focusableElements.length === 0) return;
 
-    const firstElement = focusableElements[0];
-    const lastElement = focusableElements[focusableElements.length - 1];
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
 
-    if (e.shiftKey && document.activeElement === firstElement) {
-      e.preventDefault();
-      lastElement.focus();
-    } else if (!e.shiftKey && document.activeElement === lastElement) {
-      e.preventDefault();
-      firstElement.focus();
-    }
-  }, []);
+      if (e.shiftKey && document.activeElement === firstElement) {
+        e.preventDefault();
+        lastElement.focus();
+      } else if (!e.shiftKey && document.activeElement === lastElement) {
+        e.preventDefault();
+        firstElement.focus();
+      }
+    },
+    [closeMenu]
+  );
 
   // Set up focus trap on mount
   useEffect(() => {
@@ -147,7 +160,7 @@ export default function MobileNavigation({ menu, ctas, enableSearch }: MobileNav
               if (item._type === 'menuItem') {
                 return (
                   <motion.li key={itemKey ?? `mobile-${item.label}`} variants={itemVariants}>
-                    <NavLink link={item} />
+                    <NavLink link={item} onClick={closeMenu} />
                   </motion.li>
                 );
               }
@@ -172,7 +185,7 @@ export default function MobileNavigation({ menu, ctas, enableSearch }: MobileNav
                             const linkKey = (link as { _key?: string })._key;
                             return (
                               <li key={linkKey ?? `mobile-${itemKey}-${link.label}`}>
-                                <NavLink link={link} />
+                                <NavLink link={link} onClick={closeMenu} />
                               </li>
                             );
                           })}
