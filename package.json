@@ -13,6 +13,7 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "clean": "rimraf .next ",
+    "intent": "tsx scripts/setup.ts",
     "dev": "next dev",
     "prebuild": "pnpm generate:collections",
     "build": "next build",
@@ -104,6 +105,7 @@
     "@sanity/language-filter": "^5.0.3",
     "@sanity/template-validator": "^3.1.0",
     "@tailwindcss/typography": "^0.5.20",
+    "@tanstack/intent": "0.0.41",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
