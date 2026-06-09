@@ -17,13 +17,14 @@ export default function Logo({ title, logo, brandPage, locale }: LogoProps) {
   // If both images are the same, just render one image
   const isSameImage = logoImageDark === logoImageLight;
 
-  // Generate locale-aware homepage link
-  // Default locale (en) uses "/" while other locales use "/{locale}"
-  const homeHref = locale === DEFAULT_LOCALE ? '/' : `/${locale}`;
+  // The i18n <Link> prepends the active locale automatically, so the href is
+  // the unprefixed home path. usePathname() (next/navigation) returns the
+  // localized path, so compare against the locale-prefixed home below.
+  const localizedHome = locale === DEFAULT_LOCALE ? '/' : `/${locale}`;
 
   // Scroll to top when clicking logo while already on homepage
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (pathname === homeHref) {
+    if (pathname === localizedHome) {
       e.preventDefault();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -36,7 +37,7 @@ export default function Logo({ title, logo, brandPage, locale }: LogoProps) {
           'flex cursor-pointer items-center gap-2 font-semibold text-lg leading-none lg:text-xl',
           logo?.image && 'max-w-3xs'
         )}
-        href={homeHref}
+        href="/"
         onClick={handleClick}
         aria-label={`Return to ${title} homepage`}
       >

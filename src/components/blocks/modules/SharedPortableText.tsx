@@ -114,7 +114,10 @@ export default function SharedPortableText({
   if (variant === 'intro') selectedComponents = introComponents;
   if (variant === 'prose') selectedComponents = createProseComponents(components?.types);
 
-  // Merge custom components if provided
+  // Merge custom components if provided.
+  // `block` is always the record/object-map form in this file (never the function
+  // form), but @portabletext/react v6.2 types it as `function | record`, so the
+  // spread result needs an assertion back to PortableTextComponents.
   const finalComponents = {
     ...selectedComponents,
     ...components,
@@ -130,7 +133,7 @@ export default function SharedPortableText({
       ...selectedComponents.types,
       ...components?.types,
     },
-  };
+  } as PortableTextComponents;
 
   return (
     <div

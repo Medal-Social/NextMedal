@@ -66,7 +66,8 @@ export default function resolveUrl(
 
   const slug = page.metadata?.slug?.current;
   const segment = getPathSegment(page);
-  const path = slug === 'index' ? null : `${segment}/${slug}`;
+  // A missing slug (e.g. a draft without one) must not produce "/undefined".
+  const path = !slug || slug === 'index' ? null : `${segment}/${slug}`;
 
   const paramsStr =
     typeof params === 'object' && params !== null ? buildQueryString(params, allowList) : params;

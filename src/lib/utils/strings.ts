@@ -1,16 +1,21 @@
 /**
  * Converts a string to a URL-safe slug format.
- * Removes special characters, replaces spaces with hyphens, and lowercases.
+ * Lowercases and collapses any run of non-alphanumeric characters into a single
+ * hyphen. Unicode-aware (\p{L}/\p{N}) so non-Latin headings — Arabic, Norwegian
+ * æ/ø/å, etc. — keep their letters instead of collapsing to an empty string.
+ * This is the single source of truth for heading anchor ids; the Table of
+ * Contents must use it too so its links match the rendered heading ids.
  * @param str - The string to convert to a slug
  * @returns URL-safe slug (e.g., "Hello World!" → "hello-world")
  * @example
  * slug("Hello World!") // "hello-world"
  * slug("My Article #1") // "my-article-1"
+ * slug("Følg oss") // "følg-oss"
  */
 export function slug(str: string) {
   return str
     .toLowerCase()
-    .replace(/[\s\W]+/g, '-')
+    .replace(/[^\p{L}\p{N}]+/gu, '-')
     .replace(/^-+/, '')
     .replace(/-+$/, '');
 }

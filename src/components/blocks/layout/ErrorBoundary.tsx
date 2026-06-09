@@ -78,9 +78,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     const { type, reportAsError } = categorizeError(error);
     const { componentName = 'Unknown' } = this.props;
 
-    // Log expected errors as warnings, unexpected errors as errors
-    const logLevel = reportAsError ? logger.error : logger.warn;
-    logLevel(
+    // Log expected errors as warnings, unexpected errors as errors.
+    // Call the method on `logger` directly — pino log methods rely on `this`,
+    // so detaching them into a variable throws when invoked.
+    logger[reportAsError ? 'error' : 'warn'](
       {
         error,
         errorInfo,

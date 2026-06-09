@@ -14,10 +14,13 @@ import { cn } from '@/lib/utils/index';
 // Local type for MuxVideo to match Sanity.Hero interface
 type MuxVideo = Sanity.Hero['muxVideo'];
 
-// Helper to extract YouTube ID
+// Helper to extract a YouTube video ID from the supported URL shapes:
+// watch?v=, youtu.be/, /embed/, /shorts/, /v/ (VideoHero accepts these too).
 function getYouTubeId(url: string | undefined): string | undefined {
   if (!url) return undefined;
-  const match = url.match(/[?&]v=([^&]+)/);
+  const match = url.match(
+    /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([\w-]{11})/
+  );
   return match ? match[1] : undefined;
 }
 

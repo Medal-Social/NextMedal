@@ -32,13 +32,14 @@ export default function BrandMenu({ children, logoData, hasBrandPage }: BrandMen
   const extension = (image?.asset as { extension?: string } | undefined)?.extension || 'svg';
   const label = extension === 'png' ? t('copyLogoPng') : t('copyLogoSvg');
 
-  // Generate locale-aware links
-  const homeHref = locale === DEFAULT_LOCALE ? '/' : `/${locale}`;
-  const brandHref = locale === DEFAULT_LOCALE ? '/brand' : `/${locale}/brand`;
+  // The i18n <Link> prepends the active locale automatically, so pass the
+  // unprefixed paths. usePathname() returns the localized path, so compare
+  // against the locale-prefixed home for the scroll-to-top shortcut.
+  const localizedHome = locale === DEFAULT_LOCALE ? '/' : `/${locale}`;
 
   // Scroll to top when clicking "Go to Home" while already on homepage
   const handleHomeClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (pathname === homeHref) {
+    if (pathname === localizedHome) {
       e.preventDefault();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -80,7 +81,7 @@ export default function BrandMenu({ children, logoData, hasBrandPage }: BrandMen
         <ContextMenuItem
           render={
             <Link
-              href={homeHref}
+              href="/"
               onClick={handleHomeClick}
               className="flex cursor-pointer items-center gap-2"
             >
@@ -105,7 +106,7 @@ export default function BrandMenu({ children, logoData, hasBrandPage }: BrandMen
         {hasBrandPage && (
           <ContextMenuItem
             render={
-              <Link href={brandHref} className="flex cursor-pointer items-center gap-2 font-medium">
+              <Link href="/brand" className="flex cursor-pointer items-center gap-2 font-medium">
                 <LayoutGrid className="h-4 w-4 text-primary" />
                 <span>{t('brandCenter')}</span>
               </Link>

@@ -60,6 +60,6 @@ exports[`SocialEmbed Component > Snapshot Tests > should match snapshot for YouT
 <script
   type="application/ld+json"
 >
-  {"@context":"https://schema.org","@type":"VideoObject","name":"YouTube Video","embedUrl":"https://www.youtube.com/embed/abc123","thumbnailUrl":"https://img.youtube.com/vi/abc123/maxresdefault.jpg","uploadDate":"2026-01-03T15:42:14.282Z"}
+  {"@context":"https://schema.org","@type":"VideoObject","name":"YouTube Video","embedUrl":"https://www.youtube.com/embed/abc123","thumbnailUrl":"https://img.youtube.com/vi/abc123/maxresdefault.jpg"}
 </script>
 `;

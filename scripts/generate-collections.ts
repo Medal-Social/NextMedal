@@ -107,6 +107,11 @@ async function fetchFrontpageSlugs(): Promise<
     const { slug, locale, frontpageType } = page;
 
     if (!slug || !locale || !frontpageType) continue;
+    // Skip content whose locale is no longer in LOCALE_CONFIG (e.g. a language
+    // removed from routing while its Sanity documents remain). Otherwise the
+    // slugsByLocale[locale] lookup below is undefined and throws, and the outer
+    // catch silently discards every legitimately-detected custom slug.
+    if (!slugsByLocale[locale]) continue;
     if (!(frontpageType in FRONTPAGE_TO_COLLECTION)) continue;
 
     const collectionType = FRONTPAGE_TO_COLLECTION[frontpageType];

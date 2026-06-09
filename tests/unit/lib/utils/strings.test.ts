@@ -36,9 +36,11 @@ describe('string utilities', () => {
       expect(slug('!@#$%')).toBe('');
     });
 
-    it('handles unicode characters', () => {
-      const result = slug('Héllo Wörld');
-      expect(result).toBe('h-llo-w-rld');
+    it('preserves unicode letters instead of stripping them', () => {
+      // Unicode-aware slugging keeps accented/non-Latin letters (Norwegian,
+      // Arabic, etc.) rather than collapsing them to hyphens.
+      expect(slug('Héllo Wörld')).toBe('héllo-wörld');
+      expect(slug('Følg oss')).toBe('følg-oss');
     });
   });
 

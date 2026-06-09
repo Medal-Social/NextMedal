@@ -1,31 +1,42 @@
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
+import { routing } from '@/i18n/routing';
+import { BASE_URL } from '@/lib/core/env';
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
 
+// With localePrefix: 'as-needed', the default locale has no prefix (e.g. /docs),
+// so /en/docs would redirect — canonical/hreflang must omit it.
+function docsLocalePrefix(locale: string): string {
+  return locale === routing.defaultLocale ? '' : `/${locale}`;
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://nextmedal.com';
+  const canonical = `${BASE_URL}${docsLocalePrefix(locale)}/docs`;
+
+  const languages: Record<string, string> = {};
+  for (const supportedLocale of routing.locales) {
+    languages[supportedLocale] = `${BASE_URL}${docsLocalePrefix(supportedLocale)}/docs`;
+  }
+  languages['x-default'] = `${BASE_URL}/docs`;
 
   return {
     title: 'Documentation | Medal Social',
     description:
       'Comprehensive documentation for Medal Social - guides, components, and best practices for building amazing apps.',
     alternates: {
-      canonical: `${baseUrl}/${locale}/docs`,
-      languages: {
-        en: `${baseUrl}/en/docs`,
-        nb: `${baseUrl}/nb/docs`,
-      },
+      canonical,
+      languages,
     },
     openGraph: {
       title: 'Documentation | Medal Social',
       description:
         'Comprehensive documentation for Medal Social - guides, components, and best practices.',
-      url: `${baseUrl}/${locale}/docs`,
+      url: canonical,
       siteName: 'Medal Social',
       locale: locale,
       type: 'website',
@@ -37,8 +48,8 @@ export default async function DocsPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://nextmedal.com';
-  const currentUrl = `${baseUrl}/${locale}/docs`;
+  const localePrefix = docsLocalePrefix(locale);
+  const currentUrl = `${BASE_URL}${localePrefix}/docs`;
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -48,7 +59,7 @@ export default async function DocsPage({ params }: Props) {
         '@type': 'ListItem',
         position: 1,
         name: 'Home',
-        item: `${baseUrl}/${locale}`,
+        item: `${BASE_URL}${localePrefix || '/'}`,
       },
       {
         '@type': 'ListItem',

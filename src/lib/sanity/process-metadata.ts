@@ -32,10 +32,17 @@ async function generateAlternateLanguages(
     const translation = translations?.filter(Boolean).find((t) => t.language === locale);
 
     if (translation) {
-      // Use the translation's slug
-      const langPrefix = locale === defaultLocale ? '' : `/${locale}`;
-      const slugPath = translation.slug === 'index' ? '' : `/${translation.slug}`;
-      alternates[locale] = `${BASE_URL}${langPrefix}${slugPath}`;
+      // Resolve through resolveUrl so the collection path segment (e.g.
+      // /articles, /artikler) and locale prefix are included — a bare
+      // `${BASE_URL}/${slug}` would 404 for any collection item.
+      alternates[locale] = resolveUrl(
+        {
+          _type: translation._type,
+          language: translation.language,
+          metadata: { slug: { current: translation.slug } },
+        } as unknown as Sanity.PageBase,
+        { base: true }
+      );
     } else if (locale === page.language) {
       // Current page's locale
       alternates[locale] = await resolveUrl(page, { base: true });

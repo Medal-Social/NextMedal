@@ -32,7 +32,12 @@ export function CommandMenu({ variant = 'default', className }: CommandMenuProps
   const t = useTranslations('search');
   const tA11y = useTranslations('Accessibility');
 
+  // Only the primary (default) instance owns the global ⌘K shortcut. The header
+  // mounts several CommandMenu instances (desktop + mobile icon, plus one inside
+  // the open mobile menu); if they all registered the shortcut, ⌘K would toggle
+  // every instance open and stack multiple dialogs.
   React.useEffect(() => {
+    if (variant !== 'default') return;
     const down = (e: KeyboardEvent) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
@@ -40,7 +45,10 @@ export function CommandMenu({ variant = 'default', className }: CommandMenuProps
       }
     };
     document.addEventListener('keydown', down);
+    return () => document.removeEventListener('keydown', down);
+  }, [variant]);
 
+  React.useEffect(() => {
     const controller = new AbortController();
     const { signal } = controller;
 
@@ -65,7 +73,6 @@ export function CommandMenu({ variant = 'default', className }: CommandMenuProps
     fetchItems();
 
     return () => {
-      document.removeEventListener('keydown', down);
       controller.abort();
     };
   }, [locale]);

@@ -335,7 +335,8 @@ export default function SocialEmbed({ platform, url }: SocialEmbedProps) {
               name: 'YouTube Video',
               embedUrl: `https://www.youtube.com/embed/${youtubeId}`,
               thumbnailUrl: `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`,
-              uploadDate: new Date().toISOString(),
+              // No uploadDate: a render-time `new Date()` both differs between
+              // server and client (hydration mismatch) and is factually wrong.
             }).replace(/</g, '\\u003c'),
           }}
         />

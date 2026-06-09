@@ -16,7 +16,9 @@ export function usePagination<T>({
   const { page, setPage } = usePageState();
 
   const totalPages = Math.ceil(items.length / itemsPerPage) || 1;
-  const currentPage = Math.min(page, totalPages); // Clamp to valid range
+  // Clamp to valid range. Math.max(1, …) guards against ?page=0 and negative
+  // values, which would otherwise slice from the end of the array or render empty.
+  const currentPage = Math.max(1, Math.min(page, totalPages));
 
   const atStart = currentPage === 1;
   const atEnd = currentPage === totalPages;

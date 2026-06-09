@@ -117,10 +117,12 @@ export default function HeaderClient({
     };
   }, []);
 
-  // Close mobile menu on route change
+  // Close mobile menu on route change. Depend on pathname so this fires on
+  // every client-side navigation, not just once on mount.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is the trigger, not a value read inside the effect
   useEffect(() => {
     setIsOpen(false);
-  }, []);
+  }, [pathname]);
 
   // Close mobile menu on resize to desktop
   useEffect(() => {
@@ -271,7 +273,12 @@ export default function HeaderClient({
           (isDocs ? (
             <MobileDocsNavigation closeMenu={() => setIsOpen(false)} />
           ) : (
-            <MobileNavigation menu={menu} ctas={ctas} enableSearch={enableSearch} />
+            <MobileNavigation
+              menu={menu}
+              ctas={ctas}
+              enableSearch={enableSearch}
+              closeMenu={() => setIsOpen(false)}
+            />
           ))}
       </AnimatePresence>
     </>

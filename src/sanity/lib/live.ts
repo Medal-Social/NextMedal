@@ -13,9 +13,8 @@ export const { sanityFetch, SanityLive } = defineLive({
   serverToken: token,
   // When browserToken is undefined, SanityLive will skip client-side live connections
   ...(browserToken ? { browserToken } : {}),
-  fetchOptions: {
-    revalidate: 60 * 60 * 24 * 90, // 90 days - SanityLive handles on-demand revalidation
-  },
+  // next-sanity v13 removed `fetchOptions` (time-based revalidation fallback);
+  // cache invalidation is driven by <SanityLive> sync tags instead
 });
 
 // Wrapper around sanityFetch that returns just the data

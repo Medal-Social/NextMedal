@@ -144,7 +144,7 @@ describe('Search API', () => {
 
   it('formats page results correctly', async () => {
     mockFetch.mockResolvedValueOnce({
-      pages: [{ _id: 'page-1', _type: 'page', title: 'About Us', slug: 'about' }],
+      pages: [{ _id: 'page-1', _type: 'page', title: 'About Us', slug: 'about', language: 'en' }],
       collections: [],
     });
 
@@ -157,9 +157,29 @@ describe('Search API', () => {
       _type: 'page',
       title: 'About Us',
       slug: 'about',
+      language: 'en',
       type: 'Page',
       href: '/about',
     });
+  });
+
+  it('filters out pages from other locales', async () => {
+    // The search index returns pages of every language; only the requested
+    // locale's pages should be returned, with a correct (non-prefixed for the
+    // default locale) href.
+    mockFetch.mockResolvedValueOnce({
+      pages: [
+        { _id: 'page-en', _type: 'page', title: 'About', slug: 'about', language: 'en' },
+        { _id: 'page-nb', _type: 'page', title: 'Om oss', slug: 'om-oss', language: 'nb' },
+      ],
+      collections: [],
+    });
+
+    const response = await GET(createMockRequest('en'));
+    const data = await response.json();
+
+    expect(data).toHaveLength(1);
+    expect(data[0]._id).toBe('page-en');
   });
 
   it('formats article collection results correctly', async () => {
@@ -299,7 +319,7 @@ describe('Search API', () => {
 
   it('combines pages and collections', async () => {
     mockFetch.mockResolvedValueOnce({
-      pages: [{ _id: 'page-1', _type: 'page', title: 'Home', slug: 'index' }],
+      pages: [{ _id: 'page-1', _type: 'page', title: 'Home', slug: 'index', language: 'en' }],
       collections: [
         {
           _id: 'post-1',
@@ -338,7 +358,7 @@ describe('Search API', () => {
 
   it('handles missing collections array', async () => {
     mockFetch.mockResolvedValueOnce({
-      pages: [{ _id: 'page-1', _type: 'page', title: 'Home', slug: 'index' }],
+      pages: [{ _id: 'page-1', _type: 'page', title: 'Home', slug: 'index', language: 'en' }],
     });
 
     const response = await GET(createMockRequest());

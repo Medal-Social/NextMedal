@@ -84,7 +84,7 @@ export const structure = structureTool({
                   createDocTypeListItems(
                     S,
                     (type) =>
-                      `_type == "${type}" && !(_id in path("drafts.**")) && metadata.noIndex != true && (!defined(metadata.metaDescription) || !defined(metadata.openGraphImage))`,
+                      `_type == "${type}" && !(_id in path("drafts.**")) && seo.noIndex != true && (!defined(seo.description) || !defined(seo.image))`,
                     'Missing SEO Metadata'
                   )
                 )

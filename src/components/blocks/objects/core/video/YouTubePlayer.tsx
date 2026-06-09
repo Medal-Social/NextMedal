@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import type { ComponentType } from 'react';
 
 interface ReactPlayerProps {
-  url: string;
+  src: string;
   width: string;
   height: string;
   playing: boolean;
@@ -35,7 +35,7 @@ interface YouTubePlayerProps {
 export const YouTubePlayer = ({ url, onError }: YouTubePlayerProps) => {
   return (
     <div className="h-full w-full">
-      <ReactPlayer url={url} width="100%" height="100%" playing controls onError={onError} />
+      <ReactPlayer src={url} width="100%" height="100%" playing controls onError={onError} />
     </div>
   );
 };

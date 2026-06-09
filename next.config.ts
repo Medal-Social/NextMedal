@@ -1,8 +1,26 @@
 import { createClient, groq } from "next-sanity";
 import { projectId, dataset, apiVersion } from "./src/sanity/lib/project";
+import { DEFAULT_LOCALE } from "./src/i18n/config";
+import {
+  COLLECTION_SLUGS_BY_LOCALE,
+  DEFAULT_COLLECTION_SLUGS,
+} from "./src/lib/collections/generated/collections.generated";
 // import { token } from '@/lib/sanity/token'
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+
+// Allow the Umami analytics script origin (if configured) in the CSP — the
+// script is injected client-side via next/script and would otherwise be
+// blocked by script-src 'self', silently disabling analytics.
+const umamiOrigin = (() => {
+  const scriptUrl = process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL;
+  if (!scriptUrl) return '';
+  try {
+    return ` ${new URL(scriptUrl).origin}`;
+  } catch {
+    return '';
+  }
+})();
 
 // Custom headers for branding and security
 const customHeaders = [
@@ -13,7 +31,7 @@ const customHeaders = [
       // Social media embed iframe sources
       "frame-src 'self' platform.twitter.com www.linkedin.com www.instagram.com www.threads.net www.tiktok.com www.youtube.com;",
       // Script sources - 'unsafe-inline' needed for Next.js
-      "script-src 'self' 'unsafe-inline';",
+      `script-src 'self' 'unsafe-inline'${umamiOrigin};`,
     ].join(' '),
   },
 ];
@@ -96,20 +114,68 @@ const config = {
 
     const cmsRedirects = await client.fetch(groq`*[_type == 'redirect']{
             source,
-            'destination': select(
-                destination.type == 'internal' => '/' + destination.internal->.metadata.slug.current,
-                destination.external
-            ),
+            'destinationType': destination.type,
+            'target': destination.internal->{
+                _type,
+                language,
+                'slug': metadata.slug.current
+            },
+            'external': destination.external,
             permanent
         }`);
 
-    // Auto-fix: Add leading "/" if missing (assume root level)
-    return cmsRedirects.map(
-      (r: { source: string; destination: string; permanent: boolean }) => ({
-        ...r,
-        source: r.source.startsWith('/') ? r.source : `/${r.source}`,
-      }),
-    );
+    type RedirectTarget = { _type?: string; language?: string; slug?: string | null };
+    type CmsRedirect = {
+      source?: string | null;
+      destinationType?: 'internal' | 'external' | null;
+      target?: RedirectTarget | null;
+      external?: string | null;
+      permanent?: boolean;
+    };
+
+    // Resolve an internal redirect target to a full path, including the locale
+    // prefix and the collection path segment (e.g. /articles). Redirect targets
+    // can be `collection.article` documents whose slug is only the final path
+    // component, so a bare `/${slug}` would 404. Mirrors src/lib/sanity/resolve-url.
+    const resolveInternalDestination = (target: RedirectTarget): string | null => {
+      const slug = target.slug;
+      if (!slug) return null;
+      const language = target.language || DEFAULT_LOCALE;
+      const localePrefix = language === DEFAULT_LOCALE ? '' : `/${language}`;
+      if (slug === 'index') return localePrefix || '/';
+
+      let collectionSegment = '';
+      if (target._type?.startsWith('collection.')) {
+        const collectionKey = target._type as keyof typeof DEFAULT_COLLECTION_SLUGS;
+        const collectionSlug =
+          COLLECTION_SLUGS_BY_LOCALE[language]?.[collectionKey]?.slug ||
+          DEFAULT_COLLECTION_SLUGS[collectionKey];
+        if (collectionSlug) collectionSegment = `/${collectionSlug}`;
+      }
+      return `${localePrefix}${collectionSegment}/${slug}`;
+    };
+
+    return (cmsRedirects as CmsRedirect[])
+      .map((r) => {
+        const destination =
+          r.destinationType === 'internal'
+            ? r.target
+              ? resolveInternalDestination(r.target)
+              : null
+            : (r.external ?? null);
+        // Drop redirects with a missing source or destination. An internal
+        // target that was deleted/unpublished yields a null destination, which
+        // would otherwise make next.config throw and break every build.
+        if (!r.source || !destination) return null;
+        return {
+          source: r.source.startsWith('/') ? r.source : `/${r.source}`,
+          destination,
+          permanent: Boolean(r.permanent),
+        };
+      })
+      .filter(
+        (r): r is { source: string; destination: string; permanent: boolean } => r !== null,
+      );
   },
 
   // Rewrite sitemap URLs to use internal dynamic route
