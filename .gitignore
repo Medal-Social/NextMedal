@@ -92,3 +92,10 @@ migrate-api.sh
 plugins
 .claude
 todo.md
+
+# Cloudflare / OpenNext build artifacts and local Worker env
+.open-next/
+.wrangler/
+.dev.vars
+.dev.vars.local
+cloudflare-env.d.ts

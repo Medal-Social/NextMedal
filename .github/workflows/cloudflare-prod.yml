@@ -1,0 +1,97 @@
+name: Cloudflare [PROD]
+
+# Deploys NextMedal to nextmedal.com (+ www) as a Cloudflare Worker built by
+# @opennextjs/cloudflare, mirroring cloudflare-staging.yml but pinned to `prod`
+# and the wrangler `production` env. An alternative to the Azure Container Apps
+# path in prod.yml — once the Cloudflare deploy is verified and DNS is cut over,
+# prod.yml + container-app.yaml can be removed.
+#
+# Dormant until you opt in: set the repository variable
+# CLOUDFLARE_DEPLOY_ENABLED=true and add CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID
+# to the `Prod` GitHub environment (which already holds the Sanity secrets).
+# See docs/CLOUDFLARE.md.
+
+on:
+  push:
+    branches:
+      - prod
+  workflow_dispatch:
+
+concurrency:
+  group: nextmedal-cloudflare-prod
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    if: ${{ vars.CLOUDFLARE_DEPLOY_ENABLED == 'true' }}
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    environment: Prod
+    permissions:
+      contents: read
+    env:
+      NODE_ENV: production
+      CLOUDFLARE_BUILD: 'true'
+      NEXT_PUBLIC_BASE_URL: https://www.nextmedal.com
+      NEXT_PUBLIC_APP_ENV: production
+      NEXT_PUBLIC_SANITY_PROJECT_ID: ekjn2yf6
+      NEXT_PUBLIC_SANITY_DATASET: production
+      NEXT_PUBLIC_SANITY_API_VERSION: '2025-12-23'
+      NEXT_PUBLIC_SANITY_BROWSER_TOKEN: ${{ secrets.NEXT_PUBLIC_SANITY_BROWSER_TOKEN }}
+      NEXT_PUBLIC_UMAMI_SCRIPT_URL: ${{ secrets.NEXT_PUBLIC_UMAMI_SCRIPT_URL }}
+      NEXT_PUBLIC_UMAMI_WEBSITE_ID: ${{ secrets.NEXT_PUBLIC_UMAMI_WEBSITE_ID }}
+      SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
+      MEDAL_API_KEY: ${{ secrets.MEDAL_API_KEY }}
+      MEDAL_API_ENDPOINT: ${{ secrets.MEDAL_API_ENDPOINT }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build for Cloudflare Workers
+        run: pnpm exec opennextjs-cloudflare build
+
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --env production --keep-vars
+
+      - name: Upload Worker secrets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          existing=$(pnpm exec wrangler secret list --env production 2>/dev/null | jq -r '.[].name' 2>/dev/null || echo "")
+          for name in SANITY_WRITE_TOKEN MEDAL_API_KEY MEDAL_API_ENDPOINT; do
+            value="${!name:-}"
+            if [ -z "$value" ]; then
+              if echo "$existing" | grep -qx "$name"; then
+                echo "::warning::Optional secret '$name' is empty — deleting from Worker."
+                echo y | pnpm exec wrangler secret delete "$name" --env production
+              fi
+              continue
+            fi
+            echo "Uploading $name to nextmedal (production)..."
+            printf '%s' "$value" | pnpm exec wrangler secret put "$name" --env production
+          done
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Production deploy" >> "$GITHUB_STEP_SUMMARY"
+          echo "Worker: \`nextmedal\`  ·  Routes: <https://nextmedal.com>, <https://www.nextmedal.com>" >> "$GITHUB_STEP_SUMMARY"
+          echo "Commit: \`${GITHUB_SHA:0:8}\`  ·  Run: ${GITHUB_RUN_ID}" >> "$GITHUB_STEP_SUMMARY"

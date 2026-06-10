@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { describe, expect, it } from 'vitest';
-import { proxy } from '@/proxy';
+import middleware from '@/middleware';
 
 function buildRequest(pathname: string, locale: string | null = null) {
   const url = `https://example.com${pathname}`;
@@ -9,10 +9,10 @@ function buildRequest(pathname: string, locale: string | null = null) {
   return new NextRequest(url, { headers });
 }
 
-describe('proxy middleware', () => {
+describe('i18n middleware', () => {
   it('forwards x-pathname on the request to downstream Server Components', () => {
     const request = buildRequest('/articles/hello');
-    const response = proxy(request);
+    const response = middleware(request);
 
     expect(request.headers.get('x-pathname')).toBe('/articles/hello');
     expect(response).toBeInstanceOf(NextResponse);
@@ -20,22 +20,20 @@ describe('proxy middleware', () => {
 
   it('returns a NextResponse for paths that next-intl rewrites', () => {
     // Even at `/` next-intl rewrites to its locale-prefixed canonical
-    // (e.g. `/en`) — that's the whole reason a rewrite exists. The proxy
-    // re-emits the rewrite so forwarded request headers are attached, so
-    // x-middleware-rewrite is expected to be present (re-set by
-    // NextResponse.rewrite).
+    // (e.g. `/en`) — that's the whole reason a rewrite exists. The middleware
+    // returns next-intl's response, so x-middleware-rewrite is present.
     const request = buildRequest('/');
-    const response = proxy(request);
+    const response = middleware(request);
 
     expect(response).toBeInstanceOf(NextResponse);
     expect(response.headers.get('x-middleware-rewrite')).toBe('https://example.com/en');
   });
 
-  it('forwards request headers via the rebuilt rewrite for nested paths', () => {
-    // The whole point of the rebuild is forwarding x-pathname to downstream
-    // Server Components while preserving the next-intl rewrite directive.
+  it('forwards request headers via the rewrite for nested paths', () => {
+    // next-intl copies the mutated request headers (including x-pathname) onto
+    // its rewrite response, so they reach downstream Server Components.
     const request = buildRequest('/articles/hello');
-    const response = proxy(request);
+    const response = middleware(request);
 
     expect(response.headers.get('x-middleware-rewrite')).toBe(
       'https://example.com/en/articles/hello'

@@ -18,6 +18,10 @@
     "prebuild": "pnpm generate:collections",
     "build": "next build",
     "start": "next start",
+    "preview": "CLOUDFLARE_BUILD=true opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy:staging": "CLOUDFLARE_BUILD=true opennextjs-cloudflare build && wrangler deploy",
+    "deploy:production": "CLOUDFLARE_BUILD=true opennextjs-cloudflare build && wrangler deploy --env production",
+    "cf:typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "generate:collections": "tsx scripts/generate-collections.ts",
     "setup:check": "npx tsx src/scripts/validate-setup.ts",
     "lint": "biome check .",
@@ -101,6 +105,7 @@
     "@biomejs/biome": "2.4.16",
     "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.31.0",
+    "@opennextjs/cloudflare": "^1.19.11",
     "@playwright/test": "^1.60.0",
     "@sanity/language-filter": "^5.0.3",
     "@sanity/template-validator": "^3.1.0",
@@ -133,7 +138,8 @@
     "typescript": "^6.0.3",
     "vite": "^8.0.16",
     "vitest": "^4.1.8",
-    "vitest-axe": "^0.1.0"
+    "vitest-axe": "^0.1.0",
+    "wrangler": "^4.99.0"
   },
   "packageManager": "pnpm@10.32.1",
   "pnpm": {
