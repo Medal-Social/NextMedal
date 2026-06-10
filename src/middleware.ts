@@ -4,7 +4,13 @@ import { routing } from './i18n/routing';
 
 const intlMiddleware = createMiddleware(routing);
 
-export function proxy(request: NextRequest) {
+// Named `middleware.ts` (not `proxy.ts`) deliberately: Next 16's `proxy.ts` runs
+// on the Node.js runtime, which the OpenNext Cloudflare adapter can't bundle yet
+// ("Node.js middleware is not currently supported" — opennextjs-cloudflare#972).
+// `middleware.ts` runs on the Edge runtime, which OpenNext supports and which
+// next-intl's middleware targets natively, so it works across Cloudflare, Azure,
+// and Vercel. Revert to `proxy.ts` once OpenNext ships proxy support.
+export default function middleware(request: NextRequest) {
   // Forward the pathname on the REQUEST so downstream Server Components
   // can read it via headers().get('x-pathname'). next-intl rebuilds its
   // rewrite/next response from `new Headers(request.headers)`, so the

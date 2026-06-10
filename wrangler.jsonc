@@ -1,0 +1,54 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Top-level config = STAGING target. `wrangler deploy` with no flags (or the
+  // pnpm deploy:staging script) ships nextmedal-staging on staging.nextmedal.com.
+  // Production is opt-in via `--env production` (see env.production below) so the
+  // same Worker name + custom domains are used by the prod deploy workflow.
+  "name": "nextmedal-staging",
+  "main": "cloudflare-worker.js",
+  // 2025-05-05 or later is required for WeakRef / FinalizationRegistry, used by
+  // some Next.js / React deps. Pin to a recent date for the latest runtime fixes.
+  "compatibility_date": "2025-12-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "routes": [{ "pattern": "staging.nextmedal.com", "custom_domain": true }],
+  // Plain-text vars exposed to the Worker via the env binding AND populated into
+  // process.env at request time by nodejs_compat. We declare NEXT_PUBLIC_* here
+  // (rather than as secrets) because opennextjs-cloudflare reads env values from
+  // the Worker's `env` arg via process.env, and secrets pushed via
+  // `wrangler secret put` are not reliably exposed in process.env for SSR
+  // rendering paths — which would leave <head> metadata (og:url, canonical,
+  // hreflang) rendering with the localhost fallback. NEXT_PUBLIC_* are public by
+  // definition (inlined into the client bundle anyway), so plaintext is fine.
+  // Sensitive/server-only values (SANITY_WRITE_TOKEN, the browser token, etc.)
+  // stay as Worker secrets / build-time inlined values pushed by the CI workflow.
+  "vars": {
+    "NEXT_PUBLIC_BASE_URL": "https://staging.nextmedal.com",
+    "NEXT_PUBLIC_APP_ENV": "staging",
+    "NEXT_PUBLIC_SANITY_PROJECT_ID": "ekjn2yf6",
+    "NEXT_PUBLIC_SANITY_DATASET": "production",
+    "NEXT_PUBLIC_SANITY_API_VERSION": "2025-12-23"
+  },
+  "env": {
+    "production": {
+      "name": "nextmedal",
+      "routes": [
+        { "pattern": "nextmedal.com", "custom_domain": true },
+        { "pattern": "www.nextmedal.com", "custom_domain": true }
+      ],
+      "vars": {
+        "NEXT_PUBLIC_BASE_URL": "https://www.nextmedal.com",
+        "NEXT_PUBLIC_APP_ENV": "production",
+        "NEXT_PUBLIC_SANITY_PROJECT_ID": "ekjn2yf6",
+        "NEXT_PUBLIC_SANITY_DATASET": "production",
+        "NEXT_PUBLIC_SANITY_API_VERSION": "2025-12-23"
+      }
+    }
+  }
+}

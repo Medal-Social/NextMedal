@@ -146,7 +146,12 @@ All systems (sitemap, routing, UI) use dynamic configuration
 
 ### Next.js 16 Middleware Naming
 
-In Next.js 16+, middleware MUST be named `proxy.ts` (not `middleware.ts`) and export a function named `proxy`.
+The i18n middleware lives in `src/middleware.ts` (Edge runtime). Next.js 16
+prefers `proxy.ts`, but `proxy.ts` runs on the Node.js runtime, which the
+OpenNext Cloudflare adapter can't bundle yet (opennextjs-cloudflare#972), so this
+template uses `middleware.ts` to stay deployable on Cloudflare Workers as well as
+Azure/Vercel. next-intl's middleware is Edge-native, so nothing is lost. Revert
+to `proxy.ts` once OpenNext ships proxy support.
 
 ## Code Style (Biome)
 
