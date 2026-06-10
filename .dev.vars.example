@@ -1,0 +1,22 @@
+# wrangler dev / opennextjs-cloudflare preview — local env override.
+#
+# Copy to `.dev.vars` (gitignored) and fill in real values from Infisical
+# (`/NextMedal`, env=prod) before running `pnpm exec wrangler dev` or
+# `pnpm preview`. Without these, the Worker boots but env.ts logs validation
+# errors and derived constants (BASE_URL etc.) stay at their fallbacks.
+#
+# Note: `pnpm dev` (plain `next dev`) doesn't need this file — it reads .env.
+# This file is only for the Cloudflare Worker preview path (`wrangler dev` /
+# `opennextjs-cloudflare preview`).
+NEXT_PUBLIC_BASE_URL=http://localhost:8787
+NEXT_PUBLIC_APP_ENV=development
+NEXT_PUBLIC_SANITY_PROJECT_ID=ekjn2yf6
+NEXT_PUBLIC_SANITY_DATASET=production
+NEXT_PUBLIC_SANITY_API_VERSION=2025-12-23
+# Optional — only needed for the features that consume them
+# NEXT_PUBLIC_SANITY_BROWSER_TOKEN=
+# SANITY_WRITE_TOKEN=
+# NEXT_PUBLIC_UMAMI_SCRIPT_URL=
+# NEXT_PUBLIC_UMAMI_WEBSITE_ID=
+# MEDAL_API_KEY=
+# MEDAL_API_ENDPOINT=
