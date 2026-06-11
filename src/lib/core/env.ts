@@ -31,8 +31,13 @@ const envSchema = z.object({
   MEDAL_API_ENDPOINT: z.url().optional(),
 });
 
-// Validate env vars at runtime
-const parsedEnv = envSchema.safeParse({
+// CI/CD systems expose *unset* secrets as empty strings rather than omitting
+// them (e.g. GitHub Actions `${{ secrets.MISSING }}` expands to ""). An empty
+// string is not `undefined`, so it slips past `.optional()` and then fails
+// `url()` / `min(1)` validation — taking the whole site down at runtime with
+// "Invalid environment variables". Coerce "" to undefined so optional vars
+// validate as absent. (Mirrors @t3-oss/env's `emptyStringAsUndefined`.)
+const rawEnv: Record<string, string | undefined> = {
   NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
   NODE_ENV: process.env.NODE_ENV,
   VERCEL_ENV: process.env.VERCEL_ENV,
@@ -47,7 +52,13 @@ const parsedEnv = envSchema.safeParse({
   NEXT_PUBLIC_IMAGE_PROXY_URL: process.env.NEXT_PUBLIC_IMAGE_PROXY_URL,
   MEDAL_API_KEY: process.env.MEDAL_API_KEY,
   MEDAL_API_ENDPOINT: process.env.MEDAL_API_ENDPOINT,
-});
+};
+for (const key in rawEnv) {
+  if (rawEnv[key] === '') rawEnv[key] = undefined;
+}
+
+// Validate env vars at runtime
+const parsedEnv = envSchema.safeParse(rawEnv);
 
 const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build';
 
