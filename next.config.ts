@@ -72,7 +72,7 @@ const config = {
   images: {
     // Cloudflare Workers can't run sharp, so disable Next's image optimizer on
     // the CF build and rely on Sanity's URL transforms (?w=&q=&fm=webp). Other
-    // targets (Azure/Vercel) keep the optimizer.
+    // (non-Cloudflare) targets keep the optimizer.
     ...(process.env.CLOUDFLARE_BUILD ? { unoptimized: true } : {}),
     dangerouslyAllowSVG: true,
     ...(process.env.NEXT_PUBLIC_IMAGE_PROXY_URL
@@ -116,7 +116,7 @@ const config = {
     // hosted Studio instead — the Studio bundle (all schemas + Studio plugins)
     // exceeds the Worker size limit, so the (studio) route excludes it there
     // (see src/app/(studio)/studio/[[...tool]]). Gated on CLOUDFLARE_BUILD so
-    // Azure/Vercel keep the embedded Studio at /studio.
+    // non-Cloudflare deploys keep the embedded Studio at /studio.
     const studioRedirects = process.env.CLOUDFLARE_BUILD
       ? [
           { source: '/studio', destination: 'https://nextmedal.sanity.studio', permanent: false },

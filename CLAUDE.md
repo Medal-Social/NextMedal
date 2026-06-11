@@ -150,7 +150,7 @@ The i18n middleware lives in `src/middleware.ts` (Edge runtime). Next.js 16
 prefers `proxy.ts`, but `proxy.ts` runs on the Node.js runtime, which the
 OpenNext Cloudflare adapter can't bundle yet (opennextjs-cloudflare#972), so this
 template uses `middleware.ts` to stay deployable on Cloudflare Workers as well as
-Azure/Vercel. next-intl's middleware is Edge-native, so nothing is lost. Revert
+Vercel and other hosts. next-intl's middleware is Edge-native, so nothing is lost. Revert
 to `proxy.ts` once OpenNext ships proxy support.
 
 ## Code Style (Biome)
@@ -521,7 +521,7 @@ NEXT_PUBLIC_IMAGE_PROXY_URL      # Custom image proxy (enables custom loader)
 ## Git Workflow
 
 - **Main branch**: `dev`
-- **Production deploy**: Push to `prod` branch triggers Azure Container Apps deployment
+- **Production deploy**: Push to `prod` branch deploys to Cloudflare Workers (`nextmedal.com` + `www`)
 - **Pre-commit hook**: Runs `pnpm lint` (Biome check)
 
 ## Image Handling
