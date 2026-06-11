@@ -1,8 +1,7 @@
 name: Cloudflare [STAGING]
 
 # Deploys NextMedal to staging.nextmedal.com as a Cloudflare Worker built by
-# @opennextjs/cloudflare (an alternative to the Azure Container Apps path in
-# prod.yml). Trigger: push to `dev`.
+# @opennextjs/cloudflare. Trigger: push to `dev`.
 #
 # Dormant until you opt in: set the repository variable
 # CLOUDFLARE_DEPLOY_ENABLED=true and add CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID

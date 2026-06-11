@@ -2,9 +2,8 @@ name: Cloudflare [PROD]
 
 # Deploys NextMedal to nextmedal.com (+ www) as a Cloudflare Worker built by
 # @opennextjs/cloudflare, mirroring cloudflare-staging.yml but pinned to `prod`
-# and the wrangler `production` env. An alternative to the Azure Container Apps
-# path in prod.yml — once the Cloudflare deploy is verified and DNS is cut over,
-# prod.yml + container-app.yaml can be removed.
+# and the wrangler `production` env. This is the deploy path for nextmedal.com;
+# it replaced the Azure Container Apps workflow, which has been removed.
 #
 # Dormant until you opt in: set the repository variable
 # CLOUDFLARE_DEPLOY_ENABLED=true and add CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID
