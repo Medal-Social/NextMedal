@@ -248,6 +248,47 @@ describe('env', () => {
     });
   });
 
+  describe('empty-string env vars (CI/CD unset secrets)', () => {
+    // GitHub Actions (and most CI systems) expand an unset secret reference such
+    // as `${{ secrets.MISSING }}` to "" rather than omitting it. An empty string
+    // is not `undefined`, so without coercion it slips past `.optional()` and
+    // then fails `url()` / `min(1)`, 500-ing every request at runtime.
+    it('treats an empty optional URL var as undefined instead of throwing', async () => {
+      process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL = '';
+
+      const { env } = await import('@/lib/core/env');
+
+      expect(env.NEXT_PUBLIC_UMAMI_SCRIPT_URL).toBeUndefined();
+    });
+
+    it('treats an empty optional min(1) var as undefined instead of throwing', async () => {
+      process.env.MEDAL_API_KEY = '';
+
+      const { env } = await import('@/lib/core/env');
+
+      expect(env.MEDAL_API_KEY).toBeUndefined();
+    });
+
+    it('survives the full set of unset CI secrets passed as empty strings', async () => {
+      // Reproduces the original outage: the Cloudflare deploy workflow forwards
+      // every optional secret via `${{ secrets.X }}`, so unconfigured ones arrive
+      // as "". Validation must still pass and the site must boot.
+      process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL = '';
+      process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID = '';
+      process.env.NEXT_PUBLIC_IMAGE_PROXY_URL = '';
+      process.env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN = '';
+      process.env.SANITY_WRITE_TOKEN = '';
+      process.env.MEDAL_API_KEY = '';
+      process.env.MEDAL_API_ENDPOINT = '';
+
+      const { env } = await import('@/lib/core/env');
+
+      expect(env.NEXT_PUBLIC_BASE_URL).toBe('https://example.com');
+      expect(env.NEXT_PUBLIC_UMAMI_SCRIPT_URL).toBeUndefined();
+      expect(env.MEDAL_API_ENDPOINT).toBeUndefined();
+    });
+  });
+
   describe('build-time behavior', () => {
     it('does not throw during build phase with invalid env', async () => {
       process.env.NEXT_PHASE = 'phase-production-build';
