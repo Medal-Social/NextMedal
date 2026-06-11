@@ -1,9 +1,8 @@
 # Deploying NextMedal to Cloudflare Workers
 
-NextMedal can deploy to **Cloudflare Workers** via the
-[`@opennextjs/cloudflare`](https://opennext.js.org/cloudflare) adapter, as an
-alternative to the Azure Container Apps path (`prod.yml` / `Dockerfile`). This is
-how `nextmedal.com` is intended to run.
+NextMedal deploys to **Cloudflare Workers** via the
+[`@opennextjs/cloudflare`](https://opennext.js.org/cloudflare) adapter. This is
+how `nextmedal.com` runs. (A generic `Dockerfile` remains for self-hosting.)
 
 ## Files
 
@@ -41,8 +40,8 @@ The two workflows are **dormant by default**. To enable automatic deploys:
    - `SANITY_WRITE_TOKEN`, `MEDAL_API_KEY`, `MEDAL_API_ENDPOINT` (optional — only
      if those features are used). These are pushed to the Worker as secrets.
 
-   The `Prod` environment already holds the Sanity secrets used by the Azure
-   workflow; you only need to add the two `CLOUDFLARE_*` values there.
+   The `Prod` environment already holds the Sanity secrets; you only need to add
+   the two `CLOUDFLARE_*` values there.
 
 The public Sanity project/dataset/base-URL are hardcoded in the workflows and
 `wrangler.jsonc` (they are `NEXT_PUBLIC_*`, inlined at build).
@@ -52,8 +51,7 @@ The public Sanity project/dataset/base-URL are hardcoded in the workflows and
 `wrangler.jsonc` declares `custom_domain` routes for `staging.nextmedal.com`,
 `nextmedal.com`, and `www.nextmedal.com`. The `nextmedal.com` zone must be on the
 same Cloudflare account as the Worker; wrangler attaches the domains on first
-deploy. Until DNS is cut over to Cloudflare, the Azure deploy keeps serving the
-domain.
+deploy.
 
 ## Sanity Studio
 
@@ -64,8 +62,8 @@ flag (inlined via `next.config.ts`), dead-code-eliminates the Studio import, and
 redirects `/studio` to the **hosted Studio**.
 
 ➡️ **Deploy the hosted Studio once:** `npx sanity deploy` and choose the hostname
-`nextmedal` so it lives at `https://nextmedal.sanity.studio`. On Azure/Vercel the
-Studio stays embedded at `/studio` as before.
+`nextmedal` so it lives at `https://nextmedal.sanity.studio`. On non-Cloudflare
+deploys (e.g. Vercel) the Studio stays embedded at `/studio` as before.
 
 ## Known considerations
 
