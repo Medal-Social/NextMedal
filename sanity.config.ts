@@ -13,7 +13,6 @@ import { media, mediaAssetSource } from 'sanity-plugin-media';
 import { muxInput } from 'sanity-plugin-mux-input';
 import { schemaTypes } from '@/sanity/schemaTypes';
 import StudioIcon from '@/sanity/ui/StudioIcon';
-import { dashboardTool } from '@/sanity/tools/DashboardTool';
 
 import { routing, localeConfig, type Locale } from '@/i18n/routing';
 
@@ -133,7 +132,6 @@ export default defineConfig({
 
   tools: (prev) => {
     // Extract tools by name for explicit ordering
-    const dashboard = dashboardTool();
     const structureTool = prev.find((tool) => tool.name === 'structure');
     // Editor is the custom name for presentationTool (see presentation.ts line 7)
     const editorTool = prev.find((tool) => tool.name === 'editor');
@@ -145,9 +143,8 @@ export default defineConfig({
       prev.find((tool) => tool.title?.toLowerCase().includes('mux'));
     const visionToolItem = prev.find((tool) => tool.name === 'vision');
 
-    // Explicit order: dashboard, structure, editor, media, videos (mux), vision
+    // Explicit order: structure, editor, media, videos (mux), vision
     const orderedTools = [
-      dashboard,
       structureTool,
       editorTool,
       mediaTool,
