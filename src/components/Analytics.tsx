@@ -1,21 +1,32 @@
 'use client';
 
-import Script from 'next/script';
+import { getWebInstrumentations, initializeFaro } from '@grafana/faro-web-sdk';
+import { TracingInstrumentation } from '@grafana/faro-web-tracing';
+import { useEffect, useRef } from 'react';
 import { env } from '@/lib/core/env.client';
 
 export function Analytics() {
+  const initializedRef = useRef(false);
   const isProduction = env.VERCEL_ENV === 'production' || env.NEXT_PUBLIC_APP_ENV === 'production';
 
-  if (!isProduction || !env.NEXT_PUBLIC_UMAMI_SCRIPT_URL || !env.NEXT_PUBLIC_UMAMI_WEBSITE_ID) {
-    return null;
-  }
+  useEffect(() => {
+    if (!isProduction || initializedRef.current || !env.NEXT_PUBLIC_FARO_URL) return;
 
-  return (
-    <Script
-      defer
-      src={env.NEXT_PUBLIC_UMAMI_SCRIPT_URL}
-      data-website-id={env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
-      strategy="afterInteractive"
-    />
-  );
+    initializedRef.current = true;
+    initializeFaro({
+      app: {
+        environment:
+          env.NEXT_PUBLIC_FARO_APP_ENVIRONMENT ||
+          env.NEXT_PUBLIC_APP_ENV ||
+          env.VERCEL_ENV ||
+          env.NODE_ENV,
+        name: env.NEXT_PUBLIC_FARO_APP_NAME || 'Medal Social Site',
+        version: env.NEXT_PUBLIC_FARO_APP_VERSION,
+      },
+      instrumentations: [...getWebInstrumentations(), new TracingInstrumentation()],
+      url: env.NEXT_PUBLIC_FARO_URL,
+    });
+  }, [isProduction]);
+
+  return null;
 }

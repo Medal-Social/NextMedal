@@ -17,9 +17,11 @@ const envSchema = z.object({
   // Server-side write token for creating leads (NOT public - server only)
   SANITY_WRITE_TOKEN: z.string().optional(),
 
-  // Optional: Analytics
-  NEXT_PUBLIC_UMAMI_SCRIPT_URL: z.url().optional(),
-  NEXT_PUBLIC_UMAMI_WEBSITE_ID: z.string().optional(),
+  // Optional: Grafana Faro analytics
+  NEXT_PUBLIC_FARO_URL: z.url().optional(),
+  NEXT_PUBLIC_FARO_APP_NAME: z.string().optional(),
+  NEXT_PUBLIC_FARO_APP_VERSION: z.string().optional(),
+  NEXT_PUBLIC_FARO_APP_ENVIRONMENT: z.string().optional(),
 
   // Optional: Image Optimization
   NEXT_PUBLIC_IMAGE_PROXY_URL: z.url().optional(),
@@ -47,8 +49,10 @@ const rawEnv: Record<string, string | undefined> = {
   NEXT_PUBLIC_SANITY_API_VERSION: process.env.NEXT_PUBLIC_SANITY_API_VERSION,
   NEXT_PUBLIC_SANITY_BROWSER_TOKEN: process.env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN,
   SANITY_WRITE_TOKEN: process.env.SANITY_WRITE_TOKEN,
-  NEXT_PUBLIC_UMAMI_SCRIPT_URL: process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL,
-  NEXT_PUBLIC_UMAMI_WEBSITE_ID: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID,
+  NEXT_PUBLIC_FARO_URL: process.env.NEXT_PUBLIC_FARO_URL,
+  NEXT_PUBLIC_FARO_APP_NAME: process.env.NEXT_PUBLIC_FARO_APP_NAME,
+  NEXT_PUBLIC_FARO_APP_VERSION: process.env.NEXT_PUBLIC_FARO_APP_VERSION,
+  NEXT_PUBLIC_FARO_APP_ENVIRONMENT: process.env.NEXT_PUBLIC_FARO_APP_ENVIRONMENT,
   NEXT_PUBLIC_IMAGE_PROXY_URL: process.env.NEXT_PUBLIC_IMAGE_PROXY_URL,
   MEDAL_API_KEY: process.env.MEDAL_API_KEY,
   MEDAL_API_ENDPOINT: process.env.MEDAL_API_ENDPOINT,

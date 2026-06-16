@@ -56,6 +56,8 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
+    "@grafana/faro-web-sdk": "2.7.1",
+    "@grafana/faro-web-tracing": "2.7.1",
     "@medalsocial/sdk": "^1.2.1",
     "@mux/mux-player": "^3.13.0",
     "@mux/mux-player-react": "^3.13.0",

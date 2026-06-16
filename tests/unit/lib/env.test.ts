@@ -56,12 +56,12 @@ describe('env', () => {
 
     it('includes optional env vars when provided', async () => {
       process.env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN = 'secret-token';
-      process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID = 'umami-123';
+      process.env.NEXT_PUBLIC_FARO_APP_NAME = 'Medal Social Site';
 
       const { env } = await import('@/lib/core/env');
 
       expect(env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN).toBe('secret-token');
-      expect(env.NEXT_PUBLIC_UMAMI_WEBSITE_ID).toBe('umami-123');
+      expect(env.NEXT_PUBLIC_FARO_APP_NAME).toBe('Medal Social Site');
     });
   });
 
@@ -234,17 +234,17 @@ describe('env', () => {
     });
 
     it('validates optional URL fields format', async () => {
-      process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL = 'not-a-url';
+      process.env.NEXT_PUBLIC_FARO_URL = 'not-a-url';
 
       await expect(import('@/lib/core/env')).rejects.toThrow();
     });
 
     it('accepts valid optional URL fields', async () => {
-      process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL = 'https://analytics.example.com/script.js';
+      process.env.NEXT_PUBLIC_FARO_URL = 'https://collector.example.com/collect/site-token';
 
       const { env } = await import('@/lib/core/env');
 
-      expect(env.NEXT_PUBLIC_UMAMI_SCRIPT_URL).toBe('https://analytics.example.com/script.js');
+      expect(env.NEXT_PUBLIC_FARO_URL).toBe('https://collector.example.com/collect/site-token');
     });
   });
 
@@ -254,11 +254,11 @@ describe('env', () => {
     // is not `undefined`, so without coercion it slips past `.optional()` and
     // then fails `url()` / `min(1)`, 500-ing every request at runtime.
     it('treats an empty optional URL var as undefined instead of throwing', async () => {
-      process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL = '';
+      process.env.NEXT_PUBLIC_FARO_URL = '';
 
       const { env } = await import('@/lib/core/env');
 
-      expect(env.NEXT_PUBLIC_UMAMI_SCRIPT_URL).toBeUndefined();
+      expect(env.NEXT_PUBLIC_FARO_URL).toBeUndefined();
     });
 
     it('treats an empty optional min(1) var as undefined instead of throwing', async () => {
@@ -273,8 +273,10 @@ describe('env', () => {
       // Reproduces the original outage: the Cloudflare deploy workflow forwards
       // every optional secret via `${{ secrets.X }}`, so unconfigured ones arrive
       // as "". Validation must still pass and the site must boot.
-      process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL = '';
-      process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID = '';
+      process.env.NEXT_PUBLIC_FARO_URL = '';
+      process.env.NEXT_PUBLIC_FARO_APP_NAME = '';
+      process.env.NEXT_PUBLIC_FARO_APP_VERSION = '';
+      process.env.NEXT_PUBLIC_FARO_APP_ENVIRONMENT = '';
       process.env.NEXT_PUBLIC_IMAGE_PROXY_URL = '';
       process.env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN = '';
       process.env.SANITY_WRITE_TOKEN = '';
@@ -284,7 +286,7 @@ describe('env', () => {
       const { env } = await import('@/lib/core/env');
 
       expect(env.NEXT_PUBLIC_BASE_URL).toBe('https://example.com');
-      expect(env.NEXT_PUBLIC_UMAMI_SCRIPT_URL).toBeUndefined();
+      expect(env.NEXT_PUBLIC_FARO_URL).toBeUndefined();
       expect(env.MEDAL_API_ENDPOINT).toBeUndefined();
     });
   });

@@ -58,10 +58,7 @@ export default function CookieConsentComponent({ config, locale = 'en' }: Cookie
           autoClear: {
             cookies: [
               {
-                name: /^(_ga|_gid|umami)/, // Regex for GA and Umami cookies
-              },
-              {
-                name: /^ph_/, // PostHog cookies
+                name: /^(_ga|_gid|faro|grafana)/,
               },
             ],
           },
@@ -139,9 +136,9 @@ export default function CookieConsentComponent({ config, locale = 'en' }: Cookie
                     },
                     body: [
                       {
-                        name: 'ph_*_posthog',
+                        name: 'faro_*',
                         domain: '.nextmedal.com',
-                        desc: 'PostHog analytics session cookies.',
+                        desc: 'Grafana Faro analytics session storage.',
                         duration: '1 year',
                       },
                     ],
@@ -218,9 +215,9 @@ export default function CookieConsentComponent({ config, locale = 'en' }: Cookie
                     },
                     body: [
                       {
-                        name: 'ph_*_posthog',
+                        name: 'faro_*',
                         domain: '.nextmedal.com',
-                        desc: 'PostHog analyse sesjonskapsler.',
+                        desc: 'Grafana Faro analyse sesjonslagring.',
                         duration: '1 år',
                       },
                     ],
