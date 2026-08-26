@@ -28,7 +28,7 @@ concurrency:
 jobs:
   check-agents-md:
     name: AGENTS.md is in sync with installed skills
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest # Blacksmith stalled since 22 Aug — revert when back
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
