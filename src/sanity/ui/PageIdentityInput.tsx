@@ -1,7 +1,10 @@
 'use client';
 
-import { ClipboardIcon, EyeOpenIcon, LaunchIcon } from '@sanity/icons';
-import { Box, Button, Card, Flex, Stack, Text, TextInput, useToast } from '@sanity/ui';
+import { ClipboardIcon } from '@sanity/icons/Clipboard';
+import { EyeOpenIcon } from '@sanity/icons/EyeOpen';
+import { LaunchIcon } from '@sanity/icons/Launch';
+import { Box, Button, Card, Flex, Stack, Text, TextInput } from '@sanity/ui';
+import { useToast } from '@sanity/ui/toast';
 import { useCallback, useMemo, useState } from 'react';
 import { type ObjectInputProps, set, useFormValue } from 'sanity';
 import { COLLECTION_TYPES, type CollectionType } from '@/lib/collections/types';
@@ -165,9 +168,9 @@ export default function PageIdentityInput(props: ObjectInputProps) {
     : 'The URL path for this page (e.g., about-us)';
 
   return (
-    <Stack space={4}>
+    <Stack gap={4}>
       {/* Title field */}
-      <Stack space={3}>
+      <Stack gap={3}>
         <Text size={1} weight="medium">
           {titleLabel}
         </Text>
@@ -182,7 +185,7 @@ export default function PageIdentityInput(props: ObjectInputProps) {
       </Stack>
 
       {/* Slug field with generate button */}
-      <Stack space={3}>
+      <Stack gap={3}>
         <Text size={1} weight="medium">
           URL Slug
         </Text>
@@ -221,7 +224,7 @@ export default function PageIdentityInput(props: ObjectInputProps) {
         {/* Preview box - only shown when slug is valid */}
         {previewUrl && slugValidation.length === 0 && (
           <Card padding={4} radius={2} tone="primary" border>
-            <Stack space={3}>
+            <Stack gap={3}>
               <Text size={1} muted>
                 Preview URL
               </Text>

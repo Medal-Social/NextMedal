@@ -1,6 +1,6 @@
 'use client';
 
-import { EyeOpenIcon } from '@sanity/icons';
+import { EyeOpenIcon } from '@sanity/icons/EyeOpen';
 import { Box, Button, Card, Dialog, Flex, Spinner, Stack, Text } from '@sanity/ui';
 import { useState } from 'react';
 import type { ObjectInputProps } from 'sanity';
@@ -31,7 +31,7 @@ export default function SocialImageInput(props: ObjectInputProps) {
     : `${BASE_URL}/api/og`;
 
   return (
-    <Stack space={3}>
+    <Stack gap={3}>
       {renderDefault(props)}
 
       {!props.value && (
@@ -65,8 +65,8 @@ export default function SocialImageInput(props: ObjectInputProps) {
           width={2}
         >
           <Card padding={4}>
-            <Stack space={4}>
-              <Stack space={2}>
+            <Stack gap={4}>
+              <Stack gap={2}>
                 <Text size={1} weight="semibold">
                   What is this?
                 </Text>
@@ -77,7 +77,7 @@ export default function SocialImageInput(props: ObjectInputProps) {
                 </Text>
               </Stack>
 
-              <Stack space={2}>
+              <Stack gap={2}>
                 <Text size={1} weight="semibold">
                   Preview
                 </Text>
@@ -144,7 +144,7 @@ export default function SocialImageInput(props: ObjectInputProps) {
                 </Box>
               </Stack>
 
-              <Stack space={2}>
+              <Stack gap={2}>
                 <Text size={1} weight="semibold">
                   Want to use your own image?
                 </Text>

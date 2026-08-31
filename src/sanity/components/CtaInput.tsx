@@ -1,4 +1,5 @@
-import { EarthGlobeIcon, LinkIcon } from '@sanity/icons';
+import { EarthGlobeIcon } from '@sanity/icons/EarthGlobe';
+import { LinkIcon } from '@sanity/icons/Link';
 import { Box, Button, Flex, Grid, Label, Select, Stack, Switch, Text, TextInput } from '@sanity/ui';
 import { useCallback } from 'react';
 import {
@@ -120,9 +121,9 @@ export function CtaInput(props: ObjectInputProps) {
   const linkMember = findMember(members, 'link');
 
   return (
-    <Stack space={4}>
+    <Stack gap={4}>
       {/* ROW 1: Labels & Text */}
-      <Grid columns={[1, 1, 2]} gap={4}>
+      <Grid gridTemplateColumns={[1, 1, 2]} gap={4}>
         <Box>
           <Label size={1} style={{ marginBottom: '6px' }}>
             Button Text
@@ -229,7 +230,7 @@ export function CtaInput(props: ObjectInputProps) {
       </Box>
 
       {/* ROW 4: Options */}
-      <Grid columns={[1, 1, 2]} gap={4}>
+      <Grid gridTemplateColumns={[1, 1, 2]} gap={4}>
         <Box>
           <Label size={1} style={{ marginBottom: '6px' }}>
             Section (Optional)
@@ -259,7 +260,7 @@ export function CtaInput(props: ObjectInputProps) {
               id="ctaNewTab"
             />
             <Box>
-              <Label htmlFor="ctaNewTab" size={1} style={{ cursor: 'pointer' }}>
+              <Label as="label" htmlFor="ctaNewTab" size={1} style={{ cursor: 'pointer' }}>
                 Open in new tab
               </Label>
               <Text size={1} muted>

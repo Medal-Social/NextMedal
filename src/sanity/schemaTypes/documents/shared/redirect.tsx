@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version
  */
 
-import { TransferIcon } from '@sanity/icons';
+import { TransferIcon } from '@sanity/icons/Transfer';
 import { defineField, defineType } from 'sanity';
 import resolveSlug from '@/sanity/lib/resolveSlug';
 import { RedirectInput } from '../../../components/RedirectInput';

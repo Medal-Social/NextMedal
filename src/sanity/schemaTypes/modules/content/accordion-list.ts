@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version
  */
 
-import { StackCompactIcon } from '@sanity/icons';
+import { StackCompactIcon } from '@sanity/icons/StackCompact';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 

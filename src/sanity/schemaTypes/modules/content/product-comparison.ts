@@ -11,7 +11,7 @@
  * - 1.0.0: Initial version with basic comparison functionality
  */
 
-import { LinkIcon } from '@sanity/icons';
+import { LinkIcon } from '@sanity/icons/Link';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 
 export default defineType({

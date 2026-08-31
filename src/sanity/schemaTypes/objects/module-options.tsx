@@ -11,7 +11,8 @@
 
 'use client';
 
-import { CheckmarkIcon, CopyIcon } from '@sanity/icons';
+import { CheckmarkIcon } from '@sanity/icons/Checkmark';
+import { CopyIcon } from '@sanity/icons/Copy';
 import { Box, Button, Flex, Text, TextInput } from '@sanity/ui';
 import { useState } from 'react';
 import { defineField, defineType } from 'sanity';

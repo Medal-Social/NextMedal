@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version with collection-based filtering
  */
 
-import { EnvelopeIcon } from '@sanity/icons';
+import { EnvelopeIcon } from '@sanity/icons/Envelope';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 

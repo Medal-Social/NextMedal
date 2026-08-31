@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version
  */
 
-import { BulbOutlineIcon } from '@sanity/icons';
+import { BulbOutlineIcon } from '@sanity/icons/BulbOutline';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 import { createUidField } from '../ui/uid-input';

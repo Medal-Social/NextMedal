@@ -9,7 +9,9 @@
  * - 1.0.0: Initial version
  */
 
-import { BillIcon, ControlsIcon, EditIcon } from '@sanity/icons';
+import { BillIcon } from '@sanity/icons/Bill';
+import { ControlsIcon } from '@sanity/icons/Controls';
+import { EditIcon } from '@sanity/icons/Edit';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({

@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version
  */
 
-import { CheckmarkCircleIcon } from '@sanity/icons';
+import { CheckmarkCircleIcon } from '@sanity/icons/CheckmarkCircle';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({

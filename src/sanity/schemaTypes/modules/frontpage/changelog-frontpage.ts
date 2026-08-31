@@ -6,7 +6,7 @@
  * This module enables a page to act as a changelog collection index.
  */
 
-import { DocumentTextIcon } from '@sanity/icons';
+import { DocumentTextIcon } from '@sanity/icons/DocumentText';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 
