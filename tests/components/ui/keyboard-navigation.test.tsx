@@ -539,11 +539,17 @@ describe('Keyboard Navigation Tests', () => {
   });
 
   // ==========================================================================
-  // Task 6.4: Accordion Arrow Key Navigation Test
+  // Task 6.4: Accordion Keyboard Navigation Test
   // Requirements: 4.4
+  //
+  // The WAI-ARIA APG removed roving focus (arrow-key navigation between
+  // accordion headers) from the accordion pattern
+  // (w3c/aria-practices#3434), and Base UI followed suit: Arrow/Home/End
+  // keys no longer move focus between triggers. Sequential Tab navigation
+  // is the supported traversal. These tests pin the new contract.
   // ==========================================================================
 
-  describe('Task 6.4: Accordion Arrow Key Navigation (Requirement 4.4)', () => {
+  describe('Task 6.4: Accordion Keyboard Navigation (Requirement 4.4)', () => {
     const renderAccordion = () => {
       return render(
         <Accordion>
@@ -563,7 +569,7 @@ describe('Keyboard Navigation Tests', () => {
       );
     };
 
-    it('navigates to next item with ArrowDown key', async () => {
+    it('keeps focus on the current trigger when pressing arrow keys (no roving focus)', async () => {
       const user = userEvent.setup();
       renderAccordion();
 
@@ -572,85 +578,54 @@ describe('Keyboard Navigation Tests', () => {
       expect(triggers[0]).toHaveFocus();
 
       await user.keyboard('{ArrowDown}');
+      expect(triggers[0]).toHaveFocus();
+
+      await user.keyboard('{ArrowUp}');
+      expect(triggers[0]).toHaveFocus();
+    });
+
+    it('keeps focus on the current trigger when pressing Home and End keys', async () => {
+      const user = userEvent.setup();
+      renderAccordion();
+
+      const triggers = screen.getAllByRole('button');
+      triggers[1].focus();
       expect(triggers[1]).toHaveFocus();
-
-      await user.keyboard('{ArrowDown}');
-      expect(triggers[2]).toHaveFocus();
-    });
-
-    it('navigates to previous item with ArrowUp key', async () => {
-      const user = userEvent.setup();
-      renderAccordion();
-
-      const triggers = screen.getAllByRole('button');
-      triggers[2].focus();
-      expect(triggers[2]).toHaveFocus();
-
-      await user.keyboard('{ArrowUp}');
-      expect(triggers[1]).toHaveFocus();
-
-      await user.keyboard('{ArrowUp}');
-      expect(triggers[0]).toHaveFocus();
-    });
-
-    it('wraps from last to first item with ArrowDown key', async () => {
-      const user = userEvent.setup();
-      renderAccordion();
-
-      const triggers = screen.getAllByRole('button');
-      triggers[2].focus();
-      expect(triggers[2]).toHaveFocus();
-
-      await user.keyboard('{ArrowDown}');
-      expect(triggers[0]).toHaveFocus();
-    });
-
-    it('wraps from first to last item with ArrowUp key', async () => {
-      const user = userEvent.setup();
-      renderAccordion();
-
-      const triggers = screen.getAllByRole('button');
-      triggers[0].focus();
-      expect(triggers[0]).toHaveFocus();
-
-      await user.keyboard('{ArrowUp}');
-      expect(triggers[2]).toHaveFocus();
-    });
-
-    it('navigates to first item with Home key', async () => {
-      const user = userEvent.setup();
-      renderAccordion();
-
-      const triggers = screen.getAllByRole('button');
-      triggers[2].focus();
-      expect(triggers[2]).toHaveFocus();
 
       await user.keyboard('{Home}');
-      expect(triggers[0]).toHaveFocus();
-    });
-
-    it('navigates to last item with End key', async () => {
-      const user = userEvent.setup();
-      renderAccordion();
-
-      const triggers = screen.getAllByRole('button');
-      triggers[0].focus();
-      expect(triggers[0]).toHaveFocus();
+      expect(triggers[1]).toHaveFocus();
 
       await user.keyboard('{End}');
-      expect(triggers[2]).toHaveFocus();
+      expect(triggers[1]).toHaveFocus();
     });
 
-    it('maintains focus during navigation without expanding items', async () => {
+    it('moves focus through triggers sequentially with Tab', async () => {
+      const user = userEvent.setup();
+      renderAccordion();
+
+      const triggers = screen.getAllByRole('button');
+      triggers[0].focus();
+      expect(triggers[0]).toHaveFocus();
+
+      await user.tab();
+      expect(triggers[1]).toHaveFocus();
+
+      await user.tab();
+      expect(triggers[2]).toHaveFocus();
+
+      await user.tab({ shift: true });
+      expect(triggers[1]).toHaveFocus();
+    });
+
+    it('does not expand items when pressing arrow keys', async () => {
       const user = userEvent.setup();
       renderAccordion();
 
       const triggers = screen.getAllByRole('button');
       triggers[0].focus();
 
-      // Navigate without expanding
       await user.keyboard('{ArrowDown}');
-      expect(triggers[1]).toHaveFocus();
+      expect(triggers[0]).toHaveFocus();
 
       // Content should not be visible (accordion is collapsible and no item is expanded)
       expect(screen.queryByText('Content 1')).not.toBeInTheDocument();

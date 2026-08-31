@@ -118,7 +118,7 @@ describe('Accordion Component', () => {
   });
 
   describe('Keyboard Navigation', () => {
-    it('navigates between items with arrow keys', async () => {
+    it('moves focus between items with Tab, not arrow keys (roving focus removed per APG)', async () => {
       const user = userEvent.setup();
       renderAccordion();
 
@@ -126,14 +126,17 @@ describe('Accordion Component', () => {
       triggers[0].focus();
       expect(triggers[0]).toHaveFocus();
 
+      // Arrow keys no longer move focus between accordion headers
+      // (w3c/aria-practices#3434; Base UI >= 1.6 follows the updated APG).
       await user.keyboard('{ArrowDown}');
+      expect(triggers[0]).toHaveFocus();
+
+      // Sequential Tab navigation is the supported traversal.
+      await user.tab();
       expect(triggers[1]).toHaveFocus();
 
-      await user.keyboard('{ArrowDown}');
+      await user.tab();
       expect(triggers[2]).toHaveFocus();
-
-      await user.keyboard('{ArrowUp}');
-      expect(triggers[1]).toHaveFocus();
     });
 
     it('expands item with Enter key', async () => {
