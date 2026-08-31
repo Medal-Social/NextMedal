@@ -10,7 +10,7 @@
  * - 1.0.0: Initial version
  */
 
-import { EnvelopeIcon } from '@sanity/icons';
+import { EnvelopeIcon } from '@sanity/icons/Envelope';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 
 export default defineType({

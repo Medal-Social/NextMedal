@@ -10,7 +10,7 @@
  * - 1.0.0: Initial version with collection-based filtering
  */
 
-import { DocumentsIcon } from '@sanity/icons';
+import { DocumentsIcon } from '@sanity/icons/Documents';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({

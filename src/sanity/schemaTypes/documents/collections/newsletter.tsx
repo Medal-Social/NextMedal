@@ -9,7 +9,10 @@
  * - 1.0.0: Initial version with collection reference pattern
  */
 
-import { ControlsIcon, EnvelopeIcon, EyeClosedIcon, SearchIcon } from '@sanity/icons';
+import { ControlsIcon } from '@sanity/icons/Controls';
+import { EnvelopeIcon } from '@sanity/icons/Envelope';
+import { EyeClosedIcon } from '@sanity/icons/EyeClosed';
+import { SearchIcon } from '@sanity/icons/Search';
 import { defineField, defineType } from 'sanity';
 import PageIdentityField from '@/sanity/ui/PageIdentityField';
 import PageIdentityInput from '@/sanity/ui/PageIdentityInput';

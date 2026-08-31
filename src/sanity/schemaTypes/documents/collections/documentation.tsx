@@ -1,4 +1,4 @@
-import { BookIcon } from '@sanity/icons';
+import { BookIcon } from '@sanity/icons/Book';
 import { defineField, defineType } from 'sanity';
 import { DEFAULT_LOCALE } from '@/i18n/config';
 import { createLocaleFilter } from '@/sanity/lib/createLocaleFilter';

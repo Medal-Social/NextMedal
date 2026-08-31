@@ -11,7 +11,7 @@
  * - 1.0.0: Initial version
  */
 
-import { BlockContentIcon } from '@sanity/icons';
+import { BlockContentIcon } from '@sanity/icons/BlockContent';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 import { createUidField } from '../ui/uid-input';

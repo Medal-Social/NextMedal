@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version
  */
 
-import { PlayIcon } from '@sanity/icons';
+import { PlayIcon } from '@sanity/icons/Play';
 import type { Rule } from 'sanity';
 import { defineField } from 'sanity';
 

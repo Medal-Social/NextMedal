@@ -12,14 +12,12 @@
  * - 1.0.0: Initial version
  */
 
-import {
-  DocumentIcon,
-  EditIcon,
-  EyeClosedIcon,
-  HelpCircleIcon,
-  HomeIcon,
-  SearchIcon,
-} from '@sanity/icons';
+import { DocumentIcon } from '@sanity/icons/Document';
+import { EditIcon } from '@sanity/icons/Edit';
+import { EyeClosedIcon } from '@sanity/icons/EyeClosed';
+import { HelpCircleIcon } from '@sanity/icons/HelpCircle';
+import { HomeIcon } from '@sanity/icons/Home';
+import { SearchIcon } from '@sanity/icons/Search';
 import { defineField, defineType } from 'sanity';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/i18n/config';
 import { isUniqueAcrossLocale } from '@/sanity/lib/isUniqueAcrossLocale';

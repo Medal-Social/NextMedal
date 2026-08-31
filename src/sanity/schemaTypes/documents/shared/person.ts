@@ -9,7 +9,7 @@
  * - 1.0.0: Initial version
  */
 
-import { UserIcon } from '@sanity/icons';
+import { UserIcon } from '@sanity/icons/User';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({

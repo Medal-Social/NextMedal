@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version
  */
 
-import { ImageIcon } from '@sanity/icons';
+import { ImageIcon } from '@sanity/icons/Image';
 import { defineArrayMember } from 'sanity';
 
 export default defineArrayMember({

@@ -10,7 +10,7 @@
  * - 1.0.0: Initial version with 8 platform support
  */
 
-import { ShareIcon } from '@sanity/icons';
+import { ShareIcon } from '@sanity/icons/Share';
 import type { PreviewProps, Rule } from 'sanity';
 import { defineField } from 'sanity';
 
