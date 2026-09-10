@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version with grid/carousel layouts and category filtering
  */
 
-import { EditIcon } from '@sanity/icons';
+import { EditIcon } from '@sanity/icons/Edit';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 

@@ -9,7 +9,7 @@
  * - 1.0.0: Initial version
  */
 
-import { FolderIcon } from '@sanity/icons';
+import { FolderIcon } from '@sanity/icons/Folder';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({

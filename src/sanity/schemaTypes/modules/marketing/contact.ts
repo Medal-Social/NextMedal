@@ -8,7 +8,9 @@
  * - 1.0.0: Initial version
  */
 
-import { EnvelopeIcon, PinIcon, UserIcon } from '@sanity/icons';
+import { EnvelopeIcon } from '@sanity/icons/Envelope';
+import { PinIcon } from '@sanity/icons/Pin';
+import { UserIcon } from '@sanity/icons/User';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({

@@ -15,7 +15,7 @@ export default function CharacterCount({
   const Input = as === 'textarea' ? TextArea : TextInput;
 
   return (
-    <Stack space={2}>
+    <Stack gap={2}>
       <Input {...elementProps} />
       <Flex>
         {children}

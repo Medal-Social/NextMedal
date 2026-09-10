@@ -8,7 +8,7 @@
  * - 1.0.0: Renamed from Link List to Drop Down Menu
  */
 
-import { FolderIcon } from '@sanity/icons';
+import { FolderIcon } from '@sanity/icons/Folder';
 import { defineField, defineType } from 'sanity';
 import { count } from '@/lib/utils/index';
 

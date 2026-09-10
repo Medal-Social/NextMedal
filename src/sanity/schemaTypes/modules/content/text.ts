@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version
  */
 
-import { TextIcon } from '@sanity/icons';
+import { TextIcon } from '@sanity/icons/Text';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 import { imageBlock } from '../../fragments';

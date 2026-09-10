@@ -10,7 +10,8 @@
 
 'use client';
 
-import { EyeClosedIcon, SearchIcon } from '@sanity/icons';
+import { EyeClosedIcon } from '@sanity/icons/EyeClosed';
+import { SearchIcon } from '@sanity/icons/Search';
 import { defineField, defineType } from 'sanity';
 import CharacterCount from '@/sanity/ui/CharacterCount';
 import SocialImageInput from '@/sanity/ui/SocialImageInput';

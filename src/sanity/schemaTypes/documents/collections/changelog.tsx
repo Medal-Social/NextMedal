@@ -9,7 +9,7 @@
  * - 2.0.0: Simplified to just date and content
  */
 
-import { DocumentTextIcon } from '@sanity/icons';
+import { DocumentTextIcon } from '@sanity/icons/DocumentText';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({

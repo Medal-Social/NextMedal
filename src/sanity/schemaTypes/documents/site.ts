@@ -10,7 +10,9 @@
  * - 1.0.0: Initial version with core site configuration options
  */
 
-import { CogIcon, ControlsIcon, MenuIcon } from '@sanity/icons';
+import { CogIcon } from '@sanity/icons/Cog';
+import { ControlsIcon } from '@sanity/icons/Controls';
+import { MenuIcon } from '@sanity/icons/Menu';
 import { defineField, defineType } from 'sanity';
 import { DEFAULT_LOCALE } from '@/i18n/config';
 // import modules from '../fragments/modules';

@@ -9,7 +9,7 @@
  * - 1.3.0: Removed size field as it's not being used
  */
 
-import { LaunchIcon } from '@sanity/icons';
+import { LaunchIcon } from '@sanity/icons/Launch';
 import { defineField, defineType } from 'sanity';
 import { CtaInput } from '../../components/CtaInput';
 import { CtaLinkInput } from '../../components/CtaLinkInput';

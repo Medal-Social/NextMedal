@@ -10,7 +10,7 @@
  * - 1.0.0: Initial version with collection reference pattern
  */
 
-import { CalendarIcon } from '@sanity/icons';
+import { CalendarIcon } from '@sanity/icons/Calendar';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { DEFAULT_LOCALE } from '@/i18n/config';
 import { isUniqueAcrossLocale } from '@/sanity/lib/isUniqueAcrossLocale';

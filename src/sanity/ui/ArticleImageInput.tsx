@@ -1,6 +1,6 @@
 'use client';
 
-import { EyeOpenIcon } from '@sanity/icons';
+import { EyeOpenIcon } from '@sanity/icons/EyeOpen';
 import { Box, Button, Card, Dialog, Flex, Stack, Text } from '@sanity/ui';
 import { useState } from 'react';
 import type { ObjectInputProps } from 'sanity';
@@ -26,7 +26,7 @@ export default function ArticleImageInput(props: ObjectInputProps) {
     : '/api/og/article-fallback';
 
   return (
-    <Stack space={3}>
+    <Stack gap={3}>
       {renderDefault(props)}
 
       {!props.value && (
@@ -59,7 +59,7 @@ export default function ArticleImageInput(props: ObjectInputProps) {
           width={2}
         >
           <Card padding={4}>
-            <Stack space={3}>
+            <Stack gap={3}>
               <Text size={1} muted>
                 This is what the auto-generated image will look like based on your article title.
               </Text>

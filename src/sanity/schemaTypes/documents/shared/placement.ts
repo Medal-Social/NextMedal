@@ -5,7 +5,7 @@
  * @description Defines rules for placing global content modules in specific layout slots based on content scope.
  */
 
-import { InsertAboveIcon } from '@sanity/icons';
+import { InsertAboveIcon } from '@sanity/icons/InsertAbove';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({

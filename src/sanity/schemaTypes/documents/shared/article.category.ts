@@ -9,7 +9,7 @@
  * - 1.0.0: Initial version with basic category structure
  */
 
-import { TagIcon } from '@sanity/icons';
+import { TagIcon } from '@sanity/icons/Tag';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({

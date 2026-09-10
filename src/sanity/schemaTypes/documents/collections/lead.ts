@@ -5,7 +5,7 @@
  * @description Stores captured leads from event registrations and gated content.
  */
 
-import { UserIcon } from '@sanity/icons';
+import { UserIcon } from '@sanity/icons/User';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({

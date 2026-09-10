@@ -9,7 +9,7 @@
  * - 1.0.0: Initial version
  */
 
-import { ThLargeIcon } from '@sanity/icons';
+import { ThLargeIcon } from '@sanity/icons/ThLarge';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 import { createUidField } from '../ui/uid-input';

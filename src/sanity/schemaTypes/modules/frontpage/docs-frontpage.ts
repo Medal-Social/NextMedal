@@ -9,7 +9,7 @@
  * - 1.0.0: Initial version with collection-based filtering
  */
 
-import { BookIcon } from '@sanity/icons';
+import { BookIcon } from '@sanity/icons/Book';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 

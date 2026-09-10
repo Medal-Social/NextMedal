@@ -9,7 +9,7 @@
  * - 1.0.0: Initial version
  */
 
-import { ComponentIcon } from '@sanity/icons';
+import { ComponentIcon } from '@sanity/icons/Component';
 import { defineField, defineType } from 'sanity';
 import { Icon } from '@/components/blocks/objects/core';
 import { isValidIconName } from '@/components/blocks/objects/core/utils/resolveIcon';

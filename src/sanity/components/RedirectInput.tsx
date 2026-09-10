@@ -30,7 +30,7 @@ export function RedirectInput(props: ObjectInputProps) {
 
   return (
     <Card padding={3} border radius={3} tone="default">
-      <Stack space={3}>
+      <Stack gap={3}>
         <Label size={0} muted>
           Destination
         </Label>
