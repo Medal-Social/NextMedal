@@ -9,7 +9,7 @@
  * - 1.0.0: Initial version with multi-platform support
  */
 
-import { ShareIcon } from '@sanity/icons';
+import { ShareIcon } from '@sanity/icons/Share';
 import { defineArrayMember } from 'sanity';
 
 export default defineArrayMember({

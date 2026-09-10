@@ -1,16 +1,14 @@
-import {
-  BookIcon,
-  CalendarIcon,
-  CheckmarkCircleIcon,
-  CogIcon,
-  DatabaseIcon,
-  DocumentsIcon,
-  DocumentTextIcon,
-  EditIcon,
-  EnvelopeIcon,
-  SearchIcon,
-  StackCompactIcon,
-} from '@sanity/icons';
+import { BookIcon } from '@sanity/icons/Book';
+import { CalendarIcon } from '@sanity/icons/Calendar';
+import { CheckmarkCircleIcon } from '@sanity/icons/CheckmarkCircle';
+import { CogIcon } from '@sanity/icons/Cog';
+import { DatabaseIcon } from '@sanity/icons/Database';
+import { DocumentsIcon } from '@sanity/icons/Documents';
+import { DocumentTextIcon } from '@sanity/icons/DocumentText';
+import { EditIcon } from '@sanity/icons/Edit';
+import { EnvelopeIcon } from '@sanity/icons/Envelope';
+import { SearchIcon } from '@sanity/icons/Search';
+import { StackCompactIcon } from '@sanity/icons/StackCompact';
 import type { ComponentType } from 'react';
 import type { ListItemBuilder, StructureBuilder } from 'sanity/structure';
 import { structureTool } from 'sanity/structure';

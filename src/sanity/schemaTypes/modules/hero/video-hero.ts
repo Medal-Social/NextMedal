@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version
  */
 
-import { VideoIcon } from '@sanity/icons';
+import { VideoIcon } from '@sanity/icons/Video';
 import type { Rule } from 'sanity';
 import { defineField } from 'sanity';
 import { createUidField } from '../ui/uid-input';

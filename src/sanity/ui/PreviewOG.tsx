@@ -1,6 +1,6 @@
 'use client';
 
-import { EyeOpenIcon } from '@sanity/icons';
+import { EyeOpenIcon } from '@sanity/icons/EyeOpen';
 import { Box, Button, Card, Dialog, Flex, Spinner, Stack, Text } from '@sanity/ui';
 import { useState } from 'react';
 import { BASE_URL } from '@/lib/core/env.client';
@@ -38,8 +38,8 @@ export default function PreviewOG({ title }: { title?: string }) {
           width={2}
         >
           <Card padding={4}>
-            <Stack space={4}>
-              <Stack space={2}>
+            <Stack gap={4}>
+              <Stack gap={2}>
                 <Text size={1} weight="semibold">
                   What is this?
                 </Text>
@@ -50,7 +50,7 @@ export default function PreviewOG({ title }: { title?: string }) {
                 </Text>
               </Stack>
 
-              <Stack space={2}>
+              <Stack gap={2}>
                 <Text size={1} weight="semibold">
                   Preview
                 </Text>
@@ -117,7 +117,7 @@ export default function PreviewOG({ title }: { title?: string }) {
                 </Box>
               </Stack>
 
-              <Stack space={2}>
+              <Stack gap={2}>
                 <Text size={1} weight="semibold">
                   Need a custom image?
                 </Text>

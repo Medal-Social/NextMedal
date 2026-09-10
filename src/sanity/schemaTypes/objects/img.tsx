@@ -9,7 +9,7 @@
  * - 1.1.0: Added improved validation and documentation
  */
 
-import { ImageIcon } from '@sanity/icons';
+import { ImageIcon } from '@sanity/icons/Image';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({

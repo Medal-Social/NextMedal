@@ -347,9 +347,10 @@ describe('processMetadata Property Tests', () => {
           expect(result.alternates).toBeDefined();
 
           // canonical should be defined and be a valid URL
-          expect(result.alternates?.canonical).toBeDefined();
-          expect(typeof result.alternates?.canonical).toBe('string');
-          expect((result.alternates?.canonical as string).startsWith('https://')).toBe(true);
+          const canonical = result.alternates?.canonical;
+          expect(canonical).toBeDefined();
+          expect(typeof canonical).toBe('string');
+          expect(String(canonical).startsWith('https://')).toBe(true);
         }),
         { numRuns: 100 }
       );
@@ -366,12 +367,13 @@ describe('processMetadata Property Tests', () => {
           expect(result.alternates).toBeDefined();
 
           // canonical should be defined and be a valid URL
-          expect(result.alternates?.canonical).toBeDefined();
-          expect(typeof result.alternates?.canonical).toBe('string');
-          expect((result.alternates?.canonical as string).startsWith('https://')).toBe(true);
+          const canonical = result.alternates?.canonical;
+          expect(canonical).toBeDefined();
+          expect(typeof canonical).toBe('string');
+          expect(String(canonical).startsWith('https://')).toBe(true);
 
           // For articles, canonical should include the collection slug
-          expect(result.alternates?.canonical as string).toContain('/articles/');
+          expect(String(canonical)).toContain('/articles/');
         }),
         { numRuns: 100 }
       );

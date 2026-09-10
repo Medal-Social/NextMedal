@@ -3,7 +3,7 @@
  * @description Internal or external link with destination fields, used for Portable Text annotations.
  */
 
-import { LinkIcon } from '@sanity/icons';
+import { LinkIcon } from '@sanity/icons/Link';
 import { defineField, defineType } from 'sanity';
 import { LinkAnnotationInput } from '../../components/LinkAnnotationInput';
 

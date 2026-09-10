@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version with pricing plan comparison functionality
  */
 
-import { LinkIcon } from '@sanity/icons';
+import { LinkIcon } from '@sanity/icons/Link';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 
 // Define a type for the document structure that we expect

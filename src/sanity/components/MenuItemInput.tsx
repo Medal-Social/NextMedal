@@ -1,4 +1,5 @@
-import { EarthGlobeIcon, LinkIcon } from '@sanity/icons';
+import { EarthGlobeIcon } from '@sanity/icons/EarthGlobe';
+import { LinkIcon } from '@sanity/icons/Link';
 import { Box, Button, Flex, Grid, Label, Select, Stack, Switch, Text, TextInput } from '@sanity/ui';
 import { useCallback } from 'react';
 import {
@@ -58,9 +59,9 @@ export function MenuItemInput(props: ObjectInputProps) {
   const internalMember = findMember('internal');
 
   return (
-    <Stack space={4}>
+    <Stack gap={4}>
       {/* ROW 1: Labels & Text */}
-      <Grid columns={[1, 1, 2]} gap={4}>
+      <Grid gridTemplateColumns={[1, 1, 2]} gap={4}>
         <Box>
           <Label size={1} style={{ marginBottom: '8px' }}>
             Link Text
@@ -151,7 +152,7 @@ export function MenuItemInput(props: ObjectInputProps) {
       </Box>
 
       {/* ROW 3: Options */}
-      <Grid columns={[1, 1, 2]} gap={5}>
+      <Grid gridTemplateColumns={[1, 1, 2]} gap={5}>
         {' '}
         {/* Increased gap here */}
         <Box>
@@ -197,6 +198,7 @@ export function MenuItemInput(props: ObjectInputProps) {
             />
             <Box>
               <Label
+                as="label"
                 htmlFor="menuNewTab"
                 size={2}
                 style={{ cursor: 'pointer', display: 'block', marginBottom: '4px' }}

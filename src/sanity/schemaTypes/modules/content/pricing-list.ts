@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version
  */
 
-import { BillIcon } from '@sanity/icons';
+import { BillIcon } from '@sanity/icons/Bill';
 import { defineField, defineType } from 'sanity';
 import { count } from '@/lib/utils/index';
 import { getBlockText } from '@/sanity/lib/utils';

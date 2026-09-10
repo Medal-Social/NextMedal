@@ -8,7 +8,7 @@
  * - 2.3.0: Refined Studio UX and validation
  */
 
-import { DownloadIcon } from '@sanity/icons';
+import { DownloadIcon } from '@sanity/icons/Download';
 import { defineField, defineType } from 'sanity';
 import { createUidField } from '../ui/uid-input';
 

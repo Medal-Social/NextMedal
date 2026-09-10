@@ -8,7 +8,10 @@
  * - 1.0.0: Initial version with collection reference pattern
  */
 
-import { ControlsIcon, EditIcon, EyeClosedIcon, SearchIcon } from '@sanity/icons';
+import { ControlsIcon } from '@sanity/icons/Controls';
+import { EditIcon } from '@sanity/icons/Edit';
+import { EyeClosedIcon } from '@sanity/icons/EyeClosed';
+import { SearchIcon } from '@sanity/icons/Search';
 import { defineField, defineType } from 'sanity';
 import { DEFAULT_LOCALE } from '@/i18n/config';
 import { isUniqueAcrossLocale } from '@/sanity/lib/isUniqueAcrossLocale';

@@ -19,7 +19,7 @@ jobs:
   # require real Sanity credentials — Sanity calls in tests are mocked.
   quality:
     name: Lint + Typecheck + Test
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest # Blacksmith stalled since 22 Aug — revert when back
     timeout-minutes: 15
 
     steps:
@@ -55,7 +55,7 @@ jobs:
   # to validate them via deployment.
   build:
     name: Next Build
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest # Blacksmith stalled since 22 Aug — revert when back
     timeout-minutes: 20
     # Build needs real Sanity creds (next.config.ts redirects() and static
     # prerender call sanityFetch at build time). Environment-scoped secrets

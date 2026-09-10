@@ -8,7 +8,7 @@
  * - 1.0.0: Initial version
  */
 
-import { ComponentIcon } from '@sanity/icons';
+import { ComponentIcon } from '@sanity/icons/Component';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 import { createUidField } from '../ui/uid-input';

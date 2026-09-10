@@ -11,8 +11,9 @@
 
 'use client';
 
-import { CopyIcon } from '@sanity/icons';
-import { Box, Button, Flex, Text, TextInput, useToast } from '@sanity/ui';
+import { CopyIcon } from '@sanity/icons/Copy';
+import { Box, Button, Flex, Text, TextInput } from '@sanity/ui';
+import { useToast } from '@sanity/ui/toast';
 import type { StringInputProps } from 'sanity';
 import { logger } from '@/lib/core/logger';
 import { copyToClipboard } from '@/lib/utils/clipboard';

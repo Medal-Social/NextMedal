@@ -10,7 +10,7 @@
  * - 1.4.0: Grouped destination fields, renamed label to Text, improved helper text
  */
 
-import { LinkIcon } from '@sanity/icons';
+import { LinkIcon } from '@sanity/icons/Link';
 import { defineField, defineType } from 'sanity';
 import resolveSlug from '@/sanity/lib/resolveSlug';
 import { MenuItemInput } from '../../components/MenuItemInput';

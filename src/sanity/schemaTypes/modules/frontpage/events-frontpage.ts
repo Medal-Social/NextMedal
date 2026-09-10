@@ -6,7 +6,7 @@
  * that page becomes a collection index for events (webinars, videos, physical events).
  */
 
-import { CalendarIcon } from '@sanity/icons';
+import { CalendarIcon } from '@sanity/icons/Calendar';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
