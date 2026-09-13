@@ -4,6 +4,18 @@ const origin = new URL(process.env.SMOKE_URL);
 if (origin.protocol !== 'https:') throw new Error('Smoke checks require an HTTPS site URL');
 for (let attempt = 1; attempt <= 6; attempt++) {
   try {
+    const alternatePort = new URL('/?deploy_check=canonical-port', origin);
+    alternatePort.port = '8443';
+    const expectedRedirect = new URL(alternatePort.pathname + alternatePort.search, origin);
+    const redirect = await fetch(alternatePort, {
+      redirect: 'manual',
+      signal: AbortSignal.timeout(20_000),
+      headers: { 'User-Agent': 'Medal-Deployment-Smoke/1.0' },
+    });
+    if (redirect.status !== 308 || redirect.headers.get('location') !== expectedRedirect.href)
+      throw new Error('Alternate-port request did not redirect to the canonical origin');
+    await redirect.body?.cancel();
+    console.log('Alternate-port canonical redirect verified');
     for (const path of ['/', '/robots.txt']) {
       const url = new URL(path, origin);
       url.searchParams.set('deploy_check', process.env.GITHUB_SHA || 'manual');

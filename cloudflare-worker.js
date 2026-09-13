@@ -60,6 +60,7 @@ export default {
     ) {
       url.protocol = canonical.protocol;
       url.host = canonical.host;
+      url.port = canonical.port;
       return Response.redirect(url, 308);
     }
     const publicFile = await servePublicFile(request, env);
