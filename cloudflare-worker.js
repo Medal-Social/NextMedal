@@ -3,6 +3,7 @@ import openNextWorker, {
   DOQueueHandler,
   DOShardedTagCache,
 } from './.open-next/worker.js';
+import { withDocumentFreshness } from './cloudflare/freshness.js';
 import { withOgFallback } from './cloudflare/og-response.js';
 import { servePublicFile } from './cloudflare/public-files.js';
 import { guardRequestPath } from './cloudflare/request-path-guard.js';
@@ -67,6 +68,6 @@ export default {
     const response = await withOgFallback(request, env, () =>
       openNextWorker.fetch(request, env, ctx)
     );
-    return gzipHtmlResponse(request, response);
+    return withDocumentFreshness(request, gzipHtmlResponse(request, response));
   },
 };

@@ -1,3 +1,4 @@
+import { resolveDeploymentId } from './scripts/deployment-id.js';
 import { createClient, groq } from "next-sanity";
 import { projectId, dataset, apiVersion } from "./src/sanity/lib/project";
 import { DEFAULT_LOCALE } from "./src/i18n/config";
@@ -47,6 +48,8 @@ const client = projectId
   : null;
 
 const config = {
+  // Use one ID per release so old tabs detect a newer deployment on navigation.
+  deploymentId: resolveDeploymentId(),
   reactStrictMode: true,
   poweredByHeader: false,
   output: "standalone",
