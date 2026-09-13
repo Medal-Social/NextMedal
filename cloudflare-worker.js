@@ -3,6 +3,7 @@ import openNextWorker, {
   DOQueueHandler,
   DOShardedTagCache,
 } from './.open-next/worker.js';
+import { withDocumentFreshness } from './cloudflare/freshness.js';
 
 // Re-export the OpenNext durable-object handlers so wrangler can resolve them if
 // an R2 incremental cache / sharded tag cache or queue is enabled later. They're
@@ -47,6 +48,6 @@ function gzipHtmlResponse(request, response) {
 export default {
   async fetch(request, env, ctx) {
     const response = await openNextWorker.fetch(request, env, ctx);
-    return gzipHtmlResponse(request, response);
+    return withDocumentFreshness(request, gzipHtmlResponse(request, response));
   },
 };

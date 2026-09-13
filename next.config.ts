@@ -47,6 +47,8 @@ const client = projectId
   : null;
 
 const config = {
+  // Use one ID per release so old tabs detect a newer deployment on navigation.
+  deploymentId: process.env.NEXT_DEPLOYMENT_ID || process.env.GITHUB_SHA,
   reactStrictMode: true,
   poweredByHeader: false,
   output: "standalone",

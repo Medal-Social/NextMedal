@@ -100,6 +100,11 @@ jobs:
             printf '%s' "$value" | pnpm exec wrangler secret put "$name"
           done
 
+      - name: Verify release freshness
+        env:
+          SMOKE_URL: ${{ env.NEXT_PUBLIC_BASE_URL }}
+        run: node scripts/ci/smoke.mjs
+
       - name: Summary
         if: always()
         run: |
