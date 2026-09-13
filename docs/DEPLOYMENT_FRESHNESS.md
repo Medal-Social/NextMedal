@@ -30,3 +30,9 @@ There is no timer forcing idle tabs to reload. Already-prefetched routes can
 remain in client memory until another server request. Test a persistent browser
 across two staging releases, including forms and checkout, before adding broader
 update behavior. Do not interrupt unsaved work to force an immediate refresh.
+
+Manual builds also resolve the checked-out Git commit when neither deployment-ID
+variable is supplied. Builds without Git metadata must set `NEXT_DEPLOYMENT_ID`.
+Use an explicit unique ID when rebuilding the same commit with different content
+or environment values, or when deploying uncommitted local changes. The resolved
+ID is embedded at build time; runtime startup does not need Git.
