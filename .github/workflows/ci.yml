@@ -45,6 +45,9 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      - name: Test deployment freshness checks
+        run: node --test scripts/ci/*.test.mjs
+
       - name: Test
         run: pnpm test
 
