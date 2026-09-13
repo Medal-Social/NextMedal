@@ -1,9 +1,17 @@
-import { ImageResponse } from 'next/og';
 import type { NextRequest } from 'next/server';
 import { BASE_URL } from '@/lib/core/env';
 import { getSiteOptional } from '@/sanity/lib/fetch';
+import { loadOgFont, type OgFont, ogFallbackResponse } from '../shared';
 
-export const runtime = 'edge';
+// Deliberately no `export const runtime = 'edge'` — do not add one back.
+// @opennextjs/cloudflare does not support the Next.js edge runtime, and an
+// edge-runtime route answers every request on the deployed Worker with a bare
+// 500, which is what left this site's social shares with no preview image.
+// next/og itself is fine on the default Node runtime: the adapter rewrites
+// @vercel/og's node entry to its wasm-backed edge entry at build time.
+//
+// next/og is still imported dynamically inside the handler so that a
+// module-load failure degrades to the static card instead of a route 500.
 
 // Brand Constants
 const BRAND_COLORS = {
@@ -43,43 +51,19 @@ function isRTL(locale: string): boolean {
   return locale.toLowerCase().startsWith('ar');
 }
 
-async function loadFonts(locale: string): Promise<
-  {
-    name: string;
-    data: ArrayBuffer;
-    style?: 'normal' | 'italic';
-    weight?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
-  }[]
-> {
-  const fonts: {
-    name: string;
-    data: ArrayBuffer;
-    style?: 'normal' | 'italic';
-    weight?: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
-  }[] = [];
+async function loadFonts(locale: string, requestUrl: string): Promise<OgFont[]> {
+  const fonts: OgFont[] = [];
 
-  const interData = await fetch(
-    new URL('../../../../assets/Inter-SemiBold.ttf', import.meta.url)
-  ).then((res) => res.arrayBuffer());
-
-  fonts.push({
-    name: 'Inter',
-    data: interData,
-    style: 'normal',
-    weight: 600,
-  });
+  const inter = await loadOgFont('Inter', '/fonts/Inter-SemiBold.ttf', requestUrl);
+  if (inter) fonts.push(inter);
 
   if (isRTL(locale)) {
-    const arabicData = await fetch(
-      new URL('../../../../assets/NotoSansArabic-SemiBold.ttf', import.meta.url)
-    ).then((res) => res.arrayBuffer());
-
-    fonts.push({
-      name: 'NotoSansArabic',
-      data: arabicData,
-      style: 'normal',
-      weight: 600,
-    });
+    const arabic = await loadOgFont(
+      'NotoSansArabic',
+      '/fonts/NotoSansArabic-SemiBold.ttf',
+      requestUrl
+    );
+    if (arabic) fonts.push(arabic);
   }
   return fonts;
 }
@@ -91,6 +75,7 @@ function truncateText(text: string, maxLength: number) {
 
 export async function GET(request: NextRequest) {
   try {
+    const { ImageResponse } = await import('next/og');
     const { searchParams } = new URL(request.url);
 
     const rawTitle = searchParams.get('title') || 'Article';
@@ -109,7 +94,7 @@ export async function GET(request: NextRequest) {
 
     const t = getLocalizedText(locale);
     const rtl = isRTL(locale);
-    const fonts = await loadFonts(locale);
+    const fonts = await loadFonts(locale, request.url);
 
     return new ImageResponse(
       <div
@@ -243,9 +228,17 @@ export async function GET(request: NextRequest) {
           </div>
         </div>
       </div>,
-      { width: 1200, height: 630, fonts }
+      {
+        width: 1200,
+        height: 630,
+        // With no font loaded, let satori use @vercel/og's bundled one rather
+        // than throwing: a card in the wrong typeface beats no card at all.
+        ...(fonts.length > 0 ? { fonts } : {}),
+      }
     );
-  } catch (_error) {
-    return new Response('Error generating image', { status: 500 });
+  } catch (error) {
+    // biome-ignore lint/suspicious/noConsole: the app logger (pino) is not bundled into this route
+    console.error('[api/og/article-fallback] falling back to static card:', error);
+    return ogFallbackResponse(request.url);
   }
 }
