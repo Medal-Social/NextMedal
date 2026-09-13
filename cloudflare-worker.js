@@ -3,6 +3,9 @@ import openNextWorker, {
   DOQueueHandler,
   DOShardedTagCache,
 } from './.open-next/worker.js';
+import { withOgFallback } from './cloudflare/og-response.js';
+import { servePublicFile } from './cloudflare/public-files.js';
+import { guardRequestPath } from './cloudflare/request-path-guard.js';
 
 // Re-export the OpenNext durable-object handlers so wrangler can resolve them if
 // an R2 incremental cache / sharded tag cache or queue is enabled later. They're
@@ -46,7 +49,24 @@ function gzipHtmlResponse(request, response) {
 
 export default {
   async fetch(request, env, ctx) {
-    const response = await openNextWorker.fetch(request, env, ctx);
+    const blocked = guardRequestPath(request);
+    if (blocked) return blocked;
+    const url = new URL(request.url);
+    const canonical = env.NEXT_PUBLIC_BASE_URL && new URL(env.NEXT_PUBLIC_BASE_URL);
+    if (
+      canonical &&
+      url.hostname.replace(/^www\./, '') === canonical.hostname.replace(/^www\./, '') &&
+      url.origin !== canonical.origin
+    ) {
+      url.protocol = canonical.protocol;
+      url.host = canonical.host;
+      return Response.redirect(url, 308);
+    }
+    const publicFile = await servePublicFile(request, env);
+    if (publicFile) return publicFile;
+    const response = await withOgFallback(request, env, () =>
+      openNextWorker.fetch(request, env, ctx)
+    );
     return gzipHtmlResponse(request, response);
   },
 };
