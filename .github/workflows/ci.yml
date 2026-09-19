@@ -79,6 +79,7 @@ jobs:
         || github.event_name != 'pull_request')
 
     env:
+      CLOUDFLARE_BUILD: 'true'
       NEXT_PUBLIC_BASE_URL: https://ci.example.com
       NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
       NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
@@ -102,5 +103,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm build
+      - name: Build Cloudflare deployment output
+        run: pnpm exec opennextjs-cloudflare build
+
+      - name: Validate Worker bundle and assets
+        run: pnpm exec wrangler deploy --dry-run --env production
