@@ -389,3 +389,7 @@ imports and CPU-bound rendering cannot be forcibly interrupted. Renderer/stream/
 failures are logged with their phase; request query strings are not logged by this
 boundary. If rendering or the fallback asset lookup fails, the final recovery is a
 redirect to `/og-fallback.png`.
+
+Outside Cloudflare, OG font HTTP loading requires a valid `NEXT_PUBLIC_BASE_URL`
+deployment origin. It never uses the incoming Host, rejects redirects, and caps
+font/logo bodies at 2 MiB. Missing settings skip optional fonts.
