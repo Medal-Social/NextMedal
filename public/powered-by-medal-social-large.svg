@@ -10,22 +10,22 @@
       }
     </style>
     <linearGradient id="bg-gradient-large" x1="0" y1="0" x2="400" y2="200" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#1A1035"/>
-      <stop offset="100%" stop-color="#2D1650"/>
+      <stop offset="0%" stop-color="#140028"/>
+      <stop offset="100%" stop-color="#1A0035"/>
     </linearGradient>
     <!-- Glow effect for the center -->
     <radialGradient id="center-glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(200 100) rotate(90) scale(100 200)">
-      <stop stop-color="#7E3FAC" stop-opacity="0.2"/>
-      <stop offset="1" stop-color="#1A1035" stop-opacity="0"/>
+      <stop stop-color="#5B2D8C" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#140028" stop-opacity="0"/>
     </radialGradient>
   </defs>
   
   <!-- Background -->
-  <rect x="1" y="1" width="398" height="198" rx="16" fill="url(#bg-gradient-large)" stroke="#7E3FAC" stroke-width="2"/>
+  <rect x="1" y="1" width="398" height="198" rx="16" fill="url(#bg-gradient-large)" stroke="#5B2D8C" stroke-width="2"/>
   <rect x="1" y="1" width="398" height="198" rx="16" fill="url(#center-glow)"/>
   
   <!-- "Powered by" Label -->
-  <text x="200" y="40" font-size="12" font-weight="600" letter-spacing="2" fill="#B9A8CC" text-anchor="middle" style="text-transform: uppercase;">Powered by</text>
+  <text x="200" y="40" font-size="12" font-weight="600" letter-spacing="2" fill="#B39ACF" text-anchor="middle" style="text-transform: uppercase;">Powered by</text>
   
   <!-- Centered Logo -->
   <!-- Target size: ~80px. Original: 242px. Scale ~0.33 -->

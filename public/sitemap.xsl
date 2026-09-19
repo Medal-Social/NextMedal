@@ -12,40 +12,40 @@
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <style type="text/css">
           :root {
-            --bg: #F5F3F7;
-            --fg: #1A1035;
-            --accent: #7E3FAC;
+            --bg: #FAFAFD;
+            --fg: #140028;
+            --accent: #5B2D8C;
             --accent-hover: #5B2D8C;
-            --accent-light: #E8E4ED;
+            --accent-light: #F0EBF7;
             --table-bg: #fff;
-            --table-border: #E8E4ED;
-            --row-hover: #F5F3F7;
-            --header-bg: linear-gradient(135deg, #7E3FAC 0%, #5B2D8C 50%, #3B1D6C 100%);
+            --table-border: #F0EBF7;
+            --row-hover: #FAFAFD;
+            --header-bg: linear-gradient(135deg, #5B2D8C 0%, #4A1F73 50%, #341456 100%);
             --header-fg: #fff;
-            --footer-bg: #F5F3F7;
+            --footer-bg: #FAFAFD;
             --footer-fg: #5B2D8C;
             --priority-high: #D97706;
-            --priority-medium: #7E3FAC;
+            --priority-medium: #5B2D8C;
             --priority-low: #64748b;
             --card-shadow: 0 4px 6px -1px rgba(30, 16, 53, 0.1), 0 2px 4px -2px rgba(30, 16, 53, 0.1);
             --card-shadow-hover: 0 10px 15px -3px rgba(30, 16, 53, 0.1), 0 4px 6px -4px rgba(30, 16, 53, 0.1);
           }
           @media (prefers-color-scheme: dark) {
             :root {
-              --bg: #1A1035;
+              --bg: #140028;
               --fg: #f4f4f5;
-              --accent: #B9A8CC;
-              --accent-hover: #D4CCE0;
-              --accent-light: #3B1D6C;
-              --table-bg: #2D1650;
-              --table-border: #3B1D6C;
-              --row-hover: #3B1D6C;
-              --header-bg: linear-gradient(135deg, #3B1D6C 0%, #2D1650 50%, #1A1035 100%);
+              --accent: #B39ACF;
+              --accent-hover: #D9CDE8;
+              --accent-light: #341456;
+              --table-bg: #1A0035;
+              --table-border: #341456;
+              --row-hover: #341456;
+              --header-bg: linear-gradient(135deg, #341456 0%, #1A0035 50%, #140028 100%);
               --header-fg: #f4f4f5;
-              --footer-bg: #2D1650;
-              --footer-fg: #D4CCE0;
+              --footer-bg: #1A0035;
+              --footer-fg: #D9CDE8;
               --priority-high: #F59E0B;
-              --priority-medium: #B9A8CC;
+              --priority-medium: #B39ACF;
               --priority-low: #94a3b8;
               --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
               --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
@@ -208,7 +208,7 @@
             color: var(--priority-high);
           }
           .priority-medium {
-            background: rgba(126, 63, 172, 0.15);
+            background: rgba(91, 45, 140, 0.15);
             color: var(--priority-medium);
           }
           .priority-low {

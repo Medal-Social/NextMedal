@@ -15,7 +15,7 @@ function getSiteName(site: Sanity.Site | null): string | undefined {
 
 export default async function manifest(): Promise<MetadataRoute.Manifest> {
   // Colors from globals.css
-  const THEME_COLOR = '#5B2D8C'; // --color-brand-600
+  const THEME_COLOR = '#5B2D8C'; // --color-brand-500
   const BACKGROUND_COLOR = '#ffffff';
 
   const site = await getSiteOptional(DEFAULT_LOCALE);

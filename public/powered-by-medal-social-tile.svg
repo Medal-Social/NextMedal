@@ -10,13 +10,13 @@
       }
     </style>
     <linearGradient id="bg-gradient" x1="0" y1="0" x2="300" y2="100" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#1A1035"/>
-      <stop offset="100%" stop-color="#2D1650"/>
+      <stop offset="0%" stop-color="#140028"/>
+      <stop offset="100%" stop-color="#1A0035"/>
     </linearGradient>
   </defs>
   
   <!-- Background: Brand Navy Gradient with Purple Border -->
-  <rect x="1" y="1" width="298" height="98" rx="12" fill="url(#bg-gradient)" stroke="#7E3FAC" stroke-width="2"/>
+  <rect x="1" y="1" width="298" height="98" rx="12" fill="url(#bg-gradient)" stroke="#5B2D8C" stroke-width="2"/>
   
   <!-- Logo: Left Aligned -->
   <!-- Target size ~60px. Original 242px. Scale ~0.25. -->
@@ -32,7 +32,7 @@
   
   <!-- Text Stack: Right Aligned -->
   <!-- "POWERED BY" -->
-  <text x="110" y="45" font-size="10" font-weight="600" letter-spacing="1" fill="#B9A8CC" text-anchor="start" style="text-transform: uppercase;">Powered by</text>
+  <text x="110" y="45" font-size="10" font-weight="600" letter-spacing="1" fill="#B39ACF" text-anchor="start" style="text-transform: uppercase;">Powered by</text>
   
   <!-- "Medal Social" -->
   <text x="110" y="72" font-size="24" font-weight="bold" fill="white" text-anchor="start">Medal Social</text>

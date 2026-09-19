@@ -7,11 +7,11 @@ export const runtime = 'edge';
 
 // Brand Constants
 const BRAND_COLORS = {
-  navy: '#1A1035',
-  purple: '#3B1D6C',
-  vibrant: '#7E3FAC',
-  lavender: '#D4CCE0',
-  muted: '#B9A8CC',
+  navy: '#140028',
+  purple: '#341456',
+  vibrant: '#5B2D8C',
+  lavender: '#D9CDE8',
+  muted: '#B39ACF',
   white: '#FFFFFF',
 };
 

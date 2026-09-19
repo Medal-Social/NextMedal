@@ -46,7 +46,7 @@
     --cc-link-color: var(--color-brand-500);
 
     /* Overlay */
-    --cc-overlay-bg: rgba(26, 16, 53, 0.5);
+    --cc-overlay-bg: rgba(20, 0, 40, 0.5);
 
     /* Scrollbar */
     --cc-webkit-scrollbar-bg: var(--color-brand-100);
@@ -101,7 +101,7 @@
     --cc-link-color: var(--color-brand-400);
 
     /* Overlay */
-    --cc-overlay-bg: rgba(26, 16, 53, 0.85);
+    --cc-overlay-bg: rgba(20, 0, 40, 0.85);
   }
 
   /* ============================================
@@ -188,7 +188,7 @@
   #cc-main .cm__btn:not(.cm__btn--secondary):hover,
   #cc-main .pm__btn:not(.pm__btn--secondary):hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(126, 63, 172, 0.3);
+    box-shadow: 0 4px 12px rgba(91, 45, 140, 0.3);
   }
 
   /* ============================================

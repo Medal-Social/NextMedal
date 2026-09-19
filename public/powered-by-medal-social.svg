@@ -12,14 +12,14 @@
   </defs>
   
   <!-- Left part: Powered by -->
-  <!-- Background: Brand Lavender #E8E4ED -->
-  <path d="M4 0H85V40H4C1.79086 40 0 38.2091 0 36V4C0 1.79086 1.79086 0 4 0Z" fill="#E8E4ED"/>
-  <!-- Text: Brand Navy #1A1035 -->
-  <text x="42.5" y="24" font-size="11" fill="#1A1035" text-anchor="middle">Powered by</text>
+  <!-- Background: Brand Lavender #F0EBF7 -->
+  <path d="M4 0H85V40H4C1.79086 40 0 38.2091 0 36V4C0 1.79086 1.79086 0 4 0Z" fill="#F0EBF7"/>
+  <!-- Text: Brand Navy #140028 -->
+  <text x="42.5" y="24" font-size="11" fill="#140028" text-anchor="middle">Powered by</text>
   
   <!-- Right part: Medal Social -->
-  <!-- Background: Brand Navy #1A1035 -->
-  <path d="M85 0H246C248.209 0 250 1.79086 250 4V36C250 38.2091 248.209 40 246 40H85V0Z" fill="#1A1035"/>
+  <!-- Background: Brand Navy #140028 -->
+  <path d="M85 0H246C248.209 0 250 1.79086 250 4V36C250 38.2091 248.209 40 246 40H85V0Z" fill="#140028"/>
   
   <!-- Content Group: Centered in Right Box (85 to 250 = 165px wide) -->
   <!-- Logo (24px) + Gap (8px) + Text (~98px) = ~130px width -->
