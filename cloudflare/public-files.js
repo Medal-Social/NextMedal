@@ -3,6 +3,8 @@ import { canonicalizeRequestPath } from './request-path-guard.js';
 // Requests excluded from locale middleware must never fall into [locale].
 // Existing public files are normally served by Workers Assets before this code;
 // a miss still reaches the Worker and needs a real 404, not page rendering.
+// HTML/XML/JSON slugs are also valid CMS documents and use locale middleware.
+const CMS_DOCUMENT = /\.(?:html?|xml|json)$/i;
 const FILE_EXTENSION =
   /\.(?:css|js|mjs|json|png|jpe?g|gif|svg|webp|avif|ico|txt|ttf|woff2?|map|html?|php|xml|xsl|webmanifest)$/i;
 const DYNAMIC_FILE =
@@ -26,6 +28,7 @@ export async function servePublicFile(request, env) {
     const response = await env.ASSETS.fetch(request);
     if (response.status !== 404) return response;
   }
+  if (CMS_DOCUMENT.test(pathname)) return null;
   return new Response(request.method === 'HEAD' ? null : 'Not found', {
     status: 404,
     headers: {

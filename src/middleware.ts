@@ -45,8 +45,11 @@ export default function middleware(request: NextRequest) {
 
   if (firstSegment === routing.defaultLocale) {
     // Explicit default-locale prefix → canonical unprefixed URL.
-    const canonicalPath = request.nextUrl.pathname.replace(`/${routing.defaultLocale}`, '') || '/';
-    const redirectTarget = new URL(`${canonicalPath}${request.nextUrl.search}`, request.url);
+    const redirectTarget = request.nextUrl.clone();
+    // Assign a local pathname rather than resolving //host as a new authority.
+    redirectTarget.pathname = `/${request.nextUrl.pathname
+      .slice(routing.defaultLocale.length + 1)
+      .replace(/^\/+/, '')}`;
     return NextResponse.redirect(redirectTarget, 308);
   }
 

@@ -371,3 +371,21 @@ NextMedal is licensed under the Apache License 2.0.
 ---
 
 Built with ❤️ by [Medal Social](https://medalsocial.com) in Norway
+
+
+### Worker response boundaries
+
+The Worker blocks malformed or sensitive paths before routing, and canonical-origin
+redirects preserve the path and query while replacing protocol, hostname, and port.
+Locale redirects remain on the original origin even when a path has repeated slashes.
+
+Missing static assets return a direct 404. HTML, XML, and JSON document slugs are
+resolved by the CMS route after a static-asset miss; the application returns 404
+when the document is absent. Existing assets and explicit feed routes retain precedence.
+
+OG image responses have a five-second deadline. The Worker passes an abort-aware
+request to OpenNext and cancels late response bodies. Cancellation is cooperative:
+imports and CPU-bound rendering cannot be forcibly interrupted. Renderer/stream/deadline
+failures are logged with their phase; request query strings are not logged by this
+boundary. If rendering or the fallback asset lookup fails, the final recovery is a
+redirect to `/og-fallback.png`.
