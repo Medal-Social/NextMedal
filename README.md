@@ -316,6 +316,21 @@ This script automatically pulls required build-time variables from your `.env` a
 ./scripts/docker-build.sh my-custom-image-name
 ```
 
+The script resolves a stable deployment ID on the host before Docker excludes
+`.git`: `NEXT_DEPLOYMENT_ID`, then `GITHUB_SHA`, then the checked-out commit.
+For a source archive without Git metadata, supply the release ID explicitly:
+
+```bash
+NEXT_DEPLOYMENT_ID=release-2026-09-19 pnpm docker:build
+```
+
+Use a different ID when rebuilding the same commit with different content or
+environment values. When invoking Docker directly (including external CI), pass
+`--build-arg NEXT_DEPLOYMENT_ID="$GITHUB_SHA"` alongside the existing Sanity/site
+arguments. `NEXT_DEPLOYMENT_ID` is a public build identifier, not a secret, and
+must be present in the build stage; setting it only when starting the image is
+not sufficient. Missing IDs fail before an archive build invokes Docker.
+
 ## Why Medal Social? 🏆
 
 NextMedal is crafted by Medal Social, a marketing powerhouse that knows how to elevate brands. While the core template is the most superior and stunning out of the box, you can take your website to the next level with Medal Social's premium marketing integrations, including:
