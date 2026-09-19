@@ -7,6 +7,8 @@ const FILE_EXTENSION =
   /\.(?:css|js|mjs|json|png|jpe?g|gif|svg|webp|avif|ico|txt|ttf|woff2?|map|html?|php|xml|xsl|webmanifest)$/i;
 const DYNAMIC_FILE =
   /^\/(?:robots\.txt|manifest\.(?:json|webmanifest)|sitemap[^/]*\.(?:xml|xsl)|rss\.(?:xml|xsl)|feed\.(?:xml|json))$/;
+// Collection feeds are Next routes, optionally beneath a locale segment.
+const COLLECTION_FEED = /^\/(?:[^/]+\/){1,2}rss\.xml$/;
 const OWNED_PREFIX = /^\/(?:api|_next|studio|admin|\.well-known)(?:\/|$)/;
 
 export async function servePublicFile(request, env) {
@@ -14,7 +16,10 @@ export async function servePublicFile(request, env) {
   if (pathname === null) return null;
   if (
     pathname !== '/api' &&
-    (OWNED_PREFIX.test(pathname) || DYNAMIC_FILE.test(pathname) || !FILE_EXTENSION.test(pathname))
+    (OWNED_PREFIX.test(pathname) ||
+      DYNAMIC_FILE.test(pathname) ||
+      COLLECTION_FEED.test(pathname) ||
+      !FILE_EXTENSION.test(pathname))
   )
     return null;
   if (env?.ASSETS && (request.method === 'GET' || request.method === 'HEAD')) {
