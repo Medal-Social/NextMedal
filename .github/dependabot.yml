@@ -1,5 +1,21 @@
 version: 2
 updates:
+  # Security updates always open against the default branch and ignore any
+  # entry that sets target-branch, so this entry exists only to group them.
+  # open-pull-requests-limit: 0 disables version updates for this entry
+  # without affecting security updates.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+    groups:
+      security-updates:
+        applies-to: security-updates
+        patterns:
+          - '*'
+
+  # Version updates follow the dev -> prod promotion flow.
   - package-ecosystem: npm
     directory: /
     target-branch: dev
@@ -9,10 +25,6 @@ updates:
       default-days: 7
     open-pull-requests-limit: 10
     groups:
-      security-updates:
-        applies-to: security-updates
-        patterns:
-          - '*'
       production-dependencies:
         applies-to: version-updates
         dependency-type: production
