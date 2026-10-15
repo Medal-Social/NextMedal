@@ -264,6 +264,19 @@
       "copyright": "NextMedal • Laget av <link>Medal Social</link> © {year}"
     }
   },
+  "socialEmbed": {
+    "viewOn": "Se på {platform}",
+    "playVideo": "Spill av video",
+    "openOriginal": "Dette innlegget kan ikke forhåndsvises her. Åpne det på den opprinnelige plattformen.",
+    "platforms": {
+      "x": "X",
+      "linkedin": "LinkedIn",
+      "instagram": "Instagram",
+      "threads": "Threads",
+      "tiktok": "TikTok",
+      "youtube": "YouTube"
+    }
+  },
   "collectionSetup": {
     "siteSettingsMissing": {
       "title": "Nettstedsinnstillinger ikke funnet",

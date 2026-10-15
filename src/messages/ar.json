@@ -388,6 +388,19 @@
       "copyright": "NextMedal • تم الإنشاء بواسطة <link>Medal Social</link> © {year}"
     }
   },
+  "socialEmbed": {
+    "viewOn": "عرض على {platform}",
+    "playVideo": "تشغيل الفيديو",
+    "openOriginal": "لا يمكن معاينة هذا المنشور هنا. افتحه على المنصة الأصلية.",
+    "platforms": {
+      "x": "X",
+      "linkedin": "LinkedIn",
+      "instagram": "Instagram",
+      "threads": "Threads",
+      "tiktok": "TikTok",
+      "youtube": "YouTube"
+    }
+  },
   "collectionSetup": {
     "siteSettingsMissing": {
       "title": "إعدادات الموقع غير موجودة",

@@ -264,6 +264,19 @@
       "copyright": "NextMedal • Created by <link>Medal Social</link> © {year}"
     }
   },
+  "socialEmbed": {
+    "viewOn": "View on {platform}",
+    "playVideo": "Play video",
+    "openOriginal": "This post can’t be previewed here. Open it on the original platform.",
+    "platforms": {
+      "x": "X",
+      "linkedin": "LinkedIn",
+      "instagram": "Instagram",
+      "threads": "Threads",
+      "tiktok": "TikTok",
+      "youtube": "YouTube"
+    }
+  },
   "collectionSetup": {
     "siteSettingsMissing": {
       "title": "Site Settings Not Found",
