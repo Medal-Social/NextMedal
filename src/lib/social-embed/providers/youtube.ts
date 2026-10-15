@@ -45,7 +45,12 @@ export async function fetchYouTubeEmbed(parsed: ParsedSocialUrl): Promise<Social
   const result = await fetchJson<YouTubeOembedResponse>(endpoint);
 
   if (!result.ok) {
-    // Still expose the click-to-load facade with the stock thumbnail when oEmbed fails.
+    // 404 (and other client errors): video is gone / private — link-out fallback.
+    // Transient failures (network/timeout status 0, or 5xx): keep the click-to-play
+    // facade with the stock thumbnail; the embed may still work.
+    if (result.status >= 400 && result.status < 500) {
+      return { ...base, youtubeId: null, media: null, isFallback: true };
+    }
     return { ...base, isFallback: false };
   }
 

@@ -140,8 +140,11 @@ describe('SocialEmbedCard', () => {
     const iframe = screen.getByTitle('Never Gonna Give You Up');
     expect(iframe).toHaveAttribute(
       'src',
-      expect.stringContaining('youtube-nocookie.com/embed/dQw4w9WgXcQ')
+      expect.stringMatching(/youtube-nocookie\.com\/embed\/dQw4w9WgXcQ.*autoplay=1/)
     );
+
+    // Open summary must not steal clicks meant for the iframe player.
+    expect(play.className).toMatch(/group-open:pointer-events-none/);
 
     const details = play.closest('details');
     expect(details).not.toBeNull();

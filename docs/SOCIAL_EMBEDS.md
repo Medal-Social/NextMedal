@@ -53,7 +53,7 @@ Fixture page: `/qa/social-embeds` (lean `(embed-gate)` layout — hand-rolled CS
 
 YouTube fixture uses a real Medal Social channel video (`Svz_KbFAz9Y`), not a meme/rickroll.
 
-**Scores (2026-10-15 production build):** mobile **100 / 100 / 100 / 100**, desktop **100 / 100 / 100 / 100** (Perf / A11y / Best Practices / SEO). CLS **0**. Full table + JSON/HTML reports: [`docs/lighthouse/social-embeds.md`](./lighthouse/social-embeds.md).
+**Scores (2026-10-15 production build):** mobile **100 / 100 / 100 / 100**, desktop **100 / 100 / 100 / 100** (Perf / A11y / Best Practices / SEO). CLS **0**. Score table + reproduce steps: [`docs/lighthouse/social-embeds.md`](./lighthouse/social-embeds.md) (raw Lighthouse JSON/HTML are CI artifacts, not committed).
 
 Hard requirement before merge: **100** in Performance, Accessibility, Best Practices, and SEO on **both** mobile and desktop for that fixture.
 

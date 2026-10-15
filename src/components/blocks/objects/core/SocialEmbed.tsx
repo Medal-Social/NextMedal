@@ -26,15 +26,21 @@ interface SocialEmbedProps {
   url: string;
 }
 
-/** Mockup-aligned stamp: "13 Oct 2026 · 18:36" (locale-aware). */
-function formatEmbedStamp(iso: string, locale: string): string {
-  const date = new Date(iso);
-  const dayMonth = new Intl.DateTimeFormat(locale, {
+/** Date-only stamp: "13 Oct 2026" (locale-aware, UTC). */
+function formatEmbedDateOnly(isoOrDate: string, locale: string): string {
+  const date = new Date(isoOrDate.includes('T') ? isoOrDate : `${isoOrDate}T00:00:00.000Z`);
+  return new Intl.DateTimeFormat(locale, {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
     timeZone: 'UTC',
   }).format(date);
+}
+
+/** Mockup-aligned stamp: "13 Oct 2026 · 18:36" (locale-aware). */
+function formatEmbedStamp(iso: string, locale: string): string {
+  const date = new Date(iso);
+  const dayMonth = formatEmbedDateOnly(iso, locale);
   const time = new Intl.DateTimeFormat(locale, {
     hour: '2-digit',
     minute: '2-digit',
@@ -50,8 +56,17 @@ function formatEmbedDate(
 ): { display: string | null; dateTime: string | null } {
   if (!value) return { display: null, dateTime: null };
 
-  // ISO timestamps from syndication / APIs / normalized oEmbed dates
-  if (/^\d{4}-\d{2}-\d{2}/.test(value)) {
+  // Date-only (`YYYY-MM-DD`) from X oEmbed footers — never invent a clock time.
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    try {
+      return { display: formatEmbedDateOnly(value, locale), dateTime: value };
+    } catch {
+      return { display: value, dateTime: value };
+    }
+  }
+
+  // Full ISO timestamps from syndication / APIs
+  if (/^\d{4}-\d{2}-\d{2}T/.test(value)) {
     try {
       return { display: formatEmbedStamp(value, locale), dateTime: value };
     } catch {
@@ -59,14 +74,14 @@ function formatEmbedDate(
     }
   }
 
-  // Legacy English footer strings — parse then localize
+  // Legacy English footer strings — date-only (no clock time in the source)
   const parsed = Date.parse(`${value} UTC`);
   if (!Number.isNaN(parsed)) {
-    const iso = new Date(parsed).toISOString();
+    const dateOnly = new Date(parsed).toISOString().slice(0, 10);
     try {
-      return { display: formatEmbedStamp(iso, locale), dateTime: iso };
+      return { display: formatEmbedDateOnly(dateOnly, locale), dateTime: dateOnly };
     } catch {
-      return { display: value, dateTime: iso };
+      return { display: value, dateTime: dateOnly };
     }
   }
 

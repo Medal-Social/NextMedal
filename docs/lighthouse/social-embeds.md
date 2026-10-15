@@ -7,9 +7,10 @@ The route is available on staging / preview / local (non-production) for this ga
 production returns 404 unless `ALLOW_QA_SOCIAL_EMBEDS` is set; the path is excluded from the sitemap
 and carries no canonical URL in production.
 
-Raw Lighthouse JSON/HTML reports for these runs are saved as CI/agent artifacts
-(`social-embeds-mobile.report.{json,html}`, `social-embeds-desktop.report.{json,html}`).
-Reproduce locally with the commands below to regenerate them beside this file.
+Raw Lighthouse JSON/HTML reports are **CI/agent artifacts only** — do not commit them
+under `docs/lighthouse/` (stale committed reports previously still referenced the old
+Rick Roll fixture and drifted from the Medal video + scores in this doc). Reproduce
+locally with the commands below; keep the JSON/HTML out of git.
 
 ## Scores
 

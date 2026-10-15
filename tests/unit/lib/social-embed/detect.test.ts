@@ -101,6 +101,7 @@ describe('X oEmbed body / date helpers', () => {
     const text = stripHtml(extractXOembedBodyHtml(html));
     expect(text).toBe('Hello — world about agents.');
     expect(text).not.toContain('Anthropic');
-    expect(extractDateFromXOembedHtml(html)).toMatch(/^2026-10-13T/);
+    // Date-only — oEmbed footers never carry a clock time.
+    expect(extractDateFromXOembedHtml(html)).toBe('2026-10-13');
   });
 });

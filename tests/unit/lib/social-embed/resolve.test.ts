@@ -120,4 +120,37 @@ describe('resolveSocialEmbed', () => {
     expect(await resolveSocialEmbed('twitter', '')).toBeNull();
     expect(await resolveSocialEmbed('twitter', 'not-a-url')).toBeNull();
   });
+
+  it('falls back for YouTube when oEmbed returns 404 (unavailable video)', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('Not Found', { status: 404 }))
+    );
+
+    const { resolveSocialEmbed } = await import('@/lib/social-embed/resolve');
+    const data = await resolveSocialEmbed('youtube', 'https://www.youtube.com/watch?v=Svz_KbFAz9Y');
+
+    expect(data).toMatchObject({
+      platform: 'youtube',
+      isFallback: true,
+      youtubeId: null,
+      url: 'https://www.youtube.com/watch?v=Svz_KbFAz9Y',
+    });
+  });
+
+  it('keeps the YouTube facade on transient oEmbed failures', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('upstream', { status: 503 }))
+    );
+
+    const { resolveSocialEmbed } = await import('@/lib/social-embed/resolve');
+    const data = await resolveSocialEmbed('youtube', 'https://www.youtube.com/watch?v=Svz_KbFAz9Y');
+
+    expect(data).toMatchObject({
+      platform: 'youtube',
+      isFallback: false,
+      youtubeId: 'Svz_KbFAz9Y',
+    });
+  });
 });

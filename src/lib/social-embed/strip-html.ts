@@ -24,14 +24,15 @@ const ENGLISH_MONTHS =
 
 /**
  * Pull the trailing “Month Day, Year” date from a Twitter/X oEmbed blockquote
- * footer and return an ISO timestamp so callers can localize via formatFullDate.
+ * footer. Returns a date-only `YYYY-MM-DD` string — oEmbed footers never carry
+ * a clock time, so callers must not fabricate `00:00`.
  */
 export function extractDateFromXOembedHtml(html: string): string | null {
   const match = html.match(new RegExp(`(${ENGLISH_MONTHS})\\s+(\\d{1,2}),\\s+(\\d{4})`, 'i'));
   if (!match) return null;
   const parsed = new Date(`${match[1]} ${match[2]}, ${match[3]} UTC`);
   if (Number.isNaN(parsed.getTime())) return null;
-  return parsed.toISOString();
+  return parsed.toISOString().slice(0, 10);
 }
 
 /** Keep only the first `<p>…</p>` body from X oEmbed HTML (drops the mdash footer). */

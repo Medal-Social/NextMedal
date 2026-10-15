@@ -27,7 +27,7 @@ export function YouTubeFacade({
   return (
     <details className="group relative aspect-video w-full overflow-hidden rounded-xl bg-muted open:bg-black">
       <summary
-        className="absolute inset-0 z-10 cursor-pointer list-none text-start marker:content-none focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden"
+        className="absolute inset-0 z-10 cursor-pointer list-none text-start marker:content-none focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 group-open:pointer-events-none [&::-webkit-details-marker]:hidden"
         aria-label={`${playLabel}: ${accessibleName}`}
       >
         {/*
@@ -64,7 +64,9 @@ export function YouTubeFacade({
         </span>
       </summary>
       <iframe
-        src={`https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?rel=0`}
+        // autoplay=1: once the poster opens, playback starts without a second click
+        // (summary is pointer-events-none when open so it cannot steal that click).
+        src={`https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?rel=0&autoplay=1`}
         title={title}
         className="absolute inset-0 z-0 h-full w-full border-0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
