@@ -388,6 +388,23 @@
       "copyright": "NextMedal • تم الإنشاء بواسطة <link>Medal Social</link> © {year}"
     }
   },
+  "socialEmbed": {
+    "viewOn": "عرض على {platform}",
+    "playVideo": "تشغيل الفيديو",
+    "clickToPlay": "انقر للتشغيل · يحمّل المشغّل",
+    "openOriginal": "لا يمكن معاينة هذا المنشور هنا. افتحه على المنصة الأصلية.",
+    "fallbackTitle": "تعذّر تحميل هذا المنشور",
+    "fallbackDescription": "قد يكون قد حُذف أو جُعل خاصاً، أو لم تستجب المنصة. يمكنك فتحه على {platform}.",
+    "postOn": "منشور على {platform}",
+    "platforms": {
+      "x": "X",
+      "linkedin": "LinkedIn",
+      "instagram": "Instagram",
+      "threads": "Threads",
+      "tiktok": "TikTok",
+      "youtube": "YouTube"
+    }
+  },
   "collectionSetup": {
     "siteSettingsMissing": {
       "title": "إعدادات الموقع غير موجودة",

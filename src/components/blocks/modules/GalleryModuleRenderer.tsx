@@ -6,7 +6,7 @@ import Features from './content/Features';
 import PricingComparison from './content/PricingComparison';
 import PricingList from './content/PricingList';
 import ProductComparison from './content/ProductComparison';
-import RichtextModule from './content/RichtextModule';
+import RichtextModuleClient from './content/RichtextModule/client';
 import Team from './content/Team';
 import Hero from './hero/Hero';
 import VideoHero from './hero/VideoHero';
@@ -111,8 +111,11 @@ export function GalleryModuleRenderer({ module }: Props) {
     }
 
     case 'richtext': {
+      // Client-safe RichtextModule: full portable text (paragraphs, images,
+      // callouts, …). Only socialEmbed blocks degrade to the link-out card —
+      // they must not pull server-only oEmbed resolve into this client tree.
       const props = module as Sanity.Richtext;
-      return <RichtextModule {...props} />;
+      return <RichtextModuleClient {...props} />;
     }
 
     case 'team': {

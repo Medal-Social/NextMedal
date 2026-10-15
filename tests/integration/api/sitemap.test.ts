@@ -285,6 +285,37 @@ describe('sitemap-[locale].xml route', () => {
       // Should NOT include Norwegian page in English sitemap
       expect(xml).not.toContain('om-oss');
     });
+
+    it('excludes /qa/social-embeds even if Sanity returned it as a page', async () => {
+      mockFetchSanityLive.mockResolvedValueOnce({
+        pages: [
+          {
+            _id: 'page-about',
+            slug: 'about',
+            lastModified: '2024-01-01T00:00:00Z',
+            priority: 0.8,
+            language: 'en',
+          },
+          {
+            _id: 'page-qa-embeds',
+            slug: 'qa/social-embeds',
+            lastModified: '2024-01-01T00:00:00Z',
+            priority: 0.1,
+            language: 'en',
+          },
+        ],
+        articles: [],
+        collections: [],
+      });
+      mockFetchSanityLive.mockResolvedValueOnce([]);
+
+      const response = await GET(mockRequest, { params: createParams('en') });
+      const xml = await response.text();
+
+      expect(xml).toContain('<loc>https://example.com/about</loc>');
+      expect(xml).not.toContain('qa/social-embeds');
+      expect(xml).not.toContain('/qa/social-embeds');
+    });
   });
 
   describe('Multi-language support (hreflang)', () => {
