@@ -1,5 +1,5 @@
 import { fetchJson } from '../fetch-json';
-import { extractDateFromXOembedHtml, stripHtml } from '../strip-html';
+import { extractDateFromXOembedHtml, extractXOembedBodyHtml, stripHtml } from '../strip-html';
 import type { ParsedSocialUrl, SocialEmbedData, SocialEmbedMedia } from '../types';
 
 interface XOembedResponse {
@@ -135,10 +135,9 @@ export async function fetchXEmbed(parsed: ParsedSocialUrl): Promise<SocialEmbedD
 
   const oembed = await fetchOembed(parsed.url);
   if (oembed?.html) {
-    const text = stripHtml(oembed.html)
-      // Drop the “— Author (@handle) Date” footer that stripHtml leaves behind.
-      .replace(/\n?—\s*.+$/s, '')
-      .trim();
+    // Keep only the tweet <p> body — the footer is `&mdash; Author (@handle) <a>Date</a>`
+    // and must not be stripped via a greedy em-dash regex (cuts real dashes in the body).
+    const text = stripHtml(extractXOembedBodyHtml(oembed.html)).trim();
     const handle = parsed.username;
     return {
       ...base,

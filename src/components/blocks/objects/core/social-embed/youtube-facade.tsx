@@ -48,7 +48,6 @@ export function YouTubeFacade({ videoId, title, thumbnailUrl, playLabel }: YouTu
         fill
         className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
         sizes="(max-width: 768px) 100vw, 640px"
-        unoptimized={thumb.includes('ytimg.com') || thumb.includes('img.youtube.com')}
       />
       <span className="absolute inset-0 bg-black/25 transition-colors group-hover:bg-black/35" />
       <span className="absolute inset-0 flex items-center justify-center" aria-hidden>

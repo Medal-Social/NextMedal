@@ -11,7 +11,11 @@ export {
   extractYouTubeId,
   parseSocialEmbedInput,
 } from './detect';
-export { stripHtml } from './strip-html';
+export {
+  extractDateFromXOembedHtml,
+  extractXOembedBodyHtml,
+  stripHtml,
+} from './strip-html';
 export type {
   ParsedSocialUrl,
   SanitySocialPlatform,

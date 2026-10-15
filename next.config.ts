@@ -29,8 +29,8 @@ const customHeaders = [
   {
     key: 'Content-Security-Policy',
     value: [
-      // YouTube click-to-load facade only — other platforms render static Medal cards (no iframes).
-      "frame-src 'self' www.youtube-nocookie.com;",
+      // Social embeds use youtube-nocookie; VideoHero / YouTubePlayer still use www.youtube.com.
+      "frame-src 'self' www.youtube-nocookie.com www.youtube.com;",
       // Script sources - 'unsafe-inline' needed for Next.js
       `script-src 'self' 'unsafe-inline'${umamiOrigin};`,
     ].join(' '),
@@ -91,52 +91,52 @@ const config = {
     ],
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "cdn.sanity.io",
+        protocol: 'https',
+        hostname: 'cdn.sanity.io',
       },
       {
-        protocol: "https",
-        hostname: "image.mux.com",
+        protocol: 'https',
+        hostname: 'image.mux.com',
       },
       {
-        protocol: "https",
-        hostname: "img.youtube.com",
+        protocol: 'https',
+        hostname: 'img.youtube.com',
       },
       {
-        protocol: "https",
-        hostname: "i.ytimg.com",
+        protocol: 'https',
+        hostname: 'i.ytimg.com',
       },
-      // X / Twitter avatars + media
+      // X / Twitter avatars + media (static Medal cards; go through image loader/proxy when configured)
       {
-        protocol: "https",
-        hostname: "pbs.twimg.com",
+        protocol: 'https',
+        hostname: 'pbs.twimg.com',
       },
       {
-        protocol: "https",
-        hostname: "abs.twimg.com",
+        protocol: 'https',
+        hostname: 'abs.twimg.com',
       },
       // TikTok thumbnails (oEmbed)
       {
-        protocol: "https",
-        hostname: "**.tiktokcdn.com",
+        protocol: 'https',
+        hostname: '**.tiktokcdn.com',
       },
       {
-        protocol: "https",
-        hostname: "**.tiktokcdn-us.com",
+        protocol: 'https',
+        hostname: '**.tiktokcdn-us.com',
       },
       // Instagram (rare; fallback cards usually skip images)
       {
-        protocol: "https",
-        hostname: "**.cdninstagram.com",
+        protocol: 'https',
+        hostname: '**.cdninstagram.com',
       },
       {
-        protocol: "https",
-        hostname: "**.fbcdn.net",
+        protocol: 'https',
+        hostname: '**.fbcdn.net',
       },
       // LinkedIn (rare)
       {
-        protocol: "https",
-        hostname: "media.licdn.com",
+        protocol: 'https',
+        hostname: 'media.licdn.com',
       },
     ],
   },

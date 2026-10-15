@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { logger } from '@/lib/core/logger';
 import { parseSocialEmbedInput } from './detect';
 import { fetchTikTokEmbed } from './providers/tiktok';
 import { fetchXEmbed } from './providers/x';
@@ -30,7 +31,7 @@ function fallbackCard(
 
 /**
  * Resolve a Sanity socialEmbed block into Medal card data.
- * Always returns a card — never throws for missing provider data.
+ * Always returns a card when the URL is usable — never throws for missing provider data.
  */
 export async function resolveSocialEmbed(
   platformRaw: SanitySocialPlatform | null | undefined,
@@ -58,7 +59,11 @@ export async function resolveSocialEmbed(
       default:
         return fallbackCard(parsed.platform, parsed.url);
     }
-  } catch {
+  } catch (error) {
+    logger.warn(
+      { err: error, platform: parsed.platform, url: parsed.url },
+      'social-embed resolve failed; using link-out fallback'
+    );
     return fallbackCard(parsed.platform, parsed.url, {
       youtubeId: parsed.platform === 'youtube' ? parsed.id : null,
     });

@@ -45,6 +45,17 @@ function PlatformGlyph({ platform, className }: { platform: SocialPlatform; clas
   }
 }
 
+function mediaAlt(data: SocialEmbedData, platformName: string): string {
+  if (data.media?.alt?.trim()) return data.media.alt.trim();
+  if (data.title?.trim()) return data.title.trim();
+  if (data.text?.trim()) {
+    const clipped = data.text.trim().replace(/\s+/g, ' ');
+    return clipped.length > 120 ? `${clipped.slice(0, 117)}…` : clipped;
+  }
+  if (data.authorName?.trim()) return `${data.authorName} on ${platformName}`;
+  return `${platformName} post`;
+}
+
 function Avatar({
   src,
   name,
@@ -62,7 +73,6 @@ function Avatar({
         width={40}
         height={40}
         className="size-10 rounded-full object-cover"
-        unoptimized
       />
     );
   }
@@ -161,11 +171,10 @@ export function SocialEmbedCard({ data, labels, formattedDate, className }: Soci
             <div className="relative mx-4 mb-4 aspect-[1.91/1] overflow-hidden rounded-lg bg-muted">
               <Image
                 src={data.media.url}
-                alt={data.media.alt ?? ''}
+                alt={mediaAlt(data, labels.platformName)}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 576px"
-                unoptimized
               />
             </div>
           ) : null}

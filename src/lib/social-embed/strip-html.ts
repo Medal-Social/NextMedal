@@ -8,6 +8,8 @@ export function stripHtml(html: string): string {
     .replace(/<\/p>/gi, '\n')
     .replace(/<[^>]+>/g, '')
     .replace(/&nbsp;/g, ' ')
+    .replace(/&mdash;/gi, '—')
+    .replace(/&#8212;/g, '—')
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
@@ -17,10 +19,22 @@ export function stripHtml(html: string): string {
     .trim();
 }
 
-/** Pull the trailing “Month Day, Year” date from a Twitter/X oEmbed blockquote footer. */
+const ENGLISH_MONTHS =
+  'January|February|March|April|May|June|July|August|September|October|November|December';
+
+/**
+ * Pull the trailing “Month Day, Year” date from a Twitter/X oEmbed blockquote
+ * footer and return an ISO timestamp so callers can localize via formatFullDate.
+ */
 export function extractDateFromXOembedHtml(html: string): string | null {
-  const match = html.match(
-    />(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4}<\/a>/i
-  );
-  return match ? match[0].replace(/^>/, '').replace(/<\/a>$/i, '') : null;
+  const match = html.match(new RegExp(`(${ENGLISH_MONTHS})\\s+(\\d{1,2}),\\s+(\\d{4})`, 'i'));
+  if (!match) return null;
+  const parsed = new Date(`${match[1]} ${match[2]}, ${match[3]} UTC`);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return parsed.toISOString();
+}
+
+/** Keep only the first `<p>…</p>` body from X oEmbed HTML (drops the mdash footer). */
+export function extractXOembedBodyHtml(html: string): string {
+  return html.match(/<p[^>]*>([\s\S]*?)<\/p>/i)?.[1] ?? '';
 }

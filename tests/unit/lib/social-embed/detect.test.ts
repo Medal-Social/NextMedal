@@ -90,3 +90,17 @@ describe('social-embed detect', () => {
     });
   });
 });
+
+describe('X oEmbed body / date helpers', () => {
+  it('extracts only the <p> body and ISO date from oEmbed HTML', async () => {
+    const { extractXOembedBodyHtml, extractDateFromXOembedHtml, stripHtml } = await import(
+      '@/lib/social-embed'
+    );
+    const html =
+      '<blockquote class="twitter-tweet"><p lang="en">Hello — world about agents.</p>&mdash; Anthropic (@AnthropicAI) <a href="https://x.com/x/status/1">October 13, 2026</a></blockquote>';
+    const text = stripHtml(extractXOembedBodyHtml(html));
+    expect(text).toBe('Hello — world about agents.');
+    expect(text).not.toContain('Anthropic');
+    expect(extractDateFromXOembedHtml(html)).toMatch(/^2026-10-13T/);
+  });
+});
