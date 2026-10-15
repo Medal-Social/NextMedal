@@ -56,12 +56,14 @@ describe('social-embed detect', () => {
       expect(detectPlatformFromUrl(ANTHROPIC_X)).toBe('x');
     });
 
-    it('parses YouTube watch, short, and embed urls', () => {
+    it('parses YouTube watch, short, embed, and live urls', () => {
       expect(extractYouTubeId('https://www.youtube.com/watch?v=dQw4w9WgXcQ')).toBe('dQw4w9WgXcQ');
       expect(extractYouTubeId('https://youtu.be/dQw4w9WgXcQ')).toBe('dQw4w9WgXcQ');
       expect(extractYouTubeId('https://www.youtube.com/embed/dQw4w9WgXcQ')).toBe('dQw4w9WgXcQ');
       expect(extractYouTubeId('https://www.youtube.com/shorts/dQw4w9WgXcQ')).toBe('dQw4w9WgXcQ');
+      expect(extractYouTubeId('https://www.youtube.com/live/Svz_KbFAz9Y')).toBe('Svz_KbFAz9Y');
       expect(detectPlatformFromUrl('https://youtu.be/dQw4w9WgXcQ')).toBe('youtube');
+      expect(detectPlatformFromUrl('https://www.youtube.com/live/Svz_KbFAz9Y')).toBe('youtube');
     });
 
     it('parses TikTok, Instagram, LinkedIn ids', () => {

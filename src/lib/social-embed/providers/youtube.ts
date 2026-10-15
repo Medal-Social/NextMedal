@@ -45,10 +45,12 @@ export async function fetchYouTubeEmbed(parsed: ParsedSocialUrl): Promise<Social
   const result = await fetchJson<YouTubeOembedResponse>(endpoint);
 
   if (!result.ok) {
-    // 404 (and other client errors): video is gone / private — link-out fallback.
-    // Transient failures (network/timeout status 0, or 5xx): keep the click-to-play
-    // facade with the stock thumbnail; the embed may still work.
-    if (result.status >= 400 && result.status < 500) {
+    // Permanent client errors (gone / private / bad request): link-out fallback.
+    // Transient: network/timeout (0), rate limit (429), or 5xx — keep the
+    // click-to-play facade; the embed may still work.
+    const permanentClientError =
+      result.status >= 400 && result.status < 500 && result.status !== 429;
+    if (permanentClientError) {
       return { ...base, youtubeId: null, media: null, isFallback: true };
     }
     return { ...base, isFallback: false };

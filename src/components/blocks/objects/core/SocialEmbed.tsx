@@ -37,7 +37,7 @@ function formatEmbedDateOnly(isoOrDate: string, locale: string): string {
   }).format(date);
 }
 
-/** Mockup-aligned stamp: "13 Oct 2026 · 18:36" (locale-aware). */
+/** Mockup-aligned stamp: "13 Oct 2026 · 18:36 UTC" (locale digits, explicit UTC). */
 function formatEmbedStamp(iso: string, locale: string): string {
   const date = new Date(iso);
   const dayMonth = formatEmbedDateOnly(iso, locale);
@@ -47,7 +47,9 @@ function formatEmbedStamp(iso: string, locale: string): string {
     hour12: false,
     timeZone: 'UTC',
   }).format(date);
-  return `${dayMonth} · ${time}`;
+  // Syndication timestamps are absolute UTC; label the zone so readers do not
+  // mistake 16:36Z for local wall-clock (e.g. Oslo 18:36).
+  return `${dayMonth} · ${time} UTC`;
 }
 
 function formatEmbedDate(

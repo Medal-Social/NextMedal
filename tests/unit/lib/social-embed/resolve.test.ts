@@ -153,4 +153,47 @@ describe('resolveSocialEmbed', () => {
       youtubeId: 'Svz_KbFAz9Y',
     });
   });
+
+  it('keeps the YouTube facade when oEmbed is rate-limited (429)', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('rate limited', { status: 429 }))
+    );
+
+    const { resolveSocialEmbed } = await import('@/lib/social-embed/resolve');
+    const data = await resolveSocialEmbed('youtube', 'https://www.youtube.com/watch?v=Svz_KbFAz9Y');
+
+    expect(data).toMatchObject({
+      platform: 'youtube',
+      isFallback: false,
+      youtubeId: 'Svz_KbFAz9Y',
+    });
+  });
+
+  it('extracts a YouTube live URL id for the click-to-play facade', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        async () =>
+          new Response(
+            JSON.stringify({
+              title: 'Medal live',
+              author_name: 'Medal Social',
+              thumbnail_url: 'https://i.ytimg.com/vi/Svz_KbFAz9Y/hqdefault.jpg',
+            }),
+            { status: 200, headers: { 'Content-Type': 'application/json' } }
+          )
+      )
+    );
+
+    const { resolveSocialEmbed } = await import('@/lib/social-embed/resolve');
+    const data = await resolveSocialEmbed('youtube', 'https://www.youtube.com/live/Svz_KbFAz9Y');
+
+    expect(data).toMatchObject({
+      platform: 'youtube',
+      isFallback: false,
+      youtubeId: 'Svz_KbFAz9Y',
+      title: 'Medal live',
+    });
+  });
 });

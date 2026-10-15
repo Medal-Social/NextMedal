@@ -66,7 +66,11 @@ export function extractYouTubeId(url: string): string | null {
       return id?.split('?')[0] || null;
     }
     if (host === 'youtube.com' || host === 'm.youtube.com' || host === 'youtube-nocookie.com') {
-      if (parsed.pathname.startsWith('/embed/') || parsed.pathname.startsWith('/shorts/')) {
+      if (
+        parsed.pathname.startsWith('/embed/') ||
+        parsed.pathname.startsWith('/shorts/') ||
+        parsed.pathname.startsWith('/live/')
+      ) {
         return parsed.pathname.split('/')[2] || null;
       }
       return parsed.searchParams.get('v');
