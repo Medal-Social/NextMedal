@@ -8,8 +8,14 @@ NextMedal renders Sanity `socialEmbed` blocks as **Medal-branded static cards** 
 |-------|------|------|
 | Detect / normalize | `src/lib/social-embed/detect.ts` | `stegaClean` on platform + URL (draft preview), `twitter` → `x`, URL parsers |
 | Resolve (server) | `src/lib/social-embed/resolve.ts` | oEmbed / public endpoints via `fetch` + `next: { revalidate: 3600 }` |
-| UI | `src/components/blocks/objects/core/SocialEmbed.tsx` | Async RSC → `SocialEmbedCard` / YouTube facade |
-| Portable Text | `RichtextModule/Content.tsx` | Suspense around the async embed |
+| UI (server) | `src/components/blocks/objects/core/SocialEmbed.tsx` | Async RSC → `SocialEmbedCard` / YouTube facade |
+| UI (client fallback) | `…/social-embed/social-embed-fallback.tsx` | Link-out card only — no `server-only` / oEmbed |
+| Portable Text (server) | `RichtextModule/Content.server.tsx` | Articles, events, newsletters, ModuleRenderer — full oEmbed cards |
+| Portable Text (client) | `RichtextModule/Content.tsx` + `client.tsx` | ComponentGallery — full richtext; social embeds degrade to the link-out card |
+
+### Gallery vs article rendering
+
+`GalleryModuleRenderer` is a client component. It must **not** import the server `SocialEmbed` / `resolve` path (that pulls `server-only` into the client graph and breaks Next Build). It uses `RichtextModule/client`, which keeps paragraphs, images, callouts, code, lead magnets, and video rendering — only `socialEmbed` blocks become the client-safe fallback link card. Article / event / newsletter pages and the server `RichtextModule` still use `Content.server` for full Medal oEmbed cards.
 
 ### Platforms
 
