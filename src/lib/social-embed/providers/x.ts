@@ -1,6 +1,11 @@
 import { fetchJson } from '../fetch-json';
 import { extractDateFromXOembedHtml, extractXOembedBodyHtml, stripHtml } from '../strip-html';
-import type { ParsedSocialUrl, SocialEmbedData, SocialEmbedMedia } from '../types';
+import type {
+  ParsedSocialUrl,
+  SocialEmbedData,
+  SocialEmbedLinkPreview,
+  SocialEmbedMedia,
+} from '../types';
 
 interface XOembedResponse {
   url?: string;
@@ -23,8 +28,15 @@ interface XSyndicationImageValue {
   alt?: string;
 }
 
+interface XSyndicationBindingValue {
+  type?: string;
+  string_value?: string;
+  image_value?: XSyndicationImageValue;
+}
+
 interface XSyndicationCard {
-  binding_values?: Record<string, { image_value?: XSyndicationImageValue; type?: string }>;
+  binding_values?: Record<string, XSyndicationBindingValue>;
+  url?: string;
 }
 
 interface XSyndicationTweet {
@@ -40,37 +52,93 @@ interface XSyndicationTweet {
   }>;
 }
 
-function pickCardMedia(card: XSyndicationCard | undefined): SocialEmbedMedia | null {
+function stringBinding(
+  values: Record<string, XSyndicationBindingValue> | undefined,
+  key: string
+): string | null {
+  const value = values?.[key]?.string_value?.trim();
+  return value || null;
+}
+
+function imageBinding(
+  values: Record<string, XSyndicationBindingValue> | undefined,
+  ...keys: string[]
+): SocialEmbedMedia | null {
+  if (!values) return null;
+  for (const key of keys) {
+    const preferred = values[key]?.image_value;
+    if (preferred?.url) {
+      const width = preferred.width;
+      const height = preferred.height;
+      return {
+        url: preferred.url,
+        width,
+        height,
+        alt: preferred.alt,
+        aspectRatio: width && height && height > 0 ? `${width} / ${height}` : '1.91 / 1',
+      };
+    }
+  }
+  return null;
+}
+
+function pickLinkPreview(card: XSyndicationCard | undefined): SocialEmbedLinkPreview | null {
   const values = card?.binding_values;
   if (!values) return null;
-  const preferred =
-    values.photo_image_full_size_large?.image_value ??
-    values.summary_photo_image?.image_value ??
-    values.thumbnail_image_large?.image_value ??
-    values.thumbnail_image?.image_value;
-  if (!preferred?.url) return null;
+
+  const title = stringBinding(values, 'title');
+  const description = stringBinding(values, 'description');
+  const domain = stringBinding(values, 'vanity_url') ?? stringBinding(values, 'domain');
+  const url = stringBinding(values, 'card_url') ?? card.url ?? null;
+  const image = imageBinding(
+    values,
+    'photo_image_full_size_large',
+    'summary_photo_image',
+    'thumbnail_image_large',
+    'thumbnail_image'
+  );
+
+  if (!title && !description && !domain && !image) return null;
+
+  const alt =
+    stringBinding(values, 'photo_image_full_size_alt_text') ??
+    stringBinding(values, 'summary_photo_image_alt_text') ??
+    title ??
+    undefined;
+
   return {
-    url: preferred.url,
-    width: preferred.width,
-    height: preferred.height,
-    alt: preferred.alt,
+    domain,
+    title,
+    description,
+    url,
+    image: image ? { ...image, alt: alt ?? image.alt } : null,
   };
 }
 
 function pickPhotoMedia(tweet: XSyndicationTweet): SocialEmbedMedia | null {
   const photo = tweet.photos?.[0];
   if (photo?.url) {
-    return { url: photo.url, width: photo.width, height: photo.height };
+    const width = photo.width;
+    const height = photo.height;
+    return {
+      url: photo.url,
+      width,
+      height,
+      aspectRatio: width && height && height > 0 ? `${width} / ${height}` : '1 / 1',
+    };
   }
   const detail = tweet.mediaDetails?.[0];
   if (detail?.media_url_https) {
+    const width = detail.original_info?.width;
+    const height = detail.original_info?.height;
     return {
       url: detail.media_url_https,
-      width: detail.original_info?.width,
-      height: detail.original_info?.height,
+      width,
+      height,
+      aspectRatio: width && height && height > 0 ? `${width} / ${height}` : '1 / 1',
     };
   }
-  return pickCardMedia(tweet.card);
+  return null;
 }
 
 function emptyX(parsed: ParsedSocialUrl): SocialEmbedData {
@@ -85,6 +153,7 @@ function emptyX(parsed: ParsedSocialUrl): SocialEmbedData {
     title: null,
     publishedAt: null,
     media: null,
+    linkPreview: null,
     youtubeId: null,
     isFallback: true,
   };
@@ -118,6 +187,9 @@ export async function fetchXEmbed(parsed: ParsedSocialUrl): Promise<SocialEmbedD
     const tweet = await fetchSyndication(parsed.id);
     if (tweet) {
       const handle = tweet.user?.screen_name ?? parsed.username;
+      const linkPreview = pickLinkPreview(tweet.card);
+      // Prefer native photos for the media slot; card images live on linkPreview.
+      const media = pickPhotoMedia(tweet);
       return {
         ...base,
         authorName: tweet.user?.name ?? handle ?? null,
@@ -127,7 +199,8 @@ export async function fetchXEmbed(parsed: ParsedSocialUrl): Promise<SocialEmbedD
           tweet.user?.profile_image_url_https?.replace('_normal.', '_bigger.') ?? null,
         text: tweet.text ?? null,
         publishedAt: tweet.created_at ?? null,
-        media: pickPhotoMedia(tweet),
+        media,
+        linkPreview,
         isFallback: false,
       };
     }

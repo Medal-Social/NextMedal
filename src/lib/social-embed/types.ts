@@ -21,6 +21,17 @@ export interface SocialEmbedMedia {
   width?: number;
   height?: number;
   alt?: string;
+  /** CSS aspect-ratio string when known (e.g. "1.91 / 1", "16 / 9"). */
+  aspectRatio?: string;
+}
+
+/** Open-graph style link card attached to a post (X summary cards, etc.). */
+export interface SocialEmbedLinkPreview {
+  domain: string | null;
+  title: string | null;
+  description: string | null;
+  url: string | null;
+  image: SocialEmbedMedia | null;
 }
 
 export interface SocialEmbedData {
@@ -34,6 +45,7 @@ export interface SocialEmbedData {
   title: string | null;
   publishedAt: string | null;
   media: SocialEmbedMedia | null;
+  linkPreview: SocialEmbedLinkPreview | null;
   /** YouTube video id when platform is youtube — used by the click-to-load facade. */
   youtubeId: string | null;
   /** True when we could not fetch rich data and should render the link-out fallback. */

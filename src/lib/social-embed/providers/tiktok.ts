@@ -24,6 +24,7 @@ function emptyTikTok(parsed: ParsedSocialUrl): SocialEmbedData {
     title: null,
     publishedAt: null,
     media: null,
+    linkPreview: null,
     youtubeId: null,
     isFallback: true,
   };
@@ -52,8 +53,13 @@ export async function fetchTikTokEmbed(parsed: ParsedSocialUrl): Promise<SocialE
           width: data.thumbnail_width,
           height: data.thumbnail_height,
           alt: data.title,
+          aspectRatio:
+            data.thumbnail_width && data.thumbnail_height && data.thumbnail_height > 0
+              ? `${data.thumbnail_width} / ${data.thumbnail_height}`
+              : '9 / 16',
         }
       : null,
+    linkPreview: null,
     isFallback: false,
   };
 }

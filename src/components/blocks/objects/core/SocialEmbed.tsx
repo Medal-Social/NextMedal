@@ -19,12 +19,29 @@ import {
   type SocialPlatform,
 } from '@/lib/social-embed';
 import { resolveSocialEmbed } from '@/lib/social-embed/resolve';
-import { formatFullDate } from '@/lib/utils/dates';
 import { SocialEmbedCard } from './social-embed/social-embed-card';
 
 interface SocialEmbedProps {
   platform: SanitySocialPlatform;
   url: string;
+}
+
+/** Mockup-aligned stamp: "13 Oct 2026 · 18:36" (locale-aware). */
+function formatEmbedStamp(iso: string, locale: string): string {
+  const date = new Date(iso);
+  const dayMonth = new Intl.DateTimeFormat(locale, {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(date);
+  const time = new Intl.DateTimeFormat(locale, {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZone: 'UTC',
+  }).format(date);
+  return `${dayMonth} · ${time}`;
 }
 
 function formatEmbedDate(
@@ -36,7 +53,7 @@ function formatEmbedDate(
   // ISO timestamps from syndication / APIs / normalized oEmbed dates
   if (/^\d{4}-\d{2}-\d{2}/.test(value)) {
     try {
-      return { display: formatFullDate(value, locale), dateTime: value };
+      return { display: formatEmbedStamp(value, locale), dateTime: value };
     } catch {
       return { display: value, dateTime: value };
     }
@@ -47,7 +64,7 @@ function formatEmbedDate(
   if (!Number.isNaN(parsed)) {
     const iso = new Date(parsed).toISOString();
     try {
-      return { display: formatFullDate(iso, locale), dateTime: iso };
+      return { display: formatEmbedStamp(iso, locale), dateTime: iso };
     } catch {
       return { display: value, dateTime: iso };
     }
@@ -87,6 +104,7 @@ function emergencyFallback(
     title: null,
     publishedAt: null,
     media: null,
+    linkPreview: null,
     youtubeId: null,
     isFallback: true,
   };
@@ -132,6 +150,10 @@ export default async function SocialEmbed({ platform, url }: SocialEmbedProps) {
           viewOn: t('viewOn', { platform: platformName }),
           playVideo: t('playVideo'),
           openOriginal: t('openOriginal'),
+          fallbackTitle: t('fallbackTitle'),
+          fallbackDescription: t('fallbackDescription', { platform: platformName }),
+          clickToPlay: t('clickToPlay'),
+          postOn: t('postOn', { platform: platformName }),
         }}
         formattedDate={formattedDate}
       />

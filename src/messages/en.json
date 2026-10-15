@@ -267,7 +267,11 @@
   "socialEmbed": {
     "viewOn": "View on {platform}",
     "playVideo": "Play video",
+    "clickToPlay": "Click to play · loads player",
     "openOriginal": "This post can’t be previewed here. Open it on the original platform.",
+    "fallbackTitle": "Couldn’t load this post",
+    "fallbackDescription": "It may have been deleted or made private, or the platform didn’t respond. You can still open it on {platform}.",
+    "postOn": "Post on {platform}",
     "platforms": {
       "x": "X",
       "linkedin": "LinkedIn",

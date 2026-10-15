@@ -20,6 +20,7 @@ export type {
   ParsedSocialUrl,
   SanitySocialPlatform,
   SocialEmbedData,
+  SocialEmbedLinkPreview,
   SocialEmbedMedia,
   SocialPlatform,
 } from './types';

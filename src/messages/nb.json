@@ -267,7 +267,11 @@
   "socialEmbed": {
     "viewOn": "Se på {platform}",
     "playVideo": "Spill av video",
+    "clickToPlay": "Klikk for å spille · laster spiller",
     "openOriginal": "Dette innlegget kan ikke forhåndsvises her. Åpne det på den opprinnelige plattformen.",
+    "fallbackTitle": "Kunne ikke laste innlegget",
+    "fallbackDescription": "Det kan være slettet eller gjort privat, eller plattformen svarte ikke. Du kan fortsatt åpne det på {platform}.",
+    "postOn": "Innlegg på {platform}",
     "platforms": {
       "x": "X",
       "linkedin": "LinkedIn",

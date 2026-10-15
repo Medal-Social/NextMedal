@@ -23,6 +23,7 @@ function fallbackCard(
     title: null,
     publishedAt: null,
     media: null,
+    linkPreview: null,
     youtubeId: platform === 'youtube' ? (extras?.youtubeId ?? null) : null,
     isFallback: true,
     ...extras,

@@ -27,8 +27,11 @@ function emptyYouTube(parsed: ParsedSocialUrl): SocialEmbedData {
           url: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
           width: 480,
           height: 360,
+          aspectRatio: '16 / 9',
+          alt: undefined,
         }
       : null,
+    linkPreview: null,
     youtubeId: id,
     isFallback: !id,
   };
@@ -59,8 +62,10 @@ export async function fetchYouTubeEmbed(parsed: ParsedSocialUrl): Promise<Social
           width: data.thumbnail_width,
           height: data.thumbnail_height,
           alt: data.title,
+          aspectRatio: '16 / 9',
         }
       : base.media,
+    linkPreview: null,
     isFallback: false,
   };
 }

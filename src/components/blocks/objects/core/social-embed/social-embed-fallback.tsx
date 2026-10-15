@@ -44,6 +44,7 @@ export function SocialEmbedFallback({ platform, url }: SocialEmbedFallbackProps)
     title: null,
     publishedAt: null,
     media: null,
+    linkPreview: null,
     youtubeId: null,
     isFallback: true,
   };
@@ -56,6 +57,10 @@ export function SocialEmbedFallback({ platform, url }: SocialEmbedFallbackProps)
         viewOn: t('viewOn', { platform: platformName }),
         playVideo: t('playVideo'),
         openOriginal: t('openOriginal'),
+        fallbackTitle: t('fallbackTitle'),
+        fallbackDescription: t('fallbackDescription', { platform: platformName }),
+        clickToPlay: t('clickToPlay'),
+        postOn: t('postOn', { platform: platformName }),
       }}
     />
   );

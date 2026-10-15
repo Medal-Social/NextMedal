@@ -23,6 +23,31 @@ describe('resolveSocialEmbed', () => {
                 screen_name: 'AnthropicAI',
                 profile_image_url_https: 'https://pbs.twimg.com/profile_images/abc_normal.jpg',
               },
+              card: {
+                binding_values: {
+                  title: {
+                    type: 'STRING',
+                    string_value: 'Redesigning source control at Anthropic',
+                  },
+                  description: {
+                    type: 'STRING',
+                    string_value: 'As our merges per day grew more than tenfold…',
+                  },
+                  vanity_url: { type: 'STRING', string_value: 'anthropic.com' },
+                  photo_image_full_size_large: {
+                    type: 'IMAGE',
+                    image_value: {
+                      url: 'https://pbs.twimg.com/card_img/example.jpg',
+                      width: 600,
+                      height: 314,
+                    },
+                  },
+                  photo_image_full_size_alt_text: {
+                    type: 'STRING',
+                    string_value: 'Anthropic logo',
+                  },
+                },
+              },
             }),
             { status: 200, headers: { 'Content-Type': 'application/json' } }
           );
@@ -41,6 +66,13 @@ describe('resolveSocialEmbed', () => {
     expect(data?.authorHandle).toBe('@AnthropicAI');
     expect(data?.text).toContain('source control');
     expect(data?.authorAvatarUrl).toContain('pbs.twimg.com');
+    expect(data?.linkPreview).toMatchObject({
+      domain: 'anthropic.com',
+      title: 'Redesigning source control at Anthropic',
+      description: expect.stringContaining('merges'),
+    });
+    expect(data?.linkPreview?.image?.url).toContain('pbs.twimg.com');
+    expect(data?.linkPreview?.image?.aspectRatio).toBe('600 / 314');
   });
 
   it('returns a graceful fallback card for Instagram (no token)', async () => {

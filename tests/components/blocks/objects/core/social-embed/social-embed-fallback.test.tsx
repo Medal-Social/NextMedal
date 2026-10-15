@@ -26,9 +26,9 @@ describe('SocialEmbedFallback', () => {
     const article = screen.getByRole('article');
     expect(article).toHaveAttribute('data-fallback', 'true');
     expect(article).toHaveAttribute('data-platform', 'x');
-    expect(screen.getByRole('link', { name: /View on X/i })).toHaveAttribute(
-      'href',
-      'https://x.com/gitlab/status/2110167424234295775'
-    );
+    const link = screen.getByRole('link', { name: /View on X/i });
+    expect(link).toHaveAttribute('href', 'https://x.com/gitlab/status/2110167424234295775');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer nofollow ugc');
+    expect(screen.getByText(/Couldn’t load this post|Kunne ikke|تعذّر/i)).toBeInTheDocument();
   });
 });
