@@ -1,8 +1,14 @@
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import SocialEmbed from '@/components/blocks/objects/core/SocialEmbed';
 import { routing } from '@/i18n/routing';
-import { BASE_URL } from '@/lib/core/env';
+import { BASE_URL, env } from '@/lib/core/env';
+import {
+  isAppProductionEnv,
+  isSocialEmbedQaFixtureAllowed,
+  QA_SOCIAL_EMBEDS_PATH,
+} from '@/lib/social-embed/qa-fixture-access';
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -10,8 +16,9 @@ type Props = {
 
 /**
  * Fixture article-like page for Lighthouse gating of social embed cards.
- * Uses real server resolve (X syndication / YouTube oEmbed) plus an intentional
- * fallback card. Not linked from site nav.
+ * Served only on non-production (dev / staging / preview) or when
+ * `ALLOW_QA_SOCIAL_EMBEDS` is set. Production returns 404.
+ * Not linked from site nav and excluded from the sitemap.
  */
 const FIXTURES = [
   {
@@ -29,8 +36,9 @@ const FIXTURES = [
   {
     key: 'youtube',
     platform: 'youtube' as const,
-    url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-    label: 'YouTube · click-to-play facade',
+    // Real Medal Social channel video (not a meme / rickroll).
+    url: 'https://www.youtube.com/watch?v=Svz_KbFAz9Y',
+    label: 'YouTube · Medal Social (click-to-play facade)',
   },
   {
     key: 'fallback',
@@ -45,30 +53,57 @@ function localePrefix(locale: string): string {
   return locale === routing.defaultLocale ? '' : `/${locale}`;
 }
 
+function assertQaFixtureAllowed(): void {
+  if (
+    !isSocialEmbedQaFixtureAllowed({
+      appEnv: env.NEXT_PUBLIC_APP_ENV,
+      vercelEnv: env.VERCEL_ENV,
+      qaFlag: env.ALLOW_QA_SOCIAL_EMBEDS,
+    })
+  ) {
+    notFound();
+  }
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  assertQaFixtureAllowed();
+
   const { locale } = await params;
-  const canonical = `${BASE_URL}${localePrefix(locale)}/qa/social-embeds`;
+  const path = `${localePrefix(locale)}${QA_SOCIAL_EMBEDS_PATH}`;
+  const absoluteUrl = `${BASE_URL}${path}`;
+  const isProd = isAppProductionEnv(env.NEXT_PUBLIC_APP_ENV, env.VERCEL_ENV);
+
+  // Staging/preview/dev: indexable so Lighthouse SEO can score 100.
+  // Production (only reachable via ALLOW_QA_SOCIAL_EMBEDS): no canonical, noindex.
+  if (isProd) {
+    return {
+      title: 'Social embed fixture | Medal Social',
+      description:
+        'Internal Lighthouse fixture for Medal-branded social embed cards. Not for public indexing.',
+      robots: { index: false, follow: false },
+    };
+  }
 
   return {
     title: 'Social embed fixture | Medal Social',
     description:
       'Lighthouse and SEO gate page for Medal-branded social embed cards. Server-rendered X, YouTube, and fallback cards with no third-party widget scripts.',
-    alternates: { canonical },
+    alternates: { canonical: absoluteUrl },
     openGraph: {
       title: 'Social embed fixture | Medal Social',
       description:
         'Server-rendered Medal social cards for Lighthouse Performance, Accessibility, Best Practices, and SEO.',
-      url: canonical,
+      url: absoluteUrl,
       siteName: 'Medal Social',
       locale,
       type: 'article',
     },
-    // Indexable so the Lighthouse SEO category can score 100 (noindex fails is-crawlable).
-    // Page is not linked from site nav; see docs/SOCIAL_EMBEDS.md.
   };
 }
 
 export default async function SocialEmbedFixturePage({ params }: Props) {
+  assertQaFixtureAllowed();
+
   const { locale } = await params;
   setRequestLocale(locale);
 
@@ -100,7 +135,6 @@ export default async function SocialEmbedFixturePage({ params }: Props) {
             >
               {fixture.label}
             </h2>
-            {/* loading=lazy on card media; aspect-ratio boxes keep CLS at 0. */}
             <SocialEmbed platform={fixture.platform} url={fixture.url} />
           </section>
         ))}

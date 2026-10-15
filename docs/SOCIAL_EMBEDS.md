@@ -49,6 +49,10 @@ We keep the Medal fallback link-out card (no scripts, no tokens). Do not add Fac
 
 Fixture page: `/qa/social-embeds` (lean `(embed-gate)` layout — hand-rolled CSS + locale, no site chrome, no Geist preload).
 
+**Availability:** served on non-production (development / staging / preview) so Lighthouse can run in CI and locally. **Production returns `notFound()` (404)** unless `ALLOW_QA_SOCIAL_EMBEDS` is explicitly set. The path is **never** in the public sitemap; on production (even with the flag) metadata has **no canonical** and `robots: noindex`.
+
+YouTube fixture uses a real Medal Social channel video (`Svz_KbFAz9Y`), not a meme/rickroll.
+
 **Scores (2026-10-15 production build):** mobile **100 / 100 / 100 / 100**, desktop **100 / 100 / 100 / 100** (Perf / A11y / Best Practices / SEO). CLS **0**. Full table + JSON/HTML reports: [`docs/lighthouse/social-embeds.md`](./lighthouse/social-embeds.md).
 
 Hard requirement before merge: **100** in Performance, Accessibility, Best Practices, and SEO on **both** mobile and desktop for that fixture.

@@ -5,6 +5,7 @@ import { getAllCollections } from '@/lib/collections/registry';
 import type { CollectionType } from '@/lib/collections/types';
 import { BASE_URL } from '@/lib/core/env';
 import { logger } from '@/lib/core/logger';
+import { isQaFixtureSitemapPath } from '@/lib/social-embed/qa-fixture-access';
 import { fetchSanityLive } from '@/sanity/lib/live';
 import { SITEMAP_TRANSLATIONS_QUERY, SITEMAP_WITH_TRANSLATIONS_QUERY } from '@/sanity/lib/queries';
 
@@ -144,6 +145,9 @@ function escapeXml(str: string): string {
 
 function generateUrlEntry(entry: SitemapEntry, prefix: string = ''): string {
   const url = buildUrl(entry.slug, entry.language, prefix);
+  // Hard denylist: QA fixture routes must never ship in the public sitemap.
+  if (isQaFixtureSitemapPath(url)) return '';
+
   const hreflangLinks = buildHreflangLinks(entry, prefix);
   const hasTranslations = hreflangLinks.length > 1;
 
@@ -169,6 +173,8 @@ async function generateCollectionUrlEntry(
   collectionSlugsMap: Map<string, Record<CollectionType, string>>
 ): Promise<string> {
   const url = await buildCollectionUrl(entry.slug, entry._type, entry.language, collectionSlugsMap);
+  if (isQaFixtureSitemapPath(url)) return '';
+
   const hreflangLinks = await buildCollectionHreflangLinks(entry, collectionSlugsMap);
   const hasTranslations = hreflangLinks.length > 1;
 
