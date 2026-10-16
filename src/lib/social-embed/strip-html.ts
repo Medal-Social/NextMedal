@@ -2,21 +2,37 @@
  * Strip tags from oEmbed HTML snippets so we can show plain text on our card.
  * Not a full HTML sanitizer — input is trusted provider markup we discard.
  */
+const ENTITIES: Record<string, string> = {
+  nbsp: ' ',
+  mdash: '—',
+  '#8212': '—',
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  '#39': "'",
+};
+
 export function stripHtml(html: string): string {
-  return html
-    .replace(/<br\s*\/?>/gi, '\n')
-    .replace(/<\/p>/gi, '\n')
-    .replace(/<[^>]+>/g, '')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&mdash;/gi, '—')
-    .replace(/&#8212;/g, '—')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
+  let text = html.replace(/<br\s*\/?>/gi, '\n').replace(/<\/p>/gi, '\n');
+  // Repeat until stable so nested fragments like `<scr<b>ipt>` cannot reassemble a tag.
+  let previous: string;
+  do {
+    previous = text;
+    text = text.replace(/<[^<>]*>/g, '');
+  } while (text !== previous);
+  return (
+    text
+      // Drop any unmatched angle bracket left behind by malformed markup.
+      .replace(/[<>]/g, '')
+      // Decode entities in a single pass so `&amp;lt;` stays `&lt;` (no double unescaping).
+      .replace(
+        /&(nbsp|mdash|#8212|amp|lt|gt|quot|#39);/gi,
+        (_, name: string) => ENTITIES[name.toLowerCase()] ?? _
+      )
+      .replace(/\n{3,}/g, '\n\n')
+      .trim()
+  );
 }
 
 const ENGLISH_MONTHS =

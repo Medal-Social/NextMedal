@@ -32,9 +32,15 @@ export function isSocialEmbedQaFixtureAllowed(opts: {
   appEnv?: string | null;
   vercelEnv?: string | null;
   qaFlag?: string | null;
+  /** `process.env.NODE_ENV`; production builds without a deploy identity are treated as production. */
+  nodeEnv?: string | null;
 }): boolean {
   if (isTruthyFlag(opts.qaFlag)) return true;
-  return !isAppProductionEnv(opts.appEnv, opts.vercelEnv);
+  if (isAppProductionEnv(opts.appEnv, opts.vercelEnv)) return false;
+  // An explicit non-production deploy identity (staging / preview / development) is allowed.
+  if (opts.appEnv || opts.vercelEnv) return true;
+  // No identity at all (e.g. a self-hosted Docker build): only allow outside production mode.
+  return opts.nodeEnv !== 'production';
 }
 
 /** True when a pathname is a QA fixture that must stay out of the sitemap. */

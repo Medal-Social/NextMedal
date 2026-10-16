@@ -105,3 +105,17 @@ describe('isQaFixtureSitemapPath (sitemap exclusion)', () => {
     expect(isQaFixtureSitemapPath('https://example.com/pricing')).toBe(false);
   });
 });
+
+describe('isSocialEmbedQaFixtureAllowed (no deploy identity)', () => {
+  it('404s a production-mode build that has no app/Vercel environment set', () => {
+    expect(isSocialEmbedQaFixtureAllowed({ nodeEnv: 'production' })).toBe(false);
+  });
+
+  it('allows a development-mode build without a deploy identity', () => {
+    expect(isSocialEmbedQaFixtureAllowed({ nodeEnv: 'development' })).toBe(true);
+  });
+
+  it('still allows an explicitly identified staging build in production mode', () => {
+    expect(isSocialEmbedQaFixtureAllowed({ appEnv: 'staging', nodeEnv: 'production' })).toBe(true);
+  });
+});

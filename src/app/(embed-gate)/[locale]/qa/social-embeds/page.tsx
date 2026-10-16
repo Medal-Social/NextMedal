@@ -59,6 +59,7 @@ function assertQaFixtureAllowed(): void {
       appEnv: env.NEXT_PUBLIC_APP_ENV,
       vercelEnv: env.VERCEL_ENV,
       qaFlag: env.ALLOW_QA_SOCIAL_EMBEDS,
+      nodeEnv: process.env.NODE_ENV,
     })
   ) {
     notFound();
