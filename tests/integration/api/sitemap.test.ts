@@ -316,6 +316,81 @@ describe('sitemap-[locale].xml route', () => {
       expect(xml).not.toContain('qa/social-embeds');
       expect(xml).not.toContain('/qa/social-embeds');
     });
+
+    it('omits a translated QA fixture slug from page and collection hreflang links', async () => {
+      mockFetchSanityLive.mockResolvedValueOnce({
+        pages: [
+          {
+            _id: 'page-about',
+            slug: 'about',
+            lastModified: '2024-01-01T00:00:00Z',
+            priority: 0.8,
+            language: 'en',
+          },
+        ],
+        articles: [],
+        collections: [
+          {
+            _id: 'col-guide',
+            _type: 'collection.article',
+            slug: 'guide',
+            lastModified: '2024-01-01T00:00:00Z',
+            priority: 0.6,
+            language: 'en',
+          },
+        ],
+      });
+      mockFetchSanityLive.mockResolvedValueOnce([
+        {
+          _id: 'translation-about',
+          documentId: 'page-about',
+          translations: [
+            { value: { _id: 'page-about', _type: 'page', slug: 'about', language: 'en' } },
+            {
+              value: {
+                _id: 'page-qa-nb',
+                _type: 'page',
+                slug: 'qa/social-embeds',
+                language: 'nb',
+              },
+            },
+            { value: { _id: 'page-about-ar', _type: 'page', slug: 'an', language: 'ar' } },
+          ],
+        },
+        {
+          _id: 'translation-guide',
+          documentId: 'col-guide',
+          translations: [
+            {
+              value: {
+                _id: 'col-guide',
+                _type: 'collection.article',
+                slug: 'guide',
+                language: 'en',
+              },
+            },
+            {
+              value: {
+                _id: 'col-qa-nb',
+                _type: 'collection.article',
+                slug: 'qa/social-embeds',
+                language: 'nb',
+              },
+            },
+          ],
+        },
+      ]);
+
+      const response = await GET(mockRequest, { params: createParams('en') });
+      const xml = await response.text();
+
+      expect(xml).toContain('<loc>https://example.com/about</loc>');
+      expect(xml).toContain(
+        '<xhtml:link rel="alternate" hreflang="ar" href="https://example.com/ar/an"/>'
+      );
+      expect(xml).toContain('<loc>https://example.com/articles/guide</loc>');
+      expect(xml).not.toContain('qa/social-embeds');
+    });
   });
 
   describe('Multi-language support (hreflang)', () => {

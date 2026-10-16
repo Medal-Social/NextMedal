@@ -12,9 +12,15 @@ async function pdfjs() {
   return lib;
 }
 
-export async function openPdf(src: string): Promise<PDFDocumentProxy> {
+/** In-flight pdf.js load. Call `destroy()` to abort the download before `promise` settles. */
+export interface PdfLoadingTask {
+  promise: Promise<PDFDocumentProxy>;
+  destroy: () => Promise<void> | void;
+}
+
+export async function openPdf(src: string): Promise<PdfLoadingTask> {
   const lib = await pdfjs();
-  return lib.getDocument({ url: src }).promise;
+  return lib.getDocument({ url: src });
 }
 
 /** Release the document and its worker-side resources. */

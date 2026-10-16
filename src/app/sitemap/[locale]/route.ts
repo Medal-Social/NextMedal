@@ -143,12 +143,19 @@ function escapeXml(str: string): string {
     .replace(/'/g, '&apos;');
 }
 
+/** Drop QA fixture URLs from primary locs and from alternate-language links. */
+function omitQaFixtureLinks(
+  links: { lang: string; url: string }[]
+): { lang: string; url: string }[] {
+  return links.filter((link) => !isQaFixtureSitemapPath(link.url));
+}
+
 function generateUrlEntry(entry: SitemapEntry, prefix: string = ''): string {
   const url = buildUrl(entry.slug, entry.language, prefix);
   // Hard denylist: QA fixture routes must never ship in the public sitemap.
   if (isQaFixtureSitemapPath(url)) return '';
 
-  const hreflangLinks = buildHreflangLinks(entry, prefix);
+  const hreflangLinks = omitQaFixtureLinks(buildHreflangLinks(entry, prefix));
   const hasTranslations = hreflangLinks.length > 1;
 
   let xml = '  <url>\n';
@@ -175,7 +182,9 @@ async function generateCollectionUrlEntry(
   const url = await buildCollectionUrl(entry.slug, entry._type, entry.language, collectionSlugsMap);
   if (isQaFixtureSitemapPath(url)) return '';
 
-  const hreflangLinks = await buildCollectionHreflangLinks(entry, collectionSlugsMap);
+  const hreflangLinks = omitQaFixtureLinks(
+    await buildCollectionHreflangLinks(entry, collectionSlugsMap)
+  );
   const hasTranslations = hreflangLinks.length > 1;
 
   let xml = '  <url>\n';
