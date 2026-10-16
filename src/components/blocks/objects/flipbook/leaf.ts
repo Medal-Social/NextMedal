@@ -375,7 +375,10 @@ export class Leaf {
     this.host.classList.remove('is-dragging');
     const first = d.samples[0];
     const last = d.samples[d.samples.length - 1];
-    const v = first && last && last.t > first.t ? (last.p - first.p) / (last.t - first.t) : 0;
+    // A flick only counts if the pointer was still moving when released.
+    const resting = !last || e.timeStamp - last.t > 100;
+    const v =
+      !resting && first && last && last.t > first.t ? (last.p - first.p) / (last.t - first.t) : 0;
     const p = this.turn.p;
     const complete = e.type !== 'pointercancel' && (v > 0.0012 || (p > 0.42 && v > -0.0012));
     const rest = complete ? 1 - p : p;
