@@ -1158,3 +1158,33 @@
     url("/brand/medal-mark.svg") center / cover no-repeat,
     var(--fb-accent-gradient);
 }
+
+/* Finger-sized hit areas (WCAG 2.2 / repo minimum 44px) without changing the desktop look. */
+@media (pointer: coarse) {
+  .fb-range {
+    height: 44px;
+  }
+  .fb-powered {
+    min-height: 44px;
+  }
+}
+
+/* Isolate from site-wide element styles (e.g. NextMedal's global `strong { color: var(--primary) }`). */
+.fb strong,
+.fb b {
+  color: inherit;
+}
+
+/* Dark sites: dark chrome around the book; the stage and pages are unchanged. */
+.dark .fb {
+  --fb-surface: #17132f;
+  --fb-surface-muted: #221c44;
+  --fb-border: #2e2a52;
+  --fb-ink: #f4f4f5;
+  --fb-ink-muted: #b9a8cc;
+  --fb-accent: #9f5fc8;
+  --fb-accent-soft: #2d1650;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.3),
+    0 24px 60px -24px rgba(0, 0, 0, 0.6);
+}
