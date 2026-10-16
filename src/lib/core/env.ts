@@ -29,6 +29,10 @@ const envSchema = z.object({
   // switched to bearer-token auth)
   MEDAL_API_KEY: z.string().min(1).optional(),
   MEDAL_API_ENDPOINT: z.url().optional(),
+
+  // Optional: serve `/qa/social-embeds` even when APP_ENV/VERCEL_ENV is production.
+  // Staging/preview/dev always allow the fixture; production 404s unless this is set.
+  ALLOW_QA_SOCIAL_EMBEDS: z.string().optional(),
 });
 
 // CI/CD systems expose *unset* secrets as empty strings rather than omitting
@@ -52,6 +56,7 @@ const rawEnv: Record<string, string | undefined> = {
   NEXT_PUBLIC_IMAGE_PROXY_URL: process.env.NEXT_PUBLIC_IMAGE_PROXY_URL,
   MEDAL_API_KEY: process.env.MEDAL_API_KEY,
   MEDAL_API_ENDPOINT: process.env.MEDAL_API_ENDPOINT,
+  ALLOW_QA_SOCIAL_EMBEDS: process.env.ALLOW_QA_SOCIAL_EMBEDS,
 };
 for (const key in rawEnv) {
   if (rawEnv[key] === '') rawEnv[key] = undefined;
@@ -85,5 +90,8 @@ export const dev = env.NODE_ENV === 'development';
 export const vercelPreview = env.VERCEL_ENV === 'preview';
 export const isStaging = env.NEXT_PUBLIC_APP_ENV === 'staging';
 export const isPreview = env.NEXT_PUBLIC_APP_ENV === 'preview';
+/** True when this deploy is customer-facing production (APP_ENV or Vercel production). */
+export const isAppProduction =
+  env.NEXT_PUBLIC_APP_ENV === 'production' || env.VERCEL_ENV === 'production';
 export const BASE_URL =
   dev || !env.NEXT_PUBLIC_BASE_URL ? 'http://localhost:3000' : env.NEXT_PUBLIC_BASE_URL;

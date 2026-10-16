@@ -38,6 +38,7 @@ import modules from './fragments/modules';
 // Modules - Content Sections
 import accordionList from './modules/content/accordion-list';
 import features from './modules/content/features';
+import flipbook from './modules/content/flipbook';
 import logoCloud from './modules/content/logo-cloud';
 import pricingComparison from './modules/content/pricing-comparison';
 import pricingList from './modules/content/pricing-list';
@@ -121,6 +122,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   accordionList,
   features,
   logoCloud,
+  flipbook,
   pricingComparison,
   pricingList,
   productComparison,

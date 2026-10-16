@@ -61,12 +61,13 @@ export default {
     ) {
       url.protocol = canonical.protocol;
       url.host = canonical.host;
+      url.port = canonical.port;
       return Response.redirect(url, 308);
     }
     const publicFile = await servePublicFile(request, env);
     if (publicFile) return publicFile;
-    const response = await withOgFallback(request, env, () =>
-      openNextWorker.fetch(request, env, ctx)
+    const response = await withOgFallback(request, env, (renderRequest) =>
+      openNextWorker.fetch(renderRequest, env, ctx)
     );
     return withDocumentFreshness(request, gzipHtmlResponse(request, response));
   },

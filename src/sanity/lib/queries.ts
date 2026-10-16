@@ -98,6 +98,12 @@ const BASE_MODULES_QUERY = groq`
 			}
 		} 
 	},
+	_type == 'flipbook' => {
+		title,
+		'src': file.asset->url,
+		'filename': file.asset->originalFilename,
+		'size': file.asset->size
+	},
 	_type == 'team' => {
 		...,
 		intro[]{ ${PT_BLOCK_QUERY} },

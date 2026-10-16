@@ -316,6 +316,21 @@ This script automatically pulls required build-time variables from your `.env` a
 ./scripts/docker-build.sh my-custom-image-name
 ```
 
+The script resolves a stable deployment ID on the host before Docker excludes
+`.git`: `NEXT_DEPLOYMENT_ID`, then `GITHUB_SHA`, then the checked-out commit.
+For a source archive without Git metadata, supply the release ID explicitly:
+
+```bash
+NEXT_DEPLOYMENT_ID=release-2026-09-19 pnpm docker:build
+```
+
+Use a different ID when rebuilding the same commit with different content or
+environment values. When invoking Docker directly (including external CI), pass
+`--build-arg NEXT_DEPLOYMENT_ID="$GITHUB_SHA"` alongside the existing Sanity/site
+arguments. `NEXT_DEPLOYMENT_ID` is a public build identifier, not a secret, and
+must be present in the build stage; setting it only when starting the image is
+not sufficient. Missing IDs fail before an archive build invokes Docker.
+
 ## Why Medal Social? 🏆
 
 NextMedal is crafted by Medal Social, a marketing powerhouse that knows how to elevate brands. While the core template is the most superior and stunning out of the box, you can take your website to the next level with Medal Social's premium marketing integrations, including:
@@ -356,3 +371,25 @@ NextMedal is licensed under the Apache License 2.0.
 ---
 
 Built with ❤️ by [Medal Social](https://medalsocial.com) in Norway
+
+
+### Worker response boundaries
+
+The Worker blocks malformed or sensitive paths before routing, and canonical-origin
+redirects preserve the path and query while replacing protocol, hostname, and port.
+Locale redirects remain on the original origin even when a path has repeated slashes.
+
+Missing static assets return a direct 404. HTML, XML, and JSON document slugs are
+resolved by the CMS route after a static-asset miss; the application returns 404
+when the document is absent. Existing assets and explicit feed routes retain precedence.
+
+OG image responses have a five-second deadline. The Worker passes an abort-aware
+request to OpenNext and cancels late response bodies. Cancellation is cooperative:
+imports and CPU-bound rendering cannot be forcibly interrupted. Renderer/stream/deadline
+failures are logged with their phase; request query strings are not logged by this
+boundary. If rendering or the fallback asset lookup fails, the final recovery is a
+redirect to `/og-fallback.png`.
+
+Outside Cloudflare, OG font HTTP loading requires a valid `NEXT_PUBLIC_BASE_URL`
+deployment origin. It never uses the incoming Host, rejects redirects, and caps
+font/logo bodies at 2 MiB. Missing settings skip optional fonts.
