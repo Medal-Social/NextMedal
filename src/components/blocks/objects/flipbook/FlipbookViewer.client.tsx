@@ -47,6 +47,18 @@ function fmtSize(bytes?: number) {
   return `${Math.max(1, Math.round(bytes / 1024))} KB`;
 }
 
+/** Cross-origin `download` attributes are ignored; Sanity's CDN forces a download with `?dl=`. */
+export function downloadHref(src: string, filename?: string) {
+  try {
+    const url = new URL(src, 'http://local.invalid');
+    if (url.hostname !== 'cdn.sanity.io') return src;
+    url.searchParams.set('dl', filename ?? '');
+    return url.toString();
+  } catch {
+    return src;
+  }
+}
+
 /** Thumbnail grouping: the cover stands alone, then left/right pairs. */
 function sideOf(i: number) {
   if (i === 0) return 'cover';
@@ -93,6 +105,7 @@ export function FlipbookViewer({
   const [fullscreen, setFullscreen] = useState(false);
   const [hint, setHint] = useState(false);
   const [peek, setPeek] = useState<number | null>(null);
+  const [scrub, setScrub] = useState<number | null>(null);
   const interactedRef = useRef(false);
 
   const rtl = dir === 'rtl';
@@ -153,11 +166,21 @@ export function FlipbookViewer({
     const urls: string[] = [];
     setStatus('loading');
     setLoaded(0);
+    let doc: PDFDocumentProxy | null = null;
+    let frame = 0;
+    const flushImages = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        setImages([...imagesRef.current]);
+      });
+    };
     setImages([]);
+    setZoom(null);
     imagesRef.current = [];
     (async () => {
       try {
-        const doc = await openPdf(src);
+        doc = await openPdf(src);
         if (cancelled) return void closePdf(doc);
         docRef.current = doc;
         const total = doc.numPages;
@@ -166,7 +189,8 @@ export function FlipbookViewer({
         setRatio(r);
         setCount(total);
         const start = Math.min(Math.max(0, startPage - 1), total - 1);
-        const height = targetPageHeight();
+        // Big books keep memory in check with smaller book images (zoom re-renders sharp on demand).
+        const height = Math.round(targetPageHeight() * (total > 80 ? 0.7 : 1));
         const head = [...new Set([start, 0, 1, 2, start + 1].filter((i) => i < total))];
         const order = [...head, ...[...Array(total).keys()].filter((i) => !head.includes(i))];
         let done = 0;
@@ -175,7 +199,7 @@ export function FlipbookViewer({
           if (cancelled) return void URL.revokeObjectURL(url);
           urls.push(url);
           imagesRef.current[i] = url;
-          setImages([...imagesRef.current]);
+          flushImages();
           setLoaded(++done);
           leafRef.current?.refresh(i);
           if (done === head.length) {
@@ -185,11 +209,18 @@ export function FlipbookViewer({
         }
       } catch {
         // Damaged/encrypted PDFs land in the error state; download stays available.
-        if (!cancelled) setStatus('error');
+        if (cancelled) return;
+        for (const url of urls.splice(0)) URL.revokeObjectURL(url);
+        imagesRef.current = [];
+        setImages([]);
+        if (doc) void closePdf(doc);
+        docRef.current = null;
+        setStatus('error');
       }
     })();
     return () => {
       cancelled = true;
+      cancelAnimationFrame(frame);
       for (const url of urls) URL.revokeObjectURL(url);
       if (docRef.current) void closePdf(docRef.current);
       docRef.current = null;
@@ -208,6 +239,7 @@ export function FlipbookViewer({
       rtl,
       duration: prefersReduced ? 0 : 760,
       getSrc: (i) => imagesRef.current[i],
+      pageAlt: (i) => `${label} — ${fmt(labels.pageOf, { page: i + 1, total: count })}`,
       onBegin: (target) => {
         rootRef.current?.setAttribute('data-flip', 'flipping');
         const pageW = Number.parseFloat(host.style.getPropertyValue('--pw')) || 0;
@@ -267,12 +299,19 @@ export function FlipbookViewer({
   /* ── actions */
   const next = useCallback(() => leafRef.current?.flip(1), []);
   const prev = useCallback(() => leafRef.current?.flip(-1), []);
+  const closeZoom = useCallback(() => {
+    setZoom((z) => {
+      if (z && z.url !== imagesRef.current[z.page]) URL.revokeObjectURL(z.url);
+      return null;
+    });
+  }, []);
+
   const jump = useCallback(
     (i: number) => {
-      setZoom(null);
+      closeZoom();
       leafRef.current?.go(Math.max(0, Math.min(count - 1, i)));
     },
-    [count]
+    [count, closeZoom]
   );
 
   const openZoom = useCallback(
@@ -297,7 +336,7 @@ export function FlipbookViewer({
       if (doc && (width * dpr) / ratio > targetPageHeight() * 1.1) {
         const sharp = await renderPage(doc, page, { width: width * dpr });
         setZoom((z) => {
-          if (z && z.page === page) return { ...z, url: sharp };
+          if (z && z.page === page && docRef.current === doc) return { ...z, url: sharp };
           URL.revokeObjectURL(sharp);
           return z;
         });
@@ -305,13 +344,6 @@ export function FlipbookViewer({
     },
     [portrait, ratio, markInteracted]
   );
-
-  const closeZoom = useCallback(() => {
-    setZoom((z) => {
-      if (z && z.url !== imagesRef.current[z.page]) URL.revokeObjectURL(z.url);
-      return null;
-    });
-  }, []);
 
   // Double-click / double-tap on the zoomed page closes it (the close button is the accessible path).
   useEffect(() => {
@@ -337,9 +369,10 @@ export function FlipbookViewer({
     const root = rootRef.current;
     if (!root) return;
     if (document.fullscreenElement === root) void document.exitFullscreen();
-    else if (root.requestFullscreen) void root.requestFullscreen();
-    else setFullscreen((on) => !on); // iPhone Safari: immersive overlay fallback
-  }, []);
+    else if (fullscreen) setFullscreen(false);
+    else if (root.requestFullscreen) root.requestFullscreen().catch(() => setFullscreen(true));
+    else setFullscreen(true); // iPhone Safari: immersive overlay fallback
+  }, [fullscreen]);
 
   useEffect(() => {
     const onChange = () => setFullscreen(document.fullscreenElement === rootRef.current);
@@ -370,7 +403,8 @@ export function FlipbookViewer({
     downRef.current = null;
     if (
       !down ||
-      Math.hypot(e.clientX - down.x, e.clientY - down.y) > 10 ||
+      // Below Leaf's 8px drag threshold, so a short drag can never also count as a tap.
+      Math.hypot(e.clientX - down.x, e.clientY - down.y) > 6 ||
       Date.now() - down.t > 450
     )
       return;
@@ -467,7 +501,10 @@ export function FlipbookViewer({
 
   useEffect(() => {
     if (!fullscreen) return;
-    const handler = (e: KeyboardEvent) => onKey(e);
+    // Events from inside the flipbook already reach the root's onKeyDown.
+    const handler = (e: KeyboardEvent) => {
+      if (!rootRef.current?.contains(e.target as Node)) onKey(e);
+    };
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
   }, [fullscreen, onKey]);
@@ -499,6 +536,15 @@ export function FlipbookViewer({
       ? { label: 'Medal Social', href: 'https://www.medalsocial.com' }
       : poweredBy || null;
   const peekIndex = peek == null ? null : Math.max(0, Math.min(count - 1, peek));
+  const atStart = first === 0;
+  const atEnd = last >= count - 1;
+  // Physical left/right controls: in right-to-left books the left side moves forward.
+  const leftControl = rtl
+    ? { action: next, label: labels.next, disabled: atEnd }
+    : { action: prev, label: labels.previous, disabled: atStart };
+  const rightControl = rtl
+    ? { action: prev, label: labels.previous, disabled: atStart }
+    : { action: next, label: labels.next, disabled: atEnd };
 
   return (
     // biome-ignore lint/a11y/useSemanticElements: a labelled region with keyboard shortcuts is the documented pattern
@@ -571,7 +617,7 @@ export function FlipbookViewer({
           {download && (
             <a
               className="fb-icon-btn"
-              href={src}
+              href={downloadHref(src, filename)}
               download={filename || true}
               aria-label={labels.download}
             >
@@ -628,18 +674,18 @@ export function FlipbookViewer({
         <button
           type="button"
           className="fb-nav fb-prev"
-          aria-label={labels.previous}
-          disabled={first === 0}
-          onClick={rtl ? next : prev}
+          aria-label={leftControl.label}
+          disabled={leftControl.disabled}
+          onClick={leftControl.action}
         >
           <ChevronLeft aria-hidden="true" />
         </button>
         <button
           type="button"
           className="fb-nav fb-next"
-          aria-label={labels.next}
-          disabled={last >= count - 1}
-          onClick={rtl ? prev : next}
+          aria-label={rightControl.label}
+          disabled={rightControl.disabled}
+          onClick={rightControl.action}
         >
           <ChevronRight aria-hidden="true" />
         </button>
@@ -680,7 +726,7 @@ export function FlipbookViewer({
             <button
               type="button"
               className="fb-thumbs-close"
-              aria-label={labels.closeZoom}
+              aria-label={labels.close}
               onClick={() => setThumbsOpen(false)}
             >
               <X size={14} />
@@ -716,9 +762,9 @@ export function FlipbookViewer({
         <button
           type="button"
           className="fb-step prev"
-          aria-label={labels.previous}
-          disabled={first === 0}
-          onClick={prev}
+          aria-label={leftControl.label}
+          disabled={leftControl.disabled}
+          onClick={leftControl.action}
         >
           <ChevronLeft aria-hidden="true" />
         </button>
@@ -733,18 +779,28 @@ export function FlipbookViewer({
             min={1}
             max={Math.max(count, 1)}
             step={1}
-            value={first + 1}
+            value={scrub ?? first + 1}
             aria-label={labels.goToPage}
             aria-valuetext={fmt(labels.pageOf, { page: counterText, total: count })}
-            style={{ '--p': `${count > 1 ? (first / (count - 1)) * 100 : 0}%` } as CSSProperties}
-            onChange={(e) => setPeek(Number(e.target.value) - 1)}
+            style={
+              {
+                '--p': `${count > 1 ? (((scrub ?? first + 1) - 1) / (count - 1)) * 100 : 0}%`,
+              } as CSSProperties
+            }
+            onChange={(e) => {
+              const value = Number(e.target.value);
+              setScrub(value);
+              setPeek(value - 1);
+            }}
             onPointerUp={(e) => {
               jump(Number((e.target as HTMLInputElement).value) - 1);
+              setScrub(null);
               setPeek(null);
             }}
             onKeyUp={(e) => {
-              if (/Arrow|Home|End|Page/.test(e.key))
-                jump(Number((e.target as HTMLInputElement).value) - 1);
+              if (!/Arrow|Home|End|Page/.test(e.key)) return;
+              jump(Number((e.target as HTMLInputElement).value) - 1);
+              setScrub(null);
             }}
             onPointerMove={(e) => {
               if (e.pointerType !== 'mouse' || !count) return;
@@ -752,7 +808,10 @@ export function FlipbookViewer({
               setPeek(Math.round(((e.clientX - r.left) / r.width) * (count - 1)));
             }}
             onPointerLeave={() => setPeek(null)}
-            onBlur={() => setPeek(null)}
+            onBlur={() => {
+              setPeek(null);
+              setScrub(null);
+            }}
           />
           {peekIndex != null && (
             <div
@@ -775,9 +834,9 @@ export function FlipbookViewer({
         <button
           type="button"
           className="fb-step next"
-          aria-label={labels.next}
-          disabled={last >= count - 1}
-          onClick={next}
+          aria-label={rightControl.label}
+          disabled={rightControl.disabled}
+          onClick={rightControl.action}
         >
           <ChevronRight aria-hidden="true" />
         </button>

@@ -4,6 +4,7 @@ export interface FlipbookLabels {
   allPages: string;
   zoom: string;
   closeZoom: string;
+  close: string;
   download: string;
   fullscreen: string;
   goToPage: string;

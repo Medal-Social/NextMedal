@@ -1,6 +1,9 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { FlipbookViewer } from '@/components/blocks/objects/flipbook/FlipbookViewer.client';
+import {
+  downloadHref,
+  FlipbookViewer,
+} from '@/components/blocks/objects/flipbook/FlipbookViewer.client';
 import type { FlipbookLabels } from '@/components/blocks/objects/flipbook/types';
 
 vi.mock('@/components/blocks/objects/flipbook/pdf', () => ({
@@ -17,6 +20,7 @@ const labels: FlipbookLabels = {
   allPages: 'All pages',
   zoom: 'Zoom page',
   closeZoom: 'Close zoom',
+  close: 'Close',
   download: 'Download PDF',
   fullscreen: 'Fullscreen',
   goToPage: 'Go to page',
@@ -108,5 +112,48 @@ describe('FlipbookViewer', () => {
     const region = screen.getByRole('region', { name: 'Doc' });
     expect(region.style.getPropertyValue('--fb-accent')).toBe('#55302A');
     expect(screen.queryByText('Powered by')).toBeNull();
+  });
+
+  it('lets readers scrub to a page with the slider (keyboard and pointer)', async () => {
+    render(<FlipbookViewer src="/x.pdf" title="Doc" labels={labels} dir="ltr" reducedMotion />);
+    await waitFor(() =>
+      expect(screen.getByRole('region', { name: 'Doc' })).toHaveAttribute('data-state', 'ready')
+    );
+    const slider = screen.getByRole('slider', { name: 'Go to page' });
+    fireEvent.change(slider, { target: { value: '4' } });
+    expect(slider).toHaveValue('4');
+    fireEvent.keyUp(slider, { key: 'ArrowRight' });
+    await waitFor(() => expect(counter()).toBe('4–5 / 6'));
+    fireEvent.change(slider, { target: { value: '2' } });
+    fireEvent.pointerUp(slider);
+    await waitFor(() => expect(counter()).toBe('2–3 / 6'));
+  });
+
+  it('maps the physical arrows for right-to-left books', async () => {
+    render(<FlipbookViewer src="/x.pdf" title="Doc" labels={labels} dir="rtl" reducedMotion />);
+    await waitFor(() =>
+      expect(screen.getByRole('region', { name: 'Doc' })).toHaveAttribute('data-state', 'ready')
+    );
+    const left = document.querySelector('.fb-nav.fb-prev') as HTMLButtonElement;
+    expect(left).toHaveAttribute('aria-label', 'Next page');
+    expect(left).not.toBeDisabled();
+    fireEvent.click(left);
+    await waitFor(() => expect(counter()).toBe('2–3 / 6'));
+  });
+
+  it('labels the thumbnail drawer close button as a plain close', async () => {
+    render(<FlipbookViewer src="/x.pdf" title="Doc" labels={labels} dir="ltr" reducedMotion />);
+    expect(document.querySelector('.fb-thumbs-close')).toHaveAttribute('aria-label', 'Close');
+  });
+});
+
+describe('downloadHref', () => {
+  it('forces a download for Sanity CDN files', () => {
+    expect(downloadHref('https://cdn.sanity.io/files/p/d/abc.pdf', 'report.pdf')).toBe(
+      'https://cdn.sanity.io/files/p/d/abc.pdf?dl=report.pdf'
+    );
+  });
+  it('leaves other URLs alone', () => {
+    expect(downloadHref('/api/dev/flipbook-sample', 'x.pdf')).toBe('/api/dev/flipbook-sample');
   });
 });

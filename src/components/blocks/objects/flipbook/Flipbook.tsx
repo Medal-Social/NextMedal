@@ -9,6 +9,7 @@ const LABEL_KEYS = [
   'allPages',
   'zoom',
   'closeZoom',
+  'close',
   'download',
   'fullscreen',
   'goToPage',

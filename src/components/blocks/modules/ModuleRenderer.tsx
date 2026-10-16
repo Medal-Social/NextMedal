@@ -172,7 +172,7 @@ export function ModuleRenderer({
 
     case 'flipbook': {
       const props = module as Sanity.Flipbook;
-      return <FlipbookModule {...props} />;
+      return <FlipbookModule {...props} {...sidebarProps} />;
     }
 
     case 'logo-cloud': {

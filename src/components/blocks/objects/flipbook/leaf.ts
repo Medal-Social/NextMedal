@@ -12,6 +12,8 @@
 export interface LeafOptions {
   count: number;
   getSrc: (index: number) => string | undefined;
+  /** Accessible name for page `index` (defaults to "n / total"). */
+  pageAlt?: (index: number) => string;
   onChange?: (index: number) => void;
   /** A turn started towards the reading position `targetIndex`. */
   onBegin?: (targetIndex: number, dir: 1 | -1) => void;
@@ -189,7 +191,7 @@ export class Leaf {
     }
     el.dataset.page = String(i);
     el.dataset.density = this.isHard(i) ? 'hard' : '';
-    img.alt = `${i + 1} / ${this.count}`;
+    img.alt = this.opts.pageAlt?.(i) ?? `${i + 1} / ${this.count}`;
     const url = this.opts.getSrc(i);
     if (!url) {
       img.removeAttribute('src');
