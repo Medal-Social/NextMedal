@@ -150,6 +150,31 @@ describe('FlipbookViewer', () => {
     await waitFor(() => expect(counter()).toBe('2–3 / 6'));
   });
 
+  it('ignores right-clicks on the page (no tap-to-turn)', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    render(<FlipbookViewer src="/x.pdf" title="Doc" labels={labels} dir="ltr" reducedMotion />);
+    await vi.waitFor(() => expect(document.querySelector('.fb-book.lf')).not.toBeNull());
+    const book = document.querySelector('.fb-book') as HTMLElement;
+    fireEvent.pointerDown(book, { button: 2, clientX: 900, clientY: 300 });
+    fireEvent.pointerUp(book, { button: 2, clientX: 900, clientY: 300 });
+    act(() => {
+      vi.advanceTimersByTime(400);
+    });
+    expect(counter()).toBe('1 / 6');
+    vi.useRealTimers();
+  });
+
+  it('resets the slider when a scrub is cancelled', async () => {
+    render(<FlipbookViewer src="/x.pdf" title="Doc" labels={labels} dir="ltr" reducedMotion />);
+    await engineReady('Doc');
+    const slider = screen.getByRole('slider', { name: 'Go to page' });
+    fireEvent.change(slider, { target: { value: '5' } });
+    expect(slider).toHaveValue('5');
+    fireEvent.pointerCancel(slider);
+    await waitFor(() => expect(slider).toHaveValue('1'));
+    expect(counter()).toBe('1 / 6');
+  });
+
   it('maps the physical arrows for right-to-left books', async () => {
     render(<FlipbookViewer src="/x.pdf" title="Doc" labels={labels} dir="rtl" reducedMotion />);
     await engineReady('Doc');

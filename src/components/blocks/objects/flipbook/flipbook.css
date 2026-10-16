@@ -1211,3 +1211,8 @@
   display: inline-block;
   vertical-align: -3px;
 }
+
+/* The scrub preview shows its page image as soon as it exists (no drawer loaded-state). */
+.fb-scrub-tip .fb-thumb-img img {
+  opacity: 1;
+}

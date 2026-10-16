@@ -431,7 +431,8 @@ export function FlipbookViewer({
   });
   const downRef = useRef<{ x: number; y: number; t: number } | null>(null);
   const onBookPointerDown = (e: React.PointerEvent) => {
-    downRef.current = { x: e.clientX, y: e.clientY, t: Date.now() };
+    // Only the primary button taps/turns (a right-click opens the context menu, like Leaf's drag).
+    downRef.current = e.button === 0 ? { x: e.clientX, y: e.clientY, t: Date.now() } : null;
   };
   const onBookPointerUp = (e: React.PointerEvent) => {
     const down = downRef.current;
@@ -843,6 +844,10 @@ export function FlipbookViewer({
               setPeek(Math.round(((e.clientX - r.left) / r.width) * (count - 1)));
             }}
             onPointerLeave={() => setPeek(null)}
+            onPointerCancel={() => {
+              setScrub(null);
+              setPeek(null);
+            }}
             onBlur={() => {
               setPeek(null);
               setScrub(null);
