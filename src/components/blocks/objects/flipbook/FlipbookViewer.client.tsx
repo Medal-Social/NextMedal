@@ -160,6 +160,14 @@ export function FlipbookViewer({
     [ratio, applyShift]
   );
 
+  // The sharp zoom render is owned here (book images are owned by the load effect).
+  const sharpRef = useRef<string | null>(null);
+  const zoomIdRef = useRef(0);
+  const releaseSharp = useCallback(() => {
+    if (sharpRef.current) URL.revokeObjectURL(sharpRef.current);
+    sharpRef.current = null;
+  }, []);
+
   /* ── load the PDF */
   useEffect(() => {
     let cancelled = false;
@@ -176,6 +184,8 @@ export function FlipbookViewer({
       });
     };
     setImages([]);
+    zoomIdRef.current++;
+    releaseSharp();
     setZoom(null);
     imagesRef.current = [];
     (async () => {
@@ -221,11 +231,12 @@ export function FlipbookViewer({
     return () => {
       cancelled = true;
       cancelAnimationFrame(frame);
+      releaseSharp();
       for (const url of urls) URL.revokeObjectURL(url);
       if (docRef.current) void closePdf(docRef.current);
       docRef.current = null;
     };
-  }, [src, startPage]);
+  }, [src, startPage, releaseSharp]);
 
   /* ── create the engine once the first pages exist */
   // The engine is created once per document; index/relayout/shift changes must not rebuild it.
@@ -300,11 +311,10 @@ export function FlipbookViewer({
   const next = useCallback(() => leafRef.current?.flip(1), []);
   const prev = useCallback(() => leafRef.current?.flip(-1), []);
   const closeZoom = useCallback(() => {
-    setZoom((z) => {
-      if (z && z.url !== imagesRef.current[z.page]) URL.revokeObjectURL(z.url);
-      return null;
-    });
-  }, []);
+    zoomIdRef.current++;
+    releaseSharp();
+    setZoom(null);
+  }, [releaseSharp]);
 
   const jump = useCallback(
     (i: number) => {
@@ -320,6 +330,8 @@ export function FlipbookViewer({
       const url = imagesRef.current[page];
       if (!stage || !url) return;
       const width = Math.round(stage.clientWidth * (portrait ? 1.8 : 1.25));
+      const zoomId = ++zoomIdRef.current;
+      releaseSharp();
       setZoom({ page, url, width });
       markInteracted();
       requestAnimationFrame(() => {
@@ -333,16 +345,21 @@ export function FlipbookViewer({
       });
       const doc = docRef.current;
       const dpr = Math.min(window.devicePixelRatio || 1, 3);
-      if (doc && (width * dpr) / ratio > targetPageHeight() * 1.1) {
-        const sharp = await renderPage(doc, page, { width: width * dpr });
-        setZoom((z) => {
-          if (z && z.page === page && docRef.current === doc) return { ...z, url: sharp };
-          URL.revokeObjectURL(sharp);
-          return z;
-        });
+      if (!doc || (width * dpr) / ratio <= targetPageHeight() * 1.1) return;
+      let sharp: string;
+      try {
+        sharp = await renderPage(doc, page, { width: width * dpr });
+      } catch {
+        return; // Keep showing the book-resolution image.
       }
+      if (zoomId !== zoomIdRef.current || docRef.current !== doc) {
+        URL.revokeObjectURL(sharp);
+        return;
+      }
+      sharpRef.current = sharp;
+      setZoom((z) => (z && z.page === page ? { ...z, url: sharp } : z));
     },
-    [portrait, ratio, markInteracted]
+    [portrait, ratio, markInteracted, releaseSharp]
   );
 
   // Double-click / double-tap on the zoomed page closes it (the close button is the accessible path).

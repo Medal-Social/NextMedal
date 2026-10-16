@@ -1,6 +1,12 @@
+import dynamic from 'next/dynamic';
 import { getLocale, getTranslations } from 'next-intl/server';
 import { LOCALE_CONFIG, type SupportedLocale } from '@/i18n/config';
-import { FlipbookViewer } from './FlipbookViewer.client';
+
+// Code-split: only pages that render a flipbook download the viewer, its engine and styles.
+const FlipbookViewer = dynamic(() =>
+  import('./FlipbookViewer.client').then((mod) => mod.FlipbookViewer)
+);
+
 import type { FlipbookLabels, FlipbookProps } from './types';
 
 const LABEL_KEYS = [

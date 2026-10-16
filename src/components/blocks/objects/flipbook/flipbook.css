@@ -1161,6 +1161,11 @@
 
 /* Finger-sized hit areas (WCAG 2.2 / repo minimum 44px) without changing the desktop look. */
 @media (pointer: coarse) {
+  .fb-zoom-close,
+  .fb-thumbs-close {
+    width: 44px;
+    height: 44px;
+  }
   .fb-tools {
     gap: 8px;
   }

@@ -47,6 +47,11 @@ declare module 'vitest' {
 
 // Mock ResizeObserver
 global.ResizeObserver = class ResizeObserver {
+  // Same signature as the real constructor; the mock keeps the callback but never invokes it.
+  readonly callback: ResizeObserverCallback;
+  constructor(callback: ResizeObserverCallback) {
+    this.callback = callback;
+  }
   observe() {
     // noop - mock implementation
   }

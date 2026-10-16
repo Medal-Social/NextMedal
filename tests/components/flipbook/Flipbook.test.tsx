@@ -36,6 +36,14 @@ const labels: FlipbookLabels = {
   poweredBy: 'Powered by',
 };
 
+/** Ready state *and* the page-turn engine mounted (it attaches in an effect after first paint). */
+async function engineReady(name: string) {
+  await waitFor(() => {
+    expect(screen.getByRole('region', { name })).toHaveAttribute('data-state', 'ready');
+    expect(document.querySelector('.fb-book.lf')).not.toBeNull();
+  });
+}
+
 const counter = () => screen.getByTestId('fb-counter').textContent?.replace(/\s+/g, ' ').trim();
 
 describe('FlipbookViewer', () => {
@@ -76,9 +84,7 @@ describe('FlipbookViewer', () => {
 
   it('opens the thumbnail drawer and jumps', async () => {
     render(<FlipbookViewer src="/x.pdf" title="Doc" labels={labels} dir="ltr" reducedMotion />);
-    await waitFor(() =>
-      expect(screen.getByRole('region', { name: 'Doc' })).toHaveAttribute('data-state', 'ready')
-    );
+    await engineReady('Doc');
     fireEvent.click(screen.getByRole('button', { name: 'All pages' }));
     fireEvent.click(screen.getByRole('button', { name: 'Go to page 4' }));
     await waitFor(() => expect(counter()).toBe('4–5 / 6'));
@@ -116,9 +122,7 @@ describe('FlipbookViewer', () => {
 
   it('lets readers scrub to a page with the slider (keyboard and pointer)', async () => {
     render(<FlipbookViewer src="/x.pdf" title="Doc" labels={labels} dir="ltr" reducedMotion />);
-    await waitFor(() =>
-      expect(screen.getByRole('region', { name: 'Doc' })).toHaveAttribute('data-state', 'ready')
-    );
+    await engineReady('Doc');
     const slider = screen.getByRole('slider', { name: 'Go to page' });
     fireEvent.change(slider, { target: { value: '4' } });
     expect(slider).toHaveValue('4');
@@ -131,9 +135,7 @@ describe('FlipbookViewer', () => {
 
   it('maps the physical arrows for right-to-left books', async () => {
     render(<FlipbookViewer src="/x.pdf" title="Doc" labels={labels} dir="rtl" reducedMotion />);
-    await waitFor(() =>
-      expect(screen.getByRole('region', { name: 'Doc' })).toHaveAttribute('data-state', 'ready')
-    );
+    await engineReady('Doc');
     const left = document.querySelector('.fb-nav.fb-prev') as HTMLButtonElement;
     expect(left).toHaveAttribute('aria-label', 'Next page');
     expect(left).not.toBeDisabled();
