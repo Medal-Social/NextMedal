@@ -35,7 +35,8 @@ specificity), so any `.fb { … }` rule in the site beats them.
   sanity.io/manage → API → CORS origins.
 - **Content-Security-Policy.** If the site sets `connect-src`, allow the project's file assets:
   `https://cdn.sanity.io/files/<projectId>/`. Page images are `blob:` URLs; if the site sets
-  `img-src`, include `blob:`.
+  `img-src`, include `blob:`. pdf.js runs in a same-origin module worker; if the site sets `worker-src`,
+  include `'self'`.
 - **PostCSS cascade-layer polyfills.** Sites that flatten Tailwind's `@layer` rules (e.g. Medal's
   `@medalsocial/postcss-compat`) boost the preflight reset above plain component CSS. Import
   `@medalsocial/postcss-compat/page-scoped-layers.css` at the top of `flipbook.css` there.

@@ -25,7 +25,7 @@ import {
 import { cn } from '@/lib/utils/cn';
 import { computeBookLayout, coverShift, visibleRange } from './layout';
 import { Leaf } from './leaf';
-import { closePdf, openPdf, pageRatio, renderPage, targetPageHeight } from './pdf';
+import { openPdf, pageRatio, renderPage, targetPageHeight } from './pdf';
 import type { FlipbookLabels, FlipbookProps } from './types';
 import './flipbook.css';
 
@@ -37,6 +37,9 @@ export interface FlipbookViewerProps extends FlipbookProps {
 }
 
 type Status = 'loading' | 'ready' | 'error';
+
+/** A second tap within this window is a double-tap (zoom); a single tap waits it out before turning. */
+const DOUBLE_TAP_MS = 300;
 
 const fmt = (template: string, values: Record<string, string | number>) =>
   template.replace(/\{(\w+)\}/g, (_, key: string) => String(values[key] ?? ''));
@@ -188,10 +191,11 @@ export function FlipbookViewer({
     releaseSharp();
     setZoom(null);
     imagesRef.current = [];
+    const pdfHandle = openPdf(src);
     (async () => {
       try {
-        doc = await openPdf(src);
-        if (cancelled) return void closePdf(doc);
+        doc = await pdfHandle.promise;
+        if (cancelled) return;
         docRef.current = doc;
         const total = doc.numPages;
         const r = await pageRatio(doc);
@@ -204,15 +208,29 @@ export function FlipbookViewer({
         const head = [...new Set([start, 0, 1, 2, start + 1].filter((i) => i < total))];
         const order = [...head, ...[...Array(total).keys()].filter((i) => !head.includes(i))];
         let done = 0;
+        let rendered = 0;
         for (const i of order) {
-          const url = await renderPage(doc, i, { height });
-          if (cancelled) return void URL.revokeObjectURL(url);
-          urls.push(url);
-          imagesRef.current[i] = url;
-          flushImages();
+          let url: string | undefined;
+          try {
+            url = await renderPage(doc, i, { height });
+          } catch {
+            // One bad page stays a blank slot; the rest of the book keeps working.
+            url = undefined;
+          }
+          if (cancelled) {
+            if (url) URL.revokeObjectURL(url);
+            return;
+          }
+          if (url) {
+            rendered++;
+            urls.push(url);
+            imagesRef.current[i] = url;
+            flushImages();
+            leafRef.current?.refresh(i);
+          }
           setLoaded(++done);
-          leafRef.current?.refresh(i);
           if (done === head.length) {
+            if (!rendered) throw new Error('No pages could be rendered');
             setIndex(start);
             setStatus('ready');
           }
@@ -223,7 +241,7 @@ export function FlipbookViewer({
         for (const url of urls.splice(0)) URL.revokeObjectURL(url);
         imagesRef.current = [];
         setImages([]);
-        if (doc) void closePdf(doc);
+        pdfHandle.cancel();
         docRef.current = null;
         setStatus('error');
       }
@@ -233,7 +251,7 @@ export function FlipbookViewer({
       cancelAnimationFrame(frame);
       releaseSharp();
       for (const url of urls) URL.revokeObjectURL(url);
-      if (docRef.current) void closePdf(docRef.current);
+      pdfHandle.cancel();
       docRef.current = null;
     };
   }, [src, startPage, releaseSharp]);
@@ -427,7 +445,7 @@ export function FlipbookViewer({
       return;
     const tap = tapRef.current;
     const now = Date.now();
-    if (now - tap.t < 300 && Math.hypot(e.clientX - tap.x, e.clientY - tap.y) < 40) {
+    if (now - tap.t < DOUBLE_TAP_MS && Math.hypot(e.clientX - tap.x, e.clientY - tap.y) < 40) {
       window.clearTimeout(tap.timer);
       tap.t = 0;
       const hit = pageAt(e.clientX, e.clientY);
@@ -448,7 +466,7 @@ export function FlipbookViewer({
           : clientX > r.left + r.width / 2;
         (onRight !== rtl ? next : prev)();
         markInteracted();
-      }, 260),
+      }, DOUBLE_TAP_MS),
     };
   };
   const pageAt = (x: number, y: number) => {
@@ -798,7 +816,7 @@ export function FlipbookViewer({
             step={1}
             value={scrub ?? first + 1}
             aria-label={labels.goToPage}
-            aria-valuetext={fmt(labels.pageOf, { page: counterText, total: count })}
+            aria-valuetext={fmt(labels.pageOf, { page: scrub ?? counterText, total: count })}
             style={
               {
                 '--p': `${count > 1 ? (((scrub ?? first + 1) - 1) / (count - 1)) * 100 : 0}%`,

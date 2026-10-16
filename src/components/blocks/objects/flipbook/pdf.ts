@@ -1,4 +1,4 @@
-import type { PDFDocumentProxy } from 'pdfjs-dist';
+import type { PDFDocumentLoadingTask, PDFDocumentProxy } from 'pdfjs-dist';
 
 let worker: Worker | null = null;
 
@@ -12,14 +12,28 @@ async function pdfjs() {
   return lib;
 }
 
-export async function openPdf(src: string): Promise<PDFDocumentProxy> {
-  const lib = await pdfjs();
-  return lib.getDocument({ url: src }).promise;
+export interface PdfHandle {
+  promise: Promise<PDFDocumentProxy>;
+  /** Abort the download/parse if still in flight, or release the loaded document. */
+  cancel: () => void;
 }
 
-/** Release the document and its worker-side resources. */
-export function closePdf(doc: PDFDocumentProxy): Promise<void> {
-  return doc.loadingTask.destroy();
+/** Open a PDF; `cancel()` stops an in-flight download (e.g. on unmount) as well as releasing a loaded one. */
+export function openPdf(src: string): PdfHandle {
+  let task: PDFDocumentLoadingTask | null = null;
+  let cancelled = false;
+  const promise = pdfjs().then((lib) => {
+    if (cancelled) throw new Error('PDF load cancelled');
+    task = lib.getDocument({ url: src });
+    return task.promise;
+  });
+  return {
+    promise,
+    cancel: () => {
+      cancelled = true;
+      void task?.destroy();
+    },
+  };
 }
 
 /** Page width/height ratio of page 1. */

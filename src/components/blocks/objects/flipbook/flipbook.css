@@ -297,6 +297,7 @@
   opacity: 0;
   transition: opacity 0.35s ease;
   pointer-events: none;
+  object-fit: contain;
 }
 .fb-page.is-loaded img {
   opacity: 1;
@@ -802,7 +803,7 @@
 .fb-thumb-img img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
   opacity: 0;
   transition: opacity 0.3s;

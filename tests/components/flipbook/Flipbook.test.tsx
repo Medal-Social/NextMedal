@@ -7,8 +7,7 @@ import {
 import type { FlipbookLabels } from '@/components/blocks/objects/flipbook/types';
 
 vi.mock('@/components/blocks/objects/flipbook/pdf', () => ({
-  openPdf: vi.fn(async () => ({ numPages: 6 })),
-  closePdf: vi.fn(async () => undefined),
+  openPdf: vi.fn(() => ({ promise: Promise.resolve({ numPages: 6 }), cancel: vi.fn() })),
   pageRatio: vi.fn(async () => 210 / 297),
   targetPageHeight: () => 1000,
   renderPage: vi.fn(async (_doc: unknown, i: number) => `blob:page-${i}`),
@@ -77,6 +76,26 @@ describe('FlipbookViewer', () => {
     await waitFor(() => expect(counter()).toBe('6 / 6'));
   });
 
+  it('keeps the book usable when one page fails to render', async () => {
+    const pdf = await import('@/components/blocks/objects/flipbook/pdf');
+    vi.mocked(pdf.renderPage).mockImplementation(async (_doc: unknown, i: number) => {
+      if (i === 3) throw new Error('broken page');
+      return `blob:page-${i}`;
+    });
+    render(<FlipbookViewer src="/x.pdf" title="Doc" labels={labels} dir="ltr" reducedMotion />);
+    await engineReady('Doc');
+    await waitFor(() =>
+      expect(screen.getByRole('region', { name: 'Doc' })).toHaveAttribute('data-complete', 'true')
+    );
+    fireEvent.click(screen.getAllByRole('button', { name: 'Next page' })[0]);
+    fireEvent.click(screen.getAllByRole('button', { name: 'Next page' })[0]);
+    await waitFor(() => expect(counter()).toBe('4–5 / 6'));
+    expect(screen.getByRole('region', { name: 'Doc' })).toHaveAttribute('data-state', 'ready');
+    vi.mocked(pdf.renderPage).mockImplementation(
+      async (_doc: unknown, i: number) => `blob:page-${i}`
+    );
+  });
+
   it('opens the thumbnail drawer and jumps', async () => {
     render(<FlipbookViewer src="/x.pdf" title="Doc" labels={labels} dir="ltr" reducedMotion />);
     await engineReady('Doc');
@@ -87,7 +106,10 @@ describe('FlipbookViewer', () => {
 
   it('shows the error state with a working download link', async () => {
     const pdf = await import('@/components/blocks/objects/flipbook/pdf');
-    vi.mocked(pdf.openPdf).mockRejectedValueOnce(new Error('bad pdf'));
+    vi.mocked(pdf.openPdf).mockImplementationOnce(() => ({
+      promise: Promise.reject(new Error('bad pdf')),
+      cancel: vi.fn(),
+    }));
     render(
       <FlipbookViewer src="/bad.pdf" title="Broken" labels={labels} dir="ltr" reducedMotion />
     );
