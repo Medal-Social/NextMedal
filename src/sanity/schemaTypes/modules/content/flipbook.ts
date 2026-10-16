@@ -6,7 +6,7 @@
  * look, download, "Powered by" and start page come from code/site tokens.
  */
 
-import { BookIcon } from '@sanity/icons';
+import { BookIcon } from '@sanity/icons/Book';
 import { defineField, defineType } from 'sanity';
 
 export default defineType({
