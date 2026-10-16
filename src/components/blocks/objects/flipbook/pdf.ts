@@ -17,6 +17,11 @@ export async function openPdf(src: string): Promise<PDFDocumentProxy> {
   return lib.getDocument({ url: src }).promise;
 }
 
+/** Release the document and its worker-side resources. */
+export function closePdf(doc: PDFDocumentProxy): Promise<void> {
+  return doc.loadingTask.destroy();
+}
+
 /** Page width/height ratio of page 1. */
 export async function pageRatio(doc: PDFDocumentProxy): Promise<number> {
   const page = await doc.getPage(1);
