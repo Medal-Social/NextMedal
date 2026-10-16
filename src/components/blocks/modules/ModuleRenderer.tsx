@@ -1,6 +1,7 @@
 import { type ReactElement, Suspense } from 'react';
 import AccordionList from './content/AccordionList';
 import Features from './content/Features';
+import FlipbookModule from './content/FlipbookModule';
 import LogoCloud from './content/LogoCloud';
 import PricingComparison from './content/PricingComparison';
 import PricingList from './content/PricingList';
@@ -167,6 +168,11 @@ export function ModuleRenderer({
     case 'leadmagnet': {
       const props = module as Sanity.LeadMagnet;
       return <LeadMagnet {...props} style={isSidebar ? 'sidebar' : undefined} {...sidebarProps} />;
+    }
+
+    case 'flipbook': {
+      const props = module as Sanity.Flipbook;
+      return <FlipbookModule {...props} {...sidebarProps} />;
     }
 
     case 'logo-cloud': {

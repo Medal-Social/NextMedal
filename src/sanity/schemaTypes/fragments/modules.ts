@@ -1,9 +1,10 @@
 /**
  * Modules Fragment
- * @version 1.2.0
+ * @version 1.3.0
  * @lastUpdated 2025-12-30
  * @description A registry of all available content modules for the page builder.
  * @changelog
+ * - 1.3.0: Added flipbook module
  * - 1.2.0: Renamed listing modules to frontpage (articles-frontpage, etc.)
  * - 1.1.0: Added Frontpages group with articles-frontpage module
  * - 1.0.1: Added header documentation
@@ -26,6 +27,7 @@ export default defineField({
     { type: 'contact' },
     { type: 'richtext' },
     { type: 'logo-cloud' },
+    { type: 'flipbook' },
     { type: 'team' },
     { type: 'pricing-list' },
     { type: 'product-comparison' },
@@ -60,6 +62,7 @@ export default defineField({
             'accordion-list',
             'features',
             'logo-cloud',
+            'flipbook',
             'team',
             'pricing-list',
             'product-comparison',

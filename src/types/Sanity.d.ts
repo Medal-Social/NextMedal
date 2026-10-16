@@ -739,6 +739,13 @@ declare global {
       showRssLink?: boolean;
     }
 
+    interface Flipbook extends Module<'flipbook'> {
+      title?: string;
+      src?: string; // Resolved file.asset->url
+      filename?: string;
+      size?: number;
+    }
+
     interface LogoCloud extends Module<'logo-cloud'> {
       content?: BlockContent;
       logos?: Logo[]; // Resolved
