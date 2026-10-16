@@ -206,7 +206,7 @@ export function FlipbookViewer({
     const leaf = new Leaf(host, {
       count,
       rtl,
-      duration: prefersReduced ? 220 : 760,
+      duration: prefersReduced ? 0 : 760,
       getSrc: (i) => imagesRef.current[i],
       onBegin: (target) => {
         rootRef.current?.setAttribute('data-flip', 'flipping');
