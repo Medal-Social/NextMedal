@@ -2,11 +2,14 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-// Comments are stripped first: they may contain `{ … }` examples.
+// Comments are stripped first (they may contain `{ … }` examples), then statement at-rules.
 const css = readFileSync(
   join(process.cwd(), 'src/components/blocks/objects/flipbook/flipbook.css'),
   'utf8'
-).replace(/\/\*[\s\S]*?\*\//g, '');
+)
+  .replace(/\/\*[\s\S]*?\*\//g, '')
+  // Statement at-rules (e.g. a site's `@import` of layer helpers) aren't rules.
+  .replace(/@import[^;]*;/g, '');
 
 /** Selector of every rule that sets a --fb-* token. */
 function tokenSelectors(): string[] {
