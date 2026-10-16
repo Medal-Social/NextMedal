@@ -169,6 +169,8 @@ describe('GROQ Queries - Security & Best Practices', () => {
       expect(queries.MODULES_QUERY).toContain('ctas[]{');
       expect(queries.MODULES_QUERY).toContain("_type == 'breadcrumbs' => {");
       expect(queries.MODULES_QUERY).toContain("_type == 'logo-cloud' => {");
+      expect(queries.MODULES_QUERY).toContain("_type == 'flipbook' => {");
+      expect(queries.MODULES_QUERY).toContain("'src': file.asset->url");
 
       // Should also include component-gallery specific handling
       expect(queries.MODULES_QUERY).toContain("_type == 'component-gallery' => {");
