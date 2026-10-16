@@ -13,7 +13,7 @@ describe('resolveSocialEmbed', () => {
       'fetch',
       vi.fn(async (input: RequestInfo | URL) => {
         const url = String(input);
-        if (url.includes('cdn.syndication.twimg.com')) {
+        if (new URL(url).hostname === 'cdn.syndication.twimg.com') {
           return new Response(
             JSON.stringify({
               text: 'Creating in-house source control.',

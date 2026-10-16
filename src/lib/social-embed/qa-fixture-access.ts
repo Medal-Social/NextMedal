@@ -25,6 +25,21 @@ export function isAppProductionEnv(
 }
 
 /**
+ * Whether this deployment counts as production: an explicit production identity, or a
+ * production-mode build with no deploy identity at all (e.g. a self-hosted Docker image).
+ * Gate and metadata both use this so they can never disagree.
+ */
+export function isProductionDeployment(opts: {
+  appEnv?: string | null;
+  vercelEnv?: string | null;
+  nodeEnv?: string | null;
+}): boolean {
+  if (isAppProductionEnv(opts.appEnv, opts.vercelEnv)) return true;
+  if (opts.appEnv || opts.vercelEnv) return false;
+  return opts.nodeEnv === 'production';
+}
+
+/**
  * Whether the social-embed QA fixture may be served.
  * Non-production always allowed; production only with ALLOW_QA_SOCIAL_EMBEDS.
  */
@@ -32,9 +47,11 @@ export function isSocialEmbedQaFixtureAllowed(opts: {
   appEnv?: string | null;
   vercelEnv?: string | null;
   qaFlag?: string | null;
+  /** `process.env.NODE_ENV`; production builds without a deploy identity are treated as production. */
+  nodeEnv?: string | null;
 }): boolean {
   if (isTruthyFlag(opts.qaFlag)) return true;
-  return !isAppProductionEnv(opts.appEnv, opts.vercelEnv);
+  return !isProductionDeployment(opts);
 }
 
 /** True when a pathname is a QA fixture that must stay out of the sitemap. */

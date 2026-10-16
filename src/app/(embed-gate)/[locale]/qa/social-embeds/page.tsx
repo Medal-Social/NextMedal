@@ -5,7 +5,7 @@ import SocialEmbed from '@/components/blocks/objects/core/SocialEmbed';
 import { routing } from '@/i18n/routing';
 import { BASE_URL, env } from '@/lib/core/env';
 import {
-  isAppProductionEnv,
+  isProductionDeployment,
   isSocialEmbedQaFixtureAllowed,
   QA_SOCIAL_EMBEDS_PATH,
 } from '@/lib/social-embed/qa-fixture-access';
@@ -59,6 +59,7 @@ function assertQaFixtureAllowed(): void {
       appEnv: env.NEXT_PUBLIC_APP_ENV,
       vercelEnv: env.VERCEL_ENV,
       qaFlag: env.ALLOW_QA_SOCIAL_EMBEDS,
+      nodeEnv: process.env.NODE_ENV,
     })
   ) {
     notFound();
@@ -71,7 +72,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const path = `${localePrefix(locale)}${QA_SOCIAL_EMBEDS_PATH}`;
   const absoluteUrl = `${BASE_URL}${path}`;
-  const isProd = isAppProductionEnv(env.NEXT_PUBLIC_APP_ENV, env.VERCEL_ENV);
+  const isProd = isProductionDeployment({
+    appEnv: env.NEXT_PUBLIC_APP_ENV,
+    vercelEnv: env.VERCEL_ENV,
+    nodeEnv: process.env.NODE_ENV,
+  });
 
   // Staging/preview/dev: indexable so Lighthouse SEO can score 100.
   // Production (only reachable via ALLOW_QA_SOCIAL_EMBEDS): no canonical, noindex.

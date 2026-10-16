@@ -7,7 +7,13 @@ export default function FlipbookModule({ title, src, filename, size, ...props }:
   if (!src) return null;
   return (
     <Section {...moduleProps(props)}>
-      <Flipbook src={src} title={stegaClean(title) || undefined} filename={filename} size={size} />
+      <Flipbook
+        // Visual editing may stega-encode strings; pdf.js and the download link need plain values.
+        src={stegaClean(src)}
+        title={stegaClean(title) || undefined}
+        filename={filename ? stegaClean(filename) : undefined}
+        size={size}
+      />
     </Section>
   );
 }
