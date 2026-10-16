@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   isAppProductionEnv,
+  isProductionDeployment,
   isQaFixtureSitemapPath,
   isSocialEmbedQaFixtureAllowed,
   QA_SOCIAL_EMBEDS_PATH,
@@ -117,5 +118,20 @@ describe('isSocialEmbedQaFixtureAllowed (no deploy identity)', () => {
 
   it('still allows an explicitly identified staging build in production mode', () => {
     expect(isSocialEmbedQaFixtureAllowed({ appEnv: 'staging', nodeEnv: 'production' })).toBe(true);
+  });
+});
+
+describe('isProductionDeployment (shared by gate and metadata)', () => {
+  it('is production for an explicit production identity', () => {
+    expect(isProductionDeployment({ appEnv: 'production' })).toBe(true);
+    expect(isProductionDeployment({ vercelEnv: 'production', nodeEnv: 'development' })).toBe(true);
+  });
+  it('is not production for an explicit non-production identity, even in production mode', () => {
+    expect(isProductionDeployment({ appEnv: 'development', nodeEnv: 'production' })).toBe(false);
+    expect(isProductionDeployment({ appEnv: 'staging', nodeEnv: 'production' })).toBe(false);
+  });
+  it('treats an unidentified production-mode build as production', () => {
+    expect(isProductionDeployment({ nodeEnv: 'production' })).toBe(true);
+    expect(isProductionDeployment({ nodeEnv: 'development' })).toBe(false);
   });
 });

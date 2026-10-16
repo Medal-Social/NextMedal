@@ -44,7 +44,9 @@ locally with the commands below; keep the JSON/HTML out of git.
 ## Reproduce
 
 ```bash
-pnpm build
+# Label the build as a non-production deploy: a production-mode build with no deploy
+# identity is treated as production (fixture 404s, no canonical).
+NEXT_PUBLIC_APP_ENV=development pnpm build
 # standalone (output: 'standalone'):
 cp -a .next/static .next/standalone/open/NextMedal/.next/static
 cp -a public .next/standalone/open/NextMedal/public
