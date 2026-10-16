@@ -104,6 +104,8 @@ const config = {
       },
       {
         protocol: 'https',
+        // YouTube image CDN used by social-embed thumbnails. Approved with
+        // img.youtube.com — see CLAUDE.md "Image Handling".
         hostname: 'i.ytimg.com',
       },
       // X / Twitter avatars + media (static Medal cards; go through image loader/proxy when configured)

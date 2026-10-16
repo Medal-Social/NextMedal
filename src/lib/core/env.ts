@@ -31,6 +31,7 @@ const envSchema = z.object({
   MEDAL_API_ENDPOINT: z.url().optional(),
 
   // Optional: serve `/qa/social-embeds` even when APP_ENV/VERCEL_ENV is production.
+  // The QA route is dynamic and reads this from the process on each request.
   // Staging/preview/dev always allow the fixture; production 404s unless this is set.
   ALLOW_QA_SOCIAL_EMBEDS: z.string().optional(),
 });

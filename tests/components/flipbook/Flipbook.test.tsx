@@ -3,11 +3,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   downloadHref,
   FlipbookViewer,
+  sliderLogicalFraction,
 } from '@/components/blocks/objects/flipbook/FlipbookViewer.client';
 import type { FlipbookLabels } from '@/components/blocks/objects/flipbook/types';
 
 vi.mock('@/components/blocks/objects/flipbook/pdf', () => ({
-  openPdf: vi.fn(async () => ({ numPages: 6 })),
+  openPdf: vi.fn(async () => ({
+    promise: Promise.resolve({ numPages: 6 }),
+    destroy: vi.fn(async () => undefined),
+  })),
   closePdf: vi.fn(async () => undefined),
   pageRatio: vi.fn(async () => 210 / 297),
   targetPageHeight: () => 1000,
@@ -146,6 +150,42 @@ describe('FlipbookViewer', () => {
   it('labels the thumbnail drawer close button as a plain close', async () => {
     render(<FlipbookViewer src="/x.pdf" title="Doc" labels={labels} dir="ltr" reducedMotion />);
     expect(document.querySelector('.fb-thumbs-close')).toHaveAttribute('aria-label', 'Close');
+  });
+
+  it('follows the locale direction on the viewer and the page slider', async () => {
+    render(<FlipbookViewer src="/x.pdf" title="Doc" labels={labels} dir="rtl" reducedMotion />);
+    expect(screen.getByRole('region', { name: 'Doc' })).toHaveAttribute('dir', 'rtl');
+    expect(screen.getByRole('slider', { name: 'Go to page' })).toHaveAttribute('dir', 'rtl');
+  });
+
+  it('destroys an in-flight PDF download when the viewer unmounts', async () => {
+    const pdf = await import('@/components/blocks/objects/flipbook/pdf');
+    const destroy = vi.fn(async () => undefined);
+    vi.mocked(pdf.openPdf).mockResolvedValueOnce({
+      promise: new Promise(() => undefined),
+      destroy,
+    });
+    const { unmount } = render(
+      <FlipbookViewer src="/slow.pdf" title="Slow" labels={labels} dir="ltr" reducedMotion />
+    );
+    await waitFor(() => expect(pdf.openPdf).toHaveBeenCalled());
+    await act(async () => {
+      await Promise.resolve();
+    });
+    const closeCalls = vi.mocked(pdf.closePdf).mock.calls.length;
+    unmount();
+    expect(destroy).toHaveBeenCalledOnce();
+    expect(vi.mocked(pdf.closePdf).mock.calls.length).toBe(closeCalls);
+  });
+});
+
+describe('sliderLogicalFraction', () => {
+  it('reads left-to-right from the physical left edge', () => {
+    expect(sliderLogicalFraction(25, { left: 0, width: 100 }, false)).toBe(0.25);
+  });
+
+  it('reads right-to-left from the physical right edge', () => {
+    expect(sliderLogicalFraction(25, { left: 0, width: 100 }, true)).toBe(0.75);
   });
 });
 
