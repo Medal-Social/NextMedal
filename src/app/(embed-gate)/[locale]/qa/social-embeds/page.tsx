@@ -113,7 +113,13 @@ export default async function SocialEmbedFixturePage({ params }: Props) {
             {
               '@type': 'WebSite',
               name: 'Medal Social',
+              url: BASE_URL,
+            },
+            {
+              '@type': 'WebPage',
+              name: 'Social embed cards',
               url: qaFixtureAbsoluteUrl(locale),
+              isPartOf: { '@type': 'WebSite', name: 'Medal Social', url: BASE_URL },
             },
           ],
         }}
