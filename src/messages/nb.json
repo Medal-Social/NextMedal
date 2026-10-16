@@ -298,5 +298,25 @@
       "step3": "Publiser innstillingene"
     },
     "openStudio": "Åpne Sanity Studio"
+  },
+  "Flipbook": {
+    "previous": "Forrige side",
+    "next": "Neste side",
+    "allPages": "Alle sider",
+    "zoom": "Zoom inn",
+    "closeZoom": "Lukk zoom",
+    "download": "Last ned PDF",
+    "fullscreen": "Fullskjerm",
+    "goToPage": "Gå til side",
+    "preparing": "Klargjør sider",
+    "pages": "{count} sider",
+    "page": "Side {page}",
+    "pageOf": "Side {page} av {total}",
+    "hintPointer": "Klikk eller dra for å bla · dobbeltklikk for å zoome",
+    "hintTouch": "Sveip eller trykk for å bla · dobbelttrykk for å zoome",
+    "zoomHint": "Side {page} · knip eller rull for å flytte",
+    "error": "Vi klarte ikke å åpne denne PDF-en.",
+    "errorDetail": "Den kan være skadet eller passordbeskyttet. Du kan fortsatt laste den ned.",
+    "poweredBy": "Levert av"
   }
 }
