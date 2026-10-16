@@ -65,12 +65,7 @@ describe('FlipbookViewer', () => {
         reducedMotion
       />
     );
-    await waitFor(() =>
-      expect(screen.getByRole('region', { name: 'Annual Review' })).toHaveAttribute(
-        'data-state',
-        'ready'
-      )
-    );
+    await engineReady('Annual Review');
     expect(counter()).toBe('1 / 6');
     fireEvent.click(screen.getAllByRole('button', { name: 'Next page' })[0]);
     await waitFor(() => expect(counter()).toBe('2–3 / 6'));
