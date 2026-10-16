@@ -187,6 +187,43 @@ describe('RSS Feed Route', () => {
   });
 
   describe('RSS Items', () => {
+    it.each([
+      { categories: [null], expectedCategory: null },
+      {
+        categories: [null, { title: 'News & Updates' }, { title: null }, {}, { title: 'Guides' }],
+        expectedCategory: 'News & Updates, Guides',
+      },
+      { categories: [{ title: '' }, { title: '  ' }], expectedCategory: null },
+    ])(
+      'omits dangling category references without losing the article: $categories',
+      async ({ categories, expectedCategory }) => {
+        // Sanity dereferences a deleted category to null, as observed in the Norwegian feed.
+        mockFetch.mockResolvedValueOnce([
+          {
+            _id: 'article-with-deleted-category',
+            title: 'Norwegian article',
+            slug: 'norwegian-article',
+            publishDate: '2026-09-19T12:00:00Z',
+            authors: [null],
+            categories,
+          },
+        ]);
+
+        const response = await GET(createMockRequest('nb', 'artikler'), {
+          params: createMockParams('nb', 'artikler'),
+        });
+        expect(response.status).toBe(200);
+        const xml = new DOMParser().parseFromString(await response.text(), 'application/xml');
+        expect(xml.querySelector('parsererror')).toBeNull();
+        expect(xml.querySelector('item title')?.textContent).toBe('Norwegian article');
+        expect(xml.querySelector('item link')?.textContent).toBe(
+          'https://test.example.com/nb/artikler/norwegian-article'
+        );
+        expect(xml.querySelector('item category')?.textContent ?? null).toBe(expectedCategory);
+        expect(xml.querySelector('item author')).toBeNull();
+      }
+    );
+
     it('includes item elements with required fields', async () => {
       mockFetch.mockResolvedValueOnce([
         {
