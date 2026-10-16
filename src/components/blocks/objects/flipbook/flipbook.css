@@ -1,8 +1,10 @@
 /* Flipbook — tokens + styles. Ported from the Vault mockup (COMPONENT_API.md §3). */
 /* ───────────────────────────── Flipbook tokens ─────────────────────────────
    Everything the component paints comes from these custom properties.
-   A customer re-skins the component by overriding them — no forks. */
-.fb {
+   A customer re-skins the component by overriding them — no forks.
+   Defaults use :where() (zero specificity) so a site's own `.fb { --fb-… }` always wins,
+   whatever order the stylesheets load in. */
+:where(.fb) {
   --fb-font: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
   --fb-font-mono: var(--font-mono, ui-monospace, monospace);
   --fb-radius: 18px;
@@ -1188,7 +1190,7 @@
 }
 
 /* Dark sites: dark chrome around the book; the stage and pages are unchanged. */
-.dark .fb {
+:where(.dark) :where(.fb) {
   --fb-surface: #17132f;
   --fb-surface-muted: #221c44;
   --fb-border: #2e2a52;
@@ -1196,6 +1198,8 @@
   --fb-ink-muted: #b9a8cc;
   --fb-accent: #9f5fc8;
   --fb-accent-soft: #2d1650;
+}
+.dark .fb {
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.3),
     0 24px 60px -24px rgba(0, 0, 0, 0.6);
