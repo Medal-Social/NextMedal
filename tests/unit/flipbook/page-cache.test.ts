@@ -90,6 +90,44 @@ describe('PageCache', () => {
     expect(cache.get(3)).toBe('blob:3');
   });
 
+  it('prepares a cancelled explicit request again, even outside the reading window', async () => {
+    let calls = 0;
+    const cache = new PageCache({
+      count: 100,
+      behind: 0,
+      ahead: 0,
+      schedule: (run) => run(),
+      revoke: vi.fn(),
+      render: (i, signal) => {
+        calls++;
+        return new Promise<string>((resolve, reject) => {
+          signal.addEventListener('abort', () => reject(new Error('cancelled')));
+          if (calls > 2) resolve(`blob:${i}`);
+          if (i === 0) resolve('blob:0');
+        });
+      },
+    });
+    cache.focus(0, 0);
+    for (let n = 0; n < 5; n++) await Promise.resolve();
+    cache.want(80);
+    cache.setBusy(true); // cancels page 80
+    for (let n = 0; n < 5; n++) await Promise.resolve();
+    cache.setBusy(false);
+    for (let n = 0; n < 8; n++) await Promise.resolve();
+    expect(cache.get(80)).toBe('blob:80');
+  });
+
+  it('drops withdrawn and stale requests', async () => {
+    const { cache, order, drain } = setup(100, { behind: 0, ahead: 0, keepWanted: 2 });
+    cache.focus(0, 0); // page 0 in flight
+    cache.want(50);
+    cache.want(60);
+    cache.want(70); // 50 is now the oldest beyond keepWanted
+    cache.unwant(70);
+    await drain();
+    expect(order).toEqual([0, 60]);
+  });
+
   it('keeps recently requested pages even when far from the reading position', async () => {
     const { cache, drain } = setup(100, { capacity: 3, behind: 0, ahead: 1, keepWanted: 1 });
     cache.focus(0, 0);

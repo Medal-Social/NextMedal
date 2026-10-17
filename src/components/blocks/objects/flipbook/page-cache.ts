@@ -112,7 +112,16 @@ export class PageCache {
     this.remember(index);
     if (this.isSettled(index)) return;
     this.wanted.push(index);
+    // Only the most recent requests matter (e.g. what the drawer shows right now).
+    if (this.wanted.length > this.opts.keepWanted) this.wanted.shift();
     this.pump();
+  }
+
+  /** Withdraw a request that is no longer needed (e.g. a thumbnail scrolled out of view). */
+  unwant(index: number) {
+    for (let k = this.wanted.length - 1; k >= 0; k--) {
+      if (this.wanted[k] === index) this.wanted.splice(k, 1);
+    }
   }
 
   /** Pause while the page turns (cancelling the render in progress); resume afterwards. */
@@ -173,8 +182,12 @@ export class PageCache {
           this.evict();
         })
         .catch(() => {
-          // Cancelled for a page turn: it's simply prepared again afterwards.
-          if (controller.signal.aborted) return;
+          // Cancelled for a page turn: queue it again so it is prepared afterwards
+          // (explicit requests may be outside the reading window).
+          if (controller.signal.aborted) {
+            if (!this.destroyed) this.wanted.push(target);
+            return;
+          }
           // A page that can't be rendered stays blank; don't retry it forever.
           this.failed.add(target);
           this.opts.onChange?.(target, undefined);

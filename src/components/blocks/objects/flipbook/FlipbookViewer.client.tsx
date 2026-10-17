@@ -102,6 +102,7 @@ export function FlipbookViewer({
   const thumbsRef = useRef<PageCache | null>(null);
   const thumbsWantedRef = useRef(false);
   const thumbsOpenRef = useRef(false);
+  const peekRef = useRef<number | null>(null);
   const layoutKeyRef = useRef('');
   const onPageChangeRef = useRef(onPageChange);
   onPageChangeRef.current = onPageChange;
@@ -195,6 +196,8 @@ export function FlipbookViewer({
       });
     };
     setStatus('loading');
+    // Thumbnail demand belongs to one document; a drawer left open still counts as asking.
+    thumbsWantedRef.current = thumbsOpenRef.current;
     zoomIdRef.current++;
     releaseSharp();
     setZoom(null);
@@ -242,10 +245,11 @@ export function FlipbookViewer({
           keepWanted: 40,
         });
         thumbsRef.current = thumbs;
-        // Started on demand (drawer / scrub preview); a drawer left open counts as asking.
-        thumbsWantedRef.current = thumbsOpenRef.current;
-        if (thumbsWantedRef.current) thumbs.focus(a, b);
-        else thumbs.setBusy(true);
+        // Started on demand (drawer / scrub preview), including requests made while loading.
+        if (thumbsWantedRef.current) {
+          thumbs.focus(a, b);
+          if (peekRef.current != null) thumbs.want(peekRef.current);
+        } else thumbs.setBusy(true);
         cache.focus(a, b);
       } catch {
         // Damaged/encrypted PDFs land in the error state; download stays available.
@@ -566,6 +570,7 @@ export function FlipbookViewer({
     if (thumbsOpen || thumbsWantedRef.current) thumbsRef.current?.focus(first, last);
   }, [first, last, thumbsOpen]);
   useEffect(() => {
+    peekRef.current = peek; // remembered for a thumbnail cache that doesn't exist yet
     if (peek == null) return;
     wantThumbs();
     thumbsRef.current?.want(peek);
@@ -580,6 +585,7 @@ export function FlipbookViewer({
         for (const entry of entries) {
           const i = Number((entry.target as HTMLElement).dataset.index);
           if (entry.isIntersecting) thumbsRef.current?.want(i);
+          else thumbsRef.current?.unwant(i);
         }
       },
       { root: track, rootMargin: '200px' }
