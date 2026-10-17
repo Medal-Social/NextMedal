@@ -317,6 +317,10 @@
 .fb-page.is-loaded .fb-page-skel {
   display: none;
 }
+.fb-page.is-unavailable .fb-page-skel {
+  animation: none;
+  background: var(--fb-page-bg);
+}
 .fb-gutter {
   position: absolute;
   top: 0;

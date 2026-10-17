@@ -6,6 +6,11 @@ import {
   sliderLogicalFraction,
 } from '@/components/blocks/objects/flipbook/FlipbookViewer.client';
 import type { FlipbookLabels } from '@/components/blocks/objects/flipbook/types';
+import { logger } from '@/lib/core/logger';
+
+vi.mock('@/lib/core/logger', () => ({
+  logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn() },
+}));
 
 vi.mock('@/components/blocks/objects/flipbook/pdf', () => ({
   openPdf: vi.fn(async () => ({
@@ -92,6 +97,83 @@ describe('FlipbookViewer', () => {
     fireEvent.click(screen.getByRole('button', { name: 'All pages' }));
     fireEvent.click(screen.getByRole('button', { name: 'Go to page 4' }));
     await waitFor(() => expect(counter()).toBe('4–5 / 6'));
+  });
+
+  it('keeps a readable book when a later page fails, and replaces it only when opening pages fail', async () => {
+    const pdf = await import('@/components/blocks/objects/flipbook/pdf');
+    const renderPage = vi.mocked(pdf.renderPage);
+    const restoreRender = () =>
+      renderPage.mockImplementation(async (_doc: unknown, i: number) => `blob:page-${i}`);
+
+    renderPage.mockImplementation(async (_doc: unknown, i: number) => {
+      if (i === 4) throw new Error('encode failed');
+      return `blob:page-${i}`;
+    });
+    const closeCalls = vi.mocked(pdf.closePdf).mock.calls.length;
+    const { unmount } = render(
+      <FlipbookViewer src="/late.pdf" title="Late miss" labels={labels} dir="ltr" reducedMotion />
+    );
+    await engineReady('Late miss');
+    await waitFor(() =>
+      expect(screen.getByRole('region', { name: 'Late miss' })).toHaveAttribute(
+        'data-complete',
+        'true'
+      )
+    );
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(logger.error).toHaveBeenCalledWith(
+      expect.objectContaining({ page: 5 }),
+      'Flipbook page failed to render'
+    );
+    expect(vi.mocked(pdf.closePdf).mock.calls.length).toBe(closeCalls);
+
+    const slider = screen.getByRole('slider', { name: 'Go to page' });
+    fireEvent.change(slider, { target: { value: '4' } });
+    fireEvent.keyUp(slider, { key: 'ArrowRight' });
+    await waitFor(() => expect(counter()).toBe('4–5 / 6'));
+    const missed = document.querySelector<HTMLElement>('.fb-page[data-page="4"]');
+    expect(missed).toHaveClass('is-unavailable');
+    expect(missed?.querySelector('img')).not.toHaveAttribute('src');
+    expect(document.querySelector('.fb-page[data-page="3"] img')).toHaveAttribute(
+      'src',
+      'blob:page-3'
+    );
+    const region = screen.getByRole('region', { name: 'Late miss' });
+    act(() => {
+      region.focus();
+    });
+    fireEvent.keyDown(document.activeElement as Element, { key: 'End' });
+    await waitFor(() => expect(counter()).toBe('6 / 6'));
+    expect(document.querySelector('.fb-page[data-page="5"] img')).toHaveAttribute(
+      'src',
+      'blob:page-5'
+    );
+    unmount();
+
+    restoreRender();
+    vi.mocked(logger.error).mockClear();
+    renderPage.mockImplementation(async (_doc: unknown, i: number) => {
+      if (i === 2) throw new Error('opening page failed');
+      return `blob:page-${i}`;
+    });
+    const revoke = vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined);
+    render(
+      <FlipbookViewer src="/head.pdf" title="Head miss" labels={labels} dir="ltr" reducedMotion />
+    );
+    await waitFor(() =>
+      expect(screen.getByRole('region', { name: 'Head miss' })).toHaveAttribute(
+        'data-state',
+        'error'
+      )
+    );
+    expect(screen.getByRole('alert')).toHaveTextContent('We couldn’t open this PDF.');
+    expect(document.querySelector('.fb-book.lf')).toBeNull();
+    expect(pdf.closePdf).toHaveBeenCalled();
+    expect(revoke).toHaveBeenCalledWith('blob:page-0');
+    expect(revoke).toHaveBeenCalledWith('blob:page-1');
+    expect(logger.error).not.toHaveBeenCalled();
+    revoke.mockRestore();
+    restoreRender();
   });
 
   it('shows the error state with a working download link', async () => {

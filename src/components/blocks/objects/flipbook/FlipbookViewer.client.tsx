@@ -33,6 +33,7 @@ import {
   renderPage,
   targetPageHeight,
 } from './pdf';
+import { renderBookPages } from './render-queue';
 import type { FlipbookLabels, FlipbookProps } from './types';
 import './flipbook.css';
 
@@ -230,21 +231,26 @@ export function FlipbookViewer({
         const head = [...new Set([start, 0, 1, 2, start + 1].filter((i) => i < total))];
         const order = [...head, ...[...Array(total).keys()].filter((i) => !head.includes(i))];
         let done = 0;
-        for (const i of order) {
-          const url = await renderPage(doc, i, { height });
-          if (cancelled) return void URL.revokeObjectURL(url);
-          urls.push(url);
-          imagesRef.current[i] = url;
-          flushImages();
-          setLoaded(++done);
-          leafRef.current?.refresh(i);
-          if (done === head.length) {
-            setIndex(start);
-            setStatus('ready');
-          }
-        }
+        await renderBookPages(doc, order, {
+          height,
+          headCount: head.length,
+          isCancelled: () => cancelled,
+          onPage: (i, url) => {
+            // '' is a finished page with no image. Omit it from the revoke list.
+            if (url) urls.push(url);
+            imagesRef.current[i] = url;
+            flushImages();
+            setLoaded(++done);
+            leafRef.current?.refresh(i);
+            if (done === head.length) {
+              setIndex(start);
+              setStatus('ready');
+            }
+          },
+        });
       } catch {
-        // Damaged/encrypted PDFs land in the error state; download stays available.
+        // Damaged/encrypted PDFs, or a failure in the opening pages, land in the error state.
+        // Download stays available. Pages that fail after the book is open are handled above.
         if (cancelled) return;
         for (const url of urls.splice(0)) URL.revokeObjectURL(url);
         imagesRef.current = [];
@@ -789,7 +795,11 @@ export function FlipbookViewer({
                 type="button"
                 // biome-ignore lint/suspicious/noArrayIndexKey: the page number is the item's identity
                 key={`page-${i + 1}`}
-                className={cn('fb-thumb', images[i] && 'is-loaded')}
+                className={cn(
+                  'fb-thumb',
+                  images[i] && 'is-loaded',
+                  images[i] === '' && 'is-unavailable'
+                )}
                 data-side={sideOf(i)}
                 aria-label={`${labels.goToPage} ${i + 1}`}
                 aria-current={i >= first && i <= last}

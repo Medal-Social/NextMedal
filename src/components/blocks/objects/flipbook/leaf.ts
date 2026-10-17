@@ -186,13 +186,15 @@ export class Leaf {
     if (i == null) {
       delete el.dataset.page;
       img.removeAttribute('src');
-      el.classList.remove('is-loaded');
+      el.classList.remove('is-loaded', 'is-unavailable');
       return;
     }
     el.dataset.page = String(i);
     el.dataset.density = this.isHard(i) ? 'hard' : '';
     img.alt = this.opts.pageAlt?.(i) ?? `${i + 1} / ${this.count}`;
     const url = this.opts.getSrc(i);
+    // '' is a page that finished rendering with no image. undefined is still in flight.
+    el.classList.toggle('is-unavailable', url === '');
     if (!url) {
       img.removeAttribute('src');
       el.classList.remove('is-loaded');
