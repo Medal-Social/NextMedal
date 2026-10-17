@@ -248,6 +248,25 @@ describe('FlipbookViewer', () => {
     vi.useRealTimers();
   });
 
+  it('hides the reading-mode chrome after a moment, even with focus left on the Fullscreen button', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    render(<FlipbookViewer src="/x.pdf" title="Doc" labels={labels} dir="ltr" reducedMotion />);
+    await vi.waitFor(() => expect(document.querySelector('.fb-book.lf')).not.toBeNull());
+    const button = screen.getAllByRole('button', { name: 'Fullscreen' })[0] as HTMLButtonElement;
+    act(() => {
+      button.focus();
+      fireEvent.click(button);
+    });
+    const bar = document.querySelector('.fb-bar') as HTMLElement;
+    expect(bar.hasAttribute('inert')).toBe(false);
+    act(() => {
+      vi.advanceTimersByTime(3000);
+    });
+    expect(bar.hasAttribute('inert')).toBe(true);
+    expect(screen.getByRole('region', { name: 'Doc' })).toHaveClass('chrome-hidden');
+    vi.useRealTimers();
+  });
+
   it('labels the thumbnail drawer close button as a plain close', async () => {
     render(<FlipbookViewer src="/x.pdf" title="Doc" labels={labels} dir="ltr" reducedMotion />);
     expect(document.querySelector('.fb-thumbs-close')).toHaveAttribute('aria-label', 'Close');

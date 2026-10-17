@@ -514,13 +514,19 @@ export function FlipbookViewer({
   }, [fullscreen]);
   useEffect(() => {
     if (!fullscreen || chromeHidden || thumbsOpen || zoom) return;
-    const timer = window.setTimeout(() => {
-      // Never hide the toolbar out from under keyboard focus.
+    let timer = 0;
+    const tryHide = () => {
+      // Never hide the toolbar out from under keyboard focus; check again later instead.
+      // (A mouse click leaves focus on the button too, but not :focus-visible.)
       const active = document.activeElement;
       const chrome = rootRef.current?.querySelectorAll('.fb-bar, .fb-foot') ?? [];
-      if ([...chrome].some((el) => el.contains(active))) return;
+      if (active?.matches(':focus-visible') && [...chrome].some((el) => el.contains(active))) {
+        timer = window.setTimeout(tryHide, CHROME_IDLE_MS);
+        return;
+      }
       setChromeHidden(true);
-    }, CHROME_IDLE_MS);
+    };
+    timer = window.setTimeout(tryHide, CHROME_IDLE_MS);
     return () => window.clearTimeout(timer);
   }, [fullscreen, chromeHidden, thumbsOpen, zoom]);
 
