@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import SocialEmbed from '@/components/blocks/objects/core/SocialEmbed';
 import { BreadcrumbJsonLd, JsonLd } from '@/components/blocks/seo';
-import { BASE_URL, env } from '@/lib/core/env';
+import { BASE_URL, env, readAllowQaSocialEmbeds } from '@/lib/core/env';
 import {
   isProductionDeployment,
   isSocialEmbedQaFixtureAllowed,
@@ -19,12 +19,6 @@ import {
  * ignore `ALLOW_QA_SOCIAL_EMBEDS` set on the running container.
  */
 export const dynamic = 'force-dynamic';
-
-/** Bracket access so the bundler does not inline the build-time value. */
-function readAllowQaSocialEmbeds(): string | undefined {
-  // biome-ignore lint/complexity/useLiteralKeys: a literal key is inlined at build and ignores the runtime flag
-  return process.env['ALLOW_QA_SOCIAL_EMBEDS'];
-}
 
 type Props = {
   params: Promise<{ locale: string }>;
