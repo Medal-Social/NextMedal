@@ -12,9 +12,15 @@ async function pdfjs() {
   return lib;
 }
 
-export async function openPdf(src: string): Promise<PDFDocumentProxy> {
+/** In-flight pdf.js load. Call `destroy()` to abort the download before `promise` settles. */
+export interface PdfLoadingTask {
+  promise: Promise<PDFDocumentProxy>;
+  destroy: () => Promise<void> | void;
+}
+
+export async function openPdf(src: string): Promise<PdfLoadingTask> {
   const lib = await pdfjs();
-  return lib.getDocument({ url: src }).promise;
+  return lib.getDocument({ url: src });
 }
 
 /** Release the document and its worker-side resources. */
@@ -42,22 +48,29 @@ export async function renderPage(
   size: { height: number } | { width: number }
 ): Promise<string> {
   const page = await doc.getPage(index + 1);
-  const base = page.getViewport({ scale: 1 });
-  const scale =
-    'height' in size ? size.height / base.height : Math.min(size.width, 3200) / base.width;
-  const viewport = page.getViewport({ scale });
-  const canvas = document.createElement('canvas');
-  canvas.width = Math.round(viewport.width);
-  canvas.height = Math.round(viewport.height);
-  const ctx = canvas.getContext('2d', { alpha: false });
-  if (!ctx) throw new Error('Canvas 2D context unavailable');
-  await page.render({ canvas, canvasContext: ctx, viewport }).promise;
-  const blob = await new Promise<Blob | null>((resolve) =>
-    canvas.toBlob(resolve, 'image/webp', 0.9)
-  );
-  canvas.width = 0;
-  canvas.height = 0;
-  page.cleanup();
-  if (!blob) throw new Error('Could not encode page image');
-  return URL.createObjectURL(blob);
+  let canvas: HTMLCanvasElement | null = null;
+  try {
+    const base = page.getViewport({ scale: 1 });
+    const scale =
+      'height' in size ? size.height / base.height : Math.min(size.width, 3200) / base.width;
+    const viewport = page.getViewport({ scale });
+    canvas = document.createElement('canvas');
+    canvas.width = Math.round(viewport.width);
+    canvas.height = Math.round(viewport.height);
+    const ctx = canvas.getContext('2d', { alpha: false });
+    if (!ctx) throw new Error('Canvas 2D context unavailable');
+    await page.render({ canvas, canvasContext: ctx, viewport }).promise;
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas?.toBlob(resolve, 'image/webp', 0.9)
+    );
+    if (!blob) throw new Error('Could not encode page image');
+    return URL.createObjectURL(blob);
+  } finally {
+    // A later page can fail while the book stays open, so this must run on throw too.
+    if (canvas) {
+      canvas.width = 0;
+      canvas.height = 0;
+    }
+    page.cleanup();
+  }
 }
