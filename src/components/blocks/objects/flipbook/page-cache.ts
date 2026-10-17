@@ -3,15 +3,16 @@
  *
  * Pages are rasterised one at a time, nearest-first (the visible spread, then
  * outwards, a little further ahead than behind), and the cache is bounded:
- * pages far from the reader are released again. Work pauses while a page is
- * turning and yields to the browser between pages, so rendering never competes
- * with the animation. Framework-free so it can be unit-tested.
+ * pages far from the reader are released again. When a page starts turning the
+ * render in progress is cancelled (and queued again) and no new one starts, and
+ * renders yield to the browser in between, so rendering never competes with the
+ * animation. Framework-free so it can be unit-tested.
  */
 
 export interface PageCacheOptions {
   count: number;
-  /** Rasterise page `index` and resolve with an object URL. */
-  render: (index: number) => Promise<string>;
+  /** Rasterise page `index` and resolve with an object URL; reject promptly once `signal` aborts. */
+  render: (index: number, signal: AbortSignal) => Promise<string>;
   /** A page's image arrived (`url`), or it was released or failed (`undefined`). */
   onChange?: (index: number, url: string | undefined) => void;
   /** Max pages kept at once. */
@@ -20,6 +21,8 @@ export interface PageCacheOptions {
   behind?: number;
   /** Pages to prepare ahead of the reading position. */
   ahead?: number;
+  /** Recent explicit requests (`want`) kept even when far from the reading position. */
+  keepWanted?: number;
   /** Scheduling hook between renders (tests pass a synchronous one). */
   schedule?: (run: () => void) => void;
   /** Release an object URL (tests pass a spy). */
@@ -38,6 +41,8 @@ export class PageCache {
   private readonly urls = new Map<number, string>();
   private readonly failed = new Set<number>();
   private readonly wanted: number[] = [];
+  private readonly recent: number[] = [];
+  private controller: AbortController | null = null;
   private first = 0;
   private last = 0;
   private busy = false;
@@ -50,6 +55,7 @@ export class PageCache {
       capacity: 24,
       behind: 4,
       ahead: 8,
+      keepWanted: 24,
       schedule: idle,
       revoke: (url) => URL.revokeObjectURL(url),
       ...opts,
@@ -73,8 +79,11 @@ export class PageCache {
   window(): number[] {
     const { count, behind, ahead } = this.opts;
     const out: number[] = [];
+    const seen = new Set<number>();
     const push = (i: number) => {
-      if (i >= 0 && i < count && !out.includes(i)) out.push(i);
+      if (i < 0 || i >= count || seen.has(i)) return;
+      seen.add(i);
+      out.push(i);
     };
     for (let i = this.first; i <= this.last; i++) push(i);
     for (let step = 1; step <= Math.max(ahead, behind); step++) {
@@ -99,19 +108,23 @@ export class PageCache {
 
   /** Ask for one page now (zoom, thumbnail jump), ahead of the window. */
   want(index: number) {
-    if (index < 0 || index >= this.opts.count || this.isSettled(index)) return;
+    if (index < 0 || index >= this.opts.count) return;
+    this.remember(index);
+    if (this.isSettled(index)) return;
     this.wanted.push(index);
     this.pump();
   }
 
-  /** Pause while the page turns; resume afterwards. */
+  /** Pause while the page turns (cancelling the render in progress); resume afterwards. */
   setBusy(busy: boolean) {
     this.busy = busy;
-    if (!busy) this.pump();
+    if (busy) this.controller?.abort();
+    else this.pump();
   }
 
   destroy() {
     this.destroyed = true;
+    this.controller?.abort();
     for (const url of this.urls.values()) this.opts.revoke(url);
     this.urls.clear();
   }
@@ -146,8 +159,10 @@ export class PageCache {
       const target = this.take();
       if (target === undefined) return;
       this.inFlight = true;
+      const controller = new AbortController();
+      this.controller = controller;
       this.opts
-        .render(target)
+        .render(target, controller.signal)
         .then((url) => {
           if (this.destroyed) {
             this.opts.revoke(url);
@@ -158,20 +173,30 @@ export class PageCache {
           this.evict();
         })
         .catch(() => {
+          // Cancelled for a page turn: it's simply prepared again afterwards.
+          if (controller.signal.aborted) return;
           // A page that can't be rendered stays blank; don't retry it forever.
           this.failed.add(target);
           this.opts.onChange?.(target, undefined);
         })
         .finally(() => {
+          if (this.controller === controller) this.controller = null;
           this.inFlight = false;
           this.pump();
         });
     });
   }
 
+  private remember(index: number) {
+    const at = this.recent.indexOf(index);
+    if (at >= 0) this.recent.splice(at, 1);
+    this.recent.push(index);
+    if (this.recent.length > this.opts.keepWanted) this.recent.shift();
+  }
+
   /** Drop the pages furthest from the reading position once over capacity. */
   private evict() {
-    const keep = new Set(this.window());
+    const keep = new Set([...this.window(), ...this.recent]);
     const centre = (this.first + this.last) / 2;
     while (this.urls.size > this.opts.capacity) {
       let far = -1;

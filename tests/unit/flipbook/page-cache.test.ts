@@ -61,6 +61,46 @@ describe('PageCache', () => {
     expect(order).toEqual([0, 1]);
   });
 
+  it('cancels the render in progress when a turn starts and prepares it again afterwards', async () => {
+    const signals: AbortSignal[] = [];
+    const order: number[] = [];
+    const cache = new PageCache({
+      count: 10,
+      behind: 0,
+      ahead: 0,
+      schedule: (run) => run(),
+      revoke: vi.fn(),
+      render: (i, signal) => {
+        order.push(i);
+        signals.push(signal);
+        return new Promise<string>((resolve, reject) => {
+          signal.addEventListener('abort', () => reject(new Error('cancelled')));
+          if (order.length > 1) resolve(`blob:${i}`);
+        });
+      },
+    });
+    cache.focus(3, 3);
+    cache.setBusy(true);
+    expect(signals[0]?.aborted).toBe(true);
+    for (let n = 0; n < 5; n++) await Promise.resolve();
+    expect(cache.isSettled(3)).toBe(false); // not marked as failed
+    cache.setBusy(false);
+    for (let n = 0; n < 5; n++) await Promise.resolve();
+    expect(order).toEqual([3, 3]);
+    expect(cache.get(3)).toBe('blob:3');
+  });
+
+  it('keeps recently requested pages even when far from the reading position', async () => {
+    const { cache, drain } = setup(100, { capacity: 3, behind: 0, ahead: 1, keepWanted: 1 });
+    cache.focus(0, 0);
+    cache.want(90);
+    await drain();
+    cache.focus(40, 40);
+    await drain();
+    expect(cache.get(90)).toBe('blob:90');
+    expect(cache.size).toBeLessThanOrEqual(4);
+  });
+
   it('re-prioritises when the reader jumps', async () => {
     const { cache, order, settle, drain } = setup(100, { behind: 1, ahead: 1 });
     cache.focus(0, 0);

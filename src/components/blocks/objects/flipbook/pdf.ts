@@ -49,13 +49,19 @@ export function targetPageHeight(): number {
   return Math.round(Math.min(2200, Math.max(1000, window.screen.height * dpr * 0.92)));
 }
 
-/** Render page `index` (0-based) to a WebP object URL. Size by height, or by width when given. */
+/**
+ * Render page `index` (0-based) to a WebP object URL. Size by height, or by width when given.
+ * Aborting `signal` cancels the render between pdf.js's drawing chunks.
+ */
 export async function renderPage(
   doc: PDFDocumentProxy,
   index: number,
-  size: { height: number } | { width: number }
+  size: { height: number } | { width: number },
+  signal?: AbortSignal
 ): Promise<string> {
+  signal?.throwIfAborted();
   const page = await doc.getPage(index + 1);
+  signal?.throwIfAborted();
   const base = page.getViewport({ scale: 1 });
   const scale =
     'height' in size ? size.height / base.height : Math.min(size.width, 3200) / base.width;
@@ -65,7 +71,19 @@ export async function renderPage(
   canvas.height = Math.round(viewport.height);
   const ctx = canvas.getContext('2d', { alpha: false });
   if (!ctx) throw new Error('Canvas 2D context unavailable');
-  await page.render({ canvas, canvasContext: ctx, viewport }).promise;
+  const task = page.render({ canvas, canvasContext: ctx, viewport });
+  const cancel = () => task.cancel();
+  signal?.addEventListener('abort', cancel, { once: true });
+  try {
+    await task.promise;
+  } catch (error) {
+    canvas.width = 0;
+    canvas.height = 0;
+    page.cleanup();
+    throw error;
+  } finally {
+    signal?.removeEventListener('abort', cancel);
+  }
   const blob = await new Promise<Blob | null>((resolve) =>
     canvas.toBlob(resolve, 'image/webp', 0.9)
   );

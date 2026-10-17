@@ -229,7 +229,12 @@ describe('FlipbookViewer', () => {
     await act(async () => open({ numPages: 6 }));
     await engineReady('Doc');
     await waitFor(() =>
-      expect(pdf.renderPage).toHaveBeenCalledWith(expect.anything(), 0, { height: 220 })
+      expect(pdf.renderPage).toHaveBeenCalledWith(
+        expect.anything(),
+        0,
+        { height: 220 },
+        expect.anything()
+      )
     );
   });
 

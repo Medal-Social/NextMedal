@@ -101,6 +101,7 @@ export function FlipbookViewer({
   const cacheRef = useRef<PageCache | null>(null);
   const thumbsRef = useRef<PageCache | null>(null);
   const thumbsWantedRef = useRef(false);
+  const thumbsOpenRef = useRef(false);
   const layoutKeyRef = useRef('');
   const onPageChangeRef = useRef(onPageChange);
   onPageChangeRef.current = onPageChange;
@@ -113,6 +114,7 @@ export function FlipbookViewer({
   const [portrait, setPortrait] = useState(false);
   const [ratio, setRatio] = useState(210 / 297);
   const [thumbsOpen, setThumbsOpen] = useState(false);
+  thumbsOpenRef.current = thumbsOpen;
   const [zoom, setZoom] = useState<{ page: number; url: string; width: number } | null>(null);
   const [fullscreen, setFullscreen] = useState(false);
   const [hint, setHint] = useState(false);
@@ -214,7 +216,7 @@ export function FlipbookViewer({
         let opened = false;
         const cache = new PageCache({
           count: total,
-          render: (i) => renderPage(doc, i, { height }),
+          render: (i, signal) => renderPage(doc, i, { height }, signal),
           onChange: (i) => {
             leafRef.current?.refresh(i);
             bump();
@@ -229,16 +231,19 @@ export function FlipbookViewer({
           },
         });
         cacheRef.current = cache;
+        // Thumbnails near the reading position, plus whatever the drawer actually shows.
         const thumbs = new PageCache({
           count: total,
-          render: (i) => renderPage(doc, i, { height: THUMB_HEIGHT }),
+          render: (i, signal) => renderPage(doc, i, { height: THUMB_HEIGHT }, signal),
           onChange: bump,
-          capacity: total,
-          behind: total,
-          ahead: total,
+          capacity: 72,
+          behind: 8,
+          ahead: 16,
+          keepWanted: 40,
         });
         thumbsRef.current = thumbs;
-        // Started on demand (drawer / scrub preview), unless that was asked for before the PDF loaded.
+        // Started on demand (drawer / scrub preview); a drawer left open counts as asking.
+        thumbsWantedRef.current = thumbsOpenRef.current;
         if (thumbsWantedRef.current) thumbs.focus(a, b);
         else thumbs.setBusy(true);
         cache.focus(a, b);
@@ -310,6 +315,10 @@ export function FlipbookViewer({
       window.clearTimeout(hide);
       leaf.destroy();
       leafRef.current = null;
+      // Destroyed mid-turn: onSettle never runs, so un-pause the caches here.
+      rootRef.current?.setAttribute('data-flip', 'read');
+      cacheRef.current?.setBusy(false);
+      if (thumbsWantedRef.current) thumbsRef.current?.setBusy(false);
     };
   }, [status, count, rtl, prefersReduced]);
 
@@ -561,6 +570,23 @@ export function FlipbookViewer({
     wantThumbs();
     thumbsRef.current?.want(peek);
   }, [peek, wantThumbs]);
+  // Only thumbnails scrolled into view in the drawer are prepared (and kept while recent).
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!thumbsOpen || status !== 'ready' || !track || typeof IntersectionObserver === 'undefined')
+      return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const i = Number((entry.target as HTMLElement).dataset.index);
+          if (entry.isIntersecting) thumbsRef.current?.want(i);
+        }
+      },
+      { root: track, rootMargin: '200px' }
+    );
+    for (const el of track.querySelectorAll('.fb-thumb')) io.observe(el);
+    return () => io.disconnect();
+  }, [thumbsOpen, status]);
   const thumbSrc = (i: number) => thumbsRef.current?.get(i) ?? cacheRef.current?.get(i);
 
   /* ── keyboard (scoped to the flipbook; global while fullscreen) */
@@ -875,6 +901,7 @@ export function FlipbookViewer({
                 // biome-ignore lint/suspicious/noArrayIndexKey: the page number is the item's identity
                 key={`page-${i + 1}`}
                 className={cn('fb-thumb', thumbSrc(i) && 'is-loaded')}
+                data-index={i}
                 data-side={sideOf(i)}
                 aria-label={`${labels.goToPage} ${i + 1}`}
                 aria-current={i >= first && i <= last}
