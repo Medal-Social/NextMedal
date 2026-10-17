@@ -186,6 +186,68 @@ describe('FlipbookViewer', () => {
     await waitFor(() => expect(counter()).toBe('2–3 / 6'));
   });
 
+  it('stays where the reader is when late pages arrive (back on the cover of a startPage book)', async () => {
+    const pdf = await import('@/components/blocks/objects/flipbook/pdf');
+    let release: (url: string) => void = () => {};
+    vi.mocked(pdf.renderPage).mockImplementation((_doc: unknown, i: number) =>
+      i === 5 ? new Promise((resolve) => (release = resolve)) : Promise.resolve(`blob:page-${i}`)
+    );
+    render(
+      <FlipbookViewer
+        src="/x.pdf"
+        title="Doc"
+        labels={labels}
+        dir="ltr"
+        startPage={3}
+        reducedMotion
+      />
+    );
+    await engineReady('Doc');
+    expect(counter()).toBe('2–3 / 6');
+    act(() => {
+      screen.getByRole('region', { name: 'Doc' }).focus();
+    });
+    fireEvent.keyDown(document.activeElement as Element, { key: 'Home' });
+    await waitFor(() => expect(counter()).toBe('1 / 6'));
+    await act(async () => release('blob:page-5'));
+    expect(counter()).toBe('1 / 6');
+    vi.mocked(pdf.renderPage).mockImplementation(
+      async (_doc: unknown, i: number) => `blob:page-${i}`
+    );
+  });
+
+  it('prepares thumbnails when the drawer was opened before the PDF loaded', async () => {
+    const pdf = await import('@/components/blocks/objects/flipbook/pdf');
+    let open: (doc: { numPages: number }) => void = () => {};
+    vi.mocked(pdf.openPdf).mockImplementationOnce(() => ({
+      promise: new Promise((resolve) => (open = resolve)) as never,
+      cancel: vi.fn(),
+    }));
+    vi.mocked(pdf.renderPage).mockClear();
+    render(<FlipbookViewer src="/x.pdf" title="Doc" labels={labels} dir="ltr" reducedMotion />);
+    fireEvent.click(screen.getByRole('button', { name: 'All pages' }));
+    await act(async () => open({ numPages: 6 }));
+    await engineReady('Doc');
+    await waitFor(() =>
+      expect(pdf.renderPage).toHaveBeenCalledWith(expect.anything(), 0, { height: 220 })
+    );
+  });
+
+  it('turns the page on a tap in the middle of the inline book', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    render(<FlipbookViewer src="/x.pdf" title="Doc" labels={labels} dir="ltr" reducedMotion />);
+    await vi.waitFor(() => expect(document.querySelector('.fb-book.lf')).not.toBeNull());
+    const book = document.querySelector('.fb-book') as HTMLElement;
+    vi.spyOn(book, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, 1200, 600));
+    fireEvent.pointerDown(book, { button: 0, clientX: 700, clientY: 300 });
+    fireEvent.pointerUp(book, { button: 0, clientX: 700, clientY: 300 });
+    act(() => {
+      vi.advanceTimersByTime(400);
+    });
+    expect(counter()).toBe('2–3 / 6');
+    vi.useRealTimers();
+  });
+
   it('labels the thumbnail drawer close button as a plain close', async () => {
     render(<FlipbookViewer src="/x.pdf" title="Doc" labels={labels} dir="ltr" reducedMotion />);
     expect(document.querySelector('.fb-thumbs-close')).toHaveAttribute('aria-label', 'Close');

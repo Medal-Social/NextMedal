@@ -1233,7 +1233,8 @@
 }
 
 /* ── Phones: edge to edge, and a proper reading mode ───────────────────────── */
-@container fb (max-width: 719px) {
+/* `.fb` is the `fb` container itself, so this must be a media query (matches the module's max-sm:px-0). */
+@media (max-width: 639px) {
   .fb:not(.is-fullscreen) {
     border-radius: 0;
     border-inline: 0;

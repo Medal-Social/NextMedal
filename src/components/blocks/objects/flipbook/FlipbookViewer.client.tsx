@@ -100,6 +100,7 @@ export function FlipbookViewer({
   const docRef = useRef<PDFDocumentProxy | null>(null);
   const cacheRef = useRef<PageCache | null>(null);
   const thumbsRef = useRef<PageCache | null>(null);
+  const thumbsWantedRef = useRef(false);
   const layoutKeyRef = useRef('');
   const onPageChangeRef = useRef(onPageChange);
   onPageChangeRef.current = onPageChange;
@@ -209,23 +210,26 @@ export function FlipbookViewer({
         const start = Math.min(Math.max(0, startPage - 1), total - 1);
         const height = targetPageHeight();
         const [a, b] = visibleRange(start, total, false);
+        // Each document opens once, at its own start page; later cache events never move the reader.
+        let opened = false;
         const cache = new PageCache({
           count: total,
           render: (i) => renderPage(doc, i, { height }),
           onChange: (i) => {
             leafRef.current?.refresh(i);
             bump();
-            if (cancelled || !cache.isSettled(a) || !cache.isSettled(b)) return;
+            if (opened || cancelled || !cache.isSettled(a) || !cache.isSettled(b)) return;
+            opened = true;
             if (!cache.get(a) && !cache.get(b)) {
-              setStatus((s) => (s === 'loading' ? 'error' : s));
+              setStatus('error');
               return;
             }
-            setIndex((current) => current || start);
-            setStatus((s) => (s === 'loading' ? 'ready' : s));
+            setIndex(start);
+            setStatus('ready');
           },
         });
         cacheRef.current = cache;
-        thumbsRef.current = new PageCache({
+        const thumbs = new PageCache({
           count: total,
           render: (i) => renderPage(doc, i, { height: THUMB_HEIGHT }),
           onChange: bump,
@@ -233,7 +237,10 @@ export function FlipbookViewer({
           behind: total,
           ahead: total,
         });
-        thumbsRef.current.setBusy(true); // started on demand (drawer / scrub preview)
+        thumbsRef.current = thumbs;
+        // Started on demand (drawer / scrub preview), unless that was asked for before the PDF loaded.
+        if (thumbsWantedRef.current) thumbs.focus(a, b);
+        else thumbs.setBusy(true);
         cache.focus(a, b);
       } catch {
         // Damaged/encrypted PDFs land in the error state; download stays available.
@@ -454,12 +461,17 @@ export function FlipbookViewer({
     const r = hostRef.current?.getBoundingClientRect();
     if (!r) return;
     const fx = (e.clientX - r.left) / r.width;
-    // Edges turn at once, like a book app: no waiting to see whether a second tap follows.
-    if (fx < EDGE_TAP || fx > 1 - EDGE_TAP) {
-      window.clearTimeout(tapRef.current.timer);
-      tapRef.current.t = 0;
+    const turn = () => {
       (fx > 0.5 !== rtl ? next : prev)();
       markInteracted();
+    };
+    // Edges turn at once, like a book app: no waiting to see whether a second tap follows.
+    // On a spread the zone is the outer part of each page, so most of a page still zooms.
+    const edge = portrait ? EDGE_TAP : EDGE_TAP / 2;
+    if (fx < edge || fx > 1 - edge) {
+      window.clearTimeout(tapRef.current.timer);
+      tapRef.current.t = 0;
+      turn();
       return;
     }
     const tap = tapRef.current;
@@ -476,8 +488,11 @@ export function FlipbookViewer({
       t: now,
       x: e.clientX,
       y: e.clientY,
-      // A single tap in the middle shows/hides the reading-mode chrome.
-      timer: window.setTimeout(() => setChromeHidden((h) => !h), DOUBLE_TAP_MS),
+      // A single tap in the middle shows/hides the reading-mode chrome; inline it turns the page.
+      timer: window.setTimeout(
+        () => (fullscreen ? setChromeHidden((h) => !h) : turn()),
+        DOUBLE_TAP_MS
+      ),
     };
   };
   const pageAt = (x: number, y: number) => {
@@ -499,9 +514,25 @@ export function FlipbookViewer({
   }, [fullscreen]);
   useEffect(() => {
     if (!fullscreen || chromeHidden || thumbsOpen || zoom) return;
-    const timer = window.setTimeout(() => setChromeHidden(true), CHROME_IDLE_MS);
+    const timer = window.setTimeout(() => {
+      // Never hide the toolbar out from under keyboard focus.
+      const active = document.activeElement;
+      const chrome = rootRef.current?.querySelectorAll('.fb-bar, .fb-foot') ?? [];
+      if ([...chrome].some((el) => el.contains(active))) return;
+      setChromeHidden(true);
+    }, CHROME_IDLE_MS);
     return () => window.clearTimeout(timer);
   }, [fullscreen, chromeHidden, thumbsOpen, zoom]);
+
+  const chromeOff = fullscreen && chromeHidden && !thumbsOpen && !zoom;
+  // A real mouse moving brings the chrome back; the synthetic mouse events phones send after a tap don't.
+  const lastMoveRef = useRef<{ x: number; y: number } | null>(null);
+  const onRevealMove = (e: React.PointerEvent) => {
+    if (e.pointerType !== 'mouse') return;
+    const last = lastMoveRef.current;
+    lastMoveRef.current = { x: e.clientX, y: e.clientY };
+    if (last && Math.hypot(e.clientX - last.x, e.clientY - last.y) > 4) setChromeHidden(false);
+  };
 
   /* ── the cache follows the reading position */
   useEffect(() => {
@@ -509,7 +540,6 @@ export function FlipbookViewer({
   }, [status, first, last]);
 
   /* ── thumbnails are prepared only once someone wants them (drawer or scrub preview) */
-  const thumbsWantedRef = useRef(false);
   const wantThumbs = useCallback(() => {
     thumbsWantedRef.current = true;
     thumbsRef.current?.setBusy(false);
@@ -641,7 +671,7 @@ export function FlipbookViewer({
         fullscreen && !document.fullscreenElement && 'is-immersive',
         thumbsOpen && 'thumbs-open',
         zoom && 'is-zoomed',
-        fullscreen && chromeHidden && !thumbsOpen && !zoom && 'chrome-hidden',
+        chromeOff && 'chrome-hidden',
         className
       )}
       style={
@@ -661,9 +691,9 @@ export function FlipbookViewer({
       data-orientation={portrait ? 'portrait' : 'landscape'}
       dir="ltr"
       onKeyDown={onKey}
-      onMouseMove={fullscreen && chromeHidden ? () => setChromeHidden(false) : undefined}
+      onPointerMove={fullscreen && chromeHidden ? onRevealMove : undefined}
     >
-      <div className="fb-bar">
+      <div className="fb-bar" inert={chromeOff}>
         <div className="fb-doc">
           <span className="fb-doc-icon" aria-hidden="true">
             <BookOpen />
@@ -858,7 +888,7 @@ export function FlipbookViewer({
         </div>
       </div>
 
-      <div className="fb-foot">
+      <div className="fb-foot" inert={chromeOff}>
         <button
           type="button"
           className="fb-step prev"
