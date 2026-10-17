@@ -24,6 +24,26 @@ same tokens under `.dark .fb` to change it.
 
 The full token list is in `src/components/blocks/objects/flipbook/flipbook.css` (top block).
 
+Overrides win regardless of stylesheet order: the component's defaults use `:where(.fb)` (zero
+specificity), so any `.fb { … }` rule in the site beats them.
+
+## Requirements per site
+
+- **Sanity CORS origins.** Sanity's CDN enforces the project's CORS origins on file downloads
+  (`403 CORS Origin not allowed` otherwise). Every origin that shows a flipbook — production,
+  staging, preview hosts and the local port you develop on — must be listed in
+  sanity.io/manage → API → CORS origins.
+- **Content-Security-Policy.** If the site sets `connect-src`, allow the project's file assets:
+  `https://cdn.sanity.io/files/<projectId>/`. Page images are `blob:` URLs; if the site sets
+  `img-src`, include `blob:`. pdf.js runs in a same-origin module worker; if the site sets `worker-src`,
+  include `'self'`.
+- **PostCSS cascade-layer polyfills.** Sites that flatten Tailwind's `@layer` rules (e.g. Medal's
+  `@medalsocial/postcss-compat`) boost the preflight reset above plain component CSS. Import
+  `@medalsocial/postcss-compat/page-scoped-layers.css` at the top of `flipbook.css` there.
+- **Large PDFs.** pdf.js downloads the whole file (Sanity's CDN doesn't expose range support to
+  the browser). A 145-page / 48 MB book works (usable in a few seconds, ~10 s for all pages), but
+  readers pay the full download.
+
 ## Using it in code
 
 ```tsx

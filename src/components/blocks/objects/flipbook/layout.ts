@@ -20,7 +20,8 @@ interface LayoutInput {
 
 /** Room around the book: nav buttons in landscape, tighter on short (landscape-phone) stages. */
 function padding(portrait: boolean, short: boolean) {
-  if (portrait) return { padX: 18, padY: 22 };
+  // Phones: the page runs almost edge to edge (the stage hugs it vertically).
+  if (portrait) return { padX: 6, padY: 10 };
   if (short) return { padX: 86, padY: 14 };
   return { padX: 104, padY: 40 };
 }

@@ -432,6 +432,7 @@
     "close": "إغلاق",
     "download": "تنزيل PDF",
     "fullscreen": "ملء الشاشة",
+    "readFullscreen": "اقرأ بملء الشاشة",
     "goToPage": "انتقل إلى الصفحة",
     "preparing": "جارٍ تجهيز الصفحات",
     "pages": "{count} صفحة",

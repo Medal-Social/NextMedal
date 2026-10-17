@@ -147,6 +147,39 @@ describe('Leaf: dragging', () => {
   });
 });
 
+describe('Leaf: 3D sheet stays 3D', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({
+      toFake: ['requestAnimationFrame', 'cancelAnimationFrame', 'performance', 'Date'],
+    });
+  });
+
+  it('never fades or filters the sheet itself (that would mirror the back face)', () => {
+    const { host, leaf } = make(12, { duration: 400 });
+    leaf.layout({ pageW: 300, pageH: 424, portrait: true });
+    leaf.go(3, false);
+    pointer(host, 'pointerdown', 290);
+    pointer(window, 'pointermove', 270);
+    pointer(window, 'pointermove', 60); // past halfway: the notepad leaf is fading
+    const sheet = host.querySelector('.lf-leaf') as HTMLElement;
+    const front = host.querySelector('.lf-front') as HTMLElement;
+    expect(sheet.style.opacity).toBe('');
+    expect(sheet.style.filter).toBe('');
+    expect(Number(front.style.opacity)).toBeLessThan(1);
+    pointer(window, 'pointerup', 60);
+    vi.advanceTimersByTime(1500);
+  });
+
+  it('keeps the next pages decoded and ready', () => {
+    const { host, leaf } = make();
+    leaf.go(3, false);
+    const warm = [...host.querySelectorAll('.lf-warm img')].map((img) => img.getAttribute('src'));
+    expect(warm).toEqual(
+      expect.arrayContaining(['blob:page-1', 'blob:page-2', 'blob:page-5', 'blob:page-6'])
+    );
+  });
+});
+
 describe('Leaf: images', () => {
   it('fills slots from getSrc and refreshes when a page arrives later', () => {
     const urls: Record<number, string | undefined> = { 0: 'blob:a' };

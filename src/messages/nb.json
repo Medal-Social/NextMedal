@@ -308,6 +308,7 @@
     "close": "Lukk",
     "download": "Last ned PDF",
     "fullscreen": "Fullskjerm",
+    "readFullscreen": "Les i fullskjerm",
     "goToPage": "Gå til side",
     "preparing": "Klargjør sider",
     "pages": "{count} sider",
