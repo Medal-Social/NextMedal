@@ -35,4 +35,17 @@ describe('flipbook.css token defaults', () => {
     expect(selectors).toContain(':where(.fb)');
     expect(selectors).toContain(':where(.dark) :where(.fb)');
   });
+
+  it('never puts filter or opacity on the 3D sheet (it would mirror the back face)', () => {
+    const offenders: string[] = [];
+    for (const [, selector = '', body = ''] of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+      if (
+        /\.lf-leaf(?![\w-])/.test(selector) &&
+        !/\.lf-leaf[^,]*\s+\S/.test(selector.trim()) &&
+        /(^|;|\s)(filter|opacity)\s*:/.test(body)
+      )
+        offenders.push(selector.trim());
+    }
+    expect(offenders).toEqual([]);
+  });
 });

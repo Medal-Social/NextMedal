@@ -22,6 +22,7 @@ const labels: FlipbookLabels = {
   close: 'Close',
   download: 'Download PDF',
   fullscreen: 'Fullscreen',
+  readFullscreen: 'Read full screen',
   goToPage: 'Go to page',
   preparing: 'Preparing pages',
   pages: '{count} pages',

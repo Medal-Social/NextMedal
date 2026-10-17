@@ -223,7 +223,8 @@
 /* stage */
 .fb-stage {
   position: relative;
-  height: clamp(300px, calc(100svh - 220px), 760px);
+  /* Big enough to read: most of the screen, with the toolbar and footer still in view. */
+  height: clamp(320px, calc(100svh - 190px), 1100px);
   background: var(--fb-stage-bg);
   overflow: hidden;
   display: grid;
@@ -394,8 +395,22 @@
   pointer-events: none;
   z-index: 2;
 }
-.lf.is-turning .lf-leaf {
-  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.22));
+/* The lift shadow sits on the faces: a filter (or opacity) on the 3D sheet itself would
+   flatten it, and its back face would show the front page mirrored. */
+.lf.is-turning .lf-face {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+.lf-warm {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+.lf-warm img {
+  width: 1px;
+  height: 1px;
 }
 .lf.is-dragging {
   cursor: grabbing;
@@ -1215,4 +1230,91 @@
 /* The scrub preview shows its page image as soon as it exists (no drawer loaded-state). */
 .fb-scrub-tip .fb-thumb-img img {
   opacity: 1;
+}
+
+/* ── Phones: edge to edge, and a proper reading mode ───────────────────────── */
+@container fb (max-width: 719px) {
+  .fb:not(.is-fullscreen) {
+    border-radius: 0;
+    border-inline: 0;
+  }
+}
+
+.fb-read {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  z-index: 4;
+  transform: translateX(-50%);
+  display: none;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--fb-accent);
+  color: var(--fb-accent-contrast);
+  font: 600 14px / 1 var(--fb-font);
+  box-shadow: 0 10px 28px -8px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+}
+.fb-read svg {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+}
+.fb[data-orientation="portrait"]:not(.is-fullscreen)[data-state="ready"] .fb-read {
+  display: inline-flex;
+}
+
+/* Reading mode (fullscreen / immersive): the page owns the screen, chrome floats on top and
+   steps aside after a moment; a tap in the middle of the page brings it back. */
+.fb.is-fullscreen .fb-stage {
+  position: absolute;
+  inset: 0;
+  height: auto;
+}
+.fb.is-fullscreen .fb-bar,
+.fb.is-fullscreen .fb-foot {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 8;
+  background: color-mix(in srgb, var(--fb-surface) 88%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+  transition:
+    transform 0.32s cubic-bezier(0.2, 0.9, 0.25, 1),
+    opacity 0.24s ease;
+}
+.fb.is-fullscreen .fb-bar {
+  top: 0;
+  padding-top: env(safe-area-inset-top);
+  height: calc(62px + env(safe-area-inset-top));
+}
+.fb.is-fullscreen .fb-foot {
+  bottom: 0;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.fb.is-fullscreen.chrome-hidden .fb-bar {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+.fb.is-fullscreen.chrome-hidden .fb-foot {
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+.fb.is-fullscreen.chrome-hidden .fb-nav {
+  opacity: 0;
+}
+.fb.is-immersive {
+  padding: 0;
+}
+
+/* On phones the hint sits above the "Read full screen" button instead of under it. */
+.fb[data-orientation="portrait"]:not(.is-fullscreen) .fb-hint {
+  bottom: 74px;
 }
