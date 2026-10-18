@@ -9,12 +9,22 @@ import en from '@/messages/en.json';
 vi.mock('next/navigation', () => ({ useSearchParams: () => new URLSearchParams() }));
 const submitForm = vi.hoisted(() => vi.fn());
 vi.mock('@/actions/forms/submit-form', () => ({ submitForm }));
-const action = vi.hoisted(() => ({ onSuccess: undefined as undefined | (() => void) }));
+const action = vi.hoisted(() => ({
+  onSuccess: undefined as undefined | (() => void),
+  lastInput: undefined as unknown,
+}));
 vi.mock('@/actions/leads/capture-lead', () => ({ captureLead: vi.fn() }));
 vi.mock('next-safe-action/hooks', () => ({
   useAction: (_fn: unknown, opts: { onSuccess: () => void }) => {
     action.onSuccess = opts.onSuccess;
-    return { execute: () => action.onSuccess?.(), status: 'idle', result: {} };
+    return {
+      execute: (input: unknown) => {
+        action.lastInput = input;
+        action.onSuccess?.();
+      },
+      status: 'idle',
+      result: {},
+    };
   },
 }));
 
@@ -50,6 +60,19 @@ describe('form texts per language', () => {
   it('picks the visitor language, then English', () => {
     expect(getLocalizedValue(value, 'nb')).toBe('Send inn');
     expect(getLocalizedValue(value, 'ar')).toBe('Send');
+  });
+  it('reads internationalizedArray v5 entries (language field, random _key)', () => {
+    const v5 = [
+      { _key: 'a1b2c3', _type: 'internationalizedArrayStringValue', language: 'en', value: 'Send' },
+      {
+        _key: 'd4e5f6',
+        _type: 'internationalizedArrayStringValue',
+        language: 'nb',
+        value: 'Send inn',
+      },
+    ];
+    expect(getLocalizedValue(v5, 'nb')).toBe('Send inn');
+    expect(getLocalizedValue(v5, 'ar')).toBe('Send');
   });
   it('still reads the old plain string', () => {
     expect(getLocalizedValue('Submit', 'nb')).toBe('Submit');
@@ -101,6 +124,29 @@ describe('Form uses the texts editors set', () => {
     );
     expect(screen.getByRole('link', { name: 'I agree to the terms' }).getAttribute('href')).toBe(
       '/terms'
+    );
+  });
+
+  it('consent link keeps its params', () => {
+    renderIn(
+      <Form
+        form={{
+          ...baseForm,
+          requireConsent: true,
+          acceptance: {
+            text: [{ _key: 'en', value: 'I agree to the terms' }],
+            link: {
+              type: 'internal',
+              params: '#cookies',
+              internal: { _type: 'page', language: 'en', metadata: { slug: { current: 'terms' } } },
+            },
+          },
+        }}
+        locale="en"
+      />
+    );
+    expect(screen.getByRole('link', { name: 'I agree to the terms' }).getAttribute('href')).toBe(
+      '/terms#cookies'
     );
   });
 
@@ -194,6 +240,58 @@ describe('event registration uses the texts editors set', () => {
       />
     );
     expect((screen.getByRole('checkbox') as HTMLInputElement).required).toBe(true);
+  });
+
+  it('shows the standard consent text when consent is required but no text is set', () => {
+    renderIn(
+      <EventRegistrationModal
+        open
+        onOpenChange={() => {}}
+        eventUrl="/events/launch"
+        event={event({ requireConsent: true })}
+      />
+    );
+    const checkbox = screen.getByRole('checkbox') as HTMLInputElement;
+    expect(checkbox.required).toBe(true);
+    expect(screen.getByText(en.modules.events.registration.consent)).toBeTruthy();
+  });
+
+  it('links the consent text like the contact form does', () => {
+    renderIn(
+      <EventRegistrationModal
+        open
+        onOpenChange={() => {}}
+        eventUrl="/events/launch"
+        event={event({
+          acceptance: {
+            text: 'I agree to the terms',
+            link: {
+              type: 'internal',
+              internal: { _type: 'page', language: 'en', metadata: { slug: { current: 'terms' } } },
+            },
+          },
+        })}
+      />
+    );
+    expect(screen.getByRole('link', { name: 'I agree to the terms' }).getAttribute('href')).toBe(
+      '/terms'
+    );
+  });
+
+  it('sends the form id and consent so the server can check it', () => {
+    renderIn(
+      <EventRegistrationModal
+        open
+        onOpenChange={() => {}}
+        eventUrl="/events/launch"
+        event={event({ requireConsent: true, submitButtonText: 'Submit' })}
+      />
+    );
+    fireEvent.click(screen.getByRole('checkbox'));
+    fireEvent.submit(
+      screen.getByRole('button', { name: 'Submit' }).closest('form') as HTMLFormElement
+    );
+    expect(action.lastInput).toMatchObject({ formId: 'form-1', consent: true });
   });
 
   it('leaves consent optional when the form does not require it', () => {

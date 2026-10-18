@@ -38,6 +38,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Link } from '@/i18n/navigation';
+import type { ConsentLink } from '@/lib/forms/consent-link';
 import {
   cn,
   formatEventDate,
@@ -75,6 +76,7 @@ interface RegistrationForm {
   acceptance?: {
     required?: boolean;
     text?: Sanity.InternationalizedArrayString | string;
+    link?: ConsentLink;
   };
   submitButtonText?: Sanity.InternationalizedArrayString | string;
   successMessage?: Sanity.InternationalizedArrayText | string;

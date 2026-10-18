@@ -230,7 +230,8 @@
         "registerFor": "Meld deg på {title}",
         "formDescription": "Fyll ut skjemaet nedenfor for å reservere din plass.",
         "registering": "Melder deg på...",
-        "close": "Ferdig"
+        "close": "Ferdig",
+        "consent": "Jeg godtar at opplysningene mine lagres for å håndtere påmeldingen."
       }
     }
   },

@@ -3,6 +3,7 @@
 import { Users } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import type { ConsentLink } from '@/lib/forms/consent-link';
 import EventRegistrationModal from './EventRegistrationModal';
 
 // Form field type from Sanity
@@ -25,6 +26,7 @@ interface RegistrationForm {
   acceptance?: {
     required?: boolean;
     text?: Sanity.InternationalizedArrayString | string;
+    link?: ConsentLink;
   };
   submitButtonText?: Sanity.InternationalizedArrayString | string;
   successMessage?: Sanity.InternationalizedArrayText | string;

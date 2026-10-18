@@ -11,9 +11,14 @@ import { Suspense } from 'react';
 import SharedPortableText from '@/components/blocks/modules/SharedPortableText';
 import { Section } from '@/components/ui/section';
 import { getCollectionSlugWithFallback } from '@/lib/collections/registry';
+import type { ConsentLink } from '@/lib/forms/consent-link';
 import moduleProps from '@/lib/sanity/module-props';
 import { fetchSanityLive } from '@/sanity/lib/live';
-import { IMAGE_QUERY, PERSON_PREVIEW_QUERY } from '@/sanity/lib/queries';
+import {
+  EVENT_REGISTRATION_FORM_QUERY,
+  IMAGE_QUERY,
+  PERSON_PREVIEW_QUERY,
+} from '@/sanity/lib/queries';
 import EventsFrontpageClient from './EventsFrontpageClient';
 
 interface EventsFrontpageProps extends Sanity.EventsFrontpage {
@@ -41,6 +46,7 @@ interface RegistrationForm {
   acceptance?: {
     required?: boolean;
     text?: Sanity.InternationalizedArrayString | string;
+    link?: ConsentLink;
   };
   submitButtonText?: Sanity.InternationalizedArrayString | string;
   successMessage?: Sanity.InternationalizedArrayText | string;
@@ -124,26 +130,7 @@ async function fetchCollectionEvents(
           city,
           country
         },
-        registrationForm->{
-          _id,
-          formTitle,
-          intent,
-          fields[] {
-            _key,
-            label,
-            name,
-            type,
-            placeholder,
-            required
-          },
-          requireConsent,
-          acceptance {
-            required,
-            text
-          },
-          submitButtonText,
-          successMessage
-        },
+        registrationForm->{${EVENT_REGISTRATION_FORM_QUERY}},
         speakers[]->${PERSON_PREVIEW_QUERY}
       }
     `,

@@ -10,8 +10,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { type ConsentLink, consentLinkHref } from '@/lib/forms/consent-link';
 import { getLocalizedValue } from '@/lib/i18n/localized-value';
-import { internalHref, type LinkTarget } from '@/lib/sanity/localized-link';
 import { cn } from '@/lib/utils/index';
 
 interface FormField {
@@ -37,7 +37,7 @@ interface FormProps {
       /** Legacy switch; `requireConsent` replaced it. */
       required?: boolean;
       text?: LocalizedText;
-      link?: { type?: 'internal' | 'external'; internal?: LinkTarget | null; external?: string };
+      link?: ConsentLink;
     };
     redirect?: unknown;
   };
@@ -59,15 +59,6 @@ function adaptLegacyForm(form: FormProps['form'], locale: string): FormProps['fo
     })),
     requireConsent: form.acceptance?.required || form.requireConsent || false,
   };
-}
-
-function consentLinkHref(
-  link: NonNullable<FormProps['form']['acceptance']>['link'],
-  locale: string
-): string | undefined {
-  if (!link) return undefined;
-  if (link.type === 'external') return link.external || undefined;
-  return link.internal?.metadata?.slug?.current ? internalHref(link.internal, locale) : undefined;
 }
 
 // Get autocomplete value based on field type

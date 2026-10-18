@@ -429,6 +429,29 @@ export const COLLECTION_DOCUMENTATION_SLUGS_QUERY = groq`
 	}
 `;
 
+// Event registration form: fields and the texts editors set (event list + event page)
+export const EVENT_REGISTRATION_FORM_QUERY = groq`
+	_id,
+	formTitle,
+	intent,
+	fields[] {
+		_key,
+		label,
+		name,
+		type,
+		placeholder,
+		required
+	},
+	requireConsent,
+	acceptance {
+		required,
+		text,
+		link { ${LINK_QUERY} }
+	},
+	submitButtonText,
+	successMessage
+`;
+
 // Collection events query - fetches an event by slug and language
 export const COLLECTION_EVENTS_QUERY = groq`
 	*[
@@ -449,6 +472,7 @@ export const COLLECTION_EVENTS_QUERY = groq`
 			role,
 			image { ${IMAGE_QUERY} }
 		},
+		registrationForm->{${EVENT_REGISTRATION_FORM_QUERY}},
 		metadata,
 		seo {
 			...,

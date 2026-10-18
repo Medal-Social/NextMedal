@@ -74,8 +74,10 @@ declare global {
 
     // Internationalized field types (sanity-plugin-internationalized-array)
     // Generic internationalized array structure
+    // v5 stores the language in `language` with a random `_key`; older entries use `_key`.
     type InternationalizedArray<T> = Array<{
       _key: string;
+      language?: string;
       value: T;
     }>;
 

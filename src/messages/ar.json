@@ -278,7 +278,8 @@
         "registerFor": "سجل في {title}",
         "formDescription": "املأ النموذج أدناه لحجز مكانك.",
         "registering": "جارٍ التسجيل...",
-        "close": "تم"
+        "close": "تم",
+        "consent": "أوافق على حفظ بياناتي لمعالجة تسجيلي."
       }
     },
     "newsletter": {

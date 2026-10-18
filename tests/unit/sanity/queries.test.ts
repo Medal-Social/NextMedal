@@ -605,3 +605,31 @@ describe('GROQ Queries - Security & Best Practices', () => {
  * 7. Avoid nested queries - use parallel queries + application joins (100x faster)
  * 8. Use array::unique() instead of nested count() for O(n) complexity
  */
+
+describe('event registration form projection', () => {
+  it('event detail and event list fetch the same form texts', async () => {
+    const { COLLECTION_EVENTS_QUERY, EVENT_REGISTRATION_FORM_QUERY } = await import(
+      '@/sanity/lib/queries'
+    );
+    for (const field of [
+      'requireConsent',
+      'submitButtonText',
+      'successMessage',
+      'acceptance',
+      'link',
+      'internal->',
+    ]) {
+      expect(EVENT_REGISTRATION_FORM_QUERY).toContain(field);
+    }
+    expect(COLLECTION_EVENTS_QUERY).toContain(
+      `registrationForm->{${EVENT_REGISTRATION_FORM_QUERY}}`
+    );
+    const { readFileSync } = await import('node:fs');
+    const source = readFileSync(
+      'src/components/blocks/modules/frontpage/events/EventsFrontpage.tsx',
+      'utf-8'
+    );
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: checks the interpolation in source
+    expect(source).toContain('registrationForm->{${EVENT_REGISTRATION_FORM_QUERY}}');
+  });
+});

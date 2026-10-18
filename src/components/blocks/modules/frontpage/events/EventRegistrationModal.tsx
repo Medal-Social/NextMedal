@@ -16,6 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { type ConsentLink, consentLinkHref } from '@/lib/forms/consent-link';
 import { getLocalizedValue } from '@/lib/i18n/localized-value';
 
 // Form field type from Sanity
@@ -38,6 +39,7 @@ interface RegistrationForm {
   acceptance?: {
     required?: boolean;
     text?: Sanity.InternationalizedArrayString | string;
+    link?: ConsentLink;
   };
   submitButtonText?: Sanity.InternationalizedArrayString | string;
   successMessage?: Sanity.InternationalizedArrayText | string;
@@ -97,6 +99,7 @@ export default function EventRegistrationModal({
       company,
       phone,
       consent,
+      formId: form._id,
       source: {
         type: 'event',
         referenceId: event._id,
@@ -123,8 +126,11 @@ export default function EventRegistrationModal({
   if (!form) return null;
 
   const successText = getLocalizedValue(form.successMessage, locale) || t('successMessage');
-  const consentText = getLocalizedValue(form.acceptance?.text, locale);
   const consentRequired = !!(form.requireConsent || form.acceptance?.required);
+  // A required checkbox always shows, with the standard text when none is set.
+  const consentText =
+    getLocalizedValue(form.acceptance?.text, locale) || (consentRequired ? t('consent') : '');
+  const consentHref = consentLinkHref(form.acceptance?.link, locale);
   const submitText = getLocalizedValue(form.submitButtonText, locale) || tCommon('processing');
 
   return (
@@ -242,7 +248,18 @@ export default function EventRegistrationModal({
                     className="mt-1 size-4 rounded border-border accent-primary"
                   />
                   <span className="whitespace-pre-line text-muted-foreground text-sm leading-tight">
-                    {consentText}
+                    {consentHref ? (
+                      <a
+                        href={consentHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-semibold text-primary hover:underline"
+                      >
+                        {consentText}
+                      </a>
+                    ) : (
+                      consentText
+                    )}
                     {consentRequired && <span className="ml-1 text-destructive">*</span>}
                   </span>
                 </label>

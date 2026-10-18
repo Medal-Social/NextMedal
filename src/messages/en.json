@@ -230,7 +230,8 @@
         "registerFor": "Register for {title}",
         "formDescription": "Fill out the form below to reserve your spot.",
         "registering": "Registering...",
-        "close": "Done"
+        "close": "Done",
+        "consent": "I agree that my details are stored to handle my registration."
       }
     }
   },
