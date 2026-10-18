@@ -181,6 +181,22 @@ describe('Leaf: 3D sheet stays 3D', () => {
 });
 
 describe('Leaf: images', () => {
+  it('leaves a failed page blank and still paints the pages around it', () => {
+    const host = document.createElement('div');
+    const leaf = new Leaf(host, {
+      count: 4,
+      duration: 0,
+      getSrc: (i) => (i === 2 ? '' : `blob:page-${i}`),
+    });
+    leaf.layout({ pageW: 300, pageH: 424, portrait: false }, 1);
+    const missed = host.querySelector<HTMLElement>('.fb-page[data-page="2"]');
+    const kept = host.querySelector<HTMLElement>('.fb-page[data-page="1"]');
+    expect(missed).toHaveClass('is-unavailable');
+    expect(missed?.querySelector('img')).not.toHaveAttribute('src');
+    expect(kept?.querySelector('img')).toHaveAttribute('src', 'blob:page-1');
+    expect(kept).not.toHaveClass('is-unavailable');
+  });
+
   it('fills slots from getSrc and refreshes when a page arrives later', () => {
     const urls: Record<number, string | undefined> = { 0: 'blob:a' };
     const host = document.createElement('div');

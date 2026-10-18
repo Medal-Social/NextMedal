@@ -4,7 +4,7 @@ Fixture: production build (`next build` + standalone `node server.js`) of `/qa/s
 (lean `(embed-gate)` layout). Measured 2026-10-15 against local `http://127.0.0.1:3000/qa/social-embeds`.
 
 The route is available on staging / preview / local (non-production) for this gate. Customer-facing
-production returns 404 unless `ALLOW_QA_SOCIAL_EMBEDS` is set; the path is excluded from the sitemap
+production returns 404 unless `ALLOW_QA_SOCIAL_EMBEDS` is set on the running server (the route is dynamic); the path is excluded from the sitemap, including alternate-language links
 and carries no canonical URL in production.
 
 Raw Lighthouse JSON/HTML reports are **CI/agent artifacts only** — do not commit them

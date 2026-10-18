@@ -31,6 +31,7 @@ const envSchema = z.object({
   MEDAL_API_ENDPOINT: z.url().optional(),
 
   // Optional: serve `/qa/social-embeds` even when APP_ENV/VERCEL_ENV is production.
+  // The QA route is dynamic and reads this from the process on each request.
   // Staging/preview/dev always allow the fixture; production 404s unless this is set.
   ALLOW_QA_SOCIAL_EMBEDS: z.string().optional(),
 });
@@ -95,3 +96,18 @@ export const isAppProduction =
   env.NEXT_PUBLIC_APP_ENV === 'production' || env.VERCEL_ENV === 'production';
 export const BASE_URL =
   dev || !env.NEXT_PUBLIC_BASE_URL ? 'http://localhost:3000' : env.NEXT_PUBLIC_BASE_URL;
+
+/**
+ * Live read of `ALLOW_QA_SOCIAL_EMBEDS`.
+ * Bracket access so Next does not inline the build-time value. `env.ALLOW_QA_SOCIAL_EMBEDS`
+ * is captured when this module loads, which would bake the QA gate.
+ * Same policy as the schema above: empty becomes absent, any other string is kept.
+ * The production gate then accepts only 1 / true / yes / on.
+ */
+export function readAllowQaSocialEmbeds(): string | undefined {
+  // biome-ignore lint/complexity/useLiteralKeys: a literal key is inlined at build and ignores the runtime flag
+  const raw = process.env['ALLOW_QA_SOCIAL_EMBEDS'];
+  const normalized = raw === '' ? undefined : raw;
+  const parsed = z.string().optional().safeParse(normalized);
+  return parsed.success ? parsed.data : undefined;
+}

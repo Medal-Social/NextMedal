@@ -3,11 +3,18 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   downloadHref,
   FlipbookViewer,
+  sliderLogicalFraction,
 } from '@/components/blocks/objects/flipbook/FlipbookViewer.client';
 import type { FlipbookLabels } from '@/components/blocks/objects/flipbook/types';
+import { logger } from '@/lib/core/logger';
+
+vi.mock('@/lib/core/logger', () => ({
+  logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn() },
+}));
 
 vi.mock('@/components/blocks/objects/flipbook/pdf', () => ({
   openPdf: vi.fn(() => ({ promise: Promise.resolve({ numPages: 6 }), cancel: vi.fn() })),
+  closePdf: vi.fn(async () => undefined),
   pageRatio: vi.fn(async () => 210 / 297),
   targetPageHeight: () => 1000,
   renderPage: vi.fn(async (_doc: unknown, i: number) => `blob:page-${i}`),
@@ -105,6 +112,75 @@ describe('FlipbookViewer', () => {
     await waitFor(() => expect(counter()).toBe('4–5 / 6'));
   });
 
+  it('keeps a readable book when a later page fails, and replaces it only when opening pages fail', async () => {
+    const pdf = await import('@/components/blocks/objects/flipbook/pdf');
+    const renderPage = vi.mocked(pdf.renderPage);
+    const restoreRender = () =>
+      renderPage.mockImplementation(async (_doc: unknown, i: number) => `blob:page-${i}`);
+
+    renderPage.mockImplementation(async (_doc: unknown, i: number) => {
+      if (i === 4) throw new Error('encode failed');
+      return `blob:page-${i}`;
+    });
+    const { unmount } = render(
+      <FlipbookViewer src="/late.pdf" title="Late miss" labels={labels} dir="ltr" reducedMotion />
+    );
+    await engineReady('Late miss');
+    await waitFor(() =>
+      expect(screen.getByRole('region', { name: 'Late miss' })).toHaveAttribute(
+        'data-complete',
+        'true'
+      )
+    );
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(logger.error).toHaveBeenCalledWith(
+      expect.objectContaining({ page: 5 }),
+      'Flipbook page failed to render'
+    );
+
+    const slider = screen.getByRole('slider', { name: 'Go to page' });
+    fireEvent.change(slider, { target: { value: '4' } });
+    fireEvent.keyUp(slider, { key: 'ArrowRight' });
+    await waitFor(() => expect(counter()).toBe('4–5 / 6'));
+    const missed = document.querySelector<HTMLElement>('.fb-page[data-page="4"]');
+    expect(missed).toHaveClass('is-unavailable');
+    expect(missed?.querySelector('img')).not.toHaveAttribute('src');
+    expect(document.querySelector('.fb-page[data-page="3"] img')).toHaveAttribute(
+      'src',
+      'blob:page-3'
+    );
+    const region = screen.getByRole('region', { name: 'Late miss' });
+    act(() => {
+      region.focus();
+    });
+    fireEvent.keyDown(document.activeElement as Element, { key: 'End' });
+    await waitFor(() => expect(counter()).toBe('6 / 6'));
+    expect(document.querySelector('.fb-page[data-page="5"] img')).toHaveAttribute(
+      'src',
+      'blob:page-5'
+    );
+    unmount();
+
+    restoreRender();
+    vi.mocked(logger.error).mockClear();
+    // Only when the whole opening spread fails does the book give way to the error state.
+    renderPage.mockImplementation(async (_doc: unknown, i: number) => {
+      if (i === 0) throw new Error('opening page failed');
+      return `blob:page-${i}`;
+    });
+    render(
+      <FlipbookViewer src="/head.pdf" title="Head miss" labels={labels} dir="ltr" reducedMotion />
+    );
+    await waitFor(() =>
+      expect(screen.getByRole('region', { name: 'Head miss' })).toHaveAttribute(
+        'data-state',
+        'error'
+      )
+    );
+    expect(screen.getByRole('alert')).toHaveTextContent('We couldn’t open this PDF.');
+    expect(document.querySelector('.fb-book.lf')).toBeNull();
+    restoreRender();
+  });
   it('shows the error state with a working download link', async () => {
     const pdf = await import('@/components/blocks/objects/flipbook/pdf');
     vi.mocked(pdf.openPdf).mockImplementationOnce(() => ({
@@ -275,6 +351,34 @@ describe('FlipbookViewer', () => {
   it('labels the thumbnail drawer close button as a plain close', async () => {
     render(<FlipbookViewer src="/x.pdf" title="Doc" labels={labels} dir="ltr" reducedMotion />);
     expect(document.querySelector('.fb-thumbs-close')).toHaveAttribute('aria-label', 'Close');
+  });
+
+  it('follows the locale direction on the viewer and the page slider', async () => {
+    render(<FlipbookViewer src="/x.pdf" title="Doc" labels={labels} dir="rtl" reducedMotion />);
+    expect(screen.getByRole('region', { name: 'Doc' })).toHaveAttribute('dir', 'rtl');
+    expect(screen.getByRole('slider', { name: 'Go to page' })).toHaveAttribute('dir', 'rtl');
+  });
+
+  it('cancels an in-flight PDF download when the viewer unmounts', async () => {
+    const pdf = await import('@/components/blocks/objects/flipbook/pdf');
+    const cancel = vi.fn();
+    vi.mocked(pdf.openPdf).mockReturnValueOnce({ promise: new Promise(() => undefined), cancel });
+    const { unmount } = render(
+      <FlipbookViewer src="/slow.pdf" title="Slow" labels={labels} dir="ltr" reducedMotion />
+    );
+    await waitFor(() => expect(pdf.openPdf).toHaveBeenCalled());
+    unmount();
+    expect(cancel).toHaveBeenCalledOnce();
+  });
+});
+
+describe('sliderLogicalFraction', () => {
+  it('reads left-to-right from the physical left edge', () => {
+    expect(sliderLogicalFraction(25, { left: 0, width: 100 }, false)).toBe(0.25);
+  });
+
+  it('reads right-to-left from the physical right edge', () => {
+    expect(sliderLogicalFraction(25, { left: 0, width: 100 }, true)).toBe(0.75);
   });
 });
 

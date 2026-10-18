@@ -22,6 +22,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { logger } from '@/lib/core/logger';
 import { cn } from '@/lib/utils/cn';
 import { computeBookLayout, coverShift, visibleRange } from './layout';
 import { Leaf } from './leaf';
@@ -50,6 +51,18 @@ const THUMB_HEIGHT = 220;
 
 const fmt = (template: string, values: Record<string, string | number>) =>
   template.replace(/\{(\w+)\}/g, (_, key: string) => String(values[key] ?? ''));
+
+/** Logical 0–1 position on the page slider. RTL sliders grow from the inline end. */
+export function sliderLogicalFraction(
+  clientX: number,
+  bounds: { left: number; width: number },
+  rtl: boolean
+): number {
+  if (bounds.width <= 0) return 0;
+  const visual = (clientX - bounds.left) / bounds.width;
+  const logical = rtl ? 1 - visual : visual;
+  return Math.min(1, Math.max(0, logical));
+}
 
 function fmtSize(bytes?: number) {
   if (!bytes) return '';
@@ -219,7 +232,13 @@ export function FlipbookViewer({
         let opened = false;
         const cache = new PageCache({
           count: total,
-          render: (i, signal) => renderPage(doc, i, { height }, signal),
+          render: (i, signal) =>
+            renderPage(doc, i, { height }, signal).catch((error: unknown) => {
+              // A page turn cancelling the render is not a failure.
+              if (!signal.aborted)
+                logger.error({ err: error, page: i + 1 }, 'Flipbook page failed to render');
+              throw error;
+            }),
           onChange: (i) => {
             leafRef.current?.refresh(i);
             bump();
@@ -252,7 +271,8 @@ export function FlipbookViewer({
         } else thumbs.setBusy(true);
         cache.focus(a, b);
       } catch {
-        // Damaged/encrypted PDFs land in the error state; download stays available.
+        // Damaged/encrypted PDFs, or a failure in the opening pages, land in the error state.
+        // Download stays available. Pages that fail after the book is open are handled above.
         if (cancelled) return;
         pdfHandle.cancel();
         docRef.current = null;
@@ -283,7 +303,11 @@ export function FlipbookViewer({
       count,
       rtl,
       duration: prefersReduced ? 0 : 760,
-      getSrc: (i) => cacheRef.current?.get(i),
+      // '' marks a page that failed to render (shown as plain paper); undefined is still coming.
+      getSrc: (i) => {
+        const cache = cacheRef.current;
+        return cache?.get(i) ?? (cache?.isSettled(i) ? '' : undefined);
+      },
       pageAlt: (i) => `${label} — ${fmt(labels.pageOf, { page: i + 1, total: count })}`,
       onBegin: (target) => {
         rootRef.current?.setAttribute('data-flip', 'flipping');
@@ -593,6 +617,7 @@ export function FlipbookViewer({
     for (const el of track.querySelectorAll('.fb-thumb')) io.observe(el);
     return () => io.disconnect();
   }, [thumbsOpen, status]);
+  const pageFailed = (i: number) => !!cacheRef.current?.isSettled(i) && !cacheRef.current.get(i);
   const thumbSrc = (i: number) => thumbsRef.current?.get(i) ?? cacheRef.current?.get(i);
 
   /* ── keyboard (scoped to the flipbook; global while fullscreen) */
@@ -689,6 +714,8 @@ export function FlipbookViewer({
       ? { label: 'Medal Social', href: 'https://www.medalsocial.com' }
       : poweredBy || null;
   const peekIndex = peek == null ? null : Math.max(0, Math.min(count - 1, peek));
+  const peekLogical = peekIndex == null || count <= 1 ? 0 : peekIndex / (count - 1);
+  const peekVisual = rtl ? 1 - peekLogical : peekLogical;
   const atStart = first === 0;
   const atEnd = last >= count - 1;
   // Physical left/right controls: in right-to-left books the left side moves forward.
@@ -727,7 +754,7 @@ export function FlipbookViewer({
       data-state={status}
       data-complete={complete ? 'true' : 'false'}
       data-orientation={portrait ? 'portrait' : 'landscape'}
-      dir="ltr"
+      dir={dir}
       onKeyDown={onKey}
       onPointerMove={fullscreen && chromeHidden ? onRevealMove : undefined}
     >
@@ -906,7 +933,11 @@ export function FlipbookViewer({
                 type="button"
                 // biome-ignore lint/suspicious/noArrayIndexKey: the page number is the item's identity
                 key={`page-${i + 1}`}
-                className={cn('fb-thumb', thumbSrc(i) && 'is-loaded')}
+                className={cn(
+                  'fb-thumb',
+                  thumbSrc(i) && 'is-loaded',
+                  !thumbSrc(i) && pageFailed(i) && 'is-unavailable'
+                )}
                 data-index={i}
                 data-side={sideOf(i)}
                 aria-label={`${labels.goToPage} ${i + 1}`}
@@ -945,6 +976,7 @@ export function FlipbookViewer({
           <input
             className="fb-range"
             type="range"
+            dir={dir}
             min={1}
             max={Math.max(count, 1)}
             step={1}
@@ -974,7 +1006,8 @@ export function FlipbookViewer({
             onPointerMove={(e) => {
               if (e.pointerType !== 'mouse' || !count) return;
               const r = e.currentTarget.getBoundingClientRect();
-              setPeek(Math.round(((e.clientX - r.left) / r.width) * (count - 1)));
+              const fraction = sliderLogicalFraction(e.clientX, r, rtl);
+              setPeek(Math.round(fraction * (count - 1)));
             }}
             onPointerLeave={() => setPeek(null)}
             onPointerCancel={() => {
@@ -992,7 +1025,7 @@ export function FlipbookViewer({
               aria-hidden="true"
               style={
                 {
-                  '--x': `calc(${count > 1 ? (peekIndex / (count - 1)) * 100 : 0}% + ${9 - (count > 1 ? peekIndex / (count - 1) : 0) * 18}px)`,
+                  '--x': `calc(${peekVisual * 100}% + ${9 - peekVisual * 18}px)`,
                 } as CSSProperties
               }
             >
