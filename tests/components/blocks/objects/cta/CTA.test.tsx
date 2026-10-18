@@ -274,8 +274,7 @@ describe('CTA on a translated page (spec D4)', () => {
       />
     );
     const link = screen.getByRole('link', { name: 'Om oss' });
-    expect(link).toHaveAttribute('href', '/om-oss');
-    expect(link).toHaveAttribute('locale', 'nb');
+    expect(link).toHaveAttribute('href', '/nb/om-oss');
     intl.locale = 'en';
   });
 
@@ -292,8 +291,8 @@ describe('CTA on a translated page (spec D4)', () => {
       />
     );
     const link = screen.getByRole('link', { name: 'Features' });
+    // Prefix-free: /en/about would cost a 308 redirect.
     expect(link).toHaveAttribute('href', '/about');
-    expect(link).toHaveAttribute('locale', 'en');
     intl.locale = 'en';
   });
 });

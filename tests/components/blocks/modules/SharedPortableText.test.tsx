@@ -2,7 +2,8 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('next-intl', () => ({ useLocale: () => 'en' }));
+const intl = vi.hoisted(() => ({ locale: 'en' }));
+vi.mock('next-intl', () => ({ useLocale: () => intl.locale }));
 vi.mock('@/i18n/navigation', () => ({
   Link: ({ href, children }: { href: string; children: React.ReactNode }) => (
     <a href={href}>{children}</a>
@@ -47,5 +48,58 @@ describe('SharedPortableText fidelity (lean schema rule 8)', () => {
       />
     );
     expect(html).toContain('<p>Hi</p><p><br/></p><p>There</p>');
+  });
+});
+
+describe('SharedPortableText links (spec D4)', () => {
+  const target = (slug: string, language: string) => ({
+    _id: `${slug}.${language}`,
+    _type: 'page',
+    language,
+    metadata: { slug: { current: slug } },
+  });
+  const linked = (markDef: Record<string, unknown>) =>
+    ({
+      _type: 'block',
+      _key: 'l',
+      style: 'normal',
+      markDefs: [{ _key: 'm', _type: 'link', ...markDef }],
+      children: [span('Go', ['m'])],
+    }) as never;
+
+  it('nb page linking to an untranslated English page: href="/features" (no /en/ 308)', () => {
+    intl.locale = 'nb';
+    const html = renderToStaticMarkup(
+      <SharedPortableText
+        value={[
+          linked({ type: 'internal', internal: { ...target('features', 'en'), translations: [] } }),
+        ]}
+      />
+    );
+    intl.locale = 'en';
+    expect(html).toContain('href="/features"');
+  });
+
+  it('nb page linking to a translated page: href="/nb/now"', () => {
+    intl.locale = 'nb';
+    const html = renderToStaticMarkup(
+      <SharedPortableText
+        value={[
+          linked({
+            type: 'internal',
+            internal: { ...target('now', 'en'), translations: [target('now', 'nb')] },
+          }),
+        ]}
+      />
+    );
+    intl.locale = 'en';
+    expect(html).toContain('href="/nb/now"');
+  });
+
+  it('a link marked external but holding an internal reference still renders <a> to the internal path', () => {
+    const html = renderToStaticMarkup(
+      <SharedPortableText value={[linked({ type: 'external', internal: target('about', 'en') })]} />
+    );
+    expect(html).toMatch(/<a [^>]*href="\/about"[^>]*>Go<\/a>/);
   });
 });

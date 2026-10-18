@@ -10,8 +10,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Section } from '@/components/ui/section';
-import { buildLocaleHref } from '@/i18n/navigation';
-import { internalLink, type LinkTarget } from '@/lib/sanity/localized-link';
+import { internalHref, type LinkTarget } from '@/lib/sanity/localized-link';
 import moduleProps from '@/lib/sanity/module-props';
 
 export default async function Breadcrumbs({
@@ -25,8 +24,7 @@ export default async function Breadcrumbs({
   const resolvedCrumbs = (crumbs || []).map((crumb) => {
     let resolvedUrl: string = '/';
     if (crumb.internal) {
-      const link = internalLink(crumb.internal as LinkTarget, locale);
-      if (link) resolvedUrl = buildLocaleHref(link.href, link.locale);
+      resolvedUrl = internalHref(crumb.internal as LinkTarget, locale) ?? resolvedUrl;
     } else if (crumb.external) {
       resolvedUrl = stegaClean(crumb.external);
     }

@@ -1,11 +1,11 @@
 'use client';
 import { X } from 'lucide-react';
+import Link from 'next/link';
 import { useLocale } from 'next-intl';
 import { PortableText, stegaClean } from 'next-sanity';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Link } from '@/i18n/navigation';
-import { internalLink } from '@/lib/sanity/localized-link';
+import { internalHref, withLocalePrefix } from '@/lib/sanity/localized-link';
 
 /**
  * Generate descriptive aria-label for generic link text to improve accessibility.
@@ -112,18 +112,15 @@ export default function BannerClient({ banner }: { banner: Sanity.Banner & Sanit
         {cta?.label &&
           (() => {
             let href = '#';
-            let linkLocale: string | undefined;
             if (cta?.type === 'internal') {
-              const link = internalLink(cta.internal, locale);
-              href = link?.href ?? '/';
-              linkLocale = link?.locale;
+              // Final href (no /en/ prefix for English, so no 308) for a plain next/link.
+              href = internalHref(cta.internal, locale) ?? withLocalePrefix('/', locale);
             } else if (cta?.external) {
               href = cta.external;
             }
             return (
               <Link
                 href={href}
-                locale={linkLocale}
                 target={cta?.external ? '_blank' : undefined}
                 className="inline-flex h-7 shrink-0 items-center justify-center rounded-md border border-transparent bg-white px-2.5 font-semibold text-brand-700 text-xs outline-none transition-all hover:bg-white/90 focus-visible:ring-[3px] focus-visible:ring-white/50"
                 aria-label={getAriaLabel(cta.label, cta.internal, cta.type)}

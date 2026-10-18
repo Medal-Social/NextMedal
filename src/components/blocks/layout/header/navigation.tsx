@@ -1,6 +1,7 @@
 'use client';
 
 import { ExternalLink } from 'lucide-react';
+import Link from 'next/link';
 import { useLocale } from 'next-intl';
 import { stegaClean } from 'next-sanity';
 import type * as React from 'react';
@@ -13,8 +14,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import { Link } from '@/i18n/navigation';
-import { internalLink } from '@/lib/sanity/localized-link';
+import { internalHref, withLocalePrefix } from '@/lib/sanity/localized-link';
 
 type NavMenuItem = Sanity.MenuItem | Sanity.DropdownMenu;
 
@@ -22,32 +22,31 @@ interface NavigationProps {
   items?: (Sanity.MenuItem | Sanity.DropdownMenu)[];
 }
 
-function linkProps(item: Sanity.MenuItem, locale: string): { href: string; locale?: string } {
+// Final hrefs (no /en/ prefix for English, so no 308), rendered with a plain next/link.
+function linkProps(item: Sanity.MenuItem, locale: string): { href: string } {
   if (item.internal?.metadata?.slug?.current) {
-    const link = internalLink(item.internal, locale, item.params);
-    if (link) return link;
+    const href = internalHref(item.internal, locale, item.params);
+    if (href) return { href };
   }
   if (item.external) {
     return { href: stegaClean(item.external) };
   }
-  return { href: '/' };
+  return { href: withLocalePrefix('/', locale) };
 }
 
 function ListItem({
   title,
   children,
   href,
-  locale,
   className,
   ...props
-}: React.ComponentPropsWithoutRef<'li'> & { href: string; locale?: string; title: string }) {
+}: React.ComponentPropsWithoutRef<'li'> & { href: string; title: string }) {
   return (
     <li {...props} className={className}>
       <NavigationMenuLink
         render={
           <Link
             href={href}
-            locale={locale}
             className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
             <div className="font-medium text-sm leading-none">{title}</div>

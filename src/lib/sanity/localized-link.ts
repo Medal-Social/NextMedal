@@ -55,3 +55,25 @@ export function internalLink(
   }
   return { href: path.startsWith('/') ? path : `/${path}`, locale: language };
 }
+
+/**
+ * The visitor-facing href for a path in `locale`. With localePrefix 'as-needed'
+ * English has no prefix; next-intl's <Link locale="en"> would write /en/…,
+ * which costs a 308 to the prefix-free URL.
+ */
+export function withLocalePrefix(href: string, locale: string): string {
+  if (locale === routing.defaultLocale) return href;
+  if (href === '/' || href === '') return `/${locale}`;
+  if (/^\/[?#]/.test(href)) return `/${locale}${href.slice(1)}`;
+  return `/${locale}${href.startsWith('/') ? href : `/${href}`}`;
+}
+
+/** The final href for an internal link (use with a plain next/link or <a>). */
+export function internalHref(
+  target: LinkTarget | null | undefined,
+  locale: string,
+  params?: string
+): string | undefined {
+  const link = internalLink(target, locale, params);
+  return link && withLocalePrefix(link.href, link.locale);
+}

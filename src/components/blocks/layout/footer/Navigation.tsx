@@ -1,9 +1,10 @@
 import { ExternalLink } from 'lucide-react';
+import NextLink from 'next/link';
 import { getLocale } from 'next-intl/server';
 import { stegaClean } from 'next-sanity';
 import { CTA } from '@/components/blocks/objects/cta';
 import { Link } from '@/i18n/navigation';
-import { internalLink, type LinkTarget } from '@/lib/sanity/localized-link';
+import { internalHref, type LinkTarget } from '@/lib/sanity/localized-link';
 import { getFooterSettings } from '@/sanity/lib/fetch';
 
 // Extend the type to match PageBase interface
@@ -22,7 +23,8 @@ type InternalLink = {
   translations?: LinkTarget['translations'];
 };
 
-type ResolvedLink = { href: string; locale: string };
+// Final href (no /en/ prefix for English, so no 308), rendered with a plain next/link.
+type ResolvedLink = string;
 
 type MenuItemType = {
   _type: 'menuItem';
@@ -79,13 +81,12 @@ function InternalMenuItem({
   title?: string;
 }) {
   return (
-    <Link
-      href={link.href}
-      locale={link.locale}
+    <NextLink
+      href={link}
       className="font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary"
     >
       {label || title}
-    </Link>
+    </NextLink>
   );
 }
 
@@ -145,9 +146,9 @@ function DropdownLink({
 
   if (link.internal && resolvedUrl) {
     return (
-      <Link href={resolvedUrl.href} locale={resolvedUrl.locale} className={DROPDOWN_LINK_CLASS}>
+      <NextLink href={resolvedUrl} className={DROPDOWN_LINK_CLASS}>
         {link.label || link.internal.title}
-      </Link>
+      </NextLink>
     );
   }
 
@@ -225,15 +226,15 @@ export default async function Menu() {
 
     // Handle menu items
     if (menuItem._type === 'menuItem' && menuItem.internal) {
-      const link = internalLink(menuItem.internal as LinkTarget, locale);
-      if (link) resolvedUrls.set(itemKey, link);
+      const href = internalHref(menuItem.internal as LinkTarget, locale);
+      if (href) resolvedUrls.set(itemKey, href);
     }
 
     // Handle dropdown menus
     if (menuItem._type === 'dropdownMenu' && menuItem.links) {
       for (const [linkIndex, link] of menuItem.links.entries()) {
         if (!link.internal) continue;
-        const resolved = internalLink(link.internal as LinkTarget, locale);
+        const resolved = internalHref(link.internal as LinkTarget, locale);
         if (resolved) resolvedUrls.set(getItemKey(link, linkIndex), resolved);
       }
     }

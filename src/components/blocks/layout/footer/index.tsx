@@ -1,4 +1,5 @@
 import { ExternalLink } from 'lucide-react';
+import NextLink from 'next/link';
 import { getLocale } from 'next-intl/server';
 import { PortableText } from 'next-sanity';
 import { Img } from '@/components/blocks/objects/core';
@@ -6,7 +7,7 @@ import { Social } from '@/components/blocks/utility';
 import CookiePreferencesTrigger from '@/components/CookiePreferencesTrigger';
 import { Section } from '@/components/ui/section';
 import { Link } from '@/i18n/navigation';
-import { internalLink, type LinkTarget } from '@/lib/sanity/localized-link';
+import { internalHref, type LinkTarget } from '@/lib/sanity/localized-link';
 import { cn } from '@/lib/utils/index';
 import { getFooterSettings } from '@/sanity/lib/fetch';
 import { ErrorBoundary } from '../ErrorBoundary';
@@ -36,15 +37,12 @@ async function FooterInner() {
   // Pre-resolve footer link URLs
   // footerLinks is flattened by the GROQ query; the generated types suggest a nested structure.
   const resolvedFooterLinks = ((footerLinks || []) as Sanity.MenuItem[]).map((link) => {
+    // Final href (no /en/ prefix for English, so no 308), rendered with a plain next/link.
     const internal =
       !link.external && link.internal
-        ? internalLink(link.internal as LinkTarget, locale)
+        ? internalHref(link.internal as LinkTarget, locale)
         : undefined;
-    return {
-      ...link,
-      resolvedUrl: link.external || internal?.href || null,
-      resolvedLocale: internal?.locale,
-    };
+    return { ...link, resolvedUrl: link.external || internal || null };
   });
 
   return (
@@ -112,10 +110,9 @@ async function FooterInner() {
               if (!link.resolvedUrl) return null;
               const isExternal = link.newTab || !!link.external;
               return (
-                <Link
+                <NextLink
                   key={link.label}
                   href={link.resolvedUrl}
-                  locale={link.resolvedLocale}
                   className={footerLinkStyles}
                   target={isExternal ? '_blank' : undefined}
                   rel={isExternal ? 'noopener noreferrer' : undefined}
@@ -125,7 +122,7 @@ async function FooterInner() {
                     {link.label}
                     {isExternal && <ExternalLink className="h-3 w-3" aria-hidden="true" />}
                   </span>
-                </Link>
+                </NextLink>
               );
             })}
             <CookiePreferencesTrigger locale={locale} className={footerLinkStyles} />

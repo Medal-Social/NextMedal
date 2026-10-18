@@ -2,29 +2,27 @@
 
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import { motion, type Variants } from 'motion/react';
+import Link from 'next/link';
 import { useLocale } from 'next-intl';
 import { stegaClean } from 'next-sanity';
 import { useCallback, useEffect, useRef } from 'react';
 import { CTAList } from '@/components/blocks/objects/cta';
 import { CommandMenu } from '@/components/blocks/utility';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Link } from '@/i18n/navigation';
-import { internalLink } from '@/lib/sanity/localized-link';
+import { internalHref, withLocalePrefix } from '@/lib/sanity/localized-link';
 import { ANIMATION_DURATION, ANIMATION_EASING } from './constants';
 import type { MobileNavigationProps } from './types';
 
-function navLinkProps(
-  link: Sanity.MenuItem | Sanity.Link,
-  locale: string
-): { href: string; locale?: string } {
+// Final hrefs (no /en/ prefix for English, so no 308), rendered with a plain next/link.
+function navLinkProps(link: Sanity.MenuItem | Sanity.Link, locale: string): { href: string } {
   if (link.internal && '_type' in link.internal) {
-    const target = internalLink(link.internal, locale, link.params);
-    if (target) return target;
+    const href = internalHref(link.internal, locale, link.params);
+    if (href) return { href };
   }
   if (link.external) {
     return { href: stegaClean(link.external) };
   }
-  return { href: '/' };
+  return { href: withLocalePrefix('/', locale) };
 }
 
 export const NavLink = ({

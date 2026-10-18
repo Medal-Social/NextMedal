@@ -1,29 +1,41 @@
+import Link from 'next/link';
 import { useLocale } from 'next-intl';
 import { PortableText, type PortableTextComponents, stegaClean } from 'next-sanity';
-import { Link } from '@/i18n/navigation';
-import { internalLink } from '@/lib/sanity/localized-link';
+import { internalHref } from '@/lib/sanity/localized-link';
 import { cn, slug } from '@/lib/utils/index';
 
 // Rich-text anchors may be stored without the leading "#".
 const anchorParams = (params?: string) => (params && !/^[#?]/.test(params) ? `#${params}` : params);
 
-function InternalRichTextLink({
-  internal,
-  params,
-  children,
-}: {
-  internal: Sanity.MenuItem['internal'];
-  params?: string;
-  children: React.ReactNode;
-}) {
-  const link = internalLink(internal, useLocale(), anchorParams(params));
-  if (!link) return <>{children}</>;
+/** Rendered as its own component so it can read the visitor's language. */
+function RichTextLink({ value, children }: { value?: Sanity.MenuItem; children: React.ReactNode }) {
+  const { type, internal, external, params, newTab } = value || {};
+  const locale = useLocale();
+  // Final href (no /en/ prefix for English, so no 308) for a plain <a> / next/link.
+  const internalUrl = internal?.metadata?.slug?.current
+    ? internalHref(internal, locale, anchorParams(params))
+    : undefined;
+
+  if (type === 'external' || external) {
+    // A link marked external that only holds an internal reference still goes there.
+    const href = external || internalUrl;
+    if (!href) return <>{children}</>;
+    return (
+      <a
+        href={href}
+        target={newTab ? '_blank' : undefined}
+        rel={newTab ? 'noopener noreferrer' : undefined}
+        className="font-medium text-primary hover:underline"
+      >
+        {children}
+      </a>
+    );
+  }
+
+  if (!internalUrl) return <>{children}</>;
+
   return (
-    <Link
-      href={link.href}
-      locale={link.locale}
-      className="font-medium text-primary hover:underline"
-    >
+    <Link href={internalUrl} className="font-medium text-primary hover:underline">
       {children}
     </Link>
   );
@@ -40,31 +52,7 @@ const defaultComponents: PortableTextComponents = {
   marks: {
     // Italic is italic everywhere (Vault spec 2026-10-18 bug 3).
     em: ({ children }) => <em>{children}</em>,
-    link: ({ children, value }) => {
-      const { type, internal, external, params, newTab } = value || {};
-
-      if (type === 'external' || external) {
-        if (!external) return <>{children}</>;
-        return (
-          <a
-            href={external}
-            target={newTab ? '_blank' : undefined}
-            rel={newTab ? 'noopener noreferrer' : undefined}
-            className="font-medium text-primary hover:underline"
-          >
-            {children}
-          </a>
-        );
-      }
-
-      if (!internal?.metadata?.slug?.current) return <>{children}</>;
-
-      return (
-        <InternalRichTextLink internal={internal} params={params}>
-          {children}
-        </InternalRichTextLink>
-      );
-    },
+    link: ({ children, value }) => <RichTextLink value={value}>{children}</RichTextLink>,
   },
 };
 
