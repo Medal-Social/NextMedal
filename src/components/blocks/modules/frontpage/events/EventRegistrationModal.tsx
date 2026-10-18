@@ -22,10 +22,10 @@ import { getLocalizedValue } from '@/lib/i18n/localized-value';
 // Form field type from Sanity
 interface FormField {
   _key: string;
-  label: string;
+  label: Sanity.InternationalizedArrayString | string;
   name: { current: string };
   type: 'text' | 'email' | 'tel' | 'textarea' | 'checkbox';
-  placeholder?: string;
+  placeholder?: Sanity.InternationalizedArrayString | string;
   required?: boolean;
 }
 
@@ -178,6 +178,8 @@ export default function EventRegistrationModal({
               {form.fields?.map((field) => {
                 const fieldName = field.name.current;
                 const value = formData[fieldName] || '';
+                const label = getLocalizedValue(field.label, locale);
+                const placeholder = getLocalizedValue(field.placeholder, locale) || undefined;
 
                 if (field.type === 'checkbox') {
                   return (
@@ -190,7 +192,7 @@ export default function EventRegistrationModal({
                         className="mt-1 size-4 rounded border-border accent-primary"
                       />
                       <span className="text-muted-foreground text-sm leading-tight">
-                        {field.label}
+                        {label}
                         {field.required && <span className="ml-1 text-destructive">*</span>}
                       </span>
                     </label>
@@ -201,12 +203,12 @@ export default function EventRegistrationModal({
                   return (
                     <div key={field._key} className="space-y-2">
                       <Label htmlFor={fieldName}>
-                        {field.label}
+                        {label}
                         {field.required && <span className="ml-1 text-destructive">*</span>}
                       </Label>
                       <Textarea
                         id={fieldName}
-                        placeholder={field.placeholder}
+                        placeholder={placeholder}
                         value={value as string}
                         onChange={(e) => updateField(fieldName, e.target.value)}
                         required={field.required}
@@ -220,13 +222,13 @@ export default function EventRegistrationModal({
                 return (
                   <div key={field._key} className="space-y-2">
                     <Label htmlFor={fieldName}>
-                      {field.label}
+                      {label}
                       {field.required && <span className="ml-1 text-destructive">*</span>}
                     </Label>
                     <Input
                       id={fieldName}
                       type={field.type}
-                      placeholder={field.placeholder}
+                      placeholder={placeholder}
                       value={value as string}
                       onChange={(e) => updateField(fieldName, e.target.value)}
                       required={field.required}

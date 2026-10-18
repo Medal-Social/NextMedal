@@ -59,7 +59,7 @@ const useRegistration = () => useContext(RegistrationContext);
 // Form field type
 interface FormField {
   _key: string;
-  label: string;
+  label: Sanity.InternationalizedArrayString | string;
   name: { current: string };
   type: 'text' | 'email' | 'tel' | 'textarea' | 'checkbox';
   placeholder?: string;

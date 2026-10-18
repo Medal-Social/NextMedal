@@ -294,6 +294,33 @@ describe('event registration uses the texts editors set', () => {
     expect(action.lastInput).toMatchObject({ formId: 'form-1', consent: true });
   });
 
+  it('renders per-language field labels and plain placeholders', () => {
+    renderIn(
+      <EventRegistrationModal
+        open
+        onOpenChange={() => {}}
+        eventUrl="/events/launch"
+        event={event({
+          fields: [
+            {
+              _key: 'f1',
+              label: [
+                { _key: 'r1', language: 'en', value: 'Name' },
+                { _key: 'r2', language: 'nb', value: 'Navn' },
+              ],
+              name: { current: 'name' },
+              type: 'text',
+              placeholder: 'Ola Nordmann',
+            },
+          ],
+        })}
+      />,
+      'nb'
+    );
+    const input = screen.getByLabelText('Navn') as HTMLInputElement;
+    expect(input.placeholder).toBe('Ola Nordmann');
+  });
+
   it('leaves consent optional when the form does not require it', () => {
     renderIn(
       <EventRegistrationModal
