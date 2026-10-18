@@ -144,7 +144,9 @@ async function getCollectionItems(
       'description': coalesce(seo.description, ''),
       publishDate,
       authors[]->{name},
-      categories[]->{title}
+      categories[]->{
+        "title": coalesce(title[_key == $locale][0].value, title[0].value, '')
+      }
     }`,
     { locale, documentType: collectionType }
   );
