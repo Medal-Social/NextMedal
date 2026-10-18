@@ -513,7 +513,9 @@ declare global {
       _key?: string;
       label: string;
       type: 'internal' | 'external';
-      internal?: Page | CollectionArticlePost;
+      internal?: (Page | CollectionArticlePost) & {
+        translations?: Array<PageBase | null> | null;
+      };
       external?: string;
       params?: string;
       newTab?: boolean;

@@ -17,7 +17,15 @@ export const LINK_QUERY = groq`
 		_id,
 		_type,
 		title,
-		metadata { slug }
+		language,
+		metadata { slug },
+		// D4: the same document in every language, for links on translated pages.
+		'translations': *[_type == 'translation.metadata' && references(^._id)][0].translations[].value->{
+			_id,
+			_type,
+			language,
+			metadata { slug }
+		}
 	}
 `;
 

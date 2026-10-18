@@ -2,27 +2,29 @@
 
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import { motion, type Variants } from 'motion/react';
+import { useLocale } from 'next-intl';
 import { stegaClean } from 'next-sanity';
 import { useCallback, useEffect, useRef } from 'react';
 import { CTAList } from '@/components/blocks/objects/cta';
 import { CommandMenu } from '@/components/blocks/utility';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Link } from '@/i18n/navigation';
-import { resolveUrlSync } from '@/lib/sanity/resolve-url';
+import { internalLink } from '@/lib/sanity/localized-link';
 import { ANIMATION_DURATION, ANIMATION_EASING } from './constants';
 import type { MobileNavigationProps } from './types';
 
-function getNavLinkHref(link: Sanity.MenuItem | Sanity.Link): string {
+function navLinkProps(
+  link: Sanity.MenuItem | Sanity.Link,
+  locale: string
+): { href: string; locale?: string } {
   if (link.internal && '_type' in link.internal) {
-    return resolveUrlSync(link.internal as Sanity.PageBase, {
-      base: false,
-      params: link.params,
-    });
+    const target = internalLink(link.internal, locale, link.params);
+    if (target) return target;
   }
   if (link.external) {
-    return stegaClean(link.external);
+    return { href: stegaClean(link.external) };
   }
-  return '/';
+  return { href: '/' };
 }
 
 export const NavLink = ({
@@ -33,7 +35,7 @@ export const NavLink = ({
   onClick?: () => void;
 }) => (
   <Link
-    href={getNavLinkHref(link)}
+    {...navLinkProps(link, useLocale())}
     className="flex min-h-11 items-center gap-4 rounded-lg p-4 font-medium text-foreground text-lg transition-colors hover:bg-accent hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary"
     target={link.external ? '_blank' : undefined}
     aria-label={link.external ? `${link.label} (opens in new tab)` : undefined}

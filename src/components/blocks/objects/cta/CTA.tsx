@@ -1,10 +1,11 @@
 'use client';
 
 import ExternalLink from 'next/link';
+import { useLocale } from 'next-intl';
 import { stegaClean } from 'next-sanity';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { Link } from '@/i18n/navigation';
-import { resolveUrlSync } from '@/lib/sanity/resolve-url';
+import { buildLocaleHref, Link } from '@/i18n/navigation';
+import { internalLink, type LinkTarget } from '@/lib/sanity/localized-link';
 import { cn } from '@/lib/utils/index';
 import { validateExternalUrl } from '@/lib/validateExternalUrl';
 
@@ -113,16 +114,18 @@ function InternalLinkButton({
   className?: string;
   buttonContent: React.ReactNode;
 }) {
-  const href = resolveUrlSync(internal, { base: false, params });
+  const link = internalLink(internal as LinkTarget | undefined, useLocale(), params);
+  const href = link?.href ?? '/';
   const ariaLabel =
     typeof buttonContent === 'string' ? getAriaLabel(buttonContent, internal) : undefined;
 
   return (
     <Link
       href={href}
+      locale={link?.locale}
       target={newTab ? '_blank' : undefined}
       rel={newTab ? 'noopener noreferrer' : undefined}
-      onClick={(e) => handleHashLinkClick(href, e)}
+      onClick={(e) => link && handleHashLinkClick(buildLocaleHref(link.href, link.locale), e)}
       className={cn(buttonVariants({ variant, size }), className)}
       aria-label={ariaLabel}
     >

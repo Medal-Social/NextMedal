@@ -6,7 +6,7 @@ import { Social } from '@/components/blocks/utility';
 import CookiePreferencesTrigger from '@/components/CookiePreferencesTrigger';
 import { Section } from '@/components/ui/section';
 import { Link } from '@/i18n/navigation';
-import resolveUrl from '@/lib/sanity/resolve-url-server';
+import { internalLink, type LinkTarget } from '@/lib/sanity/localized-link';
 import { cn } from '@/lib/utils/index';
 import { getFooterSettings } from '@/sanity/lib/fetch';
 import { ErrorBoundary } from '../ErrorBoundary';
@@ -34,16 +34,18 @@ async function FooterInner() {
   const logoImageLight = logo?.image?.light || logo?.image?.default || logo?.image?.dark;
 
   // Pre-resolve footer link URLs
-  const resolvedFooterLinks = await Promise.all(
-    // @ts-expect-error - footerLinks is flattened by the GROQ query but the type definition suggests a nested structure
-    (footerLinks || []).map(async (link) => ({
+  // footerLinks is flattened by the GROQ query; the generated types suggest a nested structure.
+  const resolvedFooterLinks = ((footerLinks || []) as Sanity.MenuItem[]).map((link) => {
+    const internal =
+      !link.external && link.internal
+        ? internalLink(link.internal as LinkTarget, locale)
+        : undefined;
+    return {
       ...link,
-      resolvedUrl:
-        link.external ||
-        (link.internal && (await resolveUrl(link.internal, { base: false }))) ||
-        null,
-    }))
-  );
+      resolvedUrl: link.external || internal?.href || null,
+      resolvedLocale: internal?.locale,
+    };
+  });
 
   return (
     <Wrapper className="bg-background text-foreground">
@@ -113,6 +115,7 @@ async function FooterInner() {
                 <Link
                   key={link.label}
                   href={link.resolvedUrl}
+                  locale={link.resolvedLocale}
                   className={footerLinkStyles}
                   target={isExternal ? '_blank' : undefined}
                   rel={isExternal ? 'noopener noreferrer' : undefined}

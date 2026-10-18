@@ -3,7 +3,7 @@ import { getLocale } from 'next-intl/server';
 import { stegaClean } from 'next-sanity';
 import { CTA } from '@/components/blocks/objects/cta';
 import { Link } from '@/i18n/navigation';
-import resolveUrl from '@/lib/sanity/resolve-url-server';
+import { internalLink, type LinkTarget } from '@/lib/sanity/localized-link';
 import { getFooterSettings } from '@/sanity/lib/fetch';
 
 // Extend the type to match PageBase interface
@@ -18,7 +18,11 @@ type InternalLink = {
   _rev: string;
   _createdAt: string;
   _updatedAt: string;
+  language?: string;
+  translations?: LinkTarget['translations'];
 };
+
+type ResolvedLink = { href: string; locale: string };
 
 type MenuItemType = {
   _type: 'menuItem';
@@ -65,10 +69,19 @@ function ExternalMenuItem({ href, label }: { href: string; label?: string }) {
 }
 
 // Internal link component
-function InternalMenuItem({ url, label, title }: { url: string; label?: string; title?: string }) {
+function InternalMenuItem({
+  link,
+  label,
+  title,
+}: {
+  link: ResolvedLink;
+  label?: string;
+  title?: string;
+}) {
   return (
     <Link
-      href={url}
+      href={link.href}
+      locale={link.locale}
       className="font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary"
     >
       {label || title}
@@ -82,14 +95,14 @@ function MenuItemRenderer({
   resolvedUrl,
 }: {
   item: MenuItemType;
-  resolvedUrl?: string | null;
+  resolvedUrl?: ResolvedLink | null;
 }) {
   if (item.external) {
     return <ExternalMenuItem href={item.external} label={item.label} />;
   }
 
   if (item.internal && resolvedUrl) {
-    return <InternalMenuItem url={resolvedUrl} label={item.label} title={item.internal.title} />;
+    return <InternalMenuItem link={resolvedUrl} label={item.label} title={item.internal.title} />;
   }
 
   return (
@@ -106,7 +119,13 @@ const DROPDOWN_LINK_CLASS =
   'text-muted-foreground text-sm hover:text-foreground motion-safe:transition-all motion-safe:duration-200 motion-safe:hover:translate-x-1 focus:outline-none focus:ring-2 focus:ring-primary';
 
 // Dropdown link renderer
-function DropdownLink({ link, resolvedUrl }: { link: MenuItemType; resolvedUrl?: string | null }) {
+function DropdownLink({
+  link,
+  resolvedUrl,
+}: {
+  link: MenuItemType;
+  resolvedUrl?: ResolvedLink | null;
+}) {
   if (link.external) {
     return (
       <Link
@@ -126,7 +145,7 @@ function DropdownLink({ link, resolvedUrl }: { link: MenuItemType; resolvedUrl?:
 
   if (link.internal && resolvedUrl) {
     return (
-      <Link href={resolvedUrl} className={DROPDOWN_LINK_CLASS}>
+      <Link href={resolvedUrl.href} locale={resolvedUrl.locale} className={DROPDOWN_LINK_CLASS}>
         {link.label || link.internal.title}
       </Link>
     );
@@ -141,7 +160,7 @@ function DropdownMenuRenderer({
   resolvedUrls,
 }: {
   item: DropdownMenuType;
-  resolvedUrls: Map<string, string>;
+  resolvedUrls: Map<string, ResolvedLink>;
 }) {
   return (
     <>
@@ -173,7 +192,7 @@ function NavigationItem({
 }: {
   item: MenuItem;
   index: number;
-  resolvedUrls: Map<string, string>;
+  resolvedUrls: Map<string, ResolvedLink>;
 }) {
   const key = getItemKey(item, index);
 
@@ -198,33 +217,27 @@ export default async function Menu() {
   const footerNav = site.footerNav as unknown as MenuItem[];
 
   // Pre-resolve all internal URLs
-  const resolvedUrls = new Map<string, string>();
+  const resolvedUrls = new Map<string, ResolvedLink>();
 
-  await Promise.all(
-    footerNav.map(async (item, index) => {
-      const menuItem = item as MenuItem;
-      const itemKey = getItemKey(menuItem, index);
+  for (const [index, item] of footerNav.entries()) {
+    const menuItem = item as MenuItem;
+    const itemKey = getItemKey(menuItem, index);
 
-      // Handle menu items
-      if (menuItem._type === 'menuItem' && menuItem.internal) {
-        const url = await resolveUrl(menuItem.internal, { base: false });
-        resolvedUrls.set(itemKey, url);
+    // Handle menu items
+    if (menuItem._type === 'menuItem' && menuItem.internal) {
+      const link = internalLink(menuItem.internal as LinkTarget, locale);
+      if (link) resolvedUrls.set(itemKey, link);
+    }
+
+    // Handle dropdown menus
+    if (menuItem._type === 'dropdownMenu' && menuItem.links) {
+      for (const [linkIndex, link] of menuItem.links.entries()) {
+        if (!link.internal) continue;
+        const resolved = internalLink(link.internal as LinkTarget, locale);
+        if (resolved) resolvedUrls.set(getItemKey(link, linkIndex), resolved);
       }
-
-      // Handle dropdown menus
-      if (menuItem._type === 'dropdownMenu' && menuItem.links) {
-        await Promise.all(
-          menuItem.links.map(async (link, linkIndex) => {
-            if (link.internal) {
-              const linkKey = getItemKey(link, linkIndex);
-              const url = await resolveUrl(link.internal, { base: false });
-              resolvedUrls.set(linkKey, url);
-            }
-          })
-        );
-      }
-    })
-  );
+    }
+  }
 
   return (
     <nav

@@ -1,7 +1,33 @@
+import { useLocale } from 'next-intl';
 import { PortableText, type PortableTextComponents, stegaClean } from 'next-sanity';
 import { Link } from '@/i18n/navigation';
+import { internalLink } from '@/lib/sanity/localized-link';
 import { cn, slug } from '@/lib/utils/index';
-import resolveSlug from '@/sanity/lib/resolveSlug';
+
+// Rich-text anchors may be stored without the leading "#".
+const anchorParams = (params?: string) => (params && !/^[#?]/.test(params) ? `#${params}` : params);
+
+function InternalRichTextLink({
+  internal,
+  params,
+  children,
+}: {
+  internal: Sanity.MenuItem['internal'];
+  params?: string;
+  children: React.ReactNode;
+}) {
+  const link = internalLink(internal, useLocale(), anchorParams(params));
+  if (!link) return <>{children}</>;
+  return (
+    <Link
+      href={link.href}
+      locale={link.locale}
+      className="font-medium text-primary hover:underline"
+    >
+      {children}
+    </Link>
+  );
+}
 
 interface SharedPortableTextProps {
   value: Sanity.BlockContent | undefined | null;
@@ -16,19 +42,12 @@ const defaultComponents: PortableTextComponents = {
     em: ({ children }) => <em>{children}</em>,
     link: ({ children, value }) => {
       const { type, internal, external, params, newTab } = value || {};
-      const href = resolveSlug({
-        _type: internal?._type,
-        internal: internal?.metadata?.slug?.current,
-        external,
-        params,
-      });
-
-      if (!href) return <>{children}</>;
 
       if (type === 'external' || external) {
+        if (!external) return <>{children}</>;
         return (
           <a
-            href={href}
+            href={external}
             target={newTab ? '_blank' : undefined}
             rel={newTab ? 'noopener noreferrer' : undefined}
             className="font-medium text-primary hover:underline"
@@ -38,10 +57,12 @@ const defaultComponents: PortableTextComponents = {
         );
       }
 
+      if (!internal?.metadata?.slug?.current) return <>{children}</>;
+
       return (
-        <Link href={href} className="font-medium text-primary hover:underline">
+        <InternalRichTextLink internal={internal} params={params}>
           {children}
-        </Link>
+        </InternalRichTextLink>
       );
     },
   },

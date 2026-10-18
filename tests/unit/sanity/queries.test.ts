@@ -86,6 +86,16 @@ describe('GROQ Queries - Security & Best Practices', () => {
       expect(LINK_QUERY).toContain('internal->{');
     });
 
+    it('LINK_QUERY fetches the target language and its translations (spec D4)', async () => {
+      const { LINK_QUERY } = await import('@/sanity/lib/queries');
+      const internal = LINK_QUERY.slice(LINK_QUERY.indexOf('internal->{'));
+
+      expect(internal).toMatch(/\blanguage,/);
+      expect(internal).toContain(
+        "*[_type == 'translation.metadata' && references(^._id)][0].translations[].value->{"
+      );
+    });
+
     it('IMAGE_QUERY should include asset reference (optimized - no resolution)', async () => {
       const { IMAGE_QUERY } = await import('@/sanity/lib/queries');
 

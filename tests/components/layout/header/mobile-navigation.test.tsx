@@ -16,6 +16,8 @@ vi.mock('@/sanity/lib/live', () => ({
   SanityLive: () => null,
 }));
 
+vi.mock('next-intl', () => ({ useLocale: () => 'en' }));
+
 // Mock next/link
 vi.mock('next/link', () => ({
   default: ({
