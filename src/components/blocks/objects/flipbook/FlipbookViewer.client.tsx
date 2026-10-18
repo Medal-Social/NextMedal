@@ -236,7 +236,7 @@ export function FlipbookViewer({
             renderPage(doc, i, { height }, signal).catch((error: unknown) => {
               // A page turn cancelling the render is not a failure.
               if (!signal.aborted)
-                logger.error({ err: error, page: i + 1 }, 'Flipbook page failed to render');
+                logger.error({ err: error, src, page: i + 1 }, 'Flipbook page failed to render');
               throw error;
             }),
           onChange: (i) => {
@@ -245,6 +245,10 @@ export function FlipbookViewer({
             if (opened || cancelled || !cache.isSettled(a) || !cache.isSettled(b)) return;
             opened = true;
             if (!cache.get(a) && !cache.get(b)) {
+              logger.error(
+                { src, pages: a === b ? [a + 1] : [a + 1, b + 1] },
+                'Flipbook could not open: first pages failed'
+              );
               cache.destroy();
               thumbsRef.current?.destroy();
               pdfHandle.cancel();
@@ -621,7 +625,11 @@ export function FlipbookViewer({
     for (const el of track.querySelectorAll('.fb-thumb')) io.observe(el);
     return () => io.disconnect();
   }, [thumbsOpen, status]);
-  const pageFailed = (i: number) => !!cacheRef.current?.isSettled(i) && !cacheRef.current.get(i);
+  // No image for this thumbnail: its own render and the book page both failed (or only one was tried).
+  const pageFailed = (i: number) => {
+    const failed = (c: PageCache | null) => !!c?.isSettled(i) && !c.get(i);
+    return failed(cacheRef.current) || failed(thumbsRef.current);
+  };
   const thumbSrc = (i: number) => thumbsRef.current?.get(i) ?? cacheRef.current?.get(i);
 
   /* ── keyboard (scoped to the flipbook; global while fullscreen) */

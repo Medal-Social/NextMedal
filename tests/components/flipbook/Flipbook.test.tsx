@@ -134,9 +134,15 @@ describe('FlipbookViewer', () => {
     );
     expect(screen.queryByRole('alert')).toBeNull();
     expect(logger.error).toHaveBeenCalledWith(
-      expect.objectContaining({ page: 5 }),
+      expect.objectContaining({ src: '/late.pdf', page: 5 }),
       'Flipbook page failed to render'
     );
+    fireEvent.click(screen.getByRole('button', { name: 'All pages' }));
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Go to page 5' })).toHaveClass('is-unavailable')
+    );
+    expect(screen.getByRole('button', { name: 'Go to page 4' })).not.toHaveClass('is-unavailable');
+    fireEvent.click(screen.getByRole('button', { name: 'All pages' }));
 
     const slider = screen.getByRole('slider', { name: 'Go to page' });
     fireEvent.change(slider, { target: { value: '4' } });
@@ -185,6 +191,10 @@ describe('FlipbookViewer', () => {
     );
     expect(screen.getByRole('alert')).toHaveTextContent('We couldn’t open this PDF.');
     expect(document.querySelector('.fb-book.lf')).toBeNull();
+    expect(logger.error).toHaveBeenCalledWith(
+      { src: '/head.pdf', pages: [1] },
+      'Flipbook could not open: first pages failed'
+    );
     expect(cancel).toHaveBeenCalledOnce();
     await new Promise((resolve) => setTimeout(resolve, 150));
     expect(renderPage).toHaveBeenCalledTimes(1);

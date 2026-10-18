@@ -70,7 +70,8 @@
 
 /* Book and footer controls stay physically anchored. The page slider sets its own dir. */
 .fb-stage,
-.fb-foot {
+.fb-foot,
+.fb-thumbs-track {
   direction: ltr;
 }
 
@@ -835,6 +836,10 @@
 }
 .fb-thumb.is-loaded img {
   opacity: 1;
+}
+/* A page that couldn't be rendered: plain paper, like its page in the book. */
+.fb-thumb.is-unavailable .fb-thumb-img {
+  background: var(--fb-page-bg);
 }
 .fb-thumb:hover .fb-thumb-img {
   transform: translateY(-3px);

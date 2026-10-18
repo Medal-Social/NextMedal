@@ -36,6 +36,16 @@ describe('flipbook.css token defaults', () => {
     expect(selectors).toContain(':where(.dark) :where(.fb)');
   });
 
+  it('keeps the book, footer and thumbnail strip physically left-to-right (RTL books too)', () => {
+    const rule = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].find(([, , body = '']) =>
+      /direction:\s*ltr/.test(body)
+    );
+    const selectors = (rule?.[1] ?? '').split(',').map((s) => s.trim());
+    expect(selectors).toEqual(
+      expect.arrayContaining(['.fb-stage', '.fb-foot', '.fb-thumbs-track'])
+    );
+  });
+
   it('never puts filter or opacity on the 3D sheet (it would mirror the back face)', () => {
     const offenders: string[] = [];
     for (const [, selector = '', body = ''] of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
