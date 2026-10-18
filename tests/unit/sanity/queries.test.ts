@@ -92,8 +92,10 @@ describe('GROQ Queries - Security & Best Practices', () => {
 
       expect(internal).toMatch(/\blanguage,/);
       expect(internal).toContain(
-        "*[_type == 'translation.metadata' && references(^._id)][0].translations[].value->{"
+        "*[_type == 'translation.metadata' && references(^._id)].translations[].value->{"
       );
+      // Broken data can put one document in several groups: flatten them all.
+      expect(internal).not.toContain('references(^._id)][0]');
     });
 
     it('IMAGE_QUERY should include asset reference (optimized - no resolution)', async () => {

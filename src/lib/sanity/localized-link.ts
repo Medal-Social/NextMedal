@@ -57,14 +57,17 @@ export function internalLink(
 }
 
 /**
- * The visitor-facing href for a path in `locale`. With localePrefix 'as-needed'
- * English has no prefix; next-intl's <Link locale="en"> would write /en/…,
- * which costs a 308 to the prefix-free URL.
+ * The visitor-facing href for a path in `locale`. The one place that adds a
+ * language prefix to a built href (it replaced i18n/navigation's buildLocaleHref).
+ * With localePrefix 'as-needed' English has no prefix; next-intl's
+ * <Link locale="en"> would write /en/…, which costs a 308 to the prefix-free URL.
  */
 export function withLocalePrefix(href: string, locale: string): string {
   if (locale === routing.defaultLocale) return href;
   if (href === '/' || href === '') return `/${locale}`;
+  // Anchors and queries on Home stay on the bare prefix: "/#x" and "#x" → "/nb#x".
   if (/^\/[?#]/.test(href)) return `/${locale}${href.slice(1)}`;
+  if (/^[?#]/.test(href)) return `/${locale}${href}`;
   return `/${locale}${href.startsWith('/') ? href : `/${href}`}`;
 }
 

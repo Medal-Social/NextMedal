@@ -1,9 +1,12 @@
 // tests/components/blocks/modules/SharedPortableText.test.tsx
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const intl = vi.hoisted(() => ({ locale: 'en' }));
 vi.mock('next-intl', () => ({ useLocale: () => intl.locale }));
+afterEach(() => {
+  intl.locale = 'en';
+});
 vi.mock('@/i18n/navigation', () => ({
   Link: ({ href, children }: { href: string; children: React.ReactNode }) => (
     <a href={href}>{children}</a>
@@ -76,7 +79,6 @@ describe('SharedPortableText links (spec D4)', () => {
         ]}
       />
     );
-    intl.locale = 'en';
     expect(html).toContain('href="/features"');
   });
 
@@ -92,7 +94,6 @@ describe('SharedPortableText links (spec D4)', () => {
         ]}
       />
     );
-    intl.locale = 'en';
     expect(html).toContain('href="/nb/now"');
   });
 

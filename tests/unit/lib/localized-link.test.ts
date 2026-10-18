@@ -79,6 +79,10 @@ describe('withLocalePrefix', () => {
     ['/now', 'nb', '/nb/now'],
     ['/#features', 'nb', '/nb#features'],
     ['/?q=1', 'ar', '/ar?q=1'],
+    ['#features', 'nb', '/nb#features'],
+    ['?q=1', 'nb', '/nb?q=1'],
+    ['now', 'nb', '/nb/now'],
+    ['#features', 'en', '#features'],
   ])('%s in %s → %s', (href, locale, expected) => {
     expect(withLocalePrefix(href, locale)).toBe(expected);
   });

@@ -10,7 +10,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Section } from '@/components/ui/section';
-import { internalHref, type LinkTarget } from '@/lib/sanity/localized-link';
+import { internalHref, type LinkTarget, withLocalePrefix } from '@/lib/sanity/localized-link';
 import moduleProps from '@/lib/sanity/module-props';
 
 export default async function Breadcrumbs({
@@ -22,7 +22,7 @@ export default async function Breadcrumbs({
   const locale = await getLocale();
   // Pre-resolve all internal URLs (BreadcrumbLink is a plain anchor, so the prefix is built here)
   const resolvedCrumbs = (crumbs || []).map((crumb) => {
-    let resolvedUrl: string = '/';
+    let resolvedUrl = withLocalePrefix('/', locale);
     if (crumb.internal) {
       resolvedUrl = internalHref(crumb.internal as LinkTarget, locale) ?? resolvedUrl;
     } else if (crumb.external) {

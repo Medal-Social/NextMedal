@@ -1,8 +1,11 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const intl = vi.hoisted(() => ({ locale: 'en' }));
 vi.mock('next-intl', () => ({ useLocale: () => intl.locale }));
+afterEach(() => {
+  intl.locale = 'en';
+});
 
 // Mock dependencies
 vi.mock('next-sanity', () => ({
@@ -275,7 +278,6 @@ describe('CTA on a translated page (spec D4)', () => {
     );
     const link = screen.getByRole('link', { name: 'Om oss' });
     expect(link).toHaveAttribute('href', '/nb/om-oss');
-    intl.locale = 'en';
   });
 
   it('links to the source language when there is no translation', () => {
@@ -293,6 +295,5 @@ describe('CTA on a translated page (spec D4)', () => {
     const link = screen.getByRole('link', { name: 'Features' });
     // Prefix-free: /en/about would cost a 308 redirect.
     expect(link).toHaveAttribute('href', '/about');
-    intl.locale = 'en';
   });
 });

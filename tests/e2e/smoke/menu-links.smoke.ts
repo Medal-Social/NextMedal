@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
-/** Spec §4 link test: every header/footer link on the nb and ar pages answers 200, without a redirect. */
-for (const home of ['/nb', '/ar']) {
+/** Spec §4 link test: every header/footer link on the en, nb and ar home pages answers 200, without a redirect. */
+for (const home of ['/', '/nb', '/ar']) {
   test(`${home}: every internal header and footer link answers 200`, async ({ page, request }) => {
     await page.goto(home);
     const hrefs = await page.$$eval('header a[href], footer a[href]', (links) =>
