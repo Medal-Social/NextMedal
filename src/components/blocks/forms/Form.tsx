@@ -174,7 +174,9 @@ function SuccessMessage({
         <span className="font-bold text-3xl">&#10003;</span>
       </div>
       <h3 className="mb-4 font-bold text-3xl text-foreground">{t('success-title')}</h3>
-      <p className="mx-auto max-w-md px-6 text-lg text-muted-foreground">{text}</p>
+      <p className="mx-auto max-w-md whitespace-pre-line px-6 text-lg text-muted-foreground">
+        {text}
+      </p>
     </div>
   );
 }
@@ -200,12 +202,12 @@ function AcceptanceCheckbox({
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="font-semibold text-primary hover:underline"
+        className="whitespace-pre-line font-semibold text-primary hover:underline"
       >
         {text}
       </a>
     ) : (
-      text
+      <span className="whitespace-pre-line">{text}</span>
     );
   const consentLabel = text
     ? customLabel

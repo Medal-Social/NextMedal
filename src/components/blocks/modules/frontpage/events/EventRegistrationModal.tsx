@@ -34,6 +34,7 @@ interface RegistrationForm {
   formTitle: string;
   intent: 'lead' | 'newsletter' | 'download';
   fields?: FormField[]; // Optional - may not be populated in Sanity
+  requireConsent?: boolean;
   acceptance?: {
     required?: boolean;
     text?: Sanity.InternationalizedArrayString | string;
@@ -123,6 +124,7 @@ export default function EventRegistrationModal({
 
   const successText = getLocalizedValue(form.successMessage, locale) || t('successMessage');
   const consentText = getLocalizedValue(form.acceptance?.text, locale);
+  const consentRequired = !!(form.requireConsent || form.acceptance?.required);
   const submitText = getLocalizedValue(form.submitButtonText, locale) || tCommon('processing');
 
   return (
@@ -136,7 +138,9 @@ export default function EventRegistrationModal({
             </div>
             <DialogHeader className="text-center">
               <DialogTitle className="text-xl">{t('title')}</DialogTitle>
-              <DialogDescription className="mt-2">{successText}</DialogDescription>
+              <DialogDescription className="mt-2 whitespace-pre-line">
+                {successText}
+              </DialogDescription>
             </DialogHeader>
             <div className="mt-6">
               <Button variant="outline" onClick={handleClose}>
@@ -233,13 +237,13 @@ export default function EventRegistrationModal({
                     type="checkbox"
                     checked={!!formData.consent}
                     onChange={(e) => updateField('consent', e.target.checked)}
-                    required={form.acceptance?.required}
+                    required={consentRequired}
                     disabled={isLoading}
                     className="mt-1 size-4 rounded border-border accent-primary"
                   />
-                  <span className="text-muted-foreground text-sm leading-tight">
+                  <span className="whitespace-pre-line text-muted-foreground text-sm leading-tight">
                     {consentText}
-                    {form.acceptance?.required && <span className="ml-1 text-destructive">*</span>}
+                    {consentRequired && <span className="ml-1 text-destructive">*</span>}
                   </span>
                 </label>
               )}

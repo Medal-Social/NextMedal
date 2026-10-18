@@ -116,6 +116,29 @@ describe('Form uses the texts editors set', () => {
     await waitFor(() => expect(screen.getByText('Thanks, talk soon')).toBeTruthy());
   });
 
+  it('keeps line breaks typed in the thank-you message and consent text', async () => {
+    submitForm.mockResolvedValueOnce({ data: { success: true } });
+    renderIn(
+      <Form
+        form={{
+          ...baseForm,
+          requireConsent: true,
+          acceptance: { text: [{ _key: 'en', value: 'I agree.\nContact me.' }] },
+          successMessage: [{ _key: 'en', value: "Thanks!\nWe'll reply soon." }],
+        }}
+        locale="en"
+      />
+    );
+    const consent = screen.getByText(/I agree\./);
+    expect(consent.textContent).toBe('I agree.\nContact me.');
+    expect(consent.className).toContain('whitespace-pre-line');
+    fireEvent.click(screen.getByRole('checkbox'));
+    fireEvent.submit(screen.getByRole('button').closest('form') as HTMLFormElement);
+    const message = await screen.findByText(/Thanks!/);
+    expect(message.textContent).toBe("Thanks!\nWe'll reply soon.");
+    expect(message.className).toContain('whitespace-pre-line');
+  });
+
   it('shows the standard thank-you message when none is set', async () => {
     submitForm.mockResolvedValueOnce({ data: { success: true } });
     renderIn(<Form form={baseForm} locale="en" />);
@@ -159,6 +182,54 @@ describe('event registration uses the texts editors set', () => {
     );
     expect(screen.getByRole('button', { name: 'Send inn' })).toBeTruthy();
     expect(screen.getByText('Jeg godtar')).toBeTruthy();
+  });
+
+  it('requires consent when the form requires it', () => {
+    renderIn(
+      <EventRegistrationModal
+        open
+        onOpenChange={() => {}}
+        eventUrl="/events/launch"
+        event={event({ requireConsent: true, acceptance: { text: 'I agree' } })}
+      />
+    );
+    expect((screen.getByRole('checkbox') as HTMLInputElement).required).toBe(true);
+  });
+
+  it('leaves consent optional when the form does not require it', () => {
+    renderIn(
+      <EventRegistrationModal
+        open
+        onOpenChange={() => {}}
+        eventUrl="/events/launch"
+        event={event({ acceptance: { text: 'I agree' } })}
+      />
+    );
+    expect((screen.getByRole('checkbox') as HTMLInputElement).required).toBe(false);
+  });
+
+  it('keeps line breaks in the thank-you message and consent text', async () => {
+    renderIn(
+      <EventRegistrationModal
+        open
+        onOpenChange={() => {}}
+        eventUrl="/events/launch"
+        event={event({
+          submitButtonText: 'Submit',
+          acceptance: { text: 'I agree.\nContact me.' },
+          successMessage: [{ _key: 'en', value: "Thanks!\nWe'll reply soon." }],
+        })}
+      />
+    );
+    const consent = screen.getByText(/I agree\./);
+    expect(consent.textContent).toBe('I agree.\nContact me.');
+    expect(consent.className).toContain('whitespace-pre-line');
+    fireEvent.submit(
+      screen.getByRole('button', { name: 'Submit' }).closest('form') as HTMLFormElement
+    );
+    const message = await screen.findByText(/Thanks!/);
+    expect(message.textContent).toBe("Thanks!\nWe'll reply soon.");
+    expect(message.className).toContain('whitespace-pre-line');
   });
 
   it('shows the thank-you message in the visitor language', async () => {

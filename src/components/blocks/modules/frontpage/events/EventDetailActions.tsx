@@ -21,6 +21,7 @@ interface RegistrationForm {
   formTitle: string;
   intent: 'lead' | 'newsletter' | 'download';
   fields?: FormField[]; // Optional - may not be populated in Sanity
+  requireConsent?: boolean;
   acceptance?: {
     required?: boolean;
     text?: Sanity.InternationalizedArrayString | string;
