@@ -45,7 +45,13 @@ export function internalLink(
   const doc = localizedTarget(target, locale);
   if (!doc) return undefined;
   const language = languageOf(doc);
-  let path = resolveUrlSync(doc as Sanity.PageBase, { base: false, params });
+  // Preview (Stega) encodes strings; the URL is built from clean values only.
+  const clean = {
+    ...doc,
+    language,
+    metadata: { ...doc.metadata, slug: { current: stegaClean(doc.metadata?.slug?.current) } },
+  };
+  let path = resolveUrlSync(clean as Sanity.PageBase, { base: false, params });
   const prefix = `/${language}`;
   if (
     language !== routing.defaultLocale &&
