@@ -4,6 +4,10 @@ Upload a PDF in Studio (**Add block → Content Sections → Flipbook**) and it 
 page-turning book: spreads on desktop, single pages on phones, tap/swipe/drag to turn,
 double-tap to zoom, thumbnails, fullscreen and download.
 
+On phones the book runs edge to edge, and **Read full screen** opens a reading mode whose
+toolbar floats over the page and steps aside after a moment (tap the middle of the page to
+bring it back). Tapping a page edge turns at once; inline, a tap in the middle turns too.
+
 ## Re-skinning for a customer site
 
 The flipbook paints only from `--fb-*` CSS custom properties. Override them in the site's
@@ -41,8 +45,13 @@ specificity), so any `.fb { … }` rule in the site beats them.
   `@medalsocial/postcss-compat`) boost the preflight reset above plain component CSS. Import
   `@medalsocial/postcss-compat/page-scoped-layers.css` at the top of `flipbook.css` there.
 - **Large PDFs.** pdf.js downloads the whole file (Sanity's CDN doesn't expose range support to
-  the browser). A 145-page / 48 MB book works (usable in a few seconds, ~10 s for all pages), but
-  readers pay the full download.
+  the browser), so readers pay the full download. A 145-page / 48 MB book is usable in a few
+  seconds. Pages are then prepared on demand around the reading position (`page-cache.ts`:
+  nearest first, paused while a page turns, at most 24 page images kept), and thumbnails only
+  for what the drawer shows, so big books stay smooth and light.
+- **Ported copies.** Sites that carry their own copy of the block also need the
+  `readFullscreen` label in their messages and `className="max-sm:px-0"` on the module's
+  `<Section>` (the edge-to-edge phone book).
 
 ## Using it in code
 
