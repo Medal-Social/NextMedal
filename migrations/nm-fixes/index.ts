@@ -193,14 +193,28 @@ export async function checkUnreferenced(
 /**
  * Real run, just before the first write: re-reads the migrated types from the
  * live dataset (raw perspective, so drafts count) and refuses if a draft would
- * undo the fix — catches drafts created after the run's export was taken.
+ * undo the fix — catches drafts created after the run's export was taken — or
+ * if a document it is about to delete changed since the run read it (deletes
+ * cannot be revision-locked like the patches).
  */
-export async function assertNoFreshBlockingDrafts(context: MigrationContext): Promise<void> {
+export async function assertNoFreshBlockingDrafts(
+  context: MigrationContext,
+  deleting: readonly Doc[] = []
+): Promise<void> {
   if (!context.client) throw new UnmappedContentError('no API client to re-check drafts');
   const live = await context.client
     .withConfig({ perspective: 'raw' })
     .fetch<Doc[]>(MIGRATED_QUERY, { types: [...MIGRATED_TYPES] });
   assertNoBlockingDrafts(live, { dryRun: false, env: {} });
+  const liveRev = new Map(live.map((doc) => [doc._id, doc._rev]));
+  const changed = deleting.filter(
+    (doc) => liveRev.has(doc._id) && liveRev.get(doc._id) !== doc._rev
+  );
+  if (changed.length) {
+    throw new UnmappedContentError(
+      `${changed.map((doc) => doc._id).join(', ')} changed since the run read it — run again`
+    );
+  }
 }
 
 export default defineMigration({
@@ -213,7 +227,13 @@ export default defineMigration({
     const mutations = planMutations(docs);
     const deletes = mutations.flatMap((m) => (m.type === 'delete' ? [m.id] : []));
     await checkUnreferenced(deletes, docs, context);
-    if (!context.dryRun) await assertNoFreshBlockingDrafts(context);
+    if (!context.dryRun) {
+      const ids = new Set(deletes);
+      await assertNoFreshBlockingDrafts(
+        context,
+        docs.filter((doc) => ids.has(doc._id))
+      );
+    }
     for (const mutation of mutations) yield mutation;
   },
 });

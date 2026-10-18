@@ -200,6 +200,22 @@ describe('assertNoFreshBlockingDrafts', () => {
     const context = { dryRun: false } as unknown as MigrationContext;
     await expect(assertNoFreshBlockingDrafts(context)).rejects.toThrow(/no API client/);
   });
+
+  it('refuses when a document it will delete changed since the run read it', async () => {
+    const group = { _id: 'dead', _type: 'translation.metadata', _rev: 'r1' } as Doc;
+    const live = async () => [...PUBLISHED, { ...group, _rev: 'r2' }];
+    const { context } = fakeContext(false, live);
+    await expect(assertNoFreshBlockingDrafts(context, [group])).rejects.toThrow(
+      /dead changed since the run read it/
+    );
+  });
+
+  it('passes when the documents it will delete are unchanged or already gone', async () => {
+    const same = { _id: 'same', _type: 'translation.metadata', _rev: 'r1' } as Doc;
+    const gone = { _id: 'gone', _type: 'translation.metadata', _rev: 'r1' } as Doc;
+    const { context } = fakeContext(false, async () => [...PUBLISHED, same]);
+    await expect(assertNoFreshBlockingDrafts(context, [same, gone])).resolves.toBeUndefined();
+  });
 });
 
 describe('the default export, end to end', () => {
