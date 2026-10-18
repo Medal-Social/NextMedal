@@ -1,13 +1,15 @@
 import docs from '@tests/fixtures/lean-schema/documents.json';
-import type { MigrationContext } from 'sanity/migrate';
-import { describe, expect, it, vi } from 'vitest';
-import {
+import { collectMigrationMutations, type MigrationContext, type Mutation } from 'sanity/migrate';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import migration, {
   applyMutations,
   assertNoBlockingDrafts,
+  assertNoFreshBlockingDrafts,
   checkUnreferenced,
   IGNORE_DRAFTS_ENV,
   planMutations,
 } from '$/migrations/nm-fixes/index';
+import { MIGRATED_TYPES } from '$/migrations/nm-fixes/map';
 import type { Doc } from '$/migrations/nm-fixes/shared';
 import { DEAD_GROUP_IDS } from '$/migrations/nm-fixes/translation-groups';
 
@@ -19,7 +21,7 @@ const BLOCKING = [
   'drafts.fa6acd77-2859-4c21-add7-165e3fdbe054',
 ];
 
-const count = (mutations: ReturnType<typeof planMutations>, type: string) =>
+const count = (mutations: readonly Mutation[], type: string) =>
   mutations.filter((m) => m.type === type);
 
 describe('planMutations', () => {
@@ -59,7 +61,7 @@ describe('planMutations', () => {
   });
 
   it('does not re-create a group that already exists', () => {
-    const existing = { _id: 'tm-page-terms', _type: 'translation.metadata' } as Doc;
+    const existing = { _id: 'tm-page-terms', _type: 'translation.metadata', _rev: 'r1' } as Doc;
     const created = count(planMutations([...ALL, existing]), 'createIfNotExists').map(
       (m) => (m as { document: Doc }).document._id
     );
@@ -69,6 +71,11 @@ describe('planMutations', () => {
 
   it('a second run writes nothing', () => {
     expect(planMutations(applyMutations(ALL, mutations))).toEqual([]);
+  });
+
+  it('never patches a document without a revision lock', () => {
+    const pricing = { _id: 'p', _type: 'pricing', price: { base: '1' } } as Doc;
+    expect(() => planMutations([pricing])).toThrow(/p has no _rev/);
   });
 });
 
@@ -99,45 +106,146 @@ describe('assertNoBlockingDrafts', () => {
   });
 });
 
-describe('checkUnreferenced', () => {
-  const context = (dryRun: boolean, refs: string[] | Error = []) =>
-    ({
-      dryRun,
-      client: {
-        withConfig: () => ({
-          fetch: async () => {
-            if (refs instanceof Error) throw refs;
-            return refs;
-          },
-        }),
-      },
-    }) as unknown as MigrationContext;
+type Fetch = (query: string, params: Record<string, unknown>) => Promise<unknown>;
 
-  it('offline dry run checks the export itself and only warns', async () => {
+/** A context whose client records withConfig and fetch calls. */
+function fakeContext(dryRun: boolean, fetch: Fetch = async () => []) {
+  const withConfig = vi.fn();
+  const fetchSpy = vi.fn(fetch);
+  withConfig.mockReturnValue({ fetch: fetchSpy });
+  const context = { dryRun, client: { withConfig } } as unknown as MigrationContext;
+  return { context, withConfig, fetch: fetchSpy };
+}
+
+describe('checkUnreferenced', () => {
+  it('offline dry run checks the migrated documents it read and only warns', async () => {
     const warn = vi.fn();
     const page = { _id: 'p', _type: 'page', group: { _ref: 'dead' } } as Doc;
-    await checkUnreferenced(['dead'], [page], context(true), { fromExport: true, warn });
+    await checkUnreferenced(['dead'], [page], fakeContext(true).context, {
+      fromExport: true,
+      warn,
+    });
     expect(warn).toHaveBeenCalledWith(expect.stringContaining('dead is still referenced by p'));
   });
 
-  it('API dry run warns, a real run throws', async () => {
+  it('asks once, raw perspective, for every version of every deleted document', async () => {
+    const { context, withConfig, fetch } = fakeContext(false);
+    await checkUnreferenced(['a', 'drafts.b'], [], context, { fromExport: false });
+    expect(withConfig).toHaveBeenCalledWith({ perspective: 'raw' });
+    expect(fetch).toHaveBeenCalledTimes(1);
+    const [query, params] = fetch.mock.calls[0] as [string, { ids: string[] }];
+    expect(query).toContain('references($ids)');
+    // The deleted documents themselves are excluded: dead groups may point at each other.
+    expect(query).toContain('!(_id in $ids)');
+    expect([...params.ids].sort()).toEqual(['a', 'b', 'drafts.a', 'drafts.b']);
+  });
+
+  it('API dry run warns, a real run throws, naming the referenced document', async () => {
+    const referencing = async () => [{ _id: 'x', _type: 'page', link: { _ref: 'drafts.dead' } }];
     const warn = vi.fn();
-    await checkUnreferenced(['dead'], [], context(true, ['x']), { fromExport: false, warn });
+    await checkUnreferenced(['dead', 'other'], [], fakeContext(true, referencing).context, {
+      fromExport: false,
+      warn,
+    });
+    expect(warn).toHaveBeenCalledTimes(1);
     expect(warn).toHaveBeenCalledWith(expect.stringContaining('dead is still referenced by x'));
     await expect(
-      checkUnreferenced(['dead'], [], context(false, ['x']), { fromExport: false, warn })
+      checkUnreferenced(['dead'], [], fakeContext(false, referencing).context, {
+        fromExport: false,
+      })
     ).rejects.toThrow(/dead is still referenced by x/);
   });
 
-  it('a real run fails when the reference check fails', async () => {
+  it('a real run fails when the reference check fails; a dry run warns', async () => {
+    const boom = async () => {
+      throw new Error('boom');
+    };
     await expect(
-      checkUnreferenced(['dead'], [], context(false, new Error('boom')), { fromExport: false })
+      checkUnreferenced(['dead'], [], fakeContext(false, boom).context, { fromExport: false })
     ).rejects.toThrow(/boom/);
+    const warn = vi.fn();
+    await checkUnreferenced(['dead'], [], fakeContext(true, boom).context, {
+      fromExport: false,
+      warn,
+    });
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('boom'));
   });
 
   it('the dead groups are referenced by nothing in the export', async () => {
     const warn = vi.fn();
-    await checkUnreferenced(DEAD_GROUP_IDS, ALL, context(true), { fromExport: true, warn });
+    await checkUnreferenced(DEAD_GROUP_IDS, ALL, fakeContext(true).context, {
+      fromExport: true,
+      warn,
+    });
     expect(warn).not.toHaveBeenCalled();
+  });
+});
+
+describe('assertNoFreshBlockingDrafts', () => {
+  it('re-reads the migrated types (raw perspective) and refuses a draft created after the export', async () => {
+    const { context, withConfig, fetch } = fakeContext(false, async () => ALL);
+    await expect(assertNoFreshBlockingDrafts(context)).rejects.toThrow(
+      /drafts\.0305aaeb-eef8-4f13-b724-ebdd86591b83/
+    );
+    expect(withConfig).toHaveBeenCalledWith({ perspective: 'raw' });
+    expect(fetch.mock.calls[0]?.[1]).toEqual({ types: [...MIGRATED_TYPES] });
+  });
+
+  it('passes when the live dataset has no blocking drafts', async () => {
+    const { context } = fakeContext(false, async () => PUBLISHED);
+    await expect(assertNoFreshBlockingDrafts(context)).resolves.toBeUndefined();
+  });
+
+  it('refuses without a client', async () => {
+    const context = { dryRun: false } as unknown as MigrationContext;
+    await expect(assertNoFreshBlockingDrafts(context)).rejects.toThrow(/no API client/);
+  });
+});
+
+describe('the default export, end to end', () => {
+  afterEach(() => vi.unstubAllEnvs());
+
+  async function run(docs: readonly Doc[], context: MigrationContext) {
+    const source = async function* () {
+      for (const doc of docs) yield doc as never;
+    };
+    const out: Mutation[] = [];
+    for await (const item of collectMigrationMutations(migration, source, context)) {
+      out.push(...((Array.isArray(item) ? item : [item]) as Mutation[]));
+    }
+    return out;
+  }
+
+  it('a real run refuses on blocking drafts before writing anything', async () => {
+    vi.stubEnv(IGNORE_DRAFTS_ENV, '1');
+    const { context, fetch } = fakeContext(false);
+    await expect(run(ALL, context)).rejects.toThrow(/ignored on a real run/);
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('a real run refuses when a blocking draft appeared after the export', async () => {
+    const { context } = fakeContext(false, async (query) =>
+      query.includes('references') ? [] : ALL
+    );
+    await expect(run(PUBLISHED, context)).rejects.toThrow(/drafts\./);
+  });
+
+  it('a dry run with the preview flag yields 13 patches, 18 deletes, 4 creates', async () => {
+    vi.stubEnv(IGNORE_DRAFTS_ENV, '1');
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const context = { dryRun: true } as unknown as MigrationContext;
+    const mutations = await run(ALL, context);
+    expect(count(mutations, 'patch')).toHaveLength(13);
+    expect(count(mutations, 'delete')).toHaveLength(18);
+    expect(count(mutations, 'createIfNotExists')).toHaveLength(4);
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('dry run continues'));
+    warn.mockRestore();
+  });
+
+  it('a dry run without the flag refuses too', async () => {
+    vi.stubEnv(IGNORE_DRAFTS_ENV, '');
+    await expect(run(ALL, { dryRun: true } as unknown as MigrationContext)).rejects.toThrow(
+      new RegExp(IGNORE_DRAFTS_ENV)
+    );
   });
 });

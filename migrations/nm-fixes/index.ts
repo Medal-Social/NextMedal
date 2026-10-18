@@ -7,11 +7,14 @@
  * Written as an async-iterable migration (not a per-document one) because two
  * guards need the whole document set before the first write:
  * - blocking drafts: drafts whose publishing would undo a fix (see
- *   blockingDrafts). A real run always refuses while there are any. A dry run
- *   refuses too, unless NM_FIXES_DRY_RUN_IGNORE_DRAFTS=1 is set — then it warns
- *   and prints the planned mutations. The flag is ignored on a real run.
+ *   blockingDrafts). A real run always refuses while there are any, and checks
+ *   the live dataset again just before its first write (drafts created after
+ *   the export). A dry run refuses too, unless NM_FIXES_DRY_RUN_IGNORE_DRAFTS=1
+ *   is set — then it warns and prints the planned mutations. The flag is
+ *   ignored on a real run.
  * - references: a document is never deleted while something still references
- *   it (live run: throws; API dry run: warns; offline dry run: checks the export).
+ *   it (live run: throws; API dry run: warns; offline dry run: only checks the
+ *   migrated types it read, since `--from-export` hands it nothing else).
  */
 import {
   at,
@@ -65,8 +68,8 @@ export function planMutations(docs: readonly Doc[]): Mutation[] {
     });
     if (!patches.length) return creates;
     // One patch per document, locked to the revision this run read.
-    const options = doc._rev ? { ifRevision: doc._rev } : undefined;
-    return [...creates, patch(doc._id, patches, options)];
+    if (!doc._rev) throw new UnmappedContentError(`${doc._id} has no _rev to lock the patch to`);
+    return [...creates, patch(doc._id, patches, { ifRevision: doc._rev })];
   });
 }
 
@@ -141,13 +144,20 @@ export function isFromExport(argv: readonly string[] = process.argv): boolean {
   return argv.some((arg) => arg === '--from-export' || arg.startsWith('--from-export='));
 }
 
-const REFERENCING_QUERY = '*[references($ids) && !(_id in $ids)]._id';
+const REFERENCING_QUERY = '*[references($ids) && !(_id in $ids)]';
+const MIGRATED_QUERY = '*[_type in $types]';
+
+/** Both versions (published and draft) of every id. */
+const allVersions = (ids: readonly string[]) => [
+  ...new Set(ids.flatMap((id) => [publishedId(id), `drafts.${publishedId(id)}`])),
+];
 
 /**
  * Never delete a document something else still references. Offline dry run
- * (`--from-export`, or no client): checks the export's own documents and
- * warns. API dry run: a WARNING, never an error. Live run: always checks via
- * the API (raw perspective, so drafts count) and throws.
+ * (`--from-export`, or no client): only checks the migrated types it read —
+ * the export hands the migration nothing else — and warns. API dry run: a
+ * WARNING, never an error. Live run: always checks via the API (one query,
+ * raw perspective, so drafts count) and throws.
  */
 export async function checkUnreferenced(
   ids: readonly string[],
@@ -156,37 +166,41 @@ export async function checkUnreferenced(
   { fromExport = isFromExport(), warn = consoleWarn }: { fromExport?: boolean; warn?: Warn } = {}
 ): Promise<void> {
   if (!ids.length) return;
-  const report = (id: string, from: string[]) => {
-    const message = `${id} is still referenced by ${from.join(', ')}`;
-    if (!context.dryRun) throw new UnmappedContentError(message);
-    warn(`WARNING nm-fixes: ${message} (a live run would stop here)`);
-  };
-  if (context.dryRun && (fromExport || !context.client)) {
-    const found = findReferences(docs, ids);
-    for (const id of ids) {
-      const from = found.filter((r) => publishedId(r.to) === publishedId(id)).map((r) => r.from);
-      if (from.length) report(id, [...new Set(from)]);
-    }
-    return;
-  }
-  if (!context.client) throw new UnmappedContentError('no API client to check references');
-  const client = context.client.withConfig({ perspective: 'raw' });
-  const all = [...new Set(ids.flatMap((id) => [publishedId(id), `drafts.${publishedId(id)}`]))];
-  for (const id of ids) {
-    const versions = [publishedId(id), `drafts.${publishedId(id)}`];
-    let from: string[];
+  let referencing: readonly Doc[] = docs;
+  if (!(context.dryRun && (fromExport || !context.client))) {
+    if (!context.client) throw new UnmappedContentError('no API client to check references');
     try {
       // Excludes every document this run deletes: dead groups may point at each other.
-      from = (await client.fetch<string[]>(REFERENCING_QUERY, { ids: versions })).filter(
-        (ref) => !all.includes(ref)
-      );
+      referencing = await context.client
+        .withConfig({ perspective: 'raw' })
+        .fetch<Doc[]>(REFERENCING_QUERY, { ids: allVersions(ids) });
     } catch (error) {
       if (!context.dryRun) throw error;
-      warn(`WARNING nm-fixes: could not check references to ${id}: ${String(error)}`);
-      continue;
+      warn(`WARNING nm-fixes: could not check references: ${String(error)}`);
+      return;
     }
-    if (from.length) report(id, from);
   }
+  const found = findReferences(referencing, ids);
+  for (const id of ids) {
+    const from = found.filter((r) => publishedId(r.to) === publishedId(id)).map((r) => r.from);
+    if (!from.length) continue;
+    const message = `${id} is still referenced by ${[...new Set(from)].join(', ')}`;
+    if (!context.dryRun) throw new UnmappedContentError(message);
+    warn(`WARNING nm-fixes: ${message} (a live run would stop here)`);
+  }
+}
+
+/**
+ * Real run, just before the first write: re-reads the migrated types from the
+ * live dataset (raw perspective, so drafts count) and refuses if a draft would
+ * undo the fix — catches drafts created after the run's export was taken.
+ */
+export async function assertNoFreshBlockingDrafts(context: MigrationContext): Promise<void> {
+  if (!context.client) throw new UnmappedContentError('no API client to re-check drafts');
+  const live = await context.client
+    .withConfig({ perspective: 'raw' })
+    .fetch<Doc[]>(MIGRATED_QUERY, { types: [...MIGRATED_TYPES] });
+  assertNoBlockingDrafts(live, { dryRun: false, env: {} });
 }
 
 export default defineMigration({
@@ -199,6 +213,7 @@ export default defineMigration({
     const mutations = planMutations(docs);
     const deletes = mutations.flatMap((m) => (m.type === 'delete' ? [m.id] : []));
     await checkUnreferenced(deletes, docs, context);
+    if (!context.dryRun) await assertNoFreshBlockingDrafts(context);
     for (const mutation of mutations) yield mutation;
   },
 });
