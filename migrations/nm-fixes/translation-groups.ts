@@ -50,10 +50,13 @@ export const TRANSLATION_GROUPS: readonly TranslationGroup[] = [
     },
   },
   {
+    // English = 1ddbee30, the page /events renders today (lowest _id of the two
+    // "events" pages). The lean-schema migration (R2) deletes 1ddbee30 and
+    // repoints this group to 6ea8352f, the page the menu and the events link to.
     id: '0a41c124-1e2c-4a1b-a870-4163c342b0d1',
     label: 'Events',
     pages: {
-      en: '6ea8352f-92fe-46bd-b1f7-16af1d46e20b',
+      en: '1ddbee30-c430-4d8a-9840-99ade65f68fe',
       nb: 'b1ec5d7c-d2c5-4959-8b70-5401dccbfd48',
       ar: 'b4abe66c-3d0b-4004-965c-33d94b551eeb',
     },

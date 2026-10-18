@@ -8,6 +8,7 @@ import { type AnchorModule, pageAnchors } from '../../src/lib/block-anchors';
 import {
   canonicalJson,
   type Doc,
+  documentLookup,
   isFilled,
   isObject,
   mapObjects,
@@ -104,8 +105,10 @@ export function mapForm(doc: Doc): Doc {
   if (typeof doc.submitButtonText === 'string') {
     next.submitButtonText = localized(doc.submitButtonText, 'String');
   }
-  const message = doc.successMessage as Array<{ _type?: string }> | undefined;
-  if (Array.isArray(message) && message[0]?._type === 'block') {
+  const message = doc.successMessage as { _type?: string }[] | string | undefined;
+  if (typeof message === 'string') {
+    next.successMessage = localized(message, 'Text');
+  } else if (Array.isArray(message) && message[0]?._type === 'block') {
     next.successMessage = localized(plainText(message, doc._id), 'Text');
   }
   if (isObject(doc.acceptance)) {
@@ -145,4 +148,30 @@ export function mapDocument(doc: Doc, context: FixContext = {}): FixResult {
   return canonicalJson(next) === canonicalJson(doc)
     ? { action: 'skip' }
     : { action: 'patch', next };
+}
+
+/**
+ * Drafts that would undo the fix when published: the published document is
+ * patched, and its draft (after the same mapping) differs in a patched field.
+ * index.ts refuses to run while this is not empty — discard or fix them first.
+ */
+export function blockingDrafts(docs: readonly Doc[]): string[] {
+  const context = { getDocument: documentLookup(docs) };
+  const drafts = new Map(docs.filter((d) => d._id.startsWith('drafts.')).map((d) => [d._id, d]));
+  const blocking: string[] = [];
+  for (const doc of docs) {
+    const draft = drafts.get(`drafts.${doc._id}`);
+    if (!draft) continue;
+    const result = mapDocument(doc, context);
+    if (result.action !== 'patch') continue;
+    const draftResult = mapDocument(draft, context);
+    const draftNext = draftResult.action === 'patch' ? draftResult.next : draft;
+    const patched = [...new Set([...Object.keys(doc), ...Object.keys(result.next)])].filter(
+      (key) => !key.startsWith('_') && canonicalJson(doc[key]) !== canonicalJson(result.next[key])
+    );
+    if (patched.some((key) => canonicalJson(draftNext[key]) !== canonicalJson(result.next[key]))) {
+      blocking.push(draft._id);
+    }
+  }
+  return blocking;
 }

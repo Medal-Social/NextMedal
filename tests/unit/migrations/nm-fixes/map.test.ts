@@ -3,6 +3,7 @@ import docs from '@tests/fixtures/lean-schema/documents.json';
 import { describe, expect, it } from 'vitest';
 import { pageAnchors } from '@/lib/block-anchors';
 import {
+  blockingDrafts,
   fixAnchorParam,
   groupsToCreate,
   mapDocument,
@@ -42,8 +43,8 @@ function migrate(all: readonly Doc[]): Doc[] {
 const translationsOf = (group: Doc) => (group.translations as Entry[] | undefined) ?? [];
 const groupsIn = (all: readonly Doc[]) => all.filter((d) => d._type === 'translation.metadata');
 
-/** Keys that hold structure, not words. */
-const NOT_TEXT = new Set(['params', 'style', 'listItem', 'marks']);
+/** Keys that hold structure or language codes, not words. */
+const NOT_TEXT = new Set(['params', 'style', 'listItem', 'marks', 'language']);
 
 /** Every string a person typed (keys starting with _ are system values). */
 function strings(value: unknown, out: string[] = []): string[] {
@@ -211,6 +212,19 @@ describe('form texts', () => {
     expect(next.acceptance).not.toHaveProperty('required');
   });
 
+  it('wraps a plain-string thank-you message in an English entry', () => {
+    const next = mapForm({ _id: 'f', _type: 'form', successMessage: 'Thanks!\nSee you.' });
+    expect(next.successMessage).toEqual([
+      {
+        _key: 'en',
+        _type: 'internationalizedArrayTextValue',
+        language: 'en',
+        value: 'Thanks!\nSee you.',
+      },
+    ]);
+    expect(mapForm(next)).toEqual(next);
+  });
+
   it('leaves the draft form (no texts) alone', () => {
     expect(mapDocument(byId(`drafts.${formId}`)).action).toBe('skip');
   });
@@ -218,6 +232,35 @@ describe('form texts', () => {
 
 describe('translation groups', () => {
   const pages = new Map(ALL.filter((d) => d._type === 'page').map((d) => [d._id, d]));
+
+  /**
+   * The page the site renders for a slug and language. PAGE_QUERY is
+   * `*[_type == 'page' && metadata.slug.current == $slug && language == $locale][0]`
+   * with no order(), over published documents: Sanity returns documents in
+   * `_id` order then, so `[0]` is the lowest published `_id` (Vault plan C10:
+   * /events renders 1ddbee30, not 6ea8352f).
+   */
+  const renderedPage = (slug: unknown, language: unknown) =>
+    [...pages.values()]
+      .filter((p) => !p._id.startsWith('drafts.'))
+      .filter((p) => p.language === language)
+      .filter((p) => (p.metadata as { slug?: { current?: string } })?.slug?.current === slug)
+      .map((p) => p._id)
+      .sort()[0];
+
+  it('every page in a group is the page the site renders for its slug and language', () => {
+    for (const g of TRANSLATION_GROUPS) {
+      for (const [lang, id] of Object.entries(g.pages)) {
+        const slug = (pages.get(id)?.metadata as { slug?: { current?: string } })?.slug?.current;
+        expect(renderedPage(slug, lang), `${g.label} ${lang} /${slug}`).toBe(id);
+      }
+    }
+  });
+
+  it('keeps the rendered English events page in the events group (R1)', () => {
+    const events = TRANSLATION_GROUPS.find((g) => g.id === '0a41c124-1e2c-4a1b-a870-4163c342b0d1');
+    expect(events?.pages.en).toBe('1ddbee30-c430-4d8a-9840-99ade65f68fe');
+  });
 
   it('the table only names published pages in the language it files them under', () => {
     for (const g of TRANSLATION_GROUPS) {
@@ -308,19 +351,55 @@ describe('translation groups', () => {
   });
 });
 
+describe('blocking drafts', () => {
+  it('lists the drafts whose publishing would undo a patched field', () => {
+    expect(blockingDrafts(ALL).sort()).toEqual([
+      'drafts.0305aaeb-eef8-4f13-b724-ebdd86591b83',
+      'drafts.1bc46c05-bdff-41dc-a281-e26dcee48d6f',
+      'drafts.fa6acd77-2859-4c21-add7-165e3fdbe054',
+    ]);
+  });
+
+  it('a draft that carries the same fix (or no draft) does not block', () => {
+    const published: Doc = { _id: 'p', _type: 'pricing', price: { base: '1', suffix: '/m' } };
+    expect(blockingDrafts([published])).toEqual([]);
+    expect(blockingDrafts([published, { ...published, _id: 'drafts.p', title: 'New' }])).toEqual(
+      []
+    );
+    expect(
+      blockingDrafts([published, { _id: 'drafts.p', _type: 'pricing', title: 'New' }])
+    ).toEqual(['drafts.p']);
+  });
+
+  it('is empty after the drafts are discarded', () => {
+    expect(blockingDrafts(ALL.filter((d) => !d._id.startsWith('drafts.')))).toEqual([]);
+  });
+});
+
 describe('the whole run', () => {
-  it('loses no text where text moves', () => {
+  it('loses no text where text moves (every string, counted)', () => {
+    const counts = (list: string[]) => {
+      const m = new Map<string, number>();
+      for (const text of list) m.set(text, (m.get(text) ?? 0) + 1);
+      return m;
+    };
+    let compared = 0;
     for (const doc of ALL) {
       const r = mapDocument(doc, { getDocument });
       if (r.action !== 'patch') continue;
-      const after = strings(r.next);
-      for (const text of strings(doc)) {
-        expect(
-          after.some((s) => s.includes(text)),
-          `${doc._id}: "${text}"`
-        ).toBe(true);
+      const before = counts(strings(doc));
+      const after = counts(strings(r.next));
+      if (doc._type === 'translation.metadata') {
+        // Groups gain `language` and `schemaTypes`; nothing they had may go.
+        for (const [text, n] of before) {
+          expect(after.get(text) ?? 0, `${doc._id}: "${text}"`).toBeGreaterThanOrEqual(n);
+        }
+      } else {
+        expect([...after].sort(), doc._id).toEqual([...before].sort());
       }
+      compared++;
     }
+    expect(compared).toBe(13);
   });
 
   it('only deletes the dead groups', () => {
