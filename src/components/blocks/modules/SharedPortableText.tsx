@@ -12,7 +12,8 @@ interface SharedPortableTextProps {
 
 const defaultComponents: PortableTextComponents = {
   marks: {
-    em: ({ children }) => <span className="font-bold text-primary">{children}</span>,
+    // Italic is italic everywhere (Vault spec 2026-10-18 bug 3).
+    em: ({ children }) => <em>{children}</em>,
     link: ({ children, value }) => {
       const { type, internal, external, params, newTab } = value || {};
       const href = resolveSlug({
