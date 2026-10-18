@@ -1,5 +1,6 @@
 import type { PDFDocumentProxy } from 'pdfjs-dist';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { PageCache } from '@/components/blocks/objects/flipbook/page-cache';
 import { renderPage } from '@/components/blocks/objects/flipbook/pdf';
 
 function installCanvas(behavior: 'reject-render' | 'null-blob' | 'ok') {
@@ -38,6 +39,41 @@ afterEach(() => {
 });
 
 describe('renderPage cleanup', () => {
+  it('a jump starts the new page before the old page finishes encoding', async () => {
+    const { canvas } = installCanvas('ok');
+    const { doc, cleanup } = fakeDoc(async () => undefined);
+    const callbacks: BlobCallback[] = [];
+    let encodingStarted!: () => void;
+    const encoding = new Promise<void>((resolve) => {
+      encodingStarted = resolve;
+    });
+    vi.mocked(canvas.toBlob).mockImplementation((callback) => {
+      callbacks.push(callback);
+      if (callbacks.length === 1) encodingStarted();
+      else callback(new Blob(['new page'], { type: 'image/webp' }));
+    });
+    const createUrl = vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:new-page');
+    const cache = new PageCache({
+      count: 20,
+      behind: 0,
+      ahead: 0,
+      schedule: (run) => run(),
+      render: (index, signal) => renderPage(doc, index, { height: 200 }, signal),
+    });
+    cache.focus(0);
+    await encoding;
+    cache.focus(10);
+    await vi.waitFor(() => expect(cache.get(10)).toBe('blob:new-page'));
+    expect(cache.get(0)).toBeUndefined();
+    expect(cleanup).toHaveBeenCalledTimes(2);
+    expect(canvas.width).toBe(0);
+    // The old native encoder may finish later, but it never creates a leaked URL.
+    callbacks[0]?.(new Blob(['obsolete page']));
+    await Promise.resolve();
+    expect(createUrl).toHaveBeenCalledOnce();
+    cache.destroy();
+  });
+
   it('releases the canvas and PDF page when rendering rejects', async () => {
     const { canvas } = installCanvas('ok');
     const { doc, cleanup } = fakeDoc(() => Promise.reject(new Error('render failed')));

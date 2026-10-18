@@ -37,6 +37,23 @@ function setup(count = 40, extra: Partial<ConstructorParameters<typeof PageCache
 }
 
 describe('PageCache', () => {
+  it('revokes a URL from a renderer that resolves after cancellation', async () => {
+    const { cache, pending, revoke, onChange, settle, order } = setup(20, { behind: 0, ahead: 0 });
+    cache.focus(0);
+    const stale = pending.get(0);
+    cache.focus(10);
+    stale?.('blob:obsolete');
+    pending.delete(0);
+    for (let step = 0; step < 6; step++) await Promise.resolve();
+    expect(revoke).toHaveBeenCalledWith('blob:obsolete');
+    expect(cache.get(0)).toBeUndefined();
+    expect(onChange).not.toHaveBeenCalledWith(0, 'blob:obsolete');
+    expect(order).toEqual([0, 10]);
+    await settle();
+    expect(cache.get(10)).toBe('blob:10');
+    cache.destroy();
+  });
+
   it('renders the visible spread first, then outwards with more pages ahead than behind', async () => {
     const { cache, order, drain } = setup(40, { behind: 2, ahead: 3 });
     cache.focus(10, 11);
@@ -58,7 +75,10 @@ describe('PageCache', () => {
     await settle(); // the in-flight page finishes, nothing new starts
     expect(order).toEqual([0]);
     cache.setBusy(false);
-    expect(order).toEqual([0, 1]);
+    // The aborted render's late URL was discarded; prepare the visible page again.
+    expect(order).toEqual([0, 0]);
+    await settle();
+    expect(order).toEqual([0, 0, 1]);
   });
 
   it('cancels the render in progress when a turn starts and prepares it again afterwards', async () => {
@@ -126,6 +146,60 @@ describe('PageCache', () => {
     cache.unwant(70);
     await drain();
     expect(order).toEqual([0, 60]);
+  });
+
+  it('cancels a window render the reader jumped away from, so the new spread goes first', async () => {
+    const signals = new Map<number, AbortSignal>();
+    const order: number[] = [];
+    const cache = new PageCache({
+      count: 100,
+      behind: 0,
+      ahead: 0,
+      schedule: (run) => run(),
+      revoke: vi.fn(),
+      render: (index, signal) => {
+        order.push(index);
+        signals.set(index, signal);
+        return new Promise<string>((resolve, reject) => {
+          signal.addEventListener('abort', () => reject(new Error('cancelled')));
+          if (index === 60) resolve('blob:60');
+        });
+      },
+    });
+    cache.focus(3, 3);
+    cache.focus(60, 60);
+    expect(signals.get(3)?.aborted).toBe(true);
+    for (let n = 0; n < 6; n++) await Promise.resolve();
+    expect(order).toEqual([3, 60]);
+    expect(cache.get(60)).toBe('blob:60');
+  });
+
+  it('does not queue cancelled window pages ahead of the pages on screen', async () => {
+    const order: number[] = [];
+    const cache = new PageCache({
+      count: 100,
+      behind: 0,
+      ahead: 0,
+      schedule: (run) => run(),
+      revoke: vi.fn(),
+      render: (index, signal) => {
+        order.push(index);
+        return new Promise<string>((resolve, reject) => {
+          signal.addEventListener('abort', () => reject(new Error('cancelled')));
+          if (index === 12) resolve('blob:12');
+        });
+      },
+    });
+    cache.focus(10, 10);
+    for (const next of [11, 12]) {
+      cache.setBusy(true); // a turn starts: the render in progress is cancelled
+      for (let n = 0; n < 4; n++) await Promise.resolve();
+      cache.focus(next, next); // ...and the reader lands on the next page
+      cache.setBusy(false);
+      for (let n = 0; n < 4; n++) await Promise.resolve();
+    }
+    expect(order).toEqual([10, 11, 12]); // no stale 10 or 11 re-rendered first
+    expect(cache.get(12)).toBe('blob:12');
   });
 
   it('keeps recently requested pages even when far from the reading position', async () => {
