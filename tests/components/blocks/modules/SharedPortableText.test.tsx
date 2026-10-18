@@ -103,4 +103,38 @@ describe('SharedPortableText links (spec D4)', () => {
     );
     expect(html).toMatch(/<a [^>]*href="\/about"[^>]*>Go<\/a>/);
   });
+
+  it('an unsafe external link (javascript:, data:) is never rendered as an href', () => {
+    for (const external of ['javascript:alert(1)', 'data:text/html,<script>alert(1)</script>']) {
+      const html = renderToStaticMarkup(
+        <SharedPortableText value={[linked({ type: 'external', external })]} />
+      );
+      expect(html, external).not.toContain('href=');
+      expect(html, external).toContain('Go');
+    }
+  });
+
+  it('an unsafe external link falls back to its internal reference', () => {
+    const html = renderToStaticMarkup(
+      <SharedPortableText
+        value={[
+          linked({
+            type: 'external',
+            external: 'javascript:alert(1)',
+            internal: target('about', 'en'),
+          }),
+        ]}
+      />
+    );
+    expect(html).toMatch(/<a [^>]*href="\/about"[^>]*>Go<\/a>/);
+  });
+
+  it('a safe external link keeps its URL', () => {
+    const html = renderToStaticMarkup(
+      <SharedPortableText
+        value={[linked({ type: 'external', external: 'https://example.com/x' })]}
+      />
+    );
+    expect(html).toContain('href="https://example.com/x"');
+  });
 });

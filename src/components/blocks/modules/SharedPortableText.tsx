@@ -3,6 +3,7 @@ import { useLocale } from 'next-intl';
 import { PortableText, type PortableTextComponents, stegaClean } from 'next-sanity';
 import { internalHref } from '@/lib/sanity/localized-link';
 import { cn, slug } from '@/lib/utils/index';
+import { validateExternalUrl } from '@/lib/validateExternalUrl';
 
 // Rich-text anchors may be stored without the leading "#".
 const anchorParams = (params?: string) => (params && !/^[#?]/.test(params) ? `#${params}` : params);
@@ -17,8 +18,10 @@ function RichTextLink({ value, children }: { value?: Sanity.MenuItem; children: 
     : undefined;
 
   if (type === 'external' || external) {
-    // A link marked external that only holds an internal reference still goes there.
-    const href = external || internalUrl;
+    // A link marked external that only holds an internal reference still goes there;
+    // an unsafe external value (javascript:, data:) never becomes an href.
+    const safeExternal = external ? validateExternalUrl(stegaClean(external)) : null;
+    const href = safeExternal || internalUrl;
     if (!href) return <>{children}</>;
     return (
       <a
