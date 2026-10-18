@@ -59,6 +59,9 @@ describe('SocialEmbedCard', () => {
     expect(screen.getByText(/@AnthropicAI/)).toBeInTheDocument();
     expect(screen.getByText(/Creating in-house source control/)).toBeInTheDocument();
     expect(screen.getByText('anthropic.com')).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Redesigning source control at Anthropic' })
+    ).toHaveAttribute('href', 'https://t.co/wzNkwHs7IN');
     expect(screen.getByText('Redesigning source control at Anthropic')).toBeInTheDocument();
     expect(screen.getByText('13 Oct 2026 · 16:36')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /View on X/i })).toHaveAttribute(
@@ -153,4 +156,24 @@ describe('SocialEmbedCard', () => {
     // jsdom may not toggle native <details> open; assert the control is still wired.
     expect(details?.querySelector('summary')).toBe(play);
   });
+});
+
+it('does not turn unsafe preview destinations into links', () => {
+  render(
+    <SocialEmbedCard
+      data={{
+        ...anthropicCard,
+        linkPreview: { ...anthropicCard.linkPreview!, url: 'javascript:alert(1)' },
+      }}
+      labels={labels}
+    />
+  );
+  expect(screen.getByText('Redesigning source control at Anthropic')).toBeInTheDocument();
+  expect(
+    screen.queryByRole('link', { name: 'Redesigning source control at Anthropic' })
+  ).not.toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /View on X/i })).toHaveAttribute(
+    'href',
+    anthropicCard.url
+  );
 });

@@ -262,7 +262,7 @@ function LinkPreviewFigure({
   const preview = data.linkPreview;
   if (!preview) return null;
 
-  return (
+  const figure = (
     <figure className="mt-3.5 overflow-hidden rounded-xl border border-border">
       {preview.image?.url ? (
         <div
@@ -295,6 +295,25 @@ function LinkPreviewFigure({
         ) : null}
       </figcaption>
     </figure>
+  );
+  let href: string | null = null;
+  try {
+    const url = new URL(preview.url ?? '');
+    if (url.protocol === 'https:' || url.protocol === 'http:') href = url.href;
+  } catch {
+    // Missing or malformed destinations still render the preview without a link.
+  }
+  return href ? (
+    <a
+      href={href}
+      target="_blank"
+      rel={EXTERNAL_REL}
+      aria-label={preview.title || preview.domain || href}
+    >
+      {figure}
+    </a>
+  ) : (
+    figure
   );
 }
 
