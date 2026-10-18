@@ -1,9 +1,10 @@
 /**
  * Modules Fragment
- * @version 1.3.0
- * @lastUpdated 2025-12-30
+ * @version 1.4.0
+ * @lastUpdated 2026-10-18
  * @description A registry of all available content modules for the page builder.
  * @changelog
+ * - 1.4.0: Added pricing-comparison to the Content Sections insert menu
  * - 1.3.0: Added flipbook module
  * - 1.2.0: Renamed listing modules to frontpage (articles-frontpage, etc.)
  * - 1.1.0: Added Frontpages group with articles-frontpage module
@@ -30,6 +31,7 @@ export default defineField({
     { type: 'flipbook' },
     { type: 'team' },
     { type: 'pricing-list' },
+    { type: 'pricing-comparison' },
     { type: 'product-comparison' },
     { type: 'latest-articles' },
     { type: 'breadcrumbs' },
@@ -65,6 +67,7 @@ export default defineField({
             'flipbook',
             'team',
             'pricing-list',
+            'pricing-comparison',
             'product-comparison',
           ],
         },
