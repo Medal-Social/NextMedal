@@ -37,6 +37,23 @@ function setup(count = 40, extra: Partial<ConstructorParameters<typeof PageCache
 }
 
 describe('PageCache', () => {
+  it('revokes a URL from a renderer that resolves after cancellation', async () => {
+    const { cache, pending, revoke, onChange, settle, order } = setup(20, { behind: 0, ahead: 0 });
+    cache.focus(0);
+    const stale = pending.get(0);
+    cache.focus(10);
+    stale?.('blob:obsolete');
+    pending.delete(0);
+    for (let step = 0; step < 6; step++) await Promise.resolve();
+    expect(revoke).toHaveBeenCalledWith('blob:obsolete');
+    expect(cache.get(0)).toBeUndefined();
+    expect(onChange).not.toHaveBeenCalledWith(0, 'blob:obsolete');
+    expect(order).toEqual([0, 10]);
+    await settle();
+    expect(cache.get(10)).toBe('blob:10');
+    cache.destroy();
+  });
+
   it('renders the visible spread first, then outwards with more pages ahead than behind', async () => {
     const { cache, order, drain } = setup(40, { behind: 2, ahead: 3 });
     cache.focus(10, 11);
@@ -58,7 +75,10 @@ describe('PageCache', () => {
     await settle(); // the in-flight page finishes, nothing new starts
     expect(order).toEqual([0]);
     cache.setBusy(false);
-    expect(order).toEqual([0, 1]);
+    // The aborted render's late URL was discarded; prepare the visible page again.
+    expect(order).toEqual([0, 0]);
+    await settle();
+    expect(order).toEqual([0, 0, 1]);
   });
 
   it('cancels the render in progress when a turn starts and prepares it again afterwards', async () => {
@@ -137,12 +157,12 @@ describe('PageCache', () => {
       ahead: 0,
       schedule: (run) => run(),
       revoke: vi.fn(),
-      render: (i, signal) => {
-        order.push(i);
-        signals.set(i, signal);
+      render: (index, signal) => {
+        order.push(index);
+        signals.set(index, signal);
         return new Promise<string>((resolve, reject) => {
           signal.addEventListener('abort', () => reject(new Error('cancelled')));
-          if (i === 60) resolve('blob:60');
+          if (index === 60) resolve('blob:60');
         });
       },
     });
@@ -162,11 +182,11 @@ describe('PageCache', () => {
       ahead: 0,
       schedule: (run) => run(),
       revoke: vi.fn(),
-      render: (i, signal) => {
-        order.push(i);
+      render: (index, signal) => {
+        order.push(index);
         return new Promise<string>((resolve, reject) => {
           signal.addEventListener('abort', () => reject(new Error('cancelled')));
-          if (i === 12) resolve('blob:12');
+          if (index === 12) resolve('blob:12');
         });
       },
     });

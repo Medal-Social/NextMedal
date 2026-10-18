@@ -186,7 +186,7 @@ export class PageCache {
       this.opts
         .render(target, controller.signal)
         .then((url) => {
-          if (this.destroyed) {
+          if (this.destroyed || controller.signal.aborted) {
             this.opts.revoke(url);
             return;
           }
