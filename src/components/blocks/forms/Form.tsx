@@ -190,19 +190,26 @@ function AcceptanceCheckbox({
   locale: string;
   t: ReturnType<typeof useTranslations>;
 }) {
-  const customLabel =
-    text && href ? (
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="whitespace-pre-line font-semibold text-primary hover:underline"
-      >
-        {text}
-      </a>
-    ) : (
+  const readMore = useTranslations('common')('readMore');
+  // The text stays label text so clicking it ticks the box; only the separate link opens the page.
+  const customLabel = (
+    <>
       <span className="whitespace-pre-line">{text}</span>
-    );
+      {href && (
+        <>
+          {' '}
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-primary hover:underline"
+          >
+            {readMore}
+          </a>
+        </>
+      )}
+    </>
+  );
   const consentLabel = text
     ? customLabel
     : t.rich('privacy-consent-label', {

@@ -249,17 +249,20 @@ export default function EventRegistrationModal({
                     className="mt-1 size-4 rounded border-border accent-primary"
                   />
                   <span className="whitespace-pre-line text-muted-foreground text-sm leading-tight">
-                    {consentHref ? (
-                      <a
-                        href={consentHref}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-semibold text-primary hover:underline"
-                      >
-                        {consentText}
-                      </a>
-                    ) : (
-                      consentText
+                    {/* Text stays label text (ticks the box); only the link opens the page. */}
+                    {consentText}
+                    {consentHref && (
+                      <>
+                        {' '}
+                        <a
+                          href={consentHref}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-semibold text-primary hover:underline"
+                        >
+                          {tCommon('readMore')}
+                        </a>
+                      </>
                     )}
                     {consentRequired && <span className="ml-1 text-destructive">*</span>}
                   </span>

@@ -10,7 +10,8 @@
     "cancel": "Cancel",
     "done": "Done",
     "processing": "Processing...",
-    "untitled": "Untitled"
+    "untitled": "Untitled",
+    "readMore": "Read more"
   },
   "pagination": {
     "previous": "Previous",

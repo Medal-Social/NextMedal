@@ -135,7 +135,9 @@ describe('Form uses the texts editors set', () => {
         locale="en"
       />
     );
-    expect(screen.getByRole('link', { name: 'I agree to the terms' }).getAttribute('href')).toBe(
+    // The text stays label text (clicking it ticks the box); a separate link opens the page.
+    expect(screen.getByText('I agree to the terms').closest('a')).toBeNull();
+    expect(screen.getByRole('link', { name: en.common.readMore }).getAttribute('href')).toBe(
       '/terms'
     );
   });
@@ -158,7 +160,7 @@ describe('Form uses the texts editors set', () => {
         locale="en"
       />
     );
-    expect(screen.getByRole('link', { name: 'I agree to the terms' }).getAttribute('href')).toBe(
+    expect(screen.getByRole('link', { name: en.common.readMore }).getAttribute('href')).toBe(
       '/terms#cookies'
     );
   });
@@ -274,7 +276,9 @@ describe('event registration uses the texts editors set', () => {
         })}
       />
     );
-    expect(screen.getByRole('link', { name: 'I agree to the terms' }).getAttribute('href')).toBe(
+    // The text stays label text (clicking it ticks the box); a separate link opens the page.
+    expect(screen.getByText('I agree to the terms').closest('a')).toBeNull();
+    expect(screen.getByRole('link', { name: en.common.readMore }).getAttribute('href')).toBe(
       '/terms'
     );
   });
