@@ -108,4 +108,25 @@ describe('captureLead consent', () => {
     });
     expect(result?.serverError).toMatch(/accept/i);
   });
+
+  it('during a Sanity outage with no answer seen yet, refuses instead of guessing', async () => {
+    sanityFetch.mockRejectedValueOnce(new Error('sanity is down'));
+    const result = await register({
+      consent: false,
+      source: { type: 'event', referenceId: 'event-never-seen' },
+    });
+    expect(result?.serverError).toMatch(/temporarily unavailable/i);
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it('during a Sanity outage keeps accepting a form last seen as consent-free', async () => {
+    sanityFetch.mockResolvedValueOnce({ requireConsent: false });
+    await register({ consent: false, source: { type: 'event', referenceId: 'event-free' } });
+    sanityFetch.mockRejectedValueOnce(new Error('sanity is down'));
+    const result = await register({
+      consent: false,
+      source: { type: 'event', referenceId: 'event-free' },
+    });
+    expect(result?.data?.success).toBe(true);
+  });
 });

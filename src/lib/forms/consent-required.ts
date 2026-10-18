@@ -105,8 +105,12 @@ export async function isConsentRequired(
  * The consent rule for registering to an event, read from the event's own
  * registration form — never from a form id the browser sends.
  * `no-form`: the event offers no registration, so nothing may be stored.
+ * `unavailable`: Sanity could not be read and no recent answer is known — unlike
+ * forms, an event always has a form to check, so the registration waits.
  */
-export async function eventConsent(eventId: string): Promise<'required' | 'optional' | 'no-form'> {
+export async function eventConsent(
+  eventId: string
+): Promise<'required' | 'optional' | 'no-form' | 'unavailable'> {
   const publishedId = published(eventId);
   const cacheKey = `event:${publishedId}`;
   try {
@@ -123,6 +127,8 @@ export async function eventConsent(eventId: string): Promise<'required' | 'optio
     return required ? 'required' : 'optional';
   } catch (err) {
     logger.error({ err, eventId }, '[sanity] event consent lookup failed');
-    return cachedAnswer(cacheKey) ? 'required' : 'optional';
+    const cached = consentCache.get(cacheKey);
+    if (!cached || Date.now() - cached.at >= CONSENT_CACHE_TTL_MS) return 'unavailable';
+    return cached.required ? 'required' : 'optional';
   }
 }

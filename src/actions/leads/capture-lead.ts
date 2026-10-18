@@ -32,6 +32,9 @@ export const captureLead = actionClient.schema(leadSchema).action(async ({ parse
     if (!source.referenceId) throw new PublicError('This event could not be found.');
     const rule = await eventConsent(source.referenceId);
     if (rule === 'no-form') throw new PublicError('Registration is not open for this event.');
+    if (rule === 'unavailable') {
+      throw new PublicError('Registration is temporarily unavailable. Please try again shortly.');
+    }
     if (rule === 'required' && consent !== true) {
       throw new PublicError('Please accept the privacy terms to continue.');
     }
