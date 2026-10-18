@@ -1,4 +1,4 @@
-import type { PDFDocumentProxy } from 'pdfjs-dist';
+import type { PDFDocumentLoadingTask, PDFDocumentProxy } from 'pdfjs-dist';
 
 let worker: Worker | null = null;
 
@@ -12,20 +12,28 @@ async function pdfjs() {
   return lib;
 }
 
-/** In-flight pdf.js load. Call `destroy()` to abort the download before `promise` settles. */
-export interface PdfLoadingTask {
+export interface PdfHandle {
   promise: Promise<PDFDocumentProxy>;
-  destroy: () => Promise<void> | void;
+  /** Abort the download/parse if still in flight, or release the loaded document. */
+  cancel: () => void;
 }
 
-export async function openPdf(src: string): Promise<PdfLoadingTask> {
-  const lib = await pdfjs();
-  return lib.getDocument({ url: src });
-}
-
-/** Release the document and its worker-side resources. */
-export function closePdf(doc: PDFDocumentProxy): Promise<void> {
-  return doc.loadingTask.destroy();
+/** Open a PDF; `cancel()` stops an in-flight download (e.g. on unmount) as well as releasing a loaded one. */
+export function openPdf(src: string): PdfHandle {
+  let task: PDFDocumentLoadingTask | null = null;
+  let cancelled = false;
+  const promise = pdfjs().then((lib) => {
+    if (cancelled) throw new Error('PDF load cancelled');
+    task = lib.getDocument({ url: src });
+    return task.promise;
+  });
+  return {
+    promise,
+    cancel: () => {
+      cancelled = true;
+      void task?.destroy();
+    },
+  };
 }
 
 /** Page width/height ratio of page 1. */
@@ -41,15 +49,21 @@ export function targetPageHeight(): number {
   return Math.round(Math.min(2200, Math.max(1000, window.screen.height * dpr * 0.92)));
 }
 
-/** Render page `index` (0-based) to a WebP object URL. Size by height, or by width when given. */
+/**
+ * Render page `index` (0-based) to a WebP object URL. Size by height, or by width when given.
+ * Aborting `signal` cancels the render between pdf.js's drawing chunks.
+ */
 export async function renderPage(
   doc: PDFDocumentProxy,
   index: number,
-  size: { height: number } | { width: number }
+  size: { height: number } | { width: number },
+  signal?: AbortSignal
 ): Promise<string> {
+  signal?.throwIfAborted();
   const page = await doc.getPage(index + 1);
   let canvas: HTMLCanvasElement | null = null;
   try {
+    signal?.throwIfAborted();
     const base = page.getViewport({ scale: 1 });
     const scale =
       'height' in size ? size.height / base.height : Math.min(size.width, 3200) / base.width;
@@ -59,14 +73,21 @@ export async function renderPage(
     canvas.height = Math.round(viewport.height);
     const ctx = canvas.getContext('2d', { alpha: false });
     if (!ctx) throw new Error('Canvas 2D context unavailable');
-    await page.render({ canvas, canvasContext: ctx, viewport }).promise;
+    const task = page.render({ canvas, canvasContext: ctx, viewport });
+    const cancel = () => task.cancel();
+    signal?.addEventListener('abort', cancel, { once: true });
+    try {
+      await task.promise;
+    } finally {
+      signal?.removeEventListener('abort', cancel);
+    }
     const blob = await new Promise<Blob | null>((resolve) =>
       canvas?.toBlob(resolve, 'image/webp', 0.9)
     );
     if (!blob) throw new Error('Could not encode page image');
     return URL.createObjectURL(blob);
   } finally {
-    // A later page can fail while the book stays open, so this must run on throw too.
+    // Cancelled or failed renders must release the canvas too (the book stays open).
     if (canvas) {
       canvas.width = 0;
       canvas.height = 0;

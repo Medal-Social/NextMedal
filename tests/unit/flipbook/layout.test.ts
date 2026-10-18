@@ -20,8 +20,8 @@ describe('computeBookLayout', () => {
   it('switches to a single page below the breakpoint and hugs the page', () => {
     const l = computeBookLayout({ stageW: 356, stageH: 640, containerW: 356, ratio: A4 });
     expect(l.portrait).toBe(true);
-    expect(l.pageW).toBe(356 - 36);
-    expect(l.fittedStageH).toBe(l.pageH + 44);
+    expect(l.pageW).toBe(356 - 12);
+    expect(l.fittedStageH).toBe(l.pageH + 20);
   });
 
   it('uses tight padding on short landscape stages (phones on their side)', () => {

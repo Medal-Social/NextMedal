@@ -17,6 +17,7 @@ const LABEL_KEYS = [
   'close',
   'download',
   'fullscreen',
+  'readFullscreen',
   'goToPage',
   'preparing',
   'pages',
