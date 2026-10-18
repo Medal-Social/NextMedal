@@ -2,8 +2,8 @@
  * Fixed in-page anchors (Vault spec 2026-10-18 D3). A block's id comes from
  * its type — never from a stored key or an editor field — so hash links
  * (#features, #prices, …) resolve. Pure and import-free: used by Modules.tsx
- * and blockDesign on the site, by the Studio link picker (usePageAnchors) and
- * by the content migrations, so all of them agree.
+ * on the site, by the Studio link picker (usePageAnchors) and by the content
+ * migrations, so all of them agree.
  */
 export const FIXED_ANCHORS: Readonly<Record<string, string>> = {
   features: 'features',
