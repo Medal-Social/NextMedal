@@ -714,12 +714,12 @@ async function getPage(slugParts: string[] | undefined, locale: string, stega?: 
       parent[]->{ metadata { slug } },
       metadata {
         ...,
-        'ogimage': image.asset->url + '?w=1200'
+        'ogimage': image.asset->url + '?w=1200&h=630&fit=crop'
       },
       seo {
         title,
         description,
-        'ogimage': image.asset->url + '?w=1200',
+        'ogimage': image.asset->url + '?w=1200&h=630&fit=crop',
         noIndex
       },
       ${TRANSLATIONS_QUERY}
