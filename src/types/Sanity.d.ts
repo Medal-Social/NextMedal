@@ -605,11 +605,12 @@ declare global {
       intent: string;
       formTitle?: string;
       fields: FormField[];
-      submitButtonText: string;
-      successMessage?: BlockContent;
+      requireConsent?: boolean;
+      submitButtonText?: InternationalizedArrayString | string;
+      successMessage?: InternationalizedArrayText | string;
       acceptance?: {
-        required: boolean;
-        text: string;
+        required?: boolean;
+        text?: InternationalizedArrayString | string;
         link?: {
           type: 'internal' | 'external';
           internal?: {

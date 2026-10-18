@@ -23,10 +23,10 @@ interface RegistrationForm {
   fields?: FormField[]; // Optional - may not be populated in Sanity
   acceptance?: {
     required?: boolean;
-    text?: string;
+    text?: Sanity.InternationalizedArrayString | string;
   };
-  submitButtonText: string;
-  successMessage?: Sanity.BlockContent;
+  submitButtonText?: Sanity.InternationalizedArrayString | string;
+  successMessage?: Sanity.InternationalizedArrayText | string;
 }
 
 interface EventDetailActionsProps {

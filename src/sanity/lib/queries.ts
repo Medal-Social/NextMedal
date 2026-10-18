@@ -155,7 +155,8 @@ const BASE_MODULES_QUERY = groq`
 		intro[]{ ${PT_BLOCK_QUERY} },
 		form->{
 			...,
-			redirect { ${LINK_QUERY} }
+			redirect { ${LINK_QUERY} },
+			acceptance { ..., link { ${LINK_QUERY} } }
 		},
 		contactPerson {
 			...,
@@ -171,7 +172,8 @@ const BASE_MODULES_QUERY = groq`
 		content[]{ ${PT_BLOCK_QUERY} },
 		form->{
 			...,
-			redirect { ${LINK_QUERY} }
+			redirect { ${LINK_QUERY} },
+			acceptance { ..., link { ${LINK_QUERY} } }
 		},
 		image {
 			image {

@@ -1,11 +1,10 @@
 'use client';
 
 import { Check, Loader2 } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
 import { useState } from 'react';
 import { captureLead } from '@/actions/leads/capture-lead';
-import SharedPortableText from '@/components/blocks/modules/SharedPortableText';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -17,6 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { getLocalizedValue } from '@/lib/i18n/localized-value';
 
 // Form field type from Sanity
 interface FormField {
@@ -36,10 +36,10 @@ interface RegistrationForm {
   fields?: FormField[]; // Optional - may not be populated in Sanity
   acceptance?: {
     required?: boolean;
-    text?: string;
+    text?: Sanity.InternationalizedArrayString | string;
   };
-  submitButtonText: string;
-  successMessage?: Sanity.BlockContent;
+  submitButtonText?: Sanity.InternationalizedArrayString | string;
+  successMessage?: Sanity.InternationalizedArrayText | string;
 }
 
 interface EventRegistrationModalProps {
@@ -68,6 +68,7 @@ export default function EventRegistrationModal({
   const [success, setSuccess] = useState(false);
   const t = useTranslations('modules.events.registration');
   const tCommon = useTranslations('common');
+  const locale = useLocale();
 
   const { execute, status, result } = useAction(captureLead, {
     onSuccess: () => {
@@ -120,6 +121,10 @@ export default function EventRegistrationModal({
 
   if (!form) return null;
 
+  const successText = getLocalizedValue(form.successMessage, locale) || t('successMessage');
+  const consentText = getLocalizedValue(form.acceptance?.text, locale);
+  const submitText = getLocalizedValue(form.submitButtonText, locale) || tCommon('processing');
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
@@ -131,13 +136,7 @@ export default function EventRegistrationModal({
             </div>
             <DialogHeader className="text-center">
               <DialogTitle className="text-xl">{t('title')}</DialogTitle>
-              {form.successMessage ? (
-                <div className="mt-2 text-muted-foreground text-sm">
-                  <SharedPortableText value={form.successMessage} />
-                </div>
-              ) : (
-                <DialogDescription className="mt-2">{t('successMessage')}</DialogDescription>
-              )}
+              <DialogDescription className="mt-2">{successText}</DialogDescription>
             </DialogHeader>
             <div className="mt-6">
               <Button variant="outline" onClick={handleClose}>
@@ -228,19 +227,19 @@ export default function EventRegistrationModal({
               })}
 
               {/* Acceptance/Consent checkbox */}
-              {form.acceptance?.text && (
+              {consentText && (
                 <label className="flex cursor-pointer items-start gap-2">
                   <input
                     type="checkbox"
                     checked={!!formData.consent}
                     onChange={(e) => updateField('consent', e.target.checked)}
-                    required={form.acceptance.required}
+                    required={form.acceptance?.required}
                     disabled={isLoading}
                     className="mt-1 size-4 rounded border-border accent-primary"
                   />
                   <span className="text-muted-foreground text-sm leading-tight">
-                    {form.acceptance.text}
-                    {form.acceptance.required && <span className="ml-1 text-destructive">*</span>}
+                    {consentText}
+                    {form.acceptance?.required && <span className="ml-1 text-destructive">*</span>}
                   </span>
                 </label>
               )}
@@ -260,7 +259,7 @@ export default function EventRegistrationModal({
                     {t('registering')}
                   </>
                 ) : (
-                  form.submitButtonText || tCommon('processing')
+                  submitText
                 )}
               </Button>
             </form>
