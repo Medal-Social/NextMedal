@@ -28,8 +28,8 @@ interface CollectionItem {
   slug: string;
   description?: string;
   publishDate: string;
-  authors?: { name: string }[];
-  categories?: { title: string }[];
+  authors?: ({ name: string } | null)[];
+  categories?: ({ title?: string | null } | null)[];
   version?: string; // For changelog
   issueNumber?: number; // For newsletter
 }
@@ -144,7 +144,9 @@ async function getCollectionItems(
       'description': coalesce(seo.description, ''),
       publishDate,
       authors[]->{name},
-      categories[]->{title}
+      categories[]->{
+        "title": coalesce(title[_key == $locale][0].value, title[0].value, '')
+      }
     }`,
     { locale, documentType: collectionType }
   );
@@ -175,7 +177,12 @@ function generateRss(
       const itemUrl = `${collectionUrl}/${item.slug}`;
       const pubDate = new Date(item.publishDate).toUTCString();
       const author = item.authors?.[0]?.name || '';
-      const categories = item.categories?.map((c) => c.title).join(', ') || '';
+      // Deleted Sanity references dereference to null; omit missing category titles.
+      const categories =
+        item.categories
+          ?.map((category) => category?.title)
+          .filter((title): title is string => typeof title === 'string' && title.trim().length > 0)
+          .join(', ') || '';
 
       // Build title with version or issue number if available
       let title = item.title || '';
