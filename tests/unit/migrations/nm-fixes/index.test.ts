@@ -27,11 +27,11 @@ const count = (mutations: readonly Mutation[], type: string) =>
 describe('planMutations', () => {
   const mutations = planMutations(ALL);
 
-  it('plans 13 patches, 18 deletes and 4 createIfNotExists on the 2026-10-18 export', () => {
-    expect(count(mutations, 'patch')).toHaveLength(13);
+  it('plans 15 patches, 18 deletes and 4 createIfNotExists on the 2026-10-18 export', () => {
+    expect(count(mutations, 'patch')).toHaveLength(15);
     expect(count(mutations, 'delete')).toHaveLength(18);
     expect(count(mutations, 'createIfNotExists')).toHaveLength(4);
-    expect(mutations).toHaveLength(35);
+    expect(mutations).toHaveLength(37);
   });
 
   it('deletes the dead groups and creates the four new ones', () => {
@@ -246,12 +246,12 @@ describe('the default export, end to end', () => {
     await expect(run(PUBLISHED, context)).rejects.toThrow(/drafts\./);
   });
 
-  it('a dry run with the preview flag yields 13 patches, 18 deletes, 4 creates', async () => {
+  it('a dry run with the preview flag yields 15 patches, 18 deletes, 4 creates', async () => {
     vi.stubEnv(IGNORE_DRAFTS_ENV, '1');
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     const context = { dryRun: true } as unknown as MigrationContext;
     const mutations = await run(ALL, context);
-    expect(count(mutations, 'patch')).toHaveLength(13);
+    expect(count(mutations, 'patch')).toHaveLength(15);
     expect(count(mutations, 'delete')).toHaveLength(18);
     expect(count(mutations, 'createIfNotExists')).toHaveLength(4);
     expect(warn).toHaveBeenCalledWith(expect.stringContaining('dry run continues'));

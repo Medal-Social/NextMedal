@@ -75,7 +75,7 @@ describe('anchor params', () => {
     expect(fixAnchorParam('#decdb3fff7cb', undefined)).toBe('#decdb3fff7cb');
   });
 
-  it('after migration every stored hash link resolves, except the two approved nb/ar Home buttons', () => {
+  it('after migration every stored hash link resolves', () => {
     const after = migrate(ALL);
     const lookup = documentLookup(after);
     const unresolved: string[] = [];
@@ -94,10 +94,29 @@ describe('anchor params', () => {
       for (const v of Object.values(value)) walk(v, from);
     };
     for (const d of after) walk(d, d._id);
-    expect(unresolved.sort()).toEqual([
-      '23c8c132-1b7a-4cc8-a4e6-bea80625cd06 #features',
-      '74cbf377-263d-497a-9f1d-fe93ce6d62e2 #features',
-    ]);
+    expect(unresolved).toEqual([]);
+  });
+
+  it('nb/ar Home "features" buttons link to the English Features page, no anchor (GATE A, 2026-10-19)', () => {
+    const after = migrate(ALL);
+    for (const id of [
+      '74cbf377-263d-497a-9f1d-fe93ce6d62e2',
+      '23c8c132-1b7a-4cc8-a4e6-bea80625cd06',
+    ]) {
+      const home = after.find((d) => d._id === id) as Doc;
+      const [hero] = home.modules as Array<{ ctas: Array<{ link: Record<string, unknown> }> }>;
+      const link = hero.ctas[0].link;
+      expect(link.internal, id).toEqual({ _ref: features, _type: 'reference' });
+      expect(link.type, id).toBe('internal');
+      expect(link, id).not.toHaveProperty('params');
+      expect(link.label, id).toBe((byId(id).modules as (typeof hero)[])[0].ctas[0].link.label);
+    }
+  });
+
+  it('leaves a "#features" button alone when its page has the feature grid', () => {
+    const en = byId('fa5f631e-545e-4fc2-b6b9-bebcd32dd29e');
+    const r = mapDocument(en, { getDocument });
+    expect(JSON.stringify(r.action === 'patch' ? r.next : en)).toContain('"params":"#features"');
   });
 
   it('fixes the Features hero button and the English header link', () => {
@@ -399,7 +418,7 @@ describe('the whole run', () => {
       }
       compared++;
     }
-    expect(compared).toBe(13);
+    expect(compared).toBe(15);
   });
 
   it('only deletes the dead groups', () => {

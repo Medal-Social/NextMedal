@@ -32,8 +32,35 @@ export function fixAnchorParam(params: unknown, target: Doc | undefined): unknow
   return fixed ? `#${fixed}` : params;
 }
 
-function fixLinks(doc: Doc, context: FixContext): Doc {
+/**
+ * GATE A (Ali, 2026-10-19): the nb and ar Home "features" buttons point at
+ * `#features`, which those Homes do not have. They link to the English
+ * Features page instead, without an anchor.
+ */
+export const RETARGETED_BUTTONS: Readonly<Record<string, { params: string; to: string }>> = {
+  '74cbf377-263d-497a-9f1d-fe93ce6d62e2': {
+    params: '#features',
+    to: 'b874d2a9-d0a2-46ea-b675-39e4506b00d4',
+  },
+  '23c8c132-1b7a-4cc8-a4e6-bea80625cd06': {
+    params: '#features',
+    to: 'b874d2a9-d0a2-46ea-b675-39e4506b00d4',
+  },
+};
+
+function retargetButtons(doc: Doc): Doc {
+  const rule = RETARGETED_BUTTONS[publishedId(doc._id)];
+  if (!rule) return doc;
   return mapObjects(doc, (obj) => {
+    const isLink = obj._type === 'menuItem' || obj._type === 'link';
+    if (!isLink || obj.type !== 'internal' || obj.params !== rule.params) return obj;
+    const { params: _params, ...rest } = obj;
+    return { ...rest, internal: { _ref: rule.to, _type: 'reference' } };
+  }) as Doc;
+}
+
+function fixLinks(doc: Doc, context: FixContext): Doc {
+  return mapObjects(retargetButtons(doc), (obj) => {
     const isLink = obj._type === 'menuItem' || obj._type === 'link';
     const ref = isObject(obj.internal) ? obj.internal._ref : undefined;
     if (!isLink || typeof ref !== 'string' || typeof obj.params !== 'string') return obj;
