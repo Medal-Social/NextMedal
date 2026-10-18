@@ -133,11 +133,29 @@ describe('checkUnreferenced', () => {
     await checkUnreferenced(['a', 'drafts.b'], [], context, { fromExport: false });
     expect(withConfig).toHaveBeenCalledWith({ perspective: 'raw' });
     expect(fetch).toHaveBeenCalledTimes(1);
-    const [query, params] = fetch.mock.calls[0] as [string, { ids: string[] }];
-    expect(query).toContain('references($ids)');
-    // The deleted documents themselves are excluded: dead groups may point at each other.
-    expect(query).toContain('!(_id in $ids)');
-    expect([...params.ids].sort()).toEqual(['a', 'b', 'drafts.a', 'drafts.b']);
+    const [query, params] = fetch.mock.calls[0] as [string, { refs: string[]; deleted: string[] }];
+    expect(query).toContain('references($refs)');
+    // Only the documents this run deletes are excluded: dead groups may point at each other.
+    expect(query).toContain('!(_id in $deleted)');
+    expect([...params.refs].sort()).toEqual(['a', 'b', 'drafts.a', 'drafts.b']);
+    expect([...params.deleted].sort()).toEqual(['a', 'drafts.b']);
+  });
+
+  it('a surviving version of a deleted document still counts as a reference', async () => {
+    const warn = vi.fn();
+    // Published "dead" is deleted, its draft survives and points at "other" (also deleted).
+    const draft = {
+      _id: 'drafts.dead',
+      _type: 'translation.metadata',
+      g: { _ref: 'other' },
+    } as Doc;
+    await checkUnreferenced(['dead', 'other'], [draft], fakeContext(true).context, {
+      fromExport: true,
+      warn,
+    });
+    expect(warn).toHaveBeenCalledWith(
+      expect.stringContaining('other is still referenced by drafts.dead')
+    );
   });
 
   it('API dry run warns, a real run throws, naming the referenced document', async () => {

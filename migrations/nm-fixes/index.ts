@@ -144,7 +144,7 @@ export function isFromExport(argv: readonly string[] = process.argv): boolean {
   return argv.some((arg) => arg === '--from-export' || arg.startsWith('--from-export='));
 }
 
-const REFERENCING_QUERY = '*[references($ids) && !(_id in $ids)]';
+const REFERENCING_QUERY = '*[references($refs) && !(_id in $deleted)]';
 const MIGRATED_QUERY = '*[_type in $types]';
 
 /** Both versions (published and draft) of every id. */
@@ -170,10 +170,12 @@ export async function checkUnreferenced(
   if (!(context.dryRun && (fromExport || !context.client))) {
     if (!context.client) throw new UnmappedContentError('no API client to check references');
     try {
-      // Excludes every document this run deletes: dead groups may point at each other.
+      // References to either version count; only the exact documents this run
+      // deletes are excluded (dead groups may point at each other, but a
+      // surviving draft or published version still counts).
       referencing = await context.client
         .withConfig({ perspective: 'raw' })
-        .fetch<Doc[]>(REFERENCING_QUERY, { ids: allVersions(ids) });
+        .fetch<Doc[]>(REFERENCING_QUERY, { refs: allVersions(ids), deleted: [...ids] });
     } catch (error) {
       if (!context.dryRun) throw error;
       warn(`WARNING nm-fixes: could not check references: ${String(error)}`);

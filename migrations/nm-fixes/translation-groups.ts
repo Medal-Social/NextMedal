@@ -24,7 +24,7 @@ export const TRANSLATION_GROUPS: readonly TranslationGroup[] = [
   },
   {
     id: '757d2b5f-5c37-498d-8d37-c906f9d56494',
-    label: 'Blog',
+    label: 'Articles',
     pages: {
       en: '5c6e6991-8664-4b43-acd4-f1aa6fd458ad',
       nb: '45cdf4ad-7346-43f6-9733-a41febedb8cd',

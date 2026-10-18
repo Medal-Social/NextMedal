@@ -63,9 +63,13 @@ export function mapObjects(
   return fn(inner);
 }
 
-/** Every reference to one of `ids` (draft or published) from a document not in `ids`. */
+/**
+ * Every reference to one of `ids` (draft or published) from a document that is
+ * not itself in `ids` (exact id: a surviving other version still counts).
+ */
 export function findReferences(docs: readonly Doc[], ids: readonly string[]) {
   const targets = new Set(ids.map(publishedId));
+  const deleted = new Set(ids);
   const found: Array<{ from: string; to: string }> = [];
   const walk = (value: unknown, from: string) => {
     if (Array.isArray(value)) {
@@ -78,6 +82,6 @@ export function findReferences(docs: readonly Doc[], ids: readonly string[]) {
     }
     for (const inner of Object.values(value)) walk(inner, from);
   };
-  for (const doc of docs) if (!targets.has(publishedId(doc._id))) walk(doc, doc._id);
+  for (const doc of docs) if (!deleted.has(doc._id)) walk(doc, doc._id);
   return found;
 }
