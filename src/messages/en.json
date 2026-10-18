@@ -142,7 +142,7 @@
     "email": "Email",
     "phone": "Phone",
     "privacy-link": "privacy policy",
-    "privacy-consent-label": "I agree to the {privacyLink}",
+    "privacy-consent-label": "I agree to the <privacyLink>privacy policy</privacyLink>",
     "privacy-aria-label": "Read our privacy policy",
     "address": "Address",
     "opening-hours": "Opening hours",

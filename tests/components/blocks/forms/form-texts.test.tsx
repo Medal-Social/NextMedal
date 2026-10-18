@@ -3,8 +3,9 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import type { ReactElement } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { getLocalizedValue } from '@/lib/i18n/localized-value';
+import { getExactLocalizedValue, getLocalizedValue } from '@/lib/i18n/localized-value';
 import en from '@/messages/en.json';
+import nb from '@/messages/nb.json';
 
 vi.mock('next/navigation', () => ({ useSearchParams: () => new URLSearchParams() }));
 const submitForm = vi.hoisted(() => vi.fn());
@@ -38,10 +39,22 @@ const value = [
 
 const renderIn = (ui: ReactElement, locale = 'en') =>
   render(
-    <NextIntlClientProvider locale={locale} messages={en}>
+    <NextIntlClientProvider locale={locale} messages={locale === 'nb' ? nb : en}>
       {ui}
     </NextIntlClientProvider>
   );
+
+const event = (form: Record<string, unknown>) => ({
+  _id: 'event-1',
+  metadata: { title: 'Launch' },
+  registrationForm: {
+    _id: 'form-1',
+    formTitle: 'Register',
+    intent: 'lead' as const,
+    fields: [],
+    ...form,
+  },
+});
 
 const baseForm = {
   _id: 'form-1',
@@ -196,18 +209,6 @@ describe('Form uses the texts editors set', () => {
 });
 
 describe('event registration uses the texts editors set', () => {
-  const event = (form: Record<string, unknown>) => ({
-    _id: 'event-1',
-    metadata: { title: 'Launch' },
-    registrationForm: {
-      _id: 'form-1',
-      formTitle: 'Register',
-      intent: 'lead' as const,
-      fields: [],
-      ...form,
-    },
-  });
-
   it('button and consent read the visitor language', () => {
     renderIn(
       <EventRegistrationModal
@@ -376,5 +377,112 @@ describe('event registration uses the texts editors set', () => {
       screen.getByRole('button', { name: 'Submit' }).closest('form') as HTMLFormElement
     );
     await waitFor(() => expect(screen.getByText('See you there')).toBeTruthy());
+  });
+});
+
+describe('editor texts only in the exact visitor language', () => {
+  const englishOnly = [{ _key: 'en', value: 'Submit now' }];
+
+  it('exact lookup: a plain string counts as English, no English fallback', () => {
+    expect(getExactLocalizedValue('Submit', 'en')).toBe('Submit');
+    expect(getExactLocalizedValue('Submit', 'nb')).toBe('');
+    expect(getExactLocalizedValue(englishOnly, 'nb')).toBe('');
+    expect(getExactLocalizedValue(value, 'nb')).toBe('Send inn');
+    expect(getExactLocalizedValue([{ _key: 'x1', language: 'nb', value: 'Send inn' }], 'nb')).toBe(
+      'Send inn'
+    );
+  });
+
+  it('Form: nb visitor with English-only texts sees the nb standard texts', async () => {
+    submitForm.mockResolvedValueOnce({ data: { success: true } });
+    renderIn(
+      <Form
+        form={{
+          ...baseForm,
+          requireConsent: true,
+          submitButtonText: englishOnly,
+          successMessage: [{ _key: 'en', value: 'Thanks in English' }],
+          acceptance: { text: [{ _key: 'en', value: 'I agree in English' }] },
+        }}
+        locale="nb"
+      />,
+      'nb'
+    );
+    expect(screen.queryByText('I agree in English')).toBeNull();
+    expect(screen.getByText(/Jeg godtar/)).toBeTruthy();
+    const button = screen.getByRole('button', { name: nb['contact-form']['submit-button'] });
+    fireEvent.click(screen.getByRole('checkbox'));
+    fireEvent.submit(button.closest('form') as HTMLFormElement);
+    await waitFor(() =>
+      expect(screen.getByText(nb['contact-form']['success-message'])).toBeTruthy()
+    );
+    expect(screen.queryByText('Thanks in English')).toBeNull();
+  });
+
+  it('Form: nb visitor with a legacy plain string sees the nb standard button', () => {
+    renderIn(<Form form={{ ...baseForm, submitButtonText: 'Submit' }} locale="nb" />, 'nb');
+    expect(screen.getByRole('button', { name: nb['contact-form']['submit-button'] })).toBeTruthy();
+  });
+
+  it('Form: en visitor sees the stored English text', () => {
+    renderIn(<Form form={{ ...baseForm, submitButtonText: englishOnly }} locale="en" />);
+    expect(screen.getByRole('button', { name: 'Submit now' })).toBeTruthy();
+  });
+
+  it('Form: the standard privacy link carries the visitor language', () => {
+    renderIn(<Form form={{ ...baseForm, requireConsent: true }} locale="nb" />, 'nb');
+    expect(
+      screen
+        .getByRole('link', { name: nb['contact-form']['privacy-aria-label'] })
+        .getAttribute('href')
+    ).toBe('/nb/privacy');
+  });
+
+  it('Form: the standard privacy link has no prefix in English', () => {
+    renderIn(<Form form={{ ...baseForm, requireConsent: true }} locale="en" />);
+    expect(
+      screen
+        .getByRole('link', { name: en['contact-form']['privacy-aria-label'] })
+        .getAttribute('href')
+    ).toBe('/privacy');
+  });
+
+  it('Event registration: nb visitor with English-only texts sees the nb standard texts', async () => {
+    renderIn(
+      <EventRegistrationModal
+        open
+        onOpenChange={() => {}}
+        eventUrl="/events/launch"
+        event={event({
+          requireConsent: true,
+          submitButtonText: englishOnly,
+          successMessage: [{ _key: 'en', value: 'Thanks in English' }],
+          acceptance: { text: [{ _key: 'en', value: 'I agree in English' }] },
+        })}
+      />,
+      'nb'
+    );
+    expect(screen.queryByText('I agree in English')).toBeNull();
+    expect(screen.getByText(nb.modules.events.registration.consent)).toBeTruthy();
+    const button = screen.getByRole('button', { name: nb.common.processing });
+    fireEvent.click(screen.getByRole('checkbox'));
+    fireEvent.submit(button.closest('form') as HTMLFormElement);
+    await waitFor(() =>
+      expect(screen.getByText(nb.modules.events.registration.successMessage)).toBeTruthy()
+    );
+    expect(screen.queryByText('Thanks in English')).toBeNull();
+  });
+
+  it('Event registration: nb entry present wins', () => {
+    renderIn(
+      <EventRegistrationModal
+        open
+        onOpenChange={() => {}}
+        eventUrl="/events/launch"
+        event={event({ submitButtonText: value })}
+      />,
+      'nb'
+    );
+    expect(screen.getByRole('button', { name: 'Send inn' })).toBeTruthy();
   });
 });

@@ -25,3 +25,18 @@ export function getLocalizedValue(
 
   return item?.value || fallback;
 }
+
+/**
+ * The value for exactly `locale`, else ''. A plain string (older documents) counts
+ * as English. For editor texts that have a translated standard text in the message
+ * files (send button, thank-you, consent): showing English to an nb visitor would
+ * be worse than the nb standard text.
+ */
+export function getExactLocalizedValue(
+  arr: LocalizedEntry[] | string | undefined,
+  locale: string
+): string {
+  if (typeof arr === 'string') return locale === 'en' ? arr : '';
+  if (!Array.isArray(arr)) return '';
+  return arr.find((i) => languageOf(i) === locale)?.value || '';
+}

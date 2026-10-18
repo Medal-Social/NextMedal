@@ -11,7 +11,8 @@ import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { type ConsentLink, consentLinkHref } from '@/lib/forms/consent-link';
-import { getLocalizedValue } from '@/lib/i18n/localized-value';
+import { getExactLocalizedValue, getLocalizedValue } from '@/lib/i18n/localized-value';
+import { withLocalePrefix } from '@/lib/sanity/localized-link';
 import { cn } from '@/lib/utils/index';
 
 interface FormField {
@@ -178,6 +179,7 @@ function AcceptanceCheckbox({
   onAcceptedChange,
   text,
   href,
+  locale,
   t,
 }: {
   accepted: boolean;
@@ -185,6 +187,7 @@ function AcceptanceCheckbox({
   /** Consent text set on the form; empty = the standard text with the privacy link. */
   text: string;
   href?: string;
+  locale: string;
   t: ReturnType<typeof useTranslations>;
 }) {
   const customLabel =
@@ -203,15 +206,15 @@ function AcceptanceCheckbox({
   const consentLabel = text
     ? customLabel
     : t.rich('privacy-consent-label', {
-        privacyLink: (_chunks) => (
+        privacyLink: (chunks) => (
           <a
-            href="/privacy"
+            href={withLocalePrefix('/privacy', locale)}
             target="_blank"
             rel="noopener noreferrer"
             className="font-semibold text-primary hover:underline"
             aria-label={t('privacy-aria-label')}
           >
-            {t('privacy-link')}
+            {chunks}
           </a>
         ),
       });
@@ -350,8 +353,8 @@ export default function Form({ form: rawForm, className, locale }: FormProps) {
     setLoading(false);
   };
 
-  const successText = getLocalizedValue(form.successMessage, locale) || t('success-message');
-  const consentText = getLocalizedValue(form.acceptance?.text, locale);
+  const successText = getExactLocalizedValue(form.successMessage, locale) || t('success-message');
+  const consentText = getExactLocalizedValue(form.acceptance?.text, locale);
   const consentHref = consentLinkHref(form.acceptance?.link, locale);
 
   if (submitted) {
@@ -395,6 +398,7 @@ export default function Form({ form: rawForm, className, locale }: FormProps) {
             onAcceptedChange={setAccepted}
             text={consentText}
             href={consentHref}
+            locale={locale}
             t={t}
           />
         )}
@@ -408,7 +412,7 @@ export default function Form({ form: rawForm, className, locale }: FormProps) {
               <span>{t('submitting')}</span>
             </div>
           ) : (
-            getLocalizedValue(form.submitButtonText, locale) || t('submit-button')
+            getExactLocalizedValue(form.submitButtonText, locale) || t('submit-button')
           )}
         </Button>
       </form>

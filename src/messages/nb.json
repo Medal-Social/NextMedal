@@ -142,7 +142,7 @@
     "email": "E-post",
     "phone": "Telefon",
     "privacy-link": "personvernerklæring",
-    "privacy-consent-label": "Jeg godtar {privacyLink}",
+    "privacy-consent-label": "Jeg godtar <privacyLink>personvernerklæring</privacyLink>",
     "privacy-aria-label": "Les vår personvernerklæring",
     "address": "Adresse",
     "opening-hours": "Åpningstider",

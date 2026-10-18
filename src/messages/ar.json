@@ -170,7 +170,7 @@
     "company": "الشركة",
     "sendMessage": "إرسال الرسالة",
     "privacy-link": "سياسة الخصوصية",
-    "privacy-consent-label": "أوافق على {privacyLink}",
+    "privacy-consent-label": "أوافق على <privacyLink>سياسة الخصوصية</privacyLink>",
     "privacy-aria-label": "اقرأ سياسة الخصوصية",
     "address": "العنوان",
     "opening-hours": "ساعات العمل",

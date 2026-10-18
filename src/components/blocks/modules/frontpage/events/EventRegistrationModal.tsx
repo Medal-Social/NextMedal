@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { type ConsentLink, consentLinkHref } from '@/lib/forms/consent-link';
-import { getLocalizedValue } from '@/lib/i18n/localized-value';
+import { getExactLocalizedValue, getLocalizedValue } from '@/lib/i18n/localized-value';
 
 // Form field type from Sanity
 interface FormField {
@@ -124,13 +124,13 @@ export default function EventRegistrationModal({
 
   if (!form) return null;
 
-  const successText = getLocalizedValue(form.successMessage, locale) || t('successMessage');
+  const successText = getExactLocalizedValue(form.successMessage, locale) || t('successMessage');
   const consentRequired = !!(form.requireConsent || form.acceptance?.required);
   // A required checkbox always shows, with the standard text when none is set.
   const consentText =
-    getLocalizedValue(form.acceptance?.text, locale) || (consentRequired ? t('consent') : '');
+    getExactLocalizedValue(form.acceptance?.text, locale) || (consentRequired ? t('consent') : '');
   const consentHref = consentLinkHref(form.acceptance?.link, locale);
-  const submitText = getLocalizedValue(form.submitButtonText, locale) || tCommon('processing');
+  const submitText = getExactLocalizedValue(form.submitButtonText, locale) || tCommon('processing');
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
