@@ -7,6 +7,7 @@ export interface FlipbookLabels {
   close: string;
   download: string;
   fullscreen: string;
+  readFullscreen: string;
   goToPage: string;
   preparing: string;
   pages: string; // "{count} pages"

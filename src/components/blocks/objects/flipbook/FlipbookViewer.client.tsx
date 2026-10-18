@@ -22,18 +22,12 @@ import {
   useRef,
   useState,
 } from 'react';
+import { logger } from '@/lib/core/logger';
 import { cn } from '@/lib/utils/cn';
 import { computeBookLayout, coverShift, visibleRange } from './layout';
 import { Leaf } from './leaf';
-import {
-  closePdf,
-  openPdf,
-  type PdfLoadingTask,
-  pageRatio,
-  renderPage,
-  targetPageHeight,
-} from './pdf';
-import { renderBookPages } from './render-queue';
+import { PageCache } from './page-cache';
+import { openPdf, pageRatio, renderPage, targetPageHeight } from './pdf';
 import type { FlipbookLabels, FlipbookProps } from './types';
 import './flipbook.css';
 
@@ -45,6 +39,15 @@ export interface FlipbookViewerProps extends FlipbookProps {
 }
 
 type Status = 'loading' | 'ready' | 'error';
+
+/** Two taps in the middle of the page within this window zoom (edge taps turn instantly). */
+const DOUBLE_TAP_MS = 300;
+/** Share of the book's width on each side where a tap turns the page immediately. */
+const EDGE_TAP = 0.3;
+/** How long reading-mode chrome stays up before stepping aside. */
+const CHROME_IDLE_MS = 2600;
+/** Thumbnail raster height (device px). */
+const THUMB_HEIGHT = 220;
 
 const fmt = (template: string, values: Record<string, string | number>) =>
   template.replace(/\{(\w+)\}/g, (_, key: string) => String(values[key] ?? ''));
@@ -108,25 +111,30 @@ export function FlipbookViewer({
   const zoomScrollRef = useRef<HTMLDivElement>(null);
   const leafRef = useRef<Leaf | null>(null);
   const docRef = useRef<PDFDocumentProxy | null>(null);
-  const loadingTaskRef = useRef<PdfLoadingTask | null>(null);
-  const imagesRef = useRef<string[]>([]);
+  const cacheRef = useRef<PageCache | null>(null);
+  const thumbsRef = useRef<PageCache | null>(null);
+  const thumbsWantedRef = useRef(false);
+  const thumbsOpenRef = useRef(false);
+  const peekRef = useRef<number | null>(null);
   const layoutKeyRef = useRef('');
   const onPageChangeRef = useRef(onPageChange);
   onPageChangeRef.current = onPageChange;
 
   const [status, setStatus] = useState<Status>('loading');
   const [count, setCount] = useState(0);
-  const [loaded, setLoaded] = useState(0);
-  const [images, setImages] = useState<string[]>([]);
+  // Bumped (at most once a frame) whenever a page or thumbnail image arrives or is released.
+  const [, setTick] = useState(0);
   const [index, setIndex] = useState(0);
   const [portrait, setPortrait] = useState(false);
   const [ratio, setRatio] = useState(210 / 297);
   const [thumbsOpen, setThumbsOpen] = useState(false);
+  thumbsOpenRef.current = thumbsOpen;
   const [zoom, setZoom] = useState<{ page: number; url: string; width: number } | null>(null);
   const [fullscreen, setFullscreen] = useState(false);
   const [hint, setHint] = useState(false);
   const [peek, setPeek] = useState<number | null>(null);
   const [scrub, setScrub] = useState<number | null>(null);
+  const [chromeHidden, setChromeHidden] = useState(false);
   const interactedRef = useRef(false);
 
   const rtl = dir === 'rtl';
@@ -189,35 +197,27 @@ export function FlipbookViewer({
     sharpRef.current = null;
   }, []);
 
-  /* ── load the PDF */
+  /* ── load the PDF; pages are prepared on demand around the reading position */
   useEffect(() => {
     let cancelled = false;
-    const urls: string[] = [];
-    setStatus('loading');
-    setLoaded(0);
-    let doc: PDFDocumentProxy | null = null;
     let frame = 0;
-    const flushImages = () => {
+    const bump = () => {
       if (frame) return;
       frame = requestAnimationFrame(() => {
         frame = 0;
-        setImages([...imagesRef.current]);
+        setTick((t) => t + 1);
       });
     };
-    setImages([]);
+    setStatus('loading');
+    // Thumbnail demand belongs to one document; a drawer left open still counts as asking.
+    thumbsWantedRef.current = thumbsOpenRef.current;
     zoomIdRef.current++;
     releaseSharp();
     setZoom(null);
-    imagesRef.current = [];
+    const pdfHandle = openPdf(src);
     (async () => {
       try {
-        const task = await openPdf(src);
-        if (cancelled) {
-          void task.destroy();
-          return;
-        }
-        loadingTaskRef.current = task;
-        doc = await task.promise;
+        const doc = await pdfHandle.promise;
         if (cancelled) return;
         docRef.current = doc;
         const total = doc.numPages;
@@ -226,39 +226,69 @@ export function FlipbookViewer({
         setRatio(r);
         setCount(total);
         const start = Math.min(Math.max(0, startPage - 1), total - 1);
-        // Big books keep memory in check with smaller book images (zoom re-renders sharp on demand).
-        const height = Math.round(targetPageHeight() * (total > 80 ? 0.7 : 1));
-        const head = [...new Set([start, 0, 1, 2, start + 1].filter((i) => i < total))];
-        const order = [...head, ...[...Array(total).keys()].filter((i) => !head.includes(i))];
-        let done = 0;
-        await renderBookPages(doc, order, {
-          height,
-          headCount: head.length,
-          isCancelled: () => cancelled,
-          onPage: (i, url) => {
-            // '' is a finished page with no image. Omit it from the revoke list.
-            if (url) urls.push(url);
-            imagesRef.current[i] = url;
-            flushImages();
-            setLoaded(++done);
+        const height = targetPageHeight();
+        const [a, b] = visibleRange(start, total, false);
+        // Renders at `size`, logging real failures (a page turn cancelling a render isn't one).
+        const renderLogged =
+          (size: { height: number }, kind: 'page' | 'thumbnail') =>
+          (i: number, signal: AbortSignal) =>
+            renderPage(doc, i, size, signal).catch((error: unknown) => {
+              if (!signal.aborted)
+                logger.error(
+                  { err: error, src, page: i + 1, kind },
+                  'Flipbook page failed to render'
+                );
+              throw error;
+            });
+        // Each document opens once, at its own start page; later cache events never move the reader.
+        let opened = false;
+        const cache = new PageCache({
+          count: total,
+          render: renderLogged({ height }, 'page'),
+          onChange: (i) => {
             leafRef.current?.refresh(i);
-            if (done === head.length) {
-              setIndex(start);
-              setStatus('ready');
+            bump();
+            if (opened || cancelled || !cache.isSettled(a) || !cache.isSettled(b)) return;
+            opened = true;
+            if (!cache.get(a) && !cache.get(b)) {
+              logger.error(
+                { src, pages: a === b ? [a + 1] : [a + 1, b + 1] },
+                'Flipbook could not open: first pages failed'
+              );
+              cache.destroy();
+              thumbsRef.current?.destroy();
+              pdfHandle.cancel();
+              docRef.current = null;
+              setStatus('error');
+              return;
             }
+            setIndex(start);
+            setStatus('ready');
           },
         });
+        cacheRef.current = cache;
+        // Thumbnails near the reading position, plus whatever the drawer actually shows.
+        const thumbs = new PageCache({
+          count: total,
+          render: renderLogged({ height: THUMB_HEIGHT }, 'thumbnail'),
+          onChange: bump,
+          capacity: 72,
+          behind: 8,
+          ahead: 16,
+          keepWanted: 40,
+        });
+        thumbsRef.current = thumbs;
+        // Started on demand (drawer / scrub preview), including requests made while loading.
+        if (thumbsWantedRef.current) {
+          thumbs.focus(a, b);
+          if (peekRef.current != null) thumbs.want(peekRef.current);
+        } else thumbs.setBusy(true);
+        cache.focus(a, b);
       } catch {
         // Damaged/encrypted PDFs, or a failure in the opening pages, land in the error state.
         // Download stays available. Pages that fail after the book is open are handled above.
         if (cancelled) return;
-        for (const url of urls.splice(0)) URL.revokeObjectURL(url);
-        imagesRef.current = [];
-        setImages([]);
-        const task = loadingTaskRef.current;
-        loadingTaskRef.current = null;
-        if (doc) void closePdf(doc);
-        else if (task) void task.destroy();
+        pdfHandle.cancel();
         docRef.current = null;
         setStatus('error');
       }
@@ -267,11 +297,11 @@ export function FlipbookViewer({
       cancelled = true;
       cancelAnimationFrame(frame);
       releaseSharp();
-      for (const url of urls) URL.revokeObjectURL(url);
-      const task = loadingTaskRef.current;
-      loadingTaskRef.current = null;
-      if (docRef.current) void closePdf(docRef.current);
-      else if (task) void task.destroy();
+      cacheRef.current?.destroy();
+      thumbsRef.current?.destroy();
+      cacheRef.current = null;
+      thumbsRef.current = null;
+      pdfHandle.cancel();
       docRef.current = null;
     };
   }, [src, startPage, releaseSharp]);
@@ -287,15 +317,26 @@ export function FlipbookViewer({
       count,
       rtl,
       duration: prefersReduced ? 0 : 760,
-      getSrc: (i) => imagesRef.current[i],
+      // '' marks a page that failed to render (shown as plain paper); undefined is still coming.
+      getSrc: (i) => {
+        const cache = cacheRef.current;
+        return cache?.get(i) ?? (cache?.isSettled(i) ? '' : undefined);
+      },
       pageAlt: (i) => `${label} — ${fmt(labels.pageOf, { page: i + 1, total: count })}`,
       onBegin: (target) => {
         rootRef.current?.setAttribute('data-flip', 'flipping');
+        // Rendering pauses while a page turns, so it never competes with the animation.
+        cacheRef.current?.setBusy(true);
+        thumbsRef.current?.setBusy(true);
         const pageW = Number.parseFloat(host.style.getPropertyValue('--pw')) || 0;
         applyShift(target, leaf.portrait, count, pageW);
         markInteracted();
       },
-      onSettle: () => rootRef.current?.setAttribute('data-flip', 'read'),
+      onSettle: () => {
+        rootRef.current?.setAttribute('data-flip', 'read');
+        cacheRef.current?.setBusy(false);
+        if (thumbsWantedRef.current) thumbsRef.current?.setBusy(false);
+      },
       onChange: (i) => {
         setIndex(i);
         const pageW = Number.parseFloat(host.style.getPropertyValue('--pw')) || 0;
@@ -316,6 +357,10 @@ export function FlipbookViewer({
       window.clearTimeout(hide);
       leaf.destroy();
       leafRef.current = null;
+      // Destroyed mid-turn: onSettle never runs, so un-pause the caches here.
+      rootRef.current?.setAttribute('data-flip', 'read');
+      cacheRef.current?.setBusy(false);
+      if (thumbsWantedRef.current) thumbsRef.current?.setBusy(false);
     };
   }, [status, count, rtl, prefersReduced]);
 
@@ -365,7 +410,7 @@ export function FlipbookViewer({
   const openZoom = useCallback(
     async (page: number, fx = 0.5, fy = 0) => {
       const stage = stageRef.current;
-      const url = imagesRef.current[page];
+      const url = cacheRef.current?.get(page);
       if (!stage || !url) return;
       const width = Math.round(stage.clientWidth * (portrait ? 1.8 : 1.25));
       const zoomId = ++zoomIdRef.current;
@@ -451,7 +496,8 @@ export function FlipbookViewer({
   });
   const downRef = useRef<{ x: number; y: number; t: number } | null>(null);
   const onBookPointerDown = (e: React.PointerEvent) => {
-    downRef.current = { x: e.clientX, y: e.clientY, t: Date.now() };
+    // Only the primary button taps/turns (a right-click opens the context menu, like Leaf's drag).
+    downRef.current = e.button === 0 ? { x: e.clientX, y: e.clientY, t: Date.now() } : null;
   };
   const onBookPointerUp = (e: React.PointerEvent) => {
     const down = downRef.current;
@@ -463,9 +509,25 @@ export function FlipbookViewer({
       Date.now() - down.t > 450
     )
       return;
+    const r = hostRef.current?.getBoundingClientRect();
+    if (!r) return;
+    const fx = (e.clientX - r.left) / r.width;
+    const turn = () => {
+      (fx > 0.5 !== rtl ? next : prev)();
+      markInteracted();
+    };
+    // Edges turn at once, like a book app: no waiting to see whether a second tap follows.
+    // On a spread the zone is the outer part of each page, so most of a page still zooms.
+    const edge = portrait ? EDGE_TAP : EDGE_TAP / 2;
+    if (fx < edge || fx > 1 - edge) {
+      window.clearTimeout(tapRef.current.timer);
+      tapRef.current.t = 0;
+      turn();
+      return;
+    }
     const tap = tapRef.current;
     const now = Date.now();
-    if (now - tap.t < 300 && Math.hypot(e.clientX - tap.x, e.clientY - tap.y) < 40) {
+    if (now - tap.t < DOUBLE_TAP_MS && Math.hypot(e.clientX - tap.x, e.clientY - tap.y) < 40) {
       window.clearTimeout(tap.timer);
       tap.t = 0;
       const hit = pageAt(e.clientX, e.clientY);
@@ -473,20 +535,15 @@ export function FlipbookViewer({
       return;
     }
     window.clearTimeout(tap.timer);
-    const { clientX } = e;
     tapRef.current = {
       t: now,
       x: e.clientX,
       y: e.clientY,
-      timer: window.setTimeout(() => {
-        const r = hostRef.current?.getBoundingClientRect();
-        if (!r) return;
-        const onRight = portrait
-          ? clientX > r.left + r.width * 0.35
-          : clientX > r.left + r.width / 2;
-        (onRight !== rtl ? next : prev)();
-        markInteracted();
-      }, 260),
+      // A single tap in the middle shows/hides the reading-mode chrome; inline it turns the page.
+      timer: window.setTimeout(
+        () => (fullscreen ? setChromeHidden((h) => !h) : turn()),
+        DOUBLE_TAP_MS
+      ),
     };
   };
   const pageAt = (x: number, y: number) => {
@@ -502,10 +559,90 @@ export function FlipbookViewer({
     return null;
   };
 
+  /* ── reading mode: chrome floats over the page and steps aside after a moment */
+  useEffect(() => {
+    if (fullscreen) setChromeHidden(false);
+  }, [fullscreen]);
+  useEffect(() => {
+    if (!fullscreen || chromeHidden || thumbsOpen || zoom) return;
+    let timer = 0;
+    const tryHide = () => {
+      // Never hide the toolbar out from under keyboard focus; check again later instead.
+      // (A mouse click leaves focus on the button too, but not :focus-visible.)
+      const active = document.activeElement;
+      const chrome = rootRef.current?.querySelectorAll('.fb-bar, .fb-foot') ?? [];
+      if (active?.matches(':focus-visible') && [...chrome].some((el) => el.contains(active))) {
+        timer = window.setTimeout(tryHide, CHROME_IDLE_MS);
+        return;
+      }
+      setChromeHidden(true);
+    };
+    timer = window.setTimeout(tryHide, CHROME_IDLE_MS);
+    return () => window.clearTimeout(timer);
+  }, [fullscreen, chromeHidden, thumbsOpen, zoom]);
+
+  const chromeOff = fullscreen && chromeHidden && !thumbsOpen && !zoom;
+  // A real mouse moving brings the chrome back; the synthetic mouse events phones send after a tap don't.
+  const lastMoveRef = useRef<{ x: number; y: number } | null>(null);
+  const onRevealMove = (e: React.PointerEvent) => {
+    if (e.pointerType !== 'mouse') return;
+    const last = lastMoveRef.current;
+    lastMoveRef.current = { x: e.clientX, y: e.clientY };
+    if (last && Math.hypot(e.clientX - last.x, e.clientY - last.y) > 4) setChromeHidden(false);
+  };
+
+  /* ── the cache follows the reading position */
+  useEffect(() => {
+    if (status === 'ready') cacheRef.current?.focus(first, last);
+  }, [status, first, last]);
+
+  /* ── thumbnails are prepared only once someone wants them (drawer or scrub preview) */
+  const wantThumbs = useCallback(() => {
+    thumbsWantedRef.current = true;
+    thumbsRef.current?.setBusy(false);
+  }, []);
+  useEffect(() => {
+    if (thumbsOpen) wantThumbs();
+  }, [thumbsOpen, wantThumbs]);
+  useEffect(() => {
+    if (thumbsOpen || thumbsWantedRef.current) thumbsRef.current?.focus(first, last);
+  }, [first, last, thumbsOpen]);
+  useEffect(() => {
+    peekRef.current = peek; // remembered for a thumbnail cache that doesn't exist yet
+    if (peek == null) return;
+    wantThumbs();
+    thumbsRef.current?.want(peek);
+  }, [peek, wantThumbs]);
+  // Only thumbnails scrolled into view in the drawer are prepared (and kept while recent).
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!thumbsOpen || status !== 'ready' || !track || typeof IntersectionObserver === 'undefined')
+      return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const i = Number((entry.target as HTMLElement).dataset.index);
+          if (entry.isIntersecting) thumbsRef.current?.want(i);
+          else thumbsRef.current?.unwant(i);
+        }
+      },
+      { root: track, rootMargin: '200px' }
+    );
+    for (const el of track.querySelectorAll('.fb-thumb')) io.observe(el);
+    return () => io.disconnect();
+  }, [thumbsOpen, status]);
+  // No image for this thumbnail: its own render and the book page both failed (or only one was tried).
+  const pageFailed = (i: number) => {
+    const failed = (c: PageCache | null) => !!c?.isSettled(i) && !c.get(i);
+    return failed(cacheRef.current) || failed(thumbsRef.current);
+  };
+  const thumbSrc = (i: number) => thumbsRef.current?.get(i) ?? cacheRef.current?.get(i);
+
   /* ── keyboard (scoped to the flipbook; global while fullscreen) */
   const onKey = useCallback(
     (e: KeyboardEvent | ReactKeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey || status !== 'ready') return;
+      setChromeHidden(false);
       const target = e.target as HTMLElement;
       if (target.closest?.('input:not([type=range]), textarea, select, [contenteditable]')) return;
       if (target.matches?.('input[type=range]') && /Arrow|Home|End|Page/.test(e.key)) return;
@@ -580,10 +717,14 @@ export function FlipbookViewer({
     const style: Record<string, string> = {};
     for (const [key, value] of Object.entries(theme ?? {})) if (value) style[`--fb-${key}`] = value;
     style['--fb-ratio'] = ratio.toFixed(4);
-    style['--fb-load'] = count ? `${(loaded / count) * 100}%` : '0%';
     if (zoom) style['--fb-zoom-w'] = `${zoom.width}px`;
     return style as CSSProperties;
-  }, [theme, ratio, count, loaded, zoom]);
+  }, [theme, ratio, zoom]);
+  const cache = cacheRef.current;
+  const windowPages = cache?.window() ?? [];
+  const settledInWindow = windowPages.filter((i) => cache?.isSettled(i)).length;
+  const complete =
+    status === 'ready' && windowPages.length > 0 && settledInWindow === windowPages.length;
 
   const counterText = first === last ? `${first + 1}` : `${first + 1}–${last + 1}`;
   const powered =
@@ -613,20 +754,29 @@ export function FlipbookViewer({
         fullscreen && !document.fullscreenElement && 'is-immersive',
         thumbsOpen && 'thumbs-open',
         zoom && 'is-zoomed',
+        chromeOff && 'chrome-hidden',
         className
       )}
-      style={tokenStyle}
+      style={
+        {
+          ...tokenStyle,
+          '--fb-load': windowPages.length
+            ? `${(settledInWindow / windowPages.length) * 100}%`
+            : '0%',
+        } as CSSProperties
+      }
       tabIndex={-1}
       role="region"
       aria-roledescription="flipbook"
       aria-label={label}
       data-state={status}
-      data-complete={status === 'ready' && loaded === count ? 'true' : 'false'}
+      data-complete={complete ? 'true' : 'false'}
       data-orientation={portrait ? 'portrait' : 'landscape'}
       dir={dir}
       onKeyDown={onKey}
+      onPointerMove={fullscreen && chromeHidden ? onRevealMove : undefined}
     >
-      <div className="fb-bar">
+      <div className="fb-bar" inert={chromeOff}>
         <div className="fb-doc">
           <span className="fb-doc-icon" aria-hidden="true">
             <BookOpen />
@@ -708,7 +858,9 @@ export function FlipbookViewer({
           <div className="fb-skel-status">
             <span>
               <b>{labels.preparing}</b>{' '}
-              <span className="fb-skel-count">{count ? `${loaded} / ${count}` : ''}</span>
+              <span className="fb-skel-count">
+                {windowPages.length ? `${settledInWindow} / ${windowPages.length}` : ''}
+              </span>
             </span>
             <div className="fb-skel-bar">
               <i />
@@ -745,6 +897,10 @@ export function FlipbookViewer({
           onClick={rightControl.action}
         >
           <ChevronRight aria-hidden="true" />
+        </button>
+        <button type="button" className="fb-read" onClick={toggleFullscreen}>
+          <Maximize aria-hidden="true" />
+          {labels.readFullscreen}
         </button>
         <div className={cn('fb-hint', hint && 'is-visible')} aria-hidden="true">
           <span className="keys-only">{labels.hintPointer}</span>
@@ -797,9 +953,10 @@ export function FlipbookViewer({
                 key={`page-${i + 1}`}
                 className={cn(
                   'fb-thumb',
-                  images[i] && 'is-loaded',
-                  images[i] === '' && 'is-unavailable'
+                  thumbSrc(i) && 'is-loaded',
+                  !thumbSrc(i) && pageFailed(i) && 'is-unavailable'
                 )}
+                data-index={i}
                 data-side={sideOf(i)}
                 aria-label={`${labels.goToPage} ${i + 1}`}
                 aria-current={i >= first && i <= last}
@@ -810,7 +967,7 @@ export function FlipbookViewer({
               >
                 <span className="fb-thumb-img">
                   {/* biome-ignore lint/performance/noImgElement: blob: page images from pdf.js can't go through next/image */}
-                  {images[i] && <img src={images[i]} alt="" loading="lazy" />}
+                  {thumbSrc(i) && <img src={thumbSrc(i)} alt="" loading="lazy" />}
                 </span>
                 <span>{i + 1}</span>
               </button>
@@ -819,7 +976,10 @@ export function FlipbookViewer({
         </div>
       </div>
 
-      <div className="fb-foot">
+      <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {status === 'ready' ? fmt(labels.pageOf, { page: counterText, total: count }) : ''}
+      </span>
+      <div className="fb-foot" inert={chromeOff}>
         <button
           type="button"
           className="fb-step prev"
@@ -829,7 +989,7 @@ export function FlipbookViewer({
         >
           <ChevronLeft aria-hidden="true" />
         </button>
-        <div className="fb-counter" data-testid="fb-counter" aria-live="polite" aria-atomic="true">
+        <div className="fb-counter" data-testid="fb-counter">
           <span>{count ? counterText : '–'}</span>
           <span className="fb-counter-total"> / {count || '–'}</span>
         </div>
@@ -843,7 +1003,7 @@ export function FlipbookViewer({
             step={1}
             value={scrub ?? first + 1}
             aria-label={labels.goToPage}
-            aria-valuetext={fmt(labels.pageOf, { page: counterText, total: count })}
+            aria-valuetext={fmt(labels.pageOf, { page: scrub ?? counterText, total: count })}
             style={
               {
                 '--p': `${count > 1 ? (((scrub ?? first + 1) - 1) / (count - 1)) * 100 : 0}%`,
@@ -871,6 +1031,10 @@ export function FlipbookViewer({
               setPeek(Math.round(fraction * (count - 1)));
             }}
             onPointerLeave={() => setPeek(null)}
+            onPointerCancel={() => {
+              setScrub(null);
+              setPeek(null);
+            }}
             onBlur={() => {
               setPeek(null);
               setScrub(null);
@@ -888,7 +1052,7 @@ export function FlipbookViewer({
             >
               <div className="fb-thumb-img">
                 {/* biome-ignore lint/performance/noImgElement: blob: page images from pdf.js can't go through next/image */}
-                {images[peekIndex] && <img src={images[peekIndex]} alt="" />}
+                {thumbSrc(peekIndex) && <img src={thumbSrc(peekIndex)} alt="" />}
               </div>
               <span>{fmt(labels.page, { page: peekIndex + 1 })}</span>
             </div>

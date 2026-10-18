@@ -41,6 +41,8 @@ interface Turn {
   land: HTMLElement | null;
   frontShade: HTMLElement;
   backShade: HTMLElement;
+  underShade: HTMLElement;
+  landShade: HTMLElement | null;
 }
 
 interface Drag {
@@ -86,7 +88,8 @@ export class Leaf {
     host.classList.toggle('lf-rtl', !!opts.rtl);
     host.innerHTML =
       '<div class="lf-slot fb-page lf-l"></div><div class="lf-slot fb-page lf-r"></div>' +
-      '<div class="lf-leaf" hidden><div class="lf-face fb-page lf-front"></div><div class="lf-face fb-page lf-back"></div></div>';
+      '<div class="lf-leaf" hidden><div class="lf-face fb-page lf-front"></div><div class="lf-face fb-page lf-back"></div></div>' +
+      '<div class="lf-warm" aria-hidden="true"></div>';
     const q = (sel: string) => host.querySelector(sel) as HTMLElement;
     this.L = q('.lf-l');
     this.R = q('.lf-r');
@@ -147,6 +150,7 @@ export class Leaf {
     for (const el of this.host.querySelectorAll<HTMLElement>(`.fb-page[data-page="${i}"]`)) {
       this.fill(el, i, (el.dataset.side as 'left' | 'right' | undefined) || undefined);
     }
+    if (!this.turn) this.warm();
   }
 
   flip(dir: 1 | -1): boolean {
@@ -216,6 +220,37 @@ export class Leaf {
     }
     for (const el of [this.L, this.R])
       (el.querySelector('.lf-shade') as HTMLElement).style.opacity = '0';
+    this.warm();
+  }
+
+  /** Keep the pages one turn away decoded (hidden <img>s), so the next turn starts instantly. */
+  private warm() {
+    const host = this.host.querySelector('.lf-warm');
+    if (!host) return;
+    const pages = new Set<number>();
+    for (const at of [this.pos - 1, this.pos + 1]) {
+      if (at < 0 || at > this.last) continue;
+      if (this.portrait) pages.add(at);
+      else for (const i of this.spreads[at] ?? []) if (i != null) pages.add(i);
+    }
+    const imgs = [...host.querySelectorAll('img')];
+    let k = 0;
+    for (const i of pages) {
+      const url = this.opts.getSrc(i);
+      if (!url) continue;
+      let img = imgs[k];
+      if (!img) {
+        img = document.createElement('img');
+        img.alt = '';
+        host.append(img);
+      }
+      if (img.getAttribute('src') !== url) {
+        img.src = url;
+        img.decode?.().catch(() => undefined);
+      }
+      k++;
+    }
+    for (const extra of imgs.slice(k)) extra.remove();
   }
 
   private begin(dir: 1 | -1): boolean {
@@ -259,9 +294,29 @@ export class Leaf {
     const backShade = this.back.querySelector('.lf-shade') as HTMLElement;
     frontShade.style.background = `linear-gradient(${away}, rgba(0,0,0,.55), rgba(0,0,0,.12) 45%, rgba(0,0,0,0))`;
     backShade.style.background = `linear-gradient(${toward}, rgba(0,0,0,.5), rgba(0,0,0,.1) 45%, rgba(0,0,0,0))`;
+    const underShade = under.querySelector('.lf-shade') as HTMLElement;
+    underShade.style.background = this.portrait
+      ? 'linear-gradient(to right, rgba(0,0,0,.45), rgba(0,0,0,0) 60%)'
+      : `linear-gradient(${away}, rgba(0,0,0,.5), rgba(0,0,0,.06) 55%, rgba(0,0,0,0))`;
+    const landShade = land ? (land.querySelector('.lf-shade') as HTMLElement) : null;
+    if (landShade)
+      landShade.style.background = `linear-gradient(${toward}, rgba(0,0,0,.45), rgba(0,0,0,0) 70%)`;
+    this.front.style.opacity = '1';
+    this.back.style.opacity = '1';
     this.sheet.hidden = false;
     this.host.classList.add('is-turning');
-    this.turn = { dir, p: 0, to, origin, under, land, frontShade, backShade };
+    this.turn = {
+      dir,
+      p: 0,
+      to,
+      origin,
+      under,
+      land,
+      frontShade,
+      backShade,
+      underShade,
+      landShade,
+    };
     this.apply(0);
     const [a, b] = this.portrait ? [to, to] : (this.spreads[to] ?? [null, null]);
     this.opts.onBegin?.(a ?? b ?? 0, dir);
@@ -278,24 +333,20 @@ export class Leaf {
     const rad = (deg * Math.PI) / 180;
     const s = Math.sin(rad);
     const lift = Math.min(1, deg / 14);
+    // Transform + opacity only, so every frame stays on the compositor (no repaints).
+    // Never put opacity or filter on the sheet itself: either flattens the 3D sheet and the
+    // back face would show the front page mirrored.
     this.sheet.style.transform = `rotateY(${(t.origin === 'left' ? -1 : 1) * deg}deg)`;
     t.frontShade.style.opacity = String(deg < 90 ? (0.15 + 0.6 * (1 - Math.cos(rad))) * lift : 0);
     t.backShade.style.opacity = String(deg >= 90 ? 0.85 * s : 0);
+    t.underShade.style.opacity = String((this.portrait ? 0.5 : 1) * (1 - q) * lift);
     if (this.portrait) {
-      this.sheet.style.opacity = String(q < 0.5 ? 1 : Math.max(0, 1 - (q - 0.5) / 0.32));
-      const shade = this.L.querySelector('.lf-shade') as HTMLElement;
-      shade.style.background = 'linear-gradient(to right, rgba(0,0,0,.45), rgba(0,0,0,0) 60%)';
-      shade.style.opacity = String(0.5 * (1 - q) * lift);
-      return;
-    }
-    this.sheet.style.opacity = '1';
-    const under = t.under.querySelector('.lf-shade') as HTMLElement;
-    under.style.background = `linear-gradient(${t.origin === 'left' ? 'to right' : 'to left'}, rgba(0,0,0,.5), rgba(0,0,0,.06) 55%, rgba(0,0,0,0))`;
-    under.style.opacity = String((1 - q) * lift);
-    if (t.land) {
-      const land = t.land.querySelector('.lf-shade') as HTMLElement;
-      land.style.background = `linear-gradient(${t.origin === 'left' ? 'to left' : 'to right'}, rgba(0,0,0,.45), rgba(0,0,0,0) 70%)`;
-      land.style.opacity = String(deg > 90 ? 0.6 * s : 0);
+      // The notepad leaf fades as it lifts away; the fade lives on the faces, not the sheet.
+      const fade = String(q < 0.5 ? 1 : Math.max(0, 1 - (q - 0.5) / 0.32));
+      this.front.style.opacity = fade;
+      this.back.style.opacity = fade;
+    } else if (t.landShade) {
+      t.landShade.style.opacity = String(deg > 90 ? 0.6 * s : 0);
     }
   }
 
@@ -385,9 +436,45 @@ export class Leaf {
       !resting && first && last && last.t > first.t ? (last.p - first.p) / (last.t - first.t) : 0;
     const p = this.turn.p;
     const complete = e.type !== 'pointercancel' && (v > 0.0012 || (p > 0.42 && v > -0.0012));
-    const rest = complete ? 1 - p : p;
-    this.tween(complete ? 1 : 0, Math.max(160, this.duration * 0.75 * rest), easeOutCubic);
+    if (this.duration <= 0) {
+      this.tween(complete ? 1 : 0, 0, easeOutCubic);
+      return;
+    }
+    this.spring(complete ? 1 : 0, v * 1000);
   };
+
+  /**
+   * Settle the turn like paper: a critically damped spring that starts with the finger's
+   * velocity (progress per second), so a flick carries on and a slow release eases home.
+   */
+  private spring(target: 0 | 1, velocity: number) {
+    cancelAnimationFrame(this.raf);
+    const stiffness = 170;
+    const damping = 2 * Math.sqrt(stiffness);
+    let p = this.turn?.p ?? 0;
+    let v = velocity;
+    let last = performance.now();
+    const tick = (now: number) => {
+      // Fixed sub-steps keep the integration stable on 30, 60 and 120 Hz screens alike.
+      let dt = Math.min(0.064, (now - last) / 1000);
+      last = now;
+      while (dt > 0) {
+        const step = Math.min(dt, 1 / 240);
+        v += (-stiffness * (p - target) - damping * v) * step;
+        p += v * step;
+        dt -= step;
+      }
+      p = Math.max(0, Math.min(1, p));
+      this.apply(p);
+      if (Math.abs(p - target) < 0.002 && Math.abs(v) < 0.05) {
+        this.apply(target);
+        this.settle(target === 1);
+      } else {
+        this.raf = requestAnimationFrame(tick);
+      }
+    };
+    this.raf = requestAnimationFrame(tick);
+  }
 
   private unlisten() {
     window.removeEventListener('pointermove', this.onMove);
