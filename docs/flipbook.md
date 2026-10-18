@@ -49,6 +49,10 @@ specificity), so any `.fb { … }` rule in the site beats them.
   seconds. Pages are then prepared on demand around the reading position (`page-cache.ts`:
   nearest first, paused while a page turns, at most 24 page images kept), and thumbnails only
   for what the drawer shows, so big books stay smooth and light.
+  A jump cancels obsolete window work, including the wait for canvas encoding.
+  Native encoding may finish later, but cancelled results never enter the cache:
+  late object URLs are revoked and the newly visible spread can render immediately.
+  Only recent explicit page requests are requeued, within the existing queue cap.
 - **Ported copies.** Sites that carry their own copy of the block also need the
   `readFullscreen` label in their messages and `className="max-sm:px-0"` on the module's
   `<Section>` (the edge-to-edge phone book).
