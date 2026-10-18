@@ -1,3 +1,4 @@
+import allIds from '@tests/fixtures/lean-schema/all-ids.json';
 import docs from '@tests/fixtures/lean-schema/documents.json';
 import { SPEC_BLOCK_MAP } from '@tests/fixtures/lean-schema/spec-block-map';
 import { describe, expect, it } from 'vitest';
@@ -12,7 +13,8 @@ const count = (types: string[]) =>
 describe('block map against the 2026-10-18 export', () => {
   const stored = pages.flatMap((p) => (p.modules ?? []).map((m) => m._type));
 
-  it('has the module counts the plan was written against', () => {
+  // Counts include drafts: the export holds both `drafts.<id>` and published pages.
+  it('has the module counts the plan was written against (drafts included)', () => {
     expect(count(stored)).toEqual({
       'accordion-list': 16,
       'articles-frontpage': 3,
@@ -51,10 +53,11 @@ describe('block map against the 2026-10-18 export', () => {
 });
 
 describe('lean-schema fixtures are safe for a public repo', () => {
-  it('hold no secrets, system documents or form submissions', () => {
-    const leaked = (docs as Doc[])
-      .filter((d) => /^(mux\.|sanity\.)|^lead$/.test(d._type))
-      .map((d) => d._type);
-    expect(leaked).toEqual([]);
+  const unsafe = /^(mux\.|sanity\.|system\.)|^lead$/;
+  it('documents.json holds no secrets, system documents or form submissions', () => {
+    expect((docs as Doc[]).filter((d) => unsafe.test(d._type)).map((d) => d._type)).toEqual([]);
+  });
+  it('all-ids.json lists no secrets, system documents or form submissions', () => {
+    expect((allIds as Doc[]).filter((d) => unsafe.test(d._type)).map((d) => d._type)).toEqual([]);
   });
 });

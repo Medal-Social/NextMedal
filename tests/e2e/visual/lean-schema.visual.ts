@@ -5,7 +5,11 @@ import { expect, type Page, test } from '@playwright/test';
  * Captured from production BEFORE any change; staging must match it after,
  * apart from the owner-approved diffs.
  * Run: BASE_URL=https://www.nextmedal.com pnpm exec playwright test --project=visual tests/e2e/visual/lean-schema.visual.ts
+ * Baselines are local, darwin-only (Playwright's `-darwin` suffix) and backed up to
+ * ~/Backups/nextmedal/visual-baseline-20261018; CI and other platforms have none.
  */
+test.skip(!process.env.BASE_URL, 'lean-schema baseline runs against a deployed site');
+
 const PATHS = [
   '/',
   '/features',

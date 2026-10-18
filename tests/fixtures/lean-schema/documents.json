@@ -5082,21 +5082,6 @@
     }
   },
   {
-    "_createdAt": "2025-12-30T19:55:22Z",
-    "_id": "bbe9a085-4e4d-496b-816d-8b6456bfc08b",
-    "_rev": "61wMMR7R8VvWK2bB5NTmoG",
-    "_type": "docs.category",
-    "_updatedAt": "2025-12-30T19:55:34Z",
-    "description": "Step-by-step guides and practical examples",
-    "icon": "📖",
-    "order": 50,
-    "slug": {
-      "_type": "slug",
-      "current": "tutorials"
-    },
-    "title": "Tutorials"
-  },
-  {
     "_createdAt": "2025-05-02T19:00:34Z",
     "_id": "baa0268b-aac9-44cb-a682-1ecc7d8e4a97",
     "_rev": "4P2vumDw5K6pjBv4iHjwMz",
@@ -5213,6 +5198,21 @@
       }
     ],
     "title": "Header"
+  },
+  {
+    "_createdAt": "2025-12-30T19:55:22Z",
+    "_id": "bbe9a085-4e4d-496b-816d-8b6456bfc08b",
+    "_rev": "61wMMR7R8VvWK2bB5NTmoG",
+    "_type": "docs.category",
+    "_updatedAt": "2025-12-30T19:55:34Z",
+    "description": "Step-by-step guides and practical examples",
+    "icon": "📖",
+    "order": 50,
+    "slug": {
+      "_type": "slug",
+      "current": "tutorials"
+    },
+    "title": "Tutorials"
   },
   {
     "_createdAt": "2025-12-20T18:56:31Z",
