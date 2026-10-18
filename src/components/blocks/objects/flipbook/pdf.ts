@@ -51,7 +51,7 @@ export function targetPageHeight(): number {
 
 /**
  * Render page `index` (0-based) to a WebP object URL. Size by height, or by width when given.
- * Aborting `signal` cancels the render between pdf.js's drawing chunks.
+ * Aborting `signal` cancels drawing and releases the caller while encoding finishes.
  */
 export async function renderPage(
   doc: PDFDocumentProxy,
@@ -81,9 +81,8 @@ export async function renderPage(
     } finally {
       signal?.removeEventListener('abort', cancel);
     }
-    const blob = await new Promise<Blob | null>((resolve) =>
-      canvas?.toBlob(resolve, 'image/webp', 0.9)
-    );
+    const blob = await encodePage(canvas, signal);
+    signal?.throwIfAborted();
     if (!blob) throw new Error('Could not encode page image');
     return URL.createObjectURL(blob);
   } finally {
@@ -94,4 +93,30 @@ export async function renderPage(
     }
     page.cleanup();
   }
+}
+
+/** Canvas encoding itself cannot be cancelled, but it must not hold the render queue. */
+function encodePage(canvas: HTMLCanvasElement, signal?: AbortSignal): Promise<Blob | null> {
+  return new Promise((resolve, reject) => {
+    const cleanup = () => signal?.removeEventListener('abort', abort);
+    const abort = () => {
+      cleanup();
+      reject(signal?.reason ?? new DOMException('Page encoding cancelled', 'AbortError'));
+    };
+    signal?.addEventListener('abort', abort, { once: true });
+    try {
+      signal?.throwIfAborted();
+      canvas.toBlob(
+        (blob) => {
+          cleanup();
+          resolve(blob);
+        },
+        'image/webp',
+        0.9
+      );
+    } catch (error) {
+      cleanup();
+      reject(error);
+    }
+  });
 }
