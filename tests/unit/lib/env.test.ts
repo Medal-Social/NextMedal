@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { isSocialEmbedQaFixtureAllowed } from '@/lib/social-embed/qa-fixture-access';
 
 // Store original env
 const originalEnv = { ...process.env };
@@ -302,6 +303,28 @@ describe('env', () => {
 
       expect(envModule).toBeDefined();
       consoleSpy.mockRestore();
+    });
+  });
+
+  describe('readAllowQaSocialEmbeds', () => {
+    it('treats an empty flag as unset', async () => {
+      process.env.ALLOW_QA_SOCIAL_EMBEDS = '';
+      const { readAllowQaSocialEmbeds } = await import('@/lib/core/env');
+      expect(readAllowQaSocialEmbeds()).toBeUndefined();
+    });
+
+    it('returns a truthy runtime flag', async () => {
+      process.env.ALLOW_QA_SOCIAL_EMBEDS = 'true';
+      const { readAllowQaSocialEmbeds } = await import('@/lib/core/env');
+      expect(readAllowQaSocialEmbeds()).toBe('true');
+    });
+
+    it('keeps a malformed string and the production gate still rejects it', async () => {
+      process.env.ALLOW_QA_SOCIAL_EMBEDS = 'banana';
+      const { readAllowQaSocialEmbeds } = await import('@/lib/core/env');
+      const flag = readAllowQaSocialEmbeds();
+      expect(flag).toBe('banana');
+      expect(isSocialEmbedQaFixtureAllowed({ appEnv: 'production', qaFlag: flag })).toBe(false);
     });
   });
 

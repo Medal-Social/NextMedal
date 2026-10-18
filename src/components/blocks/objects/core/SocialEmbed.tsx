@@ -1,375 +1,179 @@
 /**
- * Social Media Embed Component
- * @module SocialEmbed
- * @version 1.2.0
- * @lastUpdated 2026-01-02
+ * Social Media Embed — Medal-branded static cards.
+ * Fetches post metadata server-side (oEmbed / public endpoints), never loads
+ * third-party widget scripts or cookies by default. YouTube uses a
+ * click-to-load youtube-nocookie facade.
  *
- * @description
- * Production-ready social media embed component supporting 6 major platforms:
- * X (Twitter), LinkedIn, Instagram, Threads, TikTok, and YouTube.
- *
- * Features:
- * - Lazy loading with Intersection Observer (loads 300px before viewport)
- * - Sandboxed iframes for security
- * - Platform-specific sizing and aspect ratios
- * - Loading skeletons and error states
- * - Responsive design across all device sizes
- *
- * Platform Limitations:
- * - Preview mode (Sanity Studio): Embeds may show error state due to nested iframe restrictions
- * - Published pages: All platforms work correctly
- *
- * @example
- * ```tsx
- * <SocialEmbed
- *   platform="twitter"
- *   url="https://x.com/username/status/123456789"
- * />
- * ```
- *
- * @see {@link https://developer.x.com/en/docs/twitter-for-websites/embedded-tweets/overview Twitter Embed Docs}
+ * Import this module directly — do not re-export it from the core barrel
+ * (client importers of Img/Video would pull in server-only resolve).
  */
 
-'use client';
+import { stegaClean } from '@sanity/client/stega';
+import { getLocale, getTranslations } from 'next-intl/server';
+import {
+  cleanPlatform,
+  cleanUrl,
+  detectPlatformFromUrl,
+  type SanitySocialPlatform,
+  type SocialEmbedData,
+  type SocialPlatform,
+} from '@/lib/social-embed';
+import { resolveSocialEmbed } from '@/lib/social-embed/resolve';
+import { SocialEmbedCard } from './social-embed/social-embed-card';
 
-import { useEffect, useRef, useState } from 'react';
-import { logger } from '@/lib/core/logger';
-
-/**
- * Supported social media platforms
- * @typedef {'twitter' | 'linkedin' | 'instagram' | 'threads' | 'tiktok' | 'youtube'} Platform
- */
-type Platform = 'twitter' | 'linkedin' | 'instagram' | 'threads' | 'tiktok' | 'youtube';
-
-/**
- * Props for the SocialEmbed component
- * @interface SocialEmbedProps
- * @property {Platform} platform - The social media platform to embed
- * @property {string} url - The full URL of the post/video to embed
- */
 interface SocialEmbedProps {
-  platform: Platform;
+  platform: SanitySocialPlatform;
   url: string;
 }
 
-/**
- * Extracts the tweet/status ID from a Twitter/X URL
- * @param {string} url - Full Twitter/X URL
- * @returns {string | null} Tweet ID or null if not found
- * @example extractTwitterId('https://x.com/user/status/123456') // '123456'
- */
-function extractTwitterId(url: string): string | null {
-  const match = url.match(/status\/(\d+)/);
-  return match ? match[1] : null;
+/** Date-only stamp: "13 Oct 2026" (locale-aware, UTC). */
+function formatEmbedDateOnly(isoOrDate: string, locale: string): string {
+  const date = new Date(isoOrDate.includes('T') ? isoOrDate : `${isoOrDate}T00:00:00.000Z`);
+  return new Intl.DateTimeFormat(locale, {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(date);
 }
 
-function extractInstagramId(url: string): string | null {
-  const match = url.match(/\/(p|reel)\/([\w-]+)/);
-  return match ? match[2] : null;
+/** Mockup-aligned stamp: "13 Oct 2026 · 18:36 UTC" (locale digits, explicit UTC). */
+function formatEmbedStamp(iso: string, locale: string): string {
+  const date = new Date(iso);
+  const dayMonth = formatEmbedDateOnly(iso, locale);
+  const time = new Intl.DateTimeFormat(locale, {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZone: 'UTC',
+  }).format(date);
+  // Syndication timestamps are absolute UTC; label the zone so readers do not
+  // mistake 16:36Z for local wall-clock (e.g. Oslo 18:36).
+  return `${dayMonth} · ${time} UTC`;
 }
 
-function extractTikTokId(url: string): string | null {
-  const match = url.match(/\/video\/(\d+)/);
-  return match ? match[1] : null;
-}
+function formatEmbedDate(
+  value: string | null,
+  locale: string
+): { display: string | null; dateTime: string | null } {
+  if (!value) return { display: null, dateTime: null };
 
-function extractYouTubeId(url: string): string | null {
-  if (url.includes('youtu.be/')) {
-    return url.split('youtu.be/')[1].split('?')[0];
-  }
-  if (url.includes('youtube.com/watch')) {
+  // Date-only (`YYYY-MM-DD`) from X oEmbed footers — never invent a clock time.
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     try {
-      const urlParams = new URLSearchParams(url.split('?')[1]);
-      return urlParams.get('v');
-    } catch (error) {
-      logger.warn({ error, url }, 'Failed to parse YouTube URL');
-      return null;
+      return { display: formatEmbedDateOnly(value, locale), dateTime: value };
+    } catch {
+      return { display: value, dateTime: value };
     }
   }
-  return null;
-}
 
-function extractThreadsId(url: string): string | null {
-  const match = url.match(/\/post\/([\w-]+)/);
-  return match ? match[1] : null;
-}
-
-function extractThreadsUsername(url: string): string | null {
-  const match = url.match(/\/@([\w.]+)\/post/);
-  return match ? match[1] : null;
-}
-
-/**
- * Build Twitter embed URL with all required parameters
- */
-function buildTwitterEmbedUrl(tweetId: string): string {
-  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://example.com';
-  const params = new URLSearchParams({
-    dnt: 'true',
-    embedId: 'twitter-widget-0',
-    features:
-      'eyJ0ZndfdGltZWxpbmVfbGlzdCI6eyJidWNrZXQiOltdLCJ2ZXJzaW9uIjpudWxsfSwidGZ3X2ZvbGxvd2VyX2NvdW50X3N1bnNldCI6eyJidWNrZXQiOnRydWUsInZlcnNpb24iOm51bGx9LCJ0ZndfdHdlZXRfZWRpdF9iYWNrZW5kIjp7ImJ1Y2tldCI6Im9uIiwidmVyc2lvbiI6bnVsbH0sInRmd19yZWZzcmNfc2Vzc2lvbiI6eyJidWNrZXQiOiJvbiIsInZlcnNpb24iOm51bGx9LCJ0ZndfbWl4ZWRfbWVkaWFfMTU4OTciOnsiYnVja2V0IjoidHJlYXRtZW50IiwidmVyc2lvbiI6bnVsbH0sInRmd19leHBlcmltZW50c19jb29raWVfZXhwaXJhdGlvbiI6eyJidWNrZXQiOjEyMDk2MDAsInZlcnNpb24iOm51bGx9LCJ0ZndfZHVwbGljYXRlX3NjcmliZXNfdG9fc2V0dGluZ3MiOnsiYnVja2V0Ijoib24iLCJ2ZXJzaW9uIjpudWxsfSwidGZ3X3ZpZGVvX2hsc19keW5hbWljX21hbmlmZXN0c18xNTA4MiI6eyJidWNrZXQiOiJ0cnVlX2JpdHJhdGUiLCJ2ZXJzaW9uIjpudWxsfSwidGZ3X3Nob3dfYmx1ZV92ZXJpZmllZF9iYWRnZSI6eyJidWNrZXQiOiJvbiIsInZlcnNpb24iOm51bGx9LCJ0ZndfbGVnYWN5X3RpbWVsaW5lX3N1bnNldCI6eyJidWNrZXQiOnRydWUsInZlcnNpb24iOm51bGx9LCJ0ZndfdHdlZXRfZWRpdF9mcm9udGVuZCI6eyJidWNrZXQiOiJvbiIsInZlcnNpb24iOm51bGx9fQ%3D%3D',
-    frame: 'false',
-    hideCard: 'false',
-    hideThread: 'false',
-    id: tweetId,
-    lang: 'en',
-    origin: encodeURIComponent(origin),
-    sessionId: '',
-    theme: 'light',
-    widgetsVersion: '2615f7e52b7e0:1702314776716',
-    width: '550px',
-  });
-  return `https://platform.twitter.com/embed/Tweet.html?${params.toString()}`;
-}
-
-/**
- * Extract LinkedIn activity ID and build embed URL
- */
-function buildLinkedInEmbedUrl(url: string): string | null {
-  const urnMatch = url.match(/urn:li:activity:(\d+)/);
-  if (urnMatch) {
-    return `https://www.linkedin.com/embed/feed/update/urn:li:activity:${urnMatch[1]}`;
+  // Full ISO timestamps from syndication / APIs
+  if (/^\d{4}-\d{2}-\d{2}T/.test(value)) {
+    try {
+      return { display: formatEmbedStamp(value, locale), dateTime: value };
+    } catch {
+      return { display: value, dateTime: value };
+    }
   }
-  const postsMatch = url.match(/posts\/.*-activity-(\d+)-/);
-  if (postsMatch) {
-    return `https://www.linkedin.com/embed/feed/update/urn:li:activity:${postsMatch[1]}`;
+
+  // Legacy English footer strings — date-only (no clock time in the source)
+  const parsed = Date.parse(`${value} UTC`);
+  if (!Number.isNaN(parsed)) {
+    const dateOnly = new Date(parsed).toISOString().slice(0, 10);
+    try {
+      return { display: formatEmbedDateOnly(dateOnly, locale), dateTime: dateOnly };
+    } catch {
+      return { display: value, dateTime: dateOnly };
+    }
   }
-  return null;
+
+  return { display: value, dateTime: null };
 }
 
-/**
- * Generates platform-specific embed URLs for iframe rendering
- * @param {Platform} platform - The social media platform
- * @param {string} url - The original post/video URL
- * @returns {string | null} Embed URL or null if extraction fails
- */
-function getEmbedUrl(platform: Platform, url: string): string | null {
-  switch (platform) {
-    case 'twitter': {
-      const tweetId = extractTwitterId(url);
-      return tweetId ? buildTwitterEmbedUrl(tweetId) : null;
-    }
-    case 'linkedin': {
-      return buildLinkedInEmbedUrl(url);
-    }
-    case 'instagram': {
-      const postId = extractInstagramId(url);
-      return postId ? `https://www.instagram.com/p/${postId}/embed/captioned/` : null;
-    }
-    case 'threads': {
-      const username = extractThreadsUsername(url);
-      const postId = extractThreadsId(url);
-      return postId && username
-        ? `https://www.threads.net/@${username}/post/${postId}/embed`
-        : null;
-    }
-    case 'tiktok': {
-      const videoId = extractTikTokId(url);
-      return videoId ? `https://www.tiktok.com/embed/v2/${videoId}` : null;
-    }
-    case 'youtube': {
-      const videoId = extractYouTubeId(url);
-      return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
-    }
-    default:
-      return null;
-  }
-}
-
-// Get platform display name
-function getPlatformName(platform: Platform): string {
-  const names: Record<Platform, string> = {
-    twitter: 'X (Twitter)',
-    linkedin: 'LinkedIn',
-    instagram: 'Instagram',
-    threads: 'Threads',
-    tiktok: 'TikTok',
-    youtube: 'YouTube',
-  };
-  return names[platform];
-}
-
-// Loading skeleton
-function LoadingSkeleton({ platform }: { platform: Platform }) {
-  return (
-    <div className="w-full animate-pulse overflow-hidden rounded-lg bg-muted">
-      <div className="space-y-3 p-4">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-full bg-muted-foreground/20" />
-          <div className="flex-1 space-y-2">
-            <div className="h-3 w-1/3 rounded bg-muted-foreground/20" />
-            <div className="h-2 w-1/4 rounded bg-muted-foreground/20" />
-          </div>
-        </div>
-        <div className="space-y-2">
-          <div className="h-2 w-full rounded bg-muted-foreground/20" />
-          <div className="h-2 w-5/6 rounded bg-muted-foreground/20" />
-          <div className="h-2 w-4/6 rounded bg-muted-foreground/20" />
-        </div>
-      </div>
-      <div className="px-4 pb-4">
-        <p className="text-center text-muted-foreground text-xs">
-          Loading {getPlatformName(platform)}...
-        </p>
-      </div>
-    </div>
-  );
-}
-
-// Error fallback
-function EmbedError({ platform, url }: { platform: Platform; url: string }) {
-  return (
-    <div className="rounded-lg border border-destructive/50 bg-destructive/5 p-6">
-      <div className="flex items-start gap-3">
-        <svg
-          className="mt-0.5 h-5 w-5 flex-shrink-0 text-destructive"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-        >
-          <title>Error</title>
-          <circle cx="12" cy="12" r="10" />
-          <line x1="12" y1="8" x2="12" y2="12" />
-          <line x1="12" y1="16" x2="12.01" y2="16" />
-        </svg>
-        <div className="flex-1 space-y-2">
-          <p className="font-medium text-sm">Unable to load {getPlatformName(platform)} embed</p>
-          <p className="text-muted-foreground text-xs">
-            The embed could not be loaded. You can view the original post using the link below.
-          </p>
-          <a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-2 inline-flex items-center gap-2 text-primary text-sm hover:underline"
-          >
-            View on {getPlatformName(platform)}
-            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <title>External link</title>
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" />
-            </svg>
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/**
- * Main social media embed component with lazy loading and error handling
- *
- * @component
- * @param {SocialEmbedProps} props - Component props
- * @returns {JSX.Element} Rendered social media embed with loading and error states
- *
- * @remarks
- * Uses Intersection Observer to lazy load embeds 300px before entering viewport.
- * Renders loading skeleton until visible, then loads the actual embed.
- * Displays error state with fallback link if embed fails to load.
- */
-export default function SocialEmbed({ platform, url }: SocialEmbedProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-  const [hasError, setHasError] = useState(false);
-
-  // Intersection Observer for lazy loading
-  useEffect(() => {
-    const currentContainer = containerRef.current;
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting && !isVisible) {
-          setIsVisible(true);
-        }
-      });
-    });
-
-    if (currentContainer) {
-      observer.observe(currentContainer);
-    }
-
-    return () => {
-      if (currentContainer) {
-        observer.unobserve(currentContainer);
+function emergencyFallback(
+  platformRaw: SanitySocialPlatform,
+  urlRaw: string
+): SocialEmbedData | null {
+  const url =
+    cleanUrl(urlRaw) ??
+    (() => {
+      const cleaned = stegaClean(String(urlRaw ?? '')).trim();
+      try {
+        const parsed = new URL(cleaned);
+        if (parsed.protocol === 'http:' || parsed.protocol === 'https:') return parsed.toString();
+      } catch {
+        /* ignore */
       }
-    };
-  }, [isVisible]);
+      return null;
+    })();
+  if (!url) return null;
 
-  const embedUrl = getEmbedUrl(platform, url);
-  const youtubeId = platform === 'youtube' ? extractYouTubeId(url) : null;
+  const platform: SocialPlatform = cleanPlatform(platformRaw) ?? detectPlatformFromUrl(url) ?? 'x';
 
-  // Handle error cases
-  if (!embedUrl || hasError) {
-    return (
-      <div ref={containerRef} className="my-6">
-        <EmbedError platform={platform} url={url} />
-      </div>
-    );
+  return {
+    platform,
+    url,
+    authorName: null,
+    authorHandle: null,
+    authorUrl: null,
+    authorAvatarUrl: null,
+    text: null,
+    title: null,
+    publishedAt: null,
+    media: null,
+    linkPreview: null,
+    youtubeId: null,
+    isFallback: true,
+  };
+}
+
+export default async function SocialEmbed({ platform, url }: SocialEmbedProps) {
+  const [t, locale] = await Promise.all([getTranslations('socialEmbed'), getLocale()]);
+  const data = (await resolveSocialEmbed(platform, url)) ?? emergencyFallback(platform, url);
+
+  // Truly empty input — nothing to link out to.
+  if (!data) {
+    return null;
   }
 
-  // Platform-specific configurations - generous heights to prevent scrollbars
-  const platformConfig: Record<
-    Platform,
-    { maxWidth: string; minHeight: string; aspectRatio?: string }
-  > = {
-    twitter: { maxWidth: '550px', minHeight: '800px' },
-    linkedin: { maxWidth: '504px', minHeight: '1000px' }, // Increased for long posts
-    instagram: { maxWidth: '540px', minHeight: '900px' },
-    threads: { maxWidth: '550px', minHeight: '750px' },
-    tiktok: { maxWidth: '325px', minHeight: '730px' }, // Narrower and taller for proper aspect ratio
-    youtube: { maxWidth: '100%', minHeight: '400px', aspectRatio: '16 / 9' },
-  };
-
-  const config = platformConfig[platform];
+  const platformName = t(`platforms.${data.platform}`);
+  const { display: formattedDate, dateTime } = formatEmbedDate(data.publishedAt, locale);
+  const cardData =
+    dateTime && data.publishedAt !== dateTime ? { ...data, publishedAt: dateTime } : data;
 
   return (
     <>
-      {platform === 'youtube' && youtubeId && (
+      {data.platform === 'youtube' && data.youtubeId && !data.isFallback ? (
         <script
           type="application/ld+json"
+          // Validated YouTube id from URL parse; escape `<` for XSS-safe JSON-LD.
           dangerouslySetInnerHTML={{
-            // Validated YouTube ID from regex extraction, XSS-escaped with .replace(/</g, '\\u003c')
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'VideoObject',
-              name: 'YouTube Video',
-              embedUrl: `https://www.youtube.com/embed/${youtubeId}`,
-              thumbnailUrl: `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`,
-              // No uploadDate: a render-time `new Date()` both differs between
-              // server and client (hydration mismatch) and is factually wrong.
+              name: data.title ?? platformName,
+              embedUrl: `https://www.youtube-nocookie.com/embed/${data.youtubeId}`,
+              thumbnailUrl:
+                data.media?.url ?? `https://i.ytimg.com/vi/${data.youtubeId}/hqdefault.jpg`,
+              ...(data.publishedAt ? { uploadDate: data.publishedAt } : {}),
             }).replace(/</g, '\\u003c'),
           }}
         />
-      )}
-      <div ref={containerRef} className="my-6 flex w-full max-w-full justify-center">
-        {!isVisible ? (
-          <LoadingSkeleton platform={platform} />
-        ) : (
-          <div
-            className="relative w-full"
-            style={{
-              maxWidth: config.maxWidth,
-              minHeight: config.minHeight,
-              overflow: 'hidden',
-            }}
-          >
-            <iframe
-              src={embedUrl}
-              title={`${getPlatformName(platform)} embed`}
-              className="absolute inset-0 h-full w-full bg-transparent"
-              style={{
-                aspectRatio: config.aspectRatio,
-                border: 'none',
-                overflow: 'hidden',
-              }}
-              scrolling="no"
-              sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-forms"
-              loading="lazy"
-              onError={() => setHasError(true)}
-            />
-          </div>
-        )}
-      </div>
+      ) : null}
+      <SocialEmbedCard
+        data={cardData}
+        labels={{
+          platformName,
+          viewOn: t('viewOn', { platform: platformName }),
+          playVideo: t('playVideo'),
+          openOriginal: t('openOriginal'),
+          fallbackTitle: t('fallbackTitle'),
+          fallbackDescription: t('fallbackDescription', { platform: platformName }),
+          clickToPlay: t('clickToPlay'),
+          postOn: t('postOn', { platform: platformName }),
+        }}
+        formattedDate={formattedDate}
+      />
     </>
   );
 }
