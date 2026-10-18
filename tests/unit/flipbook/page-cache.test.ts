@@ -128,6 +128,60 @@ describe('PageCache', () => {
     expect(order).toEqual([0, 60]);
   });
 
+  it('cancels a window render the reader jumped away from, so the new spread goes first', async () => {
+    const signals = new Map<number, AbortSignal>();
+    const order: number[] = [];
+    const cache = new PageCache({
+      count: 100,
+      behind: 0,
+      ahead: 0,
+      schedule: (run) => run(),
+      revoke: vi.fn(),
+      render: (i, signal) => {
+        order.push(i);
+        signals.set(i, signal);
+        return new Promise<string>((resolve, reject) => {
+          signal.addEventListener('abort', () => reject(new Error('cancelled')));
+          if (i === 60) resolve('blob:60');
+        });
+      },
+    });
+    cache.focus(3, 3);
+    cache.focus(60, 60);
+    expect(signals.get(3)?.aborted).toBe(true);
+    for (let n = 0; n < 6; n++) await Promise.resolve();
+    expect(order).toEqual([3, 60]);
+    expect(cache.get(60)).toBe('blob:60');
+  });
+
+  it('does not queue cancelled window pages ahead of the pages on screen', async () => {
+    const order: number[] = [];
+    const cache = new PageCache({
+      count: 100,
+      behind: 0,
+      ahead: 0,
+      schedule: (run) => run(),
+      revoke: vi.fn(),
+      render: (i, signal) => {
+        order.push(i);
+        return new Promise<string>((resolve, reject) => {
+          signal.addEventListener('abort', () => reject(new Error('cancelled')));
+          if (i === 12) resolve('blob:12');
+        });
+      },
+    });
+    cache.focus(10, 10);
+    for (const next of [11, 12]) {
+      cache.setBusy(true); // a turn starts: the render in progress is cancelled
+      for (let n = 0; n < 4; n++) await Promise.resolve();
+      cache.focus(next, next); // ...and the reader lands on the next page
+      cache.setBusy(false);
+      for (let n = 0; n < 4; n++) await Promise.resolve();
+    }
+    expect(order).toEqual([10, 11, 12]); // no stale 10 or 11 re-rendered first
+    expect(cache.get(12)).toBe('blob:12');
+  });
+
   it('keeps recently requested pages even when far from the reading position', async () => {
     const { cache, drain } = setup(100, { capacity: 3, behind: 0, ahead: 1, keepWanted: 1 });
     cache.focus(0, 0);

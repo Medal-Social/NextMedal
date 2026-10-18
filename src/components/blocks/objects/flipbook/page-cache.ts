@@ -47,6 +47,8 @@ export class PageCache {
   private last = 0;
   private busy = false;
   private inFlight = false;
+  /** The page being rendered, and whether it was asked for explicitly (`want`). */
+  private current: { index: number; explicit: boolean } | null = null;
   private destroyed = false;
   private pumpQueued = false;
 
@@ -102,6 +104,10 @@ export class PageCache {
   focus(first: number, last = first) {
     this.first = first;
     this.last = last;
+    // A window render the reader has jumped away from would hold up the pages now on screen.
+    const current = this.current;
+    if (current && !current.explicit && !this.window().includes(current.index))
+      this.controller?.abort();
     this.evict();
     this.pump();
   }
@@ -111,9 +117,7 @@ export class PageCache {
     if (index < 0 || index >= this.opts.count) return;
     this.remember(index);
     if (this.isSettled(index)) return;
-    this.wanted.push(index);
-    // Only the most recent requests matter (e.g. what the drawer shows right now).
-    if (this.wanted.length > this.opts.keepWanted) this.wanted.shift();
+    this.enqueue(index);
     this.pump();
   }
 
@@ -147,15 +151,22 @@ export class PageCache {
     return this.window().find((i) => !this.isSettled(i));
   }
 
+  /** Queue an explicit request; only the most recent ones matter (e.g. what the drawer shows). */
+  private enqueue(index: number) {
+    this.wanted.push(index);
+    if (this.wanted.length > this.opts.keepWanted) this.wanted.shift();
+  }
+
   /** Take the next page, dropping requests that are already settled. */
-  private take(): number | undefined {
+  private take(): { index: number; explicit: boolean } | undefined {
     const target = this.peek();
-    const at = target === undefined ? -1 : this.wanted.lastIndexOf(target);
+    if (target === undefined) return undefined;
+    const at = this.wanted.lastIndexOf(target);
     if (at >= 0) this.wanted.splice(at, 1);
     for (let k = this.wanted.length - 1; k >= 0; k--) {
       if (this.isSettled(this.wanted[k] as number)) this.wanted.splice(k, 1);
     }
-    return target;
+    return { index: target, explicit: at >= 0 };
   }
 
   private pump() {
@@ -165,8 +176,10 @@ export class PageCache {
     this.opts.schedule(() => {
       this.pumpQueued = false;
       if (this.destroyed || this.busy || this.inFlight) return;
-      const target = this.take();
-      if (target === undefined) return;
+      const taken = this.take();
+      if (taken === undefined) return;
+      const target = taken.index;
+      this.current = taken;
       this.inFlight = true;
       const controller = new AbortController();
       this.controller = controller;
@@ -182,10 +195,11 @@ export class PageCache {
           this.evict();
         })
         .catch(() => {
-          // Cancelled for a page turn: queue it again so it is prepared afterwards
-          // (explicit requests may be outside the reading window).
+          // Cancelled (page turn or jump): window pages are found again by the window itself;
+          // an explicit request that is still recent goes back in the (capped) queue.
           if (controller.signal.aborted) {
-            if (!this.destroyed) this.wanted.push(target);
+            if (!this.destroyed && taken.explicit && this.recent.includes(target))
+              this.enqueue(target);
             return;
           }
           // A page that can't be rendered stays blank; don't retry it forever.
@@ -194,6 +208,7 @@ export class PageCache {
         })
         .finally(() => {
           if (this.controller === controller) this.controller = null;
+          this.current = null;
           this.inFlight = false;
           this.pump();
         });
