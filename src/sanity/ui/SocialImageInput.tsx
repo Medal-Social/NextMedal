@@ -6,6 +6,7 @@ import { useState } from 'react';
 import type { ObjectInputProps } from 'sanity';
 import { useFormValue } from 'sanity';
 import { BASE_URL } from '@/lib/core/env.client';
+import { resolveShareImage } from '@/lib/seo/share-images';
 
 /**
  * Custom input for social sharing images with preview button for auto-generated fallback
@@ -16,8 +17,11 @@ export default function SocialImageInput(props: ObjectInputProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
-  // Get the SEO title from the form
   const seoTitle = useFormValue(['seo', 'title']) as string | undefined;
+  const metadataTitle = useFormValue(['metadata', 'title']) as string | undefined;
+  const documentType = useFormValue(['_type']) as string | undefined;
+  const slug = useFormValue(['metadata', 'slug', 'current']) as string | undefined;
+  const modules = useFormValue(['modules']) as Array<{ _type?: string } | null> | null;
 
   const handlePreview = () => {
     setShowPreview(true);
@@ -25,10 +29,17 @@ export default function SocialImageInput(props: ObjectInputProps) {
     setHasError(false);
   };
 
-  // Build the preview URL with the current SEO title
-  const previewUrl = seoTitle
-    ? `${BASE_URL}/api/og?title=${encodeURIComponent(seoTitle)}`
-    : `${BASE_URL}/api/og`;
+  const alt = seoTitle || metadataTitle || 'NextMedal';
+  const previewUrl = resolveShareImage(
+    {
+      _type: documentType,
+      metadata: { slug: slug ? { current: slug } : undefined, title: metadataTitle },
+      seo: { title: seoTitle },
+      modules,
+    },
+    BASE_URL,
+    alt
+  ).url;
 
   return (
     <Stack gap={3}>
@@ -40,8 +51,8 @@ export default function SocialImageInput(props: ObjectInputProps) {
             <EyeOpenIcon />
             <Box flex={1}>
               <Text size={1}>
-                No image provided. An auto-generated image will be created from your SEO title and
-                shown when this page is shared on social media.
+                No image provided. This document uses its designed share card — the matching route,
+                collection, or leading module — when it is shared.
               </Text>
             </Box>
             <Button
@@ -51,7 +62,6 @@ export default function SocialImageInput(props: ObjectInputProps) {
               onClick={handlePreview}
               text="Preview"
               tone="primary"
-              disabled={!seoTitle}
             />
           </Flex>
         </Card>
@@ -72,8 +82,8 @@ export default function SocialImageInput(props: ObjectInputProps) {
                 </Text>
                 <Text size={1} muted>
                   This image will appear when your page is shared on social media platforms like
-                  Facebook, Twitter/X, LinkedIn, and Slack. It's automatically generated from your
-                  SEO title.
+                  Facebook, Twitter/X, LinkedIn, and Slack. It is the designed card for this
+                  document's route, collection, or leading module.
                 </Text>
               </Stack>
 

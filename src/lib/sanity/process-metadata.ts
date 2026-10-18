@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { stegaClean } from 'next-sanity';
 import { type Locale, routing } from '@/i18n/routing';
 import { BASE_URL, dev, isPreview, isStaging, vercelPreview } from '@/lib/core/env';
+import { resolveShareImage } from '@/lib/seo/share-images';
 import { getSiteOptional } from '@/sanity/lib/fetch';
 import resolveUrl from './resolve-url-server';
 
@@ -161,20 +162,21 @@ function getMetadataBase(): URL {
   }
 }
 
-function getOgImage(page: ProcessMetadataPage, cleanTitle: string): string {
-  const uploadedOg = page.seo?.ogimage || page.metadata?.ogimage;
-  if (uploadedOg) return uploadedOg;
+function getOgImage(page: ProcessMetadataPage, cleanTitle: string) {
+  const slug = page.metadata?.slug?.current;
+  const cleanedSlug = slug ? stegaClean(slug) : slug;
+  const sharePage =
+    cleanedSlug && cleanedSlug !== slug && page.metadata
+      ? {
+          ...page,
+          metadata: {
+            ...page.metadata,
+            slug: { ...page.metadata.slug, current: cleanedSlug },
+          },
+        }
+      : page;
 
-  const isArticleType = ARTICLE_TYPES.includes(page._type);
-  const isArticlesFrontpage =
-    page._type === 'page' &&
-    'collectionType' in page &&
-    (page as { collectionType?: string }).collectionType === 'articles-frontpage';
-  const useArticleFallback = isArticleType || isArticlesFrontpage;
-
-  return useArticleFallback
-    ? `${BASE_URL}/api/og/article-fallback?title=${encodeURIComponent(cleanTitle)}&locale=${page.language || 'en'}`
-    : `${BASE_URL}/api/og?title=${encodeURIComponent(cleanTitle)}`;
+  return resolveShareImage(sharePage, BASE_URL, cleanTitle);
 }
 
 export default async function processMetadata(
@@ -242,6 +244,7 @@ export default async function processMetadata(
     },
     twitter: {
       card: 'summary_large_image',
+      images: ogImage,
       ...(twitterSite && { site: twitterSite }),
     },
   };

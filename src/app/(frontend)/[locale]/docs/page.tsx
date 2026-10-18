@@ -3,6 +3,7 @@ import { setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 import { BASE_URL } from '@/lib/core/env';
+import { ROUTE_SHARE_IMAGES, shareImageFromEntry } from '@/lib/seo/share-images';
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -24,6 +25,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   languages['x-default'] = `${BASE_URL}/docs`;
 
+  const shareImage = shareImageFromEntry(ROUTE_SHARE_IMAGES.docs, BASE_URL);
+
   return {
     title: 'Documentation | Medal Social',
     description:
@@ -40,6 +43,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: 'Medal Social',
       locale: locale,
       type: 'website',
+      images: shareImage,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      images: shareImage,
     },
   };
 }
