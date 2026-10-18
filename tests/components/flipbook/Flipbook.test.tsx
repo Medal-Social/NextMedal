@@ -164,6 +164,12 @@ describe('FlipbookViewer', () => {
     restoreRender();
     vi.mocked(logger.error).mockClear();
     // Only when the whole opening spread fails does the book give way to the error state.
+    const cancel = vi.fn();
+    vi.mocked(pdf.openPdf).mockReturnValueOnce({
+      promise: Promise.resolve({ numPages: 6 }) as ReturnType<typeof pdf.openPdf>['promise'],
+      cancel,
+    });
+    renderPage.mockClear();
     renderPage.mockImplementation(async (_doc: unknown, i: number) => {
       if (i === 0) throw new Error('opening page failed');
       return `blob:page-${i}`;
@@ -179,6 +185,9 @@ describe('FlipbookViewer', () => {
     );
     expect(screen.getByRole('alert')).toHaveTextContent('We couldn’t open this PDF.');
     expect(document.querySelector('.fb-book.lf')).toBeNull();
+    expect(cancel).toHaveBeenCalledOnce();
+    await new Promise((resolve) => setTimeout(resolve, 150));
+    expect(renderPage).toHaveBeenCalledTimes(1);
     restoreRender();
   });
   it('shows the error state with a working download link', async () => {
@@ -345,6 +354,14 @@ describe('FlipbookViewer', () => {
     });
     expect(bar.hasAttribute('inert')).toBe(true);
     expect(screen.getByRole('region', { name: 'Doc' })).toHaveClass('chrome-hidden');
+    const announcement = screen.getByRole('status');
+    expect(announcement.closest('[inert]')).toBeNull();
+    const book = document.querySelector('.fb-book') as HTMLElement;
+    vi.spyOn(book, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, 1200, 600));
+    fireEvent.pointerDown(book, { button: 0, clientX: 1150, clientY: 300 });
+    fireEvent.pointerUp(book, { button: 0, clientX: 1150, clientY: 300 });
+    expect(announcement).toHaveTextContent('Page 2–3 of 6');
+    expect(bar.hasAttribute('inert')).toBe(true);
     vi.useRealTimers();
   });
 

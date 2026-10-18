@@ -245,6 +245,10 @@ export function FlipbookViewer({
             if (opened || cancelled || !cache.isSettled(a) || !cache.isSettled(b)) return;
             opened = true;
             if (!cache.get(a) && !cache.get(b)) {
+              cache.destroy();
+              thumbsRef.current?.destroy();
+              pdfHandle.cancel();
+              docRef.current = null;
               setStatus('error');
               return;
             }
@@ -958,6 +962,9 @@ export function FlipbookViewer({
         </div>
       </div>
 
+      <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {status === 'ready' ? fmt(labels.pageOf, { page: counterText, total: count }) : ''}
+      </span>
       <div className="fb-foot" inert={chromeOff}>
         <button
           type="button"
@@ -968,7 +975,7 @@ export function FlipbookViewer({
         >
           <ChevronLeft aria-hidden="true" />
         </button>
-        <div className="fb-counter" data-testid="fb-counter" aria-live="polite" aria-atomic="true">
+        <div className="fb-counter" data-testid="fb-counter">
           <span>{count ? counterText : '–'}</span>
           <span className="fb-counter-total"> / {count || '–'}</span>
         </div>
