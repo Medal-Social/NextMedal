@@ -39,38 +39,73 @@ describe('captureLead consent', () => {
     create.mockResolvedValue({ _id: 'lead-1' });
   });
 
-  it('rejects a registration without consent when the form requires it', async () => {
-    sanityFetch.mockResolvedValue({ requireConsent: true });
-    const result = await register({ formId: 'form-req', consent: false });
+  const required = { requireConsent: true };
+
+  it('reads the requirement from the event, not from a form id sent by the browser', async () => {
+    sanityFetch.mockResolvedValue(required);
+    await register({ formId: 'form-free', consent: true });
+    const [query, params] = sanityFetch.mock.calls[0] as [string, Record<string, string>];
+    expect(query).toContain('registrationForm->');
+    expect(params).toEqual({ eventId: 'event-1' });
+  });
+
+  it('enforces consent without a form id', async () => {
+    sanityFetch.mockResolvedValue(required);
+    const result = await register({ consent: false });
     expect(result?.serverError).toMatch(/accept/i);
     expect(create).not.toHaveBeenCalled();
   });
 
-  it('accepts it with consent', async () => {
-    sanityFetch.mockResolvedValue({ requireConsent: true });
-    const result = await register({ formId: 'form-req', consent: true });
+  it("ignores another form's id", async () => {
+    sanityFetch.mockResolvedValue(required);
+    const result = await register({ formId: 'consent-free-form', consent: false });
+    expect(result?.serverError).toMatch(/accept/i);
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it('rejects an event registration without an event id', async () => {
+    const result = await register({
+      consent: true,
+      source: { type: 'event', url: '/events/launch' },
+    });
+    expect(result?.serverError).toBeTruthy();
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it('rejects an event without a registration form', async () => {
+    sanityFetch.mockResolvedValue(null);
+    const result = await register({ consent: true });
+    expect(result?.serverError).toBeTruthy();
+    expect(create).not.toHaveBeenCalled();
+  });
+
+  it('accepts a registration with consent', async () => {
+    sanityFetch.mockResolvedValue(required);
+    const result = await register({ consent: true });
     expect(result?.data?.success).toBe(true);
     expect(create).toHaveBeenCalledWith(expect.objectContaining({ consent: true }));
   });
 
-  it('accepts it without consent when the form does not require it', async () => {
+  it('accepts a registration without consent when the form does not require it', async () => {
     sanityFetch.mockResolvedValue({ requireConsent: false });
-    const result = await register({ formId: 'form-free', consent: false });
+    const result = await register({ consent: false });
     expect(result?.data?.success).toBe(true);
   });
 
-  it('checks the form that belongs to the event', async () => {
-    sanityFetch.mockResolvedValue({ requireConsent: false });
-    await register({ formId: 'form-free', consent: false });
-    const [query, params] = sanityFetch.mock.calls[0] as [string, Record<string, string>];
-    expect(query).toContain('registrationForm._ref');
-    expect(params).toMatchObject({ formId: 'form-free', eventId: 'event-1' });
+  it('honours the legacy acceptance.required flag', async () => {
+    sanityFetch.mockResolvedValue({ legacyRequired: true });
+    const result = await register({ consent: false });
+    expect(result?.serverError).toMatch(/accept/i);
   });
 
-  it('refuses a form id that is not the event form', async () => {
-    sanityFetch.mockResolvedValue(null);
-    const result = await register({ formId: 'other-form', consent: false });
+  it('during a Sanity outage uses the last answer seen for the event', async () => {
+    sanityFetch.mockResolvedValueOnce(required);
+    await register({ consent: true, source: { type: 'event', referenceId: 'event-cached' } });
+    sanityFetch.mockRejectedValueOnce(new Error('sanity is down'));
+    const result = await register({
+      consent: false,
+      source: { type: 'event', referenceId: 'event-cached' },
+    });
     expect(result?.serverError).toMatch(/accept/i);
-    expect(create).not.toHaveBeenCalled();
   });
 });

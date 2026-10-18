@@ -62,7 +62,7 @@ interface FormField {
   label: Sanity.InternationalizedArrayString | string;
   name: { current: string };
   type: 'text' | 'email' | 'tel' | 'textarea' | 'checkbox';
-  placeholder?: string;
+  placeholder?: Sanity.InternationalizedArrayString | string;
   required?: boolean;
 }
 

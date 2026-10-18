@@ -13,8 +13,27 @@ const consentCache = new Map<string, { required: boolean; at: number }>();
 export interface ConsentScope {
   /** The form must be configured with this intent (submitForm). */
   intent?: string;
-  /** The form must be the registration form of this event (captureLead). */
-  eventId?: string;
+}
+
+type ConsentRow = { requireConsent?: boolean; legacyRequired?: boolean } | null;
+
+// Legacy documents carry the requirement as `acceptance.required`; the adapter
+// in Form.tsx still honours those, so the server must too.
+const requiredBy = (form: NonNullable<ConsentRow>) =>
+  form.requireConsent === true || form.legacyRequired === true;
+
+/**
+ * Sanity read outage: prefer the last authoritative answer seen for this key.
+ * Nothing cached → not required. Only submissions claiming no consent is needed
+ * reach here, so this is the one spot the request's word is taken. Failing
+ * closed instead would reject every legitimate consent-free submission for the
+ * duration of any outage, and the residual exposure is a forged request storing
+ * its own lead with `consent: false` — an accurate record rather than a
+ * falsified consent.
+ */
+function cachedAnswer(cacheKey: string): boolean {
+  const cached = consentCache.get(cacheKey);
+  return !!cached && Date.now() - cached.at < CONSENT_CACHE_TTL_MS && cached.required;
 }
 
 const published = (id: string) => id.replace(/^drafts\./, '');
@@ -27,7 +46,7 @@ const published = (id: string) => id.replace(/^drafts\./, '');
  * consent needed" claim is checked against Sanity.
  *
  *  - a `formId` is only authoritative within its scope (the intent it was
- *    configured with, or the event it belongs to), so an id outside that scope
+ *    configured with), so an id outside that scope
  *    is refused rather than silently trusted — otherwise a consent-free
  *    newsletter id could be replayed against a consent-gated form;
  *  - no `formId` means the submission isn't tied to a form document at all
@@ -46,8 +65,7 @@ export async function isConsentRequired(
   // Presentation/draft mode addresses the draft; the requirement lives on the
   // published document.
   const publishedId = published(formId);
-  const eventId = scope.eventId ? published(scope.eventId) : undefined;
-  const cacheKey = `${publishedId}:${scope.intent ?? ''}:${eventId ?? ''}`;
+  const cacheKey = `form:${publishedId}:${scope.intent ?? ''}`;
 
   const filters = ['_type == "form"', '_id == $formId'];
   const params: Record<string, string> = { formId: publishedId };
@@ -55,16 +73,9 @@ export async function isConsentRequired(
     filters.push('intent == $intent');
     params.intent = scope.intent;
   }
-  if (eventId) {
-    filters.push('_id in *[_id == $eventId].registrationForm._ref');
-    params.eventId = eventId;
-  }
 
   try {
-    const form = await client.fetch<{
-      requireConsent?: boolean;
-      legacyRequired?: boolean;
-    } | null>(
+    const form = await client.fetch<ConsentRow>(
       `*[${filters.join(' && ')}][0]{
         requireConsent,
         "legacyRequired": acceptance.required
@@ -80,24 +91,38 @@ export async function isConsentRequired(
       return true;
     }
 
-    // Legacy documents carry the requirement as `acceptance.required`; the
-    // adapter in Form.tsx still honours those, so the server must too.
-    const required = form.requireConsent === true || form.legacyRequired === true;
+    const required = requiredBy(form);
     consentCache.set(cacheKey, { required, at: Date.now() });
     return required;
   } catch (err) {
     logger.error({ err, formId, ...scope }, '[sanity] requireConsent lookup failed');
 
-    // Prefer the last authoritative answer we saw for this form over guessing.
-    const cached = consentCache.get(cacheKey);
-    if (cached && Date.now() - cached.at < CONSENT_CACHE_TTL_MS) return cached.required;
+    return cachedAnswer(cacheKey);
+  }
+}
 
-    // Nothing cached. Only submissions claiming no consent is needed reach
-    // here, so this is the one spot the request's word is taken. Failing
-    // closed instead would reject every legitimate consent-free submission
-    // for the duration of any Sanity read outage, and the residual exposure
-    // is a forged request storing its own lead with `consent: false` — an
-    // accurate record rather than a falsified consent.
-    return false;
+/**
+ * The consent rule for registering to an event, read from the event's own
+ * registration form — never from a form id the browser sends.
+ * `no-form`: the event offers no registration, so nothing may be stored.
+ */
+export async function eventConsent(eventId: string): Promise<'required' | 'optional' | 'no-form'> {
+  const publishedId = published(eventId);
+  const cacheKey = `event:${publishedId}`;
+  try {
+    const form = await client.fetch<ConsentRow>(
+      `*[_id == $eventId][0].registrationForm->{
+        requireConsent,
+        "legacyRequired": acceptance.required
+      }`,
+      { eventId: publishedId }
+    );
+    if (!form) return 'no-form';
+    const required = requiredBy(form);
+    consentCache.set(cacheKey, { required, at: Date.now() });
+    return required ? 'required' : 'optional';
+  } catch (err) {
+    logger.error({ err, eventId }, '[sanity] event consent lookup failed');
+    return cachedAnswer(cacheKey) ? 'required' : 'optional';
   }
 }

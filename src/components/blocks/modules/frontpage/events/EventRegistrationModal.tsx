@@ -99,7 +99,6 @@ export default function EventRegistrationModal({
       company,
       phone,
       consent,
-      formId: form._id,
       source: {
         type: 'event',
         referenceId: event._id,

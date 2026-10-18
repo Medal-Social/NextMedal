@@ -278,7 +278,7 @@ describe('event registration uses the texts editors set', () => {
     );
   });
 
-  it('sends the form id and consent so the server can check it', () => {
+  it('sends the consent so the server can check it', () => {
     renderIn(
       <EventRegistrationModal
         open
@@ -291,7 +291,10 @@ describe('event registration uses the texts editors set', () => {
     fireEvent.submit(
       screen.getByRole('button', { name: 'Submit' }).closest('form') as HTMLFormElement
     );
-    expect(action.lastInput).toMatchObject({ formId: 'form-1', consent: true });
+    expect(action.lastInput).toMatchObject({
+      consent: true,
+      source: { type: 'event', referenceId: 'event-1' },
+    });
   });
 
   it('renders per-language field labels and plain placeholders', () => {

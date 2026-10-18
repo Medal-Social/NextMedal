@@ -3,7 +3,7 @@
 import { z } from 'zod';
 import { PublicError } from '@/lib/core/errors';
 import { actionClient, withSecurity } from '@/lib/core/safe-action';
-import { isConsentRequired } from '@/lib/forms/consent-required';
+import { eventConsent } from '@/lib/forms/consent-required';
 import { withRetry } from '@/lib/utils';
 import { writeClient } from '@/sanity/lib/client';
 
@@ -15,8 +15,6 @@ const leadSchema = withSecurity(
     jobTitle: z.string().optional(),
     phone: z.string().optional(),
     consent: z.boolean().optional(),
-    // Sanity `form` document id; the consent requirement is read from it.
-    formId: z.string().optional(),
     source: z.object({
       type: z.enum(['event', 'newsletter', 'download', 'contact', 'other']),
       referenceId: z.string().optional(),
@@ -27,11 +25,16 @@ const leadSchema = withSecurity(
 );
 
 export const captureLead = actionClient.schema(leadSchema).action(async ({ parsedInput }) => {
-  const { email, name, company, jobTitle, phone, consent, formId, source, language } = parsedInput;
+  const { email, name, company, jobTitle, phone, consent, source, language } = parsedInput;
 
-  // Same rule as submitForm: the form decides, scoped to the event it belongs to.
-  if ((await isConsentRequired(formId, { eventId: source.referenceId })) && consent !== true) {
-    throw new PublicError('Please accept the privacy terms to continue.');
+  // Event registration: the event's own registration form decides about consent.
+  if (source.type === 'event') {
+    if (!source.referenceId) throw new PublicError('This event could not be found.');
+    const rule = await eventConsent(source.referenceId);
+    if (rule === 'no-form') throw new PublicError('Registration is not open for this event.');
+    if (rule === 'required' && consent !== true) {
+      throw new PublicError('Please accept the privacy terms to continue.');
+    }
   }
 
   // Check if write token is configured
