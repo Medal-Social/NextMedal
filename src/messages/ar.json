@@ -388,6 +388,23 @@
       "copyright": "NextMedal • تم الإنشاء بواسطة <link>Medal Social</link> © {year}"
     }
   },
+  "socialEmbed": {
+    "viewOn": "عرض على {platform}",
+    "playVideo": "تشغيل الفيديو",
+    "clickToPlay": "انقر للتشغيل · يحمّل المشغّل",
+    "openOriginal": "لا يمكن معاينة هذا المنشور هنا. افتحه على المنصة الأصلية.",
+    "fallbackTitle": "تعذّر تحميل هذا المنشور",
+    "fallbackDescription": "قد يكون قد حُذف أو جُعل خاصاً، أو لم تستجب المنصة. يمكنك فتحه على {platform}.",
+    "postOn": "منشور على {platform}",
+    "platforms": {
+      "x": "X",
+      "linkedin": "LinkedIn",
+      "instagram": "Instagram",
+      "threads": "Threads",
+      "tiktok": "TikTok",
+      "youtube": "YouTube"
+    }
+  },
   "collectionSetup": {
     "siteSettingsMissing": {
       "title": "إعدادات الموقع غير موجودة",
@@ -405,5 +422,26 @@
       "step3": "انشر الإعدادات"
     },
     "openStudio": "افتح Sanity Studio"
+  },
+  "Flipbook": {
+    "previous": "الصفحة السابقة",
+    "next": "الصفحة التالية",
+    "allPages": "كل الصفحات",
+    "zoom": "تكبير الصفحة",
+    "closeZoom": "إغلاق التكبير",
+    "close": "إغلاق",
+    "download": "تنزيل PDF",
+    "fullscreen": "ملء الشاشة",
+    "goToPage": "انتقل إلى الصفحة",
+    "preparing": "جارٍ تجهيز الصفحات",
+    "pages": "{count} صفحة",
+    "page": "الصفحة {page}",
+    "pageOf": "الصفحة {page} من {total}",
+    "hintPointer": "انقر أو اسحب لقلب الصفحة · انقر مرتين للتكبير",
+    "hintTouch": "اسحب أو اضغط لقلب الصفحة · اضغط مرتين للتكبير",
+    "zoomHint": "الصفحة {page} · اقرص أو مرّر للتحريك",
+    "error": "تعذّر فتح ملف PDF هذا.",
+    "errorDetail": "قد يكون تالفًا أو محميًا بكلمة مرور. لا يزال بإمكانك تنزيله.",
+    "poweredBy": "بدعم من"
   }
 }

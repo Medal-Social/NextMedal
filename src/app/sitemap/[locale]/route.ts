@@ -5,6 +5,7 @@ import { getAllCollections } from '@/lib/collections/registry';
 import type { CollectionType } from '@/lib/collections/types';
 import { BASE_URL } from '@/lib/core/env';
 import { logger } from '@/lib/core/logger';
+import { isQaFixtureSitemapPath } from '@/lib/social-embed/qa-fixture-access';
 import { fetchSanityLive } from '@/sanity/lib/live';
 import { SITEMAP_TRANSLATIONS_QUERY, SITEMAP_WITH_TRANSLATIONS_QUERY } from '@/sanity/lib/queries';
 
@@ -142,9 +143,19 @@ function escapeXml(str: string): string {
     .replace(/'/g, '&apos;');
 }
 
+/** Drop QA fixture URLs from primary locs and from alternate-language links. */
+function omitQaFixtureLinks(
+  links: { lang: string; url: string }[]
+): { lang: string; url: string }[] {
+  return links.filter((link) => !isQaFixtureSitemapPath(link.url));
+}
+
 function generateUrlEntry(entry: SitemapEntry, prefix: string = ''): string {
   const url = buildUrl(entry.slug, entry.language, prefix);
-  const hreflangLinks = buildHreflangLinks(entry, prefix);
+  // Hard denylist: QA fixture routes must never ship in the public sitemap.
+  if (isQaFixtureSitemapPath(url)) return '';
+
+  const hreflangLinks = omitQaFixtureLinks(buildHreflangLinks(entry, prefix));
   const hasTranslations = hreflangLinks.length > 1;
 
   let xml = '  <url>\n';
@@ -169,7 +180,11 @@ async function generateCollectionUrlEntry(
   collectionSlugsMap: Map<string, Record<CollectionType, string>>
 ): Promise<string> {
   const url = await buildCollectionUrl(entry.slug, entry._type, entry.language, collectionSlugsMap);
-  const hreflangLinks = await buildCollectionHreflangLinks(entry, collectionSlugsMap);
+  if (isQaFixtureSitemapPath(url)) return '';
+
+  const hreflangLinks = omitQaFixtureLinks(
+    await buildCollectionHreflangLinks(entry, collectionSlugsMap)
+  );
   const hasTranslations = hreflangLinks.length > 1;
 
   let xml = '  <url>\n';

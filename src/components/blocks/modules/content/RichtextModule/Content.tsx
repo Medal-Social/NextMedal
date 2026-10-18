@@ -1,23 +1,17 @@
-import Callout from '@/components/blocks/modules/marketing/Callout';
-import LeadMagnet from '@/components/blocks/modules/marketing/LeadMagnet';
-import SharedPortableText from '@/components/blocks/modules/SharedPortableText';
-import { SocialEmbed, Video } from '@/components/blocks/objects/core';
-import { cn } from '@/lib/utils/index';
-import Code from './Code';
-import Image from './Image';
+/**
+ * Client-safe richtext Content — social embeds render as link-out fallback cards
+ * (no server-only oEmbed resolve). Used by the ComponentGallery preview path.
+ *
+ * Article / event / newsletter pages and server RichtextModule import
+ * `Content.server` instead for the full Medal oEmbed cards.
+ */
 
-const components = {
-  types: {
-    image: Image,
-    video: ({ value }: { value: Sanity.Video }) => <Video data={value} />,
-    socialEmbed: ({ value }: { value: Sanity.SocialEmbed }) => (
-      <SocialEmbed platform={value.platform} url={value.url} />
-    ),
-    code: Code,
-    'lead-magnet': ({ value }: { value: Sanity.LeadMagnet }) => <LeadMagnet {...value} />,
-    callout: ({ value }: { value: Sanity.Callout }) => <Callout {...value} />,
-  },
-};
+import SharedPortableText from '@/components/blocks/modules/SharedPortableText';
+import { SocialEmbedFallback } from '@/components/blocks/objects/core/social-embed/social-embed-fallback';
+import { cn } from '@/lib/utils/index';
+import { createContentComponents } from './content-components';
+
+const components = createContentComponents(SocialEmbedFallback);
 
 export default function Content({
   value,

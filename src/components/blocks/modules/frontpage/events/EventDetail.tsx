@@ -7,7 +7,7 @@
 
 import { Calendar, Clock, ExternalLink, MapPin, Play, Radio, Video } from 'lucide-react';
 import { Fragment } from 'react';
-import Content from '@/components/blocks/modules/content/RichtextModule/Content';
+import Content from '@/components/blocks/modules/content/RichtextModule/Content.server';
 import MobileSidebar from '@/components/blocks/modules/frontpage/articles/MobileSidebar';
 import { Date as DateDisplay, Img, Time } from '@/components/blocks/objects/core';
 import { Badge } from '@/components/ui/badge';

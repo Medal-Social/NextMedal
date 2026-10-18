@@ -8,7 +8,7 @@
 import { Calendar, Hash } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { Fragment } from 'react';
-import Content from '@/components/blocks/modules/content/RichtextModule/Content';
+import Content from '@/components/blocks/modules/content/RichtextModule/Content.server';
 import MobileSidebar from '@/components/blocks/modules/frontpage/articles/MobileSidebar';
 import ReadTime from '@/components/blocks/modules/frontpage/articles/ReadTime';
 import Sidebar from '@/components/blocks/modules/frontpage/articles/Sidebar';
