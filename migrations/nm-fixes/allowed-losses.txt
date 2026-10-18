@@ -1,0 +1,5 @@
+# Text the nm-fixes migration removes on purpose (Vault plan 2026-10-18, Task 12).
+# One JSON string per line; the `#` lines directly above a string give its reason.
+# Used by tests/unit/migrations/nm-fixes/inventory.test.ts and by
+# `pnpm exec tsx scripts/lean-schema/string-inventory.ts before.ndjson after.ndjson migrations/nm-fixes/allowed-losses.txt`.
+# Expected to stay empty: prices, form texts and anchor params keep their strings or are ignored keys.
