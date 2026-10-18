@@ -31,27 +31,13 @@ const findMember = (members: ObjectInputProps['members'], memberName: string) =>
   return undefined;
 };
 
-// Helper to format anchor label
-const formatAnchorLabel = (anchor: {
-  anchor: string;
-  label?: string;
-  type?: string;
-  isExplicit?: boolean;
-}) => {
-  if (anchor.label) return anchor.label;
-  const typeLabel = anchor.type
-    ? anchor.type.charAt(0).toUpperCase() + anchor.type.slice(1).replace('-', ' ')
-    : 'Section';
-  return anchor.isExplicit ? `${typeLabel} (#${anchor.anchor})` : typeLabel;
-};
-
 // Helper component for anchor selector
 const AnchorSelector = ({
   anchors,
   value,
   onChange,
 }: {
-  anchors: Array<{ anchor: string; label?: string; type?: string; isExplicit?: boolean }>;
+  anchors: Array<{ anchor: string; label: string }>;
   value: string;
   onChange: (value: string) => void;
 }) => {
@@ -77,7 +63,7 @@ const AnchorSelector = ({
       <option value="">Top of page</option>
       {anchors.map((anchor) => (
         <option key={anchor.anchor} value={`#${anchor.anchor}`}>
-          {formatAnchorLabel(anchor)}
+          {anchor.label}
         </option>
       ))}
     </Select>

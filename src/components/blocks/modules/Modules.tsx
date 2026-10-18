@@ -21,7 +21,7 @@ export default function Modules({
 
   const context: ModuleContext = { page, post, isSidebar };
   const sidebarProps: SidebarProps = isSidebar ? { spacing: 'none', width: 'full' } : {};
-  const anchors = isSidebar ? new Map<string, string>() : pageAnchors(modules);
+  const anchors = isSidebar || !page ? new Map<string, string>() : pageAnchors(modules);
 
   return (
     <>
