@@ -633,3 +633,15 @@ describe('event registration form projection', () => {
     expect(source).toContain('registrationForm->{${EVENT_REGISTRATION_FORM_QUERY}}');
   });
 });
+
+describe('Hero buttons', () => {
+  it('resolve their link target (the hero branch re-spreads raw fields, so it must project ctas again)', async () => {
+    const { MODULES_QUERY, CTA_QUERY } = await import('@/sanity/lib/queries');
+    const start = MODULES_QUERY.indexOf("_type == 'hero' => {");
+    const end = MODULES_QUERY.indexOf("_type == 'videoHero'", start);
+    expect(start).toBeGreaterThan(-1);
+    const heroBranch = MODULES_QUERY.slice(start, end);
+    expect(heroBranch).toContain('...,');
+    expect(heroBranch).toContain(`ctas[]{${CTA_QUERY}}`);
+  });
+});

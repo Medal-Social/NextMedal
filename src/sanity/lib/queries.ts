@@ -183,6 +183,8 @@ const BASE_MODULES_QUERY = groq`
 	},
 	_type == 'hero' => {
 		...,
+		// The spread above re-adds the raw buttons; resolve their link targets again.
+		ctas[]{${CTA_QUERY}},
 		content[]{ ${PT_BLOCK_QUERY} },
 		muxVideo{
 			...,
