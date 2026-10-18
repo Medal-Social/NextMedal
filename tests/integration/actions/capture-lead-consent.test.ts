@@ -11,11 +11,11 @@ const sanityFetch = vi.fn();
 
 vi.mock('@/sanity/lib/client', () => ({
   client: { fetch: (...args: unknown[]) => sanityFetch(...args) },
-  getWriteClient: () => ({
+  writeClient: {
     create: (...args: unknown[]) => create(...args),
     fetch: (...args: unknown[]) => writeFetch(...args),
     config: () => ({ token: 'test-write-token' }),
-  }),
+  },
 }));
 vi.mock('@/lib/core/logger', () => ({
   logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
