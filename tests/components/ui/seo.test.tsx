@@ -113,8 +113,14 @@ describe('SEO Title and Meta Description Tests', () => {
       } as Sanity.Page;
 
       const result = await processMetadata(mockPage);
-      const image = result.openGraph?.images as { url: string };
-      expect(image.url).toBe('https://cdn.sanity.io/images/test/production/og-image.jpg');
+      const image = result.openGraph?.images as { url: string; width: number; height: number };
+      const parsed = new URL(image.url);
+      expect(parsed.pathname).toBe('/images/test/production/og-image.jpg');
+      expect(parsed.searchParams.get('w')).toBe('1200');
+      expect(parsed.searchParams.get('h')).toBe('630');
+      expect(parsed.searchParams.get('fit')).toBe('crop');
+      expect(image.width).toBe(1200);
+      expect(image.height).toBe(630);
     });
   });
 

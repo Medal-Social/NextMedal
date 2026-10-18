@@ -208,8 +208,24 @@ describe('processMetadata Property Tests', () => {
         fc.asyncProperty(pageWithOgImageArb, async (page) => {
           const result = await processMetadata(page as unknown as Sanity.Page);
 
-          const ogImage = result.openGraph?.images as { url: string };
-          expect(ogImage.url).toBe(page.metadata.ogimage);
+          const ogImage = result.openGraph?.images as {
+            url: string;
+            width?: number;
+            height?: number;
+          };
+          const uploaded = new URL(page.metadata.ogimage);
+          if (uploaded.hostname === 'cdn.sanity.io') {
+            const delivered = new URL(ogImage.url);
+            expect(delivered.searchParams.get('w')).toBe('1200');
+            expect(delivered.searchParams.get('h')).toBe('630');
+            expect(delivered.searchParams.get('fit')).toBe('crop');
+            expect(ogImage.width).toBe(1200);
+            expect(ogImage.height).toBe(630);
+          } else {
+            expect(ogImage.url).toBe(page.metadata.ogimage);
+            expect(ogImage.width).toBeUndefined();
+            expect(ogImage.height).toBeUndefined();
+          }
         }),
         { numRuns: 100 }
       );

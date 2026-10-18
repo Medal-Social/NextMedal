@@ -247,7 +247,7 @@ export const PAGE_QUERY = groq`
 		metadata,
 		seo {
 			...,
-			'ogimage': image.asset->url + '?w=1200',
+			'ogimage': image.asset->url + '?w=1200&h=630&fit=crop',
 		},
 		${TRANSLATIONS_QUERY}
 	}
@@ -295,7 +295,7 @@ export const COLLECTION_ARTICLE_POST_QUERY = groq`
 		metadata,
 		seo {
 			...,
-			'ogimage': image.asset->url + '?w=1200'
+			'ogimage': image.asset->url + '?w=1200&h=630&fit=crop'
 		},
 		'translations': *[_type == 'translation.metadata' && references(^._id)].translations[].value->{
 			_type,
@@ -349,7 +349,7 @@ export const COLLECTION_NEWSLETTER_QUERY = groq`
 		metadata,
 		seo {
 			...,
-			'ogimage': image.asset->url + '?w=1200'
+			'ogimage': image.asset->url + '?w=1200&h=630&fit=crop'
 		},
 		'translations': *[_type == 'translation.metadata' && references(^._id)].translations[].value->{
 			_type,
@@ -399,7 +399,7 @@ export const COLLECTION_DOCUMENTATION_QUERY = groq`
 		metadata,
 		seo {
 			...,
-			'ogimage': image.asset->url + '?w=1200'
+			'ogimage': image.asset->url + '?w=1200&h=630&fit=crop'
 		},
 		'translations': *[_type == 'translation.metadata' && references(^._id)].translations[].value->{
 			_type,
@@ -441,7 +441,7 @@ export const COLLECTION_EVENTS_QUERY = groq`
 		metadata,
 		seo {
 			...,
-			'ogimage': image.asset->url + '?w=1200'
+			'ogimage': image.asset->url + '?w=1200&h=630&fit=crop'
 		},
 		'translations': *[_type == 'translation.metadata' && references(^._id)].translations[].value->{
 			_type,

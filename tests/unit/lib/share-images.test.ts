@@ -40,8 +40,6 @@ describe('designed share images', () => {
     ['changelog', '/og/changelog-frontpage.png'],
     ['events', '/og/events-frontpage.png'],
     ['newsletter', '/og/newsletter-frontpage.png'],
-    ['quick-start', '/og/getting-started.png'],
-    ['installation', '/og/getting-started.png'],
   ] as const)('maps /%s to %s with dimensions and alt', (slug, path) => {
     const image = resolveShareImage(
       {
@@ -102,6 +100,33 @@ describe('designed share images', () => {
     expect(image.url).toBe(`${BASE}/og/articles-frontpage.png`);
   });
 
+  it('keeps an article whose slug matches a route on the articles card', () => {
+    const image = resolveShareImage(
+      {
+        _type: 'collection.article',
+        metadata: { slug: { current: 'getting-started' } },
+      },
+      BASE,
+      'Getting started'
+    );
+
+    expect(image.url).toBe(`${BASE}/og/articles-frontpage.png`);
+  });
+
+  it('does not give a marketing page the documentation quick-setup card', () => {
+    const image = resolveShareImage(
+      {
+        _type: 'page',
+        metadata: { slug: { current: 'installation' } },
+        modules: [{ _type: 'features' }],
+      },
+      BASE,
+      'Installation'
+    );
+
+    expect(image.url).toBe(`${BASE}/og/features.png`);
+  });
+
   it('uses the getting-started card for a documentation quick-start article', () => {
     const image = resolveShareImage(
       {
@@ -128,7 +153,31 @@ describe('designed share images', () => {
     expect(image.url).toBe(`${BASE}/og/docs.png`);
   });
 
-  it('prefers an uploaded image over the designed card', () => {
+  it('crops a Sanity upload to 1200×630 and keeps that size', () => {
+    const image = resolveShareImage(
+      {
+        _type: 'page',
+        metadata: {
+          slug: { current: 'index' },
+          ogimage: 'https://cdn.sanity.io/images/test/production/og-image.jpg?w=1200',
+        },
+      },
+      BASE,
+      'Home title'
+    );
+
+    const parsed = new URL(image.url);
+    expect(parsed.hostname).toBe('cdn.sanity.io');
+    expect(parsed.searchParams.get('w')).toBe('1200');
+    expect(parsed.searchParams.get('h')).toBe('630');
+    expect(parsed.searchParams.get('fit')).toBe('crop');
+    expect(image.width).toBe(1200);
+    expect(image.height).toBe(630);
+    expect(image.alt).toBe('Home title');
+    expect(image.type).toBe('image/jpeg');
+  });
+
+  it('does not claim 1200×630 for an upload this app cannot crop', () => {
     const image = resolveShareImage(
       {
         _type: 'page',
@@ -142,10 +191,9 @@ describe('designed share images', () => {
     );
 
     expect(image.url).toBe('https://cdn.example.com/custom.jpg');
-    expect(image.width).toBe(1200);
-    expect(image.height).toBe(630);
+    expect(image.width).toBeUndefined();
+    expect(image.height).toBeUndefined();
     expect(image.alt).toBe('Home title');
-    expect(image.type).toBe('image/jpeg');
   });
 
   it('does not treat inherited object keys as routes', () => {

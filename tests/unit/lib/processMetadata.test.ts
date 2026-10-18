@@ -181,15 +181,24 @@ describe('processMetadata', () => {
           title: 'Test Page Title',
           description: 'Test description',
           noIndex: false,
-          ogimage: 'https://cdn.example.com/custom-og-image.jpg',
+          ogimage: 'https://cdn.sanity.io/images/test/production/custom-og-image.jpg?w=1200',
         },
       });
       const result = await processMetadata(page);
-      const image = result.openGraph?.images as { url: string; alt: string; width: number };
+      const image = result.openGraph?.images as {
+        url: string;
+        alt: string;
+        width: number;
+        height: number;
+      };
 
-      expect(image.url).toBe('https://cdn.example.com/custom-og-image.jpg');
+      const parsed = new URL(image.url);
+      expect(parsed.searchParams.get('w')).toBe('1200');
+      expect(parsed.searchParams.get('h')).toBe('630');
+      expect(parsed.searchParams.get('fit')).toBe('crop');
       expect(image.alt).toBe('Test Page Title');
       expect(image.width).toBe(1200);
+      expect(image.height).toBe(630);
     });
 
     it('should keep the page title as alt text when the share card is the static fallback', async () => {

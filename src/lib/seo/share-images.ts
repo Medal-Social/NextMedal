@@ -12,11 +12,22 @@ export const SHARE_IMAGE_FALLBACK_PATH = '/og-fallback.png';
 
 export type ShareImage = {
   url: string;
-  width: typeof SHARE_IMAGE_WIDTH;
-  height: typeof SHARE_IMAGE_HEIGHT;
   alt: string;
+  /** Set only when the delivered image is actually 1200×630. */
+  width?: typeof SHARE_IMAGE_WIDTH;
+  height?: typeof SHARE_IMAGE_HEIGHT;
   type?: 'image/png' | 'image/jpeg' | 'image/webp' | 'image/gif';
 };
+
+/** Sanity CDN transform that crops an upload to the share-card size. */
+export const SANITY_SHARE_IMAGE_QUERY = '?w=1200&h=630&fit=crop';
+
+const SANITY_CDN_HOST = 'cdn.sanity.io';
+
+/** Documentation articles that use the README quick-setup card. */
+const DOCUMENTATION_SETUP_SLUGS = new Set(['quick-start', 'getting-started', 'installation']);
+
+const PAGE_DOCUMENT_TYPES = new Set(['page', 'component.library']);
 
 type ShareImageEntry = {
   file: string;
@@ -181,14 +192,33 @@ export function shareImageFromEntry(entry: ShareImageEntry, baseUrl: string): Sh
   };
 }
 
+/**
+ * Crop Sanity CDN uploads to 1200×630 so the declared size matches the bytes.
+ * Other hosts are returned unchanged and without a size, because this app cannot crop them.
+ */
 export function shareImageFromUpload(url: string, alt: string): ShareImage {
+  const cropped = cropSanityShareImage(url);
+  const delivered = cropped ?? url;
+  const type = imageType(delivered);
   return {
-    url,
-    width: SHARE_IMAGE_WIDTH,
-    height: SHARE_IMAGE_HEIGHT,
+    url: delivered,
     alt,
-    ...(imageType(url) ? { type: imageType(url) } : {}),
+    ...(cropped ? { width: SHARE_IMAGE_WIDTH, height: SHARE_IMAGE_HEIGHT } : {}),
+    ...(type ? { type } : {}),
   };
+}
+
+function cropSanityShareImage(url: string): string | undefined {
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname !== SANITY_CDN_HOST) return undefined;
+    parsed.searchParams.set('w', '1200');
+    parsed.searchParams.set('h', '630');
+    parsed.searchParams.set('fit', 'crop');
+    return parsed.toString();
+  } catch {
+    return undefined;
+  }
 }
 
 export function shareImageFallback(baseUrl: string, alt: string): ShareImage {
@@ -217,9 +247,16 @@ function entryForCollection(documentType: string | undefined): ShareImageEntry |
   return COLLECTION_SHARE_IMAGES[documentType as keyof typeof COLLECTION_SHARE_IMAGES];
 }
 
+function isPageDocument(documentType: string | undefined): boolean {
+  return documentType == null || PAGE_DOCUMENT_TYPES.has(documentType);
+}
+
 /**
  * Pick the share image for a document.
- * Order: editor upload, exact route, collection card, leading module that has a card, static fallback.
+ * Order: editor upload, page route, documentation quick-setup card, collection card,
+ * leading module that has a card, static fallback.
+ * Route keys are not applied to collection items, so an article slug of `components`
+ * stays on the articles card.
  */
 export function resolveShareImage(
   page: ShareImagePage,
@@ -230,8 +267,15 @@ export function resolveShareImage(
   if (uploaded) return shareImageFromUpload(uploaded, altFallback);
 
   const slug = page.metadata?.slug?.current;
-  const routeEntry = entryForSlug(slug);
-  if (routeEntry) return shareImageFromEntry(routeEntry, baseUrl);
+
+  if (isPageDocument(page._type) && slug && !DOCUMENTATION_SETUP_SLUGS.has(slug)) {
+    const routeEntry = entryForSlug(slug);
+    if (routeEntry) return shareImageFromEntry(routeEntry, baseUrl);
+  }
+
+  if (page._type === 'collection.documentation' && slug && DOCUMENTATION_SETUP_SLUGS.has(slug)) {
+    return shareImageFromEntry(ROUTE_SHARE_IMAGES['getting-started'], baseUrl);
+  }
 
   const collectionEntry =
     entryForCollection(page._type) ??
