@@ -47,7 +47,7 @@ test.describe('Flipbook', () => {
 
     await page.mouse.click(book.x + book.width * 0.25, book.y + book.height * 0.5);
     await expect(counter(page)).toHaveText(/^4–5/);
-    await page.mouse.dblclick(book.x + book.width * 0.75, book.y + book.height * 0.3);
+    await page.mouse.dblclick(book.x + book.width * 0.6, book.y + book.height * 0.3); // middle zone: edges turn instantly
     await expect(page.locator('.fb')).toHaveClass(/is-zoomed/);
     await expect(counter(page)).toHaveText(/^4–5/);
     await page.keyboard.press('Escape');
