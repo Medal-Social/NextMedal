@@ -134,7 +134,7 @@ describe('FlipbookViewer', () => {
     );
     expect(screen.queryByRole('alert')).toBeNull();
     expect(logger.error).toHaveBeenCalledWith(
-      expect.objectContaining({ src: '/late.pdf', page: 5 }),
+      expect.objectContaining({ src: '/late.pdf', page: 5, kind: 'page' }),
       'Flipbook page failed to render'
     );
     fireEvent.click(screen.getByRole('button', { name: 'All pages' }));
@@ -142,6 +142,12 @@ describe('FlipbookViewer', () => {
       expect(screen.getByRole('button', { name: 'Go to page 5' })).toHaveClass('is-unavailable')
     );
     expect(screen.getByRole('button', { name: 'Go to page 4' })).not.toHaveClass('is-unavailable');
+    await waitFor(() =>
+      expect(logger.error).toHaveBeenCalledWith(
+        expect.objectContaining({ src: '/late.pdf', page: 5, kind: 'thumbnail' }),
+        'Flipbook page failed to render'
+      )
+    );
     fireEvent.click(screen.getByRole('button', { name: 'All pages' }));
 
     const slider = screen.getByRole('slider', { name: 'Go to page' });

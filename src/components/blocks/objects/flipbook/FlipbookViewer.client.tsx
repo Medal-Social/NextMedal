@@ -228,17 +228,23 @@ export function FlipbookViewer({
         const start = Math.min(Math.max(0, startPage - 1), total - 1);
         const height = targetPageHeight();
         const [a, b] = visibleRange(start, total, false);
+        // Renders at `size`, logging real failures (a page turn cancelling a render isn't one).
+        const renderLogged =
+          (size: { height: number }, kind: 'page' | 'thumbnail') =>
+          (i: number, signal: AbortSignal) =>
+            renderPage(doc, i, size, signal).catch((error: unknown) => {
+              if (!signal.aborted)
+                logger.error(
+                  { err: error, src, page: i + 1, kind },
+                  'Flipbook page failed to render'
+                );
+              throw error;
+            });
         // Each document opens once, at its own start page; later cache events never move the reader.
         let opened = false;
         const cache = new PageCache({
           count: total,
-          render: (i, signal) =>
-            renderPage(doc, i, { height }, signal).catch((error: unknown) => {
-              // A page turn cancelling the render is not a failure.
-              if (!signal.aborted)
-                logger.error({ err: error, src, page: i + 1 }, 'Flipbook page failed to render');
-              throw error;
-            }),
+          render: renderLogged({ height }, 'page'),
           onChange: (i) => {
             leafRef.current?.refresh(i);
             bump();
@@ -264,7 +270,7 @@ export function FlipbookViewer({
         // Thumbnails near the reading position, plus whatever the drawer actually shows.
         const thumbs = new PageCache({
           count: total,
-          render: (i, signal) => renderPage(doc, i, { height: THUMB_HEIGHT }, signal),
+          render: renderLogged({ height: THUMB_HEIGHT }, 'thumbnail'),
           onChange: bump,
           capacity: 72,
           behind: 8,
