@@ -26,7 +26,7 @@ const devOnlyPlugins = isDev
   : [];
 
 export default defineConfig({
-  title: `Studio by Medal Social ${dataset === 'staging' ? '(STAGING)' : ''}`,
+  title: `Studio by Medal Social${dataset === 'staging' ? ' (STAGING)' : ''}`,
   icon: StudioIcon,
   projectId,
   dataset,
