@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { evaluate, parse } from 'groq-js';
 import { NextRequest } from 'next/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/i18n/config';
@@ -187,6 +188,75 @@ describe('RSS Feed Route', () => {
   });
 
   describe('RSS Items', () => {
+    it('localizes real CMS categories while retaining articles with dangling references', async () => {
+      const dataset = [
+        {
+          _id: 'article-localized',
+          _type: 'collection.article',
+          language: 'nb',
+          metadata: { title: 'Norwegian article', slug: { current: 'norwegian-article' } },
+          publishDate: '2026-09-19T12:00:00Z',
+          categories: [{ _ref: 'deleted' }, { _ref: 'localized' }, { _ref: 'fallback' }],
+        },
+        {
+          _id: 'localized',
+          title: [
+            { _key: 'en', value: 'News' },
+            { _key: 'nb', value: 'Nyheter & tips' },
+          ],
+        },
+        { _id: 'fallback', title: [{ _key: 'en', value: 'Guides' }] },
+      ];
+      mockFetch.mockImplementationOnce(async (query: string, params: Record<string, unknown>) =>
+        (await evaluate(parse(query), { dataset, params })).get()
+      );
+      const response = await GET(createMockRequest('nb', 'artikler'), {
+        params: createMockParams('nb', 'artikler'),
+      });
+      expect(response.status).toBe(200);
+      const xml = new DOMParser().parseFromString(await response.text(), 'application/xml');
+      expect(xml.querySelector('parsererror')).toBeNull();
+      expect(xml.querySelector('item title')?.textContent).toBe('Norwegian article');
+      expect(xml.querySelector('item category')?.textContent).toBe('Nyheter & tips, Guides');
+    });
+
+    it.each([
+      { categories: [null], expectedCategory: null },
+      {
+        categories: [null, { title: 'News & Updates' }, { title: null }, {}, { title: 'Guides' }],
+        expectedCategory: 'News & Updates, Guides',
+      },
+      { categories: [{ title: '' }, { title: '  ' }], expectedCategory: null },
+    ])(
+      'omits dangling category references without losing the article: $categories',
+      async ({ categories, expectedCategory }) => {
+        // Sanity dereferences a deleted category to null, as observed in the Norwegian feed.
+        mockFetch.mockResolvedValueOnce([
+          {
+            _id: 'article-with-deleted-category',
+            title: 'Norwegian article',
+            slug: 'norwegian-article',
+            publishDate: '2026-09-19T12:00:00Z',
+            authors: [null],
+            categories,
+          },
+        ]);
+
+        const response = await GET(createMockRequest('nb', 'artikler'), {
+          params: createMockParams('nb', 'artikler'),
+        });
+        expect(response.status).toBe(200);
+        const xml = new DOMParser().parseFromString(await response.text(), 'application/xml');
+        expect(xml.querySelector('parsererror')).toBeNull();
+        expect(xml.querySelector('item title')?.textContent).toBe('Norwegian article');
+        expect(xml.querySelector('item link')?.textContent).toBe(
+          'https://test.example.com/nb/artikler/norwegian-article'
+        );
+        expect(xml.querySelector('item category')?.textContent ?? null).toBe(expectedCategory);
+        expect(xml.querySelector('item author')).toBeNull();
+      }
+    );
+
     it('includes item elements with required fields', async () => {
       mockFetch.mockResolvedValueOnce([
         {
