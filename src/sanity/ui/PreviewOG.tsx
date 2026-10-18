@@ -3,14 +3,27 @@
 import { EyeOpenIcon } from '@sanity/icons/EyeOpen';
 import { Box, Button, Card, Dialog, Flex, Spinner, Stack, Text } from '@sanity/ui';
 import { useState } from 'react';
+import { useFormValue } from 'sanity';
 import { BASE_URL } from '@/lib/core/env.client';
+import { resolveShareImage } from '@/lib/seo/share-images';
 
 export default function PreviewOG({ title }: { title?: string }) {
   const [showPreview, setShowPreview] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
-  const url = `${BASE_URL}/api/og?title=${encodeURIComponent(title ?? '')}`;
+  const documentType = useFormValue(['_type']) as string | undefined;
+  const slug = useFormValue(['metadata', 'slug', 'current']) as string | undefined;
+  const modules = useFormValue(['modules']) as Array<{ _type?: string } | null> | null;
+  const url = resolveShareImage(
+    {
+      _type: documentType,
+      metadata: { slug: slug ? { current: slug } : undefined, title },
+      modules,
+    },
+    BASE_URL,
+    title || 'NextMedal'
+  ).url;
 
   const handlePreview = () => {
     setShowPreview(true);
@@ -27,7 +40,6 @@ export default function PreviewOG({ title }: { title?: string }) {
         icon={EyeOpenIcon}
         title="Preview social sharing image"
         onClick={handlePreview}
-        disabled={!title}
       />
 
       {showPreview && (
@@ -45,8 +57,8 @@ export default function PreviewOG({ title }: { title?: string }) {
                 </Text>
                 <Text size={1} muted>
                   This image will appear when your page is shared on social media platforms like
-                  Facebook, Twitter/X, LinkedIn, and Slack. It's automatically generated from your
-                  SEO title.
+                  Facebook, Twitter/X, LinkedIn, and Slack. It is the designed card for this
+                  document's route, collection, or leading module.
                 </Text>
               </Stack>
 
