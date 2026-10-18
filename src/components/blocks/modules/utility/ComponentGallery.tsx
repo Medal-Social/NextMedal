@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
 import { Loading } from '@/components/blocks/objects/core';
+import { isRetiredGalleryModule } from '@/lib/sanity/gallery-items';
 import moduleProps from '@/lib/sanity/module-props';
 import ComponentGalleryClient from './ComponentGallery.client';
 
@@ -55,20 +56,22 @@ export default async function ComponentGallery({
   const components: GalleryComponentData[] =
     groups?.flatMap(
       (group) =>
-        group.items?.map((item) => {
-          const extItem = item as ExtendedModule;
-          const title =
-            extItem.title || extItem.summary || getContentTitle(extItem.content) || item._type;
+        group.items
+          ?.filter((item) => !isRetiredGalleryModule(item._type))
+          .map((item) => {
+            const extItem = item as ExtendedModule;
+            const title =
+              extItem.title || extItem.summary || getContentTitle(extItem.content) || item._type;
 
-          return {
-            id: item._key,
-            name: title || t('untitled'),
-            description: extItem.description || extItem.subtitle || '',
-            category: group.title,
-            moduleType: item._type,
-            moduleData: item,
-          };
-        }) || []
+            return {
+              id: item._key,
+              name: title || t('untitled'),
+              description: extItem.description || extItem.subtitle || '',
+              category: group.title,
+              moduleType: item._type,
+              moduleData: item,
+            };
+          }) || []
     ) || [];
 
   return (
