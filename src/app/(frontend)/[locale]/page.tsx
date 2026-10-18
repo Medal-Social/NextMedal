@@ -41,7 +41,7 @@ export default async function Page(props: Props) {
   return (
     <PageProvider page={page}>
       {placements.top && <Modules modules={placements.top} />}
-      {page?.modules && page.modules.length > 0 && <Modules modules={page?.modules} />}
+      {page?.modules && page.modules.length > 0 && <Modules modules={page?.modules} page={page} />}
       {placements.bottom && <Modules modules={placements.bottom} />}
     </PageProvider>
   );

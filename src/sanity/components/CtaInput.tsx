@@ -32,7 +32,13 @@ const findMember = (members: ObjectInputProps['members'], memberName: string) =>
 };
 
 // Helper to format anchor label
-const formatAnchorLabel = (anchor: { anchor: string; type?: string; isExplicit?: boolean }) => {
+const formatAnchorLabel = (anchor: {
+  anchor: string;
+  label?: string;
+  type?: string;
+  isExplicit?: boolean;
+}) => {
+  if (anchor.label) return anchor.label;
   const typeLabel = anchor.type
     ? anchor.type.charAt(0).toUpperCase() + anchor.type.slice(1).replace('-', ' ')
     : 'Section';
@@ -45,7 +51,7 @@ const AnchorSelector = ({
   value,
   onChange,
 }: {
-  anchors: Array<{ anchor: string; type?: string; isExplicit?: boolean }>;
+  anchors: Array<{ anchor: string; label?: string; type?: string; isExplicit?: boolean }>;
   value: string;
   onChange: (value: string) => void;
 }) => {
