@@ -140,12 +140,38 @@ describe('processMetadata', () => {
     });
   });
 
-  describe('Auto-generated OG Image (Requirement 12.2)', () => {
-    it('should generate auto OG image URL when no ogimage provided', async () => {
+  describe('Designed share image (Requirement 12.2)', () => {
+    it('should use the static fallback card when no route or module matches', async () => {
       const page = createMockPage();
       const result = await processMetadata(page);
+      const image = result.openGraph?.images as {
+        url: string;
+        width: number;
+        height: number;
+        alt: string;
+      };
 
-      expect(result.openGraph?.images).toBe('https://example.com/api/og?title=Test%20Page%20Title');
+      expect(image.url).toBe('https://example.com/og-fallback.png');
+      expect(image.width).toBe(1200);
+      expect(image.height).toBe(630);
+      expect(image.alt).toBe('Test Page Title');
+      expect(result.twitter).toMatchObject({ card: 'summary_large_image', images: image });
+    });
+
+    it('should use home.png for the index route even when the leading module has its own card', async () => {
+      const page = createMockPage({
+        metadata: {
+          slug: { current: 'index' },
+          title: 'NextMedal',
+          description: 'Test description',
+          noIndex: false,
+        },
+        modules: [{ _type: 'hero', _key: 'hero' }],
+      });
+      const result = await processMetadata(page);
+      const image = result.openGraph?.images as { url: string };
+
+      expect(image.url).toBe('https://example.com/og/home.png');
     });
 
     it('should use uploaded ogimage when provided', async () => {
@@ -159,11 +185,14 @@ describe('processMetadata', () => {
         },
       });
       const result = await processMetadata(page);
+      const image = result.openGraph?.images as { url: string; alt: string; width: number };
 
-      expect(result.openGraph?.images).toBe('https://cdn.example.com/custom-og-image.jpg');
+      expect(image.url).toBe('https://cdn.example.com/custom-og-image.jpg');
+      expect(image.alt).toBe('Test Page Title');
+      expect(image.width).toBe(1200);
     });
 
-    it('should encode special characters in auto-generated OG image URL', async () => {
+    it('should keep the page title as alt text when the share card is the static fallback', async () => {
       const page = createMockPage({
         metadata: {
           slug: { current: 'test-page' },
@@ -173,9 +202,11 @@ describe('processMetadata', () => {
         },
       });
       const result = await processMetadata(page);
+      const image = result.openGraph?.images as { url: string; alt: string };
 
-      expect(result.openGraph?.images).toContain('api/og?title=');
-      expect(result.openGraph?.images).toContain(encodeURIComponent('Test & Special "Characters"'));
+      expect(image.url).toBe('https://example.com/og-fallback.png');
+      expect(image.alt).toBe('Test & Special "Characters"');
+      expect(result.openGraph?.title).toBe('Test & Special "Characters"');
     });
   });
 

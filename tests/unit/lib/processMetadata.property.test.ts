@@ -11,9 +11,10 @@ vi.mock('@/sanity/lib/live', () => ({
 
 import processMetadata from '@/lib/sanity/process-metadata';
 
-// Mock the env module
-vi.mock('@/lib/env', () => ({
+// Mock the env module (must match the import in process-metadata.ts)
+vi.mock('@/lib/core/env', () => ({
   BASE_URL: 'https://example.com',
+  dev: false,
   vercelPreview: false,
   isStaging: false,
   isPreview: false,
@@ -133,9 +134,9 @@ describe('processMetadata Property Tests', () => {
   });
 
   /**
-   * **Feature: component-accessibility-testing, Property 32: Auto-generated OG Image**
-   * *For any* page without an ogimage in metadata, processMetadata SHALL generate an OG image URL
-   * pointing to /api/og with the title parameter.
+   * **Feature: component-accessibility-testing, Property 32: Designed share image**
+   * *For any* page without an ogimage in metadata, processMetadata SHALL return a 1200×630
+   * share image: the designed PNG for a known route, otherwise the static fallback card.
    * **Validates: Requirements 12.2**
    */
   describe('Property 32: Auto-generated OG Image', () => {
@@ -156,23 +157,26 @@ describe('processMetadata Property Tests', () => {
       }),
     });
 
-    it('should generate auto OG image URL with title parameter when no ogimage provided', async () => {
+    it('should use a designed PNG or the static fallback when no ogimage is provided', async () => {
       await fc.assert(
         fc.asyncProperty(pageWithoutOgImageArb, async (page) => {
           const result = await processMetadata(page as unknown as Sanity.Page);
 
-          // OG image should be auto-generated
           expect(result.openGraph?.images).toBeDefined();
-          const ogImage = result.openGraph?.images as string;
+          const ogImage = result.openGraph?.images as {
+            url: string;
+            width: number;
+            height: number;
+            alt: string;
+          };
 
-          // Should point to /api/og
-          expect(ogImage).toContain('/api/og');
-
-          // Should include title parameter
-          expect(ogImage).toContain('title=');
-
-          // Should include encoded title
-          expect(ogImage).toContain(encodeURIComponent(page.metadata.title));
+          const designed = ogImage.url.startsWith('https://example.com/og/');
+          const fallback = ogImage.url === 'https://example.com/og-fallback.png';
+          expect(designed || fallback).toBe(true);
+          expect(ogImage.url).not.toContain('/api/og');
+          expect(ogImage.width).toBe(1200);
+          expect(ogImage.height).toBe(630);
+          expect(ogImage.alt.length).toBeGreaterThan(0);
         }),
         { numRuns: 100 }
       );
@@ -204,8 +208,8 @@ describe('processMetadata Property Tests', () => {
         fc.asyncProperty(pageWithOgImageArb, async (page) => {
           const result = await processMetadata(page as unknown as Sanity.Page);
 
-          // OG image should be the provided one
-          expect(result.openGraph?.images).toBe(page.metadata.ogimage);
+          const ogImage = result.openGraph?.images as { url: string };
+          expect(ogImage.url).toBe(page.metadata.ogimage);
         }),
         { numRuns: 100 }
       );

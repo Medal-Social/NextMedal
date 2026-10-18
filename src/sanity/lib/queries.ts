@@ -210,7 +210,7 @@ export const MODULES_QUERY = groq`
 		...,
 		groups[]{
 			...,
-			items[]{
+			items[_type != "blog-frontpage" && _type != "blog-listing"]{
 				${BASE_MODULES_QUERY}
 			}
 		}
