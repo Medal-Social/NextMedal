@@ -62,6 +62,7 @@ describe('loadOgFont', () => {
   afterEach(() => {
     delete (globalThis as Record<symbol, unknown>)[CF_CONTEXT];
     vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
   });
 
   it('reads the font through the Worker ASSETS binding, not over HTTP', async () => {
@@ -83,7 +84,8 @@ describe('loadOgFont', () => {
     expect(loaded).toMatchObject({ name: 'Inter', weight: 600 });
   });
 
-  it('falls back to an HTTP fetch when there is no binding (next dev)', async () => {
+  it('uses the configured origin for HTTP loading without a binding', async () => {
+    vi.stubEnv('NEXT_PUBLIC_BASE_URL', 'http://localhost:3000');
     const httpFetch = vi.fn().mockResolvedValue(new Response(font, { status: 200 }));
     vi.stubGlobal('fetch', httpFetch);
 
@@ -95,15 +97,19 @@ describe('loadOgFont', () => {
 
     expect(httpFetch).toHaveBeenCalledWith('http://localhost:3000/fonts/Inter-SemiBold.ttf', {
       signal: expect.any(AbortSignal),
+      redirect: 'error',
     });
     expect(loaded?.data.byteLength).toBe(4);
   });
 
   it('returns null rather than throwing when every source fails', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network down')));
+    vi.stubEnv('NEXT_PUBLIC_BASE_URL', 'https://trusted.example');
+    const httpFetch = vi.fn().mockRejectedValue(new Error('network down'));
+    vi.stubGlobal('fetch', httpFetch);
 
     await expect(
       loadOgFont('Inter', '/fonts/Inter-SemiBold.ttf', 'https://site.test/api/og')
     ).resolves.toBeNull();
+    expect(httpFetch).toHaveBeenCalledOnce();
   });
 });

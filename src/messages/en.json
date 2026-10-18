@@ -264,6 +264,23 @@
       "copyright": "NextMedal • Created by <link>Medal Social</link> © {year}"
     }
   },
+  "socialEmbed": {
+    "viewOn": "View on {platform}",
+    "playVideo": "Play video",
+    "clickToPlay": "Click to play · loads player",
+    "openOriginal": "This post can’t be previewed here. Open it on the original platform.",
+    "fallbackTitle": "Couldn’t load this post",
+    "fallbackDescription": "It may have been deleted or made private, or the platform didn’t respond. You can still open it on {platform}.",
+    "postOn": "Post on {platform}",
+    "platforms": {
+      "x": "X",
+      "linkedin": "LinkedIn",
+      "instagram": "Instagram",
+      "threads": "Threads",
+      "tiktok": "TikTok",
+      "youtube": "YouTube"
+    }
+  },
   "collectionSetup": {
     "siteSettingsMissing": {
       "title": "Site Settings Not Found",
@@ -281,5 +298,26 @@
       "step3": "Publish the settings"
     },
     "openStudio": "Open Sanity Studio"
+  },
+  "Flipbook": {
+    "previous": "Previous page",
+    "next": "Next page",
+    "allPages": "All pages",
+    "zoom": "Zoom page",
+    "closeZoom": "Close zoom",
+    "close": "Close",
+    "download": "Download PDF",
+    "fullscreen": "Fullscreen",
+    "goToPage": "Go to page",
+    "preparing": "Preparing pages",
+    "pages": "{count} pages",
+    "page": "Page {page}",
+    "pageOf": "Page {page} of {total}",
+    "hintPointer": "Click or drag to turn · double-click to zoom",
+    "hintTouch": "Swipe or tap to turn · double-tap to zoom",
+    "zoomHint": "Page {page} · pinch or scroll to pan",
+    "error": "We couldn’t open this PDF.",
+    "errorDetail": "It may be damaged or password-protected. You can still download it.",
+    "poweredBy": "Powered by"
   }
 }

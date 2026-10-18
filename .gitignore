@@ -10,6 +10,9 @@
 /test-results/
 /playwright/.cache/
 /lighthouse-report.html
+# Social-embed Lighthouse gate: regenerate locally/CI; do not commit (stale fixture drift).
+docs/lighthouse/*.report.json
+docs/lighthouse/*.report.html
 blob-report/
 *.lhci.json
 

@@ -18,6 +18,19 @@ Learn how to add a new language to the NextMedal i18n system. Covers:
 
 ---
 
+### [Flipbook block](./flipbook.md)
+
+Show an uploaded PDF as a page-turning book. Covers:
+
+- Adding it in Studio (one PDF field, optional title)
+- Re-skinning per customer with `--fb-*` tokens, including dark mode
+- Using `<Flipbook>` directly in code
+- Security notes (pinned pdf.js, same-origin worker, in-house page-turn engine)
+
+**When to use**: You want to publish a report, brochure or lookbook that reads like a magazine.
+
+---
+
 ### [Adding a Collection](./adding-a-collection.md)
 
 Learn how to create a new content collection type (e.g., Tutorials, Case Studies, Press Releases). Covers:

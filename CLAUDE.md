@@ -529,7 +529,7 @@ NEXT_PUBLIC_IMAGE_PROXY_URL      # Custom image proxy (enables custom loader)
 Allowed remote image sources:
 - `cdn.sanity.io` (Sanity assets)
 - `image.mux.com` (Mux video thumbnails)
-- `img.youtube.com` (YouTube thumbnails)
+- `img.youtube.com` and `i.ytimg.com` (YouTube thumbnails; `i.ytimg.com` is the image CDN social embed cards load)
 
 SVGs are allowed via `dangerouslyAllowSVG`. Custom image proxy can be enabled via `NEXT_PUBLIC_IMAGE_PROXY_URL`.
 

@@ -22,7 +22,8 @@
       "!**/coverage/",
       "!**/.wrangler/",
       "!**/dist/",
-      "!**/*.d.ts"
+      "!**/*.d.ts",
+      "!docs/lighthouse/**/*.report.*"
     ]
   },
   "assist": {

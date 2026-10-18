@@ -3,10 +3,13 @@ import { withOgFallback } from '../../../cloudflare/og-response.js';
 import { servePublicFile } from '../../../cloudflare/public-files.js';
 
 const req = (path: string) => new Request(`https://site.test${path}`);
-afterEach(() => vi.useRealTimers());
+afterEach(() => {
+  vi.useRealTimers();
+  vi.restoreAllMocks();
+});
 
 describe('public file routing', () => {
-  it.each(['/missing.js', '/favicon.ico', '/contact.html', '/api', '/ads.txt'])(
+  it.each(['/missing.js', '/favicon.ico', '/api', '/ads.txt'])(
     'returns a true 404 for %s',
     async (path) => {
       const response = await servePublicFile(req(path), {
@@ -97,4 +100,93 @@ describe('complete OG responses', () => {
     expect(await withOgFallback(req('/contact'), env, async () => response)).toBe(response);
     expect(response.bodyUsed).toBe(false);
   });
+});
+
+describe('OG failure recovery', () => {
+  it('redirects to the static card when the asset binding rejects', async () => {
+    const response = await withOgFallback(
+      req('/api/og'),
+      {
+        ASSETS: {
+          fetch: async () => {
+            throw new Error('asset service unavailable');
+          },
+        },
+      },
+      async () => {
+        throw new Error('renderer unavailable');
+      }
+    );
+    expect(response.status).toBe(302);
+    expect(response.headers.get('location')).toBe('https://site.test/og-fallback.png');
+  });
+  it('aborts the request passed to the renderer when its deadline expires', async () => {
+    vi.useFakeTimers();
+    const aborted = vi.fn();
+    const pending = withOgFallback(
+      req('/api/og'),
+      {},
+      (renderRequest: Request) => {
+        renderRequest?.signal.addEventListener('abort', aborted);
+        return new Promise(() => {});
+      },
+      100
+    );
+    await vi.advanceTimersByTimeAsync(100);
+    expect((await pending).status).toBe(302);
+    expect(aborted).toHaveBeenCalledOnce();
+  });
+  it('cancels a response body that arrives after the rendering deadline', async () => {
+    vi.useFakeTimers();
+    const cancel = vi.fn();
+    let complete!: (response: Response) => void;
+    const pending = withOgFallback(
+      req('/api/og'),
+      {},
+      () =>
+        new Promise<Response>((resolve) => {
+          complete = resolve;
+        }),
+      100
+    );
+    await vi.advanceTimersByTimeAsync(100);
+    expect((await pending).status).toBe(302);
+    complete(new Response(new ReadableStream({ cancel })));
+    await vi.advanceTimersByTimeAsync(0);
+    expect(cancel).toHaveBeenCalledOnce();
+  });
+  it('records renderer and asset failures without logging the request query', async () => {
+    const log = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const renderError = new Error('renderer unavailable');
+    const assetError = new Error('asset service unavailable');
+    await withOgFallback(
+      req('/api/og?title=private-user-title'),
+      {
+        ASSETS: {
+          fetch: async () => {
+            throw assetError;
+          },
+        },
+      },
+      async () => {
+        throw renderError;
+      }
+    ).catch(() => {});
+    expect(log).toHaveBeenCalledWith('[api/og] response failed', { phase: 'render' }, renderError);
+    expect(log).toHaveBeenCalledWith('[api/og] fallback asset failed', assetError);
+    expect(JSON.stringify(log.mock.calls)).not.toContain('private-user-title');
+  });
+});
+
+describe('CMS document slugs', () => {
+  it.each(['/contact.html', '/articles/release.xml', '/nb/report.json'])(
+    'lets the application resolve %s after an asset miss',
+    async (path) => {
+      expect(
+        await servePublicFile(req(path), {
+          ASSETS: { fetch: async () => new Response(null, { status: 404 }) },
+        })
+      ).toBeNull();
+    }
+  );
 });

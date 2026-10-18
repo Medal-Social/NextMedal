@@ -1,6 +1,7 @@
 import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/sanity/module-props';
-import Content from './Content';
+// Server ModuleRenderer path — full oEmbed social cards.
+import Content from './Content.server';
 
 export default function RichtextModule({ content, ...props }: Sanity.Richtext) {
   if (!content) return null;
