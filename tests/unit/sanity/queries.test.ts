@@ -98,6 +98,11 @@ describe('GROQ Queries - Security & Best Practices', () => {
       expect(internal).not.toContain('references(^._id)][0]');
     });
 
+    it('LINK_QUERY link title falls back to the page name once page.title is gone', async () => {
+      const { LINK_QUERY } = await import('@/sanity/lib/queries');
+      expect(LINK_QUERY).toContain("'title': coalesce(title, metadata.title),");
+    });
+
     it('IMAGE_QUERY should include asset reference (optimized - no resolution)', async () => {
       const { IMAGE_QUERY } = await import('@/sanity/lib/queries');
 
@@ -517,13 +522,16 @@ describe('GROQ Queries - Security & Best Practices', () => {
       expect(COLLECTION_ARTICLE_POST_QUERY).toContain("_type == 'link' => {");
     });
 
-    it('richtext module should extract headings for table of contents', async () => {
+    it('richtext module reads no table-of-contents flag (no schema field, no content, no renderer)', async () => {
       const queries = await import('@/sanity/lib/queries');
-
-      // Should use select() with tableOfContents flag
-      expect(queries.MODULES_QUERY).toContain("'headings': select(");
-      expect(queries.MODULES_QUERY).toContain('tableOfContents =>');
-      expect(queries.MODULES_QUERY).toContain("content[style in ['h2', 'h3', 'h4', 'h5', 'h6']]");
+      const start = queries.MODULES_QUERY.indexOf("_type == 'richtext' =>");
+      const branch = queries.MODULES_QUERY.slice(
+        start,
+        queries.MODULES_QUERY.indexOf("_type == 'features' =>")
+      );
+      expect(start).toBeGreaterThan(-1);
+      expect(branch).not.toContain('tableOfContents');
+      expect(branch).not.toContain("'headings'");
     });
   });
 

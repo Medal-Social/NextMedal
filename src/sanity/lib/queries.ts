@@ -16,7 +16,8 @@ export const LINK_QUERY = groq`
 	internal->{
 		_id,
 		_type,
-		title,
+		// page.title is an orphan (dropped by the lean-schema migration); pages are named by metadata.title.
+		'title': coalesce(title, metadata.title),
 		language,
 		metadata { slug },
 		// D4: the same document in every language, for links on translated pages
@@ -135,12 +136,6 @@ const BASE_MODULES_QUERY = groq`
 				${IMAGE_QUERY}
 			}
 		},
-		'headings': select(
-			tableOfContents => content[style in ['h2', 'h3', 'h4', 'h5', 'h6']]{
-				style,
-				'text': pt::text(@)
-			}
-		),
 	},
 	_type == 'features' => {
 		...,
