@@ -64,6 +64,12 @@ describe.each(workflows)('%s', (file) => {
     expect(calls.filter((c) => c.includes('secret delete SANITY_WRITE_TOKEN'))).toHaveLength(1);
   });
 
+  it('deletes a deployed MEDAL_API_ENDPOINT when the CI value is empty (docs/CLOUDFLARE.md)', () => {
+    const { status, calls } = fakeUpload(source, ['MEDAL_API_KEY', 'MEDAL_API_ENDPOINT']);
+    expect(status).toBe(0);
+    expect(calls.filter((c) => c.includes('secret delete MEDAL_API_ENDPOINT'))).toHaveLength(1);
+  });
+
   it('leaves the Worker alone when the retired token is gone', () => {
     const { status, calls } = fakeUpload(source, ['MEDAL_API_KEY']);
     expect(status).toBe(0);
