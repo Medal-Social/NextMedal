@@ -547,6 +547,8 @@ declare global {
       width?: 'default' | 'narrow' | 'wide' | 'full';
       options?: {
         anchorId?: string;
+        bgFrom?: string;
+        bgTo?: string;
       };
     }
 
