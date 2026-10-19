@@ -49,7 +49,6 @@ import eventsFrontpage from './modules/frontpage/events-frontpage';
 import newsletterFrontpage from './modules/frontpage/newsletter-frontpage';
 // Modules - Hero Sections
 import hero from './modules/hero/hero';
-import videoHero from './modules/hero/video-hero';
 // Modules - Marketing & Leads
 import callout from './modules/marketing/callout';
 import leadMagnet from './modules/marketing/lead-magnet';
@@ -63,7 +62,6 @@ import img from './objects/img';
 import link from './objects/link';
 import menuItem from './objects/menu-item';
 import metadata from './objects/metadata';
-import moduleOptions from './objects/module-options';
 import seoMetadata from './objects/seo-metadata';
 import socialEmbed from './objects/social-embed';
 import video from './objects/video';
@@ -99,7 +97,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   link,
   menuItem,
   metadata,
-  moduleOptions,
   seoMetadata,
   socialEmbed,
   video,
@@ -107,7 +104,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
 
   // Modules - Hero Sections
   hero,
-  videoHero,
 
   // Modules - Content Sections
   accordionList,

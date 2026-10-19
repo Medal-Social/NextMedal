@@ -164,22 +164,6 @@ const BASE_MODULES_QUERY = groq`
 			}
 		}
 	},
-	_type == 'videoHero' => {
-		_type,
-		type,
-		videoId,
-		muxVideo{
-			...,
-			asset->{
-				...,
-				"playbackId": playback_ids[0].id
-			}
-		},
-		thumbnail {
-			${IMAGE_QUERY}
-		},
-		title
-	},
 `;
 
 export const MODULES_QUERY = groq`

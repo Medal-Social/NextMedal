@@ -675,13 +675,7 @@ declare global {
       ctas?: CTA[];
       image?: Img;
       /** Set by blockDesign from `videoUrl`; no longer an editor field. */
-      videoType?: 'image' | 'mux' | 'youtube';
-      /** @deprecated Mux is opt-in; old content only, removed with the legacy blocks (plan Task 35). */
-      muxVideo?: {
-        asset?: {
-          playbackId?: string;
-        };
-      };
+      videoType?: 'image' | 'youtube';
       /** "Video link": a YouTube link. Empty shows the picture. */
       videoUrl?: string;
       options?: {
@@ -748,19 +742,6 @@ declare global {
 
     interface Richtext extends Module<'richtext'> {
       content?: BlockContent;
-    }
-
-    interface VideoHero extends Module<'videoHero'> {
-      type: 'mux' | 'youtube';
-      videoId?: string;
-      muxVideo?: {
-        asset?: {
-          playbackId?: string;
-        };
-        playbackId?: string; // added
-      };
-      thumbnail?: Image;
-      title?: string;
     }
   }
 }

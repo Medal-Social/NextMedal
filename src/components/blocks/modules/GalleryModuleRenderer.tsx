@@ -8,7 +8,6 @@ import PricingList from './content/PricingList';
 import ProductComparison from './content/ProductComparison';
 import RichtextModuleClient from './content/RichtextModule/client';
 import Hero from './hero/Hero';
-import VideoHero from './hero/VideoHero';
 import Callout from './marketing/Callout';
 import LeadMagnet from './marketing/LeadMagnet';
 
@@ -98,11 +97,6 @@ export function GalleryModuleRenderer({ module: stored }: Props) {
       // they must not pull server-only oEmbed resolve into this client tree.
       const props = module as Sanity.Richtext;
       return <RichtextModuleClient {...props} />;
-    }
-
-    case 'videoHero': {
-      const props = module as Sanity.VideoHero;
-      return <VideoHero data={props} />;
     }
 
     // ComponentGallery is intentionally NOT rendered here to avoid cycles

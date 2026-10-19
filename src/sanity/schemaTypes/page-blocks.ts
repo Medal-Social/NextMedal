@@ -26,9 +26,6 @@ export const PAGE_BLOCK_NAMES: readonly string[] = INSERT_GROUPS.flatMap((group)
 /** Accepted in the modules array, never offered: the /components developer showcase (D8). */
 export const DEVELOPER_BLOCK_NAMES = ['component-gallery'] as const;
 
-/** In stored content until prod is migrated; not insertable. Deleted in Task 35. */
-export const DEPRECATED_BLOCK_NAMES = ['videoHero'] as const;
-
 /** Placements keep their own small list (documented exception to rule 6). */
 export const PLACEMENT_BLOCK_NAMES = ['lead-magnet', 'callout'] as const;
 

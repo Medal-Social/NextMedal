@@ -12,7 +12,6 @@ import { DocsFrontpage } from './frontpage/docs';
 import { EventsFrontpage } from './frontpage/events';
 import { NewsletterFrontpage } from './frontpage/newsletter';
 import Hero from './hero/Hero';
-import VideoHero from './hero/VideoHero';
 import Callout from './marketing/Callout';
 import LeadMagnet from './marketing/LeadMagnet';
 import type { FilterParams, ModuleContext, SidebarProps } from './types';
@@ -169,11 +168,6 @@ export function ModuleRenderer({
     case 'richtext': {
       const props = module as Sanity.Richtext;
       return <RichtextModule {...props} {...sidebarProps} />;
-    }
-
-    case 'videoHero': {
-      const props = module as Sanity.VideoHero;
-      return <VideoHero data={props} {...sidebarProps} />;
     }
 
     default:
