@@ -82,7 +82,7 @@ export default defineType({
       of: [{ type: 'cta' }],
       group: 'content',
     }),
-    richTextField('content', 'Features', 'prose', {
+    richTextField('content', 'Features', 'tier', {
       description: 'List of features included in this tier.',
       group: 'content',
     }),

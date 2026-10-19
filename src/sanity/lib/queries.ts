@@ -513,6 +513,7 @@ export const LOGOS_QUERY = groq`
 export const SITE_BANNERS_QUERY = groq`
 	*[_type == 'site'][0].banners[]->{
 		...,
+		content[]{ ..., value[]{ ${PT_BLOCK_QUERY} } },
 		cta{ ${LINK_QUERY} },
 	}
 `;
@@ -692,7 +693,9 @@ export const SITE_QUERY = groq`
 		"footerLinks": coalesce(footerLinks[_key == $language][0].value, footerLinks[_key == "en"][0].value)[]{
 			${LINK_QUERY}
 		},
-		"copyright": coalesce(copyright[_key == $language][0].value, copyright[_key == "en"][0].value),
+		"copyright": coalesce(copyright[_key == $language][0].value, copyright[_key == "en"][0].value)[]{
+			${PT_BLOCK_QUERY}
+		},
 		systemStatus,
 		socialLinks,
 		cookieConsent {
@@ -762,7 +765,9 @@ export const FOOTER_SETTINGS_QUERY = groq`
 		"footerLinks": coalesce(footerLinks[_key == $language][0].value, footerLinks[_key == "en"][0].value)[]{
 			${LINK_QUERY}
 		},
-		"copyright": coalesce(copyright[_key == $language][0].value, copyright[_key == "en"][0].value),
+		"copyright": coalesce(copyright[_key == $language][0].value, copyright[_key == "en"][0].value)[]{
+			${PT_BLOCK_QUERY}
+		},
 		systemStatus,
 		socialLinks
 	}

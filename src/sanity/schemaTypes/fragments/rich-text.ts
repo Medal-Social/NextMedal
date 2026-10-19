@@ -53,6 +53,16 @@ export const RICH_TEXT_PRESETS = {
   },
   /** Text inside a list item (feature, answer, comparison text). */
   plain: { styles: ['normal'], lists: [], decorators: ['strong', 'em'], annotations: [] },
+  /** Short text that may link somewhere: footer copyright, site tagline, bios, banners. */
+  plainLink: {
+    styles: ['normal'],
+    lists: [],
+    decorators: ['strong', 'em'],
+    annotations: ['link'],
+    linkEditor: 'registered',
+  },
+  /** A pricing tier's features: paragraphs and a bullet list (each bullet gets a check mark). */
+  tier: { styles: ['normal'], lists: ['bullet'], decorators: ['strong', 'em'], annotations: [] },
   /** The Text block. */
   prose: {
     styles: ['normal', 'h2', 'h3', 'h4', 'blockquote'],
@@ -132,9 +142,12 @@ export function richTextField(
   });
 }
 
-/** The internationalized `blockContent` field type (sanity.config.ts). */
+/**
+ * The internationalized `blockContent` field type (sanity.config.ts): footer copyright
+ * (stores a "Medal Social" link), site tagline, banners, bios.
+ */
 export const blockContentField = defineField({
   name: 'blockContent',
   type: 'array',
-  of: [richTextBlock('plain')],
+  of: [richTextBlock('plainLink')],
 });

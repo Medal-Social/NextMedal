@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useLocale } from 'next-intl';
 import { PortableText, stegaClean } from 'next-sanity';
 import { useEffect, useRef, useState } from 'react';
+import { RichTextLink } from '@/components/blocks/modules/SharedPortableText';
 import { Button } from '@/components/ui/button';
 import { internalHref, withLocalePrefix } from '@/lib/sanity/localized-link';
 
@@ -104,6 +105,13 @@ export default function BannerClient({ banner }: { banner: Sanity.Banner & Sanit
             components={{
               block: {
                 normal: ({ children }) => <p className="inline">{children}</p>,
+              },
+              marks: {
+                link: ({ children, value }) => (
+                  <RichTextLink value={value} className="underline">
+                    {children}
+                  </RichTextLink>
+                ),
               },
             }}
           />

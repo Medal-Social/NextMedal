@@ -14,9 +14,24 @@ import { validateExternalUrl } from '@/lib/validateExternalUrl';
 // Rich-text anchors may be stored without the leading "#".
 const anchorParams = (params?: string) => (params && !/^[#?]/.test(params) ? `#${params}` : params);
 
-/** Rendered as its own component so it can read the visitor's language. */
-function RichTextLink({ value, children }: { value?: Sanity.MenuItem; children: React.ReactNode }) {
-  const { type, internal, external, params, newTab } = value || {};
+const LINK_CLASS = 'font-medium text-primary hover:underline';
+
+/**
+ * Rendered as its own component so it can read the visitor's language. Exported for
+ * places that style links themselves (footer copyright): pass `className`.
+ */
+export function RichTextLink({
+  value,
+  children,
+  className = LINK_CLASS,
+}: {
+  value?: Sanity.MenuItem & { href?: string };
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const { type, internal, params, newTab } = value || {};
+  // Older content stores Sanity's default link shape (`href` only): an external link.
+  const external = value?.external || value?.href;
   const locale = useLocale();
   // Final href (no /en/ prefix for English, so no 308) for a plain <a> / next/link.
   const internalUrl = internal?.metadata?.slug?.current
@@ -34,7 +49,7 @@ function RichTextLink({ value, children }: { value?: Sanity.MenuItem; children: 
         href={href}
         target={newTab ? '_blank' : undefined}
         rel={newTab ? 'noopener noreferrer' : undefined}
-        className="font-medium text-primary hover:underline"
+        className={className}
       >
         {children}
       </a>
@@ -44,7 +59,7 @@ function RichTextLink({ value, children }: { value?: Sanity.MenuItem; children: 
   if (!internalUrl) return <>{children}</>;
 
   return (
-    <Link href={internalUrl} className="font-medium text-primary hover:underline">
+    <Link href={internalUrl} className={className}>
       {children}
     </Link>
   );

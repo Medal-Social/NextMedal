@@ -12,6 +12,8 @@ vi.mock('@/i18n/navigation', () => ({
   ),
 }));
 
+import FooterRichText from '@/components/blocks/layout/footer/FooterRichText';
+import { pricingTierComponents } from '@/components/blocks/modules/content/PricingList';
 import Content from '@/components/blocks/modules/content/RichtextModule/Content';
 import { buildPortableTextComponents } from '@/components/blocks/modules/hero/Hero';
 import SharedPortableText from '@/components/blocks/modules/SharedPortableText';
@@ -220,8 +222,15 @@ const viaShared = (components: PortableTextComponents) =>
 
 type BlockRenderer = (props: { value: Sanity.BlockContent }) => ReactElement | null;
 
+const FeaturesIntro: BlockRenderer = ({ value }) => (
+  <SharedPortableText value={value} variant="intro" />
+);
+
 const BLOCK_RENDERERS: [string, BlockRenderer, RichTextPresetName][] = [
   ['Page top', viaShared(buildPortableTextComponents(false)), 'pageTop'],
+  ['Features intro', FeaturesIntro, 'section'],
+  ['Pricing tier', viaShared(pricingTierComponents), 'tier'],
+  ['Footer tagline and copyright', FooterRichText, 'plainLink'],
   ['Text block', Content, 'prose'],
   ['Article body', Content, 'article'],
 ];
@@ -242,12 +251,92 @@ describe('block renderers depend only on what their field offers', () => {
   });
 });
 
+const fieldMembers = (typeName: string, fieldName: string) =>
+  (schemaTypes as unknown as SchemaType[])
+    .find((type) => type.name === typeName)
+    ?.fields?.find((field) => field.name === fieldName)?.of ?? [];
+
+describe('fields hold what their stored content uses', () => {
+  it('the Text block offers prose and keeps pictures (Features page stores one)', () => {
+    const members = fieldMembers('richtext', 'content');
+    expect(members.map((member) => member.type)).toEqual(['block', 'image']);
+    expect(offered(members[0])).toEqual(presetShape(RICH_TEXT_PRESETS.prose));
+  });
+
+  it('the Text block renders a stored picture', () => {
+    const html = renderToStaticMarkup(
+      <Content
+        value={
+          [
+            {
+              _type: 'image',
+              _key: '7f86c527e3f3',
+              asset: { _type: 'reference', _ref: 'image-Tb9Ew8CXIwaY6R1kjMvI0uRR-1200x800-png' },
+            },
+          ] as never
+        }
+      />
+    );
+    expect(warn).not.toHaveBeenCalled();
+    expect(html).toContain('<img');
+  });
+
+  it('a pricing tier offers the tier preset (features list)', () => {
+    expect(offered(fieldMembers('pricing', 'content')[0])).toEqual(
+      presetShape(RICH_TEXT_PRESETS.tier)
+    );
+  });
+});
+
 describe('the internationalized blockContent field', () => {
-  it('offers the plain preset', () => {
+  it('offers the plain preset with links (footer copyright)', () => {
     const members = blockContentField.of as unknown as Member[];
     expect(members.map((member) => offered(member))).toEqual([
-      presetShape(RICH_TEXT_PRESETS.plain),
+      presetShape(RICH_TEXT_PRESETS.plainLink),
     ]);
+  });
+
+  const copyright = (markDef: Record<string, unknown>) =>
+    [
+      {
+        _type: 'block',
+        _key: 'c',
+        style: 'normal',
+        markDefs: [{ _type: 'link', _key: 'l', ...markDef }],
+        children: [
+          { _type: 'span', _key: 'a', text: '© 2026 ', marks: [] },
+          { _type: 'span', _key: 'b', text: 'Medal Social', marks: ['l'] },
+          { _type: 'span', _key: 'c', text: '. All rights reserved.', marks: [] },
+        ],
+      },
+    ] as never;
+
+  it.each([
+    ['a stored href link', { href: 'https://www.medalsocial.com' }, 'https://www.medalsocial.com/'],
+    [
+      'an external link',
+      { type: 'external', external: 'https://www.medalsocial.com' },
+      'https://www.medalsocial.com/',
+    ],
+    [
+      'an internal link',
+      { type: 'internal', internal: { _type: 'page', metadata: { slug: { current: 'pricing' } } } },
+      '/pricing',
+    ],
+  ])('the footer copyright renders %s', (_, markDef, href) => {
+    const html = renderToStaticMarkup(<FooterRichText value={copyright(markDef)} />);
+    const root = document.createElement('div');
+    root.innerHTML = html;
+    expect(root.querySelector('a')?.getAttribute('href')).toBe(href);
+    expect(root.querySelector('a')?.textContent).toBe('Medal Social');
+    expect(root.textContent).toBe('© 2026 Medal Social. All rights reserved.');
+  });
+
+  it('the footer queries resolve copyright link targets', async () => {
+    const { FOOTER_SETTINGS_QUERY, SITE_QUERY } = await import('@/sanity/lib/queries');
+    for (const query of [FOOTER_SETTINGS_QUERY, SITE_QUERY]) {
+      expect(query).toMatch(/"copyright": coalesce\([^\n]*\)\[\]\{[\s\S]*?markDefs\[\]\{/);
+    }
   });
 
   it('is the field registered in sanity.config.ts', () => {
