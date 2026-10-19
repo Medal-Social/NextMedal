@@ -19,7 +19,7 @@ export interface Submission {
   labels: string[];
   /** The submission itself, on the contact's timeline. */
   note: string;
-  /** A newsletter sign-up: the contact is (re-)subscribed to email. */
+  /** A newsletter sign-up: subscribed, or re-subscribed after an opt-out. */
   subscribe?: boolean;
   /**
    * A line that identifies this submission in a note (e.g. `Event ID: <id>`).
@@ -57,6 +57,28 @@ function missingDetails(contact: Contact, submission: Submission): UpdateContact
   return fill;
 }
 
+/** Longest a submission may take before the visitor gets the error message. */
+export const SUBMISSION_DEADLINE_MS = 20_000;
+
+/** Timeline pages scanned for an earlier registration (newest first, 100 per page). */
+const TIMELINE_PAGES = 3;
+const NOTE_TYPES = new Set(['note.added', 'note.edited']);
+
+/**
+ * A note's text. The API sends it as `note_content` on live note activities;
+ * the SDK 1.6 `Activity` type calls it `content`, which the API never sends.
+ */
+function noteText(activity: unknown): string {
+  const { type, note_content, content } = activity as {
+    type?: unknown;
+    note_content?: unknown;
+    content?: unknown;
+  };
+  if (!NOTE_TYPES.has(String(type))) return '';
+  const text = note_content ?? content;
+  return typeof text === 'string' ? text : '';
+}
+
 async function alreadyRecorded(
   medal: Medal,
   contactId: string,
@@ -64,8 +86,17 @@ async function alreadyRecorded(
   logger: Logger
 ): Promise<boolean> {
   try {
-    const { data } = await medal.contacts.activities(contactId, { limit: 100 });
-    return data.some((activity) => (activity.content ?? '').split('\n').includes(line));
+    let cursor: string | undefined;
+    for (let page = 0; page < TIMELINE_PAGES; page++) {
+      const { data, pagination } = await medal.contacts.activities(contactId, {
+        limit: 100,
+        ...(cursor ? { cursor } : {}),
+      });
+      if (data.some((activity) => noteText(activity).split('\n').includes(line))) return true;
+      if (!pagination?.has_more || !pagination.next_cursor) return false;
+      cursor = pagination.next_cursor;
+    }
+    return false;
   } catch (err) {
     // A duplicate note is better than a lost registration.
     logger.error({ err }, '[medal-sdk] contacts.activities failed; recording anyway');
@@ -79,13 +110,35 @@ async function alreadyRecorded(
  * labels added (existing ones kept — `label_ids` replaces the set), any
  * missing details filled in, and the submission as a new note.
  *
- * Throws on any failure; callers turn that into SUBMISSION_UNAVAILABLE_MESSAGE.
+ * Throws on any failure or after SUBMISSION_DEADLINE_MS; callers turn that into
+ * SUBMISSION_UNAVAILABLE_MESSAGE. At the deadline the SDK calls are abandoned,
+ * not cancelled: one may still land, and a retry then goes the returning-
+ * contact way.
  */
 export async function recordSubmission(
   medal: Medal,
   submission: Submission,
   logger: Logger
 ): Promise<RecordResult> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const deadline = new Promise<never>((_, reject) => {
+    timer = setTimeout(
+      () => reject(new Error(`Medal did not answer within ${SUBMISSION_DEADLINE_MS / 1000}s`)),
+      SUBMISSION_DEADLINE_MS
+    );
+  });
+  try {
+    return await Promise.race([record(medal, submission, logger), deadline]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/** A newsletter sign-up never overrides a bounce or complaint, only an opt-out or nothing. */
+const resubscribable = (contact: Contact) =>
+  !contact.email_status || contact.email_status === 'unsubscribed';
+
+async function record(medal: Medal, submission: Submission, logger: Logger): Promise<RecordResult> {
   const input: CreateContactInput = {
     email: submission.email,
     status: 'lead',
@@ -121,7 +174,9 @@ export async function recordSubmission(
     label_ids: contact.label_ids,
     labels: submission.labels,
     ...missingDetails(contact, submission),
-    ...(submission.subscribe ? { email_status: 'subscribed' as const } : {}),
+    ...(submission.subscribe && resubscribable(contact)
+      ? { email_status: 'subscribed' as const }
+      : {}),
   });
   await medal.contacts.addNote(contact.id, { content: submission.note });
   return { status: 'updated', contactId: contact.id };

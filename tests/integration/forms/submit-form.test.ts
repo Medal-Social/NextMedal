@@ -231,7 +231,12 @@ describe('submitForm', () => {
       expect(contactsUpdate.mock.calls[0]?.[1]).not.toHaveProperty('first_name');
     });
 
-    it('re-subscribes a returning newsletter sign-up', async () => {
+    it('re-subscribes a returning newsletter sign-up who had unsubscribed', async () => {
+      contactsList.mockResolvedValue({
+        data: [{ ...existing, email_status: 'unsubscribed' }],
+        pagination: { has_more: false, next_cursor: null },
+      });
+
       await submit({ intent: 'newsletter', data: { email: 'human@example.com' } });
 
       expect(contactsUpdate).toHaveBeenCalledWith(
@@ -239,6 +244,32 @@ describe('submitForm', () => {
         expect.objectContaining({ email_status: 'subscribed', labels: ['newsletter'] })
       );
     });
+
+    it('subscribes a returning newsletter sign-up with no email status', async () => {
+      contactsList.mockResolvedValue({
+        data: [{ ...existing, email_status: null }],
+        pagination: { has_more: false, next_cursor: null },
+      });
+
+      await submit({ intent: 'newsletter', data: { email: 'human@example.com' } });
+
+      expect(contactsUpdate.mock.calls[0]?.[1]).toHaveProperty('email_status', 'subscribed');
+    });
+
+    it.each(['bounced', 'complained', 'subscribed'])(
+      'never overwrites a %s email status',
+      async (status) => {
+        contactsList.mockResolvedValue({
+          data: [{ ...existing, email_status: status }],
+          pagination: { has_more: false, next_cursor: null },
+        });
+
+        await submit({ intent: 'newsletter', data: { email: 'human@example.com' } });
+
+        expect(contactsUpdate.mock.calls[0]?.[1]).not.toHaveProperty('email_status');
+        expect(addNote).toHaveBeenCalled();
+      }
+    );
 
     it('fails when Medal reports a duplicate it then cannot find', async () => {
       contactsList.mockResolvedValue({
@@ -288,6 +319,13 @@ describe('submitForm', () => {
 
       expect(result?.validationErrors).toBeDefined();
       expect(result?.data?.success).toBeUndefined();
+      expect(contactsCreate).not.toHaveBeenCalled();
+    });
+
+    it('rejects a submission without a timestamp', async () => {
+      const result = await submit({ _submissionTimestamp: undefined });
+
+      expect(result?.validationErrors).toBeDefined();
       expect(contactsCreate).not.toHaveBeenCalled();
     });
 

@@ -28,6 +28,7 @@ type LocalizedText = Sanity.InternationalizedArrayString | string;
 
 interface FormProps {
   form: {
+    _id?: string;
     intent: string;
     /** Per language; old documents store a plain string. */
     formTitle?: LocalizedText;
@@ -350,7 +351,20 @@ export default function Form({ form: rawForm, className, locale }: FormProps) {
 
     const result = await submitForm({
       intent: form.intent,
-      data: { ...formData, _submissionTimestamp: mountTime },
+      // `withSecurity` reads `_submissionTimestamp` from the ROOT of the action
+      // input (not from `data`) and requires it. Before mount there is no
+      // mount time; "now" is then correctly rejected as too fast.
+      _submissionTimestamp: mountTime ?? new Date().toISOString(),
+      // Sent so the server can enforce the consent requirement itself rather
+      // than relying on the client-side check above.
+      ...(form._id ? { formId: form._id } : {}),
+      requireConsent: !!form.requireConsent,
+      consent: accepted,
+      data: { ...formData },
+      metadata: {
+        locale,
+        ...(typeof window !== 'undefined' ? { url: window.location.href } : {}),
+      },
     });
 
     if (result?.data?.success) {

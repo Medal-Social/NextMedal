@@ -14,6 +14,13 @@
 // SDK module.
 import type { Medal as MedalType } from '@medalsocial/sdk';
 
+/**
+ * Per-request timeout. The SDK retries 429/5xx up to 3 attempts per call and
+ * has no option to lower that, so recordSubmission also caps the whole
+ * submission (SUBMISSION_DEADLINE_MS).
+ */
+export const MEDAL_REQUEST_TIMEOUT_MS = 8000;
+
 let _medal: MedalType | null = null;
 let _medalPromise: Promise<MedalType | null> | null = null;
 
@@ -45,7 +52,10 @@ export function getMedal(): Promise<MedalType | null> {
           (sdk.Medal as typeof MedalType | undefined) ??
           (sdk.default as typeof MedalType | undefined);
         if (!MedalClass) return null;
-        _medal = new MedalClass(apiKey, { baseUrl: baseUrl || undefined });
+        _medal = new MedalClass(apiKey, {
+          baseUrl: baseUrl || undefined,
+          timeout: MEDAL_REQUEST_TIMEOUT_MS,
+        });
         return _medal;
       } catch {
         // Contract is "return null on any failure". Reset the memo

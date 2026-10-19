@@ -112,7 +112,7 @@ export default function EventRegistrationModal({
       },
       language: locale,
       _honeypot: (formData._honeypot as string) || '',
-      ...(openedAt.current ? { _submissionTimestamp: openedAt.current } : {}),
+      _submissionTimestamp: openedAt.current ?? new Date().toISOString(),
     });
   };
 

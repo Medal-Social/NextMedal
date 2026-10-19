@@ -122,13 +122,8 @@ describe('Server Actions - Security Audit', () => {
       expect(captureLeadSource).toContain('Please enter a valid email address');
     });
 
-    it('should validate source type with enum', () => {
-      expect(captureLeadSource).toContain('type: z.enum([');
-      expect(captureLeadSource).toContain("'event'");
-      expect(captureLeadSource).toContain("'newsletter'");
-      expect(captureLeadSource).toContain("'download'");
-      expect(captureLeadSource).toContain("'contact'");
-      expect(captureLeadSource).toContain("'other'");
+    it('should accept event registrations only', () => {
+      expect(captureLeadSource).toContain("type: z.literal('event')");
     });
 
     it('should fail closed when Medal cannot take the registration', () => {

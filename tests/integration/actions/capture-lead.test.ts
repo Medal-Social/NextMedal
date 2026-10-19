@@ -150,7 +150,12 @@ describe('captureLead → Medal', () => {
     contactsCreate.mockRejectedValue(Object.assign(new Error('exists'), { status: 409 }));
     activities.mockResolvedValue({
       data: [
-        { id: 'a1', type: 'note', content: 'Event registration: Launch night\nEvent ID: event-1' },
+        {
+          id: 'a1',
+          type: 'note.added',
+          title: null,
+          note_content: 'Event registration: Launch night\nEvent ID: event-1',
+        },
       ],
       pagination: { has_more: false, next_cursor: null },
     });
@@ -169,12 +174,61 @@ describe('captureLead → Medal', () => {
   it('does not mistake another event with a longer id for this one', async () => {
     contactsCreate.mockRejectedValue(Object.assign(new Error('exists'), { status: 409 }));
     activities.mockResolvedValue({
-      data: [{ id: 'a1', type: 'note', content: 'Event ID: event-10' }],
+      data: [{ id: 'a1', type: 'note.added', note_content: 'Event ID: event-10' }],
       pagination: { has_more: false, next_cursor: null },
     });
 
     const result = await register();
 
+    expect(result?.data?.alreadyRegistered).toBe(false);
+    expect(addNote).toHaveBeenCalled();
+  });
+
+  it('ignores a deleted note and non-note activity that mention the event', async () => {
+    // The API serves note text as `note_content` on note.added/note.edited only.
+    contactsCreate.mockRejectedValue(Object.assign(new Error('exists'), { status: 409 }));
+    activities.mockResolvedValue({
+      data: [
+        { id: 'a1', type: 'note.deleted', note_content: null, title: 'Event ID: event-1' },
+        { id: 'a2', type: 'email.sent', note_content: null, title: 'Event ID: event-1' },
+      ],
+      pagination: { has_more: false, next_cursor: null },
+    });
+
+    const result = await register();
+
+    expect(result?.data?.alreadyRegistered).toBe(false);
+    expect(addNote).toHaveBeenCalled();
+  });
+
+  it('finds an earlier registration on a later timeline page (up to 3 pages)', async () => {
+    contactsCreate.mockRejectedValue(Object.assign(new Error('exists'), { status: 409 }));
+    activities
+      .mockResolvedValueOnce({
+        data: [{ id: 'a1', type: 'note.added', note_content: 'Website form: contact' }],
+        pagination: { has_more: true, next_cursor: 'c2' },
+      })
+      .mockResolvedValueOnce({
+        data: [{ id: 'a2', type: 'note.edited', note_content: 'Event ID: event-1' }],
+        pagination: { has_more: true, next_cursor: 'c3' },
+      });
+
+    const result = await register();
+
+    expect(result?.data?.alreadyRegistered).toBe(true);
+    expect(activities).toHaveBeenNthCalledWith(2, 'contact-9', { limit: 100, cursor: 'c2' });
+  });
+
+  it('stops after 3 timeline pages and registers', async () => {
+    contactsCreate.mockRejectedValue(Object.assign(new Error('exists'), { status: 409 }));
+    activities.mockResolvedValue({
+      data: [{ id: 'a', type: 'note.added', note_content: 'something else' }],
+      pagination: { has_more: true, next_cursor: 'more' },
+    });
+
+    const result = await register();
+
+    expect(activities).toHaveBeenCalledTimes(3);
     expect(result?.data?.alreadyRegistered).toBe(false);
     expect(addNote).toHaveBeenCalled();
   });
@@ -213,12 +267,17 @@ describe('captureLead → Medal', () => {
     expect(getWriteClient).not.toHaveBeenCalled();
   });
 
-  it('labels a non-event sign-up by its source type', async () => {
-    await register({ source: { type: 'newsletter', url: 'https://example.com/' } });
+  it('accepts event registrations only', async () => {
+    const result = await register({ source: { type: 'newsletter', url: 'https://example.com/' } });
 
-    expect(contactsCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ labels: ['newsletter'] })
-    );
-    expect(sanityFetch).not.toHaveBeenCalled();
+    expect(result?.validationErrors).toBeDefined();
+    expect(contactsCreate).not.toHaveBeenCalled();
+  });
+
+  it('rejects a registration without a submission timestamp', async () => {
+    const result = await register({ _submissionTimestamp: undefined });
+
+    expect(result?.validationErrors).toBeDefined();
+    expect(contactsCreate).not.toHaveBeenCalled();
   });
 });
