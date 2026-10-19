@@ -12,6 +12,7 @@ import { BillIcon } from '@sanity/icons/Bill';
 import { defineField, defineType } from 'sanity';
 import { count } from '@/lib/utils/index';
 import { getBlockText } from '@/sanity/lib/utils';
+import { richTextField } from '../../fragments/rich-text';
 
 export default defineType({
   name: 'pricing-list',
@@ -28,12 +29,7 @@ export default defineType({
       type: 'module-options',
       group: 'options',
     }),
-    defineField({
-      name: 'intro',
-      type: 'array',
-      of: [{ type: 'block' }],
-      group: 'content',
-    }),
+    richTextField('intro', 'Intro', 'section', { group: 'content' }),
     defineField({
       name: 'tiers',
       type: 'array',

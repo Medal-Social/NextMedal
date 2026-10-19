@@ -1,6 +1,12 @@
 import Link from 'next/link';
 import { useLocale } from 'next-intl';
-import { PortableText, type PortableTextComponents, stegaClean } from 'next-sanity';
+import {
+  PortableText,
+  type PortableTextBlock,
+  type PortableTextBlockComponent,
+  type PortableTextComponents,
+  stegaClean,
+} from 'next-sanity';
 import { internalHref } from '@/lib/sanity/localized-link';
 import { cn, slug } from '@/lib/utils/index';
 import { validateExternalUrl } from '@/lib/validateExternalUrl';
@@ -115,6 +121,66 @@ const createProseComponents = (
   },
 });
 
+type BlockComponents = Exclude<PortableTextComponents['block'], PortableTextBlockComponent>;
+
+/** A paragraph with no visible text (double Enter in the Studio). Non-breaking spaces count as text. */
+function isEmptyBlock(block: PortableTextBlock): boolean {
+  return (
+    block.children?.every(
+      (child) =>
+        child?._type === 'span' &&
+        stegaClean(String(child.text ?? '')).replace(/[ \t\r\n]+/g, '') === ''
+    ) ?? false
+  );
+}
+
+/** Wraps a paragraph renderer so an empty paragraph renders as one empty line in its own style. */
+function emptyLineAware(Base: PortableTextBlockComponent): PortableTextBlockComponent {
+  return function EmptyLineAwareParagraph(props) {
+    if (!isEmptyBlock(props.value)) return <Base {...props} />;
+    return (
+      <Base {...props}>
+        <br />
+      </Base>
+    );
+  };
+}
+
+// Cached per base renderer so re-renders keep component identity (no paragraph remounts).
+const emptyLineAwareCache = new WeakMap<PortableTextBlockComponent, PortableTextBlockComponent>();
+const defaultParagraph = emptyLineAware(({ children }) => <p>{children}</p>);
+
+function withEmptyLine(base?: PortableTextBlockComponent): PortableTextBlockComponent {
+  if (!base) return defaultParagraph;
+  let wrapped = emptyLineAwareCache.get(base);
+  if (!wrapped) {
+    wrapped = emptyLineAware(base);
+    emptyLineAwareCache.set(base, wrapped);
+  }
+  return wrapped;
+}
+
+/** Every `normal` paragraph renders a double Enter as one empty line (lean schema rule 8). */
+function withParagraphEmptyLines(
+  block: PortableTextComponents['block']
+): PortableTextComponents['block'] {
+  // A single function override styles every block itself; leave it alone.
+  if (typeof block === 'function') return block;
+  const styles: BlockComponents = block ?? {};
+  return { ...styles, normal: withEmptyLine(styles.normal) };
+}
+
+function mergePortableTextComponentMap<T>(defaults: T | undefined, overrides: T | undefined) {
+  if (typeof defaults === 'function' || typeof overrides === 'function') {
+    return overrides ?? defaults;
+  }
+
+  return {
+    ...(defaults && typeof defaults === 'object' ? defaults : {}),
+    ...(overrides && typeof overrides === 'object' ? overrides : {}),
+  } as T;
+}
+
 export default function SharedPortableText({
   value,
   className,
@@ -127,26 +193,18 @@ export default function SharedPortableText({
   if (variant === 'intro') selectedComponents = introComponents;
   if (variant === 'prose') selectedComponents = createProseComponents(components?.types);
 
-  // Merge custom components if provided.
-  // `block` is always the record/object-map form in this file (never the function
-  // form), but @portabletext/react v6.2 types it as `function | record`, so the
-  // spread result needs an assertion back to PortableTextComponents.
+  // Merge custom components if provided
+  // @portabletext/react 7 types reject spread-merging component maps whose
+  // values may be undefined — merge through the typed helper instead.
   const finalComponents = {
     ...selectedComponents,
     ...components,
-    block: {
-      ...selectedComponents.block,
-      ...components?.block,
-    },
-    marks: {
-      ...selectedComponents.marks,
-      ...components?.marks,
-    },
-    types: {
-      ...selectedComponents.types,
-      ...components?.types,
-    },
-  } as PortableTextComponents;
+    block: withParagraphEmptyLines(
+      mergePortableTextComponentMap(selectedComponents.block, components?.block)
+    ),
+    marks: mergePortableTextComponentMap(selectedComponents.marks, components?.marks),
+    types: mergePortableTextComponentMap(selectedComponents.types, components?.types),
+  };
 
   return (
     <div

@@ -14,6 +14,7 @@
 import { BlockContentIcon } from '@sanity/icons/BlockContent';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
+import { richTextField } from '../../fragments/rich-text';
 import { createUidField } from '../ui/uid-input';
 
 export default defineType({
@@ -75,29 +76,7 @@ export default defineType({
         }),
       ],
     }),
-    defineField({
-      name: 'content',
-      title: 'Content',
-      description: 'Main text content (H1 for title, Normal for description)',
-      type: 'array',
-      of: [
-        defineArrayMember({
-          type: 'block',
-          styles: [
-            { title: 'Normal', value: 'normal' },
-            { title: 'Heading 1', value: 'h1' },
-          ],
-          lists: [],
-          marks: {
-            decorators: [
-              { title: 'Strong', value: 'strong' },
-              { title: 'Emphasis', value: 'em' },
-            ],
-          },
-        }),
-      ],
-      group: 'content',
-    }),
+    richTextField('content', 'Title and text', 'pageTop', { group: 'content' }),
     defineField({
       name: 'ctas',
       title: 'Call-to-actions',

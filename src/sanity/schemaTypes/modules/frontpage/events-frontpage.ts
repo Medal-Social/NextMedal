@@ -8,6 +8,7 @@
 
 import { CalendarIcon } from '@sanity/icons/Calendar';
 import { defineField, defineType } from 'sanity';
+import { richTextField } from '../../fragments/rich-text';
 
 export default defineType({
   name: 'events-frontpage',
@@ -15,13 +16,7 @@ export default defineType({
   icon: CalendarIcon,
   type: 'object',
   fields: [
-    defineField({
-      name: 'intro',
-      title: 'Introduction',
-      type: 'array',
-      of: [{ type: 'block' }],
-      description: 'Optional introduction text above the events list',
-    }),
+    richTextField('intro', 'Intro', 'listIntro'),
     defineField({
       name: 'layout',
       title: 'Layout',

@@ -11,6 +11,7 @@
 import { BulbOutlineIcon } from '@sanity/icons/BulbOutline';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
+import { richTextField } from '../../fragments/rich-text';
 import { createUidField } from '../ui/uid-input';
 
 export default defineType({
@@ -26,28 +27,8 @@ export default defineType({
     },
   ],
   fields: [
-    defineField({
-      name: 'content',
-      title: 'Content',
+    richTextField('content', 'Text', 'section', {
       description: 'The main text of the callout.',
-      type: 'array',
-      of: [
-        {
-          type: 'block',
-          styles: [
-            { title: 'Normal', value: 'normal' },
-            { title: 'Heading 2', value: 'h2' },
-            { title: 'Heading 3', value: 'h3' },
-          ],
-          lists: [],
-          marks: {
-            decorators: [
-              { title: 'Strong', value: 'strong' },
-              { title: 'Emphasis', value: 'em' },
-            ],
-          },
-        },
-      ],
     }),
     defineField({
       name: 'ctas',

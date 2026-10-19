@@ -11,7 +11,7 @@
 import { TextIcon } from '@sanity/icons/Text';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
-import { imageBlock } from '../../fragments';
+import { richTextField } from '../../fragments/rich-text';
 
 export default defineType({
   name: 'richtext',
@@ -28,25 +28,7 @@ export default defineType({
       type: 'module-options',
       group: 'options',
     }),
-    defineField({
-      name: 'content',
-      type: 'array',
-      of: [
-        {
-          type: 'block',
-          marks: {
-            annotations: [
-              {
-                name: 'link',
-                type: 'link',
-              },
-            ],
-          },
-        },
-        imageBlock,
-      ],
-      group: 'content',
-    }),
+    richTextField('content', 'Text', 'prose', { group: 'content' }),
   ],
   preview: {
     select: {

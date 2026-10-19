@@ -52,7 +52,7 @@ function getImageAspectRatio(
 }
 
 // Build PortableText components
-function buildPortableTextComponents(hasMedia: boolean) {
+export function buildPortableTextComponents(hasMedia: boolean) {
   return {
     block: {
       h1: ({ children }: { children?: ReactNode }) => (

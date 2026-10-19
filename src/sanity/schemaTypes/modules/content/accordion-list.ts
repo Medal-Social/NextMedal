@@ -11,6 +11,7 @@
 import { StackCompactIcon } from '@sanity/icons/StackCompact';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
+import { richTextField } from '../../fragments/rich-text';
 
 export default defineType({
   name: 'accordion-list',
@@ -27,29 +28,8 @@ export default defineType({
       type: 'module-options',
       group: 'options',
     }),
-    defineField({
-      name: 'content',
-      type: 'array',
-      title: 'Content',
+    richTextField('content', 'Intro', 'section', {
       description: 'Optional introductory text before the accordion list.',
-      of: [
-        {
-          type: 'block',
-          styles: [
-            { title: 'Normal', value: 'normal' },
-            { title: 'Heading 2', value: 'h2' },
-            { title: 'Heading 3', value: 'h3' },
-            { title: 'Heading 4', value: 'h4' },
-          ],
-          lists: [],
-          marks: {
-            decorators: [
-              { title: 'Strong', value: 'strong' },
-              { title: 'Emphasis', value: 'em' },
-            ],
-          },
-        },
-      ],
       group: 'content',
     }),
     defineField({
@@ -70,32 +50,8 @@ export default defineType({
               type: 'string',
               validation: (Rule) => Rule.required(),
             }),
-            defineField({
-              name: 'content',
-              title: 'Content',
+            richTextField('content', 'Answer', 'plain', {
               description: 'The hidden content that is revealed when opened.',
-              type: 'array',
-              of: [
-                {
-                  type: 'block',
-                  styles: [
-                    { title: 'Normal', value: 'normal' },
-                    { title: 'Heading 3', value: 'h3' },
-                    { title: 'Heading 4', value: 'h4' },
-                    { title: 'Heading 5', value: 'h5' },
-                  ],
-                  lists: [
-                    { title: 'Bullet', value: 'bullet' },
-                    { title: 'Numbered', value: 'number' },
-                  ],
-                  marks: {
-                    decorators: [
-                      { title: 'Strong', value: 'strong' },
-                      { title: 'Emphasis', value: 'em' },
-                    ],
-                  },
-                },
-              ],
             }),
             defineField({
               name: 'open',

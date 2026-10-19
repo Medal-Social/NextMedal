@@ -11,6 +11,7 @@
 import { ComponentIcon } from '@sanity/icons/Component';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
+import { richTextField } from '../../fragments/rich-text';
 import { createUidField } from '../ui/uid-input';
 
 export default defineType({
@@ -30,31 +31,7 @@ export default defineType({
       group: 'options',
       fields: [createUidField()],
     }),
-    defineField({
-      name: 'content',
-      type: 'array',
-      title: 'Content',
-      description: 'Optional introductory text.',
-      of: [
-        {
-          type: 'block',
-          styles: [
-            { title: 'Normal', value: 'normal' },
-            { title: 'Heading 2', value: 'h2' },
-            { title: 'Heading 3', value: 'h3' },
-            { title: 'Heading 4', value: 'h4' },
-          ],
-          lists: [],
-          marks: {
-            decorators: [
-              { title: 'Strong', value: 'strong' },
-              { title: 'Emphasis', value: 'em' },
-            ],
-          },
-        },
-      ],
-      group: 'content',
-    }),
+    richTextField('content', 'Intro', 'section', { group: 'content' }),
     defineField({
       name: 'logos',
       type: 'array',

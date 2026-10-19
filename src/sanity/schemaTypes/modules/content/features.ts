@@ -12,6 +12,7 @@
 import { ThLargeIcon } from '@sanity/icons/ThLarge';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
+import { richTextField } from '../../fragments/rich-text';
 import { createUidField } from '../ui/uid-input';
 
 export default defineType({
@@ -32,30 +33,7 @@ export default defineType({
       group: 'options',
       fields: [createUidField()],
     }),
-    defineField({
-      name: 'intro',
-      title: 'Introduction',
-      description: 'Introductory text for the feature grid',
-      type: 'array',
-      of: [
-        {
-          type: 'block',
-          styles: [
-            { title: 'Normal', value: 'normal' },
-            { title: 'Heading 2', value: 'h2' },
-            { title: 'Heading 3', value: 'h3' },
-          ],
-          lists: [],
-          marks: {
-            decorators: [
-              { title: 'Strong', value: 'strong' },
-              { title: 'Emphasis', value: 'em' },
-            ],
-          },
-        },
-      ],
-      group: 'content',
-    }),
+    richTextField('intro', 'Intro', 'section', { group: 'content' }),
     defineField({
       name: 'items',
       title: 'Feature Items',
@@ -80,30 +58,7 @@ export default defineType({
               type: 'string',
               validation: (Rule) => Rule.required(),
             }),
-            defineField({
-              name: 'content',
-              title: 'Feature Description',
-              description: 'Detailed description of this feature',
-              type: 'array',
-              of: [
-                {
-                  type: 'block',
-                  styles: [{ title: 'Normal', value: 'normal' }],
-                  lists: [],
-                  marks: {
-                    decorators: [
-                      { title: 'Strong', value: 'strong' },
-                      { title: 'Emphasis', value: 'em' },
-                      {
-                        title: 'Highlight',
-                        value: 'highlight',
-                      },
-                    ],
-                  },
-                },
-              ],
-              validation: (Rule) => Rule.required(),
-            }),
+            richTextField('content', 'Text', 'plain', { required: true }),
           ],
           preview: {
             select: {

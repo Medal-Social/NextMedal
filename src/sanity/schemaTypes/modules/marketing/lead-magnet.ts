@@ -10,6 +10,7 @@
 
 import { DownloadIcon } from '@sanity/icons/Download';
 import { defineField, defineType } from 'sanity';
+import { richTextField } from '../../fragments/rich-text';
 import { createUidField } from '../ui/uid-input';
 
 export default defineType({
@@ -36,29 +37,10 @@ export default defineType({
       initialValue: 'featured',
       group: 'content',
     }),
-    defineField({
-      name: 'content',
-      title: 'Content',
-      description: 'The main text content. Use H2/H3 for headlines and lists for benefits.',
-      type: 'array',
-      of: [
-        {
-          type: 'block',
-          styles: [
-            { title: 'Normal', value: 'normal' },
-            { title: 'Heading 2', value: 'h2' },
-            { title: 'Heading 3', value: 'h3' },
-          ],
-          lists: [{ title: 'Bullet', value: 'bullet' }],
-          marks: {
-            decorators: [
-              { title: 'Strong', value: 'strong' },
-              { title: 'Emphasis', value: 'em' },
-            ],
-          },
-        },
-      ],
+    richTextField('content', 'Title and text', 'section', {
+      description: 'The headline (Heading) and a short text about the resource.',
       group: 'content',
+      required: true,
       initialValue: [
         {
           _type: 'block',
@@ -75,26 +57,7 @@ export default defineType({
             },
           ],
         },
-        {
-          _type: 'block',
-          style: 'normal',
-          listItem: 'bullet',
-          children: [{ _type: 'span', text: 'Step-by-step implementation guide' }],
-        },
-        {
-          _type: 'block',
-          style: 'normal',
-          listItem: 'bullet',
-          children: [{ _type: 'span', text: 'Exclusive industry insights' }],
-        },
-        {
-          _type: 'block',
-          style: 'normal',
-          listItem: 'bullet',
-          children: [{ _type: 'span', text: 'Proven templates and checklists' }],
-        },
       ],
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'image',

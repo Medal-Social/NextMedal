@@ -9,6 +9,7 @@
 import { DocumentTextIcon } from '@sanity/icons/DocumentText';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
+import { richTextField } from '../../fragments/rich-text';
 
 export default defineType({
   name: 'changelog-frontpage',
@@ -20,14 +21,7 @@ export default defineType({
     { name: 'display', title: 'Display Options' },
   ],
   fields: [
-    defineField({
-      name: 'intro',
-      title: 'Introduction',
-      type: 'array',
-      of: [{ type: 'block' }],
-      description: 'Optional introduction text above the changelog',
-      group: 'content',
-    }),
+    richTextField('intro', 'Intro', 'listIntro', { group: 'content' }),
     defineField({
       name: 'layout',
       title: 'Layout',

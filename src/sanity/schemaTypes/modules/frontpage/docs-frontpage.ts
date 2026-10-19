@@ -12,6 +12,7 @@
 import { BookIcon } from '@sanity/icons/Book';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
+import { richTextField } from '../../fragments/rich-text';
 
 export default defineType({
   name: 'docs-frontpage',
@@ -24,14 +25,7 @@ export default defineType({
     { name: 'display', title: 'Display Options' },
   ],
   fields: [
-    defineField({
-      name: 'intro',
-      title: 'Introduction',
-      description: 'Optional intro text displayed above the documentation navigation.',
-      type: 'array',
-      of: [{ type: 'block' }],
-      group: 'content',
-    }),
+    richTextField('intro', 'Intro', 'listIntro', { group: 'content' }),
 
     // Category ordering
     defineField({

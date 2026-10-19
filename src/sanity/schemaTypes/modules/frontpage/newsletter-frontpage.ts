@@ -11,6 +11,7 @@
 import { EnvelopeIcon } from '@sanity/icons/Envelope';
 import { defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
+import { richTextField } from '../../fragments/rich-text';
 
 export default defineType({
   name: 'newsletter-frontpage',
@@ -23,14 +24,7 @@ export default defineType({
     { name: 'filtering', title: 'Filtering' },
   ],
   fields: [
-    defineField({
-      name: 'intro',
-      title: 'Introduction',
-      description: 'Optional intro text displayed above the newsletter list.',
-      type: 'array',
-      of: [{ type: 'block' }],
-      group: 'content',
-    }),
+    richTextField('intro', 'Intro', 'listIntro', { group: 'content' }),
     defineField({
       name: 'layout',
       title: 'Layout Style',

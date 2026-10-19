@@ -12,6 +12,7 @@ import { languageFilter } from '@sanity/language-filter';
 import { media, mediaAssetSource } from 'sanity-plugin-media';
 import { muxInput } from 'sanity-plugin-mux-input';
 import { schemaTypes } from '@/sanity/schemaTypes';
+import { blockContentField } from '@/sanity/schemaTypes/fragments/rich-text';
 import StudioIcon from '@/sanity/ui/StudioIcon';
 
 import { routing, localeConfig, type Locale } from '@/i18n/routing';
@@ -67,24 +68,7 @@ export default defineConfig({
       fieldTypes: [
         'string',
         'text',
-        defineField({
-          name: 'blockContent',
-          type: 'array',
-          of: [
-            {
-              type: 'block',
-              styles: [{ title: 'Normal', value: 'normal' }],
-              lists: [],
-              marks: {
-                decorators: [
-                  { title: 'Strong', value: 'strong' },
-                  { title: 'Emphasis', value: 'em' },
-                ],
-                annotations: [],
-              },
-            },
-          ],
-        }),
+        blockContentField,
         // Navigation array types for site settings
         defineField({
           name: 'headerNavArray',

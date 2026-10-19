@@ -13,6 +13,7 @@ import { BillIcon } from '@sanity/icons/Bill';
 import { ControlsIcon } from '@sanity/icons/Controls';
 import { EditIcon } from '@sanity/icons/Edit';
 import { defineField, defineType } from 'sanity';
+import { richTextField } from '../../fragments/rich-text';
 
 export default defineType({
   name: 'pricing',
@@ -81,12 +82,8 @@ export default defineType({
       of: [{ type: 'cta' }],
       group: 'content',
     }),
-    defineField({
-      name: 'content',
-      title: 'Features',
+    richTextField('content', 'Features', 'prose', {
       description: 'List of features included in this tier.',
-      type: 'array',
-      of: [{ type: 'block' }],
       group: 'content',
     }),
     defineField({
