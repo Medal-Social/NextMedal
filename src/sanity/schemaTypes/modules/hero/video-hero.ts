@@ -45,7 +45,10 @@ export const getYouTubeVideoId = (url: string) => {
 
 export default defineField({
   name: 'videoHero',
-  title: 'Video Hero',
+  title: 'Old – Video top',
+  deprecated: {
+    reason: 'Merged into “Page top” (picture or video link). Kept until all content is migrated.',
+  },
   type: 'object',
   icon: VideoIcon,
   fieldsets: [
@@ -61,7 +64,7 @@ export default defineField({
       media: 'thumbnail',
     },
     prepare({ videoType, media }) {
-      const title = 'Video Hero';
+      const title = 'Old – Video top';
       let subtitle = '';
 
       if (videoType === 'youtube') {

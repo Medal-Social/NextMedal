@@ -13,7 +13,8 @@ import { defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'component-gallery',
-  title: 'Component Gallery',
+  title: 'Component gallery',
+  description: 'Developer showcase used on /components. Not for editors.',
   icon: ImagesIcon,
   type: 'object',
   fields: [
@@ -103,7 +104,8 @@ export default defineType({
     },
     prepare({ groupCount }) {
       return {
-        title: 'Component Gallery',
+        title: 'Component gallery',
+        description: 'Developer showcase used on /components. Not for editors.',
         subtitle: `${groupCount || 0} group${groupCount === 1 ? '' : 's'}`,
         media: ImagesIcon,
       };

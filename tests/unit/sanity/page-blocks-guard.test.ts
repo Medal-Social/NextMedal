@@ -218,3 +218,24 @@ describe('placement blocks', () => {
     expect(fieldNames(block('pricing').fields)).not.toContain('style');
   });
 });
+
+describe('deprecated types', () => {
+  type Deprecated = Block & { deprecated?: { reason?: string } };
+  it.each(DEPRECATED_BLOCK_NAMES)(
+    '%s is marked deprecated with a reason and an "Old – " title',
+    (name) => {
+      const type = registered.get(name) as Deprecated;
+      expect(type.deprecated?.reason?.length ?? 0).toBeGreaterThanOrEqual(10);
+      expect(type.title).toMatch(/^Old – /);
+    }
+  );
+});
+
+describe('developer types', () => {
+  it('component-gallery says it is not for editors', () => {
+    expect(block('component-gallery')).toMatchObject({
+      title: 'Component gallery',
+      description: 'Developer showcase used on /components. Not for editors.',
+    });
+  });
+});
