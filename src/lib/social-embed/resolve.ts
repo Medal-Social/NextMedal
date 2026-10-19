@@ -31,7 +31,7 @@ function fallbackCard(
 }
 
 /**
- * Resolve a Sanity socialEmbed block into Medal card data.
+ * Resolve a Sanity socialEmbed block into Medal Social card data.
  * Always returns a card when the URL is usable — never throws for missing provider data.
  */
 export async function resolveSocialEmbed(

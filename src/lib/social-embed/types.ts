@@ -1,5 +1,5 @@
 /**
- * In-house social embed types — Medal-branded static cards, no third-party widgets.
+ * In-house social embed types — Medal Social-branded static cards, no third-party widgets.
  */
 
 export const SOCIAL_PLATFORMS = [

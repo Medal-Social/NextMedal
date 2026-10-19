@@ -12,23 +12,23 @@ const COPY: Record<
   { title: string; description: string; breadcrumb: string; home: string }
 > = {
   en: {
-    title: 'Social embed cards for the Medal Lighthouse SEO gate',
+    title: 'Social embed cards for the Medal Social Lighthouse SEO gate',
     description:
-      "Review Medal's server-rendered X, YouTube, and fallback social embed cards on this Lighthouse gate. Open a card to check the preview.",
+      "Review Medal Social's server-rendered X, YouTube, and fallback social embed cards on this Lighthouse gate. Open a card to check the preview.",
     breadcrumb: 'Social embed cards',
     home: 'Home',
   },
   nb: {
-    title: 'Sosiale innbyggingskort for Medals Lighthouse-SEO-test',
+    title: 'Innbyggingskort for Medal Socials Lighthouse-SEO-test',
     description:
-      'Se Medals server-rendrede X-, YouTube- og reservekort på denne Lighthouse-testen. Åpne et kort og sjekk forhåndsvisningen.',
+      'Se Medal Socials server-rendrede X-, YouTube- og reservekort på denne Lighthouse-testen. Åpne et kort og sjekk forhåndsvisningen.',
     breadcrumb: 'Sosiale innbyggingskort',
     home: 'Hjem',
   },
   ar: {
-    title: 'بطاقات التضمين الاجتماعي من Medal لاختبار Lighthouse',
+    title: 'بطاقات التضمين الاجتماعي من Medal Social لاختبار Lighthouse',
     description:
-      'راجع بطاقات X وYouTube والاحتياط التي يعرضها خادم Medal على صفحة اختبار Lighthouse. افتح بطاقة لمعاينة المشاركة.',
+      'راجع بطاقات X وYouTube والاحتياط التي يعرضها خادم Medal Social على صفحة اختبار Lighthouse. افتح بطاقة لمعاينة المشاركة.',
     breadcrumb: 'بطاقات التضمين',
     home: 'الرئيسية',
   },

@@ -41,7 +41,7 @@ specificity), so any `.fb { … }` rule in the site beats them.
   `https://cdn.sanity.io/files/<projectId>/`. Page images are `blob:` URLs; if the site sets
   `img-src`, include `blob:`. pdf.js runs in a same-origin module worker; if the site sets `worker-src`,
   include `'self'`.
-- **PostCSS cascade-layer polyfills.** Sites that flatten Tailwind's `@layer` rules (e.g. Medal's
+- **PostCSS cascade-layer polyfills.** Sites that flatten Tailwind's `@layer` rules (e.g. Medal Social's
   `@medalsocial/postcss-compat`) boost the preflight reset above plain component CSS. Import
   `@medalsocial/postcss-compat/page-scoped-layers.css` at the top of `flipbook.css` there.
 - **Large PDFs.** pdf.js downloads the whole file (Sanity's CDN doesn't expose range support to

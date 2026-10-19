@@ -1,5 +1,5 @@
 /**
- * Social Media Embed — Medal-branded static cards.
+ * Social Media Embed — Medal Social-branded static cards.
  * Fetches post metadata server-side (oEmbed / public endpoints), never loads
  * third-party widget scripts or cookies by default. YouTube uses a
  * click-to-load youtube-nocookie facade.

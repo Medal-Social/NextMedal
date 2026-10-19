@@ -3,7 +3,7 @@
  * (no server-only oEmbed resolve). Used by the ComponentGallery preview path.
  *
  * Article / event / newsletter pages and server RichtextModule import
- * `Content.server` instead for the full Medal oEmbed cards.
+ * `Content.server` instead for the full Medal Social oEmbed cards.
  */
 
 import SharedPortableText from '@/components/blocks/modules/SharedPortableText';
