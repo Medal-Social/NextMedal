@@ -51,7 +51,6 @@ const EDITOR_ITEMS = [
   'Price plans',
   'Logos',
   'Forms',
-  'Form submissions',
   'divider',
   'Site settings',
 ];
@@ -74,7 +73,6 @@ describe('Studio sidebar', () => {
       'pricing',
       'logo',
       'form',
-      'lead',
     ]);
   });
 
@@ -89,6 +87,12 @@ describe('Studio sidebar', () => {
       'Article topics',
       'Docs categories',
     ]);
+  });
+
+  it('has no form submissions list: submissions go to Medal Social, not the public dataset', () => {
+    const items = sidebar(user('administrator'));
+    expect(items.map((entry) => entry.label ?? '')).not.toContain('Form submissions');
+    expect(items.map((entry) => entry.type)).not.toContain('lead');
   });
 
   it('has no Content Health folder or other developer views', () => {

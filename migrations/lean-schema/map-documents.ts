@@ -35,6 +35,9 @@ export const DELETE_TYPES = [
   'announcement',
   'sanity.assist.task.status',
   'component.library',
+  // Form submissions go to Medal Social only (owner decision 2026-10-19); the
+  // dataset is public, so no visitor data may stay in it. Production had none.
+  'lead',
 ] as const;
 
 /**

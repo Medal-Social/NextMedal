@@ -278,7 +278,6 @@ describe('env', () => {
       process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID = '';
       process.env.NEXT_PUBLIC_IMAGE_PROXY_URL = '';
       process.env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN = '';
-      process.env.SANITY_WRITE_TOKEN = '';
       process.env.MEDAL_API_KEY = '';
       process.env.MEDAL_API_ENDPOINT = '';
 

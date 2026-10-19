@@ -17,7 +17,6 @@ import collectionArticle from './documents/collections/article';
 import collectionChangelog from './documents/collections/changelog';
 import collectionDocumentation from './documents/collections/documentation';
 import collectionEvents from './documents/collections/events';
-import lead from './documents/collections/lead';
 import collectionNewsletter from './documents/collections/newsletter';
 // Documents - Pages
 import page from './documents/page';
@@ -81,7 +80,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   collectionDocumentation,
   collectionEvents,
   collectionNewsletter,
-  lead,
 
   // Documents - Shared Content
   banner,

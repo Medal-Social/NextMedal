@@ -101,34 +101,69 @@ export async function isConsentRequired(
   }
 }
 
+export type EventConsentRule = 'required' | 'optional' | 'no-form' | 'unavailable';
+
+/** What a registration note names the event by. */
+export interface EventDetails {
+  id: string;
+  title?: string;
+  startDateTime?: string;
+  timezone?: string;
+}
+
+type EventRow = {
+  title?: string;
+  startDateTime?: string;
+  timezone?: string;
+  form?: ConsentRow;
+} | null;
+
+const eventCache = new Map<string, EventDetails>();
+
 /**
  * The consent rule for registering to an event, read from the event's own
- * registration form — never from a form id the browser sends.
+ * registration form — never from a form id the browser sends — together with
+ * the event's title and date for the registration record.
  * `no-form`: the event offers no registration, so nothing may be stored.
  * `unavailable`: Sanity could not be read and no recent answer is known — unlike
  * forms, an event always has a form to check, so the registration waits.
  */
 export async function eventConsent(
   eventId: string
-): Promise<'required' | 'optional' | 'no-form' | 'unavailable'> {
+): Promise<{ rule: EventConsentRule; event: EventDetails }> {
   const publishedId = published(eventId);
   const cacheKey = `event:${publishedId}`;
   try {
-    const form = await client.fetch<ConsentRow>(
-      `*[_id == $eventId][0].registrationForm->{
-        requireConsent,
-        "legacyRequired": acceptance.required
+    const row = await client.fetch<EventRow>(
+      `*[_id == $eventId][0]{
+        "title": metadata.title,
+        startDateTime,
+        timezone,
+        "form": registrationForm->{
+          requireConsent,
+          "legacyRequired": acceptance.required
+        }
       }`,
       { eventId: publishedId }
     );
-    if (!form) return 'no-form';
-    const required = requiredBy(form);
+    const event: EventDetails = {
+      id: publishedId,
+      title: row?.title ?? undefined,
+      startDateTime: row?.startDateTime ?? undefined,
+      timezone: row?.timezone ?? undefined,
+    };
+    if (!row?.form) return { rule: 'no-form', event };
+    const required = requiredBy(row.form);
     consentCache.set(cacheKey, { required, at: Date.now() });
-    return required ? 'required' : 'optional';
+    eventCache.set(cacheKey, event);
+    return { rule: required ? 'required' : 'optional', event };
   } catch (err) {
     logger.error({ err, eventId }, '[sanity] event consent lookup failed');
+    const event = eventCache.get(cacheKey) ?? { id: publishedId };
     const cached = consentCache.get(cacheKey);
-    if (!cached || Date.now() - cached.at >= CONSENT_CACHE_TTL_MS) return 'unavailable';
-    return cached.required ? 'required' : 'optional';
+    if (!cached || Date.now() - cached.at >= CONSENT_CACHE_TTL_MS) {
+      return { rule: 'unavailable', event };
+    }
+    return { rule: cached.required ? 'required' : 'optional', event };
   }
 }

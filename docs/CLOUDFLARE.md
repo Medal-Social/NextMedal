@@ -37,8 +37,11 @@ The two workflows are **dormant by default**. To enable automatic deploys:
    - `CLOUDFLARE_ACCOUNT_ID` — the account ID.
    - `NEXT_PUBLIC_SANITY_BROWSER_TOKEN`, `NEXT_PUBLIC_UMAMI_SCRIPT_URL`,
      `NEXT_PUBLIC_UMAMI_WEBSITE_ID` (optional — for live preview / analytics).
-   - `SANITY_WRITE_TOKEN`, `MEDAL_API_KEY`, `MEDAL_API_ENDPOINT` (optional — only
-     if those features are used). These are pushed to the Worker as secrets.
+   - `MEDAL_API_KEY` (**required for forms**) and `MEDAL_API_ENDPOINT`
+     (optional). Every contact form, newsletter sign-up and event registration
+     goes to Medal Social only — nothing is stored in Sanity — so without the
+     key visitors get "We couldn't send your message right now". These are
+     pushed to the Worker as secrets; an empty one is deleted from the Worker.
 
    The `Prod` environment already holds the Sanity secrets; you only need to add
    the two `CLOUDFLARE_*` values there.

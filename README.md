@@ -86,7 +86,14 @@ cp .env.example .env.local
 # NEXT_PUBLIC_SANITY_PROJECT_ID=your-project-id-here
 # NEXT_PUBLIC_SANITY_DATASET=production
 # NEXT_PUBLIC_BASE_URL=http://localhost:3000
+
+# Needed for forms (contact, newsletter, event registration):
+# MEDAL_API_KEY=your-medal-api-key
 ```
+
+Form submissions go to [Medal Social](https://medalsocial.com) only, through
+`@medalsocial/sdk` — nothing is stored in Sanity, whose dataset is public.
+Without `MEDAL_API_KEY` the forms tell visitors their message couldn't be sent.
 
 **Get your Sanity Project ID:**
 1. Go to [sanity.io/manage](https://www.sanity.io/manage)

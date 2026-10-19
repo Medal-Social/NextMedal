@@ -7,7 +7,6 @@ import { DocumentTextIcon } from '@sanity/icons/DocumentText';
 import { EditIcon } from '@sanity/icons/Edit';
 import { EnvelopeIcon } from '@sanity/icons/Envelope';
 import { ImageIcon } from '@sanity/icons/Image';
-import { InboxIcon } from '@sanity/icons/Inbox';
 import { UsersIcon } from '@sanity/icons/Users';
 import { type StructureResolver, structureTool } from 'sanity/structure';
 import { isAdministrator } from './studio-tools';
@@ -30,7 +29,6 @@ export const contentStructure: StructureResolver = (S, { currentUser }) =>
       S.documentTypeListItem('pricing').title('Price plans').icon(BillIcon),
       S.documentTypeListItem('logo').title('Logos').icon(ImageIcon),
       S.documentTypeListItem('form').title('Forms').icon(EnvelopeIcon),
-      S.documentTypeListItem('lead').title('Form submissions').icon(InboxIcon),
       S.divider(),
       S.listItem()
         .title('Site settings')

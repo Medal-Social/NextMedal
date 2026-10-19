@@ -3,7 +3,7 @@
 import { Check, Loader2 } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { captureLead } from '@/actions/leads/capture-lead';
 import { Button } from '@/components/ui/button';
 import {
@@ -72,6 +72,12 @@ export default function EventRegistrationModal({
   const t = useTranslations('modules.events.registration');
   const tCommon = useTranslations('common');
   const locale = useLocale();
+  // When the dialog opened: `withSecurity` rejects a submission made within
+  // three seconds of this, so it must not be the moment of submitting.
+  const openedAt = useRef<string | undefined>(undefined);
+  useEffect(() => {
+    if (open) openedAt.current = new Date().toISOString();
+  }, [open]);
 
   const { execute, status, result } = useAction(captureLead, {
     onSuccess: () => {
@@ -104,8 +110,9 @@ export default function EventRegistrationModal({
         referenceId: event._id,
         url: eventUrl,
       },
+      language: locale,
       _honeypot: (formData._honeypot as string) || '',
-      _submissionTimestamp: new Date().toISOString(),
+      ...(openedAt.current ? { _submissionTimestamp: openedAt.current } : {}),
     });
   };
 

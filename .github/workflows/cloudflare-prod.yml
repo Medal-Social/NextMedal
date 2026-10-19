@@ -38,7 +38,6 @@ jobs:
       NEXT_PUBLIC_SANITY_BROWSER_TOKEN: ${{ secrets.NEXT_PUBLIC_SANITY_BROWSER_TOKEN }}
       NEXT_PUBLIC_UMAMI_SCRIPT_URL: ${{ secrets.NEXT_PUBLIC_UMAMI_SCRIPT_URL }}
       NEXT_PUBLIC_UMAMI_WEBSITE_ID: ${{ secrets.NEXT_PUBLIC_UMAMI_WEBSITE_ID }}
-      SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
       MEDAL_API_KEY: ${{ secrets.MEDAL_API_KEY }}
       MEDAL_API_ENDPOINT: ${{ secrets.MEDAL_API_ENDPOINT }}
 
@@ -74,7 +73,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           set -euo pipefail
-          for name in SANITY_WRITE_TOKEN MEDAL_API_KEY MEDAL_API_ENDPOINT; do
+          for name in MEDAL_API_KEY MEDAL_API_ENDPOINT; do
             value="${!name:-}"
             if [ -z "$value" ]; then
               echo "Optional secret '$name' is not configured in CI; preserving the deployed value."
