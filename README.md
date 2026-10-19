@@ -94,6 +94,8 @@ cp .env.example .env.local
 Form submissions go to [Medal Social](https://medalsocial.com) only, through
 `@medalsocial/sdk` — nothing is stored in Sanity, whose dataset is public.
 Without `MEDAL_API_KEY` the forms tell visitors their message couldn't be sent.
+The key needs the scopes `read:contacts` and `write:contacts` (dotted:
+`crm.contact.read`, `crm.activity.read`, `write:contacts`, `crm.contact.note.create`).
 
 **Get your Sanity Project ID:**
 1. Go to [sanity.io/manage](https://www.sanity.io/manage)

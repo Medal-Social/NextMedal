@@ -42,6 +42,15 @@ jobs:
       MEDAL_API_ENDPOINT: ${{ secrets.MEDAL_API_ENDPOINT }}
 
     steps:
+      # Forms send to Medal Social only (nothing is stored in Sanity), so a
+      # Worker without the key would answer every form with an error.
+      - name: Require MEDAL_API_KEY
+        run: |
+          if [ -z "${MEDAL_API_KEY:-}" ]; then
+            echo "::error::MEDAL_API_KEY is empty. Add it to the Prod environment (scopes read:contacts + write:contacts) — every form needs it."
+            exit 1
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
@@ -73,7 +82,10 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           set -euo pipefail
-          for name in MEDAL_API_KEY MEDAL_API_ENDPOINT; do
+          echo "Uploading MEDAL_API_KEY to nextmedal (production)..."
+          printf '%s' "$MEDAL_API_KEY" | pnpm exec wrangler secret put MEDAL_API_KEY --env production
+          # Optional: an empty value keeps the deployed one.
+          for name in MEDAL_API_ENDPOINT; do
             value="${!name:-}"
             if [ -z "$value" ]; then
               echo "Optional secret '$name' is not configured in CI; preserving the deployed value."

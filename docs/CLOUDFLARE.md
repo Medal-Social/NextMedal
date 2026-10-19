@@ -40,8 +40,11 @@ The two workflows are **dormant by default**. To enable automatic deploys:
    - `MEDAL_API_KEY` (**required for forms**) and `MEDAL_API_ENDPOINT`
      (optional). Every contact form, newsletter sign-up and event registration
      goes to Medal Social only — nothing is stored in Sanity — so without the
-     key visitors get "We couldn't send your message right now". These are
-     pushed to the Worker as secrets; an empty one is deleted from the Worker.
+     key visitors get "We couldn't send your message right now", so the deploy
+     fails when `MEDAL_API_KEY` is empty. Key scopes: `read:contacts` and
+     `write:contacts` (dotted: `crm.contact.read`, `crm.activity.read`,
+     `write:contacts`, `crm.contact.note.create`). Both are pushed to the
+     Worker as secrets; an empty `MEDAL_API_ENDPOINT` is deleted from it.
 
    The `Prod` environment already holds the Sanity secrets; you only need to add
    the two `CLOUDFLARE_*` values there.
