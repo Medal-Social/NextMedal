@@ -95,6 +95,7 @@ jobs:
             printf '%s' "$value" | pnpm exec wrangler secret put "$name" --env production
           done
           # Retired: forms no longer write to Sanity. Remove a token left by older deploys.
+          existing=$(pnpm exec wrangler secret list --env production 2>/dev/null | jq -r '.[].name' 2>/dev/null || echo "")
           for name in SANITY_WRITE_TOKEN; do
             if echo "$existing" | grep -qx "$name"; then
               echo "::warning::Retired secret '$name' is still on the Worker — deleting."
