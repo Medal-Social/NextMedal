@@ -64,12 +64,8 @@ export const EVENTS_LIST = {
   limit: 50,
   showRssLink: false,
 } as const;
-/**
- * en renders `list`; nb/ar render `grid` today (no stored settings → component
- * default). Reproduced as is; owner picks one layout at the gate (Task 32 list B).
- */
-export const NEWSLETTER_LIST = { columns: 3, limit: 12 } as const;
-export const NEWSLETTER_LAYOUT = { defaultLanguage: 'list', other: 'grid' } as const;
+/** One layout in every language: `list` (owner decision 2026-10-19; nb/ar rendered `grid` before). */
+export const NEWSLETTER_LIST = { layout: 'list', columns: 3, limit: 12 } as const;
 
 const clean = (value: unknown): string => (typeof value === 'string' ? stegaClean(value) : '');
 const firstSolid = (index: number): Look => (index === 0 ? 'primary' : 'ghost');
@@ -138,10 +134,7 @@ export function blockDesign<M extends Sanity.Module>(module: M, page?: DesignPag
       Object.assign(out, EVENTS_LIST);
       break;
     case 'newsletter-frontpage':
-      Object.assign(out, NEWSLETTER_LIST, {
-        layout: isDefaultLanguage ? NEWSLETTER_LAYOUT.defaultLanguage : NEWSLETTER_LAYOUT.other,
-        showRssLink: isDefaultLanguage,
-      });
+      Object.assign(out, NEWSLETTER_LIST, { showRssLink: isDefaultLanguage });
       break;
   }
   return out as M;

@@ -112,14 +112,14 @@ describe('lists (what renders today, Vault plan C10)', () => {
     expect(design(mod('changelog-frontpage'), page('endringslogg', 'nb')).showRssLink).toBe(false);
     expect(design(mod('newsletter-frontpage'), page('newsletter', 'ar')).showRssLink).toBe(false);
   });
-  it('newsletter: list in the default language, grid in nb/ar (owner picks one later)', () => {
+  it('newsletter: list in every language (owner decision 2026-10-19)', () => {
     expect(
       design(mod('newsletter-frontpage', { layout: 'grid' }), page('newsletter', 'en')).layout
     ).toBe('list');
-    expect(design(mod('newsletter-frontpage'), page('nyhetsbrev', 'nb')).layout).toBe('grid');
+    expect(design(mod('newsletter-frontpage'), page('nyhetsbrev', 'nb')).layout).toBe('list');
     expect(
-      design(mod('newsletter-frontpage', { layout: 'list' }), page('newsletter', 'ar')).layout
-    ).toBe('grid');
+      design(mod('newsletter-frontpage', { layout: 'grid' }), page('newsletter', 'ar')).layout
+    ).toBe('list');
   });
   it('events: cards, as /events renders today', () => {
     expect(

@@ -8,6 +8,7 @@ vi.mock('@/components/blocks/modules/ModuleRenderer', () => ({
       data-module={module._type}
       data-bg={module.options?.bgTo}
       data-layout={(module as { layout?: string }).layout}
+      data-rss={String((module as { showRssLink?: boolean }).showRssLink)}
       data-looks={(module as { ctas?: Array<{ style?: string }> }).ctas
         ?.map((cta) => cta.style)
         .join(',')}
@@ -130,14 +131,16 @@ describe('Modules renders every block through blockDesign', () => {
 describe('placements are designed for the route language', () => {
   const newsletter = { _type: 'newsletter-frontpage', _key: 'n1' } as Sanity.Module;
 
-  it('nb placement: grid, as nb renders today', () => {
+  it('nb placement: list, no RSS link (RSS only in the default language)', () => {
     const html = renderToStaticMarkup(<Modules modules={[newsletter]} locale="nb" />);
-    expect(html).toContain('data-layout="grid"');
+    expect(html).toContain('data-layout="list"');
+    expect(html).toContain('data-rss="false"');
     expect(html).toContain('id="module-n1"');
   });
 
-  it('en placement: list', () => {
+  it('en placement: list with the RSS link', () => {
     const html = renderToStaticMarkup(<Modules modules={[newsletter]} locale="en" />);
     expect(html).toContain('data-layout="list"');
+    expect(html).toContain('data-rss="true"');
   });
 });

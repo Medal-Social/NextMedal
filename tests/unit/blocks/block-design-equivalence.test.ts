@@ -101,13 +101,43 @@ function renderedDesign(m: Mod, anchor: string | undefined) {
 const KEPT = new Set(PAGE_BLOCK_NAMES);
 
 /**
- * Owner-approved differences, `<docId> <moduleKey|*> <property>` (Task 32
- * list B). Empty: blockDesign reproduces today's output, including the
- * per-language newsletter layout and the /events cards (owner choices later).
+ * Owner-approved differences (Task 32 list B), `<docId> <moduleKey> <property>`
+ * → the value that property renders with after the change. Anything not listed
+ * must render exactly as today.
  */
-const APPROVED_DIFFS = new Set<string>();
-const approved = (id: string, key: string, prop: string) =>
-  APPROVED_DIFFS.has(`${id} ${key} ${prop}`) || APPROVED_DIFFS.has(`${id} * ${prop}`);
+type Design = ReturnType<typeof renderedDesign>;
+const NEWSLETTER_AS_LIST = (before: Design) => ({
+  ...(before.list as Record<string, unknown>),
+  layout: 'list',
+});
+const APPROVED_DIFFS = new Map<string, (before: Design) => unknown>([
+  // Owner decision 2026-10-19 (Ali, GATE A): newsletter is a list in every
+  // language; nb/ar rendered the component default `grid` until now.
+  ['b543a3a3-6cea-4bec-b6b8-31e0f6cb42ce 61wMMR7R8VvWK2bB62zo4m list', NEWSLETTER_AS_LIST],
+  ['729eaa88-335a-4fc4-88d5-ced936ae0a8b 4P2vumDw5K6pjBv4j2d5uc list', NEWSLETTER_AS_LIST],
+]);
+/** What a property must render after blockDesign: today's value or the approved change. */
+const expected = (id: string, key: string, prop: keyof Design, before: Design) =>
+  APPROVED_DIFFS.get(`${id} ${key} ${prop}`)?.(before) ?? before[prop];
+
+describe('approved differences', () => {
+  it('each approved difference is a real change on a rendered page', () => {
+    const rendered = new Set(
+      PAGES.flatMap((p) => (p.modules ?? []).map((m) => `${p._id} ${m._key}`))
+    );
+    for (const entry of APPROVED_DIFFS.keys()) {
+      expect(rendered.has(entry.split(' ').slice(0, 2).join(' ')), entry).toBe(true);
+    }
+    for (const id of [
+      'b543a3a3-6cea-4bec-b6b8-31e0f6cb42ce',
+      '729eaa88-335a-4fc4-88d5-ced936ae0a8b',
+    ]) {
+      const page = PAGES.find((p) => p._id === id) as Doc;
+      const m = page.modules?.find((x) => x._type === 'newsletter-frontpage') as Mod;
+      expect(renderedDesign(m, undefined).list).toMatchObject({ layout: 'grid' });
+    }
+  });
+});
 
 describe('fixtures', () => {
   it('no page or placement block stores an anchor (anchors come from code only)', () => {
@@ -151,8 +181,7 @@ describe('blockDesign reproduces what every rendered page shows today', () => {
       (designed.options as { anchorId?: string } | undefined)?.anchorId
     );
     for (const prop of Object.keys(before) as Array<keyof typeof before>) {
-      if (approved(p._id, m._key, prop)) continue;
-      expect(after[prop], prop).toEqual(before[prop]);
+      expect(after[prop], prop).toEqual(expected(p._id, m._key, prop, before));
     }
   });
 });
@@ -195,8 +224,7 @@ describe('blockDesign after the lean-schema migration', () => {
       (designed.options as { anchorId?: string } | undefined)?.anchorId
     );
     for (const prop of Object.keys(before) as Array<keyof typeof before>) {
-      if (approved(p._id, m._key, prop)) continue;
-      expect(after[prop], prop).toEqual(before[prop]);
+      expect(after[prop], prop).toEqual(expected(p._id, m._key, prop, before));
     }
   });
 });
