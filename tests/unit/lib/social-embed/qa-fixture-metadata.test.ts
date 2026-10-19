@@ -37,6 +37,10 @@ describe('buildQaFixtureMetadata', () => {
       }
     }
 
+    expect(String(buildQaFixtureMetadata('nb', false).title)).toBe(
+      'Innbyggingskort for Medal Socials Lighthouse-SEO-test'
+    );
+
     expect(titles.size).toBe(SUPPORTED_LOCALES.length);
   });
 

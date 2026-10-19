@@ -19,7 +19,7 @@ const COPY: Record<
     home: 'Home',
   },
   nb: {
-    title: 'Sosiale innbyggingskort fra Medal Social, SEO-testen',
+    title: 'Innbyggingskort for Medal Socials Lighthouse-SEO-test',
     description:
       'Se Medal Socials server-rendrede X-, YouTube- og reservekort på denne Lighthouse-testen. Åpne et kort og sjekk forhåndsvisningen.',
     breadcrumb: 'Sosiale innbyggingskort',
