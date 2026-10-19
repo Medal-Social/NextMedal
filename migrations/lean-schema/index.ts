@@ -26,6 +26,8 @@ import {
   type NodePatch,
   patch,
   set,
+  type Transaction,
+  transaction,
   unset,
 } from 'sanity/migrate';
 import { isFromExport } from '../nm-fixes/index';
@@ -69,9 +71,25 @@ function patchFor(doc: Doc, next: Doc): Mutation[] {
   return [patch(doc._id, patches, { ifRevision: doc._rev })];
 }
 
+/** Never stored: the no-op the delete guard unsets. */
+const DELETE_GUARD_FIELD = 'leanSchemaDeleteGuard';
+
+/**
+ * A delete locked to the revision this run read: `del` takes no ifRevision, so
+ * it goes in one transaction after a no-op patch that does. A document changed
+ * since the read fails the whole transaction instead of losing the new edit.
+ */
+export function lockedDelete(doc: Doc): Transaction {
+  if (!doc._rev) throw new UnmappedContentError(`${doc._id} has no _rev to lock the delete to`);
+  return transaction([
+    patch(doc._id, [at(DELETE_GUARD_FIELD, unset())], { ifRevision: doc._rev }),
+    del(doc._id),
+  ]);
+}
+
 /**
  * Every mutation the run makes: all patches first (they repoint references),
- * then the deletes.
+ * then the deletes (the default export yields them as lockedDelete).
  */
 export function planMutations(docs: readonly Doc[]): Mutation[] {
   const patches: Mutation[] = [];
@@ -176,7 +194,7 @@ export async function checkUnreferenced(
  * Real run, just before the first write: re-reads the migrated and deleted
  * types (raw perspective, so drafts count). Refuses on a blocking draft, and
  * when a document the mapping would change is new or changed since the run
- * read it (it would be missed, or a delete could not be revision-locked).
+ * read it (it would be missed, or its locked delete would fail mid-run).
  */
 export async function assertNoFreshChanges(
   context: MigrationContext,
@@ -209,6 +227,9 @@ export default defineMigration({
     const deletes = mutations.flatMap((m) => (m.type === 'delete' ? [m.id] : []));
     await checkUnreferenced(deletes, docs, context);
     if (!context.dryRun) await assertNoFreshChanges(context, docs);
-    for (const mutation of mutations) yield mutation;
+    const read = new Map(docs.map((doc) => [doc._id, doc]));
+    for (const mutation of mutations) {
+      yield mutation.type === 'delete' ? lockedDelete(read.get(mutation.id) as Doc) : mutation;
+    }
   },
 });

@@ -1,5 +1,10 @@
 import docs from '@tests/fixtures/lean-schema/documents.json';
-import { collectMigrationMutations, type MigrationContext, type Mutation } from 'sanity/migrate';
+import {
+  collectMigrationMutations,
+  type MigrationContext,
+  type Mutation,
+  type Transaction,
+} from 'sanity/migrate';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import migration, {
   applyMutations,
@@ -8,6 +13,7 @@ import migration, {
   checkUnreferenced,
   DOCUMENT_TYPES,
   IGNORE_DRAFTS_ENV,
+  lockedDelete,
   planMutations,
 } from '$/migrations/lean-schema/index';
 import { type Doc, DUPLICATE_PAGES, planDeletions } from '$/migrations/lean-schema/map-documents';
@@ -208,19 +214,55 @@ describe('assertNoFreshChanges', () => {
   });
 });
 
+describe('lockedDelete', () => {
+  it('deletes in one transaction with a no-op patch that fails on a newer revision', () => {
+    const t = lockedDelete({ _id: 'x', _type: 'page', _rev: 'r1' } as Doc);
+    expect(t.type).toBe('transaction');
+    const [guard, del] = t.mutations as Record<string, unknown>[];
+    expect(guard).toMatchObject({ type: 'patch', id: 'x', options: { ifRevision: 'r1' } });
+    expect((guard.patches as Array<{ op: { type: string } }>).map((p) => p.op.type)).toEqual([
+      'unset',
+    ]);
+    expect(del).toEqual({ type: 'delete', id: 'x' });
+  });
+
+  it('refuses a document without a revision', () => {
+    expect(() => lockedDelete({ _id: 'x', _type: 'page' } as Doc)).toThrow(/_rev/);
+  });
+});
+
 describe('the default export, end to end', () => {
   afterEach(() => vi.unstubAllEnvs());
 
-  async function run(input: readonly Doc[], context: MigrationContext) {
+  async function yielded(input: readonly Doc[], context: MigrationContext) {
     const source = async function* () {
       for (const doc of input) yield doc as never;
     };
-    const out: Mutation[] = [];
+    const out: Array<Mutation | Transaction> = [];
     for await (const item of collectMigrationMutations(migration, source, context)) {
-      out.push(...((Array.isArray(item) ? item : [item]) as Mutation[]));
+      out.push(...((Array.isArray(item) ? item : [item]) as Array<Mutation | Transaction>));
     }
     return out;
   }
+
+  /** The yielded mutations, a locked delete counted as its delete. */
+  async function run(input: readonly Doc[], context: MigrationContext) {
+    return (await yielded(input, context)).map((m) =>
+      m.type === 'transaction' ? (m.mutations[1] as Mutation) : m
+    );
+  }
+
+  it('every delete is yielded revision-locked to the version the run read', async () => {
+    const context = { dryRun: true } as unknown as MigrationContext;
+    const out = await yielded(ALL, context);
+    const locked = out.filter((m): m is Transaction => m.type === 'transaction');
+    expect(locked).toHaveLength(15);
+    expect(out.some((m) => m.type === 'delete')).toBe(false);
+    for (const t of locked) {
+      const id = (t.mutations[1] as { id: string }).id;
+      expect(t.mutations).toEqual(lockedDelete(ALL.find((d) => d._id === id) as Doc).mutations);
+    }
+  });
 
   it('visits the migrated and the deleted types', () => {
     expect(migration.documentTypes).toEqual([...DOCUMENT_TYPES]);

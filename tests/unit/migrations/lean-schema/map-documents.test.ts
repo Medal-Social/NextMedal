@@ -239,7 +239,7 @@ describe('site, pricing, placement, banner', () => {
   it('a gallery intro link keeps its href (the gallery schema edits href links)', () => {
     const components = byId('01914fd8-6f5c-4b9d-8830-065fe8f413a5');
     const link = { _key: 'l1', _type: 'link', href: 'https://example.com' };
-    const gallery = (components.modules as Array<Record<string, unknown>>)[0];
+    const gallery = (components.modules as Record<string, unknown>[])[0];
     const doc = {
       ...components,
       modules: [
