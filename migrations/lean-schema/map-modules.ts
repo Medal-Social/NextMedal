@@ -9,6 +9,7 @@
  * link or inline object). DROP holds design knobs only — blockDesign recreates
  * their values (equivalence-tested). Copy is never dropped.
  */
+import { getYouTubeId } from '../../src/lib/youtube';
 import { isFilled, isObject, UnmappedContentError } from '../nm-fixes/shared';
 
 export { UnmappedContentError };
@@ -319,7 +320,11 @@ function mapVideoHero(module: AnyModule, label: string): AnyModule {
   guard(module, ['type', 'videoId', 'thumbnail'], ['title', 'anchorId', 'muxVideo'], label);
   const out: AnyModule = { _type: 'hero', _key: module._key };
   if (module.type === 'youtube' && isFilled(module.videoId)) {
-    out.videoUrl = `https://www.youtube.com/watch?v=${String(module.videoId)}`;
+    // The old field took "YouTube URL or ID".
+    const value = String(module.videoId).trim();
+    const id = getYouTubeId(value) ?? (/^[\w-]{11}$/.test(value) ? value : undefined);
+    if (!id) throw new UnmappedContentError(`${label}: YouTube value ${value}`);
+    out.videoUrl = `https://www.youtube.com/watch?v=${id}`;
   } else if (isFilled(module.videoId)) {
     throw new UnmappedContentError(`${label}: ${String(module.type)} video id`);
   }

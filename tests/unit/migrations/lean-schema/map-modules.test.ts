@@ -119,6 +119,27 @@ describe('page top', () => {
     });
   });
 
+  it('videoHero: a stored full YouTube link (the field took "URL or ID") keeps its video', () => {
+    for (const videoId of [
+      'https://youtu.be/dQw4w9WgXcQ',
+      ' https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=3 ',
+    ]) {
+      expect(mapModule({ _type: 'videoHero', _key: 'v', type: 'youtube', videoId })).toEqual({
+        _type: 'hero',
+        _key: 'v',
+        videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      });
+    }
+  });
+
+  it('videoHero: refuses a YouTube value that is neither a video link nor an id', () => {
+    for (const videoId of ['https://www.youtube.com/@channel', 'not an id']) {
+      expect(() => mapModule({ _type: 'videoHero', _key: 'v', type: 'youtube', videoId })).toThrow(
+        UnmappedContentError
+      );
+    }
+  });
+
   it('a Mux videoHero with no video becomes an empty page top', () => {
     expect(mapModule({ _type: 'videoHero', _key: 'v', type: 'mux' })).toEqual({
       _type: 'hero',
