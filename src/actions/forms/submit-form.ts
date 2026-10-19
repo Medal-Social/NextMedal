@@ -103,13 +103,31 @@ function buildContext(
   }
 }
 
+/**
+ * Identifies one submission of one shown form: the same form (shown at the
+ * same time) sending the same content. A retry after an ambiguous Medal
+ * timeout carries the same id, so a returning contact is not noted twice;
+ * a new message from the same visitor gets a new id.
+ */
+async function submissionId(parts: unknown[]): Promise<string> {
+  const bytes = new TextEncoder().encode(JSON.stringify(parts));
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return [...new Uint8Array(digest)]
+    .slice(0, 8)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+const submissionIdLine = (id: string) => `Submission ID: ${id}`;
+
 /** The Medal contact and note for one submission. */
 function toSubmission(
   intent: SupportedIntent,
   data: Record<string, unknown>,
   metadata: Record<string, unknown>,
   email: string,
-  consentGiven: boolean
+  consentGiven: boolean,
+  id: string
 ): Submission {
   const message = getStringOrUndefined(data.message || data.content);
   const context = buildContext(data, metadata);
@@ -125,6 +143,7 @@ function toSubmission(
       ['Language', getStringOrUndefined(metadata.locale)],
       ['Privacy terms accepted', consentGiven ? 'yes' : 'no'],
     ]),
+    submissionIdLine(id),
     ...(context ? ['', 'Details:', context] : []),
   ].join('\n');
 
@@ -137,13 +156,24 @@ function toSubmission(
     labels: [intent],
     note,
     subscribe: intent === 'newsletter',
+    dedupeLine: submissionIdLine(id),
   };
 }
 
 export const submitForm = actionClient
   .schema(submissionSchema)
   .action(
-    async ({ parsedInput: { intent, data, metadata = {}, formId, consent, requireConsent } }) => {
+    async ({
+      parsedInput: {
+        intent,
+        data,
+        metadata = {},
+        formId,
+        consent,
+        requireConsent,
+        _submissionTimestamp,
+      },
+    }) => {
       if (data._honeypot) {
         logger.warn('Bot submission blocked via honeypot');
         return { success: true };
@@ -178,7 +208,14 @@ export const submitForm = actionClient
       try {
         await recordSubmission(
           medal,
-          toSubmission(intent, data, metadata, email, consentGiven),
+          toSubmission(
+            intent,
+            data,
+            metadata,
+            email,
+            consentGiven,
+            await submissionId([formId ?? '', intent, _submissionTimestamp, email, data])
+          ),
           logger
         );
         return { success: true };

@@ -225,6 +225,52 @@ describe('submitForm', () => {
       });
     });
 
+    it('a retry of the same submission (same form shown, same message) adds no second note', async () => {
+      const shownAt = humanTimestamp();
+      const first = { _submissionTimestamp: shownAt };
+      await submit(first);
+      const note = (addNote.mock.calls[0]?.[1] as { content: string } | undefined)?.content ?? '';
+      const idLine = note.split('\n').find((line) => line.startsWith('Submission ID: '));
+      expect(idLine).toMatch(/^Submission ID: [0-9a-f]{16}$/);
+
+      vi.clearAllMocks();
+      contactsCreate.mockRejectedValue(conflict());
+      contactsList.mockResolvedValue({
+        data: [existing],
+        pagination: { has_more: false, next_cursor: null },
+      });
+      activities.mockResolvedValue({
+        data: [{ id: 'a1', type: 'note.added', title: null, note_content: note }],
+        pagination: { has_more: false, next_cursor: null },
+      });
+      const result = await submit(first);
+
+      expect(result?.data).toEqual({ success: true });
+      expect(addNote).not.toHaveBeenCalled();
+    });
+
+    it('a new message from the same visitor is still recorded', async () => {
+      const shownAt = humanTimestamp();
+      await submit({ _submissionTimestamp: shownAt });
+      const note = (addNote.mock.calls[0]?.[1] as { content: string } | undefined)?.content ?? '';
+      vi.clearAllMocks();
+      contactsCreate.mockRejectedValue(conflict());
+      contactsList.mockResolvedValue({
+        data: [existing],
+        pagination: { has_more: false, next_cursor: null },
+      });
+      activities.mockResolvedValue({
+        data: [{ id: 'a1', type: 'note.added', title: null, note_content: note }],
+        pagination: { has_more: false, next_cursor: null },
+      });
+      await submit({
+        _submissionTimestamp: shownAt,
+        data: { email: 'human@example.com', message: 'Something else' },
+      });
+
+      expect(addNote).toHaveBeenCalledTimes(1);
+    });
+
     it('does not overwrite details the contact already has', async () => {
       await submit({ data: { email: 'human@example.com', name: 'Someone Else' } });
 
