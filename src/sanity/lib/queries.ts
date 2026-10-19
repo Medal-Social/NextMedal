@@ -1,4 +1,5 @@
 import { groq } from 'next-sanity';
+import { DEFAULT_LOCALE } from '@/i18n/config';
 import { ARTICLE_PLACEMENT_SCOPE, PAGE_PLACEMENT_SCOPE } from '@/lib/sanity/placement-scopes';
 
 export const SLUG_QUERY = groq`
@@ -262,7 +263,9 @@ export const COLLECTION_ARTICLE_POST_QUERY = groq`
 			_type == 'socialEmbed' => { _type, platform, url },
 			_type == 'video' => { _type, type, videoId, muxVideo{ ..., asset->{ ..., "playbackId": playback_ids[0].id } }, thumbnail, title }
 		},
-		'placements': ${placementQuery(`scope == '${ARTICLE_PLACEMENT_SCOPE}'`)},
+		// Placements have no language and are written in the default one (the download
+		// offer is English), so only default-language articles get them for now.
+		'placements': ${placementQuery(`scope == '${ARTICLE_PLACEMENT_SCOPE}' && $locale == '${DEFAULT_LOCALE}'`)},
 		'readTime': math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
 		'headings': body[style in ['h2', 'h3']]{
 			style,

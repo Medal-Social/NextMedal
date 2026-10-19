@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { DEFAULT_LOCALE } from '@/i18n/config';
 import {
   ARTICLE_PLACEMENT_SCOPE,
   PAGE_PLACEMENT_SCOPE,
@@ -22,7 +23,7 @@ describe('placement scopes', () => {
   it('article pages ask for the "Articles" placements', () => {
     expect(ARTICLE_PLACEMENT_SCOPE).toBe('articles-frontpage');
     expect(COLLECTION_ARTICLE_POST_QUERY).toContain(
-      `'placements': *[_type == 'placement' && (scope == '${ARTICLE_PLACEMENT_SCOPE}')]`
+      `'placements': *[_type == 'placement' && (scope == '${ARTICLE_PLACEMENT_SCOPE}' && $locale == '${DEFAULT_LOCALE}')]`
     );
   });
 
@@ -34,7 +35,7 @@ describe('placement scopes', () => {
 
   it('every scope a query asks for is one the Studio offers', () => {
     const asked = [COLLECTION_ARTICLE_POST_QUERY, PAGE_QUERY].flatMap((q) =>
-      [...q.matchAll(/_type == 'placement' && \(scope == '([^']+)'\)/g)].map((m) => m[1])
+      [...q.matchAll(/_type == 'placement' && \(scope == '([^']+)'/g)].map((m) => m[1])
     );
     expect(asked.length).toBeGreaterThan(1);
     for (const s of asked) expect(PLACEMENT_SCOPES).toContain(s);
