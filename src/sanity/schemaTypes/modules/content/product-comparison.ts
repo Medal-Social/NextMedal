@@ -1,9 +1,10 @@
 /**
  * Product Comparison Module Schema
- * @version 1.3.1
+ * @version 2.0.0
  * @lastUpdated 2025-12-23
  * @description A comparison table for products/features with customizable details for each cell.
  * @changelog
+ * - 2.0.0: Title and Text replace the positional intro (h2 + paragraphs)
  * - 1.3.1: Updated header documentation
  * - 1.3.0: Fixed validation logic to properly access parent module
  * - 1.2.0: Updated field descriptions for improved UX and clarity
@@ -33,9 +34,17 @@ export default defineType({
       title: 'Advanced Options',
       group: 'options',
     }),
-    richTextField('intro', 'Intro', 'section', {
-      description: 'Brief text explaining the comparison (will appear centered above the table)',
+    defineField({ name: 'title', title: 'Title', type: 'string', group: 'content' }),
+    richTextField('text', 'Text', 'plain', {
+      description: 'Shown under the title.',
       group: 'content',
+    }),
+    // Old positional intro (h2 + paragraphs). Hidden; the lean-schema migration
+    // moves it to Title and Text, and plan Task 35 deletes it.
+    defineField({
+      ...richTextField('intro', 'Intro', 'section'),
+      hidden: true,
+      deprecated: { reason: 'Moved to Title and Text by the lean-schema migration.' },
     }),
     defineField({
       name: 'products',

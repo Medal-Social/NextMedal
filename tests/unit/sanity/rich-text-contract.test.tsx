@@ -97,6 +97,7 @@ describe('every rich-text field offers exactly one preset', () => {
         'features.items.content',
         'logo-cloud.content',
         'pricing-list.intro',
+        'product-comparison.text',
         'changelog-frontpage.intro',
         'pricing.content',
         'collection.article.body',

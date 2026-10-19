@@ -789,6 +789,9 @@ declare global {
     }
 
     interface ProductComparison extends Module<'product-comparison'> {
+      title?: string;
+      text?: BlockContent;
+      /** Old positional intro; blockDesign builds it from Title and Text (plan Task 18). */
       intro?: BlockContent;
       products?: {
         _key: string;
