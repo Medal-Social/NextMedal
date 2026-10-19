@@ -10,6 +10,7 @@ import {
   FIELD_BUDGET_ALLOWLIST,
   PAGE_BLOCK_NAMES,
 } from '@/sanity/schemaTypes/page-blocks';
+import { mapAll } from '$/migrations/lean-schema/map-documents';
 
 type Field = {
   name: string;
@@ -110,8 +111,15 @@ describe('the page modules array', () => {
     expect([...stored].filter((type) => !accepted.includes(type))).toEqual([]);
   });
 
-  // enabled in Task 24: the same check over the pages after mapDocument
-  // (import { mapDocument } from '$/migrations/lean-schema/map-documents').
+  it('after the lean-schema migration, pages store only offered or developer blocks', () => {
+    type Page = { _type: string; modules?: Array<{ _type: string }> };
+    const pages = (mapAll(fixtureDocuments as never) as unknown as Page[]).filter(
+      (doc) => doc._type === 'page'
+    );
+    const stored = new Set(pages.flatMap((doc) => (doc.modules ?? []).map((m) => m._type)));
+    const allowed = [...PAGE_BLOCK_NAMES, ...DEVELOPER_BLOCK_NAMES] as string[];
+    expect([...stored].filter((type) => !allowed.includes(type))).toEqual([]);
+  });
 
   it('offers the five insert groups in order', () => {
     expect(groups.map((g) => g.name)).toEqual(['Page top', 'Text', 'Features', 'Prices', 'Lists']);

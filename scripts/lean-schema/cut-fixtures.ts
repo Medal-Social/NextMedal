@@ -24,6 +24,8 @@ const KEEP = new Set([
   'placement',
   'redirect',
   'component.library',
+  // The en events link their list page: the lean-schema migration repoints them.
+  'collection.events',
   // Orphan types with no schema (spec §3): kept so the delete plan is tested.
   'navigation',
   'global-module',
