@@ -44,7 +44,7 @@ const AnchorSelector = ({
   if (anchors.length === 0) {
     return (
       <TextInput
-        placeholder="#section-id"
+        placeholder="e.g. features"
         value={value}
         onChange={(e) => onChange(e.currentTarget.value)}
         fontSize={2}
@@ -165,7 +165,7 @@ export function CtaInput(props: ObjectInputProps) {
       {/* ROW 3: The Actual Destination Input */}
       <Box>
         <Label size={1} style={{ marginBottom: '6px' }}>
-          Page
+          {isInternal ? 'Page' : 'Web address'}
         </Label>
         {isInternal ? (
           <Box>
@@ -200,7 +200,7 @@ export function CtaInput(props: ObjectInputProps) {
       <Grid gridTemplateColumns={[1, 1, 2]} gap={4}>
         <Box>
           <Label size={1} style={{ marginBottom: '6px' }}>
-            Section (Optional)
+            Section (optional)
           </Label>
           {isInternal ? (
             <AnchorSelector
@@ -210,7 +210,7 @@ export function CtaInput(props: ObjectInputProps) {
             />
           ) : (
             <TextInput
-              placeholder="#section-id"
+              placeholder="e.g. features"
               value={linkValue?.params || ''}
               onChange={(e) => handleLinkFieldChange('params', e.currentTarget.value)}
               fontSize={2}

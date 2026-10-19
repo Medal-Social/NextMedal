@@ -24,6 +24,7 @@ export default defineType({
       description: 'The first is a solid button, the second a quieter one.',
       type: 'array',
       of: [defineArrayMember({ type: 'cta' })],
+      validation: (Rule) => Rule.max(2),
     }),
   ],
   preview: blockPreview('Message with buttons', { title: 'content' }),

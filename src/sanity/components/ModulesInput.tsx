@@ -7,6 +7,10 @@
  * menu (All items, groups, search) from `props.schemaType.of`, and each
  * item's insert before / after menu from `member.parentSchemaType.of`, which
  * the form state sets to the unfiltered array type. Both are replaced here.
+ *
+ * Side effect: copy/paste checks pasted items against the filtered `of`, so
+ * pasting a hidden (old or developer) block into a page is refused. Stored
+ * ones keep rendering and validating; only new copies are blocked.
  */
 import { useMemo } from 'react';
 import type { ArrayOfObjectsInputProps, ArraySchemaType } from 'sanity';

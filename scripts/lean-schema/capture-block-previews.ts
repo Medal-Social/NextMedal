@@ -7,6 +7,16 @@
 // dev-only harness /dev/flipbook (the real Flipbook component with the
 // fixture PDF), so it needs `pnpm dev` running: LOCAL_URL (default
 // http://localhost:3000). Pass block names to shoot only those.
+//
+// changelog-frontpage: www.nextmedal.com and staging show "No changelog
+// entries yet" (2026-10-19: the 3 stored entries have no collection
+// reference and use an old shape). Its preview was shot from a temporary,
+// uncommitted dev page that rendered the real ChangelogList (timeline,
+// grouped by year) with two sample entries under a "Changelog" heading and
+// the RSS link, at /dev/changelog-preview; recreate it to re-shoot.
+//
+// The page opens with reduced motion, so motion/react blocks (feature cards)
+// render in their final state instead of mid-reveal.
 import { mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { chromium, type Locator, type Page } from '@playwright/test';
@@ -75,7 +85,7 @@ const SOURCES: Record<string, { path: string; selector: string; local?: boolean 
   'logo-cloud': { path: '/', selector: '[data-module="logo-cloud"]' },
   'pricing-list': { path: '/pricing', selector: '[data-module="pricing-list"]' },
   'articles-frontpage': { path: '/now', selector: '[data-module="articles-frontpage"]' },
-  'changelog-frontpage': { path: '/changelog', selector: '[data-module="changelog-frontpage"]' },
+  'changelog-frontpage': { path: '/dev/changelog-preview', selector: 'main section', local: true },
   // The docs list renders its own layout without a data-module wrapper.
   'docs-frontpage': { path: '/docs', selector: 'main' },
   'events-frontpage': { path: '/events', selector: '[data-module="events-frontpage"]' },
@@ -86,7 +96,7 @@ async function main() {
   mkdirSync(OUT, { recursive: true });
   const only = process.argv.slice(2);
   const browser = await chromium.launch();
-  const page = await browser.newPage({ viewport: VIEWPORT });
+  const page = await browser.newPage({ viewport: VIEWPORT, reducedMotion: 'reduce' });
   for (const [name, source] of Object.entries(SOURCES)) {
     if (only.length && !only.includes(name)) continue;
     // load / networkidle never settle on some pages; wait for fonts and the block's pictures instead.

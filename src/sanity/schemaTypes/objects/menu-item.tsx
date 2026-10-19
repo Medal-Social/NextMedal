@@ -17,17 +17,17 @@ import { MenuItemInput } from '../../components/MenuItemInput';
 
 export default defineType({
   name: 'menuItem',
-  title: 'Menu Item',
+  title: 'Link',
   icon: LinkIcon,
   type: 'object',
   components: {
     input: MenuItemInput,
   },
-  description: 'Internal or external link with optional icon and label',
+  description: 'A link to a page on this site or to another website.',
   fieldsets: [
     {
       name: 'destination',
-      title: 'Destination',
+      title: 'Where it goes',
       options: { collapsible: false },
     },
     {
@@ -40,20 +40,19 @@ export default defineType({
     defineField({
       name: 'label',
       title: 'Text',
-      description: 'The text that will be displayed for this link',
+      description: 'The words people click.',
       type: 'string',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'type',
-      title: 'Link Type',
-      description: 'Choose where this link should point to',
+      title: 'Link to',
       type: 'string',
       options: {
         layout: 'radio',
         list: [
-          { title: 'Internal Page', value: 'internal' },
-          { title: 'External Website', value: 'external' },
+          { title: 'Page on this site', value: 'internal' },
+          { title: 'Other website', value: 'external' },
         ],
       },
       validation: (Rule) => Rule.required(),
@@ -62,8 +61,7 @@ export default defineType({
     }),
     defineField({
       name: 'internal',
-      title: 'Internal Page',
-      description: 'Select a page within this website',
+      title: 'Page',
       type: 'reference',
       to: [{ type: 'page' }, { type: 'collection.article' }],
       validation: (Rule) =>
@@ -79,8 +77,7 @@ export default defineType({
     }),
     defineField({
       name: 'external',
-      title: 'External URL',
-      description: 'Enter a link to an external website',
+      title: 'Web address',
       placeholder: 'https://example.com',
       type: 'url',
       validation: (Rule) =>
@@ -128,7 +125,7 @@ export default defineType({
     defineField({
       name: 'newTab',
       title: 'Open in new tab',
-      description: 'Open link in a new browser tab',
+      description: 'Opens the link in a new browser tab.',
       type: 'boolean',
       initialValue: false,
       fieldset: 'advanced',
@@ -139,17 +136,19 @@ export default defineType({
       label: 'label',
       _type: 'internal._type',
       title: 'internal.title',
+      pageName: 'internal.metadata.title',
       internal: 'internal.metadata.slug.current',
       params: 'params',
       external: 'external',
     },
-    prepare: ({ label, title, _type, internal, params, external }) => {
+    prepare: ({ label, title, pageName, _type, internal, params, external }) => {
       const _resolvedUrl = resolveSlug({ _type, internal, params, external });
-      const linkType = external ? 'External' : 'Internal';
-      const destination = external || title || internal || 'Untitled Page';
+      const linkType = external ? 'Other website' : 'Page on this site';
+      const name = title || pageName;
+      const destination = external || name || internal || 'No page chosen';
 
       return {
-        title: label || title || 'Untitled Link',
+        title: label || name || 'Link',
         subtitle: `${linkType} → ${destination}`,
         media: LinkIcon,
       };
