@@ -277,11 +277,11 @@ export function assertDeletable(docs: readonly Doc[]) {
 }
 
 /**
- * Drafts the run cannot leave in the mapped state: a draft kept while its
- * published version is deleted, a draft of another type than its published
- * version (the run visits by type), or a draft the mapping does not settle in
- * one pass. Publishing any of them would bring the old shape back.
- * Every other draft is mapped in the same run as its published version.
+ * Drafts the run cannot leave in the mapped state: a draft of another type
+ * than its published version (the run visits by type, so publishing it would
+ * undo the patch or the delete of the published version), or a draft the
+ * mapping does not settle in one pass. Every other draft is mapped (or
+ * deleted) in the same run as its published version.
  */
 export function blockingDrafts(docs: readonly Doc[]): string[] {
   const byId = new Map(docs.map((d) => [d._id, d]));
@@ -289,15 +289,10 @@ export function blockingDrafts(docs: readonly Doc[]): string[] {
     .filter((d) => d._id.startsWith('drafts.'))
     .filter((draft) => {
       const published = byId.get(publishedId(draft._id));
-      const result = mapDocument(draft);
-      if (published && isDeleted(published) && result.action !== 'delete') return true;
-      if (
-        published &&
-        published._type !== draft._type &&
-        mapDocument(published).action !== 'skip'
-      ) {
-        return true;
+      if (published && published._type !== draft._type) {
+        return mapDocument(published).action !== 'skip';
       }
+      const result = mapDocument(draft);
       return result.action === 'patch' && mapDocument(result.next).action !== 'skip';
     })
     .map((d) => d._id);

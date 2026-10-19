@@ -1,0 +1,42 @@
+# Text the lean-schema migration removes on purpose (Vault plan 2026-10-18, Task 25).
+# One JSON string per line; the `#` lines directly above a string give its reason.
+# Used by tests/unit/migrations/lean-schema/inventory.test.ts and by
+# `pnpm exec tsx scripts/lean-schema/string-inventory.ts before.ndjson after.ndjson migrations/lean-schema/allowed-losses.txt`.
+# Only page-title duplicates of metadata.title, design values and the owner-approved
+# form clean-up belong here; anything else the inventory prints is a mapping bug.
+# Documents the migration deletes are listed separately (orphans, duplicate list pages).
+
+# Orphan page.title (no schema field, not rendered; metadata.title "Components" names the page).
+"Components"
+
+# Orphan page.title (metadata.title "Contact us").
+"Contact us"
+
+# Orphan page.title (metadata.title "Our story").
+"Our story"
+
+# Orphan page.title on Terms, published (metadata.title "Terms of Services").
+"Terms of Service"
+
+# Orphan page.title typo on the Terms draft (metadata.title "Terms of Services").
+"Terms of Cervice"
+
+# Orphan page.title on the Guides page (metadata.title "This page will have guides").
+"Guides"
+
+# Orphan page.title on Privacy, published and draft (metadata.title "privacy" / "Privacy").
+"Privacy"
+
+# Docs list "uncategorized" label = the code default (DOCS_LIST.uncategorizedLabel).
+"Other"
+
+# Form intent "lead" is not a value the schema offers; becomes "contact" (owner gate list B).
+"lead"
+
+# Form placeholder copy, replaced by "you@example.com" (owner decision, R2 form clean-up).
+"Give us your shitty email"
+
+# Form consent text "Test" (replaced by "I agree to the privacy policy." in en/nb/ar) and the
+# label of the orphan form.redirect (no schema field since form v3, read by nothing).
+# The consent link keeps its label "Test" (not rendered).
+"Test"

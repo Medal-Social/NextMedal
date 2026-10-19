@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { blockDesign, type DesignPage } from '@/components/blocks/modules/block-design';
 import { pageAnchors } from '@/lib/block-anchors';
 import { PAGE_BLOCK_NAMES } from '@/sanity/schemaTypes/page-blocks';
+import { mapAll } from '$/migrations/lean-schema/map-documents';
 
 /**
  * blockDesign must reproduce what every rendered nextmedal.com page shows
@@ -144,6 +145,50 @@ describe('blockDesign reproduces what every rendered page shows today', () => {
     // Today Modules.tsx (R1) gives each block its fixed anchor over the page's list.
     const before = renderedDesign(m, pageAnchors(p.modules).get(m._key));
     const designed = blockDesign(m as never, p) as unknown as Mod;
+    const after = renderedDesign(
+      designed,
+      (designed.options as { anchorId?: string } | undefined)?.anchorId
+    );
+    for (const prop of Object.keys(before) as Array<keyof typeof before>) {
+      if (approved(p._id, m._key, prop)) continue;
+      expect(after[prop], prop).toEqual(before[prop]);
+    }
+  });
+});
+
+/**
+ * After the lean-schema migration (Task 25 Step 4): the stored knobs are gone,
+ * blockDesign must still give every block on every rendered page the design it
+ * renders with today. The migration keeps the page each route renders today
+ * (events included), so routes are compared page by page and block by block.
+ */
+describe('blockDesign after the lean-schema migration', () => {
+  const MAPPED = (mapAll(docs as never) as unknown as Doc[]).filter((d) => d._type === 'page');
+  const mappedById = new Map(MAPPED.map((d) => [d._id, d]));
+  const renderedAfter = (d: Doc) =>
+    MAPPED.filter((o) => isDraft(o) === isDraft(d) && slugLang(o) === slugLang(d)).sort((a, b) =>
+      a._id < b._id ? -1 : 1
+    )[0]?._id;
+
+  it('every route renders the same page as today', () => {
+    for (const page of PAGES) {
+      if (isDraft(page)) continue;
+      expect(renderedAfter(page), slugLang(page)).toBe(page._id);
+    }
+  });
+
+  const cases = PAGES.flatMap((p) =>
+    (p.modules ?? [])
+      .filter((m) => KEPT.has(m._type))
+      .map((m) => [`${p._id} ${m._type} ${m._key}`, p, m] as const)
+  );
+
+  it.each(cases)('%s', (_, p, m) => {
+    const before = renderedDesign(m, pageAnchors(p.modules).get(m._key));
+    const page = mappedById.get(p._id) as Doc;
+    const mapped = page.modules?.find((x) => x._key === m._key) as Mod;
+    expect(mapped._type).toBe(m._type);
+    const designed = blockDesign(mapped as never, page) as unknown as Mod;
     const after = renderedDesign(
       designed,
       (designed.options as { anchorId?: string } | undefined)?.anchorId

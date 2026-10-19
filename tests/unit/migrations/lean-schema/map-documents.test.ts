@@ -26,6 +26,15 @@ const AFTER = mapAll(ALL);
 const deleted = new Set(planDeletions(ALL));
 const isDraft = (id: string) => id.startsWith('drafts.');
 
+/** Every object of `type` that still stores `key`, at any depth. */
+function withKey(value: unknown, type: string, key: string): unknown[] {
+  if (Array.isArray(value)) return value.flatMap((item) => withKey(item, type, key));
+  if (!value || typeof value !== 'object') return [];
+  const obj = value as Record<string, unknown>;
+  const own = obj._type === type && key in obj ? [obj] : [];
+  return [...own, ...Object.values(obj).flatMap((inner) => withKey(inner, type, key))];
+}
+
 const FORM = '0305aaeb-eef8-4f13-b724-ebdd86591b83';
 const EVENTS_GROUP = '0a41c124-1e2c-4a1b-a870-4163c342b0d1';
 
@@ -119,7 +128,7 @@ describe('pages', () => {
       );
       expect(JSON.stringify(outsideGallery), knob).not.toContain(knob);
     }
-    expect(pages).not.toMatch(/"_type":"cta"[^}]*"style"/);
+    expect(withKey(JSON.parse(pages), 'cta', 'style')).toEqual([]);
   });
 
   it('the campaigns draft (Mux videoHero, no video) gets an empty page top', () => {
@@ -131,7 +140,8 @@ describe('pages', () => {
 describe('site, pricing, placement, banner', () => {
   it('site: no button styles; the copyright link is an external link in every language', () => {
     const site = next(byId('site'));
-    expect(JSON.stringify(site)).not.toMatch(/"_type":"cta"[^}]*"style"/);
+    expect(withKey(byId('site'), 'cta', 'style').length).toBeGreaterThan(0);
+    expect(withKey(site, 'cta', 'style')).toEqual([]);
     const links = (site.copyright as Array<{ value: Array<{ markDefs: unknown[] }> }>).flatMap(
       (l) => l.value.flatMap((b) => b.markDefs)
     );
@@ -165,7 +175,7 @@ describe('site, pricing, placement, banner', () => {
       const result = mapDocument(doc);
       const out = result.action === 'patch' ? result.next : doc;
       expect(out).not.toHaveProperty('style');
-      expect(JSON.stringify(out)).not.toMatch(/"_type":"cta"[^}]*"style"/);
+      expect(withKey(out, 'cta', 'style')).toEqual([]);
       expect(out.monthlyPrice).toBe(doc.monthlyPrice);
     }
   });
@@ -345,7 +355,7 @@ describe('drafts and re-runs', () => {
     expect(blockingDrafts(ALL)).toEqual([]);
   });
 
-  it('flags a draft kept while its published version is deleted', () => {
+  it('flags a draft of another type than its published version (the run visits by type)', () => {
     const removed = DUPLICATE_PAGES[0].remove;
     const all = [...ALL, { _id: `drafts.${removed}`, _type: 'site' } as Doc];
     expect(blockingDrafts(all)).toEqual([`drafts.${removed}`]);
