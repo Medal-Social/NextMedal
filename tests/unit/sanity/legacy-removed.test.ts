@@ -76,6 +76,7 @@ describe('no leftovers', () => {
     expect(studioDeployment('fork1234', '')).toBeUndefined();
     expect(studioDeployment('fork1234', 'forkapp')).toEqual({ appId: 'forkapp' });
     expect(read('sanity.cli.ts')).toMatch(/deployment: studioDeployment\(projectId\)/);
+    expect(read('src/sanity/lib/studio-deployment.ts')).not.toMatch(/process\.env/);
   });
 });
 
