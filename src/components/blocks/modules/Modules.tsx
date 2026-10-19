@@ -28,15 +28,17 @@ export default function Modules({
   // not from content. Anchors are computed over the list actually rendered;
   // placements (no page) get the design but no page anchors, so they never
   // duplicate an id of the page below them.
-  const designPage: DesignPage = page
-    ? { ...(page as DesignPage), modules }
-    : { language: locale, modules: [] };
+  // Sidebar blocks sit beside the page: designed like placements (no page anchors).
+  const designPage: DesignPage =
+    page && !isSidebar
+      ? { ...(page as DesignPage), modules }
+      : { language: (page as DesignPage | undefined)?.language ?? locale, modules: [] };
 
   return (
     <>
       {modules.map((stored) => {
         if (!stored) return null;
-        const module = isSidebar ? stored : blockDesign(stored, designPage);
+        const module = blockDesign(stored, designPage);
 
         return (
           <ModuleRenderer

@@ -109,16 +109,24 @@ describe('Modules renders every block through blockDesign', () => {
     expect(html).toContain('id="module-top1"');
   });
 
-  it('sidebar blocks render as stored', () => {
+  it('sidebar blocks get their button looks from code too (stored styles are migrated away)', () => {
     const callout = {
       _type: 'callout',
       _key: 'side1',
-      ctas: [{ style: 'ghost' }],
+      ctas: [{ _key: 'a' }, { _key: 'b' }],
     } as unknown as Sanity.Module;
     const html = renderToStaticMarkup(
       <Modules modules={[callout]} page={at('pricing')} isSidebar />
     );
-    expect(html).toContain('data-looks="ghost"');
+    expect(html).toContain('data-looks="primary,ghost"');
+  });
+
+  it('sidebar blocks get no page anchor (they sit beside the page)', () => {
+    const features = { _type: 'features', _key: 'f1' } as Sanity.Module;
+    const html = renderToStaticMarkup(
+      <Modules modules={[features]} page={at('index')} isSidebar />
+    );
+    expect(html).toContain('id="module-f1"');
   });
 
   it('old and undesigned blocks pass through unchanged', () => {
