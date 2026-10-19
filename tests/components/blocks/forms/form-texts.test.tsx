@@ -31,6 +31,7 @@ vi.mock('next-safe-action/hooks', () => ({
 
 import Form from '@/components/blocks/forms/Form';
 import EventRegistrationModal from '@/components/blocks/modules/frontpage/events/EventRegistrationModal';
+import LeadMagnet from '@/components/blocks/modules/marketing/LeadMagnet';
 
 const value = [
   { _key: 'en', value: 'Send' },
@@ -488,5 +489,42 @@ describe('editor texts only in the exact visitor language', () => {
       'nb'
     );
     expect(screen.getByRole('button', { name: 'Send inn' })).toBeTruthy();
+  });
+});
+
+describe('form title per language (lean-schema migration stores it per language)', () => {
+  const title = [
+    { _key: 'en', _type: 'internationalizedArrayStringValue', language: 'en', value: 'Contact us' },
+    { _key: 'nb', _type: 'internationalizedArrayStringValue', language: 'nb', value: 'Kontakt' },
+  ];
+
+  it('Form shows the title in the visitor language, then English', () => {
+    renderIn(<Form form={{ ...baseForm, formTitle: title }} locale="nb" />, 'nb');
+    expect(screen.getByRole('heading', { name: 'Kontakt' })).toBeTruthy();
+  });
+
+  it('Form falls back to English for a language with no title', () => {
+    renderIn(<Form form={{ ...baseForm, formTitle: title }} locale="ar" />);
+    expect(screen.getByRole('heading', { name: 'Contact us' })).toBeTruthy();
+  });
+
+  it('Form still shows an old plain-string title', () => {
+    renderIn(<Form form={{ ...baseForm, formTitle: 'Contact us' }} locale="en" />);
+    expect(screen.getByRole('heading', { name: 'Contact us' })).toBeTruthy();
+  });
+
+  it('the download offer dialog shows the title in the visitor language', () => {
+    renderIn(
+      <LeadMagnet
+        _type="lead-magnet"
+        _key="l"
+        content={[]}
+        buttonText="Download now"
+        form={{ ...baseForm, formTitle: title } as never}
+      />,
+      'nb'
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Download now' }));
+    expect(screen.getByRole('dialog', { name: 'Kontakt' })).toBeTruthy();
   });
 });

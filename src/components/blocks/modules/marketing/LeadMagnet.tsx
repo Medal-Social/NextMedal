@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Section } from '@/components/ui/section';
+import { getLocalizedValue } from '@/lib/i18n/localized-value';
 import moduleProps from '@/lib/sanity/module-props';
 import { cn } from '@/lib/utils/index';
 import SharedPortableText from '../SharedPortableText';
@@ -159,7 +160,7 @@ export default function LeadMagnet({
                   <div className="bg-primary px-8 py-6 text-primary-foreground">
                     <DialogHeader>
                       <DialogTitle className="font-bold text-2xl">
-                        {form?.formTitle || t('defaultFormTitle')}
+                        {getLocalizedValue(form?.formTitle, locale) || t('defaultFormTitle')}
                       </DialogTitle>
                     </DialogHeader>
                   </div>

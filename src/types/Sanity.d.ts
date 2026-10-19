@@ -609,7 +609,7 @@ declare global {
 
     interface Form {
       intent: string;
-      formTitle?: string;
+      formTitle?: InternationalizedArrayString | string;
       fields: FormField[];
       requireConsent?: boolean;
       submitButtonText?: InternationalizedArrayString | string;

@@ -29,7 +29,8 @@ type LocalizedText = Sanity.InternationalizedArrayString | string;
 interface FormProps {
   form: {
     intent: string;
-    formTitle?: string;
+    /** Per language; old documents store a plain string. */
+    formTitle?: LocalizedText;
     fields: FormField[];
     requireConsent?: boolean;
     submitButtonText?: LocalizedText;
@@ -363,6 +364,7 @@ export default function Form({ form: rawForm, className, locale }: FormProps) {
   const successText = getExactLocalizedValue(form.successMessage, locale) || t('success-message');
   const consentText = getExactLocalizedValue(form.acceptance?.text, locale);
   const consentHref = consentLinkHref(form.acceptance?.link, locale);
+  const title = getLocalizedValue(form.formTitle, locale);
 
   if (submitted) {
     return <SuccessMessage className={className} text={successText} t={t} />;
@@ -370,9 +372,7 @@ export default function Form({ form: rawForm, className, locale }: FormProps) {
 
   return (
     <div className={cn('rounded-lg border bg-card p-8 shadow-sm sm:p-10', className)}>
-      {form.formTitle && (
-        <h3 className="mb-8 font-bold text-2xl text-foreground">{form.formTitle}</h3>
-      )}
+      {title && <h3 className="mb-8 font-bold text-2xl text-foreground">{title}</h3>}
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Security: Invisible Honeypot */}
         <div style={{ display: 'none' }} aria-hidden="true">
