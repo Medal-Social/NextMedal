@@ -4,110 +4,75 @@
  * @lastUpdated 2025-12-31
  * @description Defines a pricing tier or plan (e.g., Free, Pro, Enterprise).
  * @changelog
+ * - 3.0.0: Lean — no card style or tabs; plain labels
  * - 2.0.0: Flattened price object - moved fields to root level for simpler editing
  * - 1.0.1: Updated header documentation
  * - 1.0.0: Initial version
  */
 
 import { BillIcon } from '@sanity/icons/Bill';
-import { ControlsIcon } from '@sanity/icons/Controls';
-import { EditIcon } from '@sanity/icons/Edit';
-import { defineField, defineType } from 'sanity';
+import { defineArrayMember, defineField, defineType } from 'sanity';
 import { richTextField } from '../../fragments/rich-text';
 
 export default defineType({
   name: 'pricing',
-  title: 'Pricing Tier',
+  title: 'Price plan',
   icon: BillIcon,
   type: 'document',
-  groups: [
-    { name: 'content', title: 'Content', icon: EditIcon, default: true },
-    { name: 'options', title: 'Advanced Options', icon: ControlsIcon },
-  ],
   fields: [
     defineField({
       name: 'title',
-      title: 'Tier Name',
-      description: 'Name of the pricing tier (e.g. "Free", "Pro").',
+      title: 'Name',
+      description: 'E.g. "Free" or "Pro".',
       type: 'string',
       validation: (Rule) => Rule.required(),
-      group: 'content',
     }),
     defineField({
       name: 'description',
-      title: 'Description',
-      description: 'Brief summary of what this tier offers.',
+      title: 'Short text',
+      description: 'Who the plan is for, in one line.',
       type: 'text',
-      group: 'content',
     }),
     defineField({
       name: 'monthlyPrice',
-      title: 'Monthly Price',
+      title: 'Price per month',
       type: 'string',
-      description: 'Monthly price (e.g., "99", "Free", "Contact us"). Leave empty to hide.',
-      placeholder: 'e.g., 99, Free, Contact us',
-      group: 'content',
+      description: 'E.g. "99", "Free" or "Contact us". Leave empty to hide.',
     }),
     defineField({
       name: 'yearlyPrice',
-      title: 'Yearly Price',
+      title: 'Price per year',
       type: 'string',
-      description: 'Yearly price (e.g., "999"). Leave empty to hide yearly option.',
-      placeholder: 'e.g., 999',
-      group: 'content',
+      description: 'E.g. "999". Leave empty if there is no yearly price.',
     }),
     defineField({
       name: 'currency',
-      title: 'Currency Symbol',
+      title: 'Currency',
       type: 'string',
-      description: 'Currency symbol displayed before the price (e.g., $, €, kr)',
-      placeholder: 'e.g., $, €, kr',
+      description: 'Shown before the price, e.g. $, € or kr.',
       initialValue: '$',
-      group: 'content',
     }),
     defineField({
       name: 'priceSuffix',
-      title: 'Price Suffix',
+      title: 'After the price',
       type: 'string',
-      description: 'Text shown after the price (e.g., /month, /user, /year)',
-      placeholder: 'e.g., /month, /user, /year',
+      description: 'E.g. /month or /user.',
       initialValue: '/month',
-      group: 'content',
     }),
     defineField({
       name: 'ctas',
-      title: 'Call-to-Actions',
-      description: 'Buttons for this pricing tier.',
+      title: 'Buttons',
       type: 'array',
-      of: [{ type: 'cta' }],
-      group: 'content',
+      of: [defineArrayMember({ type: 'cta' })],
     }),
     richTextField('content', 'Features', 'tier', {
-      description: 'List of features included in this tier.',
-      group: 'content',
+      description: 'What the plan includes.',
     }),
     defineField({
       name: 'highlight',
-      title: 'Highlight Badge',
+      title: 'Badge',
       type: 'string',
-      description: 'e.g. Recommended, Most Popular, etc.',
-      group: 'options',
-    }),
-    defineField({
-      name: 'style',
-      title: 'Card Style',
-      type: 'string',
-      description: 'Visual style of the pricing card.',
-      options: {
-        list: [
-          { title: 'Default', value: 'default' },
-          { title: 'Featured (Purple accent)', value: 'featured' },
-          { title: 'Dark (Dark background)', value: 'dark' },
-        ],
-        layout: 'radio',
-      },
-      initialValue: 'default',
-      group: 'options',
+      description: 'Optional, e.g. "Most popular".',
     }),
   ],
   preview: {

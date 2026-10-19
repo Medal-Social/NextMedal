@@ -124,7 +124,7 @@ export default function LeadMagnet({
           {style === 'featured' && image?.image && (
             <div className="relative shrink-0 lg:w-[40%]">
               <div className="relative z-10 overflow-hidden rounded-xl shadow-2xl transition-transform duration-500 hover:scale-[1.02]">
-                <Img image={image.image} className="h-auto w-full object-cover" />
+                <Img image={image.image} alt={image.alt} className="h-auto w-full object-cover" />
               </div>
               <div className="absolute -inset-4 z-0 rounded-full bg-primary/10 opacity-50 blur-3xl" />
             </div>

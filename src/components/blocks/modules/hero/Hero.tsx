@@ -95,10 +95,11 @@ function HeroBackground({ hasMedia }: { hasMedia: boolean }) {
 }
 
 // Hero image media
-function HeroImage({ image }: { image: Sanity.Image }) {
+function HeroImage({ image, alt }: { image: Sanity.Image; alt?: string }) {
   return (
     <Img
       image={image}
+      alt={alt}
       className="absolute inset-0 h-full w-full object-contain"
       loading="eager"
       fetchPriority="high"
@@ -159,7 +160,7 @@ function HeroMedia({
   hasImage: boolean;
   hasMux: boolean;
   hasYouTube: boolean;
-  image?: { image?: Sanity.Image };
+  image?: { image?: Sanity.Image; alt?: string };
   muxVideo?: MuxVideo;
   videoUrl?: string;
   imageAspectRatio?: number;
@@ -181,7 +182,7 @@ function HeroMedia({
         )}
         style={style}
       >
-        {hasImage && image?.image && <HeroImage image={image.image} />}
+        {hasImage && image?.image && <HeroImage image={image.image} alt={image.alt} />}
         {hasMux && <HeroVideo type="mux" muxVideo={muxVideo} thumbnail={image?.image} />}
         {hasYouTube && <HeroVideo type="youtube" videoUrl={videoUrl} thumbnail={image?.image} />}
       </div>

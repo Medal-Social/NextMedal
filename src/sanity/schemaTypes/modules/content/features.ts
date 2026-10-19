@@ -1,92 +1,56 @@
 /**
- * Feature Grid Module Schema
- * @version 1.1.1
- * @lastUpdated 2025-12-23
- * @description Grid layout of features with icons and descriptions.
+ * Feature grid: features with an icon, a title and a short text.
+ * The anchor comes from blockDesign.
  * @changelog
- * - 1.1.1: Updated header documentation
- * - 1.1.0: Added alignment options and improved validation
- * - 1.0.0: Initial version
+ * - 2.0.0: Lean — no anchor option; plain labels
  */
 
 import { ThLargeIcon } from '@sanity/icons/ThLarge';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { getBlockText } from '@/sanity/lib/utils';
 import { richTextField } from '../../fragments/rich-text';
-import { createUidField } from '../ui/uid-input';
+import { blockPreview } from '../preview';
 
 export default defineType({
   name: 'features',
-  title: 'Features',
+  title: 'Feature grid',
+  description: 'A grid of features, each with an icon, a title and a short text.',
   type: 'object',
   icon: ThLargeIcon,
-  description: 'Grid layout of features with icons and descriptions',
-  groups: [
-    { name: 'content', title: 'Content', default: true },
-    { name: 'options', title: 'Advanced Options' },
-  ],
   fields: [
-    defineField({
-      name: 'options',
-      type: 'object',
-      title: 'Advanced Options',
-      group: 'options',
-      fields: [createUidField()],
-    }),
-    richTextField('intro', 'Intro', 'section', { group: 'content' }),
+    richTextField('intro', 'Intro', 'section'),
     defineField({
       name: 'items',
-      title: 'Feature Items',
-      description: 'Add individual feature items to the grid',
+      title: 'Features',
       type: 'array',
       of: [
         defineArrayMember({
           name: 'feature-item',
           type: 'object',
+          title: 'Feature',
           icon: ThLargeIcon,
           fields: [
-            defineField({
-              name: 'icon',
-              title: 'Feature Icon',
-              description: 'Icon representing this feature',
-              type: 'icon',
-            }),
+            defineField({ name: 'icon', title: 'Icon', type: 'icon' }),
             defineField({
               name: 'summary',
-              title: 'Feature Title',
-              description: 'Short title for this feature',
+              title: 'Title',
               type: 'string',
               validation: (Rule) => Rule.required(),
             }),
             richTextField('content', 'Text', 'plain', { required: true }),
           ],
           preview: {
-            select: {
-              title: 'summary',
-              content: 'content',
-              icon: 'icon',
-            },
+            select: { title: 'summary', content: 'content', icon: 'icon' },
             prepare: ({ title, content, icon }) => ({
-              title: title || 'Untitled Feature',
-              subtitle: getBlockText(content),
+              title: title || 'Feature',
+              subtitle: getBlockText(content, ' '),
               media: icon,
             }),
           },
         }),
       ],
-      validation: (Rule) => Rule.min(1).max(12).error('Must have between 1 and 12 feature items'),
-      group: 'content',
+      validation: (Rule) => Rule.min(1).max(12).error('Add between 1 and 12 features'),
     }),
   ],
-  preview: {
-    select: {
-      intro: 'intro',
-      items: 'items',
-    },
-    prepare: ({ intro, items = [] }) => ({
-      title: getBlockText(intro) || 'Feature Grid',
-      subtitle: `${items.length || 0} feature items`,
-      media: ThLargeIcon,
-    }),
-  },
+  preview: blockPreview('Feature grid', { title: 'intro' }),
 });

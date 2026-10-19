@@ -176,6 +176,7 @@ const BASE_MODULES_QUERY = groq`
 			acceptance { ..., link { ${LINK_QUERY} } }
 		},
 		image {
+			alt,
 			image {
 				${IMAGE_QUERY}
 			}
@@ -187,6 +188,7 @@ const BASE_MODULES_QUERY = groq`
 		ctas[]{${CTA_QUERY}},
 		content[]{ ${PT_BLOCK_QUERY} },
 		image {
+			alt,
 			image {
 				${IMAGE_QUERY}
 			}

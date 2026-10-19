@@ -1,52 +1,29 @@
 /**
- * Logo Cloud Module Schema
- * @version 1.0.1
- * @lastUpdated 2025-12-23
- * @description Displays a grid of partner/client logos.
+ * Logo row: customer or partner logos. The anchor comes from blockDesign.
  * @changelog
- * - 1.0.1: Updated header documentation
- * - 1.0.0: Initial version
+ * - 2.0.0: Lean — no anchor option; plain labels
  */
 
 import { ComponentIcon } from '@sanity/icons/Component';
-import { defineField, defineType } from 'sanity';
-import { getBlockText } from '@/sanity/lib/utils';
+import { defineArrayMember, defineField, defineType } from 'sanity';
 import { richTextField } from '../../fragments/rich-text';
-import { createUidField } from '../ui/uid-input';
+import { blockPreview } from '../preview';
 
 export default defineType({
   name: 'logo-cloud',
-  title: 'Logo Cloud',
+  title: 'Logo row',
+  description: 'A row of logos, e.g. customers or partners.',
   icon: ComponentIcon,
   type: 'object',
-  groups: [
-    { name: 'content', title: 'Content', default: true },
-    { name: 'options', title: 'Advanced Options' },
-  ],
   fields: [
-    defineField({
-      name: 'options',
-      type: 'object',
-      title: 'Advanced Options',
-      group: 'options',
-      fields: [createUidField()],
-    }),
-    richTextField('content', 'Intro', 'section', { group: 'content' }),
+    richTextField('content', 'Intro', 'section'),
     defineField({
       name: 'logos',
+      title: 'Logos',
+      description: 'Leave empty to show all logos.',
       type: 'array',
-      of: [{ type: 'reference', to: [{ type: 'logo' }] }],
-      description: 'Leave empty to display all logos',
-      group: 'content',
+      of: [defineArrayMember({ type: 'reference', to: [{ type: 'logo' }] })],
     }),
   ],
-  preview: {
-    select: {
-      content: 'content',
-    },
-    prepare: ({ content }) => ({
-      title: getBlockText(content) || 'Logo Cloud',
-      subtitle: 'Logo Cloud',
-    }),
-  },
+  preview: blockPreview('Logo row', { title: 'content' }),
 });

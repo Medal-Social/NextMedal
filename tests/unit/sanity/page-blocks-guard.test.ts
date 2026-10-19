@@ -14,6 +14,8 @@ import {
 type Field = {
   name: string;
   type: string;
+  title?: string;
+  description?: string;
   fieldset?: string;
   hidden?: unknown;
   fields?: Field[];
@@ -33,9 +35,6 @@ const KNOB =
   /^(tone|variant|layout|style|options|anchorId|headlineSize|show[A-Z]\w*|limit\w*|dark|bg[A-Z]\w*|columns|groupByYear|filterByType|hidePastEvents|sidebarStyle|uncategorized\w*|categoryOrder|defaultArticle|videoType|open|generateSchema)$/;
 const BUDGET = 5;
 const HARD_CAP = 9;
-
-/** Blocks not yet stripped of their knobs (plan Task 20 empties this). */
-const NOT_YET_LEAN = new Set<string>(PAGE_BLOCK_NAMES);
 
 const registered = new Map((schemaTypes as unknown as Block[]).map((type) => [type.name, type]));
 const block = (name: string) => registered.get(name) as Block;
@@ -149,12 +148,9 @@ describe.each(PAGE_BLOCK_NAMES)('block %s', (name) => {
     expect(height).toBeLessThanOrEqual(420);
   });
 
-  it.skipIf(NOT_YET_LEAN.has(name))(
-    'is lean: plain title, description, list preview, no knobs, within budget',
-    () => {
-      expect(leanProblems(name)).toEqual([]);
-    }
-  );
+  it('is lean: plain title, description, list preview, no knobs, within budget', () => {
+    expect(leanProblems(name)).toEqual([]);
+  });
 
   it('is not labelled "Old"', () => {
     expect(block(name).title).not.toMatch(/^Old\b/);
@@ -164,5 +160,61 @@ describe.each(PAGE_BLOCK_NAMES)('block %s', (name) => {
 describe('field budget allowlist', () => {
   it('is empty: every block fits in 5 fields (spec §1)', () => {
     expect(Object.keys(FIELD_BUDGET_ALLOWLIST)).toEqual([]);
+  });
+});
+
+type Labelled = { title?: string; description?: string; fields?: Labelled[]; of?: Labelled[] };
+
+/** Every title and description an editor reads on a type, its fields and members. */
+function labels(type: Labelled | undefined): string[] {
+  if (!type) return [];
+  return [
+    type.title,
+    type.description,
+    ...(type.fields ?? []).flatMap(labels),
+    ...(type.of ?? []).flatMap(labels),
+  ].filter((text): text is string => typeof text === 'string');
+}
+
+/** Words non-technical editors should never read (skill rule 4). */
+const JARGON =
+  /\b(CTA|Call-to-actions?|Hero|Advanced Options|Anchor ID|Ghost|Lead Magnet|Frontpage|Logo Cloud|variant|UID)\b/i;
+
+describe('plain labels', () => {
+  it.each([...PAGE_BLOCK_NAMES, 'cta', 'img', 'lead-magnet', 'pricing'])(
+    '%s uses no developer words',
+    (name) => {
+      expect(labels(registered.get(name) as Labelled).filter((text) => JARGON.test(text))).toEqual(
+        []
+      );
+    }
+  );
+});
+
+describe('buttons', () => {
+  it('cta has no style field (looks come from blockDesign)', () => {
+    expect(fieldNames(block('cta').fields)).not.toContain('style');
+  });
+
+  it('cta is called "Button or link"', () => {
+    expect(block('cta').title).toBe('Button or link');
+  });
+});
+
+describe('pictures', () => {
+  it('img asks to describe the picture', () => {
+    const alt = block('img').fields.find((f) => f.name === 'alt');
+    expect(alt).toMatchObject({ type: 'string', title: 'Describe the picture' });
+    expect(block('img').title).toBe('Picture');
+  });
+});
+
+describe('placement blocks', () => {
+  it('lead-magnet has no design knobs', () => {
+    expect(fieldNames(block('lead-magnet').fields).filter((n) => KNOB.test(n))).toEqual([]);
+  });
+
+  it('price plan has no card style', () => {
+    expect(fieldNames(block('pricing').fields)).not.toContain('style');
   });
 });

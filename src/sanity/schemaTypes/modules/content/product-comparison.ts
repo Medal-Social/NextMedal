@@ -4,6 +4,7 @@
  * @lastUpdated 2025-12-23
  * @description A comparison table for products/features with customizable details for each cell.
  * @changelog
+ * - 3.0.0: Lean — no anchor option; plain labels
  * - 2.0.0: Title and Text replace the positional intro (h2 + paragraphs)
  * - 1.3.1: Updated header documentation
  * - 1.3.0: Fixed validation logic to properly access parent module
@@ -15,36 +16,22 @@
 import { LinkIcon } from '@sanity/icons/Link';
 import { defineArrayMember, defineField, defineType } from 'sanity';
 import { richTextField } from '../../fragments/rich-text';
+import { blockPreview } from '../preview';
 
 export default defineType({
   name: 'product-comparison',
-  title: 'Product Comparison',
+  title: 'Comparison table',
+  description: 'A table that compares products or plans, feature by feature.',
   icon: LinkIcon,
   type: 'object',
-  description:
-    'Create a side-by-side comparison table to highlight differences between products or service tiers',
-  groups: [
-    { name: 'content', default: true, title: 'Content' },
-    { name: 'options', title: 'Advanced Options' },
-  ],
   fields: [
-    defineField({
-      name: 'options',
-      type: 'module-options',
-      title: 'Advanced Options',
-      group: 'options',
-    }),
-    defineField({ name: 'title', title: 'Title', type: 'string', group: 'content' }),
-    richTextField('text', 'Text', 'plain', {
-      description: 'Shown under the title.',
-      group: 'content',
-    }),
+    defineField({ name: 'title', title: 'Title', type: 'string' }),
+    richTextField('text', 'Text', 'plain', { description: 'Shown under the title.' }),
     // Old positional intro (h2 + paragraphs): shown read-only only while it has
     // content. The lean-schema migration moves it to Title and Text; Task 35 deletes it.
     defineField({
       ...richTextField('intro', 'Intro', 'section', {
         description: 'Old intro — move it into Title and Text.',
-        group: 'content',
       }),
       hidden: ({ value }) => !value,
       readOnly: true,
@@ -52,100 +39,72 @@ export default defineType({
     }),
     defineField({
       name: 'products',
-      title: 'Products to Compare',
-      description: 'Add the products or service tiers that will be compared in columns',
+      title: 'Columns',
+      description: 'The products or plans, one column each.',
       type: 'array',
       of: [
         defineArrayMember({
           name: 'comparison-product',
           type: 'object',
+          title: 'Column',
           fields: [
             defineField({
               name: 'name',
-              title: 'Product Name',
-              description: 'Name that will appear in the column header',
+              title: 'Name',
               type: 'string',
               validation: (Rule) => Rule.required(),
             }),
             defineField({
               name: 'highlight',
-              title: 'Featured Product',
-              description:
-                'Enable to visually emphasize this product (useful for recommended options)',
+              title: 'Highlight this column',
               type: 'boolean',
               initialValue: false,
             }),
           ],
           preview: {
-            select: {
-              name: 'name',
-              highlight: 'highlight',
-            },
+            select: { name: 'name', highlight: 'highlight' },
             prepare: ({ name, highlight }) => ({
               title: name,
-              subtitle: highlight ? 'Featured' : undefined,
+              subtitle: highlight ? 'Highlighted' : undefined,
             }),
           },
         }),
       ],
-      validation: (Rule) => Rule.min(1).error('At least one product is required'),
-      group: 'content',
+      validation: (Rule) => Rule.min(1).error('Add at least one column'),
     }),
     defineField({
       name: 'features',
-      title: 'Feature Rows',
-      description: 'Add the features or attributes to compare across products (shown as rows)',
+      title: 'Rows',
+      description: 'One row per feature, with a value for each column.',
       type: 'array',
       of: [
         defineArrayMember({
           name: 'comparison-feature-row',
           type: 'object',
+          title: 'Row',
           fields: [
             defineField({
               name: 'name',
-              title: 'Feature Name',
-              description: 'The feature name that appears in the leftmost column',
+              title: 'Feature',
               type: 'string',
               validation: (Rule) => Rule.required(),
             }),
             defineField({
               name: 'featureDetails',
-              title: 'Feature Values',
-              description: 'Add a value for each product column. One entry required per product.',
+              title: 'Values',
+              description: 'One value per column, in the same order.',
               type: 'array',
-              of: [
-                defineArrayMember({
-                  type: 'string',
-                  title: 'Value',
-                }),
-              ],
-              validation: undefined,
+              of: [defineArrayMember({ type: 'string', title: 'Value' })],
             }),
           ],
           preview: {
-            select: {
-              name: 'name',
-            },
-            prepare: ({ name }) => ({
-              title: name,
-            }),
+            select: { name: 'name' },
+            prepare: ({ name }) => ({ title: name }),
           },
         }),
       ],
-      validation: (Rule) => Rule.min(1).error('At least one feature row is required'),
-      group: 'content',
+      validation: (Rule) => Rule.min(1).error('Add at least one row'),
     }),
   ],
-  preview: {
-    select: {
-      title: 'title',
-      tiersCount: 'products',
-      categoriesCount: 'features',
-    },
-    prepare: ({ title, tiersCount = [], categoriesCount = [] }) => ({
-      title: title || 'Product Comparison',
-      subtitle: `${tiersCount.length} products • ${categoriesCount.length} features`,
-      media: LinkIcon,
-    }),
-  },
+  preview: blockPreview('Comparison table', { title: 'title' }),
 });

@@ -66,20 +66,17 @@ describe('page top (hero) schema', () => {
     }
   });
 
-  it('previews as a picture or a video link', () => {
+  it('previews as "Page top" with its title text and picture', () => {
     const preview = (
       hero as unknown as {
         preview: {
           select: Record<string, string>;
-          prepare: (v: Record<string, unknown>) => { subtitle: string };
+          prepare: (v: Record<string, unknown>) => { title: string; subtitle: string };
         };
       }
     ).preview;
-    expect(Object.values(preview.select)).not.toContain('videoType');
-    expect(preview.prepare({ videoUrl: 'https://youtu.be/x' }).subtitle).toBe(
-      'Page top • Video link'
-    );
-    expect(preview.prepare({}).subtitle).toBe('Page top • Picture');
+    expect(preview.select).toEqual({ title: 'content', media: 'image.image' });
+    expect(preview.prepare({})).toMatchObject({ title: 'Page top', subtitle: 'Page top' });
   });
 });
 
@@ -91,5 +88,11 @@ describe('page top query', () => {
     const branch = MODULES_QUERY.slice(start, end > start ? end : undefined);
     expect(branch).not.toContain('muxVideo');
     expect(branch).toContain('image {');
+  });
+
+  it('fetches the picture description', () => {
+    const start = MODULES_QUERY.indexOf("_type == 'hero' =>");
+    const branch = MODULES_QUERY.slice(start, MODULES_QUERY.indexOf("_type == 'videoHero' =>"));
+    expect(branch).toMatch(/image \{\s*alt,/);
   });
 });

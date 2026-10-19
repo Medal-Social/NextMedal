@@ -2,7 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/components/blocks/objects/core', () => ({
-  Img: () => <span data-testid="hero-picture" />,
+  Img: ({ alt }: { alt?: string }) => <span data-testid="hero-picture" data-alt={alt ?? ''} />,
 }));
 vi.mock('@/components/blocks/objects/core/Video', () => ({
   default: ({ data }: { data: { type: string; videoId?: string } }) => (
@@ -44,5 +44,16 @@ describe('page top shows a picture or a YouTube link', () => {
   it('a stale media type does not hide the video link', () => {
     const html = render({ videoType: 'image', videoUrl: 'https://youtu.be/dQw4w9WgXcQ' });
     expect(html).toContain('data-type="youtube"');
+  });
+});
+
+describe('page top picture description', () => {
+  it('reads "Describe the picture" as the alt text', () => {
+    const html = render({ image: { ...picture, alt: 'Two people at a laptop' } });
+    expect(html).toContain('data-alt="Two people at a laptop"');
+  });
+
+  it('has an empty alt when the picture is not described', () => {
+    expect(render({})).toContain('data-alt=""');
   });
 });

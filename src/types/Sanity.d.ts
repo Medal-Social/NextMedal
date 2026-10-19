@@ -487,6 +487,8 @@ declare global {
     interface Img {
       readonly _type: 'img';
       image: Image;
+      /** "Describe the picture" — the alt text. */
+      alt?: string;
       responsive?: {
         image: Image;
         media: string;

@@ -32,7 +32,7 @@ export default defineType({
     },
     {
       name: 'advanced',
-      title: 'Advanced Options',
+      title: 'More',
       options: { collapsible: true, collapsed: true },
     },
   ],
@@ -99,9 +99,8 @@ export default defineType({
     }),
     defineField({
       name: 'params',
-      title: 'Anchor Link (Optional)',
-      description:
-        'Link to a specific section on the page (e.g., pricing, contact). Anchor IDs are set in each module\'s "Advanced Options".',
+      title: 'Section (optional)',
+      description: 'Go straight to a section of the page, e.g. features or pricing.',
       placeholder: 'e.g., pricing, contact, features',
       type: 'string',
       validation: (Rule) =>
@@ -114,12 +113,12 @@ export default defineType({
 
           // Must have content
           if (anchorContent.length === 0) {
-            return 'Anchor ID cannot be empty';
+            return 'Please name the section';
           }
 
           // Must be valid HTML ID format (alphanumeric, hyphens, underscores)
           if (!/^[a-zA-Z0-9_-]+$/.test(anchorContent)) {
-            return 'Anchor ID must only contain letters, numbers, hyphens, and underscores';
+            return 'Use only letters, numbers, - and _';
           }
 
           return true;
