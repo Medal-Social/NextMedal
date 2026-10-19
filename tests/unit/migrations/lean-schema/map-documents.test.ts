@@ -3,6 +3,7 @@ import docs from '@tests/fixtures/lean-schema/documents.json';
 import beforeNmFixes from '@tests/fixtures/nm-fixes/documents.json';
 import { describe, expect, it } from 'vitest';
 import { bannerBlocks } from '@/components/blocks/layout/banner/Banner.client';
+import { ARTICLE_PLACEMENT_SCOPE, PLACEMENT_SCOPES } from '@/lib/sanity/placement-scopes';
 import {
   assertDeletable,
   blockingDrafts,
@@ -287,6 +288,20 @@ describe('site, pricing, placement, banner', () => {
     const [after] = next(placement).modules as Record<string, unknown>[];
     const { style: _style, ...rest } = before;
     expect(after).toEqual(rest);
+  });
+
+  it('placement: the download offer applies to articles (stored scope "blog.post" matched no page)', () => {
+    const placement = ALL.find((d) => d._type === 'placement') as Doc;
+    expect(placement.scope).toBe('blog.post');
+    expect(next(placement).scope).toBe(ARTICLE_PLACEMENT_SCOPE);
+  });
+
+  it('placement: every scope after the migration is one the Studio offers', () => {
+    for (const d of AFTER.filter((x) => x._type === 'placement')) {
+      expect(PLACEMENT_SCOPES, d._id).toContain(d.scope);
+    }
+    const unknown = { _id: 'pl', _type: 'placement', scope: 'mystery', modules: [] };
+    expect(() => mapDocument(unknown)).toThrow(UnmappedContentError);
   });
 
   it('placement: refuses another download-offer look and filled options', () => {

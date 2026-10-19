@@ -1,4 +1,5 @@
 import { groq } from 'next-sanity';
+import { ARTICLE_PLACEMENT_SCOPE, PAGE_PLACEMENT_SCOPE } from '@/lib/sanity/placement-scopes';
 
 export const SLUG_QUERY = groq`
 	metadata.slug.current
@@ -219,7 +220,7 @@ export const PAGE_QUERY = groq`
 	*[_type == 'page' && metadata.slug.current == $slug && language == $locale][0]{
 		...,
 		'modules': modules[]{ ${MODULES_QUERY} },
-		'placements': ${placementQuery("scope == 'page'")},
+		'placements': ${placementQuery(`scope == '${PAGE_PLACEMENT_SCOPE}'`)},
 		metadata,
 		seo {
 			...,
@@ -261,6 +262,7 @@ export const COLLECTION_ARTICLE_POST_QUERY = groq`
 			_type == 'socialEmbed' => { _type, platform, url },
 			_type == 'video' => { _type, type, videoId, muxVideo{ ..., asset->{ ..., "playbackId": playback_ids[0].id } }, thumbnail, title }
 		},
+		'placements': ${placementQuery(`scope == '${ARTICLE_PLACEMENT_SCOPE}'`)},
 		'readTime': math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
 		'headings': body[style in ['h2', 'h3']]{
 			style,

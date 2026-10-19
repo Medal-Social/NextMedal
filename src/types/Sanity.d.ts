@@ -187,6 +187,8 @@ declare global {
           title?: string;
         };
       };
+      /** Placement rules that apply to articles (scope `articles-frontpage`). */
+      placements?: import('@/lib/sanity/placement').Placement[];
       readTime?: number;
       headings?: { style: string; text: string }[];
       translations?: Array<{

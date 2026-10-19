@@ -15,6 +15,7 @@ import type { CollectionType } from '@/lib/collections/types';
 import { BASE_URL } from '@/lib/core/env';
 import { logger } from '@/lib/core/logger';
 import { groupPlacements, type Placement } from '@/lib/sanity/placement';
+import { PAGE_PLACEMENT_SCOPE } from '@/lib/sanity/placement-scopes';
 import processMetadata from '@/lib/sanity/process-metadata';
 import resolveUrl from '@/lib/sanity/resolve-url-server';
 import { parseFilterParams } from '@/lib/utils/url';
@@ -712,7 +713,7 @@ async function getPage(slugParts: string[] | undefined, locale: string, stega?: 
     ][0]{
       ...,
       'modules': modules[]{ ${MODULES_QUERY} },
-      'placements': ${placementQuery("scope == 'page'")},
+      'placements': ${placementQuery(`scope == '${PAGE_PLACEMENT_SCOPE}'`)},
       parent[]->{ metadata { slug } },
       metadata {
         ...,

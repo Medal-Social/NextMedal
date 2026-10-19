@@ -5,7 +5,7 @@
 # Used by tests/unit/migrations/lean-schema/inventory.test.ts and by
 # `pnpm exec tsx scripts/lean-schema/string-inventory.ts before.ndjson after.ndjson migrations/lean-schema/allowed-losses.txt`.
 # Only page-title duplicates of metadata.title, design values, the owner-approved form
-# clean-up and the removed Team gallery item belong here; anything else the inventory
+# clean-up, the download-offer scope fix and the removed Team gallery item belong here; anything else the inventory
 # prints is a mapping bug.
 # Documents the migration deletes are listed separately (orphans, duplicate list pages).
 
@@ -50,3 +50,7 @@
 # consent link label "Test" (the link now goes to the Privacy page, "Privacy policy") and the
 # label of the orphan form.redirect (no schema field since form v3, read by nothing).
 "Test" 3 form.acceptance.text.value,form.acceptance.link.label,form.redirect.label
+
+# Placement scope "blog.post" is not a value the Studio offers, so no route showed the
+# download offer; becomes "articles-frontpage" (article pages; owner decision 2026-10-19).
+"blog.post" 1 placement.scope

@@ -5,6 +5,8 @@
  * duplicate list pages deleted (references repointed first), old-format links
  * and the form leftovers fixed. Self-contained like map-modules.ts.
  */
+
+import { ARTICLE_PLACEMENT_SCOPE, PLACEMENT_SCOPES } from '../../src/lib/sanity/placement-scopes';
 import {
   canonicalJson,
   type Doc,
@@ -171,8 +173,25 @@ function mapPage(doc: Doc): Doc {
 
 const LEAD_MAGNET_FIELDS = ['content', 'image', 'buttonText', 'form'];
 
+/**
+ * Stored scopes the Studio never offered → the scope that shows the rule where
+ * it was meant to (owner decision 2026-10-19: the download offer on article pages).
+ */
+const LEGACY_PLACEMENT_SCOPES: Record<string, string> = { 'blog.post': ARTICLE_PLACEMENT_SCOPE };
+
+function placementScope(doc: Doc): unknown {
+  const scope = doc.scope;
+  if (typeof scope !== 'string') return scope;
+  if ((PLACEMENT_SCOPES as string[]).includes(scope)) return scope;
+  const mapped = LEGACY_PLACEMENT_SCOPES[scope];
+  if (!mapped) throw new UnmappedContentError(`${doc._id}: placement scope ${scope}`);
+  return mapped;
+}
+
 /** Placements keep their own small list: lead-magnet (style/options out) and callout. */
-function mapPlacement(doc: Doc): Doc {
+function mapPlacement(placement: Doc): Doc {
+  const scope = placementScope(placement);
+  const doc = scope === placement.scope ? placement : { ...placement, scope };
   if (!Array.isArray(doc.modules)) return doc;
   const modules = (doc.modules as AnyModule[]).map((m) => {
     const label = `${doc._id} ${m._type} ${m._key}`;

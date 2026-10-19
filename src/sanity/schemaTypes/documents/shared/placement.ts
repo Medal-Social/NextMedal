@@ -7,6 +7,7 @@
 
 import { InsertAboveIcon } from '@sanity/icons/InsertAbove';
 import { defineField, defineType } from 'sanity';
+import { PLACEMENT_SCOPE_TITLES, PLACEMENT_SCOPES } from '@/lib/sanity/placement-scopes';
 import { PLACEMENT_BLOCK_NAMES } from '../../page-blocks';
 
 export default defineType({
@@ -21,13 +22,7 @@ export default defineType({
       type: 'string',
       description: 'Choose the content type this rule applies to.',
       options: {
-        list: [
-          { title: 'Articles', value: 'articles-frontpage' },
-          { title: 'Changelog', value: 'changelog-frontpage' },
-          { title: 'Documentation', value: 'docs-frontpage' },
-          { title: 'Newsletter', value: 'newsletter-frontpage' },
-          { title: 'All Pages', value: 'page' },
-        ],
+        list: PLACEMENT_SCOPES.map((value) => ({ title: PLACEMENT_SCOPE_TITLES[value], value })),
         layout: 'radio',
       },
       validation: (Rule) => Rule.required(),
@@ -78,13 +73,7 @@ export default defineType({
       modules: 'modules',
     },
     prepare: ({ scope, location, modules }) => {
-      const scopeMap: Record<string, string> = {
-        'articles-frontpage': 'Articles',
-        'changelog-frontpage': 'Changelog',
-        'docs-frontpage': 'Documentation',
-        'newsletter-frontpage': 'Newsletter',
-        page: 'Pages',
-      };
+      const scopeMap: Record<string, string> = { ...PLACEMENT_SCOPE_TITLES, page: 'Pages' };
       const locationMap: Record<string, string> = {
         sidebar: 'Sidebar',
         injection: 'Injection',
