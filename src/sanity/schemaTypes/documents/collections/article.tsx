@@ -20,7 +20,7 @@ import CharacterCount from '@/sanity/ui/CharacterCount';
 import PageIdentityField from '@/sanity/ui/PageIdentityField';
 import PageIdentityInput from '@/sanity/ui/PageIdentityInput';
 import { imageBlock, socialEmbedBlock } from '../../fragments';
-import link from '../../objects/link';
+import { richTextBlock } from '../../fragments/rich-text';
 
 export default defineType({
   name: 'collection.article',
@@ -30,7 +30,7 @@ export default defineType({
   groups: [
     { name: 'content', title: 'Content', icon: EditIcon, default: true },
     { name: 'seo', title: 'SEO', icon: SearchIcon },
-    { name: 'advanced', title: 'Advanced Options', icon: ControlsIcon },
+    { name: 'advanced', title: 'More settings', icon: ControlsIcon },
   ],
   fields: [
     defineField({
@@ -90,33 +90,7 @@ export default defineType({
       description: 'The main content of the article.',
       type: 'array',
       of: [
-        {
-          type: 'block',
-          styles: [
-            { title: 'Normal', value: 'normal' },
-            { title: 'Heading 2', value: 'h2' },
-            { title: 'Heading 3', value: 'h3' },
-            { title: 'Heading 4', value: 'h4' },
-            { title: 'Quote', value: 'blockquote' },
-          ],
-          marks: {
-            decorators: [
-              { title: 'Strong', value: 'strong' },
-              { title: 'Emphasis', value: 'em' },
-              { title: 'Underline', value: 'underline' },
-              { title: 'Strike', value: 'strike-through' },
-            ],
-            annotations: [
-              {
-                name: 'link',
-                type: 'object',
-                title: 'Link',
-                fields: link.fields,
-                icon: link.icon,
-              },
-            ],
-          },
-        },
+        richTextBlock('article'),
         imageBlock,
         socialEmbedBlock,
         { type: 'code' },

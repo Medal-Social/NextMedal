@@ -2,10 +2,15 @@
 
 import { z } from 'zod';
 import { PublicError } from '@/lib/core/errors';
+import { logger } from '@/lib/core/logger';
 import { actionClient, withSecurity } from '@/lib/core/safe-action';
-import { eventConsent } from '@/lib/forms/consent-required';
-import { withRetry } from '@/lib/utils';
-import { writeClient } from '@/sanity/lib/client';
+import { type EventDetails, eventConsent } from '@/lib/forms/consent-required';
+import { getMedal } from '@/lib/medal-sdk/client';
+import {
+  noteLines,
+  recordSubmission,
+  SUBMISSION_UNAVAILABLE_MESSAGE,
+} from '@/lib/medal-sdk/record-submission';
 
 const leadSchema = withSecurity(
   z.object({
@@ -16,7 +21,8 @@ const leadSchema = withSecurity(
     phone: z.string().optional(),
     consent: z.boolean().optional(),
     source: z.object({
-      type: z.enum(['event', 'newsletter', 'download', 'contact', 'other']),
+      // Event registration is this action's only use; other forms go through submitForm.
+      type: z.literal('event'),
       referenceId: z.string().optional(),
       url: z.string().optional(),
     }),
@@ -24,75 +30,78 @@ const leadSchema = withSecurity(
   })
 );
 
+const trimmed = (value: string | undefined) => value?.trim() || undefined;
+
+/** The note line that identifies one event's registrations on a contact's timeline. */
+const eventIdLine = (id: string) => `Event ID: ${id}`;
+
+function eventDate(event: EventDetails): string | undefined {
+  if (!event.startDateTime) return undefined;
+  return event.timezone ? `${event.startDateTime} (${event.timezone})` : event.startDateTime;
+}
+
+/**
+ * Event registration goes to Medal Social only: a lead contact plus a note
+ * with the event, page, language and consent decision. Nothing personal is
+ * written to Sanity — the dataset is public.
+ */
 export const captureLead = actionClient.schema(leadSchema).action(async ({ parsedInput }) => {
   const { email, name, company, jobTitle, phone, consent, source, language } = parsedInput;
 
-  // Event registration: the event's own registration form decides about consent.
-  if (source.type === 'event') {
-    if (!source.referenceId) throw new PublicError('This event could not be found.');
-    const rule = await eventConsent(source.referenceId);
-    if (rule === 'no-form') throw new PublicError('Registration is not open for this event.');
-    if (rule === 'unavailable') {
-      throw new PublicError('Registration is temporarily unavailable. Please try again shortly.');
-    }
-    if (rule === 'required' && consent !== true) {
-      throw new PublicError('Please accept the privacy terms to continue.');
-    }
+  // The event's own registration form decides about consent.
+  if (!source.referenceId) throw new PublicError('This event could not be found.');
+  const { rule, event } = await eventConsent(source.referenceId);
+  if (rule === 'no-form') throw new PublicError('Registration is not open for this event.');
+  if (rule === 'unavailable') {
+    throw new PublicError('Registration is temporarily unavailable. Please try again shortly.');
+  }
+  if (rule === 'required' && consent !== true) {
+    throw new PublicError('Please accept the privacy terms to continue.');
   }
 
-  // Check if write token is configured
-  if (!writeClient.config().token) {
-    throw new PublicError('Lead capture is not configured. Please contact the site administrator.');
+  const medal = await getMedal();
+  if (!medal) {
+    logger.error(
+      { eventId: event.id },
+      '[medal-sdk] not configured (MEDAL_API_KEY) — sign-up not sent'
+    );
+    throw new PublicError(SUBMISSION_UNAVAILABLE_MESSAGE);
   }
 
-  // Check for existing lead with same email + source reference (with retry for network resilience)
-  const existingLead = await withRetry(
-    () =>
-      writeClient.fetch(
-        `*[_type == "lead" && email == $email && source.reference._ref == $referenceId][0]._id`,
-        { email, referenceId: source.referenceId || '' }
-      ),
-    { retries: 3, delay: 1000 }
-  );
+  const note = [
+    `Event registration: ${event.title ?? event.id}`,
+    ...noteLines([
+      ['Event date', eventDate(event)],
+      ['Event ID', event.id],
+      ['Page', trimmed(source.url)],
+      ['Language', trimmed(language)],
+      ['Privacy terms accepted', consent === true ? 'yes' : 'no'],
+    ]),
+  ].join('\n');
 
-  if (existingLead) {
-    // Already registered - return success without creating duplicate
-    return {
-      success: true,
-      message: 'You are already registered!',
-      leadId: existingLead,
-      alreadyRegistered: true,
-    };
-  }
-
-  // Create new lead document (with retry for network resilience)
-  const lead = await withRetry(
-    () =>
-      writeClient.create({
-        _type: 'lead',
+  let result: Awaited<ReturnType<typeof recordSubmission>>;
+  try {
+    result = await recordSubmission(
+      medal,
+      {
         email,
-        name: name || undefined,
-        company: company || undefined,
-        jobTitle: jobTitle || undefined,
-        phone: phone || undefined,
-        consent: consent ?? false,
-        source: {
-          type: source.type,
-          reference: source.referenceId
-            ? { _type: 'reference', _ref: source.referenceId }
-            : undefined,
-          url: source.url || undefined,
-        },
-        language: language || undefined,
-        createdAt: new Date().toISOString(),
-      }),
-    { retries: 3, delay: 1000 }
-  );
+        firstName: trimmed(name),
+        company: trimmed(company),
+        jobTitle: trimmed(jobTitle),
+        phone: trimmed(phone),
+        labels: ['event-registration'],
+        note,
+        dedupeLine: eventIdLine(event.id),
+      },
+      logger
+    );
+  } catch (err) {
+    logger.error({ err, eventId: event.id }, '[medal-sdk] sign-up failed');
+    throw new PublicError(SUBMISSION_UNAVAILABLE_MESSAGE);
+  }
 
-  return {
-    success: true,
-    message: 'Successfully registered!',
-    leadId: lead._id,
-    alreadyRegistered: false,
-  };
+  if (result.status === 'duplicate') {
+    return { success: true, message: 'You are already registered!', alreadyRegistered: true };
+  }
+  return { success: true, message: 'Successfully registered!', alreadyRegistered: false };
 });

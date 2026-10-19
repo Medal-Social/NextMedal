@@ -6,21 +6,28 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
  */
 
 const create = vi.fn();
-const writeFetch = vi.fn();
 const sanityFetch = vi.fn();
 
 vi.mock('@/sanity/lib/client', () => ({
   client: { fetch: (...args: unknown[]) => sanityFetch(...args) },
-  writeClient: {
-    create: (...args: unknown[]) => create(...args),
-    fetch: (...args: unknown[]) => writeFetch(...args),
-    config: () => ({ token: 'test-write-token' }),
-  },
+}));
+vi.mock('@/lib/medal-sdk/client', () => ({
+  getMedal: async () => ({
+    contacts: {
+      create: (...args: unknown[]) => create(...args),
+      list: vi.fn(),
+      update: vi.fn(),
+      addNote: vi.fn(),
+      activities: vi.fn(),
+    },
+  }),
 }));
 vi.mock('@/lib/core/logger', () => ({
   logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), debug: vi.fn() },
 }));
-vi.mock('@/lib/utils', () => ({ withRetry: (fn: () => Promise<unknown>) => fn() }));
+
+/** The event row the consent lookup reads: the event plus its registration form. */
+const event = (form: Record<string, unknown> | null) => ({ title: 'Launch', form });
 
 const { captureLead } = await import('@/actions/leads/capture-lead');
 
@@ -35,11 +42,10 @@ const register = (overrides: Record<string, unknown> = {}) =>
 describe('captureLead consent', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    writeFetch.mockResolvedValue(null);
-    create.mockResolvedValue({ _id: 'lead-1' });
+    create.mockResolvedValue({ data: { id: 'contact-1' } });
   });
 
-  const required = { requireConsent: true };
+  const required = event({ requireConsent: true });
 
   it('reads the requirement from the event, not from a form id sent by the browser', async () => {
     sanityFetch.mockResolvedValue(required);
@@ -73,7 +79,7 @@ describe('captureLead consent', () => {
   });
 
   it('rejects an event without a registration form', async () => {
-    sanityFetch.mockResolvedValue(null);
+    sanityFetch.mockResolvedValue(event(null));
     const result = await register({ consent: true });
     expect(result?.serverError).toBeTruthy();
     expect(create).not.toHaveBeenCalled();
@@ -83,17 +89,19 @@ describe('captureLead consent', () => {
     sanityFetch.mockResolvedValue(required);
     const result = await register({ consent: true });
     expect(result?.data?.success).toBe(true);
-    expect(create).toHaveBeenCalledWith(expect.objectContaining({ consent: true }));
+    expect(create).toHaveBeenCalledWith(
+      expect.objectContaining({ notes: expect.stringContaining('Privacy terms accepted: yes') })
+    );
   });
 
   it('accepts a registration without consent when the form does not require it', async () => {
-    sanityFetch.mockResolvedValue({ requireConsent: false });
+    sanityFetch.mockResolvedValue(event({ requireConsent: false }));
     const result = await register({ consent: false });
     expect(result?.data?.success).toBe(true);
   });
 
   it('honours the legacy acceptance.required flag', async () => {
-    sanityFetch.mockResolvedValue({ legacyRequired: true });
+    sanityFetch.mockResolvedValue(event({ legacyRequired: true }));
     const result = await register({ consent: false });
     expect(result?.serverError).toMatch(/accept/i);
   });
@@ -120,7 +128,7 @@ describe('captureLead consent', () => {
   });
 
   it('during a Sanity outage keeps accepting a form last seen as consent-free', async () => {
-    sanityFetch.mockResolvedValueOnce({ requireConsent: false });
+    sanityFetch.mockResolvedValueOnce(event({ requireConsent: false }));
     await register({ consent: false, source: { type: 'event', referenceId: 'event-free' } });
     sanityFetch.mockRejectedValueOnce(new Error('sanity is down'));
     const result = await register({

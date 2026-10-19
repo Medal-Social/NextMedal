@@ -14,6 +14,7 @@ import MobileSidebar from '@/components/blocks/modules/frontpage/articles/Mobile
 import ReadTime from '@/components/blocks/modules/frontpage/articles/ReadTime';
 import Sidebar from '@/components/blocks/modules/frontpage/articles/Sidebar';
 import SocialShare from '@/components/blocks/modules/frontpage/articles/SocialShare';
+import Modules from '@/components/blocks/modules/Modules';
 import { Date as DateDisplay, Img } from '@/components/blocks/objects/core';
 import {
   Breadcrumb,
@@ -24,6 +25,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { routing } from '@/i18n/routing';
+import { groupPlacements } from '@/lib/sanity/placement';
 import { getArticleFallbackImage } from '@/lib/utils/article-helpers';
 import { createStegaAttribute } from '@/sanity/lib/client';
 
@@ -226,8 +228,14 @@ export default async function ArticleDetail({ post, collectionSlug }: ArticleDet
     type: post._type,
   });
 
+  // Placement rules for articles (e.g. the download offer). Sidebar blocks render
+  // once, below the share box on small screens and in the sticky column on large.
+  const placements = groupPlacements(post.placements ?? []);
+  const locale = post.language;
+
   return (
     <article>
+      <Modules modules={placements.top} locale={locale} />
       <PostHeader post={post} collectionSlug={collectionSlug} stega={stega} homeLabel={t('home')} />
 
       {/* Main Content Section */}
@@ -254,7 +262,13 @@ export default async function ArticleDetail({ post, collectionSlug }: ArticleDet
           </div>
 
           {/* Sidebar Column */}
-          <div className="sticky top-24 hidden self-start lg:col-span-4 lg:block">
+          <div
+            className={
+              placements.sidebar.length
+                ? 'space-y-8 self-start lg:sticky lg:top-24 lg:col-span-4'
+                : 'sticky top-24 hidden self-start lg:col-span-4 lg:block'
+            }
+          >
             <Sidebar
               headings={post.headings}
               title={post.metadata?.title || ''}
@@ -262,9 +276,11 @@ export default async function ArticleDetail({ post, collectionSlug }: ArticleDet
               shareLabel={t('shareArticle')}
               onThisPageLabel={t('onThisPage')}
             />
+            <Modules modules={placements.sidebar} post={post} isSidebar locale={locale} />
           </div>
         </div>
       </div>
+      <Modules modules={placements.bottom} locale={locale} />
     </article>
   );
 }

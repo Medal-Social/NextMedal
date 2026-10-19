@@ -1,4 +1,6 @@
 import { groq } from 'next-sanity';
+import { DEFAULT_LOCALE } from '@/i18n/config';
+import { ARTICLE_PLACEMENT_SCOPE, PAGE_PLACEMENT_SCOPE } from '@/lib/sanity/placement-scopes';
 
 export const SLUG_QUERY = groq`
 	metadata.slug.current
@@ -16,7 +18,8 @@ export const LINK_QUERY = groq`
 	internal->{
 		_id,
 		_type,
-		title,
+		// page.title is an orphan (dropped by the lean-schema migration); pages are named by metadata.title.
+		'title': coalesce(title, metadata.title),
 		language,
 		metadata { slug },
 		// D4: the same document in every language, for links on translated pages
@@ -94,7 +97,6 @@ export const CTA_QUERY = groq`
 const BASE_MODULES_QUERY = groq`
 	...,
 	ctas[]{${CTA_QUERY}},
-	_type == 'breadcrumbs' => { crumbs[]{ ${LINK_QUERY} } },
 	_type == 'callout' => {
 		"copy": content,
 	},
@@ -113,15 +115,6 @@ const BASE_MODULES_QUERY = groq`
 		'filename': file.asset->originalFilename,
 		'size': file.asset->size
 	},
-	_type == 'team' => {
-		...,
-		intro[]{ ${PT_BLOCK_QUERY} },
-		people[]->{
-			...,
-			image { ${IMAGE_QUERY} },
-			bio[]{ ${PT_BLOCK_QUERY} }
-		},
-	},
 	_type == 'pricing-list' => {
 		tiers[]->{
 			...,
@@ -135,12 +128,6 @@ const BASE_MODULES_QUERY = groq`
 				${IMAGE_QUERY}
 			}
 		},
-		'headings': select(
-			tableOfContents => content[style in ['h2', 'h3', 'h4', 'h5', 'h6']]{
-				style,
-				'text': pt::text(@)
-			}
-		),
 	},
 	_type == 'features' => {
 		...,
@@ -148,23 +135,6 @@ const BASE_MODULES_QUERY = groq`
 		items[]{
 			...,
 			content[]{ ${PT_BLOCK_QUERY} }
-		}
-	},
-	_type == 'contact' => {
-		...,
-		intro[]{ ${PT_BLOCK_QUERY} },
-		form->{
-			...,
-			redirect { ${LINK_QUERY} },
-			acceptance { ..., link { ${LINK_QUERY} } }
-		},
-		contactPerson {
-			...,
-			image {
-				image {
-					${IMAGE_QUERY}
-				}
-			}
 		}
 	},
 	_type == 'lead-magnet' => {
@@ -176,6 +146,7 @@ const BASE_MODULES_QUERY = groq`
 			acceptance { ..., link { ${LINK_QUERY} } }
 		},
 		image {
+			alt,
 			image {
 				${IMAGE_QUERY}
 			}
@@ -186,14 +157,8 @@ const BASE_MODULES_QUERY = groq`
 		// The spread above re-adds the raw buttons; resolve their link targets again.
 		ctas[]{${CTA_QUERY}},
 		content[]{ ${PT_BLOCK_QUERY} },
-		muxVideo{
-			...,
-			asset->{
-				...,
-				"playbackId": playback_ids[0].id
-			}
-		},
 		image {
+			alt,
 			image {
 				${IMAGE_QUERY}
 			}
@@ -256,7 +221,7 @@ export const PAGE_QUERY = groq`
 	*[_type == 'page' && metadata.slug.current == $slug && language == $locale][0]{
 		...,
 		'modules': modules[]{ ${MODULES_QUERY} },
-		'placements': ${placementQuery("scope == 'page'")},
+		'placements': ${placementQuery(`scope == '${PAGE_PLACEMENT_SCOPE}'`)},
 		metadata,
 		seo {
 			...,
@@ -298,6 +263,9 @@ export const COLLECTION_ARTICLE_POST_QUERY = groq`
 			_type == 'socialEmbed' => { _type, platform, url },
 			_type == 'video' => { _type, type, videoId, muxVideo{ ..., asset->{ ..., "playbackId": playback_ids[0].id } }, thumbnail, title }
 		},
+		// Placements have no language and are written in the default one (the download
+		// offer is English), so only default-language articles get them for now.
+		'placements': ${placementQuery(`scope == '${ARTICLE_PLACEMENT_SCOPE}' && $locale == '${DEFAULT_LOCALE}'`)},
 		'readTime': math::max([1, round(length(string::split(pt::text(body), ' ')) / 200)]),
 		'headings': body[style in ['h2', 'h3']]{
 			style,
@@ -509,10 +477,15 @@ export const LOGOS_QUERY = groq`
 	}
 `;
 
-// Site banners from site document
+// Site banners from site document. The schema stores per-language values,
+// but every stored banner (2026-10-18) still holds plain blocks: project both.
 export const SITE_BANNERS_QUERY = groq`
 	*[_type == 'site'][0].banners[]->{
 		...,
+		content[]{
+			_type == 'internationalizedArrayBlockContentValue' => { _key, _type, language, value[]{ ${PT_BLOCK_QUERY} } },
+			_type != 'internationalizedArrayBlockContentValue' => { ${PT_BLOCK_QUERY} }
+		},
 		cta{ ${LINK_QUERY} },
 	}
 `;
@@ -692,7 +665,9 @@ export const SITE_QUERY = groq`
 		"footerLinks": coalesce(footerLinks[_key == $language][0].value, footerLinks[_key == "en"][0].value)[]{
 			${LINK_QUERY}
 		},
-		"copyright": coalesce(copyright[_key == $language][0].value, copyright[_key == "en"][0].value),
+		"copyright": coalesce(copyright[_key == $language][0].value, copyright[_key == "en"][0].value)[]{
+			${PT_BLOCK_QUERY}
+		},
 		systemStatus,
 		socialLinks,
 		cookieConsent {
@@ -762,7 +737,9 @@ export const FOOTER_SETTINGS_QUERY = groq`
 		"footerLinks": coalesce(footerLinks[_key == $language][0].value, footerLinks[_key == "en"][0].value)[]{
 			${LINK_QUERY}
 		},
-		"copyright": coalesce(copyright[_key == $language][0].value, copyright[_key == "en"][0].value),
+		"copyright": coalesce(copyright[_key == $language][0].value, copyright[_key == "en"][0].value)[]{
+			${PT_BLOCK_QUERY}
+		},
 		systemStatus,
 		socialLinks
 	}

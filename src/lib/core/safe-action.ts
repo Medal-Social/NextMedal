@@ -41,17 +41,15 @@ export const withSecurity = <T extends z.ZodRawShape>(schema: z.ZodObject<T>) =>
         .string()
         .max(0, { message: 'Please complete all fields correctly and try again.' })
         .optional(),
-      _submissionTimestamp: z.string().optional(),
+      // When the form was shown. Required: every form sends it, and a missing or
+      // unparseable value would skip the timing check.
+      _submissionTimestamp: z.string(),
     })
     .refine(
       (data) => {
-        const timestamp = (data as { _submissionTimestamp?: string })._submissionTimestamp;
-        if (!timestamp) return true;
-
+        const timestamp = (data as { _submissionTimestamp: string })._submissionTimestamp;
         const start = new Date(timestamp).getTime();
-
-        // Allow if timestamp is invalid
-        if (Number.isNaN(start)) return true;
+        if (Number.isNaN(start)) return false;
 
         // Reject if submission took less than 3 seconds
         return Date.now() - start >= 3000;

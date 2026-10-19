@@ -25,7 +25,7 @@ export default defineType({
   groups: [
     { name: 'content', title: 'Content', icon: EnvelopeIcon, default: true },
     { name: 'seo', title: 'SEO', icon: SearchIcon },
-    { name: 'advanced', title: 'Advanced Options', icon: ControlsIcon },
+    { name: 'advanced', title: 'More settings', icon: ControlsIcon },
   ],
   fields: [
     // Issue Number (shared across languages)

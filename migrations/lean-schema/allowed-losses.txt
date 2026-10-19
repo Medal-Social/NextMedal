@@ -1,0 +1,56 @@
+# Text the lean-schema migration removes on purpose (Vault plan 2026-10-18, Task 25).
+# One JSON string per line; the `#` lines directly above a string give its reason.
+# After the string: the number of occurrences lost and the field path(s) they are lost from
+# (`<doc type>.<key>…`, array positions left out); the check fails on any other count or path.
+# Used by tests/unit/migrations/lean-schema/inventory.test.ts and by
+# `pnpm exec tsx scripts/lean-schema/string-inventory.ts before.ndjson after.ndjson migrations/lean-schema/allowed-losses.txt`.
+# Only page-title duplicates of metadata.title, design values, the owner-approved form
+# clean-up, the download-offer scope fix and the removed Team gallery item belong here; anything else the inventory
+# prints is a mapping bug.
+# Documents the migration deletes are listed separately (orphans, duplicate list pages).
+
+# Orphan page.title (no schema field, not rendered; metadata.title "Components" names the page).
+"Components" 1 page.title
+
+# Orphan page.title (metadata.title "Contact us").
+"Contact us" 1 page.title
+
+# Orphan page.title (metadata.title "Our story").
+"Our story" 1 page.title
+
+# Orphan page.title on Terms, published (metadata.title "Terms of Services").
+"Terms of Service" 1 page.title
+
+# Orphan page.title typo on the Terms draft (metadata.title "Terms of Services").
+"Terms of Cervice" 1 page.title
+
+# Orphan page.title on the Guides page (metadata.title "This page will have guides").
+"Guides" 1 page.title
+
+# Orphan page.title on Privacy, published and draft (metadata.title "privacy" / "Privacy").
+"Privacy" 2 page.title
+
+# The Team item of the /components developer gallery: the team block is deleted (owner
+# decision B, 2026-10-19). Its two people stay as documents; only the item's own copy goes.
+"Meet the Team" 1 page.modules.groups.items.pretitle
+
+# Intro heading of the same Team gallery item.
+"The experts behind the product." 1 page.modules.groups.items.intro.children.text
+
+# Docs list "uncategorized" label = the code default (DOCS_LIST.uncategorizedLabel).
+"Other" 1 page.modules.uncategorizedLabel
+
+# Form intent "lead" is not a value the schema offers; becomes "contact" (owner gate list B).
+"lead" 1 form.intent
+
+# Form placeholder copy, replaced by "you@example.com" (owner decision, R2 form clean-up).
+"Give us your shitty email" 1 form.fields.placeholder
+
+# Form consent text "Test" (replaced by "I agree to the privacy policy." in en/nb/ar), the
+# consent link label "Test" (the link now goes to the Privacy page, "Privacy policy") and the
+# label of the orphan form.redirect (no schema field since form v3, read by nothing).
+"Test" 3 form.acceptance.text.value,form.acceptance.link.label,form.redirect.label
+
+# Placement scope "blog.post" is not a value the Studio offers, so no route showed the
+# download offer; becomes "articles-frontpage" (article pages; owner decision 2026-10-19).
+"blog.post" 1 placement.scope

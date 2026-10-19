@@ -4,9 +4,10 @@
  *
  * Usage: pnpm exec tsx scripts/lean-schema/string-inventory.ts before.ndjson after.ndjson [allowed.txt]
  * Lists the documents missing from after (each must be on the migration's delete plan),
- * then prints every text string (line breaks included) of the kept documents that occurs
- * fewer times after than before, minus the allow-list (migrations/nm-fixes/allowed-losses.txt
- * or migrations/lean-schema/allowed-losses.txt). Exits 1 when anything else is lost.
+ * then checks every text string (line breaks included) of the kept documents that occurs
+ * fewer times after than before against the allow-list (migrations/nm-fixes/allowed-losses.txt
+ * or migrations/lean-schema/allowed-losses.txt): entry, count and field paths must match.
+ * Exits 1 on any problem.
  */
 import { readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
@@ -47,33 +48,99 @@ const IGNORE_KEYS = new Set([
 ]);
 
 export type Inventory = Map<string, number>;
+/** text → field path (`<doc type>.<key>.<key>`, array positions left out) → count. */
+export type PathInventory = Map<string, Map<string, number>>;
 
-function walk(value: unknown, out: Inventory) {
+function walk(value: unknown, path: string, out: PathInventory) {
   if (Array.isArray(value)) {
-    for (const item of value) walk(item, out);
+    for (const item of value) walk(item, path, out);
   } else if (value && typeof value === 'object') {
-    for (const [key, inner] of Object.entries(value)) if (!IGNORE_KEYS.has(key)) walk(inner, out);
+    for (const [key, inner] of Object.entries(value)) {
+      if (!IGNORE_KEYS.has(key)) walk(inner, path ? `${path}.${key}` : key, out);
+    }
   } else if (typeof value === 'string') {
     const text = value.trim();
-    if (text) out.set(text, (out.get(text) ?? 0) + 1);
+    if (!text) return;
+    const paths = out.get(text) ?? new Map<string, number>();
+    paths.set(path, (paths.get(path) ?? 0) + 1);
+    out.set(text, paths);
   }
 }
 
-export function inventory(docs: unknown[]): Inventory {
-  const out: Inventory = new Map();
-  walk(docs, out);
+/** Every text string by the field path it sits in. */
+export function pathInventory(docs: unknown[]): PathInventory {
+  const out: PathInventory = new Map();
+  for (const doc of docs) {
+    walk(doc, String((doc as { _type?: unknown })?._type ?? '?'), out);
+  }
   return out;
 }
+
+const total = (paths: ReadonlyMap<string, number> | undefined) =>
+  [...(paths?.values() ?? [])].reduce((sum, n) => sum + n, 0);
+
+export function inventory(docs: unknown[]): Inventory {
+  return new Map([...pathInventory(docs)].map(([text, paths]) => [text, total(paths)]));
+}
+
+/** One allowed loss: why, how many occurrences, and in which field paths. */
+export type AllowedLoss = { reason: string; count?: number; paths?: string[] };
 
 /** Strings that occur fewer times after than before, minus the allowed ones. */
 export function lostStrings(
   before: Inventory,
   after: Inventory,
-  allowed: ReadonlyMap<string, string> = new Map()
+  allowed: ReadonlyMap<string, unknown> = new Map()
 ): string[] {
   return [...before.entries()]
     .filter(([text, count]) => (after.get(text) ?? 0) < count && !allowed.has(text))
     .map(([text]) => text);
+}
+
+/**
+ * Every problem with the losses between two document sets: a string lost
+ * without an allow-list entry, a loss of another size than the entry's count,
+ * a loss outside the entry's field paths, or an entry that loses nothing.
+ * Empty = no text lost beyond the allow-list.
+ */
+export function checkLosses(
+  beforeDocs: unknown[],
+  afterDocs: unknown[],
+  allowed: ReadonlyMap<string, AllowedLoss> = new Map()
+): string[] {
+  const before = pathInventory(beforeDocs);
+  const after = pathInventory(afterDocs);
+  const problems: string[] = [];
+  for (const [text, paths] of before) {
+    const lost = total(paths) - total(after.get(text));
+    if (lost <= 0) continue;
+    const where = [...paths.keys()]
+      .filter((p) => (paths.get(p) ?? 0) > (after.get(text)?.get(p) ?? 0))
+      .join(', ');
+    const entry = allowed.get(text);
+    if (!entry) {
+      problems.push(`LOST ${JSON.stringify(text)} x${lost} (${where})`);
+      continue;
+    }
+    if (entry.count !== undefined && entry.count !== lost) {
+      problems.push(`${JSON.stringify(text)}: lost ${lost}, allowed ${entry.count} (${where})`);
+    }
+    if (entry.paths) {
+      const atPaths = entry.paths.reduce(
+        (sum, p) => sum + Math.max(0, (paths.get(p) ?? 0) - (after.get(text)?.get(p) ?? 0)),
+        0
+      );
+      if (atPaths < lost) {
+        problems.push(`${JSON.stringify(text)}: lost outside ${entry.paths.join(', ')} (${where})`);
+      }
+    }
+  }
+  for (const text of allowed.keys()) {
+    if (total(before.get(text)) - total(after.get(text)) <= 0) {
+      problems.push(`${JSON.stringify(text)}: on the allow-list but not lost`);
+    }
+  }
+  return problems;
 }
 
 export function readNdjson(path: string): unknown[] {
@@ -83,12 +150,16 @@ export function readNdjson(path: string): unknown[] {
     .map((line) => JSON.parse(line));
 }
 
+const ENTRY = /^("(?:[^"\\]|\\.)*")(?:\s+(\d+))?(?:\s+(\S+))?$/;
+
 /**
- * Allow-list file: one JSON-escaped string per line; the `#` lines right above
- * a string are its reason. Blank lines separate entries.
+ * Allow-list file: one entry per line — a JSON string, then optionally the
+ * number of occurrences lost and the comma-separated field paths
+ * (`"Privacy" 2 page.title`). The `#` lines right above an entry are its
+ * reason. Blank lines separate entries.
  */
-export function readAllowList(path: string): Map<string, string> {
-  const allowed = new Map<string, string>();
+export function readAllowList(path: string): Map<string, AllowedLoss> {
+  const allowed = new Map<string, AllowedLoss>();
   let reason: string[] = [];
   for (const raw of readFileSync(path, 'utf8').split('\n')) {
     const line = raw.trim();
@@ -97,9 +168,14 @@ export function readAllowList(path: string): Map<string, string> {
     } else if (line.startsWith('#')) {
       reason.push(line.replace(/^#\s?/, ''));
     } else {
-      const text = JSON.parse(line);
-      if (typeof text !== 'string') throw new Error(`${path}: not a JSON string: ${line}`);
-      allowed.set(text.trim(), reason.join(' '));
+      const match = ENTRY.exec(line);
+      const text = match ? JSON.parse(match[1]) : undefined;
+      if (typeof text !== 'string') throw new Error(`${path}: not an allow-list entry: ${line}`);
+      allowed.set(text.trim(), {
+        reason: reason.join(' '),
+        ...(match?.[2] ? { count: Number(match[2]) } : {}),
+        ...(match?.[3] ? { paths: match[3].split(',') } : {}),
+      });
       reason = [];
     }
   }
@@ -112,7 +188,7 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
     console.error('Usage: string-inventory.ts before.ndjson after.ndjson [allowed.txt]');
     process.exit(2);
   }
-  const allowed = allowPath ? readAllowList(allowPath) : new Map<string, string>();
+  const allowed = allowPath ? readAllowList(allowPath) : new Map<string, AllowedLoss>();
   const before = readNdjson(beforePath) as Array<{ _id: string; _type: string }>;
   const after = readNdjson(afterPath) as Array<{ _id: string }>;
   const kept = new Set(after.map((d) => d._id));
@@ -121,15 +197,13 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
     `Documents removed (${removed.length}) — each must be on the migration's delete plan:`
   );
   for (const d of removed) console.log(`  ${d._type} ${d._id}`);
-  const lost = lostStrings(
-    inventory(before.filter((d) => kept.has(d._id))),
-    inventory(after),
+  const problems = checkLosses(
+    before.filter((d) => kept.has(d._id)),
+    after,
     allowed
   );
   console.log(
-    lost.length
-      ? `LOST ${lost.length}:\n${lost.map((s) => JSON.stringify(s)).join('\n')}`
-      : 'No text lost.'
+    problems.length ? `PROBLEMS ${problems.length}:\n${problems.join('\n')}` : 'No text lost.'
   );
-  process.exit(lost.length ? 1 : 0);
+  process.exit(problems.length ? 1 : 0);
 }

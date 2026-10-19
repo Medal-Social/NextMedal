@@ -232,7 +232,11 @@
         "formDescription": "Fyll ut skjemaet nedenfor for å reservere din plass.",
         "registering": "Melder deg på...",
         "close": "Ferdig",
-        "consent": "Jeg godtar at opplysningene mine lagres for å håndtere påmeldingen."
+        "consent": "Jeg godtar at opplysningene mine lagres for å håndtere påmeldingen.",
+        "submit": "Meld deg på",
+        "invalidEmail": "Skriv inn en gyldig e-postadresse.",
+        "tooFast": "Ta deg et øyeblikk til å se over opplysningene, og send på nytt.",
+        "checkFields": "Se over opplysningene og prøv igjen."
       }
     }
   },

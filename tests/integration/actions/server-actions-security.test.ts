@@ -12,7 +12,6 @@ import { beforeAll, describe, expect, it } from 'vitest';
  * ✅ Input validation (Zod schemas)
  * ✅ Honeypot bot detection
  * ✅ Error handling (no sensitive data leakage)
- * ✅ Retry logic for network resilience
  * ✅ Safe type conversions
  * ✅ Missing credentials handling
  * ✅ Duplicate detection
@@ -61,20 +60,24 @@ describe('Server Actions - Security Audit', () => {
       expect(submitFormSource).toContain('function getStringOrUndefined(value: unknown)');
     });
 
-    it('should swallow non-fatal SDK errors instead of crashing the request', () => {
-      // The Medal SDK is best-effort (Sanity is the source of truth), so each
-      // intent handler wraps the SDK call in try/catch and logs at error level.
-      expect(submitFormSource).toContain('contacts.create failed (non-fatal)');
-      expect(submitFormSource).toContain('logger.error');
+    it('should fail closed when Medal cannot take the submission', () => {
+      // Medal is the only destination (no copy in the public Sanity dataset):
+      // a failed or unconfigured SDK is logged and reported to the visitor.
+      expect(submitFormSource).toContain('SUBMISSION_UNAVAILABLE_MESSAGE');
+      expect(submitFormSource).toContain('[medal-sdk] submission failed');
+    });
+
+    it('should never write to Sanity', () => {
+      expect(submitFormSource).not.toContain('getWriteClient');
+      expect(submitFormSource).not.toContain("_type: 'lead'");
     });
 
     it('should handle unknown intents', () => {
-      expect(submitFormSource).toContain('default:');
+      expect(submitFormSource).toContain('isSupportedIntent(intent)');
       expect(submitFormSource).toContain('Unknown submission intent');
     });
 
     it('should have generic error messages (no sensitive data leakage)', () => {
-      expect(submitFormSource).toContain("couldn't process your submission");
       expect(submitFormSource).toContain('not set up correctly');
       // Should NOT contain actual error details in user-facing messages
       expect(submitFormSource).not.toContain('throw error');
@@ -88,17 +91,12 @@ describe('Server Actions - Security Audit', () => {
     });
 
     it('should support multiple submission intents', () => {
-      expect(submitFormSource).toContain("case 'lead':");
-      expect(submitFormSource).toContain("case 'contact':");
-      expect(submitFormSource).toContain("case 'newsletter':");
-      expect(submitFormSource).toContain("case 'download':");
+      expect(submitFormSource).toContain("['lead', 'contact', 'newsletter', 'download']");
     });
 
     it('should include metadata in all submissions', () => {
-      // Metadata is part of the schema and the SubmissionContext, and is
-      // forwarded into per-intent handlers via the spread `...ctx.metadata`.
       expect(submitFormSource).toContain('metadata: z.record');
-      expect(submitFormSource).toContain('...ctx.metadata');
+      expect(submitFormSource).toContain('buildContext(data, metadata)');
     });
   });
 
@@ -124,50 +122,29 @@ describe('Server Actions - Security Audit', () => {
       expect(captureLeadSource).toContain('Please enter a valid email address');
     });
 
-    it('should validate source type with enum', () => {
-      expect(captureLeadSource).toContain('type: z.enum([');
-      expect(captureLeadSource).toContain("'event'");
-      expect(captureLeadSource).toContain("'newsletter'");
-      expect(captureLeadSource).toContain("'download'");
-      expect(captureLeadSource).toContain("'contact'");
-      expect(captureLeadSource).toContain("'other'");
+    it('should accept event registrations only', () => {
+      expect(captureLeadSource).toContain("type: z.literal('event')");
     });
 
-    it('should check for write token configuration', () => {
-      expect(captureLeadSource).toContain('if (!writeClient.config().token)');
-      expect(captureLeadSource).toContain('Lead capture is not configured');
+    it('should fail closed when Medal cannot take the registration', () => {
+      expect(captureLeadSource).toContain('if (!medal)');
+      expect(captureLeadSource).toContain('throw new PublicError(SUBMISSION_UNAVAILABLE_MESSAGE)');
     });
 
-    it('should detect duplicate leads', () => {
-      expect(captureLeadSource).toContain('existingLead');
+    it('should never write to Sanity', () => {
+      expect(captureLeadSource).not.toContain('getWriteClient');
+      expect(captureLeadSource).not.toContain("_type: 'lead'");
+    });
+
+    it('should detect duplicate registrations via Medal', () => {
+      expect(captureLeadSource).toContain('dedupeLine');
       expect(captureLeadSource).toContain('already registered');
       expect(captureLeadSource).toContain('alreadyRegistered: true');
     });
 
-    it('should use parameterized GROQ queries (prevent injection)', () => {
-      expect(captureLeadSource).toContain('email == $email');
-      expect(captureLeadSource).toContain('{ email,');
-      // Should NOT use string interpolation in queries
-      // biome-ignore lint/suspicious/noTemplateCurlyInString: Testing that template strings are NOT used
-      expect(captureLeadSource).not.toContain('email == "${email}"');
-      // biome-ignore lint/suspicious/noTemplateCurlyInString: Testing that template strings are NOT used
-      expect(captureLeadSource).not.toContain('email == `${email}`');
-    });
-
-    it('should use retry logic for network resilience', () => {
-      expect(captureLeadSource).toContain('import { withRetry }');
-      expect(captureLeadSource).toContain('withRetry(');
-      expect(captureLeadSource).toContain('retries: 3');
-    });
-
-    it('should track GDPR consent', () => {
+    it('should record the GDPR consent decision', () => {
       expect(captureLeadSource).toContain('consent: z.boolean()');
-      expect(captureLeadSource).toContain('consent: consent ?? false');
-    });
-
-    it('should include timestamp for audit trail', () => {
-      expect(captureLeadSource).toContain('createdAt:');
-      expect(captureLeadSource).toContain('new Date().toISOString()');
+      expect(captureLeadSource).toContain("'Privacy terms accepted'");
     });
 
     it('should use PublicError for user-facing errors', () => {
@@ -176,8 +153,8 @@ describe('Server Actions - Security Audit', () => {
     });
 
     it('should sanitize optional fields', () => {
-      expect(captureLeadSource).toContain('|| undefined');
-      // Should convert empty strings to undefined, not store empty strings
+      // Empty strings become undefined instead of blank contact fields.
+      expect(captureLeadSource).toContain('?.trim() || undefined');
     });
   });
 
@@ -241,14 +218,12 @@ describe('Server Actions - Security Audit', () => {
  * ✅ IMPLEMENTED:
  * 1. Input validation (Zod schemas)
  * 2. Honeypot bot detection
- * 3. Parameterized queries (prevent injection)
- * 4. Generic error messages (no data leakage)
- * 5. Retry logic for reliability
- * 6. Missing credentials checks
- * 7. Duplicate detection
- * 8. GDPR consent tracking
- * 9. Audit timestamps
- * 10. Safe type conversions
+ * 3. Generic error messages (no data leakage)
+ * 4. Missing credentials checks (fail closed)
+ * 5. Duplicate detection (via Medal)
+ * 6. GDPR consent tracking
+ * 7. Safe type conversions
+ * 8. No personal data in the public Sanity dataset
  *
  * 📋 TODO (Future Enhancements):
  * 1. Rate limiting (by IP and/or email)
@@ -286,8 +261,7 @@ describe('Server Actions - Security Audit', () => {
  *
  * 8. PII encryption
  *    - Encrypt sensitive fields at rest
- *    - Use Sanity field-level encryption
- *
+ * *
  * 9. Webhook validation
  *    - Verify webhook signatures
  *    - Prevent replay attacks

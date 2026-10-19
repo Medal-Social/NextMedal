@@ -75,6 +75,8 @@ describe('errorHandler', () => {
 
 describe('withSecurity', () => {
   const schema = withSecurity(z.object({ name: z.string() }));
+  /** Old enough to clear the 3-second guard. */
+  const human = () => new Date(Date.now() - 10_000).toISOString();
 
   it('should pass if submission takes longer than 3 seconds', () => {
     const start = Date.now() - 4000;
@@ -102,25 +104,27 @@ describe('withSecurity', () => {
     }
   });
 
-  it('should pass if timestamp is invalid (NaN)', () => {
+  it('should fail if timestamp is invalid (NaN)', () => {
+    // An unparseable timestamp would otherwise skip the timing check entirely.
     const result = schema.safeParse({
       name: 'test',
       _submissionTimestamp: 'invalid-date',
     });
-    expect(result.success).toBe(true);
+    expect(result.success).toBe(false);
   });
 
-  it('should pass if timestamp is missing', () => {
+  it('should fail if timestamp is missing (every form sends it)', () => {
     const result = schema.safeParse({
       name: 'test',
     });
-    expect(result.success).toBe(true);
+    expect(result.success).toBe(false);
   });
 
   describe('honeypot field', () => {
     it('should pass if honeypot is empty string', () => {
       const result = schema.safeParse({
         name: 'test',
+        _submissionTimestamp: human(),
         _honeypot: '',
       });
       expect(result.success).toBe(true);
@@ -129,6 +133,7 @@ describe('withSecurity', () => {
     it('should pass if honeypot is undefined', () => {
       const result = schema.safeParse({
         name: 'test',
+        _submissionTimestamp: human(),
         _honeypot: undefined,
       });
       expect(result.success).toBe(true);
@@ -137,6 +142,7 @@ describe('withSecurity', () => {
     it('should fail if honeypot has content (bot detected)', () => {
       const result = schema.safeParse({
         name: 'test',
+        _submissionTimestamp: human(),
         _honeypot: 'bot value',
       });
 
@@ -181,6 +187,7 @@ describe('withSecurity', () => {
     const result = complexSchema.safeParse({
       email: 'test@example.com',
       age: 25,
+      _submissionTimestamp: human(),
     });
 
     expect(result.success).toBe(true);

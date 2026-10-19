@@ -3,7 +3,7 @@
  */
 
 export interface ModuleContext {
-  page?: Sanity.Page | Sanity.ComponentLibrary;
+  page?: Sanity.Page;
   post?: Sanity.CollectionArticlePost;
   isSidebar?: boolean;
 }

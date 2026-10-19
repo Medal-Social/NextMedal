@@ -26,7 +26,7 @@
   // rendering paths — which would leave <head> metadata (og:url, canonical,
   // hreflang) rendering with the localhost fallback. NEXT_PUBLIC_* are public by
   // definition (inlined into the client bundle anyway), so plaintext is fine.
-  // Sensitive/server-only values (SANITY_WRITE_TOKEN, the browser token, etc.)
+  // Sensitive/server-only values (MEDAL_API_KEY, the browser token, etc.)
   // stay as Worker secrets / build-time inlined values pushed by the CI workflow.
   "vars": {
     "NEXT_PUBLIC_BASE_URL": "https://staging.nextmedal.com",

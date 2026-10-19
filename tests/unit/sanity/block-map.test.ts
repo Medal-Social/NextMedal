@@ -10,7 +10,7 @@ const count = (types: string[]) =>
     [...new Set(types)].sort().map((t) => [t, types.filter((x) => x === t).length])
   );
 
-describe('block map against the 2026-10-18 export', () => {
+describe('block map against the 2026-10-19 production export (after nm-fixes)', () => {
   const stored = pages.flatMap((p) => (p.modules ?? []).map((m) => m._type));
 
   // Counts include drafts: the export holds both `drafts.<id>` and published pages.

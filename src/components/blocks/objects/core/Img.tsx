@@ -76,8 +76,10 @@ function renderDirectImage(
     targetHeight
   );
 
+  // alt after the spread: an `alt={undefined}` prop must not remove the attribute.
+  const { alt, ...rest } = props;
   const imageElement = (
-    <Image src={src} width={width} height={height} alt={props.alt || image.alt || ''} {...props} />
+    <Image src={src} width={width} height={height} {...rest} alt={alt || image.alt || ''} />
   );
 
   return wrapWithSanityContainer(imageElement, props['data-sanity'], props.className);
@@ -123,6 +125,7 @@ export function Img({
   if (!generatedSrc) return null;
 
   const { src, width, height } = generatedSrc;
+  const { alt, ...rest } = props;
   const isGif = src.includes('.gif');
   const isSvg = src.toLowerCase().endsWith('.svg');
 
@@ -150,10 +153,11 @@ export function Img({
       src={isGif ? src.split('?')[0] : src}
       width={props.fill ? undefined : width}
       height={props.fill ? undefined : height}
-      alt={props.alt || image.alt || image.altText || image.asset?.altText || ''}
       unoptimized={isGif || isSvg}
       {...blurProps}
-      {...props}
+      {...rest}
+      // After the spread: an `alt={undefined}` prop must not remove the attribute.
+      alt={alt || image.alt || image.altText || image.asset?.altText || ''}
       loading={validLoading}
     />
   );
