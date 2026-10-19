@@ -32,8 +32,8 @@ interface FormField {
 // Registration form type
 interface RegistrationForm {
   _id: string;
-  formTitle: string;
-  intent: 'lead' | 'newsletter' | 'download';
+  formTitle: Sanity.InternationalizedArrayString | string;
+  intent: 'contact' | 'lead' | 'newsletter' | 'event' | 'download';
   fields?: FormField[]; // Optional - may not be populated in Sanity
   requireConsent?: boolean;
   acceptance?: {

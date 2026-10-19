@@ -86,6 +86,10 @@ export const MIGRATED_TYPES = [
   'form',
   'banner',
   'translation.metadata',
+  // `collection` on an event has no field in the events schema, yet the event
+  // list depends on it: EventsFrontpage fetches events by
+  // `collection->metadata.slug.current == $collectionSlug`. The 4 en events
+  // point at the removed events page and are repointed to the one that stays.
   'collection.events',
 ] as const;
 
@@ -103,6 +107,20 @@ function assertEmptyDraft(doc: Doc) {
   const target = isObject(destination) ? { ...destination, type: undefined } : destination;
   if (isFilled(content) || isFilled(target)) {
     throw new UnmappedContentError(`${doc._id}: the "empty" draft has content now`);
+  }
+}
+
+/**
+ * A translation group must already hold the page that stays: nm-fixes (run
+ * first, production 2026-10-19) rewrote the groups. A group still holding a
+ * removed duplicate means nm-fixes did not run — refuse rather than repoint.
+ */
+function assertGroupRepaired(doc: Doc) {
+  const stale = DUPLICATE_PAGE_IDS.filter((id) => JSON.stringify(doc).includes(`"_ref":"${id}"`));
+  if (stale.length) {
+    throw new UnmappedContentError(
+      `${doc._id}: translation group holds removed page(s) ${stale.join(', ')} — run nm-fixes first`
+    );
   }
 }
 
@@ -166,6 +184,22 @@ function mapPlacement(doc: Doc): Doc {
   return { ...doc, modules };
 }
 
+/** The site's per-language arrays this migration rewrites; their entries get `language` (= `_key`). */
+const SITE_LANGUAGE_FIELDS = ['headerNav', 'ctas', 'copyright'];
+
+function mapSite(doc: Doc): Doc {
+  const next: Doc = { ...doc };
+  for (const field of SITE_LANGUAGE_FIELDS) {
+    if (!Array.isArray(doc[field])) continue;
+    next[field] = (doc[field] as Obj[]).map((e) =>
+      isObject(e) && e.language === undefined && typeof e._key === 'string'
+        ? { ...e, language: e._key }
+        : e
+    );
+  }
+  return next;
+}
+
 function mapPricing(doc: Doc): Doc {
   const { style: _style, ...rest } = doc;
   return rest as Doc;
@@ -188,6 +222,11 @@ export const FORM_FIXES = {
   /** "lead" is not a value the schema offers; "Contact / Lead Generation" is. */
   intent: { from: 'lead', to: 'contact' },
   placeholder: { from: 'Give us your shitty email', to: 'you@example.com' },
+  /** The consent link pointed at the Components page with the label "Test". */
+  consentLink: {
+    from: { label: 'Test', ref: '01914fd8-6f5c-4b9d-8830-065fe8f413a5' },
+    to: { label: 'Privacy policy', ref: 'e77cef43-7a03-4691-8375-662f01ecad58' },
+  },
   consent: {
     from: 'Test',
     to: [
@@ -210,9 +249,17 @@ function mapFormField(field: Obj): Obj {
     : placeholder;
   return {
     ...field,
-    label: perLanguage(field.label),
+    ...(field.label === undefined ? {} : { label: perLanguage(field.label) }),
     ...(fixed === undefined ? {} : { placeholder: fixed }),
   };
+}
+
+/** The placeholder consent link (label "Test" → Components page) → the English Privacy page. */
+function consentLink(link: unknown): unknown {
+  const { from, to } = FORM_FIXES.consentLink;
+  const ref = isObject(link) && isObject(link.internal) ? link.internal._ref : undefined;
+  if (!isObject(link) || link.label !== from.label || ref !== from.ref) return link;
+  return { ...link, label: to.label, internal: { ...(link.internal as Obj), _ref: to.ref } };
 }
 
 /**
@@ -232,6 +279,7 @@ function mapForm(doc: Doc): Doc {
     next.acceptance = {
       ...next.acceptance,
       ...(placeholder ? { text: [...FORM_FIXES.consent.to] } : {}),
+      ...(next.acceptance.link === undefined ? {} : { link: consentLink(next.acceptance.link) }),
     };
   }
   return next as Doc;
@@ -243,7 +291,9 @@ export function mapDocument(doc: Doc): DocumentResult {
     return { action: 'delete' };
   }
   if (!(MIGRATED_TYPES as readonly string[]).includes(doc._type)) return { action: 'skip' };
+  if (doc._type === 'translation.metadata') assertGroupRepaired(doc);
   let next = repointReferences(doc);
+  if (next._type === 'site') next = mapSite(next);
   if (next._type === 'page') next = mapPage(next);
   if (next._type === 'placement') next = mapPlacement(next);
   if (next._type === 'pricing') next = mapPricing(next);

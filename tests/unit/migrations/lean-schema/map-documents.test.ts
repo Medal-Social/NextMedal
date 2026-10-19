@@ -1,5 +1,6 @@
 import ids from '@tests/fixtures/lean-schema/all-ids.json';
 import docs from '@tests/fixtures/lean-schema/documents.json';
+import beforeNmFixes from '@tests/fixtures/nm-fixes/documents.json';
 import { describe, expect, it } from 'vitest';
 import {
   assertDeletable,
@@ -155,6 +156,24 @@ describe('site, pricing, placement, banner', () => {
     );
   });
 
+  it('site: the per-language headerNav, ctas and copyright entries get their language', () => {
+    const site = next(byId('site'));
+    for (const field of ['headerNav', 'ctas', 'copyright']) {
+      const entries = site[field] as Array<{ _key: string; language?: string }>;
+      expect(
+        entries.map((e) => [e._key, e.language]),
+        field
+      ).toEqual([
+        ['en', 'en'],
+        ['nb', 'nb'],
+        ['ar', 'ar'],
+      ]);
+    }
+    // Other site fields are left as stored.
+    expect(site.footerNav).toEqual(byId('site').footerNav);
+    expect(site.title).toEqual(byId('site').title);
+  });
+
   it('banner draft: its href link becomes an external link', () => {
     const banner = next(byId('drafts.751a3c7d-1982-4b18-94cb-e9df4628fccc'));
     expect(JSON.stringify(banner)).toContain('"type":"external","external":"https://google.com"');
@@ -232,14 +251,44 @@ describe('form leftovers (owner: clean up in R2)', () => {
     expect(form.intent).toBe('contact');
   });
 
-  it('consent "Test" becomes plain wording in en, nb and ar; the link stays', () => {
-    const acceptance = form.acceptance as { text: Entry[]; link: unknown };
+  it('consent "Test" becomes plain wording in en, nb and ar', () => {
+    const acceptance = form.acceptance as { text: Entry[] };
     expect(acceptance.text.map((e) => [e.language, e.value])).toEqual([
       ['en', 'I agree to the privacy policy.'],
       ['nb', 'Jeg godtar personvernerklæringen.'],
       ['ar', 'أوافق على سياسة الخصوصية.'],
     ]);
-    expect(acceptance.link).toEqual((byId(FORM).acceptance as { link: unknown }).link);
+  });
+
+  it('the consent link goes to the English Privacy page, labelled "Privacy policy"', () => {
+    const privacy = byId('e77cef43-7a03-4691-8375-662f01ecad58');
+    expect(privacy).toMatchObject({ _type: 'page', language: 'en' });
+    expect((privacy.metadata as { slug: { current: string } }).slug.current).toBe('privacy');
+    const link = (form.acceptance as { link: Record<string, unknown> }).link;
+    expect(link).toEqual({
+      _type: 'menuItem',
+      type: 'internal',
+      label: 'Privacy policy',
+      internal: { _ref: 'e77cef43-7a03-4691-8375-662f01ecad58', _type: 'reference' },
+    });
+  });
+
+  it('keeps a consent link an editor pointed somewhere real', () => {
+    const own = {
+      ...byId(FORM),
+      acceptance: {
+        link: { _type: 'menuItem', type: 'internal', label: 'Terms', internal: { _ref: 't' } },
+      },
+    };
+    const result = mapDocument(own);
+    const out = result.action === 'patch' ? result.next : own;
+    expect((out.acceptance as { link: { label: string } }).link.label).toBe('Terms');
+  });
+
+  it('leaves a field without a label without one', () => {
+    const own = { ...byId(FORM), fields: [{ _key: 'f', name: { current: 'x' }, type: 'text' }] };
+    const out = next(own);
+    expect((out.fields as object[])[0]).not.toHaveProperty('label');
   });
 
   it('drops the orphan redirect (no schema field since form v3, read by nothing)', () => {
@@ -328,6 +377,16 @@ describe('translation groups and links after the mapping', () => {
         expect(rendered(id), `${group._id} ${id}`).toBe(true);
       }
     }
+  });
+
+  it('refuses a translation group that still holds a removed duplicate (nm-fixes must run first)', () => {
+    const oldGroups = (beforeNmFixes as Doc[]).filter(
+      (d) =>
+        d._type === 'translation.metadata' &&
+        DUPLICATE_PAGES.some((dup) => JSON.stringify(d).includes(`"_ref":"${dup.remove}"`))
+    );
+    expect(oldGroups.length).toBeGreaterThan(0);
+    for (const group of oldGroups) expect(() => mapDocument(group)).toThrow(/nm-fixes/);
   });
 
   it('the events group keeps the page /events renders; menus and events link that page too', () => {
