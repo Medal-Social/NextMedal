@@ -18,7 +18,12 @@ import migration, {
   lockedDelete,
   planMutations,
 } from '$/migrations/lean-schema/index';
-import { type Doc, DUPLICATE_PAGES, planDeletions } from '$/migrations/lean-schema/map-documents';
+import {
+  type Doc,
+  DUPLICATE_PAGES,
+  mapDocument,
+  planDeletions,
+} from '$/migrations/lean-schema/map-documents';
 
 const ALL = docs as Doc[];
 const EVENTS = DUPLICATE_PAGES.find((d) => d.slug === 'events') as { remove: string; keep: string };
@@ -208,6 +213,30 @@ describe('assertNoFreshChanges', () => {
     const fresh = { _id: 'new', _type: 'pricing', _rev: 'n1', title: 'Pro' } as Doc;
     const { context } = fakeContext(false, async () => [...ALL, fresh]);
     await expect(assertNoFreshChanges(context, ALL)).resolves.toBeUndefined();
+  });
+
+  it('refuses a planned document an editor changed into one the mapping skips', async () => {
+    const target = ids(count(planMutations(ALL), 'patch'))[0] as string;
+    const planned = (d: Doc) => {
+      const r = mapDocument(d);
+      return r.action === 'patch' ? ({ ...r.next, _rev: 'edited' } as Doc) : d;
+    };
+    // The live version is now already lean (mapDocument would skip it), but the run
+    // planned a locked patch for the revision it read: that write would fail mid-run.
+    const lean = ALL.map((d) => (d._id === target ? planned(d) : d));
+    expect(mapDocument(lean.find((d) => d._id === target) as Doc).action).toBe('skip');
+    const { context } = fakeContext(false, async () => lean);
+    await expect(assertNoFreshChanges(context, ALL)).rejects.toThrow(
+      new RegExp(`${target} changed since the run read it`)
+    );
+  });
+
+  it('refuses when a planned document is gone (deleted or discarded since the read)', async () => {
+    const target = ids(count(planMutations(ALL), 'delete'))[0] as string;
+    const { context } = fakeContext(false, async () => ALL.filter((d) => d._id !== target));
+    await expect(assertNoFreshChanges(context, ALL)).rejects.toThrow(
+      new RegExp(`${target} changed since the run read it`)
+    );
   });
 
   it('refuses without a client', async () => {

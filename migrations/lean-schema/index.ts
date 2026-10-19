@@ -227,9 +227,10 @@ export async function checkUnreferenced(
 
 /**
  * Real run, just before the first write: re-reads the migrated and deleted
- * types (raw perspective, so drafts count). Refuses on a blocking draft, and
- * when a document the mapping would change is new or changed since the run
- * read it (it would be missed, or its locked delete would fail mid-run).
+ * types (raw perspective, so drafts count). Refuses on a blocking draft, when
+ * a document the mapping would change is new or changed since the run read it
+ * (it would be missed), and when a document the run plans to write changed or
+ * is gone (its locked patch or delete would fail mid-run).
  */
 export async function assertNoFreshChanges(
   context: MigrationContext,
@@ -241,9 +242,20 @@ export async function assertNoFreshChanges(
     .fetch<Doc[]>(LIVE_QUERY, { types: [...DOCUMENT_TYPES] });
   assertNoBlockingDrafts(live, { dryRun: false, env: {} });
   const readRev = new Map(read.map((doc) => [doc._id, doc._rev]));
-  const changed = live.filter(
-    (doc) => readRev.get(doc._id) !== doc._rev && mapDocument(doc).action !== 'skip'
+  // Every document the run writes: its locked patch or delete would fail mid-run
+  // if the live revision moved on (even to one the mapping now skips) or is gone.
+  const planned = new Set(
+    planMutations(read).flatMap((m) => ('id' in m && typeof m.id === 'string' ? [m.id] : []))
   );
+  const liveRev = new Map(live.map((doc) => [doc._id, doc._rev]));
+  const changed = [
+    ...live.filter(
+      (doc) =>
+        readRev.get(doc._id) !== doc._rev &&
+        (planned.has(doc._id) || mapDocument(doc).action !== 'skip')
+    ),
+    ...[...planned].filter((id) => !liveRev.has(id)).map((id) => ({ _id: id })),
+  ];
   if (changed.length) {
     throw new UnmappedContentError(
       `${changed.map((doc) => doc._id).join(', ')} changed since the run read it — run again`
