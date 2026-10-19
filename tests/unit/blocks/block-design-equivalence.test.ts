@@ -1,6 +1,7 @@
 import docs from '@tests/fixtures/lean-schema/documents.json';
 import { describe, expect, it } from 'vitest';
 import { blockDesign, type DesignPage } from '@/components/blocks/modules/block-design';
+import { buttonVariantFor } from '@/components/blocks/objects/cta/button-variant';
 import { pageAnchors } from '@/lib/block-anchors';
 import { PAGE_BLOCK_NAMES } from '@/sanity/schemaTypes/page-blocks';
 import { mapAll } from '$/migrations/lean-schema/map-documents';
@@ -197,5 +198,64 @@ describe('blockDesign after the lean-schema migration', () => {
       if (approved(p._id, m._key, prop)) continue;
       expect(after[prop], prop).toEqual(before[prop]);
     }
+  });
+});
+
+/**
+ * Every button keeps its look after the migration, also the ones blockDesign
+ * does not design (price plans, site header buttons, gallery items): the
+ * migration removes `style`, CTA_QUERY projects it as `null`, and
+ * buttonVariantFor must still give the look it renders with today.
+ */
+describe('every button keeps its look after the lean-schema migration', () => {
+  type Cta = { _key?: string; style?: string | null };
+  const MAPPED = mapAll(docs as never) as unknown as Doc[];
+  const mappedById = new Map(MAPPED.map((d) => [d._id, d]));
+
+  /**
+   * `<path of _keys> → variant`, rendered the way the site renders: page modules
+   * through blockDesign(module, page), gallery items through blockDesign(item,
+   * { modules: [] }) (GalleryModuleRenderer).
+   */
+  function looks(doc: Doc): Map<string, string> {
+    const out = new Map<string, string>();
+    const walk = (node: unknown, path: string, galleryItem = false): void => {
+      if (Array.isArray(node)) {
+        for (const [i, x] of node.entries()) {
+          walk(x, `${path}/${(x as Cta)?._key ?? i}`, galleryItem);
+        }
+        return;
+      }
+      if (!node || typeof node !== 'object') return;
+      const rendered: object = galleryItem ? blockDesign(node as never, { modules: [] }) : node;
+      for (const [k, v] of Object.entries(rendered)) {
+        if (k === 'ctas' && Array.isArray(v)) {
+          for (const [i, c] of (v as Cta[]).entries()) {
+            out.set(`${path}/ctas/${c._key ?? i}`, buttonVariantFor(c.style ?? null));
+          }
+        } else walk(v, `${path}/${k}`, k === 'items' && path.includes('/groups/'));
+      }
+    };
+    const modules = doc.modules?.map((m) => blockDesign(m as never, doc) as unknown as Mod);
+    walk(modules ? { ...doc, modules } : doc, '');
+    return out;
+  }
+
+  const SOURCES = (docs as unknown as Doc[]).filter(
+    (d) => mappedById.has(d._id) && !SHADOWED.has(d._id)
+  );
+  const cases = SOURCES.flatMap((d) =>
+    [...looks(d)].map(([path, look]) => [`${d._id} ${path}`, d._id, path, look] as const)
+  );
+
+  it('covers price plans, site buttons and gallery items, not only page tops and callouts', () => {
+    const types = new Set(cases.map(([, id]) => mappedById.get(id)?._type));
+    expect(types).toEqual(new Set(['page', 'pricing', 'site']));
+    expect(cases.some(([, , path]) => path.includes('/groups/'))).toBe(true);
+  });
+
+  it.each(cases)('%s', (_, id, path, look) => {
+    const after = looks(mappedById.get(id) as Doc).get(path);
+    expect(after).toBe(look);
   });
 });
