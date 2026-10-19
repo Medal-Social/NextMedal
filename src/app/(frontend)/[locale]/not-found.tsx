@@ -7,7 +7,7 @@ import { PAGE_404_QUERY } from '@/sanity/lib/queries';
 export default async function NotFound() {
   const page = await get404();
   if (!page) return <NotFoundFallback />;
-  return <Modules modules={page?.modules || []} />;
+  return <Modules modules={page?.modules || []} page={page} />;
 }
 
 export async function generateMetadata() {

@@ -10,7 +10,8 @@
     "cancel": "Cancel",
     "done": "Done",
     "processing": "Processing...",
-    "untitled": "Untitled"
+    "untitled": "Untitled",
+    "readMore": "Read more"
   },
   "pagination": {
     "previous": "Previous",
@@ -142,7 +143,7 @@
     "email": "Email",
     "phone": "Phone",
     "privacy-link": "privacy policy",
-    "privacy-consent-label": "I agree to the {privacyLink}",
+    "privacy-consent-label": "I agree to the <privacyLink>privacy policy</privacyLink>",
     "privacy-aria-label": "Read our privacy policy",
     "address": "Address",
     "opening-hours": "Opening hours",
@@ -230,7 +231,8 @@
         "registerFor": "Register for {title}",
         "formDescription": "Fill out the form below to reserve your spot.",
         "registering": "Registering...",
-        "close": "Done"
+        "close": "Done",
+        "consent": "I agree that my details are stored to handle my registration."
       }
     }
   },

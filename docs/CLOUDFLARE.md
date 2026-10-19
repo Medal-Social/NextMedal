@@ -46,6 +46,18 @@ The two workflows are **dormant by default**. To enable automatic deploys:
 The public Sanity project/dataset/base-URL are hardcoded in the workflows and
 `wrangler.jsonc` (they are `NEXT_PUBLIC_*`, inlined at build).
 
+Staging reads its own Sanity dataset, `staging`; production reads `production`.
+Before running a content migration on staging, back staging up and refresh it
+from production:
+
+```bash
+pnpm exec sanity datasets export staging staging-backup.tar.gz
+pnpm exec sanity datasets export production production.tar.gz
+pnpm exec sanity datasets import production.tar.gz staging --replace --allow-failing-assets
+```
+
+Then redeploy staging (the site may prerender pages at build time).
+
 ## Custom domains
 
 `wrangler.jsonc` declares `custom_domain` routes for `staging.nextmedal.com`,

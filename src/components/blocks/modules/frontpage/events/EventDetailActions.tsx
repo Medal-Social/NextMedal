@@ -3,15 +3,16 @@
 import { Users } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import type { ConsentLink } from '@/lib/forms/consent-link';
 import EventRegistrationModal from './EventRegistrationModal';
 
 // Form field type from Sanity
 interface FormField {
   _key: string;
-  label: string;
+  label: Sanity.InternationalizedArrayString | string;
   name: { current: string };
   type: 'text' | 'email' | 'tel' | 'textarea' | 'checkbox';
-  placeholder?: string;
+  placeholder?: Sanity.InternationalizedArrayString | string;
   required?: boolean;
 }
 
@@ -21,12 +22,14 @@ interface RegistrationForm {
   formTitle: string;
   intent: 'lead' | 'newsletter' | 'download';
   fields?: FormField[]; // Optional - may not be populated in Sanity
+  requireConsent?: boolean;
   acceptance?: {
     required?: boolean;
-    text?: string;
+    text?: Sanity.InternationalizedArrayString | string;
+    link?: ConsentLink;
   };
-  submitButtonText: string;
-  successMessage?: Sanity.BlockContent;
+  submitButtonText?: Sanity.InternationalizedArrayString | string;
+  successMessage?: Sanity.InternationalizedArrayText | string;
 }
 
 interface EventDetailActionsProps {

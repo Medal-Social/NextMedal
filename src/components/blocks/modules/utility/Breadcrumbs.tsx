@@ -1,3 +1,4 @@
+import { getLocale } from 'next-intl/server';
 import { stegaClean } from 'next-sanity';
 import { Fragment } from 'react';
 import {
@@ -9,8 +10,8 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Section } from '@/components/ui/section';
+import { internalHref, type LinkTarget, withLocalePrefix } from '@/lib/sanity/localized-link';
 import moduleProps from '@/lib/sanity/module-props';
-import resolveUrl from '@/lib/sanity/resolve-url-server';
 
 export default async function Breadcrumbs({
   crumbs,
@@ -18,18 +19,17 @@ export default async function Breadcrumbs({
   currentPage,
   ...props
 }: Sanity.Breadcrumbs) {
-  // Pre-resolve all internal URLs
-  const resolvedCrumbs = await Promise.all(
-    (crumbs || []).map(async (crumb) => {
-      let resolvedUrl: string = '/';
-      if (crumb.internal) {
-        resolvedUrl = await resolveUrl(crumb.internal as Sanity.PageBase, { base: false });
-      } else if (crumb.external) {
-        resolvedUrl = stegaClean(crumb.external);
-      }
-      return { ...crumb, resolvedUrl };
-    })
-  );
+  const locale = await getLocale();
+  // Pre-resolve all internal URLs (BreadcrumbLink is a plain anchor, so the prefix is built here)
+  const resolvedCrumbs = (crumbs || []).map((crumb) => {
+    let resolvedUrl = withLocalePrefix('/', locale);
+    if (crumb.internal) {
+      resolvedUrl = internalHref(crumb.internal as LinkTarget, locale) ?? resolvedUrl;
+    } else if (crumb.external) {
+      resolvedUrl = stegaClean(crumb.external);
+    }
+    return { ...crumb, resolvedUrl };
+  });
 
   return (
     <Section as={Breadcrumb} className="py-4 text-sm" spacing="none" {...moduleProps(props)}>

@@ -35,7 +35,9 @@ jobs:
       NEXT_PUBLIC_BASE_URL: https://staging.nextmedal.com
       NEXT_PUBLIC_APP_ENV: staging
       NEXT_PUBLIC_SANITY_PROJECT_ID: ekjn2yf6
-      NEXT_PUBLIC_SANITY_DATASET: production
+      # Keep the website and embedded Studio isolated from production: the
+      # dataset is inlined at build time, so the Worker var alone is not enough.
+      NEXT_PUBLIC_SANITY_DATASET: staging
       NEXT_PUBLIC_SANITY_API_VERSION: '2025-12-23'
       # Build-time public vars sourced from the environment's secrets.
       NEXT_PUBLIC_SANITY_BROWSER_TOKEN: ${{ secrets.NEXT_PUBLIC_SANITY_BROWSER_TOKEN }}

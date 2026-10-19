@@ -28,7 +28,6 @@ vi.mock('@/i18n/navigation', async () => {
     }),
     getPathname: ({ href }: { href: string | { pathname: string } }) =>
       typeof href === 'string' ? href : href.pathname,
-    buildLocaleHref: (path: string, _locale: string) => path,
   };
 });
 

@@ -32,7 +32,7 @@
     "NEXT_PUBLIC_BASE_URL": "https://staging.nextmedal.com",
     "NEXT_PUBLIC_APP_ENV": "staging",
     "NEXT_PUBLIC_SANITY_PROJECT_ID": "ekjn2yf6",
-    "NEXT_PUBLIC_SANITY_DATASET": "production",
+    "NEXT_PUBLIC_SANITY_DATASET": "staging",
     "NEXT_PUBLIC_SANITY_API_VERSION": "2025-12-23"
   },
   "env": {

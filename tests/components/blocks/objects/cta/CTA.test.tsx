@@ -1,5 +1,11 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+const intl = vi.hoisted(() => ({ locale: 'en' }));
+vi.mock('next-intl', () => ({ useLocale: () => intl.locale }));
+afterEach(() => {
+  intl.locale = 'en';
+});
 
 // Mock dependencies
 vi.mock('next-sanity', () => ({
@@ -245,5 +251,49 @@ describe('CTA internal link behavior', () => {
     );
     const link = screen.getByRole('link');
     expect(link).not.toHaveAttribute('target', '_blank');
+  });
+});
+
+describe('CTA on a translated page (spec D4)', () => {
+  const target = (language: string) => ({
+    ...createTestPage(language === 'nb' ? 'om-oss' : 'about'),
+    _id: `about.${language}`,
+    language,
+  });
+
+  it('links to the translation in the visitor language', () => {
+    intl.locale = 'nb';
+    render(
+      <CTA
+        link={{
+          _type: 'menuItem',
+          label: 'Om oss',
+          type: 'internal',
+          internal: {
+            ...target('en'),
+            translations: [target('en'), target('nb')],
+          } as unknown as Sanity.MenuItem['internal'],
+        }}
+      />
+    );
+    const link = screen.getByRole('link', { name: 'Om oss' });
+    expect(link).toHaveAttribute('href', '/nb/om-oss');
+  });
+
+  it('links to the source language when there is no translation', () => {
+    intl.locale = 'nb';
+    render(
+      <CTA
+        link={{
+          _type: 'menuItem',
+          label: 'Features',
+          type: 'internal',
+          internal: { ...target('en'), translations: [] } as unknown as Sanity.MenuItem['internal'],
+        }}
+      />
+    );
+    const link = screen.getByRole('link', { name: 'Features' });
+    // Prefix-free: /en/about would cost a 308 redirect.
+    expect(link).toHaveAttribute('href', '/about');
   });
 });

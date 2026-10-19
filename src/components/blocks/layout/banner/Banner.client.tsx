@@ -1,10 +1,11 @@
 'use client';
 import { X } from 'lucide-react';
+import Link from 'next/link';
+import { useLocale } from 'next-intl';
 import { PortableText, stegaClean } from 'next-sanity';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Link } from '@/i18n/navigation';
-import { resolveUrlSync } from '@/lib/sanity/resolve-url';
+import { internalHref, withLocalePrefix } from '@/lib/sanity/localized-link';
 
 /**
  * Generate descriptive aria-label for generic link text to improve accessibility.
@@ -49,6 +50,7 @@ function getAriaLabel(
 
 export default function BannerClient({ banner }: { banner: Sanity.Banner & Sanity.Module }) {
   const { content, cta } = banner;
+  const locale = useLocale();
   const [isClosed, setIsClosed] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -111,7 +113,8 @@ export default function BannerClient({ banner }: { banner: Sanity.Banner & Sanit
           (() => {
             let href = '#';
             if (cta?.type === 'internal') {
-              href = resolveUrlSync(cta.internal, { base: false });
+              // Final href (no /en/ prefix for English, so no 308) for a plain next/link.
+              href = internalHref(cta.internal, locale) ?? withLocalePrefix('/', locale);
             } else if (cta?.external) {
               href = cta.external;
             }

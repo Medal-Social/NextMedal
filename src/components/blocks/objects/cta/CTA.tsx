@@ -1,10 +1,10 @@
 'use client';
 
-import ExternalLink from 'next/link';
+import NextLink from 'next/link';
+import { useLocale } from 'next-intl';
 import { stegaClean } from 'next-sanity';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { Link } from '@/i18n/navigation';
-import { resolveUrlSync } from '@/lib/sanity/resolve-url';
+import { internalHref, type LinkTarget, withLocalePrefix } from '@/lib/sanity/localized-link';
 import { cn } from '@/lib/utils/index';
 import { validateExternalUrl } from '@/lib/validateExternalUrl';
 
@@ -113,12 +113,16 @@ function InternalLinkButton({
   className?: string;
   buttonContent: React.ReactNode;
 }) {
-  const href = resolveUrlSync(internal, { base: false, params });
+  const locale = useLocale();
+  // Final href (no /en/ prefix for English, so no 308); a plain next/link keeps it as is.
+  const href =
+    internalHref(internal as LinkTarget | undefined, locale, params) ??
+    withLocalePrefix('/', locale);
   const ariaLabel =
     typeof buttonContent === 'string' ? getAriaLabel(buttonContent, internal) : undefined;
 
   return (
-    <Link
+    <NextLink
       href={href}
       target={newTab ? '_blank' : undefined}
       rel={newTab ? 'noopener noreferrer' : undefined}
@@ -127,7 +131,7 @@ function InternalLinkButton({
       aria-label={ariaLabel}
     >
       {buttonContent}
-    </Link>
+    </NextLink>
   );
 }
 
@@ -165,7 +169,7 @@ function ExternalLinkButton({
     typeof buttonContent === 'string' ? getAriaLabel(buttonContent, undefined) : undefined;
 
   return (
-    <ExternalLink
+    <NextLink
       href={validatedUrl}
       target={shouldOpenNewTab ? '_blank' : undefined}
       rel={shouldOpenNewTab ? 'noopener noreferrer' : undefined}
@@ -178,7 +182,7 @@ function ExternalLinkButton({
       }
     >
       {buttonContent}
-    </ExternalLink>
+    </NextLink>
   );
 }
 
