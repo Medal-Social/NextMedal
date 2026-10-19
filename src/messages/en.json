@@ -232,7 +232,11 @@
         "formDescription": "Fill out the form below to reserve your spot.",
         "registering": "Registering...",
         "close": "Done",
-        "consent": "I agree that my details are stored to handle my registration."
+        "consent": "I agree that my details are stored to handle my registration.",
+        "submit": "Register",
+        "invalidEmail": "Please enter a valid email address.",
+        "tooFast": "Please take a moment to check your details, then send again.",
+        "checkFields": "Please check your details and try again."
       }
     }
   },

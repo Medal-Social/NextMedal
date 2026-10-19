@@ -35,7 +35,8 @@ export default defineType({
     defineField({
       name: 'cta',
       type: 'menuItem',
-      description: 'Optional call-to-action link.',
+      title: 'Button',
+      description: 'Optional.',
     }),
   ],
   preview: {

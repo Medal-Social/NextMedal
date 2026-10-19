@@ -1,59 +1,28 @@
 /**
- * Pricing List Module Schema
- * @version 1.0.1
- * @lastUpdated 2025-12-23
- * @description Displays a list of pricing tiers/plans.
+ * Prices: the price plans, side by side. The anchor comes from blockDesign.
  * @changelog
- * - 1.0.1: Added header documentation
- * - 1.0.0: Initial version
+ * - 2.0.0: Lean — no anchor option; plain labels
  */
 
 import { BillIcon } from '@sanity/icons/Bill';
-import { defineField, defineType } from 'sanity';
-import { count } from '@/lib/utils/index';
-import { getBlockText } from '@/sanity/lib/utils';
+import { defineArrayMember, defineField, defineType } from 'sanity';
+import { richTextField } from '../../fragments/rich-text';
+import { blockPreview } from '../preview';
 
 export default defineType({
   name: 'pricing-list',
-  title: 'Pricing list',
+  title: 'Prices',
+  description: 'The price plans, side by side.',
   icon: BillIcon,
   type: 'object',
-  groups: [
-    { name: 'content', title: 'Content', default: true },
-    { name: 'options', title: 'Advanced Options' },
-  ],
   fields: [
-    defineField({
-      name: 'options',
-      type: 'module-options',
-      group: 'options',
-    }),
-    defineField({
-      name: 'intro',
-      type: 'array',
-      of: [{ type: 'block' }],
-      group: 'content',
-    }),
+    richTextField('intro', 'Intro', 'section'),
     defineField({
       name: 'tiers',
+      title: 'Plans',
       type: 'array',
-      of: [
-        {
-          type: 'reference',
-          to: [{ type: 'pricing' }],
-        },
-      ],
-      group: 'content',
+      of: [defineArrayMember({ type: 'reference', to: [{ type: 'pricing' }] })],
     }),
   ],
-  preview: {
-    select: {
-      intro: 'intro',
-      tiers: 'tiers',
-    },
-    prepare: ({ intro, tiers }) => ({
-      title: getBlockText(intro) || count(tiers, 'tier'),
-      subtitle: 'Pricing list',
-    }),
-  },
+  preview: blockPreview('Prices', { title: 'intro' }),
 });

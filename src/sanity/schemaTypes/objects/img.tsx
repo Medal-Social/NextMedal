@@ -1,12 +1,8 @@
 /**
- * OG Image Schema
- * @version 2.0.1
- * @lastUpdated 2025-12-23
- * @description A simplified image schema specifically for Open Graph and social media sharing.
+ * Picture: an image with a description for screen readers.
  * @changelog
- * - 2.0.1: Updated header documentation
- * - 2.0.0: Simplified schema for OG images only
- * - 1.1.0: Added improved validation and documentation
+ * - 3.0.0: Plain labels; "Describe the picture" (alt) added (Vault plan C15)
+ * - 2.0.0: Simplified schema
  */
 
 import { ImageIcon } from '@sanity/icons/Image';
@@ -14,30 +10,25 @@ import { defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'img',
-  title: 'Image',
+  title: 'Picture',
   type: 'object',
   icon: ImageIcon,
-  description: 'Image for OG and social sharing (optional - will auto-generate if not provided)',
   fields: [
     defineField({
       name: 'image',
-      title: 'Image',
-      description:
-        'The image to be used for social media sharing. If not provided, an auto-generated OG image will be used.',
+      title: 'Picture',
       type: 'image',
-      options: {
-        hotspot: true,
-      },
-      validation: (Rule) => Rule.required().warning('Adding an image is recommended'),
+      options: { hotspot: true },
+    }),
+    defineField({
+      name: 'alt',
+      title: 'Describe the picture',
+      description: 'Read aloud to people who cannot see it. Leave empty if it is decoration.',
+      type: 'string',
     }),
   ],
   preview: {
-    select: {
-      image: 'image',
-    },
-    prepare: ({ image }) => ({
-      title: 'OG Image',
-      media: image,
-    }),
+    select: { image: 'image', alt: 'alt' },
+    prepare: ({ image, alt }) => ({ title: alt || 'Picture', media: image }),
   },
 });

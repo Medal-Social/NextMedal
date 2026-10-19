@@ -1,17 +1,16 @@
 /**
- * Flipbook Module Schema
- * @version 1.0.0
- * @lastUpdated 2026-10-16
- * @description A PDF shown as a page-turning flipbook. Deliberately two fields:
+ * Flipbook: a PDF shown as a page-turning book. Deliberately two fields:
  * look, download, "Powered by" and start page come from code/site tokens.
  */
 
 import { BookIcon } from '@sanity/icons/Book';
 import { defineField, defineType } from 'sanity';
+import { blockPreview } from '../preview';
 
 export default defineType({
   name: 'flipbook',
   title: 'Flipbook',
+  description: 'A PDF shown as a book you can page through.',
   type: 'object',
   icon: BookIcon,
   fields: [
@@ -24,15 +23,10 @@ export default defineType({
     }),
     defineField({
       name: 'title',
+      title: 'Title',
       type: 'string',
       description: 'Optional. Uses the file name if empty.',
     }),
   ],
-  preview: {
-    select: { title: 'title', filename: 'file.asset.originalFilename' },
-    prepare: ({ title, filename }) => ({
-      title: (title as string) || (filename as string) || 'Flipbook',
-      subtitle: 'Flipbook',
-    }),
-  },
+  preview: blockPreview('Flipbook', { title: 'title', fallback: 'file.asset.originalFilename' }),
 });

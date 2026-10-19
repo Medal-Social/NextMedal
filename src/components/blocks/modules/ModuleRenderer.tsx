@@ -3,11 +3,9 @@ import AccordionList from './content/AccordionList';
 import Features from './content/Features';
 import FlipbookModule from './content/FlipbookModule';
 import LogoCloud from './content/LogoCloud';
-import PricingComparison from './content/PricingComparison';
 import PricingList from './content/PricingList';
 import ProductComparison from './content/ProductComparison';
 import RichtextModule from './content/RichtextModule';
-import Team from './content/Team';
 import { ArticlesFrontpage } from './frontpage/articles';
 import { ChangelogFrontpage } from './frontpage/changelog';
 import { DocsFrontpage } from './frontpage/docs';
@@ -16,12 +14,9 @@ import { NewsletterFrontpage } from './frontpage/newsletter';
 import Hero from './hero/Hero';
 import VideoHero from './hero/VideoHero';
 import Callout from './marketing/Callout';
-import Contact from './marketing/Contact';
 import LeadMagnet from './marketing/LeadMagnet';
 import type { FilterParams, ModuleContext, SidebarProps } from './types';
-import Breadcrumbs from './utility/Breadcrumbs';
 import ComponentGallery from './utility/ComponentGallery';
-import LatestArticles from './utility/LatestArticles';
 
 function ModuleSkeleton() {
   return (
@@ -56,7 +51,7 @@ export function ModuleRenderer({
   sidebarProps,
   searchParams,
 }: Props): ReactElement | null {
-  const { page, post, isSidebar } = context;
+  const { page, isSidebar } = context;
 
   // Type assertions are needed because Sanity.Module._type is a generic string,
   // and TypeScript switch doesn't narrow to literal types automatically.
@@ -116,11 +111,6 @@ export function ModuleRenderer({
       );
     }
 
-    case 'breadcrumbs': {
-      const props = module as Sanity.Breadcrumbs;
-      return <Breadcrumbs {...props} currentPage={post || page} {...sidebarProps} />;
-    }
-
     case 'callout': {
       const props = module as Sanity.Callout;
       return <Callout {...props} {...sidebarProps} />;
@@ -135,15 +125,6 @@ export function ModuleRenderer({
       );
     }
 
-    case 'contact': {
-      const props = module as Sanity.Contact;
-      return (
-        <Suspense fallback={<ModuleSkeleton />}>
-          <Contact {...props} {...sidebarProps} />
-        </Suspense>
-      );
-    }
-
     case 'features': {
       const props = module as Sanity.Features;
       return <Features {...props} {...sidebarProps} />;
@@ -152,15 +133,6 @@ export function ModuleRenderer({
     case 'hero': {
       const props = module as Sanity.Hero;
       return <Hero {...props} {...sidebarProps} />;
-    }
-
-    case 'latest-articles': {
-      const props = module as Sanity.LatestArticles;
-      return (
-        <Suspense fallback={<ModuleSkeleton />}>
-          <LatestArticles {...props} {...sidebarProps} />
-        </Suspense>
-      );
     }
 
     case 'lead-magnet':
@@ -180,11 +152,6 @@ export function ModuleRenderer({
       return <LogoCloud {...props} {...sidebarProps} />;
     }
 
-    case 'pricing-comparison': {
-      const props = module as Sanity.PricingComparison;
-      return <PricingComparison {...props} {...sidebarProps} />;
-    }
-
     case 'pricing-list': {
       const props = module as Sanity.PricingList;
       return (
@@ -202,15 +169,6 @@ export function ModuleRenderer({
     case 'richtext': {
       const props = module as Sanity.Richtext;
       return <RichtextModule {...props} {...sidebarProps} />;
-    }
-
-    case 'team': {
-      const props = module as Sanity.Team;
-      return (
-        <Suspense fallback={<ModuleSkeleton />}>
-          <Team {...props} {...sidebarProps} />
-        </Suspense>
-      );
     }
 
     case 'videoHero': {

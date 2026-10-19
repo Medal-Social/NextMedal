@@ -38,11 +38,19 @@ jobs:
       NEXT_PUBLIC_SANITY_BROWSER_TOKEN: ${{ secrets.NEXT_PUBLIC_SANITY_BROWSER_TOKEN }}
       NEXT_PUBLIC_UMAMI_SCRIPT_URL: ${{ secrets.NEXT_PUBLIC_UMAMI_SCRIPT_URL }}
       NEXT_PUBLIC_UMAMI_WEBSITE_ID: ${{ secrets.NEXT_PUBLIC_UMAMI_WEBSITE_ID }}
-      SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
       MEDAL_API_KEY: ${{ secrets.MEDAL_API_KEY }}
       MEDAL_API_ENDPOINT: ${{ secrets.MEDAL_API_ENDPOINT }}
 
     steps:
+      # Forms send to Medal Social only (nothing is stored in Sanity), so a
+      # Worker without the key would answer every form with an error.
+      - name: Require MEDAL_API_KEY
+        run: |
+          if [ -z "${MEDAL_API_KEY:-}" ]; then
+            echo "::error::MEDAL_API_KEY is empty. Add it to the Prod environment (scopes read:contacts + write:contacts) — every form needs it."
+            exit 1
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
 
@@ -74,14 +82,28 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           set -euo pipefail
-          for name in SANITY_WRITE_TOKEN MEDAL_API_KEY MEDAL_API_ENDPOINT; do
+          existing=$(pnpm exec wrangler secret list --env production 2>/dev/null | jq -r '.[].name' 2>/dev/null || echo "")
+          echo "Uploading MEDAL_API_KEY to nextmedal (production)..."
+          printf '%s' "$MEDAL_API_KEY" | pnpm exec wrangler secret put MEDAL_API_KEY --env production
+          # Optional: an empty value deletes it, so a removed endpoint doesn't linger under --keep-vars.
+          for name in MEDAL_API_ENDPOINT; do
             value="${!name:-}"
             if [ -z "$value" ]; then
-              echo "Optional secret '$name' is not configured in CI; preserving the deployed value."
+              if echo "$existing" | grep -qx "$name"; then
+                echo "::warning::Optional secret '$name' is empty — deleting from Worker."
+                echo y | pnpm exec wrangler secret delete "$name" --env production
+              fi
               continue
             fi
             echo "Uploading $name to nextmedal (production)..."
             printf '%s' "$value" | pnpm exec wrangler secret put "$name" --env production
+          done
+          # Retired: forms no longer write to Sanity. Remove a token left by older deploys.
+          for name in SANITY_WRITE_TOKEN; do
+            if echo "$existing" | grep -qx "$name"; then
+              echo "::warning::Retired secret '$name' is still on the Worker — deleting."
+              echo y | pnpm exec wrangler secret delete "$name" --env production
+            fi
           done
 
       - name: Verify release freshness

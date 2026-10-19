@@ -3,7 +3,7 @@
 import { Check, Loader2 } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { captureLead } from '@/actions/leads/capture-lead';
 import { Button } from '@/components/ui/button';
 import {
@@ -32,8 +32,8 @@ interface FormField {
 // Registration form type
 interface RegistrationForm {
   _id: string;
-  formTitle: string;
-  intent: 'lead' | 'newsletter' | 'download';
+  formTitle: Sanity.InternationalizedArrayString | string;
+  intent: 'contact' | 'lead' | 'newsletter' | 'event' | 'download';
   fields?: FormField[]; // Optional - may not be populated in Sanity
   requireConsent?: boolean;
   acceptance?: {
@@ -59,6 +59,26 @@ interface EventRegistrationModalProps {
   onSuccess?: () => void;
 }
 
+type ValidationErrors = Record<string, { _errors?: string[] } | string[] | undefined>;
+
+/**
+ * Message key for a rejected registration: the schema's own messages are
+ * English, so the visitor gets a plain, translated one per kind of problem.
+ */
+export function validationMessageKey(
+  errors: ValidationErrors | undefined
+): 'invalidEmail' | 'tooFast' | 'checkFields' | undefined {
+  if (!errors) return undefined;
+  const has = (field: string) => {
+    const entry = errors[field];
+    const list = Array.isArray(entry) ? entry : entry?._errors;
+    return !!list?.length;
+  };
+  if (has('email')) return 'invalidEmail';
+  if (has('_submissionTimestamp')) return 'tooFast';
+  return Object.keys(errors).some(has) ? 'checkFields' : undefined;
+}
+
 export default function EventRegistrationModal({
   open,
   onOpenChange,
@@ -72,6 +92,12 @@ export default function EventRegistrationModal({
   const t = useTranslations('modules.events.registration');
   const tCommon = useTranslations('common');
   const locale = useLocale();
+  // When the dialog opened: `withSecurity` rejects a submission made within
+  // three seconds of this, so it must not be the moment of submitting.
+  const openedAt = useRef<string | undefined>(undefined);
+  useEffect(() => {
+    if (open) openedAt.current = new Date().toISOString();
+  }, [open]);
 
   const { execute, status, result } = useAction(captureLead, {
     onSuccess: () => {
@@ -104,8 +130,9 @@ export default function EventRegistrationModal({
         referenceId: event._id,
         url: eventUrl,
       },
+      language: locale,
       _honeypot: (formData._honeypot as string) || '',
-      _submissionTimestamp: new Date().toISOString(),
+      _submissionTimestamp: openedAt.current ?? new Date().toISOString(),
     });
   };
 
@@ -130,7 +157,11 @@ export default function EventRegistrationModal({
   const consentText =
     getExactLocalizedValue(form.acceptance?.text, locale) || (consentRequired ? t('consent') : '');
   const consentHref = consentLinkHref(form.acceptance?.link, locale);
-  const submitText = getExactLocalizedValue(form.submitButtonText, locale) || tCommon('processing');
+  const submitText = getExactLocalizedValue(form.submitButtonText, locale) || t('submit');
+  const validationKey = validationMessageKey(
+    result.validationErrors as ValidationErrors | undefined
+  );
+  const errorText = result.serverError || (validationKey ? t(validationKey) : undefined);
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -270,9 +301,12 @@ export default function EventRegistrationModal({
               )}
 
               {/* Error message */}
-              {result.serverError && (
-                <div className="rounded-md bg-destructive/10 p-3 text-destructive text-sm">
-                  {result.serverError}
+              {errorText && (
+                <div
+                  role="alert"
+                  className="rounded-md bg-destructive/10 p-3 text-destructive text-sm"
+                >
+                  {errorText}
                 </div>
               )}
 

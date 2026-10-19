@@ -14,13 +14,21 @@
 // SDK module.
 import type { Medal as MedalType } from '@medalsocial/sdk';
 
+/**
+ * Per-request timeout. The SDK retries 429/5xx up to 3 attempts per call and
+ * has no option to lower that, so recordSubmission also caps the whole
+ * submission (SUBMISSION_DEADLINE_MS).
+ */
+export const MEDAL_REQUEST_TIMEOUT_MS = 8000;
+
 let _medal: MedalType | null = null;
 let _medalPromise: Promise<MedalType | null> | null = null;
 
 /**
- * Returns a singleton Medal SDK client, or null if MEDAL_API_KEY isn't set.
- * Forms must NEVER fail because the SDK is unavailable — Sanity is the
- * source of truth and SDK calls are best-effort.
+ * Returns a singleton Medal SDK client, or null if MEDAL_API_KEY isn't set or
+ * the SDK can't be loaded. Medal is the only destination for form submissions
+ * (nothing is stored in Sanity), so callers treat null as "can't send" and
+ * tell the visitor — see src/lib/medal-sdk/record-submission.ts.
  *
  * Reads directly from process.env so this file stays Studio-bundle-safe
  * (the strict env validator throws when env vars aren't loaded).
@@ -44,11 +52,13 @@ export function getMedal(): Promise<MedalType | null> {
           (sdk.Medal as typeof MedalType | undefined) ??
           (sdk.default as typeof MedalType | undefined);
         if (!MedalClass) return null;
-        _medal = new MedalClass(apiKey, { baseUrl: baseUrl || undefined });
+        _medal = new MedalClass(apiKey, {
+          baseUrl: baseUrl || undefined,
+          timeout: MEDAL_REQUEST_TIMEOUT_MS,
+        });
         return _medal;
       } catch {
-        // Forms must NEVER fail because the SDK is unavailable —
-        // contract is "return null on any failure". Reset the memo
+        // Contract is "return null on any failure". Reset the memo
         // so a subsequent call can retry (transient failures, e.g.
         // module not yet ready post-deploy, shouldn't permanently
         // disable the SDK across the worker's lifetime).

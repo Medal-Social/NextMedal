@@ -1,4 +1,5 @@
-import docs from '@tests/fixtures/lean-schema/documents.json';
+import PROD_AFTER from '@tests/fixtures/lean-schema/documents.json';
+import docs from '@tests/fixtures/nm-fixes/documents.json';
 import { describe, expect, it } from 'vitest';
 import { applyMutations, planMutations } from '$/migrations/nm-fixes/index';
 import type { Doc } from '$/migrations/nm-fixes/shared';
@@ -24,5 +25,11 @@ describe('nm-fixes string inventory', () => {
 
   it('a second run plans nothing', () => {
     expect(planMutations(after)).toEqual([]);
+  });
+});
+
+describe('nm-fixes on production after its run (2026-10-19 export)', () => {
+  it('plans nothing: the lean-schema fixtures are nm-fixes output', () => {
+    expect(planMutations(PROD_AFTER as Doc[])).toEqual([]);
   });
 });

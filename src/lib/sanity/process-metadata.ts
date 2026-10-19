@@ -143,7 +143,6 @@ function getOpenGraphLocale(language: string): string {
 
 type ProcessMetadataPage = (
   | Sanity.Page
-  | Sanity.ComponentLibrary
   | Sanity.CollectionArticlePost
   | Sanity.CollectionDocumentation
   | Sanity.CollectionEvents

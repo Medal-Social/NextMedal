@@ -16,3 +16,12 @@ describe('every <Modules> fed with page modules also gets the page (design rules
     for (const call of calls) expect(call, call).toMatch(/\bpage=\{page\b/);
   });
 });
+
+describe('placements get the route locale (language-aware design rules)', () => {
+  it.each(ROUTES.slice(0, 2))('%s', (file) => {
+    const source = readFileSync(resolve(__dirname, '../../..', file), 'utf8');
+    const calls = source.match(/<Modules\b[^>]*modules=\{placements[^>]*>/g) ?? [];
+    expect(calls.length).toBeGreaterThan(0);
+    for (const call of calls) expect(call, call).toMatch(/\blocale=\{locale\}/);
+  });
+});

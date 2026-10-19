@@ -21,8 +21,8 @@ describe('flipbook schema', () => {
         preview: { prepare: (v: Record<string, unknown>) => { title: string } };
       }
     ).preview.prepare;
-    expect(prepare({ title: 'Report', filename: 'r.pdf' }).title).toBe('Report');
-    expect(prepare({ filename: 'r.pdf' }).title).toBe('r.pdf');
+    expect(prepare({ title: 'Report', fallback: 'r.pdf' }).title).toBe('Report');
+    expect(prepare({ fallback: 'r.pdf' }).title).toBe('r.pdf');
     expect(prepare({}).title).toBe('Flipbook');
   });
 });

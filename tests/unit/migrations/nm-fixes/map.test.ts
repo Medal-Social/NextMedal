@@ -1,5 +1,5 @@
-import ids from '@tests/fixtures/lean-schema/all-ids.json';
-import docs from '@tests/fixtures/lean-schema/documents.json';
+import ids from '@tests/fixtures/nm-fixes/all-ids.json';
+import docs from '@tests/fixtures/nm-fixes/documents.json';
 import { describe, expect, it } from 'vitest';
 import { pageAnchors } from '@/lib/block-anchors';
 import {

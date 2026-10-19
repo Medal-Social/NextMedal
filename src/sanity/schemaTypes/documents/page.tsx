@@ -91,8 +91,6 @@ export default defineType({
     // Page Content modules - Content tab
     defineField({
       ...modules,
-      title: 'Page Content',
-      description: 'Add content modules to build the page',
       group: 'content',
     }),
     // SEO Settings - SEO tab only

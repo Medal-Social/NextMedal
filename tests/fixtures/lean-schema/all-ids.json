@@ -1,9 +1,5 @@
 [
   {
-    "_id": "00ebda9b-9e40-44ff-8c22-58d1d0567df1",
-    "_type": "translation.metadata"
-  },
-  {
     "_id": "0123a8e7-d17f-4184-880f-199f91241fc0",
     "_type": "collection.documentation"
   },
@@ -54,10 +50,6 @@
   {
     "_id": "11abc5ad-3d85-4555-89c3-a4b99ba441c1",
     "_type": "collection.documentation"
-  },
-  {
-    "_id": "1304ae0a-619d-4b49-92a1-fb400c6cbf8e",
-    "_type": "translation.metadata"
   },
   {
     "_id": "13a15309-bda0-4af9-ae9a-294857b85290",
@@ -116,10 +108,6 @@
     "_type": "collection.documentation"
   },
   {
-    "_id": "1e8ff78a-200f-4422-8da9-edda9e0359f1",
-    "_type": "translation.metadata"
-  },
-  {
     "_id": "1eb24463-a7a9-4d6e-a459-96740cb2361c",
     "_type": "collection.newsletter"
   },
@@ -176,20 +164,12 @@
     "_type": "collection.documentation"
   },
   {
-    "_id": "30b0bf69-a040-45e4-acff-80d9796b06e9",
-    "_type": "translation.metadata"
-  },
-  {
     "_id": "3171edf5-141a-449b-8782-a0d96c4b4be6",
     "_type": "collection.events"
   },
   {
     "_id": "318fdae0-9d55-4dd5-ac9e-7d9aa1cef0a3",
     "_type": "collection.documentation"
-  },
-  {
-    "_id": "31a077e9-a2ea-451d-9c78-1e718e03fa32",
-    "_type": "translation.metadata"
   },
   {
     "_id": "31deab03-f039-4d17-bfb3-a990b629a914",
@@ -312,10 +292,6 @@
     "_type": "collection.documentation"
   },
   {
-    "_id": "574b2ce3-403d-4b27-a2f3-add93ceb35cb",
-    "_type": "translation.metadata"
-  },
-  {
     "_id": "58767191-7495-4ea1-86df-c2af488d5dae",
     "_type": "collection.documentation"
   },
@@ -388,10 +364,6 @@
     "_type": "gallery"
   },
   {
-    "_id": "6522afca-05b5-48e1-817a-479f65e05b44",
-    "_type": "translation.metadata"
-  },
-  {
     "_id": "668ecb18-1004-4243-b600-d9a5896132ab",
     "_type": "collection.documentation"
   },
@@ -434,10 +406,6 @@
   {
     "_id": "6ea8352f-92fe-46bd-b1f7-16af1d46e20b",
     "_type": "page"
-  },
-  {
-    "_id": "6eb5a492-39cd-4a1c-b05a-b09be9a3b91e",
-    "_type": "translation.metadata"
   },
   {
     "_id": "6ef5d186-0a4a-4285-9d24-a4277d6c6233",
@@ -492,14 +460,6 @@
     "_type": "collection.documentation"
   },
   {
-    "_id": "79d25c3d-f53c-443f-b2fb-3257dedbe3d8",
-    "_type": "translation.metadata"
-  },
-  {
-    "_id": "7a12a509-2543-4a2e-a38e-144364926231",
-    "_type": "translation.metadata"
-  },
-  {
     "_id": "7b468f27-2413-48f8-9091-1a3849812230",
     "_type": "collection.documentation"
   },
@@ -544,10 +504,6 @@
     "_type": "collection.article"
   },
   {
-    "_id": "838fd55e-a8f3-46f7-9ce7-c099f964ba89",
-    "_type": "translation.metadata"
-  },
-  {
     "_id": "8518d91c-4d43-4356-b043-45fddc85218c",
     "_type": "collection.events"
   },
@@ -590,10 +546,6 @@
   {
     "_id": "910e52c9-92ea-4414-b34a-115cf9c8d746",
     "_type": "collection.events"
-  },
-  {
-    "_id": "926f6660-f858-4ae8-88e2-3216e109a583",
-    "_type": "translation.metadata"
   },
   {
     "_id": "92d491d3-b423-46d2-9097-fdc784c7c856",
@@ -649,10 +601,6 @@
   },
   {
     "_id": "a0c55c92-0c7c-4173-b7fb-8a675af62268",
-    "_type": "translation.metadata"
-  },
-  {
-    "_id": "a14b11cc-80d2-418a-908f-4fb8cd777911",
     "_type": "translation.metadata"
   },
   {
@@ -748,10 +696,6 @@
     "_type": "page"
   },
   {
-    "_id": "b68e1f6f-b4c6-41d3-9eac-f46164e713eb",
-    "_type": "translation.metadata"
-  },
-  {
     "_id": "b6dd624a-17fc-4303-8597-434e917ba7e8",
     "_type": "collection.documentation"
   },
@@ -804,10 +748,6 @@
     "_type": "page"
   },
   {
-    "_id": "c0483369-d676-4472-ad62-afc7f03decb3",
-    "_type": "translation.metadata"
-  },
-  {
     "_id": "c06c5b2a-e7ce-4047-8643-c8ba1672a091",
     "_type": "collection.newsletter"
   },
@@ -834,10 +774,6 @@
   {
     "_id": "c8d73a33-784a-4112-a475-f033e5f2ed80",
     "_type": "collection.newsletter"
-  },
-  {
-    "_id": "c9da52c2-27b1-40c5-9b6f-6416130c16f4",
-    "_type": "translation.metadata"
   },
   {
     "_id": "ca36ebd7-89a2-4181-9540-2683d68732df",
@@ -912,10 +848,6 @@
     "_type": "collection.documentation"
   },
   {
-    "_id": "drafts.0305aaeb-eef8-4f13-b724-ebdd86591b83",
-    "_type": "form"
-  },
-  {
     "_id": "drafts.0863af12-9400-4822-84fa-2cccda348db5",
     "_type": "collection.changelog"
   },
@@ -928,20 +860,12 @@
     "_type": "collection.newsletter"
   },
   {
-    "_id": "drafts.16378fcb-e4b6-4f24-8724-e5dfdf8db1bc",
-    "_type": "translation.metadata"
-  },
-  {
     "_id": "drafts.17cc68b3-7f7c-4818-8620-3b3951d335c1",
     "_type": "collection.newsletter"
   },
   {
     "_id": "drafts.1821a218-33e4-4c77-becb-c955d3373b8b",
     "_type": "page"
-  },
-  {
-    "_id": "drafts.1bc46c05-bdff-41dc-a281-e26dcee48d6f",
-    "_type": "pricing"
   },
   {
     "_id": "drafts.2966f4e2-fa75-415b-a511-c5d3d93f5272",
@@ -1028,10 +952,6 @@
     "_type": "page"
   },
   {
-    "_id": "drafts.fa6acd77-2859-4c21-add7-165e3fdbe054",
-    "_type": "pricing"
-  },
-  {
     "_id": "e00331f6-eecb-4eae-b332-fec8de091e4f",
     "_type": "collection.newsletter"
   },
@@ -1054,10 +974,6 @@
   {
     "_id": "e43f4b4c-dff4-4d66-8956-b1916b6b25c4",
     "_type": "page"
-  },
-  {
-    "_id": "e46760da-752b-45be-897c-88aacb19f66b",
-    "_type": "translation.metadata"
   },
   {
     "_id": "e525da67-0022-4f98-b073-baa5f7e08cda",
@@ -1166,5 +1082,21 @@
   {
     "_id": "site",
     "_type": "site"
+  },
+  {
+    "_id": "tm-page-contact-us",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "tm-page-guides",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "tm-page-our-story",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "tm-page-terms",
+    "_type": "translation.metadata"
   }
 ]

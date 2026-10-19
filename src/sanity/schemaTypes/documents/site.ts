@@ -24,7 +24,7 @@ export default defineType({
   groups: [
     { name: 'general', title: 'General', icon: CogIcon, default: true },
     { name: 'navigation', title: 'Navigation', icon: MenuIcon },
-    { name: 'advanced', title: 'Advanced Options', icon: ControlsIcon },
+    { name: 'advanced', title: 'More settings', icon: ControlsIcon },
   ],
   fieldsets: [
     { name: 'header', title: 'Header', options: { collapsible: true, collapsed: true } },

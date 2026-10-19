@@ -10,19 +10,11 @@ import { CTAList } from '@/components/blocks/objects/cta';
 import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/sanity/module-props';
 import { cn } from '@/lib/utils/index';
+import { getYouTubeId } from '@/lib/youtube';
 
-// Local type for MuxVideo to match Sanity.Hero interface
+// Unreachable: blockDesign sets videoType to 'youtube' or 'image', so the Mux branch never
+// renders. Kept only as the old shape's type; removed in plan Task 35.
 type MuxVideo = Sanity.Hero['muxVideo'];
-
-// Helper to extract a YouTube video ID from the supported URL shapes:
-// watch?v=, youtu.be/, /embed/, /shorts/, /v/ (VideoHero accepts these too).
-function getYouTubeId(url: string | undefined): string | undefined {
-  if (!url) return undefined;
-  const match = url.match(
-    /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([\w-]{11})/
-  );
-  return match ? match[1] : undefined;
-}
 
 // Calculate media flags
 function getMediaFlags(
@@ -52,7 +44,7 @@ function getImageAspectRatio(
 }
 
 // Build PortableText components
-function buildPortableTextComponents(hasMedia: boolean) {
+export function buildPortableTextComponents(hasMedia: boolean) {
   return {
     block: {
       h1: ({ children }: { children?: ReactNode }) => (
@@ -103,10 +95,11 @@ function HeroBackground({ hasMedia }: { hasMedia: boolean }) {
 }
 
 // Hero image media
-function HeroImage({ image }: { image: Sanity.Image }) {
+function HeroImage({ image, alt }: { image: Sanity.Image; alt?: string }) {
   return (
     <Img
       image={image}
+      alt={alt}
       className="absolute inset-0 h-full w-full object-contain"
       loading="eager"
       fetchPriority="high"
@@ -167,7 +160,7 @@ function HeroMedia({
   hasImage: boolean;
   hasMux: boolean;
   hasYouTube: boolean;
-  image?: { image?: Sanity.Image };
+  image?: { image?: Sanity.Image; alt?: string };
   muxVideo?: MuxVideo;
   videoUrl?: string;
   imageAspectRatio?: number;
@@ -189,7 +182,7 @@ function HeroMedia({
         )}
         style={style}
       >
-        {hasImage && image?.image && <HeroImage image={image.image} />}
+        {hasImage && image?.image && <HeroImage image={image.image} alt={image.alt} />}
         {hasMux && <HeroVideo type="mux" muxVideo={muxVideo} thumbnail={image?.image} />}
         {hasYouTube && <HeroVideo type="youtube" videoUrl={videoUrl} thumbnail={image?.image} />}
       </div>

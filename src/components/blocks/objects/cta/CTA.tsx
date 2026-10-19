@@ -7,9 +7,8 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { internalHref, type LinkTarget, withLocalePrefix } from '@/lib/sanity/localized-link';
 import { cn } from '@/lib/utils/index';
 import { validateExternalUrl } from '@/lib/validateExternalUrl';
+import { type ButtonVariant, buttonVariantFor } from './button-variant';
 
-// Define the allowed button variants matching the Button component
-type ButtonVariant = 'default' | 'outline' | 'secondary' | 'ghost' | 'link' | 'destructive';
 type ButtonSize = 'default' | 'xs' | 'sm' | 'lg' | 'icon' | 'icon-xs' | 'icon-sm' | 'icon-lg';
 
 type CTAProps = Sanity.CTA & {
@@ -73,12 +72,6 @@ function getAriaLabel(
   }
 
   return undefined;
-}
-
-// Get button variant from style
-function getVariant(style?: string): ButtonVariant {
-  const cleanStyle = stegaClean(style);
-  return (cleanStyle === 'primary' ? 'default' : cleanStyle) as ButtonVariant;
 }
 
 // Handle smooth scroll for hash links on same page
@@ -212,7 +205,7 @@ export default function CTA({
   if (!effectiveLink) return null;
 
   const { label, type, internal, external, params, newTab } = effectiveLink;
-  const variant = getVariant(style);
+  const variant = buttonVariantFor(style);
   const buttonContent = children || label || 'Button';
 
   if (type === 'internal' && internal) {

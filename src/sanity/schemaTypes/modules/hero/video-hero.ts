@@ -11,6 +11,7 @@
 import { VideoIcon } from '@sanity/icons/Video';
 import type { Rule } from 'sanity';
 import { defineField } from 'sanity';
+import { MUX_ENABLED, muxOnly } from '../../../lib/mux';
 import { createUidField } from '../ui/uid-input';
 
 // Extract YouTube video ID from various URL formats
@@ -45,7 +46,10 @@ export const getYouTubeVideoId = (url: string) => {
 
 export default defineField({
   name: 'videoHero',
-  title: 'Video Hero',
+  title: 'Old – Video top',
+  deprecated: {
+    reason: 'Merged into “Page top” (picture or video link). Kept until all content is migrated.',
+  },
   type: 'object',
   icon: VideoIcon,
   fieldsets: [
@@ -61,7 +65,7 @@ export default defineField({
       media: 'thumbnail',
     },
     prepare({ videoType, media }) {
-      const title = 'Video Hero';
+      const title = 'Old – Video top';
       let subtitle = '';
 
       if (videoType === 'youtube') {
@@ -86,11 +90,13 @@ export default defineField({
       fieldset: 'videoOptions',
       options: {
         list: [
-          { title: 'Mux', value: 'mux' },
+          ...muxOnly([{ title: 'Mux', value: 'mux' }]),
           { title: 'YouTube', value: 'youtube' },
         ],
         layout: 'radio',
       },
+      // With Mux off YouTube is the only choice: preselect it.
+      ...(MUX_ENABLED ? {} : { initialValue: 'youtube' }),
       validation: (rule: Rule) => rule.required(),
     },
     {
@@ -114,22 +120,24 @@ export default defineField({
           return true;
         }),
     },
-    {
-      name: 'muxVideo',
-      title: 'Mux Video',
-      type: 'mux.video',
-      description: 'Upload or select a video from Mux',
-      fieldset: 'videoOptions',
-      hidden: ({ parent }) => parent?.type !== 'mux',
-      validation: (rule: Rule) =>
-        rule.custom((value, context) => {
-          const parent = context.parent as { type?: string } | undefined;
-          if (parent?.type === 'mux' && !value) {
-            return 'Mux video is required';
-          }
-          return true;
-        }),
-    },
+    ...muxOnly([
+      defineField({
+        name: 'muxVideo',
+        title: 'Mux Video',
+        type: 'mux.video',
+        description: 'Upload or select a video from Mux',
+        fieldset: 'videoOptions',
+        hidden: ({ parent }) => parent?.type !== 'mux',
+        validation: (rule: Rule) =>
+          rule.custom((value, context) => {
+            const parent = context.parent as { type?: string } | undefined;
+            if (parent?.type === 'mux' && !value) {
+              return 'Mux video is required';
+            }
+            return true;
+          }),
+      }),
+    ]),
     {
       name: 'thumbnail',
       title: 'Thumbnail Image',

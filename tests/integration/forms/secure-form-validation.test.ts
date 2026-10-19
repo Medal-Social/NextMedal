@@ -72,14 +72,12 @@ describe('Secure Forms Validation', () => {
     expect(result.success).toBe(true);
   });
 
-  it('should accept submissions without timestamp (backward compatibility/optional)', () => {
-    // If timestamp is missing, the schema currently allows it (optional)
-    // You might want to change this to required if strict security is needed
+  it('should reject submissions without a timestamp (every form sends one)', () => {
     const result = secureSchema.safeParse({
-      name: 'Legacy Submission',
-      email: 'legacy@example.com',
+      name: 'No Timestamp',
+      email: 'scripted@example.com',
     });
 
-    expect(result.success).toBe(true);
+    expect(result.success).toBe(false);
   });
 });
