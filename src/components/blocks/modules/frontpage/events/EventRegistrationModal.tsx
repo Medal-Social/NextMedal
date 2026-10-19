@@ -59,6 +59,26 @@ interface EventRegistrationModalProps {
   onSuccess?: () => void;
 }
 
+type ValidationErrors = Record<string, { _errors?: string[] } | string[] | undefined>;
+
+/**
+ * Message key for a rejected registration: the schema's own messages are
+ * English, so the visitor gets a plain, translated one per kind of problem.
+ */
+export function validationMessageKey(
+  errors: ValidationErrors | undefined
+): 'invalidEmail' | 'tooFast' | 'checkFields' | undefined {
+  if (!errors) return undefined;
+  const has = (field: string) => {
+    const entry = errors[field];
+    const list = Array.isArray(entry) ? entry : entry?._errors;
+    return !!list?.length;
+  };
+  if (has('email')) return 'invalidEmail';
+  if (has('_submissionTimestamp')) return 'tooFast';
+  return Object.keys(errors).some(has) ? 'checkFields' : undefined;
+}
+
 export default function EventRegistrationModal({
   open,
   onOpenChange,
@@ -137,7 +157,11 @@ export default function EventRegistrationModal({
   const consentText =
     getExactLocalizedValue(form.acceptance?.text, locale) || (consentRequired ? t('consent') : '');
   const consentHref = consentLinkHref(form.acceptance?.link, locale);
-  const submitText = getExactLocalizedValue(form.submitButtonText, locale) || tCommon('processing');
+  const submitText = getExactLocalizedValue(form.submitButtonText, locale) || t('submit');
+  const validationKey = validationMessageKey(
+    result.validationErrors as ValidationErrors | undefined
+  );
+  const errorText = result.serverError || (validationKey ? t(validationKey) : undefined);
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -277,9 +301,12 @@ export default function EventRegistrationModal({
               )}
 
               {/* Error message */}
-              {result.serverError && (
-                <div className="rounded-md bg-destructive/10 p-3 text-destructive text-sm">
-                  {result.serverError}
+              {errorText && (
+                <div
+                  role="alert"
+                  className="rounded-md bg-destructive/10 p-3 text-destructive text-sm"
+                >
+                  {errorText}
                 </div>
               )}
 

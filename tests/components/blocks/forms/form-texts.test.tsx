@@ -469,7 +469,7 @@ describe('editor texts only in the exact visitor language', () => {
     );
     expect(screen.queryByText('I agree in English')).toBeNull();
     expect(screen.getByText(nb.modules.events.registration.consent)).toBeTruthy();
-    const button = screen.getByRole('button', { name: nb.common.processing });
+    const button = screen.getByRole('button', { name: nb.modules.events.registration.submit });
     fireEvent.click(screen.getByRole('checkbox'));
     fireEvent.submit(button.closest('form') as HTMLFormElement);
     await waitFor(() =>
