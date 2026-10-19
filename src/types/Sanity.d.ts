@@ -142,11 +142,6 @@ declare global {
       modules?: Module[];
     }
 
-    interface ComponentLibrary extends PageBase {
-      readonly _type: 'component.library';
-      modules?: Module[];
-    }
-
     // interface GlobalModule extends SanityDocument {
     //   path: string;
     //   excludePaths?: string[];
@@ -359,7 +354,6 @@ declare global {
       showSearch?: boolean;
       showTableOfContents?: boolean;
       showRelatedDocs?: boolean;
-      defaultArticle?: CollectionDocumentation;
     }
 
     interface CollectionEvents extends SanityDocument {
@@ -554,15 +548,6 @@ declare global {
       };
     }
 
-    interface PricingComparisonTier {
-      _key: string;
-      name: string;
-      price: string;
-      description: string;
-      cta: CTA;
-      popular: boolean;
-    }
-
     interface SanityImage {
       _type: 'image';
       asset: {
@@ -638,31 +623,6 @@ declare global {
       };
     }
 
-    interface Contact extends Module<'contact'> {
-      intro?: BlockContent;
-      form: Form;
-      officeInfo?: {
-        title: string;
-        address: {
-          street: string;
-          city: string;
-          country: string;
-        };
-        email?: string;
-        phone?: string;
-        openingHours?: string;
-      };
-      contactPerson?: {
-        title: string;
-        name: string;
-        position: string;
-        description?: string;
-        image?: Image;
-        email?: string;
-        phone?: string;
-      };
-    }
-
     interface LeadMagnet extends Module<'lead-magnet'> {
       content: BlockContent;
       buttonText: string;
@@ -681,12 +641,6 @@ declare global {
         content: BlockContent;
         open?: boolean;
       }[];
-    }
-
-    interface Breadcrumbs extends Module<'breadcrumbs'> {
-      crumbs?: MenuItem[];
-      hideCurrent?: boolean;
-      currentPage?: Page | CollectionArticlePost | ComponentLibrary;
     }
 
     interface Callout extends Module<'callout'> {
@@ -735,15 +689,6 @@ declare global {
       };
     }
 
-    interface LatestArticles extends Module<'latest-articles'> {
-      intro?: BlockContent;
-      layout?: 'grid' | 'carousel';
-      showFeaturedPostsFirst?: boolean;
-      displayFilters?: boolean;
-      limit?: number;
-      filteredCategory?: ArticleCategory; // Resolved
-    }
-
     interface ArticlesFrontpage extends Module<'articles-frontpage'> {
       showFeaturedFirst?: boolean;
       displayFilters?: boolean;
@@ -761,28 +706,6 @@ declare global {
     interface LogoCloud extends Module<'logo-cloud'> {
       content?: BlockContent;
       logos?: Logo[]; // Resolved
-    }
-
-    interface PricingComparison extends Module<'pricing-comparison'> {
-      title?: string;
-      description?: string;
-      tiers?: PricingComparisonTier[];
-      featureCategories?: {
-        _key: string;
-        category: string;
-        items?: {
-          _key: string;
-          name: string;
-          tooltip?: string;
-          tiers?: (string | boolean)[];
-          subItems?: {
-            _key: string;
-            name: string;
-            tooltip?: string;
-            tiers?: (string | boolean)[];
-          }[];
-        }[];
-      }[];
     }
 
     interface PricingList extends Module<'pricing-list'> {

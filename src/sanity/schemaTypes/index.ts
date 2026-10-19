@@ -19,7 +19,6 @@ import collectionDocumentation from './documents/collections/documentation';
 import collectionEvents from './documents/collections/events';
 import lead from './documents/collections/lead';
 import collectionNewsletter from './documents/collections/newsletter';
-import componentLibrary from './documents/component-library';
 // Documents - Pages
 import page from './documents/page';
 import articleCategory from './documents/shared/article.category';
@@ -40,7 +39,6 @@ import accordionList from './modules/content/accordion-list';
 import features from './modules/content/features';
 import flipbook from './modules/content/flipbook';
 import logoCloud from './modules/content/logo-cloud';
-import pricingComparison from './modules/content/pricing-comparison';
 import pricingList from './modules/content/pricing-list';
 import productComparison from './modules/content/product-comparison';
 import team from './modules/content/team';
@@ -56,12 +54,9 @@ import hero from './modules/hero/hero';
 import videoHero from './modules/hero/video-hero';
 // Modules - Marketing & Leads
 import callout from './modules/marketing/callout';
-import contact from './modules/marketing/contact';
 import leadMagnet from './modules/marketing/lead-magnet';
 // Modules - Utility
-import breadcrumbs from './modules/utility/breadcrumbs';
 import componentGallery from './modules/utility/component-gallery';
-import latestArticles from './modules/utility/latest-articles';
 // Objects
 import cta from './objects/cta';
 import dropdownMenu from './objects/dropdown-menu';
@@ -79,7 +74,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   // Documents - Pages
   page,
   site,
-  componentLibrary,
 
   // Documents - Collections
   collectionArticle,
@@ -123,7 +117,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   features,
   logoCloud,
   flipbook,
-  pricingComparison,
   pricingList,
   productComparison,
   team,
@@ -131,7 +124,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
 
   // Modules - Marketing & Leads
   callout,
-  contact,
   leadMagnet,
 
   // Modules - Frontpages
@@ -142,7 +134,5 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   newsletterFrontpage,
 
   // Modules - Utility
-  breadcrumbs,
   componentGallery,
-  latestArticles,
 ];

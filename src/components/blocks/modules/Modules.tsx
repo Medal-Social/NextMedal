@@ -11,7 +11,7 @@ export default function Modules({
   locale,
 }: {
   modules?: Sanity.Module[];
-  page?: Sanity.Page | Sanity.ComponentLibrary;
+  page?: Sanity.Page;
   post?: Sanity.CollectionArticlePost;
   isSidebar?: boolean;
   searchParams?: FilterParams;

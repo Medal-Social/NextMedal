@@ -196,7 +196,7 @@ describe('GROQ Queries - Security & Best Practices', () => {
 
       // MODULES_QUERY should include BASE_MODULES_QUERY patterns
       expect(queries.MODULES_QUERY).toContain('ctas[]{');
-      expect(queries.MODULES_QUERY).toContain("_type == 'breadcrumbs' => {");
+      expect(queries.MODULES_QUERY).toContain("_type == 'hero' => {");
       expect(queries.MODULES_QUERY).toContain("_type == 'logo-cloud' => {");
       expect(queries.MODULES_QUERY).toContain("_type == 'flipbook' => {");
       expect(queries.MODULES_QUERY).toContain("'src': file.asset->url");
@@ -383,7 +383,7 @@ describe('GROQ Queries - Security & Best Practices', () => {
       const queries = await import('@/sanity/lib/queries');
 
       // Should check _type before expanding
-      expect(queries.MODULES_QUERY).toContain("_type == 'breadcrumbs' => {");
+      expect(queries.MODULES_QUERY).toContain("_type == 'hero' => {");
       expect(queries.MODULES_QUERY).toContain("_type == 'callout' => {");
       expect(queries.MODULES_QUERY).toContain("_type == 'logo-cloud' => {");
       expect(queries.MODULES_QUERY).toContain("_type == 'richtext' => {");

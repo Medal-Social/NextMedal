@@ -27,7 +27,7 @@ const SANITY_CDN_HOST = 'cdn.sanity.io';
 /** Documentation articles that use the README quick-setup card. */
 const DOCUMENTATION_SETUP_SLUGS = new Set(['quick-start', 'getting-started', 'installation']);
 
-const PAGE_DOCUMENT_TYPES = new Set(['page', 'component.library']);
+const PAGE_DOCUMENT_TYPES = new Set(['page']);
 
 type ShareImageEntry = {
   file: string;
@@ -95,10 +95,6 @@ export const MODULE_SHARE_IMAGES = {
     'A comparison table for products and features with customizable details for each cell.'
   ),
   callout: designed('callout.png', 'A highlighted section with content and call-to-actions.'),
-  contact: designed(
-    'contact.png',
-    'Standard contact module with reusable form support and contact details.'
-  ),
   'lead-magnet': designed(
     'lead-magnet.png',
     'Flexible lead generation module with refined Studio UX.'
@@ -120,21 +116,9 @@ export const MODULE_SHARE_IMAGES = {
     'newsletter-frontpage.png',
     'Displays a list of newsletter issues from a collection.'
   ),
-  breadcrumbs: designed(
-    'breadcrumbs.png',
-    'Automatically generated breadcrumbs based on page structure.'
-  ),
   'component-gallery': designed(
     'component-gallery.png',
     'A visual gallery of all available UI components for demonstration and testing.'
-  ),
-  'latest-articles': designed(
-    'latest-articles.png',
-    'Displays a list of recent articles with filtering options.'
-  ),
-  'pricing-comparison': designed(
-    'pricing-comparison.png',
-    'A module for displaying and comparing pricing plans with features and tiers.'
   ),
 } as const satisfies Record<string, ShareImageEntry>;
 

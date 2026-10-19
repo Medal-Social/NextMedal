@@ -4,7 +4,6 @@ import { Suspense } from 'react';
 import { blockDesign, type DesignPage } from './block-design';
 import AccordionList from './content/AccordionList';
 import Features from './content/Features';
-import PricingComparison from './content/PricingComparison';
 import PricingList from './content/PricingList';
 import ProductComparison from './content/ProductComparison';
 import RichtextModuleClient from './content/RichtextModule/client';
@@ -12,7 +11,6 @@ import Team from './content/Team';
 import Hero from './hero/Hero';
 import VideoHero from './hero/VideoHero';
 import Callout from './marketing/Callout';
-import Contact from './marketing/Contact';
 import LeadMagnet from './marketing/LeadMagnet';
 
 function ModuleSkeleton() {
@@ -56,21 +54,9 @@ export function GalleryModuleRenderer({ module: stored }: Props) {
       return <AccordionList {...props} />;
     }
 
-    case 'breadcrumbs':
-      return <ServerOnlyPlaceholder moduleType="Breadcrumbs" />;
-
     case 'callout': {
       const props = module as Sanity.Callout;
       return <Callout {...props} />;
-    }
-
-    case 'contact': {
-      const props = module as Sanity.Contact;
-      return (
-        <Suspense fallback={<ModuleSkeleton />}>
-          <Contact {...props} />
-        </Suspense>
-      );
     }
 
     case 'features': {
@@ -83,9 +69,6 @@ export function GalleryModuleRenderer({ module: stored }: Props) {
       return <Hero {...props} />;
     }
 
-    case 'latest-articles':
-      return <ServerOnlyPlaceholder moduleType="Latest Articles" />;
-
     case 'lead-magnet':
     case 'leadMagnet':
     case 'leadmagnet': {
@@ -95,11 +78,6 @@ export function GalleryModuleRenderer({ module: stored }: Props) {
 
     case 'logo-cloud':
       return <ServerOnlyPlaceholder moduleType="Logo Cloud" />;
-
-    case 'pricing-comparison': {
-      const props = module as Sanity.PricingComparison;
-      return <PricingComparison {...props} />;
-    }
 
     case 'pricing-list': {
       const props = module as Sanity.PricingList;

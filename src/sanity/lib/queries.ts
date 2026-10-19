@@ -95,7 +95,6 @@ export const CTA_QUERY = groq`
 const BASE_MODULES_QUERY = groq`
 	...,
 	ctas[]{${CTA_QUERY}},
-	_type == 'breadcrumbs' => { crumbs[]{ ${LINK_QUERY} } },
 	_type == 'callout' => {
 		"copy": content,
 	},
@@ -143,23 +142,6 @@ const BASE_MODULES_QUERY = groq`
 		items[]{
 			...,
 			content[]{ ${PT_BLOCK_QUERY} }
-		}
-	},
-	_type == 'contact' => {
-		...,
-		intro[]{ ${PT_BLOCK_QUERY} },
-		form->{
-			...,
-			redirect { ${LINK_QUERY} },
-			acceptance { ..., link { ${LINK_QUERY} } }
-		},
-		contactPerson {
-			...,
-			image {
-				image {
-					${IMAGE_QUERY}
-				}
-			}
 		}
 	},
 	_type == 'lead-magnet' => {

@@ -555,7 +555,7 @@ export async function generateStaticParams() {
     await Promise.all([
       clientWithoutStega.fetch<{ slug: string }[]>(
         groq`*[
-          _type in ['page', 'component.library'] &&
+          _type == 'page' &&
           defined(metadata.slug.current) &&
           !(metadata.slug.current in ['index'])
         ]{ 'slug': metadata.slug.current }`,
@@ -703,11 +703,9 @@ async function getCollectionEvent(itemSlug: string, locale: string, stega?: bool
 async function getPage(slugParts: string[] | undefined, locale: string, stega?: boolean) {
   const slug = slugParts?.join('/');
 
-  return await fetchSanityLive<
-    Sanity.Page | (Sanity.ComponentLibrary & { placements?: Placement[] })
-  >({
+  return await fetchSanityLive<Sanity.Page & { placements: Placement[] }>({
     query: groq`*[
-      _type in ['page', 'component.library'] &&
+      _type == 'page' &&
       ${SLUG_QUERY} == $slug &&
       language == $locale &&
       !(metadata.slug.current in ['index'])

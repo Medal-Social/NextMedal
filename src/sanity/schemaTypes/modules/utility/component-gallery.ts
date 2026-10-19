@@ -88,8 +88,6 @@ export default defineType({
                 { type: 'team' },
                 { type: 'pricing-list' },
                 { type: 'product-comparison' },
-                { type: 'latest-articles' },
-                { type: 'breadcrumbs' },
                 { type: 'component-gallery' },
               ],
             }),
