@@ -74,8 +74,10 @@ declare global {
 
     // Internationalized field types (sanity-plugin-internationalized-array)
     // Generic internationalized array structure
+    // v5 stores the language in `language` with a random `_key`; older entries use `_key`.
     type InternationalizedArray<T> = Array<{
       _key: string;
+      language?: string;
       value: T;
     }>;
 
@@ -513,7 +515,9 @@ declare global {
       _key?: string;
       label: string;
       type: 'internal' | 'external';
-      internal?: Page | CollectionArticlePost;
+      internal?: (Page | CollectionArticlePost) & {
+        translations?: Array<PageBase | null> | null;
+      };
       external?: string;
       params?: string;
       newTab?: boolean;
@@ -603,11 +607,12 @@ declare global {
       intent: string;
       formTitle?: string;
       fields: FormField[];
-      submitButtonText: string;
-      successMessage?: BlockContent;
+      requireConsent?: boolean;
+      submitButtonText?: InternationalizedArrayString | string;
+      successMessage?: InternationalizedArrayText | string;
       acceptance?: {
-        required: boolean;
-        text: string;
+        required?: boolean;
+        text?: InternationalizedArrayString | string;
         link?: {
           type: 'internal' | 'external';
           internal?: {

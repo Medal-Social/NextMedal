@@ -14,7 +14,7 @@ export async function fetchJson<T>(
   try {
     const response = await fetch(url, {
       ...init,
-      signal: init?.signal ?? controller.signal,
+      signal: init?.signal ? AbortSignal.any([init.signal, controller.signal]) : controller.signal,
       headers: {
         Accept: 'application/json',
         ...(init?.headers ?? {}),

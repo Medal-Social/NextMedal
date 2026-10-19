@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useClient } from 'sanity';
+import { anchorChoices } from '@/lib/block-anchors';
 
 export type PageAnchor = {
   anchor: string;
@@ -13,8 +14,6 @@ export type PageAnchor = {
 type SanityModule = {
   _type: string;
   _key: string;
-  anchorId?: string;
-  uid?: string;
 };
 
 type SanityDoc = {
@@ -40,9 +39,7 @@ export function usePageAnchors(pageRef: string | undefined) {
           _id,
           modules[] {
             _type,
-            _key,
-            "anchorId": options.anchorId,
-            "uid": options.uid
+            _key
           }
         }`;
 
@@ -51,32 +48,8 @@ export function usePageAnchors(pageRef: string | undefined) {
         const published = docs.find((d) => !d._id.startsWith('drafts.'));
         const modules = draft?.modules || published?.modules || [];
 
-        if (Array.isArray(modules)) {
-          const allAnchors = modules
-            .map((m) => {
-              // Use explicit ID if available, otherwise fallback to _key (which is often the default ID in frontend)
-              const explicitId = m.anchorId || m.uid;
-              const finalId = explicitId || m._key;
-
-              return {
-                anchor: finalId,
-                label: explicitId || `Default (${m._key.slice(0, 4)}...)`,
-                type: m._type,
-                _key: m._key,
-                isExplicit: !!explicitId,
-              };
-            })
-            // Always keep everything, as every module is technically linkable via key
-            .filter((item) => item.anchor);
-
-          // Deduplicate
-          const uniqueAnchors = Array.from(
-            new Map(allAnchors.map((item) => [item.anchor, item])).values()
-          ) as PageAnchor[];
-          setAnchors(uniqueAnchors);
-        } else {
-          setAnchors([]);
-        }
+        // Only the fixed anchors the site renders (Vault spec 2026-10-18 D3).
+        setAnchors(Array.isArray(modules) ? anchorChoices(modules) : []);
       } catch (error) {
         // biome-ignore lint/suspicious/noConsole: Client-side debugging
         console.error('Failed to fetch page anchors:', error);

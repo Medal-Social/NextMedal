@@ -2,27 +2,27 @@
 
 import { ChevronDown, ExternalLink } from 'lucide-react';
 import { motion, type Variants } from 'motion/react';
+import Link from 'next/link';
+import { useLocale } from 'next-intl';
 import { stegaClean } from 'next-sanity';
 import { useCallback, useEffect, useRef } from 'react';
 import { CTAList } from '@/components/blocks/objects/cta';
 import { CommandMenu } from '@/components/blocks/utility';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Link } from '@/i18n/navigation';
-import { resolveUrlSync } from '@/lib/sanity/resolve-url';
+import { internalHref, withLocalePrefix } from '@/lib/sanity/localized-link';
 import { ANIMATION_DURATION, ANIMATION_EASING } from './constants';
 import type { MobileNavigationProps } from './types';
 
-function getNavLinkHref(link: Sanity.MenuItem | Sanity.Link): string {
+// Final hrefs (no /en/ prefix for English, so no 308), rendered with a plain next/link.
+function navLinkProps(link: Sanity.MenuItem | Sanity.Link, locale: string): { href: string } {
   if (link.internal && '_type' in link.internal) {
-    return resolveUrlSync(link.internal as Sanity.PageBase, {
-      base: false,
-      params: link.params,
-    });
+    const href = internalHref(link.internal, locale, link.params);
+    if (href) return { href };
   }
   if (link.external) {
-    return stegaClean(link.external);
+    return { href: stegaClean(link.external) };
   }
-  return '/';
+  return { href: withLocalePrefix('/', locale) };
 }
 
 export const NavLink = ({
@@ -33,7 +33,7 @@ export const NavLink = ({
   onClick?: () => void;
 }) => (
   <Link
-    href={getNavLinkHref(link)}
+    {...navLinkProps(link, useLocale())}
     className="flex min-h-11 items-center gap-4 rounded-lg p-4 font-medium text-foreground text-lg transition-colors hover:bg-accent hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary"
     target={link.external ? '_blank' : undefined}
     aria-label={link.external ? `${link.label} (opens in new tab)` : undefined}

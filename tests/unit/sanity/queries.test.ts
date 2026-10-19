@@ -86,6 +86,18 @@ describe('GROQ Queries - Security & Best Practices', () => {
       expect(LINK_QUERY).toContain('internal->{');
     });
 
+    it('LINK_QUERY fetches the target language and its translations (spec D4)', async () => {
+      const { LINK_QUERY } = await import('@/sanity/lib/queries');
+      const internal = LINK_QUERY.slice(LINK_QUERY.indexOf('internal->{'));
+
+      expect(internal).toMatch(/\blanguage,/);
+      expect(internal).toContain(
+        "*[_type == 'translation.metadata' && references(^._id)].translations[].value->{"
+      );
+      // Broken data can put one document in several groups: flatten them all.
+      expect(internal).not.toContain('references(^._id)][0]');
+    });
+
     it('IMAGE_QUERY should include asset reference (optimized - no resolution)', async () => {
       const { IMAGE_QUERY } = await import('@/sanity/lib/queries');
 
@@ -593,3 +605,43 @@ describe('GROQ Queries - Security & Best Practices', () => {
  * 7. Avoid nested queries - use parallel queries + application joins (100x faster)
  * 8. Use array::unique() instead of nested count() for O(n) complexity
  */
+
+describe('event registration form projection', () => {
+  it('event detail and event list fetch the same form texts', async () => {
+    const { COLLECTION_EVENTS_QUERY, EVENT_REGISTRATION_FORM_QUERY } = await import(
+      '@/sanity/lib/queries'
+    );
+    for (const field of [
+      'requireConsent',
+      'submitButtonText',
+      'successMessage',
+      'acceptance',
+      'link',
+      'internal->',
+    ]) {
+      expect(EVENT_REGISTRATION_FORM_QUERY).toContain(field);
+    }
+    expect(COLLECTION_EVENTS_QUERY).toContain(
+      `registrationForm->{${EVENT_REGISTRATION_FORM_QUERY}}`
+    );
+    const { readFileSync } = await import('node:fs');
+    const source = readFileSync(
+      'src/components/blocks/modules/frontpage/events/EventsFrontpage.tsx',
+      'utf-8'
+    );
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: checks the interpolation in source
+    expect(source).toContain('registrationForm->{${EVENT_REGISTRATION_FORM_QUERY}}');
+  });
+});
+
+describe('Hero buttons', () => {
+  it('resolve their link target (the hero branch re-spreads raw fields, so it must project ctas again)', async () => {
+    const { MODULES_QUERY, CTA_QUERY } = await import('@/sanity/lib/queries');
+    const start = MODULES_QUERY.indexOf("_type == 'hero' => {");
+    const end = MODULES_QUERY.indexOf("_type == 'videoHero'", start);
+    expect(start).toBeGreaterThan(-1);
+    const heroBranch = MODULES_QUERY.slice(start, end);
+    expect(heroBranch).toContain('...,');
+    expect(heroBranch).toContain(`ctas[]{${CTA_QUERY}}`);
+  });
+});

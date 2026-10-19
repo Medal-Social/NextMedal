@@ -3,6 +3,7 @@
 import { z } from 'zod';
 import { PublicError } from '@/lib/core/errors';
 import { actionClient, withSecurity } from '@/lib/core/safe-action';
+import { eventConsent } from '@/lib/forms/consent-required';
 import { withRetry } from '@/lib/utils';
 import { writeClient } from '@/sanity/lib/client';
 
@@ -25,6 +26,19 @@ const leadSchema = withSecurity(
 
 export const captureLead = actionClient.schema(leadSchema).action(async ({ parsedInput }) => {
   const { email, name, company, jobTitle, phone, consent, source, language } = parsedInput;
+
+  // Event registration: the event's own registration form decides about consent.
+  if (source.type === 'event') {
+    if (!source.referenceId) throw new PublicError('This event could not be found.');
+    const rule = await eventConsent(source.referenceId);
+    if (rule === 'no-form') throw new PublicError('Registration is not open for this event.');
+    if (rule === 'unavailable') {
+      throw new PublicError('Registration is temporarily unavailable. Please try again shortly.');
+    }
+    if (rule === 'required' && consent !== true) {
+      throw new PublicError('Please accept the privacy terms to continue.');
+    }
+  }
 
   // Check if write token is configured
   if (!writeClient.config().token) {

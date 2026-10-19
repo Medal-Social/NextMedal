@@ -1,11 +1,10 @@
 'use client';
 
 import { Check, Loader2 } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useAction } from 'next-safe-action/hooks';
 import { useState } from 'react';
 import { captureLead } from '@/actions/leads/capture-lead';
-import SharedPortableText from '@/components/blocks/modules/SharedPortableText';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -17,14 +16,16 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { type ConsentLink, consentLinkHref } from '@/lib/forms/consent-link';
+import { getExactLocalizedValue, getLocalizedValue } from '@/lib/i18n/localized-value';
 
 // Form field type from Sanity
 interface FormField {
   _key: string;
-  label: string;
+  label: Sanity.InternationalizedArrayString | string;
   name: { current: string };
   type: 'text' | 'email' | 'tel' | 'textarea' | 'checkbox';
-  placeholder?: string;
+  placeholder?: Sanity.InternationalizedArrayString | string;
   required?: boolean;
 }
 
@@ -34,12 +35,14 @@ interface RegistrationForm {
   formTitle: string;
   intent: 'lead' | 'newsletter' | 'download';
   fields?: FormField[]; // Optional - may not be populated in Sanity
+  requireConsent?: boolean;
   acceptance?: {
     required?: boolean;
-    text?: string;
+    text?: Sanity.InternationalizedArrayString | string;
+    link?: ConsentLink;
   };
-  submitButtonText: string;
-  successMessage?: Sanity.BlockContent;
+  submitButtonText?: Sanity.InternationalizedArrayString | string;
+  successMessage?: Sanity.InternationalizedArrayText | string;
 }
 
 interface EventRegistrationModalProps {
@@ -68,6 +71,7 @@ export default function EventRegistrationModal({
   const [success, setSuccess] = useState(false);
   const t = useTranslations('modules.events.registration');
   const tCommon = useTranslations('common');
+  const locale = useLocale();
 
   const { execute, status, result } = useAction(captureLead, {
     onSuccess: () => {
@@ -120,6 +124,14 @@ export default function EventRegistrationModal({
 
   if (!form) return null;
 
+  const successText = getExactLocalizedValue(form.successMessage, locale) || t('successMessage');
+  const consentRequired = !!(form.requireConsent || form.acceptance?.required);
+  // A required checkbox always shows, with the standard text when none is set.
+  const consentText =
+    getExactLocalizedValue(form.acceptance?.text, locale) || (consentRequired ? t('consent') : '');
+  const consentHref = consentLinkHref(form.acceptance?.link, locale);
+  const submitText = getExactLocalizedValue(form.submitButtonText, locale) || tCommon('processing');
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
@@ -131,13 +143,9 @@ export default function EventRegistrationModal({
             </div>
             <DialogHeader className="text-center">
               <DialogTitle className="text-xl">{t('title')}</DialogTitle>
-              {form.successMessage ? (
-                <div className="mt-2 text-muted-foreground text-sm">
-                  <SharedPortableText value={form.successMessage} />
-                </div>
-              ) : (
-                <DialogDescription className="mt-2">{t('successMessage')}</DialogDescription>
-              )}
+              <DialogDescription className="mt-2 whitespace-pre-line">
+                {successText}
+              </DialogDescription>
             </DialogHeader>
             <div className="mt-6">
               <Button variant="outline" onClick={handleClose}>
@@ -169,6 +177,8 @@ export default function EventRegistrationModal({
               {form.fields?.map((field) => {
                 const fieldName = field.name.current;
                 const value = formData[fieldName] || '';
+                const label = getLocalizedValue(field.label, locale);
+                const placeholder = getLocalizedValue(field.placeholder, locale) || undefined;
 
                 if (field.type === 'checkbox') {
                   return (
@@ -181,7 +191,7 @@ export default function EventRegistrationModal({
                         className="mt-1 size-4 rounded border-border accent-primary"
                       />
                       <span className="text-muted-foreground text-sm leading-tight">
-                        {field.label}
+                        {label}
                         {field.required && <span className="ml-1 text-destructive">*</span>}
                       </span>
                     </label>
@@ -192,12 +202,12 @@ export default function EventRegistrationModal({
                   return (
                     <div key={field._key} className="space-y-2">
                       <Label htmlFor={fieldName}>
-                        {field.label}
+                        {label}
                         {field.required && <span className="ml-1 text-destructive">*</span>}
                       </Label>
                       <Textarea
                         id={fieldName}
-                        placeholder={field.placeholder}
+                        placeholder={placeholder}
                         value={value as string}
                         onChange={(e) => updateField(fieldName, e.target.value)}
                         required={field.required}
@@ -211,13 +221,13 @@ export default function EventRegistrationModal({
                 return (
                   <div key={field._key} className="space-y-2">
                     <Label htmlFor={fieldName}>
-                      {field.label}
+                      {label}
                       {field.required && <span className="ml-1 text-destructive">*</span>}
                     </Label>
                     <Input
                       id={fieldName}
                       type={field.type}
-                      placeholder={field.placeholder}
+                      placeholder={placeholder}
                       value={value as string}
                       onChange={(e) => updateField(fieldName, e.target.value)}
                       required={field.required}
@@ -228,19 +238,33 @@ export default function EventRegistrationModal({
               })}
 
               {/* Acceptance/Consent checkbox */}
-              {form.acceptance?.text && (
+              {consentText && (
                 <label className="flex cursor-pointer items-start gap-2">
                   <input
                     type="checkbox"
                     checked={!!formData.consent}
                     onChange={(e) => updateField('consent', e.target.checked)}
-                    required={form.acceptance.required}
+                    required={consentRequired}
                     disabled={isLoading}
                     className="mt-1 size-4 rounded border-border accent-primary"
                   />
-                  <span className="text-muted-foreground text-sm leading-tight">
-                    {form.acceptance.text}
-                    {form.acceptance.required && <span className="ml-1 text-destructive">*</span>}
+                  <span className="whitespace-pre-line text-muted-foreground text-sm leading-tight">
+                    {/* Text stays label text (ticks the box); only the link opens the page. */}
+                    {consentText}
+                    {consentHref && (
+                      <>
+                        {' '}
+                        <a
+                          href={consentHref}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-semibold text-primary hover:underline"
+                        >
+                          {tCommon('readMore')}
+                        </a>
+                      </>
+                    )}
+                    {consentRequired && <span className="ml-1 text-destructive">*</span>}
                   </span>
                 </label>
               )}
@@ -260,7 +284,7 @@ export default function EventRegistrationModal({
                     {t('registering')}
                   </>
                 ) : (
-                  form.submitButtonText || tCommon('processing')
+                  submitText
                 )}
               </Button>
             </form>

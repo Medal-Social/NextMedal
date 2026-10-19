@@ -44,7 +44,13 @@ const ENGLISH_MONTHS =
  * a clock time, so callers must not fabricate `00:00`.
  */
 export function extractDateFromXOembedHtml(html: string): string | null {
-  const match = html.match(new RegExp(`(${ENGLISH_MONTHS})\\s+(\\d{1,2}),\\s+(\\d{4})`, 'i'));
+  // Body copy can mention dates too. Only the trailing footer link is a timestamp.
+  const bodyEnd = html.toLowerCase().lastIndexOf('</p>');
+  if (bodyEnd < 0) return null;
+  const footer = html.slice(bodyEnd + 4).split(/<\/blockquote>/i)[0];
+  const anchors = [...footer.matchAll(/<a\b[^>]*>([\s\S]*?)<\/a>/gi)];
+  const dateText = stripHtml(anchors.at(-1)?.[1] ?? '');
+  const match = dateText.match(new RegExp(`^(${ENGLISH_MONTHS})\\s+(\\d{1,2}),\\s+(\\d{4})$`, 'i'));
   if (!match) return null;
   const parsed = new Date(`${match[1]} ${match[2]}, ${match[3]} UTC`);
   if (Number.isNaN(parsed.getTime())) return null;

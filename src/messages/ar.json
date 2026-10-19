@@ -170,7 +170,7 @@
     "company": "الشركة",
     "sendMessage": "إرسال الرسالة",
     "privacy-link": "سياسة الخصوصية",
-    "privacy-consent-label": "أوافق على {privacyLink}",
+    "privacy-consent-label": "أوافق على <privacyLink>سياسة الخصوصية</privacyLink>",
     "privacy-aria-label": "اقرأ سياسة الخصوصية",
     "address": "العنوان",
     "opening-hours": "ساعات العمل",
@@ -278,7 +278,8 @@
         "registerFor": "سجل في {title}",
         "formDescription": "املأ النموذج أدناه لحجز مكانك.",
         "registering": "جارٍ التسجيل...",
-        "close": "تم"
+        "close": "تم",
+        "consent": "أوافق على حفظ بياناتي لمعالجة تسجيلي."
       }
     },
     "newsletter": {

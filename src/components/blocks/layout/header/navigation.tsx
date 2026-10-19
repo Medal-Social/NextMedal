@@ -1,6 +1,8 @@
 'use client';
 
 import { ExternalLink } from 'lucide-react';
+import Link from 'next/link';
+import { useLocale } from 'next-intl';
 import { stegaClean } from 'next-sanity';
 import type * as React from 'react';
 import {
@@ -12,8 +14,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import { Link } from '@/i18n/navigation';
-import { resolveUrlSync } from '@/lib/sanity/resolve-url';
+import { internalHref, withLocalePrefix } from '@/lib/sanity/localized-link';
 
 type NavMenuItem = Sanity.MenuItem | Sanity.DropdownMenu;
 
@@ -21,17 +22,16 @@ interface NavigationProps {
   items?: (Sanity.MenuItem | Sanity.DropdownMenu)[];
 }
 
-function getLinkHref(item: Sanity.MenuItem): string {
+// Final hrefs (no /en/ prefix for English, so no 308), rendered with a plain next/link.
+function linkProps(item: Sanity.MenuItem, locale: string): { href: string } {
   if (item.internal?.metadata?.slug?.current) {
-    return resolveUrlSync(item.internal as Sanity.PageBase, {
-      base: false,
-      params: item.params,
-    });
+    const href = internalHref(item.internal, locale, item.params);
+    if (href) return { href };
   }
   if (item.external) {
-    return stegaClean(item.external);
+    return { href: stegaClean(item.external) };
   }
-  return '/';
+  return { href: withLocalePrefix('/', locale) };
 }
 
 function ListItem({
@@ -69,6 +69,7 @@ function isDropdownMenu(item: NavMenuItem): item is Sanity.DropdownMenu {
 }
 
 export default function Navigation({ items }: NavigationProps) {
+  const locale = useLocale();
   return (
     <NavigationMenu>
       <NavigationMenuList>
@@ -81,7 +82,7 @@ export default function Navigation({ items }: NavigationProps) {
                 <NavigationMenuLink
                   render={
                     <Link
-                      href={getLinkHref(item)}
+                      {...linkProps(item, locale)}
                       className={navigationMenuTriggerStyle()}
                       target={item.external ? '_blank' : undefined}
                       aria-label={item.external ? `${item.label} (opens in new tab)` : undefined}
@@ -112,7 +113,7 @@ export default function Navigation({ items }: NavigationProps) {
                       <ListItem
                         key={('_key' in link && link._key) || `nav-link-${index}-${linkIndex}`}
                         title={link.label || ''}
-                        href={getLinkHref(link)}
+                        {...linkProps(link, locale)}
                       >
                         {/* Description would go here if available */}
                       </ListItem>

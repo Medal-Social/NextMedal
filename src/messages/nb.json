@@ -10,7 +10,8 @@
     "cancel": "Avbryt",
     "done": "Ferdig",
     "processing": "Behandler...",
-    "untitled": "Uten tittel"
+    "untitled": "Uten tittel",
+    "readMore": "Les mer"
   },
   "pagination": {
     "previous": "Forrige",
@@ -142,7 +143,7 @@
     "email": "E-post",
     "phone": "Telefon",
     "privacy-link": "personvernerklæring",
-    "privacy-consent-label": "Jeg godtar {privacyLink}",
+    "privacy-consent-label": "Jeg godtar <privacyLink>personvernerklæring</privacyLink>",
     "privacy-aria-label": "Les vår personvernerklæring",
     "address": "Adresse",
     "opening-hours": "Åpningstider",
@@ -230,7 +231,8 @@
         "registerFor": "Meld deg på {title}",
         "formDescription": "Fyll ut skjemaet nedenfor for å reservere din plass.",
         "registering": "Melder deg på...",
-        "close": "Ferdig"
+        "close": "Ferdig",
+        "consent": "Jeg godtar at opplysningene mine lagres for å håndtere påmeldingen."
       }
     }
   },

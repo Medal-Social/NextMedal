@@ -169,10 +169,7 @@ export function MenuItemInput(props: ObjectInputProps) {
               <option value="">Top of page</option>
               {anchors.map((a) => (
                 <option key={a.anchor} value={`#${a.anchor}`}>
-                  {a.type
-                    ? a.type.charAt(0).toUpperCase() + a.type.slice(1).replace('-', ' ')
-                    : 'Section'}
-                  {a.isExplicit ? ` (#${a.anchor})` : ''}
+                  {a.label}
                 </option>
               ))}
             </Select>

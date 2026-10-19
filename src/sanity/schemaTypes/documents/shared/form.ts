@@ -18,6 +18,9 @@ export default defineType({
   title: 'Form',
   icon: EnvelopeIcon,
   type: 'document',
+  fieldsets: [
+    { name: 'texts', title: 'Texts on the form', options: { collapsible: true, collapsed: false } },
+  ],
   fields: [
     defineField({
       name: 'formTitle',
@@ -194,9 +197,38 @@ export default defineType({
       name: 'requireConsent',
       title: 'Require Privacy Consent?',
       description:
-        'If enabled, users must accept the privacy policy before submitting. Consent text comes from translation files.',
+        'If enabled, users must accept the privacy policy before submitting. The text is set under "Texts on the form" (empty = the standard text).',
       type: 'boolean',
       initialValue: false,
+    }),
+    defineField({
+      name: 'submitButtonText',
+      title: 'Send button text',
+      description: 'Leave empty for the standard text in each language.',
+      type: 'internationalizedArrayString',
+      fieldset: 'texts',
+    }),
+    defineField({
+      name: 'successMessage',
+      title: 'Thank-you message',
+      description: 'Shown after sending. Leave empty for the standard text.',
+      type: 'internationalizedArrayText',
+      fieldset: 'texts',
+    }),
+    defineField({
+      name: 'acceptance',
+      title: 'Consent checkbox',
+      type: 'object',
+      fieldset: 'texts',
+      fields: [
+        defineField({ name: 'text', title: 'Text', type: 'internationalizedArrayString' }),
+        defineField({
+          name: 'link',
+          title: 'Link',
+          description: 'e.g. the privacy page.',
+          type: 'menuItem',
+        }),
+      ],
     }),
   ],
   preview: {
