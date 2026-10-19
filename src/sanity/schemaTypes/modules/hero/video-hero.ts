@@ -11,6 +11,7 @@
 import { VideoIcon } from '@sanity/icons/Video';
 import type { Rule } from 'sanity';
 import { defineField } from 'sanity';
+import { muxOnly } from '../../../lib/mux';
 import { createUidField } from '../ui/uid-input';
 
 // Extract YouTube video ID from various URL formats
@@ -89,7 +90,7 @@ export default defineField({
       fieldset: 'videoOptions',
       options: {
         list: [
-          { title: 'Mux', value: 'mux' },
+          ...muxOnly([{ title: 'Mux', value: 'mux' }]),
           { title: 'YouTube', value: 'youtube' },
         ],
         layout: 'radio',
@@ -117,22 +118,24 @@ export default defineField({
           return true;
         }),
     },
-    {
-      name: 'muxVideo',
-      title: 'Mux Video',
-      type: 'mux.video',
-      description: 'Upload or select a video from Mux',
-      fieldset: 'videoOptions',
-      hidden: ({ parent }) => parent?.type !== 'mux',
-      validation: (rule: Rule) =>
-        rule.custom((value, context) => {
-          const parent = context.parent as { type?: string } | undefined;
-          if (parent?.type === 'mux' && !value) {
-            return 'Mux video is required';
-          }
-          return true;
-        }),
-    },
+    ...muxOnly([
+      defineField({
+        name: 'muxVideo',
+        title: 'Mux Video',
+        type: 'mux.video',
+        description: 'Upload or select a video from Mux',
+        fieldset: 'videoOptions',
+        hidden: ({ parent }) => parent?.type !== 'mux',
+        validation: (rule: Rule) =>
+          rule.custom((value, context) => {
+            const parent = context.parent as { type?: string } | undefined;
+            if (parent?.type === 'mux' && !value) {
+              return 'Mux video is required';
+            }
+            return true;
+          }),
+      }),
+    ]),
     {
       name: 'thumbnail',
       title: 'Thumbnail Image',

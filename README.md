@@ -29,7 +29,7 @@ NextMedal is the ultimate choice for developers, agencies, and businesses who de
 
 ### Content & Media
 - **Sanity CMS**: Visual editing, real-time collaboration
-- **Mux Video**: High-performance video streaming
+- **Mux Video** (opt-in): set `MUX_ENABLED` in `src/sanity/lib/mux.ts` to add the Mux plugin and video source
 - **Next-Intl**: Built-in internationalization
 - **Portable Text**: Structured content format
 
