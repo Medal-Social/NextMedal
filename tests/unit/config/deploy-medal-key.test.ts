@@ -1,6 +1,7 @@
 import { spawnSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { chmodSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 /**
@@ -54,6 +55,68 @@ describe.each(workflows)('%s', (file) => {
   it('only deletes MEDAL_API_ENDPOINT from the Worker when it is empty', () => {
     const upload = stepScript(source, 'Upload Worker secrets');
     expect(upload).toMatch(/for name in MEDAL_API_ENDPOINT; do/);
-    expect(upload).not.toContain('SANITY_WRITE_TOKEN');
+    expect(upload).not.toMatch(/secret put "?\$?\{?SANITY_WRITE_TOKEN/);
+  });
+
+  it('deletes the retired SANITY_WRITE_TOKEN still on the Worker (deploys keep vars)', () => {
+    const { status, calls } = fakeUpload(source, ['MEDAL_API_KEY', 'SANITY_WRITE_TOKEN']);
+    expect(status).toBe(0);
+    expect(calls.filter((c) => c.includes('secret delete SANITY_WRITE_TOKEN'))).toHaveLength(1);
+  });
+
+  it('leaves the Worker alone when the retired token is gone', () => {
+    const { status, calls } = fakeUpload(source, ['MEDAL_API_KEY']);
+    expect(status).toBe(0);
+    expect(calls.some((c) => c.includes('SANITY_WRITE_TOKEN'))).toBe(false);
   });
 });
+
+/**
+ * Runs the "Upload Worker secrets" step against a fake `pnpm` that only logs.
+ * The PATH holds the fake and the system dirs only, and the run refuses unless
+ * `pnpm` resolves to the fake: the real one would reach the live Workers.
+ */
+function fakeUpload(source: string, secretsOnWorker: string[]) {
+  const dir = mkdtempSync(join(tmpdir(), 'nm-deploy-'));
+  try {
+    const fake = join(dir, 'pnpm');
+    const log = join(dir, 'calls.log');
+    writeFileSync(
+      fake,
+      [
+        '#!/bin/bash',
+        'echo "$*" >> "$CALLS"',
+        'if [[ "$*" == *"secret list"* ]]; then echo "$SECRETS_JSON"; else cat > /dev/null; fi',
+        '',
+      ].join('\n')
+    );
+    chmodSync(fake, 0o755);
+    writeFileSync(log, '');
+    // No credentials reach the subprocess: no Cloudflare variables, and HOME /
+    // XDG_CONFIG_HOME point at the empty temp dir (no wrangler login).
+    const env = {
+      PATH: `${dir}:/usr/bin:/bin`,
+      HOME: dir,
+      XDG_CONFIG_HOME: dir,
+      CALLS: log,
+      SECRETS_JSON: JSON.stringify(secretsOnWorker.map((name) => ({ name }))),
+      MEDAL_API_KEY: 'medal_x',
+    } as unknown as NodeJS.ProcessEnv;
+    if (Object.keys(env).some((key) => key.startsWith('CLOUDFLARE_'))) {
+      throw new Error('refusing to run: Cloudflare credentials in the environment');
+    }
+    const resolved = spawnSync(
+      'bash',
+      ['-c', 'command -v pnpm; command -v wrangler; command -v npx; true'],
+      { env }
+    )
+      .stdout.toString()
+      .trim();
+    if (resolved !== fake) throw new Error(`refusing to run: pnpm resolves to ${resolved}`);
+    const result = spawnSync('bash', ['-c', stepScript(source, 'Upload Worker secrets')], { env });
+    const calls = readFileSync(log, 'utf8').trim().split('\n').filter(Boolean);
+    return { status: result.status, calls };
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}

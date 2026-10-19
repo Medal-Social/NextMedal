@@ -94,6 +94,13 @@ jobs:
             echo "Uploading $name to nextmedal (production)..."
             printf '%s' "$value" | pnpm exec wrangler secret put "$name" --env production
           done
+          # Retired: forms no longer write to Sanity. Remove a token left by older deploys.
+          for name in SANITY_WRITE_TOKEN; do
+            if echo "$existing" | grep -qx "$name"; then
+              echo "::warning::Retired secret '$name' is still on the Worker — deleting."
+              echo y | pnpm exec wrangler secret delete "$name" --env production
+            fi
+          done
 
       - name: Verify release freshness
         env:

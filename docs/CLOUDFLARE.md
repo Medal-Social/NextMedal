@@ -45,6 +45,9 @@ The two workflows are **dormant by default**. To enable automatic deploys:
      `write:contacts` (dotted: `crm.contact.read`, `crm.activity.read`,
      `write:contacts`, `crm.contact.note.create`). Both are pushed to the
      Worker as secrets; an empty `MEDAL_API_ENDPOINT` is deleted from it.
+   - `SANITY_WRITE_TOKEN` is retired (forms no longer write to Sanity). A deploy
+     deletes it from the Worker if an older deploy left it there; also revoke
+     the token in Sanity manage and remove the GitHub secret.
 
    The `Prod` environment already holds the Sanity secrets; you only need to add
    the two `CLOUDFLARE_*` values there.
