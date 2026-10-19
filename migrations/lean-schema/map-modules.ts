@@ -338,6 +338,7 @@ export const REMOVED_GALLERY_ITEMS = ['team'];
 /**
  * The /components developer showcase (D8): kept as stored, minus deleted block
  * types; an old video page top becomes a page top (its renderer is deleted).
+ * A gallery nested inside the gallery is mapped the same way.
  */
 function mapGallery(module: AnyModule): AnyModule {
   if (!Array.isArray(module.groups)) return module;
@@ -347,11 +348,16 @@ function mapGallery(module: AnyModule): AnyModule {
           ...group,
           items: (group.items as AnyModule[])
             .filter((item) => !REMOVED_GALLERY_ITEMS.includes(item?._type))
-            .map((item) =>
-              item?._type === 'videoHero'
-                ? mapVideoHero(item, `component-gallery ${module._key} videoHero ${item._key}`)
-                : item
-            ),
+            .map((item) => {
+              if (item?._type === 'component-gallery') return mapGallery(item);
+              if (item?._type === 'videoHero') {
+                return mapVideoHero(
+                  item,
+                  `component-gallery ${module._key} videoHero ${item._key}`
+                );
+              }
+              return item;
+            }),
         }
       : group
   );
