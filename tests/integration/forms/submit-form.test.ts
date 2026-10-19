@@ -231,18 +231,23 @@ describe('submitForm', () => {
       expect(contactsUpdate.mock.calls[0]?.[1]).not.toHaveProperty('first_name');
     });
 
-    it('re-subscribes a returning newsletter sign-up who had unsubscribed', async () => {
+    it('never re-subscribes a contact who unsubscribed (the public form proves no ownership)', async () => {
       contactsList.mockResolvedValue({
         data: [{ ...existing, email_status: 'unsubscribed' }],
         pagination: { has_more: false, next_cursor: null },
       });
 
-      await submit({ intent: 'newsletter', data: { email: 'human@example.com' } });
+      const result = await submit({ intent: 'newsletter', data: { email: 'human@example.com' } });
 
+      expect(result?.data).toEqual({ success: true });
       expect(contactsUpdate).toHaveBeenCalledWith(
         'contact-9',
-        expect.objectContaining({ email_status: 'subscribed', labels: ['newsletter'] })
+        expect.objectContaining({ labels: ['newsletter'] })
       );
+      expect(contactsUpdate.mock.calls[0]?.[1]).not.toHaveProperty('email_status');
+      expect(addNote).toHaveBeenCalledWith('contact-9', {
+        content: expect.stringContaining('unsubscribed'),
+      });
     });
 
     it('subscribes a returning newsletter sign-up with no email status', async () => {

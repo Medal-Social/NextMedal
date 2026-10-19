@@ -19,7 +19,7 @@ export interface Submission {
   labels: string[];
   /** The submission itself, on the contact's timeline. */
   note: string;
-  /** A newsletter sign-up: subscribed, or re-subscribed after an opt-out. */
+  /** A newsletter sign-up: new contacts and contacts with no email status are subscribed; an opt-out stays. */
   subscribe?: boolean;
   /**
    * A line that identifies this submission in a note (e.g. `Event ID: <id>`).
@@ -134,9 +134,15 @@ export async function recordSubmission(
   }
 }
 
-/** A newsletter sign-up never overrides a bounce or complaint, only an opt-out or nothing. */
-const resubscribable = (contact: Contact) =>
-  !contact.email_status || contact.email_status === 'unsubscribed';
+/**
+ * A newsletter sign-up only subscribes a contact with no email status. The
+ * public form proves nobody owns the address, so it never overrides an
+ * opt-out, a bounce or a complaint; an opted-out contact gets a note instead.
+ */
+const subscribable = (contact: Contact) => !contact.email_status;
+
+const OPTED_OUT_NOTE =
+  'This contact had unsubscribed, so the email status was left unchanged. Confirm with them before subscribing them again.';
 
 async function record(medal: Medal, submission: Submission, logger: Logger): Promise<RecordResult> {
   const input: CreateContactInput = {
@@ -174,11 +180,14 @@ async function record(medal: Medal, submission: Submission, logger: Logger): Pro
     label_ids: contact.label_ids,
     labels: submission.labels,
     ...missingDetails(contact, submission),
-    ...(submission.subscribe && resubscribable(contact)
+    ...(submission.subscribe && subscribable(contact)
       ? { email_status: 'subscribed' as const }
       : {}),
   });
-  await medal.contacts.addNote(contact.id, { content: submission.note });
+  const optedOut = submission.subscribe && contact.email_status === 'unsubscribed';
+  await medal.contacts.addNote(contact.id, {
+    content: optedOut ? `${submission.note}\n${OPTED_OUT_NOTE}` : submission.note,
+  });
   return { status: 'updated', contactId: contact.id };
 }
 
