@@ -85,7 +85,6 @@ export default defineType({
                 { type: 'callout' },
                 { type: 'richtext' },
                 { type: 'logo-cloud' },
-                { type: 'team' },
                 { type: 'pricing-list' },
                 { type: 'product-comparison' },
                 { type: 'component-gallery' },

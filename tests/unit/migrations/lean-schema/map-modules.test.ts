@@ -305,6 +305,39 @@ describe('kept blocks lose their knobs and nothing else', () => {
     expect(JSON.stringify(mapModule(gallery))).toContain('"bgFrom"');
     expect(JSON.stringify(mapModule(gallery))).not.toContain('"style"');
   });
+
+  it('the developer gallery drops its Team item (team block deleted, owner decision B)', () => {
+    const gallery = {
+      _type: 'component-gallery',
+      _key: 'g',
+      groups: [
+        {
+          _key: 'x',
+          _type: 'component-group',
+          title: 'Content blocks',
+          items: [
+            { _type: 'features', _key: 'f' },
+            { _type: 'team', _key: 't', pretitle: 'Meet the Team' },
+            { _type: 'logo-cloud', _key: 'l' },
+          ],
+        },
+      ],
+    };
+    const once = mapModule(gallery);
+    expect(once).toEqual({
+      ...gallery,
+      groups: [
+        {
+          ...gallery.groups[0],
+          items: [
+            { _type: 'features', _key: 'f' },
+            { _type: 'logo-cloud', _key: 'l' },
+          ],
+        },
+      ],
+    });
+    expect(mapModule(once)).toEqual(once);
+  });
 });
 
 describe('stripCtaStyles', () => {

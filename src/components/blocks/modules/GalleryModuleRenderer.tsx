@@ -7,7 +7,6 @@ import Features from './content/Features';
 import PricingList from './content/PricingList';
 import ProductComparison from './content/ProductComparison';
 import RichtextModuleClient from './content/RichtextModule/client';
-import Team from './content/Team';
 import Hero from './hero/Hero';
 import VideoHero from './hero/VideoHero';
 import Callout from './marketing/Callout';
@@ -99,15 +98,6 @@ export function GalleryModuleRenderer({ module: stored }: Props) {
       // they must not pull server-only oEmbed resolve into this client tree.
       const props = module as Sanity.Richtext;
       return <RichtextModuleClient {...props} />;
-    }
-
-    case 'team': {
-      const props = module as Sanity.Team;
-      return (
-        <Suspense fallback={<ModuleSkeleton />}>
-          <Team {...props} />
-        </Suspense>
-      );
     }
 
     case 'videoHero': {

@@ -29,13 +29,6 @@ export const DEVELOPER_BLOCK_NAMES = ['component-gallery'] as const;
 /** In stored content until prod is migrated; not insertable. Deleted in Task 35. */
 export const DEPRECATED_BLOCK_NAMES = ['videoHero'] as const;
 
-/**
- * Not a page block: stored only inside the /components developer gallery
- * (one item on nextmedal.com). The other D6 blocks are deleted; delete these
- * together with their gallery items.
- */
-export const GALLERY_ONLY_BLOCK_NAMES = ['team'] as const;
-
 /** Placements keep their own small list (documented exception to rule 6). */
 export const PLACEMENT_BLOCK_NAMES = ['lead-magnet', 'callout'] as const;
 

@@ -3,16 +3,19 @@ import { resolve } from 'node:path';
 import fixtureDocuments from '@tests/fixtures/lean-schema/documents.json';
 import { describe, expect, it } from 'vitest';
 import { schemaTypes } from '@/sanity/schemaTypes';
-import { GALLERY_ONLY_BLOCK_NAMES } from '@/sanity/schemaTypes/page-blocks';
 import { mapAll } from '$/migrations/lean-schema/map-documents';
 
-/** Vault spec 2026-10-18 D6: removed from the template (forks keep their copies). */
+/**
+ * Vault spec 2026-10-18 D6: removed from the template (forks keep their copies).
+ * team: owner decision B (2026-10-19) — its one /components gallery item goes too.
+ */
 const REMOVED = [
   'contact',
   'breadcrumbs',
   'latest-articles',
   'pricing-comparison',
   'component.library',
+  'team',
 ] as const;
 
 const APP = resolve(__dirname, '../../..');
@@ -62,23 +65,14 @@ describe('blocks removed from the template (D6)', () => {
     for (const type of REMOVED) expect(source).not.toContain(`case '${type}'`);
   });
 
-  it('routes and queries no longer ask for component.library or breadcrumbs', () => {
+  it('routes, queries and share images no longer know the removed blocks', () => {
     expect(read('src/app/(frontend)/[locale]/[...slug]/page.tsx')).not.toContain(
       'component.library'
     );
     expect(read('src/lib/seo/share-images.ts')).not.toContain('component.library');
     expect(read('src/sanity/lib/queries.ts')).not.toContain("_type == 'breadcrumbs'");
     expect(read('src/sanity/lib/queries.ts')).not.toContain("_type == 'contact'");
+    expect(read('src/sanity/lib/queries.ts')).not.toContain("_type == 'team'");
+    expect(read('src/lib/seo/share-images.ts')).not.toContain('team.png');
   });
-});
-
-describe('gallery-only blocks', () => {
-  it.each(GALLERY_ONLY_BLOCK_NAMES)(
-    '%s is still stored in the /components gallery, so it stays registered (delete it with that item)',
-    (type) => {
-      expect(afterMigration.get(type) ?? 0).toBeGreaterThan(0);
-      expect(registered.has(type)).toBe(true);
-      expect(galleryItemTypes()).toContain(type);
-    }
-  );
 });

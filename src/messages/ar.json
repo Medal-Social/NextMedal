@@ -305,13 +305,6 @@
       "noQuestions": "لا توجد أسئلة بعد",
       "expand": "توسيع",
       "collapse": "طي"
-    },
-    "team": {
-      "ourTeam": "فريقنا",
-      "meetTheTeam": "تعرف على الفريق",
-      "noTeamMembers": "لا يوجد أعضاء فريق بعد",
-      "viewProfile": "عرض الملف الشخصي",
-      "readBio": "اقرأ السيرة الذاتية"
     }
   },
   "navigation": {

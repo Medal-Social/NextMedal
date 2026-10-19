@@ -327,13 +327,33 @@ function mapVideoHero(module: AnyModule, label: string): AnyModule {
   return out;
 }
 
+/** Gallery items whose block type is deleted (owner decision B, 2026-10-19: team). */
+export const REMOVED_GALLERY_ITEMS = ['team'];
+
+/** The /components developer showcase (D8): kept as stored, minus deleted block types. */
+function mapGallery(module: AnyModule): AnyModule {
+  if (!Array.isArray(module.groups)) return module;
+  const groups = (module.groups as AnyModule[]).map((group) =>
+    Array.isArray(group?.items)
+      ? {
+          ...group,
+          items: (group.items as AnyModule[]).filter(
+            (item) => !REMOVED_GALLERY_ITEMS.includes(item?._type)
+          ),
+        }
+      : group
+  );
+  return { ...module, groups };
+}
+
 export function mapModule(input: AnyModule): AnyModule {
   let module = stripCtaStyles(input);
   const label = `${module._type} ${module._key}`;
 
   if (module._type === 'videoHero') return mapVideoHero(module, label);
-  // The /components developer showcase (D8): untouched apart from button styles.
-  if (module._type === 'component-gallery') return module;
+  // The /components developer showcase (D8): untouched apart from button styles
+  // and the items of deleted block types.
+  if (module._type === 'component-gallery') return mapGallery(module);
 
   const keep = KEEP[module._type];
   if (!keep) throw new UnmappedContentError(`${label}: no lean block for this type`);

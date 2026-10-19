@@ -29,7 +29,7 @@ describe('lean-schema string inventory', () => {
   });
 
   it('every allow-list entry has a reason, a count and field paths', () => {
-    expect(allowed.size).toBe(11);
+    expect(allowed.size).toBe(13);
     for (const [text, entry] of allowed) {
       expect(entry.reason.length, text).toBeGreaterThan(10);
       expect(entry.count, text).toBeGreaterThan(0);

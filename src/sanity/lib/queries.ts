@@ -113,15 +113,6 @@ const BASE_MODULES_QUERY = groq`
 		'filename': file.asset->originalFilename,
 		'size': file.asset->size
 	},
-	_type == 'team' => {
-		...,
-		intro[]{ ${PT_BLOCK_QUERY} },
-		people[]->{
-			...,
-			image { ${IMAGE_QUERY} },
-			bio[]{ ${PT_BLOCK_QUERY} }
-		},
-	},
 	_type == 'pricing-list' => {
 		tiers[]->{
 			...,

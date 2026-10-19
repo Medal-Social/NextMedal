@@ -730,12 +730,6 @@ declare global {
       }[];
     }
 
-    interface Team extends Module<'team'> {
-      intro?: BlockContent;
-      people?: Person[]; // Resolved
-      layout?: 'grid' | 'split';
-    }
-
     interface Testimonials extends Module<'testimonials'> {
       intro?: BlockContent;
       reviews?: {

@@ -88,7 +88,6 @@ export const MODULE_SHARE_IMAGES = {
   features: designed('features.png', 'Grid layout of features with icons and descriptions.'),
   'logo-cloud': designed('logo-cloud.png', 'Displays a grid of partner and client logos.'),
   flipbook: designed('flipbook.png', 'A PDF shown as a page-turning flipbook.'),
-  team: designed('team.png', 'Displays a list of team members in a grid or list layout.'),
   'pricing-list': designed('pricing-list.png', 'Displays a list of pricing tiers and plans.'),
   'product-comparison': designed(
     'product-comparison.png',

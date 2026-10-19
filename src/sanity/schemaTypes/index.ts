@@ -40,7 +40,6 @@ import flipbook from './modules/content/flipbook';
 import logoCloud from './modules/content/logo-cloud';
 import pricingList from './modules/content/pricing-list';
 import productComparison from './modules/content/product-comparison';
-import team from './modules/content/team';
 import text from './modules/content/text';
 // Modules - Frontpages
 import articlesFrontpage from './modules/frontpage/articles-frontpage';
@@ -117,7 +116,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   flipbook,
   pricingList,
   productComparison,
-  team,
   text,
 
   // Modules - Marketing & Leads
