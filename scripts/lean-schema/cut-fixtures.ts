@@ -1,5 +1,7 @@
 // scripts/lean-schema/cut-fixtures.ts
 // Usage: pnpm exec tsx scripts/lean-schema/cut-fixtures.ts <path/to/data.ndjson>
+// tests/fixtures/lean-schema = production after nm-fixes (2026-10-19 export);
+// tests/fixtures/nm-fixes = the 2026-10-18 export nm-fixes was written against (frozen).
 // The fixtures are committed to a PUBLIC repo: types are allowlisted, never
 // secrets (mux.apiKey, sanity.previewUrlSecret), system docs or form submissions.
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';

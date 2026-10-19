@@ -1,4 +1,4 @@
-import docs from '@tests/fixtures/lean-schema/documents.json';
+import docs from '@tests/fixtures/nm-fixes/documents.json';
 import { collectMigrationMutations, type MigrationContext, type Mutation } from 'sanity/migrate';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import migration, {

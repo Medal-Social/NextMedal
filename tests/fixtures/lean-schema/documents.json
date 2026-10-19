@@ -1,12 +1,5 @@
 [
   {
-    "_createdAt": "2025-12-31T11:48:23Z",
-    "_id": "00ebda9b-9e40-44ff-8c22-58d1d0567df1",
-    "_rev": "47e233f9-48d0-4a93-b7b2-6f8e8c24726d",
-    "_type": "translation.metadata",
-    "_updatedAt": "2025-12-31T11:48:23Z"
-  },
-  {
     "_createdAt": "2025-05-11T19:33:50Z",
     "_id": "01914fd8-6f5c-4b9d-8830-065fe8f413a5",
     "_rev": "F72nYjsyqsYk2r6gCP6eEn",
@@ -72,7 +65,11 @@
                   }
                 ],
                 "image": {
-                  "_type": "img"
+                  "_type": "img",
+                  "image": {
+                    "_sanityAsset": "image@file://./images/bc5a81ba1ec668cd9ad165c7b9148d6b8bbc7889-1096x896.png",
+                    "_type": "image"
+                  }
                 },
                 "options": {
                   "bgFrom": "brand-vibrant",
@@ -1003,9 +1000,9 @@
   {
     "_createdAt": "2025-12-22T20:45:09Z",
     "_id": "0305aaeb-eef8-4f13-b724-ebdd86591b83",
-    "_rev": "61wMMR7R8VvWK2bB550gbL",
+    "_rev": "2eedf779-4540-4fe7-b9c8-6fd90123401a",
     "_type": "form",
-    "_updatedAt": "2025-12-29T15:25:14Z",
+    "_updatedAt": "2026-10-19T02:23:56Z",
     "acceptance": {
       "link": {
         "_type": "menuItem",
@@ -1016,7 +1013,14 @@
         "label": "Test",
         "type": "internal"
       },
-      "text": "Test"
+      "text": [
+        {
+          "_key": "en",
+          "_type": "internationalizedArrayStringValue",
+          "language": "en",
+          "value": "Test"
+        }
+      ]
     },
     "fields": [
       {
@@ -1044,20 +1048,20 @@
       "newTab": false,
       "type": "internal"
     },
-    "submitButtonText": "Submit",
+    "submitButtonText": [
+      {
+        "_key": "en",
+        "_type": "internationalizedArrayStringValue",
+        "language": "en",
+        "value": "Submit"
+      }
+    ],
     "successMessage": [
       {
-        "_key": "e9d95a7e06d934efbcc052b41283f4a9",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "ac882a66c52b1bd01fb3e7baed80655d",
-            "_type": "span",
-            "text": "Thank you! We have received your submission and will get back to you shortly."
-          }
-        ],
-        "markDefs": [],
-        "style": "normal"
+        "_key": "en",
+        "_type": "internationalizedArrayTextValue",
+        "language": "en",
+        "value": "Thank you! We have received your submission and will get back to you shortly."
       }
     ]
   },
@@ -1079,29 +1083,48 @@
   {
     "_createdAt": "2026-01-03T19:57:15Z",
     "_id": "0a41c124-1e2c-4a1b-a870-4163c342b0d1",
-    "_rev": "F72nYjsyqsYk2r6gD9TCQV",
+    "_rev": "2eedf779-4540-4fe7-b9c8-6fd90123401a",
     "_type": "translation.metadata",
-    "_updatedAt": "2026-01-03T19:57:29Z",
+    "_updatedAt": "2026-10-19T02:23:56Z",
+    "schemaTypes": ["page"],
     "translations": [
       {
         "_key": "en",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "en",
         "value": {
           "_ref": "1ddbee30-c430-4d8a-9840-99ade65f68fe",
-          "_type": "reference"
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
         }
       },
       {
         "_key": "nb",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "nb",
         "value": {
           "_ref": "b1ec5d7c-d2c5-4959-8b70-5401dccbfd48",
-          "_type": "reference"
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
         }
       },
       {
         "_key": "ar",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "ar",
         "value": {
           "_ref": "b4abe66c-3d0b-4004-965c-33d94b551eeb",
-          "_type": "reference"
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
         }
       }
     ]
@@ -1130,40 +1153,6 @@
       "noIndex": false,
       "title": "Dokumentasjon - Guider og referanser"
     }
-  },
-  {
-    "_createdAt": "2026-01-03T21:06:29Z",
-    "_id": "1304ae0a-619d-4b49-92a1-fb400c6cbf8e",
-    "_rev": "F72nYjsyqsYk2r6gD9jnKB",
-    "_type": "translation.metadata",
-    "_updatedAt": "2026-01-03T21:06:29Z",
-    "schemaTypes": ["page"],
-    "translations": [
-      {
-        "_key": "en",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "711c4adb-5d25-4674-b01c-febfad295067",
-          "_strengthenOnPublish": {
-            "type": "page"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      },
-      {
-        "_key": "ar",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "e0727f30-9901-4a71-b63b-bf72f7c5d459",
-          "_strengthenOnPublish": {
-            "type": "page"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      }
-    ]
   },
   {
     "_createdAt": "2025-12-29T17:25:53Z",
@@ -2152,9 +2141,9 @@
   {
     "_createdAt": "2025-12-29T17:30:18Z",
     "_id": "1bc46c05-bdff-41dc-a281-e26dcee48d6f",
-    "_rev": "4P2vumDw5K6pjBv4i5ckFx",
+    "_rev": "2eedf779-4540-4fe7-b9c8-6fd90123401a",
     "_type": "pricing",
-    "_updatedAt": "2025-12-29T18:37:07Z",
+    "_updatedAt": "2026-10-19T02:23:56Z",
     "content": [
       {
         "_key": "b0c50c5da2bb",
@@ -2333,10 +2322,8 @@
     ],
     "description": "Self-host and own everything",
     "highlight": "Free forever",
-    "price": {
-      "base": "Free",
-      "suffix": "forever"
-    },
+    "monthlyPrice": "Free",
+    "priceSuffix": "forever",
     "style": "default",
     "title": "Open Source"
   },
@@ -2366,43 +2353,9 @@
     }
   },
   {
-    "_createdAt": "2025-12-26T19:36:00Z",
-    "_id": "1e8ff78a-200f-4422-8da9-edda9e0359f1",
-    "_rev": "IP0HScRYPltURNOjIVAjiJ",
-    "_type": "translation.metadata",
-    "_updatedAt": "2025-12-26T19:36:00Z",
-    "schemaTypes": ["page"],
-    "translations": [
-      {
-        "_key": "en",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "fee75f90-6d2e-42f3-95d4-8803ee10e936",
-          "_strengthenOnPublish": {
-            "type": "page"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      },
-      {
-        "_key": "nb",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "5c1229c3-c988-4506-8489-40c292ee62fd",
-          "_strengthenOnPublish": {
-            "type": "page"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      }
-    ]
-  },
-  {
     "_createdAt": "2026-01-03T21:28:19Z",
     "_id": "23c8c132-1b7a-4cc8-a4e6-bea80625cd06",
-    "_rev": "4P2vumDw5K6pjBv4j3CEpQ",
+    "_rev": "2eedf779-4540-4fe7-b9c8-6fd90123401a",
     "_system": {
       "base": {
         "id": "23c8c132-1b7a-4cc8-a4e6-bea80625cd06",
@@ -2410,7 +2363,7 @@
       }
     },
     "_type": "page",
-    "_updatedAt": "2026-01-03T21:29:03Z",
+    "_updatedAt": "2026-10-19T02:23:56Z",
     "language": "ar",
     "metadata": {
       "_type": "metadata",
@@ -2463,12 +2416,11 @@
             "link": {
               "_type": "menuItem",
               "internal": {
-                "_ref": "23c8c132-1b7a-4cc8-a4e6-bea80625cd06",
+                "_ref": "b874d2a9-d0a2-46ea-b675-39e4506b00d4",
                 "_type": "reference"
               },
               "label": "اطلع على الميزات",
               "newTab": false,
-              "params": "#features",
               "type": "internal"
             },
             "style": "primary"
@@ -2533,74 +2485,6 @@
       "description": "NextMedal: قالب موقع Next.js 16 جاهز للإنتاج مع Sanity CMS ومكونات الخادم ودعم i18n ودرجات Lighthouse مثالية.",
       "title": "NextMedal - قالب موقع Next.js 16 حديث مع Sanity CMS"
     }
-  },
-  {
-    "_createdAt": "2025-12-16T16:49:57Z",
-    "_id": "30b0bf69-a040-45e4-acff-80d9796b06e9",
-    "_rev": "mC31IH6OXG2OB55kTQSIg1",
-    "_type": "translation.metadata",
-    "_updatedAt": "2025-12-16T16:49:57Z",
-    "schemaTypes": ["blog.post"],
-    "translations": [
-      {
-        "_key": "nb",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "2d080d38-21ca-43eb-8198-04086d3a6bc5",
-          "_strengthenOnPublish": {
-            "type": "blog.post"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      },
-      {
-        "_key": "en",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "6595b939-8248-411e-a369-99dff7d59349",
-          "_strengthenOnPublish": {
-            "type": "blog.post"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      }
-    ]
-  },
-  {
-    "_createdAt": "2025-12-16T16:29:04Z",
-    "_id": "31a077e9-a2ea-451d-9c78-1e718e03fa32",
-    "_rev": "44aF5gxFxgMZhXBarR9PZ2",
-    "_type": "translation.metadata",
-    "_updatedAt": "2025-12-16T16:29:04Z",
-    "schemaTypes": ["blog.post"],
-    "translations": [
-      {
-        "_key": "en",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "d62a6725-fed5-462d-abf1-bcd67134bfe0",
-          "_strengthenOnPublish": {
-            "type": "blog.post"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      },
-      {
-        "_key": "nb",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "c812c922-40ce-48c7-ada7-5f407476b3dc",
-          "_strengthenOnPublish": {
-            "type": "blog.post"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      }
-    ]
   },
   {
     "_createdAt": "2025-12-30T15:11:54Z",
@@ -2727,7 +2611,16 @@
     },
     "_type": "logo",
     "_updatedAt": "2025-12-21T21:15:42Z",
-    "image": {},
+    "image": {
+      "dark": {
+        "_sanityAsset": "image@file://./images/1a9dc1f067fc7a3c8c8262a4e56cb17b27307cf5-300x300.png",
+        "_type": "image"
+      },
+      "default": {
+        "_sanityAsset": "image@file://./images/1a9dc1f067fc7a3c8c8262a4e56cb17b27307cf5-300x300.png",
+        "_type": "image"
+      }
+    },
     "link": "https://www.medalsocial.com/",
     "title": "Medal Social"
   },
@@ -3315,46 +3208,21 @@
     "title": "Guides"
   },
   {
-    "_createdAt": "2025-12-16T16:33:04Z",
-    "_id": "574b2ce3-403d-4b27-a2f3-add93ceb35cb",
-    "_rev": "mC31IH6OXG2OB55kTQFKzd",
-    "_type": "translation.metadata",
-    "_updatedAt": "2025-12-16T16:33:04Z",
-    "schemaTypes": ["blog.post"],
-    "translations": [
-      {
-        "_key": "nb",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "593939b2-49a3-42ab-b9cc-cdece0b0c402",
-          "_strengthenOnPublish": {
-            "type": "blog.post"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      },
-      {
-        "_key": "en",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "4d97369a-6751-413d-8c8e-2005d29f4746",
-          "_strengthenOnPublish": {
-            "type": "blog.post"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      }
-    ]
-  },
-  {
     "_createdAt": "2025-12-20T22:31:46Z",
     "_id": "5a1ff63b-f3aa-4e3e-b735-0e9a73aff7fd",
     "_rev": "wdVElnxigbSMUBkOJ7RgUY",
     "_type": "logo",
     "_updatedAt": "2025-12-20T22:32:57Z",
-    "image": {},
+    "image": {
+      "dark": {
+        "_sanityAsset": "image@file://./images/a982f4cddef9b5d5c37961841de86630f54f409b-512x512.png",
+        "_type": "image"
+      },
+      "default": {
+        "_sanityAsset": "image@file://./images/a982f4cddef9b5d5c37961841de86630f54f409b-512x512.png",
+        "_type": "image"
+      }
+    },
     "link": "https://www.technologynorway.com/",
     "title": "Tech Norway"
   },
@@ -3424,29 +3292,48 @@
   {
     "_createdAt": "2026-01-03T19:57:14Z",
     "_id": "62da2612-dc0a-4e2c-a9b1-c83f8cb7eeeb",
-    "_rev": "F72nYjsyqsYk2r6gD9TCQV",
+    "_rev": "2eedf779-4540-4fe7-b9c8-6fd90123401a",
     "_type": "translation.metadata",
-    "_updatedAt": "2026-01-03T19:57:29Z",
+    "_updatedAt": "2026-10-19T02:23:56Z",
+    "schemaTypes": ["page"],
     "translations": [
       {
         "_key": "en",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "en",
         "value": {
-          "_ref": "e54ebf4c-2b92-4ef5-832f-476bfe5e5fe8",
-          "_type": "reference"
+          "_ref": "31deab03-f039-4d17-bfb3-a990b629a914",
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
         }
       },
       {
         "_key": "nb",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "nb",
         "value": {
           "_ref": "b543a3a3-6cea-4bec-b6b8-31e0f6cb42ce",
-          "_type": "reference"
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
         }
       },
       {
         "_key": "ar",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "ar",
         "value": {
           "_ref": "729eaa88-335a-4fc4-88d5-ced936ae0a8b",
-          "_type": "reference"
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
         }
       }
     ]
@@ -3482,41 +3369,11 @@
     "_rev": "8c0FE3YcwfgEXCqB9RAc8q",
     "_type": "gallery",
     "_updatedAt": "2025-05-11T21:40:00Z",
+    "image": {
+      "_sanityAsset": "image@file://./images/6908375cc677ab50f3e7c4ff9fadc6d3eb03c710-1024x1024.jpg",
+      "_type": "image"
+    },
     "name": "Hello"
-  },
-  {
-    "_createdAt": "2026-01-03T20:29:04Z",
-    "_id": "6522afca-05b5-48e1-817a-479f65e05b44",
-    "_rev": "61wMMR7R8VvWK2bB63Lcf1",
-    "_type": "translation.metadata",
-    "_updatedAt": "2026-01-03T20:29:04Z",
-    "schemaTypes": ["collection.article"],
-    "translations": [
-      {
-        "_key": "nb",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "8384c13c-6196-41e0-8369-a6a734ac4da3",
-          "_strengthenOnPublish": {
-            "type": "collection.article"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      },
-      {
-        "_key": "ar",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "4de4b0da-3cf4-481d-8fc8-45e132104c8d",
-          "_strengthenOnPublish": {
-            "type": "collection.article"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      }
-    ]
   },
   {
     "_createdAt": "2026-01-03T16:16:42Z",
@@ -3557,9 +3414,9 @@
   {
     "_createdAt": "2025-12-29T18:22:33Z",
     "_id": "6d40e2e1-1aca-47cf-9c27-ed5b290e102d",
-    "_rev": "61wMMR7R8VvWK2bB57wRUi",
+    "_rev": "2eedf779-4540-4fe7-b9c8-6fd90123401a",
     "_type": "pricing",
-    "_updatedAt": "2025-12-29T18:37:05Z",
+    "_updatedAt": "2026-10-19T02:23:56Z",
     "content": [
       {
         "_key": "69f109a3cde7",
@@ -3736,12 +3593,10 @@
         "style": "primary"
       }
     ],
+    "currency": "$",
     "description": "For founders serious about growth",
-    "price": {
-      "base": "249",
-      "currency": "$",
-      "suffix": "/month"
-    },
+    "monthlyPrice": "249",
+    "priceSuffix": "/month",
     "title": "Business"
   },
   {
@@ -3794,40 +3649,6 @@
     }
   },
   {
-    "_createdAt": "2025-12-16T16:45:32Z",
-    "_id": "6eb5a492-39cd-4a1c-b05a-b09be9a3b91e",
-    "_rev": "mC31IH6OXG2OB55kTQQ4dn",
-    "_type": "translation.metadata",
-    "_updatedAt": "2025-12-16T16:45:32Z",
-    "schemaTypes": ["blog.post"],
-    "translations": [
-      {
-        "_key": "nb",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "d290fb04-5ff6-4406-b7fb-87e01d51abcf",
-          "_strengthenOnPublish": {
-            "type": "blog.post"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      },
-      {
-        "_key": "en",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "7b29b50b-d01d-4cb7-9836-7c642999599a",
-          "_strengthenOnPublish": {
-            "type": "blog.post"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      }
-    ]
-  },
-  {
     "_createdAt": "2025-05-11T19:22:27Z",
     "_id": "71636629-c7a7-440f-b388-df9b6cf355ad",
     "_rev": "61wMMR7R8VvWK2bB5LZb75",
@@ -3839,6 +3660,10 @@
     },
     "_type": "person",
     "_updatedAt": "2025-12-30T17:58:04Z",
+    "banner": {
+      "_sanityAsset": "image@file://./images/c7cb771afcb2f7b2056c0565ff66f2f78182ff63-1128x191.png",
+      "_type": "image"
+    },
     "bio": [
       {
         "_key": "107c4dc306a9",
@@ -3855,6 +3680,10 @@
         "style": "normal"
       }
     ],
+    "image": {
+      "_sanityAsset": "image@file://./images/ddd8f926912d9b7351651c8999603b0decc32fa1-800x800.jpg",
+      "_type": "image"
+    },
     "name": "Ali Aljumaili",
     "slug": {
       "_type": "slug",
@@ -3910,9 +3739,9 @@
   {
     "_createdAt": "2026-01-03T21:40:15Z",
     "_id": "74cbf377-263d-497a-9f1d-fe93ce6d62e2",
-    "_rev": "F72nYjsyqsYk2r6gD9sCH5",
+    "_rev": "2eedf779-4540-4fe7-b9c8-6fd90123401a",
     "_type": "page",
-    "_updatedAt": "2026-01-03T21:40:23Z",
+    "_updatedAt": "2026-10-19T02:23:56Z",
     "language": "nb",
     "metadata": {
       "_type": "metadata",
@@ -3964,9 +3793,12 @@
             "_type": "cta",
             "link": {
               "_type": "menuItem",
+              "internal": {
+                "_ref": "b874d2a9-d0a2-46ea-b675-39e4506b00d4",
+                "_type": "reference"
+              },
               "label": "Se funksjoner",
               "newTab": false,
-              "params": "#features",
               "type": "internal"
             },
             "style": "primary"
@@ -4035,14 +3867,15 @@
   {
     "_createdAt": "2026-01-03T16:56:33Z",
     "_id": "757d2b5f-5c37-498d-8d37-c906f9d56494",
-    "_rev": "F72nYjsyqsYk2r6gD8lurJ",
+    "_rev": "2eedf779-4540-4fe7-b9c8-6fd90123401a",
     "_type": "translation.metadata",
-    "_updatedAt": "2026-01-03T16:56:36Z",
+    "_updatedAt": "2026-10-19T02:23:56Z",
     "schemaTypes": ["page"],
     "translations": [
       {
         "_key": "en",
         "_type": "internationalizedArrayReferenceValue",
+        "language": "en",
         "value": {
           "_ref": "5c6e6991-8664-4b43-acd4-f1aa6fd458ad",
           "_strengthenOnPublish": {
@@ -4055,6 +3888,7 @@
       {
         "_key": "nb",
         "_type": "internationalizedArrayReferenceValue",
+        "language": "nb",
         "value": {
           "_ref": "45cdf4ad-7346-43f6-9733-a41febedb8cd",
           "_strengthenOnPublish": {
@@ -4067,6 +3901,7 @@
       {
         "_key": "ar",
         "_type": "internationalizedArrayReferenceValue",
+        "language": "ar",
         "value": {
           "_ref": "8f38318c-5877-4536-8ad1-2659d3cbd981",
           "_strengthenOnPublish": {
@@ -4084,7 +3919,16 @@
     "_rev": "wdVElnxigbSMUBkOJ7W0yI",
     "_type": "logo",
     "_updatedAt": "2025-12-20T22:37:12Z",
-    "image": {},
+    "image": {
+      "dark": {
+        "_sanityAsset": "image@file://./images/e1229c37453dd82d1f978ea6d8b0bbcca3be010c-500x500.svg",
+        "_type": "image"
+      },
+      "default": {
+        "_sanityAsset": "image@file://./images/e1229c37453dd82d1f978ea6d8b0bbcca3be010c-500x500.svg",
+        "_type": "image"
+      }
+    },
     "link": "https://www.duftreisen.no/",
     "title": "Duftreisen"
   },
@@ -4140,86 +3984,6 @@
     ]
   },
   {
-    "_createdAt": "2025-12-16T16:42:24Z",
-    "_id": "79d25c3d-f53c-443f-b2fb-3257dedbe3d8",
-    "_rev": "VoNiSYfW3UAiwxp1bSkI2v",
-    "_type": "translation.metadata",
-    "_updatedAt": "2025-12-16T16:42:24Z",
-    "schemaTypes": ["blog.post"],
-    "translations": [
-      {
-        "_key": "nb",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "aa4f843d-994c-4f3d-88b5-3304f84f1274",
-          "_strengthenOnPublish": {
-            "type": "blog.post"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      },
-      {
-        "_key": "en",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "b1bdd61a-257f-454d-acd1-b95c6d0714b0",
-          "_strengthenOnPublish": {
-            "type": "blog.post"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      }
-    ]
-  },
-  {
-    "_createdAt": "2025-12-18T21:53:31Z",
-    "_id": "7a12a509-2543-4a2e-a38e-144364926231",
-    "_rev": "bf32447d-e09a-40ba-a3ac-2807c3425899",
-    "_type": "translation.metadata",
-    "_updatedAt": "2025-12-18T21:53:32Z",
-    "schemaTypes": ["page"]
-  },
-  {
-    "_createdAt": "2025-11-24T16:37:58Z",
-    "_id": "838fd55e-a8f3-46f7-9ce7-c099f964ba89",
-    "_rev": "4d98146c-29c0-4a94-90a8-b5b4a357fed0",
-    "_type": "translation.metadata",
-    "_updatedAt": "2025-11-24T16:51:09Z",
-    "schemaTypes": ["page"],
-    "translations": [
-      {
-        "_key": "en",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "bbf0af0c-c775-4f0b-b1b0-9aca160efb4b",
-          "_strengthenOnPublish": {
-            "template": {
-              "id": "page-en"
-            },
-            "type": "page",
-            "weak": false
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      },
-      {
-        "_key": "nb",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "34d5ce75-ee49-434c-ac67-9798f17fab7f",
-          "_strengthenOnPublish": {
-            "type": "page"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      }
-    ]
-  },
-  {
     "_createdAt": "2025-12-30T19:55:20Z",
     "_id": "8626cb44-d3dd-49b1-a4a2-b968f0e92740",
     "_rev": "61wMMR7R8VvWK2bB5NTmoG",
@@ -4246,7 +4010,16 @@
     },
     "_type": "logo",
     "_updatedAt": "2025-12-20T22:34:31Z",
-    "image": {},
+    "image": {
+      "dark": {
+        "_sanityAsset": "image@file://./images/93d8ea432f89e2ebd52b218d42d8735960ecd751-190x219.svg",
+        "_type": "image"
+      },
+      "default": {
+        "_sanityAsset": "image@file://./images/93d8ea432f89e2ebd52b218d42d8735960ecd751-190x219.svg",
+        "_type": "image"
+      }
+    },
     "link": "https://www.dmf.no/",
     "title": "DMF"
   },
@@ -4289,40 +4062,6 @@
     }
   },
   {
-    "_createdAt": "2025-12-16T16:37:43Z",
-    "_id": "926f6660-f858-4ae8-88e2-3216e109a583",
-    "_rev": "mC31IH6OXG2OB55kTQLpyJ",
-    "_type": "translation.metadata",
-    "_updatedAt": "2025-12-16T16:37:43Z",
-    "schemaTypes": ["blog.post"],
-    "translations": [
-      {
-        "_key": "nb",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "c29e4388-6ef6-4784-aefb-629aa616e7ee",
-          "_strengthenOnPublish": {
-            "type": "blog.post"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      },
-      {
-        "_key": "en",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "3547d122-569f-4cdb-81c2-a7b952afd2be",
-          "_strengthenOnPublish": {
-            "type": "blog.post"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      }
-    ]
-  },
-  {
     "_createdAt": "2025-12-31T19:56:46Z",
     "_id": "940fbe71-561f-4b0e-92ae-d0c24be1a24d",
     "_rev": "61wMMR7R8VvWK2bB5a2yNj",
@@ -4355,21 +4094,31 @@
     "_rev": "wdVElnxigbSMUBkOJ6o3fG",
     "_type": "logo",
     "_updatedAt": "2025-12-20T21:40:37Z",
-    "image": {},
+    "image": {
+      "dark": {
+        "_sanityAsset": "image@file://./images/62de2b717051c9eb09b775501881c7884de44cc5-3000x3000.png",
+        "_type": "image"
+      },
+      "default": {
+        "_sanityAsset": "image@file://./images/62de2b717051c9eb09b775501881c7884de44cc5-3000x3000.png",
+        "_type": "image"
+      }
+    },
     "link": "https://www.housebets.com/",
     "title": "Housebets"
   },
   {
     "_createdAt": "2025-12-25T17:48:05Z",
     "_id": "a0a07d0d-0ad4-44cb-9c02-f31931230d6f",
-    "_rev": "2S9zUG2U97f93gFIaTdZoX",
+    "_rev": "2eedf779-4540-4fe7-b9c8-6fd90123401a",
     "_type": "translation.metadata",
-    "_updatedAt": "2025-12-25T17:48:05Z",
+    "_updatedAt": "2026-10-19T02:23:56Z",
     "schemaTypes": ["page"],
     "translations": [
       {
         "_key": "en",
         "_type": "internationalizedArrayReferenceValue",
+        "language": "en",
         "value": {
           "_ref": "e77cef43-7a03-4691-8375-662f01ecad58",
           "_strengthenOnPublish": {
@@ -4382,8 +4131,22 @@
       {
         "_key": "nb",
         "_type": "internationalizedArrayReferenceValue",
+        "language": "nb",
         "value": {
-          "_ref": "0b7f540f-3608-43d2-a97e-c10ce8bbba6b",
+          "_ref": "411b3401-0ac3-4aa7-b085-89c31a6e6a9e",
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
+        }
+      },
+      {
+        "_key": "ar",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "ar",
+        "value": {
+          "_ref": "c2bfa56b-a753-40a3-89e8-77d8b72bf515",
           "_strengthenOnPublish": {
             "type": "page"
           },
@@ -4396,14 +4159,15 @@
   {
     "_createdAt": "2025-12-16T16:15:15Z",
     "_id": "a0c55c92-0c7c-4173-b7fb-8a675af62268",
-    "_rev": "44aF5gxFxgMZhXBarR3dgu",
+    "_rev": "2eedf779-4540-4fe7-b9c8-6fd90123401a",
     "_type": "translation.metadata",
-    "_updatedAt": "2025-12-16T16:15:15Z",
+    "_updatedAt": "2026-10-19T02:23:56Z",
     "schemaTypes": ["page"],
     "translations": [
       {
         "_key": "en",
         "_type": "internationalizedArrayReferenceValue",
+        "language": "en",
         "value": {
           "_ref": "fa5f631e-545e-4fc2-b6b9-bebcd32dd29e",
           "_strengthenOnPublish": {
@@ -4416,30 +4180,9 @@
       {
         "_key": "nb",
         "_type": "internationalizedArrayReferenceValue",
+        "language": "nb",
         "value": {
-          "_ref": "bb6ac54b-4604-4787-adb3-77b6b90d30b7",
-          "_strengthenOnPublish": {
-            "type": "page"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      }
-    ]
-  },
-  {
-    "_createdAt": "2025-12-25T18:45:22Z",
-    "_id": "a14b11cc-80d2-418a-908f-4fb8cd777911",
-    "_rev": "2S9zUG2U97f93gFIaTxe75",
-    "_type": "translation.metadata",
-    "_updatedAt": "2025-12-25T18:45:22Z",
-    "schemaTypes": ["page"],
-    "translations": [
-      {
-        "_key": "en",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "50266faf-d900-4ac7-9b5b-1e7647959997",
+          "_ref": "74cbf377-263d-497a-9f1d-fe93ce6d62e2",
           "_strengthenOnPublish": {
             "type": "page"
           },
@@ -4448,10 +4191,11 @@
         }
       },
       {
-        "_key": "nb",
+        "_key": "ar",
         "_type": "internationalizedArrayReferenceValue",
+        "language": "ar",
         "value": {
-          "_ref": "140a113c-55a2-4896-b8d4-861facfc4e0e",
+          "_ref": "23c8c132-1b7a-4cc8-a4e6-bea80625cd06",
           "_strengthenOnPublish": {
             "type": "page"
           },
@@ -4526,29 +4270,48 @@
   {
     "_createdAt": "2026-01-03T19:57:13Z",
     "_id": "af3c10fc-2e19-457f-8fe4-1dd9cd476cde",
-    "_rev": "F72nYjsyqsYk2r6gD9TCQV",
+    "_rev": "2eedf779-4540-4fe7-b9c8-6fd90123401a",
     "_type": "translation.metadata",
-    "_updatedAt": "2026-01-03T19:57:29Z",
+    "_updatedAt": "2026-10-19T02:23:56Z",
+    "schemaTypes": ["page"],
     "translations": [
       {
         "_key": "en",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "en",
         "value": {
-          "_ref": "43a2eee5-8dfa-49ec-aabc-c9e543546e3e",
-          "_type": "reference"
+          "_ref": "1882fec2-060e-4b50-a170-30fb0f37d1ba",
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
         }
       },
       {
         "_key": "nb",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "nb",
         "value": {
           "_ref": "ea5bac06-a342-4f0b-88e8-cdd0472eda2b",
-          "_type": "reference"
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
         }
       },
       {
         "_key": "ar",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "ar",
         "value": {
           "_ref": "61873ebc-e1ff-4bc6-8992-7143e9ed2f10",
-          "_type": "reference"
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
         }
       }
     ]
@@ -4653,43 +4416,9 @@
     }
   },
   {
-    "_createdAt": "2025-12-28T21:05:02Z",
-    "_id": "b68e1f6f-b4c6-41d3-9eac-f46164e713eb",
-    "_rev": "IP0HScRYPltURNOjIsr8NH",
-    "_type": "translation.metadata",
-    "_updatedAt": "2025-12-28T21:05:02Z",
-    "schemaTypes": ["page"],
-    "translations": [
-      {
-        "_key": "en",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "01914fd8-6f5c-4b9d-8830-065fe8f413a5",
-          "_strengthenOnPublish": {
-            "type": "page"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      },
-      {
-        "_key": "nb",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "31bed27c-f39b-41eb-8143-91fbfc8df60a",
-          "_strengthenOnPublish": {
-            "type": "page"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      }
-    ]
-  },
-  {
     "_createdAt": "2025-12-29T17:12:37Z",
     "_id": "b874d2a9-d0a2-46ea-b675-39e4506b00d4",
-    "_rev": "4P2vumDw5K6pjBv4i4BJXU",
+    "_rev": "2eedf779-4540-4fe7-b9c8-6fd90123401a",
     "_system": {
       "base": {
         "id": "b874d2a9-d0a2-46ea-b675-39e4506b00d4",
@@ -4697,7 +4426,7 @@
       }
     },
     "_type": "page",
-    "_updatedAt": "2025-12-29T17:20:39Z",
+    "_updatedAt": "2026-10-19T02:23:56Z",
     "language": "en",
     "metadata": {
       "slug": {
@@ -4752,7 +4481,7 @@
               },
               "label": "See Modules",
               "newTab": false,
-              "params": "#decdb3fff7cb",
+              "params": "#text",
               "type": "internal"
             },
             "style": "primary"
@@ -4795,6 +4524,11 @@
             ],
             "markDefs": [],
             "style": "normal"
+          },
+          {
+            "_sanityAsset": "image@file://./images/9d2741b3c97a441c34cce8e827e4a00c13c38dcc-5160x4580.png",
+            "_key": "7f86c527e3f3",
+            "_type": "image"
           },
           {
             "_key": "cf44e35eeaa9",
@@ -5234,40 +4968,6 @@
     "title": "Our story"
   },
   {
-    "_createdAt": "2025-12-16T16:18:59Z",
-    "_id": "c0483369-d676-4472-ad62-afc7f03decb3",
-    "_rev": "mC31IH6OXG2OB55kTPxGql",
-    "_type": "translation.metadata",
-    "_updatedAt": "2025-12-16T16:18:59Z",
-    "schemaTypes": ["page"],
-    "translations": [
-      {
-        "_key": "en",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "96804ac3-58bc-4104-88a4-0ea858d0218e",
-          "_strengthenOnPublish": {
-            "type": "page"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      },
-      {
-        "_key": "nb",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "e5c74f7b-6f4e-4a80-88d8-a013c56a8bd1",
-          "_strengthenOnPublish": {
-            "type": "page"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      }
-    ]
-  },
-  {
     "_createdAt": "2025-12-30T15:31:49Z",
     "_id": "c1dc84f2-f810-46ec-8bf2-b88635b2e37e",
     "_rev": "F72nYjsyqsYk2r6gD72LXB",
@@ -5393,52 +5093,6 @@
     ]
   },
   {
-    "_createdAt": "2025-12-18T21:49:14Z",
-    "_id": "c9da52c2-27b1-40c5-9b6f-6416130c16f4",
-    "_rev": "61wMMR7R8VvWK2bB62HwwU",
-    "_type": "translation.metadata",
-    "_updatedAt": "2026-01-03T17:02:56Z",
-    "schemaTypes": ["site"],
-    "translations": [
-      {
-        "_key": "en",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "site",
-          "_strengthenOnPublish": {
-            "type": "site"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      },
-      {
-        "_key": "nb",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "98d32817-0048-4ae6-9ec7-cc8d85f62cd3",
-          "_strengthenOnPublish": {
-            "type": "site"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      },
-      {
-        "_key": "ar",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "27bfa19c-7346-4e49-9eaf-820b96c7b87d",
-          "_strengthenOnPublish": {
-            "type": "site"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      }
-    ]
-  },
-  {
     "_createdAt": "2025-12-20T22:23:16Z",
     "_id": "d0abc3c8-24b2-409f-a903-cc2e05194e29",
     "_rev": "2S9zUG2U97f93gFIaHAHcb",
@@ -5450,6 +5104,10 @@
     },
     "_type": "person",
     "_updatedAt": "2025-12-22T14:38:34Z",
+    "image": {
+      "_sanityAsset": "image@file://./images/cf0080c3e0f9c9861ce4672a9d0c046257ceab03-3106x3454.jpg",
+      "_type": "image"
+    },
     "name": "Ada Aligiai",
     "slug": {
       "_type": "slug",
@@ -5563,75 +5221,6 @@
         "_key": "en",
         "_type": "internationalizedArrayStringValue",
         "value": "Design System"
-      }
-    ]
-  },
-  {
-    "_createdAt": "2025-12-22T20:45:09Z",
-    "_id": "drafts.0305aaeb-eef8-4f13-b724-ebdd86591b83",
-    "_rev": "32c91105-73b1-4b06-8b42-ddc7c2a2f714",
-    "_system": {
-      "base": {
-        "id": "0305aaeb-eef8-4f13-b724-ebdd86591b83",
-        "rev": "2S9zUG2U97f93gFIaLsimp"
-      }
-    },
-    "_type": "form",
-    "_updatedAt": "2026-01-03T22:02:33Z",
-    "fields": [
-      {
-        "_key": "94bf5c5ab5b5",
-        "_type": "form-field",
-        "label": "Email",
-        "name": {
-          "_type": "slug",
-          "current": "email"
-        },
-        "placeholder": "Give us your shitty email",
-        "required": false,
-        "type": "text"
-      }
-    ],
-    "formTitle": [
-      {
-        "_key": "en",
-        "_type": "internationalizedArrayStringValue"
-      }
-    ],
-    "intent": "contact",
-    "requireConsent": true
-  },
-  {
-    "_createdAt": "2025-12-16T16:21:21Z",
-    "_id": "drafts.16378fcb-e4b6-4f24-8724-e5dfdf8db1bc",
-    "_rev": "F72nYjsyqsYk2r6gCYz96f",
-    "_type": "translation.metadata",
-    "_updatedAt": "2025-12-16T16:21:21Z",
-    "schemaTypes": ["blog.post"],
-    "translations": [
-      {
-        "_key": "en",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "14bb9c40-ec7e-42a7-a904-33745325178f",
-          "_strengthenOnPublish": {
-            "type": "blog.post"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      },
-      {
-        "_key": "nb",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "017dd109-68de-4e11-a86a-0297cb55aadc",
-          "_strengthenOnPublish": {
-            "type": "blog.post"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
       }
     ]
   },
@@ -7151,199 +6740,6 @@
     "title": "Terms of Cervice"
   },
   {
-    "_createdAt": "2025-12-29T17:30:18Z",
-    "_id": "drafts.1bc46c05-bdff-41dc-a281-e26dcee48d6f",
-    "_rev": "b299305c-7ed0-4be9-9c50-8826b5363c80",
-    "_system": {
-      "base": {
-        "id": "1bc46c05-bdff-41dc-a281-e26dcee48d6f",
-        "rev": "4P2vumDw5K6pjBv4i5ckFx"
-      }
-    },
-    "_type": "pricing",
-    "_updatedAt": "2025-12-29T18:37:07Z",
-    "content": [
-      {
-        "_key": "b0c50c5da2bb",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "a45aeaab3060",
-            "_type": "span",
-            "marks": [],
-            "text": "Full source code on GitHub"
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "ca025c545ad4",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "a1aa06c44a35",
-            "_type": "span",
-            "marks": [],
-            "text": "All 17+ content modules"
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "bb9d9e9301ec",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "78045fed05ac",
-            "_type": "span",
-            "marks": [],
-            "text": "Sanity CMS integration"
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "92f875523bc1",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "e05f43c8cbcd",
-            "_type": "span",
-            "marks": [],
-            "text": "i18n support (EN/NO)"
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "16affea1a795",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "245e94522210",
-            "_type": "span",
-            "marks": [],
-            "text": "Docker-optimized builds"
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "07e8908b3f8f",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "df8af0825ab3",
-            "_type": "span",
-            "marks": [],
-            "text": "MIT License—use anywhere"
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "66b9330f2961",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "bd668a44ac2f",
-            "_type": "span",
-            "marks": [],
-            "text": "Community support (GitHub)"
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "0a16ea596904",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "46ba00ef8c29",
-            "_type": "span",
-            "marks": [],
-            "text": "Managed hosting"
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "2600009f226e",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "7f8d88b526e8",
-            "_type": "span",
-            "marks": [],
-            "text": "Priority support"
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "0a1bf49321ac",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "096a49f12bf4",
-            "_type": "span",
-            "marks": [],
-            "text": "Custom development"
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      }
-    ],
-    "ctas": [
-      {
-        "_key": "e01ae9908c94",
-        "_type": "cta",
-        "link": {
-          "_type": "menuItem",
-          "external": "https://github.com/Medal-Social/NextMedal",
-          "label": "Clone from Github",
-          "newTab": false,
-          "type": "external"
-        },
-        "style": "primary"
-      }
-    ],
-    "description": "Self-host and own everything",
-    "highlight": "Free forever",
-    "style": "default",
-    "title": "Open Source"
-  },
-  {
     "_createdAt": "2025-12-29T21:33:29Z",
     "_id": "drafts.455fd5f0-77f5-4bea-aa01-6ea71868fb38",
     "_rev": "0b2fdb86-d79d-46bd-a59f-ee471ee2cf48",
@@ -7446,12 +6842,20 @@
     },
     "_type": "person",
     "_updatedAt": "2026-01-03T20:15:20Z",
+    "banner": {
+      "_sanityAsset": "image@file://./images/c7cb771afcb2f7b2056c0565ff66f2f78182ff63-1128x191.png",
+      "_type": "image"
+    },
     "bio": [
       {
         "_key": "en",
         "_type": "internationalizedArrayBlockContentValue"
       }
     ],
+    "image": {
+      "_sanityAsset": "image@file://./images/ddd8f926912d9b7351651c8999603b0decc32fa1-800x800.jpg",
+      "_type": "image"
+    },
     "name": "Ali Aljumaili",
     "socialLinks": [
       {
@@ -7658,6 +7062,10 @@
         "_type": "internationalizedArrayBlockContentValue"
       }
     ],
+    "image": {
+      "_sanityAsset": "image@file://./images/cf0080c3e0f9c9861ce4672a9d0c046257ceab03-3106x3454.jpg",
+      "_type": "image"
+    },
     "name": "Ada Aligiai",
     "title": [
       {
@@ -9099,7 +8507,11 @@
           }
         ],
         "image": {
-          "_type": "img"
+          "_type": "img",
+          "image": {
+            "_sanityAsset": "image@file://./images/bc5a81ba1ec668cd9ad165c7b9148d6b8bbc7889-1096x896.png",
+            "_type": "image"
+          }
         },
         "options": {
           "bgFrom": "brand-vibrant",
@@ -10059,208 +9471,50 @@
     }
   },
   {
-    "_createdAt": "2025-12-29T18:30:37Z",
-    "_id": "drafts.fa6acd77-2859-4c21-add7-165e3fdbe054",
-    "_rev": "e883ace3-a340-44d3-a087-a45e2aefe5d0",
-    "_system": {
-      "base": {
-        "id": "fa6acd77-2859-4c21-add7-165e3fdbe054",
-        "rev": "4P2vumDw5K6pjBv4i5cjX6"
-      }
-    },
-    "_type": "pricing",
-    "_updatedAt": "2025-12-29T18:37:02Z",
-    "content": [
-      {
-        "_key": "d74effab7a59",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "49ae1efe61de",
-            "_type": "span",
-            "marks": [],
-            "text": "Everything in Business"
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "087b5b92767c",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "49ae1efe61de",
-            "_type": "span",
-            "marks": [],
-            "text": "Dedicated infrastructure"
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "9d0c99225fde",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "9706fab40613",
-            "_type": "span",
-            "marks": [],
-            "text": "Custom integrations"
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "809f6eed4bb7",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "2b4edeb72972",
-            "_type": "span",
-            "marks": [],
-            "text": "Bespoke module development"
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "76a804c8b4fd",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "e85e7d4a2845",
-            "_type": "span",
-            "marks": [],
-            "text": "On-call priority support"
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "cc2ccfdb9b74",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "04c73bedf7c7",
-            "_type": "span",
-            "marks": [],
-            "text": "Dedicated account manager"
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "e6fe57f31acc",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "986dec86f50f",
-            "_type": "span",
-            "marks": [],
-            "text": "Custom SLA (up to 99.99%)"
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "9a0dc6b4ca0c",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "6375eb794064",
-            "_type": "span",
-            "marks": [],
-            "text": "Security & compliance review"
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "5956871d7ff5",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "5abf55fe8b73",
-            "_type": "span",
-            "marks": [],
-            "text": "Training & onboarding"
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      },
-      {
-        "_key": "52280719ecf9",
-        "_type": "block",
-        "children": [
-          {
-            "_key": "79371152403c",
-            "_type": "span",
-            "marks": [],
-            "text": "Quarterly roadmap sessions"
-          }
-        ],
-        "level": 1,
-        "listItem": "bullet",
-        "markDefs": [],
-        "style": "normal"
-      }
-    ],
-    "description": "For companies that need it all",
-    "title": "Enterprise"
-  },
-  {
     "_createdAt": "2026-01-03T19:57:12Z",
     "_id": "e0769b94-6f60-48d0-ab66-7f3e7b88966a",
-    "_rev": "F72nYjsyqsYk2r6gD9TCQV",
+    "_rev": "2eedf779-4540-4fe7-b9c8-6fd90123401a",
     "_type": "translation.metadata",
-    "_updatedAt": "2026-01-03T19:57:29Z",
+    "_updatedAt": "2026-10-19T02:23:56Z",
+    "schemaTypes": ["page"],
     "translations": [
       {
         "_key": "en",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "en",
         "value": {
-          "_ref": "e43f4b4c-dff4-4d66-8956-b1916b6b25c4",
-          "_type": "reference"
+          "_ref": "c1dc84f2-f810-46ec-8bf2-b88635b2e37e",
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
         }
       },
       {
         "_key": "nb",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "nb",
         "value": {
           "_ref": "0cb8074f-fb81-4a72-926b-b3d4bf1b4d42",
-          "_type": "reference"
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
         }
       },
       {
         "_key": "ar",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "ar",
         "value": {
           "_ref": "a8ca1bc9-c11d-4f30-85bf-919b9a52b5be",
-          "_type": "reference"
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
         }
       }
     ]
@@ -10439,40 +9693,6 @@
       "noIndex": false,
       "title": "Documentation - Guides and references"
     }
-  },
-  {
-    "_createdAt": "2026-01-03T21:29:36Z",
-    "_id": "e46760da-752b-45be-897c-88aacb19f66b",
-    "_rev": "F72nYjsyqsYk2r6gD9pwHl",
-    "_type": "translation.metadata",
-    "_updatedAt": "2026-01-03T21:29:36Z",
-    "schemaTypes": ["page"],
-    "translations": [
-      {
-        "_key": "ar",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "23c8c132-1b7a-4cc8-a4e6-bea80625cd06",
-          "_strengthenOnPublish": {
-            "type": "page"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      },
-      {
-        "_key": "nb",
-        "_type": "internationalizedArrayReferenceValue",
-        "value": {
-          "_ref": "d4bdb28a-22f4-4d18-b504-5b247583b463",
-          "_strengthenOnPublish": {
-            "type": "page"
-          },
-          "_type": "reference",
-          "_weak": true
-        }
-      }
-    ]
   },
   {
     "_createdAt": "2026-01-03T19:31:09Z",
@@ -10724,7 +9944,16 @@
     "_rev": "wdVElnxigbSMUBkOJ6q3xC",
     "_type": "logo",
     "_updatedAt": "2025-12-20T21:42:45Z",
-    "image": {},
+    "image": {
+      "dark": {
+        "_sanityAsset": "image@file://./images/00e2489347e10c72d3c0af406d6f4f75d9dcacae-800x800.png",
+        "_type": "image"
+      },
+      "default": {
+        "_sanityAsset": "image@file://./images/00e2489347e10c72d3c0af406d6f4f75d9dcacae-800x800.png",
+        "_type": "image"
+      }
+    },
     "link": "https://kshipping.no/",
     "title": "Kaizen Shipping"
   },
@@ -10856,7 +10085,11 @@
           }
         ],
         "image": {
-          "_type": "img"
+          "_type": "img",
+          "image": {
+            "_sanityAsset": "image@file://./images/bc5a81ba1ec668cd9ad165c7b9148d6b8bbc7889-1096x896.png",
+            "_type": "image"
+          }
         },
         "options": {
           "bgFrom": "brand-vibrant",
@@ -11818,9 +11051,9 @@
   {
     "_createdAt": "2025-12-29T18:30:37Z",
     "_id": "fa6acd77-2859-4c21-add7-165e3fdbe054",
-    "_rev": "4P2vumDw5K6pjBv4i5cjX6",
+    "_rev": "2eedf779-4540-4fe7-b9c8-6fd90123401a",
     "_type": "pricing",
-    "_updatedAt": "2025-12-29T18:37:02Z",
+    "_updatedAt": "2026-10-19T02:23:56Z",
     "content": [
       {
         "_key": "d74effab7a59",
@@ -11984,16 +11217,14 @@
       }
     ],
     "description": "For companies that need it all",
-    "price": {
-      "base": "Custom",
-      "suffix": "tailored to you"
-    },
+    "monthlyPrice": "Custom",
+    "priceSuffix": "tailored to you",
     "title": "Enterprise"
   },
   {
     "_createdAt": "2025-04-27T22:40:06Z",
     "_id": "site",
-    "_rev": "61wMMR7R8VvWK2bB6Bk36c",
+    "_rev": "2eedf779-4540-4fe7-b9c8-6fd90123401a",
     "_system": {
       "base": {
         "id": "site",
@@ -12001,7 +11232,7 @@
       }
     },
     "_type": "site",
-    "_updatedAt": "2026-01-04T20:50:45Z",
+    "_updatedAt": "2026-10-19T02:23:56Z",
     "banners": [
       {
         "_key": "80a5bc178903",
@@ -12676,7 +11907,7 @@
             },
             "label": "Features",
             "newTab": true,
-            "params": "#decdb3fff7cb",
+            "params": "#text",
             "type": "internal"
           },
           {
@@ -13096,6 +12327,202 @@
       {
         "_key": "ar",
         "value": "NextMedal"
+      }
+    ]
+  },
+  {
+    "_createdAt": "2026-10-19T02:23:56Z",
+    "_id": "tm-page-contact-us",
+    "_rev": "2eedf779-4540-4fe7-b9c8-6fd90123401a",
+    "_type": "translation.metadata",
+    "_updatedAt": "2026-10-19T02:23:56Z",
+    "schemaTypes": ["page"],
+    "translations": [
+      {
+        "_key": "en",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "en",
+        "value": {
+          "_ref": "ade886a1-ad00-46b0-a3a3-1d187763b45f",
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
+        }
+      },
+      {
+        "_key": "nb",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "nb",
+        "value": {
+          "_ref": "6c619e2c-b8c5-43e9-ad93-8941c412f6d2",
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
+        }
+      },
+      {
+        "_key": "ar",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "ar",
+        "value": {
+          "_ref": "ada0c123-3b3a-4572-8bdb-34a5bbf0dbc3",
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
+        }
+      }
+    ]
+  },
+  {
+    "_createdAt": "2026-10-19T02:23:56Z",
+    "_id": "tm-page-guides",
+    "_rev": "2eedf779-4540-4fe7-b9c8-6fd90123401a",
+    "_type": "translation.metadata",
+    "_updatedAt": "2026-10-19T02:23:56Z",
+    "schemaTypes": ["page"],
+    "translations": [
+      {
+        "_key": "en",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "en",
+        "value": {
+          "_ref": "4e9ed39d-23cb-433b-b1d6-c6866e2a5447",
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
+        }
+      },
+      {
+        "_key": "nb",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "nb",
+        "value": {
+          "_ref": "67131f8e-54f2-49de-86e0-ca825ac7673a",
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
+        }
+      },
+      {
+        "_key": "ar",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "ar",
+        "value": {
+          "_ref": "d0b0751f-e6fe-46aa-8d84-18a77a17e5f0",
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
+        }
+      }
+    ]
+  },
+  {
+    "_createdAt": "2026-10-19T02:23:56Z",
+    "_id": "tm-page-our-story",
+    "_rev": "2eedf779-4540-4fe7-b9c8-6fd90123401a",
+    "_type": "translation.metadata",
+    "_updatedAt": "2026-10-19T02:23:56Z",
+    "schemaTypes": ["page"],
+    "translations": [
+      {
+        "_key": "en",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "en",
+        "value": {
+          "_ref": "c0372fc3-5780-48cf-8a6f-681a4c4adac0",
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
+        }
+      },
+      {
+        "_key": "nb",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "nb",
+        "value": {
+          "_ref": "41df2c1a-ea92-4590-8126-8378f7a56530",
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
+        }
+      },
+      {
+        "_key": "ar",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "ar",
+        "value": {
+          "_ref": "4c3587b2-7be7-4ad2-9202-89d5b898def6",
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
+        }
+      }
+    ]
+  },
+  {
+    "_createdAt": "2026-10-19T02:23:56Z",
+    "_id": "tm-page-terms",
+    "_rev": "2eedf779-4540-4fe7-b9c8-6fd90123401a",
+    "_type": "translation.metadata",
+    "_updatedAt": "2026-10-19T02:23:56Z",
+    "schemaTypes": ["page"],
+    "translations": [
+      {
+        "_key": "en",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "en",
+        "value": {
+          "_ref": "1821a218-33e4-4c77-becb-c955d3373b8b",
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
+        }
+      },
+      {
+        "_key": "nb",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "nb",
+        "value": {
+          "_ref": "4368543d-74b0-4f13-808e-c4ad1d77c2af",
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
+        }
+      },
+      {
+        "_key": "ar",
+        "_type": "internationalizedArrayReferenceValue",
+        "language": "ar",
+        "value": {
+          "_ref": "b51eadc2-0ccd-4078-a1e5-221fed46852c",
+          "_strengthenOnPublish": {
+            "type": "page"
+          },
+          "_type": "reference",
+          "_weak": true
+        }
       }
     ]
   }

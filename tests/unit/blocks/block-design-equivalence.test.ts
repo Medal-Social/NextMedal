@@ -136,7 +136,7 @@ describe('blockDesign reproduces what every rendered page shows today', () => {
         'e54ebf4c-2b92-4ef5-832f-476bfe5e5fe8',
       ])
     );
-    // 2026-10-18: 76 modules − 4 on shadowed pages − videoHero − component-gallery.
+    // 2026-10-19 export (after nm-fixes; same modules as 2026-10-18): 76 modules − 4 on shadowed pages − videoHero − component-gallery.
     expect(cases).toHaveLength(70);
   });
 

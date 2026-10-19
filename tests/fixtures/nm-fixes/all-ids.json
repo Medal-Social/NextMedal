@@ -1,0 +1,1170 @@
+[
+  {
+    "_id": "00ebda9b-9e40-44ff-8c22-58d1d0567df1",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "0123a8e7-d17f-4184-880f-199f91241fc0",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "01914fd8-6f5c-4b9d-8830-065fe8f413a5",
+    "_type": "page"
+  },
+  {
+    "_id": "0305aaeb-eef8-4f13-b724-ebdd86591b83",
+    "_type": "form"
+  },
+  {
+    "_id": "05650fe4-6ed6-4be2-aa6c-67fb7e46c945",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "05debd08-d25b-41ec-a679-0134de72a79d",
+    "_type": "docs.category"
+  },
+  {
+    "_id": "0863af12-9400-4822-84fa-2cccda348db5",
+    "_type": "collection.changelog"
+  },
+  {
+    "_id": "08bbb9c4-c7c5-4df7-b4a1-02fecf8b7004",
+    "_type": "collection.article"
+  },
+  {
+    "_id": "0911bdad-b8de-4eaa-97ff-c2c8d01edbe4",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "0a41c124-1e2c-4a1b-a870-4163c342b0d1",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "0aaaf21d-7a48-460f-a2e0-aa3f27f41b12",
+    "_type": "collection.events"
+  },
+  {
+    "_id": "0b7c1c14-3b43-42b2-b96b-b7df42f4b5c4",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "0cb8074f-fb81-4a72-926b-b3d4bf1b4d42",
+    "_type": "page"
+  },
+  {
+    "_id": "11abc5ad-3d85-4555-89c3-a4b99ba441c1",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "1304ae0a-619d-4b49-92a1-fb400c6cbf8e",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "13a15309-bda0-4af9-ae9a-294857b85290",
+    "_type": "page"
+  },
+  {
+    "_id": "14d87c9a-f6ee-4e6e-bc15-818a65b1fdb9",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "15e25c33-260a-457d-8a0d-1ce9b60034a9",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "16fb6953-a47e-4abc-8a48-2e5064910b1e",
+    "_type": "announcement"
+  },
+  {
+    "_id": "170116b8-e965-4722-b0d5-1caf277b1d85",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "17cc68b3-7f7c-4818-8620-3b3951d335c1",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "17d96b7c-271d-4961-826c-f495eb23e1a3",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "1821a218-33e4-4c77-becb-c955d3373b8b",
+    "_type": "page"
+  },
+  {
+    "_id": "1882fec2-060e-4b50-a170-30fb0f37d1ba",
+    "_type": "page"
+  },
+  {
+    "_id": "190b6395-2d46-4a07-8e81-5da95af7713d",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "1923f6a5-e6e3-456b-b8cc-e5e383c00c17",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "1bc46c05-bdff-41dc-a281-e26dcee48d6f",
+    "_type": "pricing"
+  },
+  {
+    "_id": "1ddbee30-c430-4d8a-9840-99ade65f68fe",
+    "_type": "page"
+  },
+  {
+    "_id": "1e73b744-aa22-40df-b1a7-64fa7e0a616a",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "1e8ff78a-200f-4422-8da9-edda9e0359f1",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "1eb24463-a7a9-4d6e-a459-96740cb2361c",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "20aabbed-231f-490b-b186-6d99e74c0a8f",
+    "_type": "collection.article"
+  },
+  {
+    "_id": "23c8c132-1b7a-4cc8-a4e6-bea80625cd06",
+    "_type": "page"
+  },
+  {
+    "_id": "23e4b2f7-a29e-4a37-9388-d3156160c6d0",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "2505578b-386b-4d15-be0e-a92ff329eb62",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "27a800e6-e29a-492c-af15-6d4eadf4ca05",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "27f013a7-1861-4237-ba65-e44a9ca8b6cd",
+    "_type": "collection.events"
+  },
+  {
+    "_id": "2966f4e2-fa75-415b-a511-c5d3d93f5272",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "2ad10b50-80da-4442-a582-6883d605c14d",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "2c57887c-7271-4c8b-8431-85412e78191c",
+    "_type": "collection.events"
+  },
+  {
+    "_id": "2d28831c-3229-42fd-90f1-a277ce72ae3d",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "2e328a67-9a93-4c8e-beb8-9680b7857450",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "2efa51ac-a214-440b-8d76-b3d924956c87",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "2f4f5a56-60b9-4eb0-9145-cf8c83456f64",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "30b0bf69-a040-45e4-acff-80d9796b06e9",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "3171edf5-141a-449b-8782-a0d96c4b4be6",
+    "_type": "collection.events"
+  },
+  {
+    "_id": "318fdae0-9d55-4dd5-ac9e-7d9aa1cef0a3",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "31a077e9-a2ea-451d-9c78-1e718e03fa32",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "31deab03-f039-4d17-bfb3-a990b629a914",
+    "_type": "page"
+  },
+  {
+    "_id": "321f5e65-58e1-4b93-b859-a3bdea3fa99d",
+    "_type": "placement"
+  },
+  {
+    "_id": "33c4d1fd-3ea4-4795-81db-a600b2d9e843",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "3614f528-e303-4ef4-8841-8bc9397dcf0f",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "3636e79e-fcad-4999-a748-077d84d86949",
+    "_type": "article.category"
+  },
+  {
+    "_id": "3708f013-2e48-45bb-a08b-43c1749d19e9",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "3794841a-8dcb-44fb-b124-400ebd1a5131",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "387bc85c-a133-4ee9-a5e5-be785af42e5f",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "39076ade-6425-4427-aff6-459efbff8595",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "3a4061a3-2d66-440b-8b1b-2c1b8896d6ba",
+    "_type": "logo"
+  },
+  {
+    "_id": "3c33c6b5-5172-439f-864f-0a2a5f9db227",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "3fa1fb83-c9a6-4b4f-ab56-10bc52da75e3",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "411b3401-0ac3-4aa7-b085-89c31a6e6a9e",
+    "_type": "page"
+  },
+  {
+    "_id": "41df2c1a-ea92-4590-8126-8378f7a56530",
+    "_type": "page"
+  },
+  {
+    "_id": "426ce721-1c0d-41e9-ba7b-e9dc3ef81442",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "433a60cd-6e02-4559-af79-7a7e46481a9b",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "4368543d-74b0-4f13-808e-c4ad1d77c2af",
+    "_type": "page"
+  },
+  {
+    "_id": "43a2eee5-8dfa-49ec-aabc-c9e543546e3e",
+    "_type": "page"
+  },
+  {
+    "_id": "44b7304f-d2a8-48d8-a3b6-450b4e4326ba",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "455fd5f0-77f5-4bea-aa01-6ea71868fb38",
+    "_type": "banner"
+  },
+  {
+    "_id": "45a2c4eb-821e-498f-a5d8-c96b382b2caf",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "45cdf4ad-7346-43f6-9733-a41febedb8cd",
+    "_type": "page"
+  },
+  {
+    "_id": "46b2c4b2-1d88-403a-89a7-e87548128ff0",
+    "_type": "page"
+  },
+  {
+    "_id": "4c3587b2-7be7-4ad2-9202-89d5b898def6",
+    "_type": "page"
+  },
+  {
+    "_id": "4e9ed39d-23cb-433b-b1d6-c6866e2a5447",
+    "_type": "page"
+  },
+  {
+    "_id": "50f478c3-77d2-40a9-b86e-7d2f5c0790df",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "512ceb4a-8f63-44b6-bb07-14336f4c21cb",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "53686dac-5e47-47fa-8034-fec30d8a69ff",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "53e8cd3c-7b75-4080-a2ab-4b1b0432741a",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "55de8372-736e-400b-a1a1-b5f2ca088147",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "574b2ce3-403d-4b27-a2f3-add93ceb35cb",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "58767191-7495-4ea1-86df-c2af488d5dae",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "58c5f630-9c30-4fd9-8982-af449871db2b",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "5a1ff63b-f3aa-4e3e-b735-0e9a73aff7fd",
+    "_type": "logo"
+  },
+  {
+    "_id": "5ababc02-1303-4db3-9c0b-f680c5880d42",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "5c6e6991-8664-4b43-acd4-f1aa6fd458ad",
+    "_type": "page"
+  },
+  {
+    "_id": "5c773f68-93fd-41a2-9c84-2e06cb1a55ef",
+    "_type": "collection.article"
+  },
+  {
+    "_id": "5ccd3f08-643e-4870-978e-6c82de6baaeb",
+    "_type": "collection.article"
+  },
+  {
+    "_id": "5dfb82db-dc14-4d01-a495-842ee6d71aba",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "5e8901d8-e73b-4107-bce5-ecdf8b45be73",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "5fd6a32b-38e1-4425-91c1-d7f6fcccf013",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "609aefed-50ed-413e-9237-64e934ed00df",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "61873ebc-e1ff-4bc6-8992-7143e9ed2f10",
+    "_type": "page"
+  },
+  {
+    "_id": "621004ea-5ce6-49ed-92d9-465ab8fe8e2e",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "6283c483-e652-4453-982d-e22c998f0e51",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "62da2612-dc0a-4e2c-a9b1-c83f8cb7eeeb",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "62ec043a-424d-48c7-961c-b007e7d0774a",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "63f0df33-9319-40dd-9110-deb6fb5dba8c",
+    "_type": "global-module"
+  },
+  {
+    "_id": "64bbccbf-6214-4e0a-b742-4e032e79dddb",
+    "_type": "gallery"
+  },
+  {
+    "_id": "6522afca-05b5-48e1-817a-479f65e05b44",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "668ecb18-1004-4243-b600-d9a5896132ab",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "67131f8e-54f2-49de-86e0-ca825ac7673a",
+    "_type": "page"
+  },
+  {
+    "_id": "69fb49d8-8dd5-4bb2-b6b9-7b7727be4971",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "6aa7c7ad-ca25-45e1-8bc6-ad4718fe6fdd",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "6b5d0357-eab5-4505-8a3d-d1e603affe7a",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "6bbf859c-056a-43aa-b88c-151fd3339959",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "6c619e2c-b8c5-43e9-ad93-8941c412f6d2",
+    "_type": "page"
+  },
+  {
+    "_id": "6d40e2e1-1aca-47cf-9c27-ed5b290e102d",
+    "_type": "pricing"
+  },
+  {
+    "_id": "6defbd91-d671-4a3e-abdf-ca73f2d9ba12",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "6e580556-0d40-4cf2-b69f-a140dc22d16f",
+    "_type": "collection.article"
+  },
+  {
+    "_id": "6ea8352f-92fe-46bd-b1f7-16af1d46e20b",
+    "_type": "page"
+  },
+  {
+    "_id": "6eb5a492-39cd-4a1c-b05a-b09be9a3b91e",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "6ef5d186-0a4a-4285-9d24-a4277d6c6233",
+    "_type": "collection.events"
+  },
+  {
+    "_id": "6fcf5023-39de-4add-b07e-2583b88d11ee",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "70aedd42-69c9-403a-a463-59621330fd4c",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "711819d4-600e-4770-a84b-ccd065b75b16",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "71636629-c7a7-440f-b388-df9b6cf355ad",
+    "_type": "person"
+  },
+  {
+    "_id": "729eaa88-335a-4fc4-88d5-ced936ae0a8b",
+    "_type": "page"
+  },
+  {
+    "_id": "73c4032c-53f6-4578-bac2-a1af0de33170",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "74cbf377-263d-497a-9f1d-fe93ce6d62e2",
+    "_type": "page"
+  },
+  {
+    "_id": "757d2b5f-5c37-498d-8d37-c906f9d56494",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "762e3c57-3093-413d-912a-581f4eec2b92",
+    "_type": "logo"
+  },
+  {
+    "_id": "78860c2c-6944-4f91-a20a-b6f8e14949ad",
+    "_type": "testimonial"
+  },
+  {
+    "_id": "78a438f2-5428-4e2d-a3d9-0a5d7987879d",
+    "_type": "article.category"
+  },
+  {
+    "_id": "78c83100-bde5-4479-9fbf-45fba5f08cd4",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "79d25c3d-f53c-443f-b2fb-3257dedbe3d8",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "7a12a509-2543-4a2e-a38e-144364926231",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "7b468f27-2413-48f8-9091-1a3849812230",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "7b6b45d4-901a-4c48-ae1b-7f2ca68c9ebb",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "7c822d4e-4977-4a9e-b769-4ef957d5fa05",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "7ed216e1-d051-4545-84b0-4a200969e3b2",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "7fe46da4-5f34-446a-baa7-1bed2bd4d90f",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "819c72ae-94d1-4612-8a5b-d34db79d634c",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "81a4384f-7e1c-47b7-8f16-67ce3ecc2e3b",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "82710770-adf4-4558-9956-237a8fdce814",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "82cb8f44-7d74-4baa-b8ad-95668d75157c",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "83249978-d16e-471d-b301-e9a980901688",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "8384c13c-6196-41e0-8369-a6a734ac4da3",
+    "_type": "collection.article"
+  },
+  {
+    "_id": "838fd55e-a8f3-46f7-9ce7-c099f964ba89",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "8518d91c-4d43-4356-b043-45fddc85218c",
+    "_type": "collection.events"
+  },
+  {
+    "_id": "85efb292-24f4-4744-a389-b55a07dc936e",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "8626cb44-d3dd-49b1-a4a2-b968f0e92740",
+    "_type": "docs.category"
+  },
+  {
+    "_id": "863a290f-169d-4c8f-8290-28898ff92ec4",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "8703d89a-c0c3-4867-9216-2ad4440579e3",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "88dae0a5-66fb-4cee-a86d-5818e701c40b",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "8980864f-6e26-4b72-9262-14b81c5bc482",
+    "_type": "logo"
+  },
+  {
+    "_id": "8bb5f4f8-e72f-4692-9473-0b7f95cb5b4c",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "8cb909e4-274a-46fb-9a12-6ec2f3027e09",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "8f38318c-5877-4536-8ad1-2659d3cbd981",
+    "_type": "page"
+  },
+  {
+    "_id": "910e52c9-92ea-4414-b34a-115cf9c8d746",
+    "_type": "collection.events"
+  },
+  {
+    "_id": "926f6660-f858-4ae8-88e2-3216e109a583",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "92d491d3-b423-46d2-9097-fdc784c7c856",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "940fbe71-561f-4b0e-92ae-d0c24be1a24d",
+    "_type": "article.category"
+  },
+  {
+    "_id": "9590f509-eaf9-4be0-8543-c63950882324",
+    "_type": "collection.changelog"
+  },
+  {
+    "_id": "966cd2b0-d409-422b-ae5d-9940bc9fac07",
+    "_type": "docs.category"
+  },
+  {
+    "_id": "97b5fa40-6ba5-4277-aba7-ee0f816447f7",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "97ba00c7-6da3-436f-924a-35a475ed5b1b",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "98d3508b-dcfc-4f6a-b5da-74c556b30a33",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "998e1ca6-6edb-49e3-bd50-a82e49a55f10",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "9c1404d8-9e9e-4964-b544-3846b15336d3",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "9cbbb215-6d97-4ee8-a90d-79cca92ed3bd",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "9dde1ee9-a74e-4b42-9abc-a3b05c1ba6ac",
+    "_type": "logo"
+  },
+  {
+    "_id": "9eb667ce-cbdb-47c4-a589-cac5be580391",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "a0a07d0d-0ad4-44cb-9c02-f31931230d6f",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "a0c55c92-0c7c-4173-b7fb-8a675af62268",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "a14b11cc-80d2-418a-908f-4fb8cd777911",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "a15fc61b-3643-4c36-8956-3ba1a59208dd",
+    "_type": "collection.article"
+  },
+  {
+    "_id": "a25125a7-bd0c-4f26-8208-ddf6012d9c1a",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "a27fbc38-b84b-47fe-b206-c4981ee79b4f",
+    "_type": "collection.article"
+  },
+  {
+    "_id": "a31e2d5c-dafa-4dc1-adfa-a1c22d98a5a1",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "a592c175-af27-43dd-aeb2-921b425d7729",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "a6078dad-2989-4fa1-918d-ebac46582a34",
+    "_type": "collection.changelog"
+  },
+  {
+    "_id": "a618dac4-51b0-4615-bae0-fb02553d74f4",
+    "_type": "collection.events"
+  },
+  {
+    "_id": "a7ae5c85-1681-44c6-bfa7-56aec775d7ea",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "a8ca1bc9-c11d-4f30-85bf-919b9a52b5be",
+    "_type": "page"
+  },
+  {
+    "_id": "ada0c123-3b3a-4572-8bdb-34a5bbf0dbc3",
+    "_type": "page"
+  },
+  {
+    "_id": "ade886a1-ad00-46b0-a3a3-1d187763b45f",
+    "_type": "page"
+  },
+  {
+    "_id": "af351606-6677-4b67-898c-b14b49828af1",
+    "_type": "collection.events"
+  },
+  {
+    "_id": "af3c10fc-2e19-457f-8fe4-1dd9cd476cde",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "afe07547-8773-4155-a468-3bca8db69a49",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "b08f15f6-9983-4684-948a-9bca05307f4d",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "b1ec5d7c-d2c5-4959-8b70-5401dccbfd48",
+    "_type": "page"
+  },
+  {
+    "_id": "b2784fe0-d8bf-405d-a6e9-bd259b5d3727",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "b27b7008-ae5d-4a4b-9ee6-22f34740f2c6",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "b322d7ff-ea79-40a2-abcd-b7ded3374bb9",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "b4110260-9886-4d5a-ab84-5cffb41b589e",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "b4abe66c-3d0b-4004-965c-33d94b551eeb",
+    "_type": "page"
+  },
+  {
+    "_id": "b51eadc2-0ccd-4078-a1e5-221fed46852c",
+    "_type": "page"
+  },
+  {
+    "_id": "b543a3a3-6cea-4bec-b6b8-31e0f6cb42ce",
+    "_type": "page"
+  },
+  {
+    "_id": "b68e1f6f-b4c6-41d3-9eac-f46164e713eb",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "b6dd624a-17fc-4303-8597-434e917ba7e8",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "b77588d2-4dfd-4707-920e-435fe63123a4",
+    "_type": "collection.article"
+  },
+  {
+    "_id": "b8291b9a-0d47-4411-a9ee-03e65058e140",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "b84e87a5-99aa-4ef7-9cea-25728bbb1e37",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "b874d2a9-d0a2-46ea-b675-39e4506b00d4",
+    "_type": "page"
+  },
+  {
+    "_id": "ba16e38a-8139-471f-a054-42185dde1f3c",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "baa0268b-aac9-44cb-a682-1ecc7d8e4a97",
+    "_type": "navigation"
+  },
+  {
+    "_id": "bb1f1e29-06a7-42ec-b3ce-53c83470be73",
+    "_type": "collection.article"
+  },
+  {
+    "_id": "bbb73925-62e0-4b84-bba0-c805e4b332aa",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "bbe9a085-4e4d-496b-816d-8b6456bfc08b",
+    "_type": "docs.category"
+  },
+  {
+    "_id": "bc98ea05-8492-4e1f-8d7c-a7e8a51adcb6",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "bcaa8a0e-7e01-47d8-ad21-d665a359b929",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "c0372fc3-5780-48cf-8a6f-681a4c4adac0",
+    "_type": "page"
+  },
+  {
+    "_id": "c0483369-d676-4472-ad62-afc7f03decb3",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "c06c5b2a-e7ce-4047-8643-c8ba1672a091",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "c17b576a-971f-428a-ae3c-09a8c6b1f233",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "c1dc84f2-f810-46ec-8bf2-b88635b2e37e",
+    "_type": "page"
+  },
+  {
+    "_id": "c250cafd-3560-44bc-a98c-f982fef3d704",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "c2bfa56b-a753-40a3-89e8-77d8b72bf515",
+    "_type": "page"
+  },
+  {
+    "_id": "c861ff2c-aa76-4297-82c4-d71607e8d617",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "c8d73a33-784a-4112-a475-f033e5f2ed80",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "c9da52c2-27b1-40c5-9b6f-6416130c16f4",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "ca36ebd7-89a2-4181-9540-2683d68732df",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "cd6c4cf2-cfb2-4ac8-b594-c3d7fad47397",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "collection-blog-blogs-coming-soon",
+    "_type": "collection.article"
+  },
+  {
+    "_id": "collection-blog-common-sanity-schema-mistakes",
+    "_type": "collection.article"
+  },
+  {
+    "_id": "collection-blog-integrating-with-medal-social-sdk",
+    "_type": "collection.article"
+  },
+  {
+    "_id": "collection-blog-more-than-a-template",
+    "_type": "collection.article"
+  },
+  {
+    "_id": "collection-blog-why-we-simplified-sanity-schema",
+    "_type": "collection.article"
+  },
+  {
+    "_id": "d0abc3c8-24b2-409f-a903-cc2e05194e29",
+    "_type": "person"
+  },
+  {
+    "_id": "d0b0751f-e6fe-46aa-8d84-18a77a17e5f0",
+    "_type": "page"
+  },
+  {
+    "_id": "d2330ccc-5a77-4065-8ef3-37645c3c8b12",
+    "_type": "article.category"
+  },
+  {
+    "_id": "d2369b73-79a7-4729-9716-a32334cb34f0",
+    "_type": "docs.category"
+  },
+  {
+    "_id": "d8175fd6-e4c9-476c-a064-0e0b45b30be1",
+    "_type": "banner"
+  },
+  {
+    "_id": "d90c0a72-a86d-4711-9007-e7ea8c3359bc",
+    "_type": "article.category"
+  },
+  {
+    "_id": "d93058f6-a728-48db-b9f9-2cd963c604b8",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "dc1de424-67a1-4b88-972c-2d3dd70e1677",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "dd9a21a4-2fe0-4899-be10-a5db9b0c25cb",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "de2b62e7-499b-48d8-9249-004998bd961a",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "df37d59f-9127-4c8e-8ad5-624529db5daa",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "drafts.0305aaeb-eef8-4f13-b724-ebdd86591b83",
+    "_type": "form"
+  },
+  {
+    "_id": "drafts.0863af12-9400-4822-84fa-2cccda348db5",
+    "_type": "collection.changelog"
+  },
+  {
+    "_id": "drafts.0aaaf21d-7a48-460f-a2e0-aa3f27f41b12",
+    "_type": "collection.events"
+  },
+  {
+    "_id": "drafts.0b7c1c14-3b43-42b2-b96b-b7df42f4b5c4",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "drafts.16378fcb-e4b6-4f24-8724-e5dfdf8db1bc",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "drafts.17cc68b3-7f7c-4818-8620-3b3951d335c1",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "drafts.1821a218-33e4-4c77-becb-c955d3373b8b",
+    "_type": "page"
+  },
+  {
+    "_id": "drafts.1bc46c05-bdff-41dc-a281-e26dcee48d6f",
+    "_type": "pricing"
+  },
+  {
+    "_id": "drafts.2966f4e2-fa75-415b-a511-c5d3d93f5272",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "drafts.455fd5f0-77f5-4bea-aa01-6ea71868fb38",
+    "_type": "banner"
+  },
+  {
+    "_id": "drafts.58ac0fb1-024e-49e8-ab6d-267819889dc1",
+    "_type": "page"
+  },
+  {
+    "_id": "drafts.5ccd3f08-643e-4870-978e-6c82de6baaeb",
+    "_type": "collection.article"
+  },
+  {
+    "_id": "drafts.5f787c9d-44e4-49d5-838a-d1f8f0046cb2",
+    "_type": "global-layout"
+  },
+  {
+    "_id": "drafts.63f0df33-9319-40dd-9110-deb6fb5dba8c",
+    "_type": "global-module"
+  },
+  {
+    "_id": "drafts.71636629-c7a7-440f-b388-df9b6cf355ad",
+    "_type": "person"
+  },
+  {
+    "_id": "drafts.751a3c7d-1982-4b18-94cb-e9df4628fccc",
+    "_type": "banner"
+  },
+  {
+    "_id": "drafts.8384c13c-6196-41e0-8369-a6a734ac4da3",
+    "_type": "collection.article"
+  },
+  {
+    "_id": "drafts.86bc7f3f-3399-433a-981f-e112101f6164",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "drafts.9590f509-eaf9-4be0-8543-c63950882324",
+    "_type": "collection.changelog"
+  },
+  {
+    "_id": "drafts.a6078dad-2989-4fa1-918d-ebac46582a34",
+    "_type": "collection.changelog"
+  },
+  {
+    "_id": "drafts.cb69182b-7a35-4427-b24c-e58ef4fa47e3",
+    "_type": "redirect"
+  },
+  {
+    "_id": "drafts.cc148fc5-fb10-45d7-ae86-2622f40f1655",
+    "_type": "component.library"
+  },
+  {
+    "_id": "drafts.collection-blog-common-sanity-schema-mistakes",
+    "_type": "collection.article"
+  },
+  {
+    "_id": "drafts.d07089e3-9594-4543-81d4-397b70cd7a8d",
+    "_type": "page"
+  },
+  {
+    "_id": "drafts.d0abc3c8-24b2-409f-a903-cc2e05194e29",
+    "_type": "person"
+  },
+  {
+    "_id": "drafts.d48a21ee-bd8e-4597-b020-9eaa5a6cb3d0",
+    "_type": "intranet.department"
+  },
+  {
+    "_id": "drafts.d899e4f5-96b7-45c8-b11d-10a40faa8f78",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "drafts.e77cef43-7a03-4691-8375-662f01ecad58",
+    "_type": "page"
+  },
+  {
+    "_id": "drafts.fa5f631e-545e-4fc2-b6b9-bebcd32dd29e",
+    "_type": "page"
+  },
+  {
+    "_id": "drafts.fa6acd77-2859-4c21-add7-165e3fdbe054",
+    "_type": "pricing"
+  },
+  {
+    "_id": "e00331f6-eecb-4eae-b332-fec8de091e4f",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "e028500d-9cd4-4013-a0a1-42ab9ba5695e",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "e0769b94-6f60-48d0-ab66-7f3e7b88966a",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "e1885980-fac9-4a5f-b538-f1f0582dbdcd",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "e42857f2-facd-4728-9b0c-00867fcac79f",
+    "_type": "page"
+  },
+  {
+    "_id": "e43f4b4c-dff4-4d66-8956-b1916b6b25c4",
+    "_type": "page"
+  },
+  {
+    "_id": "e46760da-752b-45be-897c-88aacb19f66b",
+    "_type": "translation.metadata"
+  },
+  {
+    "_id": "e525da67-0022-4f98-b073-baa5f7e08cda",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "e54ebf4c-2b92-4ef5-832f-476bfe5e5fe8",
+    "_type": "page"
+  },
+  {
+    "_id": "e77cef43-7a03-4691-8375-662f01ecad58",
+    "_type": "page"
+  },
+  {
+    "_id": "e7fcd5a2-f46a-477b-8c6b-ba0080d94016",
+    "_type": "collection.events"
+  },
+  {
+    "_id": "e8ae0f9a-909b-4dfa-a5ee-c3ad69069d33",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "e930bfec-6e98-4ebe-bdc1-4b9e655928de",
+    "_type": "navigation"
+  },
+  {
+    "_id": "e9ebf6d7-509a-4196-a6dd-61a7522bd50e",
+    "_type": "logo"
+  },
+  {
+    "_id": "ea0b3adf-270f-47c4-8a46-17ecc91fb0a4",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "ea5bac06-a342-4f0b-88e8-cdd0472eda2b",
+    "_type": "page"
+  },
+  {
+    "_id": "ea5eb22c-9abc-47e7-960e-5ba2536463c0",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "ec363393-dddf-4409-afaf-6806bb4f3432",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "ef27051f-2458-4477-89a3-cee3955b460d",
+    "_type": "docs.category"
+  },
+  {
+    "_id": "efe5bde6-262f-43d1-b50c-ac5123fef24a",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "f3292202-c1bf-4433-88af-9024dd1d0cba",
+    "_type": "collection.newsletter"
+  },
+  {
+    "_id": "f38d92d1-c2ec-4751-b3dc-840ec18fc455",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "f4e0af15-34f1-48d8-b14b-9215ec4eb66e",
+    "_type": "article.category"
+  },
+  {
+    "_id": "f6eaf737-a1f8-43cc-9b61-6c8df53c4cc0",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "f93de70c-9d95-4b98-bad0-f9505db1083d",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "fa5f631e-545e-4fc2-b6b9-bebcd32dd29e",
+    "_type": "page"
+  },
+  {
+    "_id": "fa6acd77-2859-4c21-add7-165e3fdbe054",
+    "_type": "pricing"
+  },
+  {
+    "_id": "fba90729-a4a8-40a1-ac4d-4b0584aa62cf",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "fbf8dd47-f25c-4f93-ac2d-82ba73d4715d",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "fc24e99f-3499-4a7f-a21c-88fa069f31fb",
+    "_type": "collection.events"
+  },
+  {
+    "_id": "fce5a6ae-ea0a-4281-b208-83cdd138c3ed",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "fddbf7e9-5af4-4cd8-9f29-0e4d2be8a1e4",
+    "_type": "collection.documentation"
+  },
+  {
+    "_id": "fdfc551b-37e9-465b-882a-3aecc134703d",
+    "_type": "collection.events"
+  },
+  {
+    "_id": "site",
+    "_type": "site"
+  }
+]
