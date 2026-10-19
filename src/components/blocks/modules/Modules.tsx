@@ -1,4 +1,4 @@
-import { pageAnchors } from '@/lib/block-anchors';
+import { blockDesign, type DesignPage } from './block-design';
 import { ModuleRenderer } from './ModuleRenderer';
 import type { FilterParams, ModuleContext, SidebarProps } from './types';
 
@@ -21,15 +21,17 @@ export default function Modules({
 
   const context: ModuleContext = { page, post, isSidebar };
   const sidebarProps: SidebarProps = isSidebar ? { spacing: 'none', width: 'full' } : {};
-  const anchors = isSidebar || !page ? new Map<string, string>() : pageAnchors(modules);
+  // Design values come from code (blockDesign, Vault spec 2026-10-18 D2/D3),
+  // not from content. Anchors are computed over the list actually rendered;
+  // placements (no page) get the design but no page anchors, so they never
+  // duplicate an id of the page below them.
+  const designPage: DesignPage = page ? { ...(page as DesignPage), modules } : { modules: [] };
 
   return (
     <>
       {modules.map((stored) => {
         if (!stored) return null;
-        // Fixed anchors from code (Vault spec 2026-10-18 D3), never from content.
-        const anchorId = anchors.get(stored._key);
-        const module = anchorId ? { ...stored, options: { ...stored.options, anchorId } } : stored;
+        const module = isSidebar ? stored : blockDesign(stored, designPage);
 
         return (
           <ModuleRenderer
