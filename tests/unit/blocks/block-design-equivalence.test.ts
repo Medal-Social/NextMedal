@@ -26,6 +26,16 @@ const SHADOWED = new Set(
 const PAGES = ALL.filter((d) => !SHADOWED.has(d._id));
 
 const look = (c: { style?: string }) => c.style ?? 'primary';
+/**
+ * Component defaults (src/components/blocks/modules/frontpage/…). An unset
+ * `showRssLink` / `showSearch` is falsy, written here as `false`.
+ * - articles  ArticlesFrontpage.tsx:165-168
+ * - changelog ChangelogFrontpage.tsx:400-403
+ * - newsletter NewsletterFrontpage.tsx:99-102
+ * - events    EventsFrontpage.tsx:304-309
+ * - docs      DocsFrontpage.tsx:206-214 (showSearch:214), DocDetail.tsx:92-93
+ *             (showTableOfContents, showRelatedDocs)
+ */
 const LIST_DEFAULTS: Record<string, Record<string, unknown>> = {
   'articles-frontpage': {
     showFeaturedFirst: true,
@@ -96,6 +106,19 @@ const KEPT = new Set(PAGE_BLOCK_NAMES);
 const APPROVED_DIFFS = new Set<string>();
 const approved = (id: string, key: string, prop: string) =>
   APPROVED_DIFFS.has(`${id} ${key} ${prop}`) || APPROVED_DIFFS.has(`${id} * ${prop}`);
+
+describe('fixtures', () => {
+  it('no page or placement block stores an anchor (anchors come from code only)', () => {
+    const stored = (docs as unknown as Array<{ _id: string; _type: string; modules?: Mod[] }>)
+      .filter((d) => d._type === 'page' || d._type === 'placement')
+      .flatMap((d) =>
+        (d.modules ?? [])
+          .filter((m) => (m.options as { anchorId?: unknown } | undefined)?.anchorId !== undefined)
+          .map((m) => `${d._id} ${m._key}`)
+      );
+    expect(stored).toEqual([]);
+  });
+});
 
 describe('blockDesign reproduces what every rendered page shows today', () => {
   const cases = PAGES.flatMap((p) =>

@@ -509,11 +509,15 @@ export const LOGOS_QUERY = groq`
 	}
 `;
 
-// Site banners from site document
+// Site banners from site document. The schema stores per-language values,
+// but every stored banner (2026-10-18) still holds plain blocks: project both.
 export const SITE_BANNERS_QUERY = groq`
 	*[_type == 'site'][0].banners[]->{
 		...,
-		content[]{ ..., value[]{ ${PT_BLOCK_QUERY} } },
+		content[]{
+			_type == 'internationalizedArrayBlockContentValue' => { _key, _type, language, value[]{ ${PT_BLOCK_QUERY} } },
+			_type != 'internationalizedArrayBlockContentValue' => { ${PT_BLOCK_QUERY} }
+		},
 		cta{ ${LINK_QUERY} },
 	}
 `;

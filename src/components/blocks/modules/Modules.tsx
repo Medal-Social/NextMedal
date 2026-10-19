@@ -8,12 +8,15 @@ export default function Modules({
   post,
   isSidebar = false,
   searchParams,
+  locale,
 }: {
   modules?: Sanity.Module[];
   page?: Sanity.Page | Sanity.ComponentLibrary;
   post?: Sanity.CollectionArticlePost;
   isSidebar?: boolean;
   searchParams?: FilterParams;
+  /** Route locale, for placements (no page) so language rules still apply. */
+  locale?: string;
 }) {
   if (!modules?.length) {
     return null;
@@ -25,7 +28,9 @@ export default function Modules({
   // not from content. Anchors are computed over the list actually rendered;
   // placements (no page) get the design but no page anchors, so they never
   // duplicate an id of the page below them.
-  const designPage: DesignPage = page ? { ...(page as DesignPage), modules } : { modules: [] };
+  const designPage: DesignPage = page
+    ? { ...(page as DesignPage), modules }
+    : { language: locale, modules: [] };
 
   return (
     <>

@@ -49,6 +49,33 @@ function getAriaLabel(
   return undefined;
 }
 
+type BannerValue = {
+  _type: 'internationalizedArrayBlockContentValue';
+  _key: string;
+  language?: string;
+  value?: Sanity.BlockContent;
+};
+const INTL_VALUE = 'internationalizedArrayBlockContentValue';
+const isValue = (item: { _type?: string }): item is BannerValue => item?._type === INTL_VALUE;
+
+/**
+ * The blocks to show. A translated banner holds one value per language: the
+ * visitor's (language, else legacy `_key`), then English, then the first.
+ * Banners stored as plain blocks (all of them on prod today) render as is.
+ */
+export function bannerBlocks(
+  content: Array<{ _type?: string }> | null | undefined,
+  locale: string
+): Sanity.BlockContent {
+  const items = content ?? [];
+  const values = items.filter(isValue).filter((v) => v.value?.length);
+  const lang = (v: BannerValue) => v.language ?? v._key;
+  const picked =
+    values.find((v) => lang(v) === locale) ?? values.find((v) => lang(v) === 'en') ?? values[0];
+  if (picked?.value) return picked.value;
+  return items.filter((item) => !isValue(item)) as Sanity.BlockContent;
+}
+
 export default function BannerClient({ banner }: { banner: Sanity.Banner & Sanity.Module }) {
   const { content, cta } = banner;
   const locale = useLocale();
@@ -101,7 +128,7 @@ export default function BannerClient({ banner }: { banner: Sanity.Banner & Sanit
       <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-center">
         <div className="font-medium text-sm [&_p]:m-0 [&_p]:leading-normal">
           <PortableText
-            value={content}
+            value={bannerBlocks(content, locale)}
             components={{
               block: {
                 normal: ({ children }) => <p className="inline">{children}</p>,

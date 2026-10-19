@@ -127,6 +127,18 @@ describe('GROQ Queries - Security & Best Practices', () => {
 
       expect(SITE_BANNERS_QUERY).toContain("*[_type == 'site'][0].banners[]->{");
     });
+
+    it('SITE_BANNERS_QUERY projects plain blocks and per-language values (stored banners are plain)', async () => {
+      const { SITE_BANNERS_QUERY, PT_BLOCK_QUERY } = await import('@/sanity/lib/queries');
+      const norm = (q: string) => q.replace(/\s+/g, ' ').trim();
+      const query = norm(SITE_BANNERS_QUERY);
+      const block = norm(PT_BLOCK_QUERY);
+
+      expect(query).toContain(
+        `_type == 'internationalizedArrayBlockContentValue' => { _key, _type, language, value[]{ ${block} } }`
+      );
+      expect(query).toContain(`_type != 'internationalizedArrayBlockContentValue' => { ${block} }`);
+    });
   });
 
   describe('Query Composition & Reusability', () => {

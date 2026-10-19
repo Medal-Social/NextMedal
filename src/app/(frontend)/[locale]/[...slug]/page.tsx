@@ -428,11 +428,15 @@ export default async function Page({ params, searchParams }: Props) {
 
   return (
     <PageProvider page={page}>
-      {placements.top && <Modules modules={placements.top} searchParams={filterParams} />}
+      {placements.top && (
+        <Modules modules={placements.top} locale={locale} searchParams={filterParams} />
+      )}
       {page.modules && page.modules.length > 0 && (
         <Modules modules={page.modules} page={page} searchParams={filterParams} />
       )}
-      {placements.bottom && <Modules modules={placements.bottom} searchParams={filterParams} />}
+      {placements.bottom && (
+        <Modules modules={placements.bottom} locale={locale} searchParams={filterParams} />
+      )}
     </PageProvider>
   );
 }

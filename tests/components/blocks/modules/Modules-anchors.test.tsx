@@ -7,6 +7,7 @@ vi.mock('@/components/blocks/modules/ModuleRenderer', () => ({
       id={module.options?.anchorId || `module-${module._key}`}
       data-module={module._type}
       data-bg={module.options?.bgTo}
+      data-layout={(module as { layout?: string }).layout}
       data-looks={(module as { ctas?: Array<{ style?: string }> }).ctas
         ?.map((cta) => cta.style)
         .join(',')}
@@ -123,5 +124,20 @@ describe('Modules renders every block through blockDesign', () => {
     const video = { _type: 'videoHero', _key: 'v1', options: { bgTo: 'stored' } } as Sanity.Module;
     const html = renderToStaticMarkup(<Modules modules={[video]} page={at('index')} />);
     expect(html).toContain('data-bg="stored"');
+  });
+});
+
+describe('placements are designed for the route language', () => {
+  const newsletter = { _type: 'newsletter-frontpage', _key: 'n1' } as Sanity.Module;
+
+  it('nb placement: grid, as nb renders today', () => {
+    const html = renderToStaticMarkup(<Modules modules={[newsletter]} locale="nb" />);
+    expect(html).toContain('data-layout="grid"');
+    expect(html).toContain('id="module-n1"');
+  });
+
+  it('en placement: list', () => {
+    const html = renderToStaticMarkup(<Modules modules={[newsletter]} locale="en" />);
+    expect(html).toContain('data-layout="list"');
   });
 });
