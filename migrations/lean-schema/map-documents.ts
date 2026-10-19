@@ -187,8 +187,16 @@ function mapPlacement(doc: Doc): Doc {
   return { ...doc, modules };
 }
 
-/** The site's per-language arrays this migration rewrites; their entries get `language` (= `_key`). */
-const SITE_LANGUAGE_FIELDS = ['headerNav', 'ctas', 'copyright'];
+/** The site's per-language arrays; their entries get `language` (= `_key`, plugin v5). */
+const SITE_LANGUAGE_FIELDS = [
+  'headerNav',
+  'ctas',
+  'copyright',
+  'footerNav',
+  'footerLinks',
+  'tagline',
+  'title',
+];
 
 function mapSite(doc: Doc): Doc {
   const next: Doc = { ...doc };
@@ -201,6 +209,29 @@ function mapSite(doc: Doc): Doc {
     );
   }
   return next;
+}
+
+const BANNER_VALUE = 'internationalizedArrayBlockContentValue';
+
+/**
+ * Banner content the schema edits per language: plain blocks (every stored
+ * banner, 2026-10-19) become one English entry. An empty English entry next
+ * to them takes the blocks; a filled one would need a choice, so it refuses.
+ */
+function mapBanner(doc: Doc): Doc {
+  if (!Array.isArray(doc.content)) return doc;
+  const items = doc.content as Obj[];
+  const plain = items.filter((item) => item?._type !== BANNER_VALUE);
+  if (plain.length === 0) return doc;
+  const values = items.filter((item) => item?._type === BANNER_VALUE);
+  const lang = (v: Obj) => (v.language ?? v._key) as string;
+  const en = values.find((v) => lang(v) === 'en');
+  if (en && isFilled(en.value)) {
+    throw new UnmappedContentError(`${doc._id}: banner has plain blocks and English content`);
+  }
+  const english = { ...(en ?? {}), _key: 'en', _type: BANNER_VALUE, language: 'en', value: plain };
+  const others = values.filter((v) => v !== en);
+  return { ...doc, content: [english, ...others] };
 }
 
 function mapPricing(doc: Doc): Doc {
@@ -300,6 +331,7 @@ export function mapDocument(doc: Doc): DocumentResult {
   if (next._type === 'page') next = mapPage(next);
   if (next._type === 'placement') next = mapPlacement(next);
   if (next._type === 'pricing') next = mapPricing(next);
+  if (next._type === 'banner') next = mapBanner(next);
   if (next._type === 'form') next = mapForm(next);
   next = fixHrefLinks(stripCtaStyles(next), doc._id);
   return canonicalJson(next) === canonicalJson(doc)

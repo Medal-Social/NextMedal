@@ -24,10 +24,10 @@ const ids = (mutations: readonly Mutation[]) => mutations.map((m) => (m as { id:
 describe('planMutations', () => {
   const mutations = planMutations(ALL);
 
-  it('plans 35 patches and 15 deletes on the fixtures (2026-10-19 export)', () => {
-    expect(count(mutations, 'patch')).toHaveLength(35);
+  it('plans 38 patches and 15 deletes on the fixtures (2026-10-19 export)', () => {
+    expect(count(mutations, 'patch')).toHaveLength(38);
     expect(count(mutations, 'delete')).toHaveLength(15);
-    expect(mutations).toHaveLength(50);
+    expect(mutations).toHaveLength(53);
   });
 
   it('deletes exactly the planned documents, after every patch', () => {
@@ -226,10 +226,10 @@ describe('the default export, end to end', () => {
     expect(migration.documentTypes).toEqual([...DOCUMENT_TYPES]);
   });
 
-  it('a dry run yields 35 patches and 15 deletes, then a re-run yields nothing', async () => {
+  it('a dry run yields 38 patches and 15 deletes, then a re-run yields nothing', async () => {
     const context = { dryRun: true } as unknown as MigrationContext;
     const mutations = await run(ALL, context);
-    expect(count(mutations, 'patch')).toHaveLength(35);
+    expect(count(mutations, 'patch')).toHaveLength(38);
     expect(count(mutations, 'delete')).toHaveLength(15);
     expect(await run(applyMutations(ALL, mutations), context)).toEqual([]);
   });

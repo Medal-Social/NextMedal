@@ -2,6 +2,7 @@ import ids from '@tests/fixtures/lean-schema/all-ids.json';
 import docs from '@tests/fixtures/lean-schema/documents.json';
 import beforeNmFixes from '@tests/fixtures/nm-fixes/documents.json';
 import { describe, expect, it } from 'vitest';
+import { bannerBlocks } from '@/components/blocks/layout/banner/Banner.client';
 import {
   assertDeletable,
   blockingDrafts,
@@ -156,9 +157,17 @@ describe('site, pricing, placement, banner', () => {
     );
   });
 
-  it('site: the per-language headerNav, ctas and copyright entries get their language', () => {
+  it('site: every per-language entry gets its language (v5 `language` field)', () => {
     const site = next(byId('site'));
-    for (const field of ['headerNav', 'ctas', 'copyright']) {
+    for (const field of [
+      'headerNav',
+      'ctas',
+      'copyright',
+      'footerNav',
+      'footerLinks',
+      'tagline',
+      'title',
+    ]) {
       const entries = site[field] as Array<{ _key: string; language?: string }>;
       expect(
         entries.map((e) => [e._key, e.language]),
@@ -169,15 +178,62 @@ describe('site, pricing, placement, banner', () => {
         ['ar', 'ar'],
       ]);
     }
-    // Other site fields are left as stored.
-    expect(site.footerNav).toEqual(byId('site').footerNav);
-    expect(site.title).toEqual(byId('site').title);
+    // Only `language` is added; the values are left as stored.
+    const strip = (v: unknown) =>
+      (v as Record<string, unknown>[]).map(({ language: _l, ...rest }) => rest);
+    expect(strip(site.footerNav)).toEqual(byId('site').footerNav);
+    expect(strip(site.title)).toEqual(byId('site').title);
+    expect(site.socialLinks).toEqual(byId('site').socialLinks);
   });
 
   it('banner draft: its href link becomes an external link', () => {
     const banner = next(byId('drafts.751a3c7d-1982-4b18-94cb-e9df4628fccc'));
     expect(JSON.stringify(banner)).toContain('"type":"external","external":"https://google.com"');
     expect(JSON.stringify(banner)).not.toContain('"href"');
+  });
+
+  const BANNERS = ALL.filter((d) => d._type === 'banner');
+  const bannerOut = (doc: Doc) => {
+    const result = mapDocument(doc);
+    return result.action === 'patch' ? result.next : doc;
+  };
+
+  it('banner: content stored as plain blocks becomes one English entry (published + drafts)', () => {
+    expect(BANNERS).toHaveLength(4);
+    for (const doc of BANNERS) {
+      const content = bannerOut(doc).content as Record<string, unknown>[];
+      expect(
+        content.map((e) => [e._key, e._type, e.language]),
+        doc._id
+      ).toEqual([['en', 'internationalizedArrayBlockContentValue', 'en']]);
+      const plain = (doc.content as Array<{ _type: string }>).filter((b) => b._type === 'block');
+      expect(JSON.stringify(content[0].value), doc._id).toBe(
+        JSON.stringify(fixHrefLinks(plain, doc._id))
+      );
+    }
+  });
+
+  it('banner: every language shows the same blocks as before the migration', () => {
+    for (const doc of BANNERS) {
+      for (const locale of ['en', 'nb', 'ar']) {
+        const before = bannerBlocks(fixHrefLinks(doc.content, doc._id) as never, locale);
+        const after = bannerBlocks(bannerOut(doc).content as never, locale);
+        expect(after, `${doc._id} ${locale}`).toEqual(before);
+      }
+    }
+  });
+
+  it('banner: refuses plain blocks next to a filled English entry', () => {
+    const block = { _key: 'b', _type: 'block', children: [{ _type: 'span', text: 'x' }] };
+    const doc = {
+      _id: 'b1',
+      _type: 'banner',
+      content: [
+        block,
+        { _key: 'en', _type: 'internationalizedArrayBlockContentValue', value: [block] },
+      ],
+    } as Doc;
+    expect(() => mapDocument(doc)).toThrow(UnmappedContentError);
   });
 
   it('fixHrefLinks refuses a link with an href and another target', () => {
