@@ -29,14 +29,11 @@ describe('Mux is opt-in (spec D5)', () => {
     expect(users).toEqual([]);
   });
 
-  it.each(['video', 'videoHero'])(
-    '%s starts on YouTube, the only video type while Mux is off',
-    (name) => {
-      type Typed = { name: string; fields?: Array<{ name: string; initialValue?: unknown }> };
-      const type = (schemaTypes as unknown as Typed[]).find((t) => t.name === name);
-      expect(type?.fields?.find((f) => f.name === 'type')?.initialValue).toBe('youtube');
-    }
-  );
+  it('video starts on YouTube, the only video type while Mux is off', () => {
+    type Typed = { name: string; fields?: Array<{ name: string; initialValue?: unknown }> };
+    const type = (schemaTypes as unknown as Typed[]).find((t) => t.name === 'video');
+    expect(type?.fields?.find((f) => f.name === 'type')?.initialValue).toBe('youtube');
+  });
 
   it('sanity.config.ts adds the Mux plugin only behind MUX_ENABLED', () => {
     const calls = config.match(/muxInput\(/g) ?? [];

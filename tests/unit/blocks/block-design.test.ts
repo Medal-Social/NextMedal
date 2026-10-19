@@ -37,13 +37,10 @@ describe('blockDesign covers exactly the page blocks', () => {
     expect([...DESIGNED_BLOCKS].sort()).toEqual([...PAGE_BLOCK_NAMES].sort());
     expect(PAGE_BLOCK_NAMES).toHaveLength(14);
   });
-  it.each(['videoHero', 'component-gallery', 'lead-magnet'])(
-    'passes %s through untouched',
-    (type) => {
-      const m = mod(type, { options: { anchorId: 'x' } });
-      expect(blockDesign(m, page('index'))).toBe(m);
-    }
-  );
+  it.each(['component-gallery', 'lead-magnet'])('passes %s through untouched', (type) => {
+    const m = mod(type, { options: { anchorId: 'x' } });
+    expect(blockDesign(m, page('index'))).toBe(m);
+  });
 });
 
 describe('page top (hero)', () => {

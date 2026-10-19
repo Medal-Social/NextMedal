@@ -6,4 +6,6 @@ export default defineCliConfig({
     projectId,
     dataset,
   },
+  // Hosted Studio https://nextmedal.sanity.studio: `sanity deploy` reuses this app.
+  deployment: { appId: 'jouu0fkhamrp3bb4jrv5u43z' },
 });

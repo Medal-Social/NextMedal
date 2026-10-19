@@ -5,7 +5,6 @@ import { describe, expect, it } from 'vitest';
 import { schemaTypes } from '@/sanity/schemaTypes';
 import modulesField from '@/sanity/schemaTypes/fragments/modules';
 import {
-  DEPRECATED_BLOCK_NAMES,
   DEVELOPER_BLOCK_NAMES,
   FIELD_BUDGET_ALLOWLIST,
   PAGE_BLOCK_NAMES,
@@ -96,16 +95,16 @@ describe('the page modules array', () => {
   const groups = field.options.insertMenu.groups;
   const accepted = field.of.map((m) => m.type);
 
-  it('holds the 14 blocks plus the developer and deprecated types', () => {
+  it('holds the 14 blocks plus the developer showcase', () => {
     expect(PAGE_BLOCK_NAMES).toHaveLength(14);
-    expect([...accepted].sort()).toEqual(
-      [...PAGE_BLOCK_NAMES, ...DEVELOPER_BLOCK_NAMES, ...DEPRECATED_BLOCK_NAMES].sort()
-    );
+    expect([...accepted].sort()).toEqual([...PAGE_BLOCK_NAMES, ...DEVELOPER_BLOCK_NAMES].sort());
   });
 
-  it('accepts every block stored on the fixture pages', () => {
+  it('accepts every block stored on the migrated fixture pages (prod is migrated)', () => {
     type Page = { _type: string; modules?: Array<{ _type: string }> };
-    const pages = (fixtureDocuments as Page[]).filter((doc) => doc._type === 'page');
+    const pages = (mapAll(fixtureDocuments as never) as unknown as Page[]).filter(
+      (doc) => doc._type === 'page'
+    );
     const stored = new Set(pages.flatMap((doc) => (doc.modules ?? []).map((m) => m._type)));
     expect(stored.size).toBeGreaterThan(0);
     expect([...stored].filter((type) => !accepted.includes(type))).toEqual([]);
@@ -129,10 +128,9 @@ describe('the page modules array', () => {
     expect(groups.filter((g) => g.of.includes(name))).toHaveLength(1);
   });
 
-  it('offers no developer or deprecated type in any group', () => {
+  it('offers no developer type in any group', () => {
     const offered = groups.flatMap((g) => g.of);
-    for (const name of [...DEVELOPER_BLOCK_NAMES, ...DEPRECATED_BLOCK_NAMES])
-      expect(offered).not.toContain(name);
+    for (const name of DEVELOPER_BLOCK_NAMES) expect(offered).not.toContain(name);
   });
 });
 
@@ -225,18 +223,6 @@ describe('placement blocks', () => {
   it('price plan has no card style', () => {
     expect(fieldNames(block('pricing').fields)).not.toContain('style');
   });
-});
-
-describe('deprecated types', () => {
-  type Deprecated = Block & { deprecated?: { reason?: string } };
-  it.each(DEPRECATED_BLOCK_NAMES)(
-    '%s is marked deprecated with a reason and an "Old – " title',
-    (name) => {
-      const type = registered.get(name) as Deprecated;
-      expect(type.deprecated?.reason?.length ?? 0).toBeGreaterThanOrEqual(10);
-      expect(type.title).toMatch(/^Old – /);
-    }
-  );
 });
 
 describe('developer types', () => {
