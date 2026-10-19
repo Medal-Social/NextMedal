@@ -36,8 +36,9 @@ type Field = { name: string; type: string; of?: Member[]; fields?: Field[] };
 type SchemaType = { name: string; fields?: Field[] };
 
 /**
- * Types whose rich text is out of scope for the presets: the developer showcase, and collection bodies other than
- * articles (they keep their own toolbars with code blocks and tables).
+ * Types whose rich text is out of scope for the presets: the developer showcase,
+ * and collection bodies other than articles (they keep their own toolbars with
+ * code blocks and tables).
  */
 const SKIP: readonly string[] = [
   'component-gallery',

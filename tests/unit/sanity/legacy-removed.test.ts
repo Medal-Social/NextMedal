@@ -8,6 +8,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { MODULES_QUERY } from '@/sanity/lib/queries';
+import { studioDeployment } from '@/sanity/lib/studio-deployment';
 import { schemaTypes } from '@/sanity/schemaTypes';
 import modulesField from '@/sanity/schemaTypes/fragments/modules';
 import * as pageBlocks from '@/sanity/schemaTypes/page-blocks';
@@ -58,6 +59,23 @@ describe('legacy blocks are deleted', () => {
     'src/sanity/schemaTypes/modules/ui/UidInputComponent.tsx',
   ])('%s is deleted', (file) => {
     expect(existsSync(resolve(APP, file))).toBe(false);
+  });
+});
+
+describe('no leftovers', () => {
+  it.each(['en', 'nb', 'ar'])(
+    '%s messages have no video namespace (VideoHero was its only reader)',
+    (locale) => {
+      const messages = JSON.parse(read(`src/messages/${locale}.json`)) as Record<string, unknown>;
+      expect(messages.video).toBeUndefined();
+    }
+  );
+
+  it('the hosted Studio app id is used only for the NextMedal project (forks deploy their own)', () => {
+    expect(studioDeployment('ekjn2yf6', '')).toEqual({ appId: 'jouu0fkhamrp3bb4jrv5u43z' });
+    expect(studioDeployment('fork1234', '')).toBeUndefined();
+    expect(studioDeployment('fork1234', 'forkapp')).toEqual({ appId: 'forkapp' });
+    expect(read('sanity.cli.ts')).toMatch(/deployment: studioDeployment\(projectId\)/);
   });
 });
 
