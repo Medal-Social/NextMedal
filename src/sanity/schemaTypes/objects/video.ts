@@ -11,7 +11,7 @@
 import { PlayIcon } from '@sanity/icons/Play';
 import type { Rule } from 'sanity';
 import { defineField } from 'sanity';
-import { muxOnly } from '../../lib/mux';
+import { MUX_ENABLED, muxOnly } from '../../lib/mux';
 
 // Extract YouTube video ID from various URL formats
 export const getYouTubeVideoId = (url: string) => {
@@ -101,6 +101,8 @@ export default defineField({
         ],
         layout: 'radio',
       },
+      // With Mux off YouTube is the only choice: preselect it.
+      ...(MUX_ENABLED ? {} : { initialValue: 'youtube' }),
       validation: (rule: Rule) => rule.required(),
     },
     {

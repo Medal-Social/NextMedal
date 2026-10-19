@@ -5,7 +5,8 @@
  *
  * Usage (from apps/NextMedal):
  *   pnpm exec tsx scripts/lean-schema/fork-usage.ts            # code: schema + renderer per app
- *   pnpm exec tsx scripts/lean-schema/fork-usage.ts --content  # also published page counts (read-only Sanity queries)
+ *   pnpm exec tsx scripts/lean-schema/fork-usage.ts --content  # also published page counts (read-only Sanity queries;
+ *                                                               top-level page modules only, nested blocks not counted)
  * Prints Markdown tables.
  */
 import { execFileSync } from 'node:child_process';
@@ -63,13 +64,16 @@ for (const type of TYPES) {
 if (process.argv.includes('--content')) {
   type App = { app: string; sanity_project_id?: string };
   const config = JSON.parse(readFileSync(join(REPO, 'scripts/ci/apps.json'), 'utf8')) as App[];
+  const published = '!(_id in path("drafts.**"))';
   const query = `{${TYPES.map((type) =>
     type === 'component.library'
-      ? `"${type}": count(*[_type == "${type}"])`
-      : `"${type}": count(*[defined(modules) && "${type}" in modules[]._type])`
+      ? `"${type}": count(*[_type == "${type}" && ${published}])`
+      : `"${type}": count(*[${published} && defined(modules) && "${type}" in modules[]._type])`
   ).join(', ')}}`;
   console.log(
-    '\nPublished documents whose top-level `modules` hold the block (dataset `production`):\n'
+    '\nPublished documents whose top-level `modules` hold the block (dataset `production`).\n' +
+      'Counts top-level published page modules only: drafts and blocks nested inside other\n' +
+      'blocks (e.g. items of the /components gallery) are not counted.\n'
   );
   console.log(`| App | ${TYPES.join(' | ')} |`);
   console.log(`|---|${TYPES.map(() => '---').join('|')}|`);
