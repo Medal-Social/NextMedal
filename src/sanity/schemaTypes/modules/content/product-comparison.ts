@@ -39,11 +39,15 @@ export default defineType({
       description: 'Shown under the title.',
       group: 'content',
     }),
-    // Old positional intro (h2 + paragraphs). Hidden; the lean-schema migration
-    // moves it to Title and Text, and plan Task 35 deletes it.
+    // Old positional intro (h2 + paragraphs): shown read-only only while it has
+    // content. The lean-schema migration moves it to Title and Text; Task 35 deletes it.
     defineField({
-      ...richTextField('intro', 'Intro', 'section'),
-      hidden: true,
+      ...richTextField('intro', 'Intro', 'section', {
+        description: 'Old intro — move it into Title and Text.',
+        group: 'content',
+      }),
+      hidden: ({ value }) => !value,
+      readOnly: true,
       deprecated: { reason: 'Moved to Title and Text by the lean-schema migration.' },
     }),
     defineField({

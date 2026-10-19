@@ -14,11 +14,10 @@
 
 import { BlockContentIcon } from '@sanity/icons/BlockContent';
 import { defineArrayMember, defineField, defineType } from 'sanity';
+import { getYouTubeId } from '@/lib/youtube';
 import { getBlockText } from '@/sanity/lib/utils';
 import { richTextField } from '../../fragments/rich-text';
 import { createUidField } from '../ui/uid-input';
-
-const YOUTUBE_LINK = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/;
 
 export default defineType({
   name: 'hero',
@@ -113,7 +112,7 @@ export default defineType({
       validation: (Rule) =>
         Rule.custom((value) => {
           if (!value) return true;
-          return YOUTUBE_LINK.test(value) || 'Please enter a valid YouTube link';
+          return getYouTubeId(value) ? true : 'Please paste a link to one YouTube video';
         }),
     }),
   ],

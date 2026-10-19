@@ -10,19 +10,11 @@ import { CTAList } from '@/components/blocks/objects/cta';
 import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/sanity/module-props';
 import { cn } from '@/lib/utils/index';
+import { getYouTubeId } from '@/lib/youtube';
 
-// Old content only: Mux left the page top (Mux is opt-in); removed in plan Task 35.
+// Unreachable: blockDesign sets videoType to 'youtube' or 'image', so the Mux branch never
+// renders. Kept only as the old shape's type; removed in plan Task 35.
 type MuxVideo = Sanity.Hero['muxVideo'];
-
-// Helper to extract a YouTube video ID from the supported URL shapes:
-// watch?v=, youtu.be/, /embed/, /shorts/, /v/ (VideoHero accepts these too).
-function getYouTubeId(url: string | undefined): string | undefined {
-  if (!url) return undefined;
-  const match = url.match(
-    /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([\w-]{11})/
-  );
-  return match ? match[1] : undefined;
-}
 
 // Calculate media flags
 function getMediaFlags(

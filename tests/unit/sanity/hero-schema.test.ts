@@ -42,11 +42,28 @@ describe('page top (hero) schema', () => {
     expect(videoUrl?.hidden).toBeUndefined();
   });
 
-  it('checks only the link shape', () => {
+  it('accepts an empty link or a link to one YouTube video', () => {
     expect(validate('videoUrl', undefined)).toBe(true);
-    expect(validate('videoUrl', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')).toBe(true);
-    expect(validate('videoUrl', 'https://youtu.be/dQw4w9WgXcQ')).toBe(true);
-    expect(validate('videoUrl', 'https://vimeo.com/1')).toBe('Please enter a valid YouTube link');
+    for (const url of [
+      'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+      'https://youtu.be/dQw4w9WgXcQ',
+      'https://www.youtube.com/shorts/dQw4w9WgXcQ',
+      'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      'https://m.youtube.com/watch?v=dQw4w9WgXcQ',
+    ]) {
+      expect(validate('videoUrl', url)).toBe(true);
+    }
+  });
+
+  it('refuses channels, playlists, broken ids and other sites', () => {
+    for (const url of [
+      'https://www.youtube.com/@medalsocial',
+      'https://www.youtube.com/playlist?list=PL1234567890abcdef',
+      'https://www.youtube.com/watch?v=short',
+      'https://vimeo.com/1',
+    ]) {
+      expect(validate('videoUrl', url)).toBe('Please paste a link to one YouTube video');
+    }
   });
 
   it('previews as a picture or a video link', () => {

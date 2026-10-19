@@ -7,6 +7,7 @@ type Field = {
   type: string;
   description?: string;
   hidden?: unknown;
+  readOnly?: unknown;
   deprecated?: { reason: string };
   of?: { type: string; styles?: { value: string }[] }[];
 };
@@ -25,9 +26,13 @@ describe('comparison table schema', () => {
     expect(text?.of?.[0]?.styles?.map((s) => s.value)).toEqual(['normal']);
   });
 
-  it('keeps the old positional intro hidden until the migration has run', () => {
+  it('shows the old positional intro read-only, and only while it has content', () => {
     const intro = field('intro');
-    expect(intro?.hidden).toBe(true);
+    const hidden = intro?.hidden as (ctx: { value?: unknown }) => boolean;
+    expect(hidden({ value: undefined })).toBe(true);
+    expect(hidden({ value: [{ _type: 'block', _key: 'b' }] })).toBe(false);
+    expect(intro?.readOnly).toBe(true);
+    expect(intro?.description).toBe('Old intro — move it into Title and Text.');
     expect(intro?.deprecated?.reason).toBe('Moved to Title and Text by the lean-schema migration.');
   });
 

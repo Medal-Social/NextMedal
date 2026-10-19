@@ -1,6 +1,7 @@
 'use client';
 
 import { Suspense } from 'react';
+import { blockDesign, type DesignPage } from './block-design';
 import AccordionList from './content/AccordionList';
 import Features from './content/Features';
 import PricingComparison from './content/PricingComparison';
@@ -40,11 +41,15 @@ interface Props {
   module: Sanity.Module;
 }
 
+/** Gallery previews are not page sections: no page anchors, keep `module-<key>` ids. */
+const GALLERY_PAGE: DesignPage = { modules: [] };
+
 /**
  * Simplified module renderer for ComponentGallery previews.
  * Does NOT include ComponentGallery itself to avoid circular dependencies.
  */
-export function GalleryModuleRenderer({ module }: Props) {
+export function GalleryModuleRenderer({ module: stored }: Props) {
+  const module = blockDesign(stored, GALLERY_PAGE);
   switch (module._type) {
     case 'accordion-list': {
       const props = module as Sanity.AccordionList;
