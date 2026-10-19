@@ -716,12 +716,15 @@ declare global {
       content?: BlockContent; // renamed from description to match schema
       ctas?: CTA[];
       image?: Img;
+      /** Set by blockDesign from `videoUrl`; no longer an editor field. */
       videoType?: 'image' | 'mux' | 'youtube';
+      /** @deprecated Mux is opt-in; old content only, removed with the legacy blocks (plan Task 35). */
       muxVideo?: {
         asset?: {
           playbackId?: string;
         };
       };
+      /** "Video link": a YouTube link. Empty shows the picture. */
       videoUrl?: string;
       options?: {
         anchorId?: string;

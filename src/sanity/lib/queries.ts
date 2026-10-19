@@ -186,13 +186,6 @@ const BASE_MODULES_QUERY = groq`
 		// The spread above re-adds the raw buttons; resolve their link targets again.
 		ctas[]{${CTA_QUERY}},
 		content[]{ ${PT_BLOCK_QUERY} },
-		muxVideo{
-			...,
-			asset->{
-				...,
-				"playbackId": playback_ids[0].id
-			}
-		},
 		image {
 			image {
 				${IMAGE_QUERY}

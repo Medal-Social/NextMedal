@@ -1,8 +1,9 @@
 /**
  * Hero Module Schema
- * @version 2.0.0
+ * @version 3.0.0
  * @lastUpdated 2024-12-XX
  * @changelog
+ * - 3.0.0: Picture or YouTube link; Mux and the media type switch removed (Mux is opt-in)
  * - 2.0.0: Added video support (Mux and URL), removed text alignment, simplified layout
  * - 1.4.0: Added stats row for displaying metrics with icons
  * - 1.3.0: Removed video/Mux support to simplify
@@ -17,6 +18,8 @@ import { getBlockText } from '@/sanity/lib/utils';
 import { richTextField } from '../../fragments/rich-text';
 import { createUidField } from '../ui/uid-input';
 
+const YOUTUBE_LINK = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/;
+
 export default defineType({
   name: 'hero',
   title: 'Hero',
@@ -26,13 +29,6 @@ export default defineType({
     { name: 'content', title: 'Content', default: true },
     { name: 'media', title: 'Media' },
     { name: 'options', title: 'Advanced Options' },
-  ],
-  fieldsets: [
-    {
-      name: 'videoOptions',
-      title: 'Video Source',
-      options: { collapsible: false },
-    },
   ],
   fields: [
     defineField({
@@ -103,75 +99,34 @@ export default defineType({
       group: 'content',
     }),
     defineField({
-      name: 'videoType',
-      title: 'Media Type',
-      description: 'Choose between image, Mux video, or YouTube video',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Image', value: 'image' },
-          { title: 'Mux Video', value: 'mux' },
-          { title: 'YouTube', value: 'youtube' },
-        ],
-        layout: 'radio',
-      },
-      initialValue: 'image',
-      group: 'media',
-    }),
-    defineField({
       name: 'image',
       type: 'img',
       group: 'media',
-      description: 'Image to display (will show play icon overlay if video is selected)',
-    }),
-    defineField({
-      name: 'muxVideo',
-      title: 'Mux Video',
-      type: 'mux.video',
-      description: 'Upload or select a video from Mux',
-      group: 'media',
-      hidden: ({ parent }) => parent?.videoType !== 'mux',
+      description: 'Shown when there is no video link, and as the video cover.',
     }),
     defineField({
       name: 'videoUrl',
-      title: 'YouTube URL',
-      description: 'Enter a YouTube video URL (e.g., https://www.youtube.com/watch?v=VIDEO_ID)',
+      title: 'Video link',
+      description: 'A YouTube link. Leave empty to show the picture.',
       type: 'url',
       group: 'media',
-      hidden: ({ parent }) => parent?.videoType !== 'youtube',
       validation: (Rule) =>
-        Rule.custom((value, context) => {
-          const parent = context.parent as { videoType?: string } | undefined;
-          if (parent?.videoType === 'youtube' && !value) {
-            return 'Please enter a YouTube URL';
-          }
-          if (value && parent?.videoType === 'youtube') {
-            const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+/;
-            if (!youtubeRegex.test(value)) {
-              return 'Please enter a valid YouTube URL';
-            }
-          }
-          return true;
+        Rule.custom((value) => {
+          if (!value) return true;
+          return YOUTUBE_LINK.test(value) || 'Please enter a valid YouTube link';
         }),
     }),
   ],
   preview: {
     select: {
       media: 'image',
-      videoType: 'videoType',
+      videoUrl: 'videoUrl',
       description: 'content',
     },
-    prepare: ({ media, videoType, description }) => {
-      const mediaLabel = (() => {
-        if (videoType === 'mux') return 'Mux Video';
-        if (videoType === 'url') return 'Video URL';
-        return 'Image';
-      })();
-      return {
-        title: getBlockText(description) || 'Hero',
-        subtitle: `Hero • ${mediaLabel}`,
-        media: media?.image || BlockContentIcon,
-      };
-    },
+    prepare: ({ media, videoUrl, description }) => ({
+      title: getBlockText(description) || 'Page top',
+      subtitle: `Page top • ${videoUrl ? 'Video link' : 'Picture'}`,
+      media: media?.image || BlockContentIcon,
+    }),
   },
 });

@@ -11,7 +11,7 @@ import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/sanity/module-props';
 import { cn } from '@/lib/utils/index';
 
-// Local type for MuxVideo to match Sanity.Hero interface
+// Old content only: Mux left the page top (Mux is opt-in); removed in plan Task 35.
 type MuxVideo = Sanity.Hero['muxVideo'];
 
 // Helper to extract a YouTube video ID from the supported URL shapes:
