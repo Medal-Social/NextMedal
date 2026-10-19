@@ -127,7 +127,7 @@ export default async function SocialEmbedFixturePage({ params }: Props) {
         */}
         <header className="flex min-h-[85dvh] flex-col justify-center">
           <p className="font-semibold text-brand-600 text-xs uppercase tracking-[0.14em] dark:text-brand-300">
-            Medal · QA · Social embeds
+            Medal Social · QA · Social embeds
           </p>
           <h1 className="mt-3 font-semibold text-5xl tracking-tight sm:text-6xl">
             Social embed fixture article

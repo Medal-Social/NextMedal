@@ -9,7 +9,7 @@ and carries no canonical URL in production.
 
 Raw Lighthouse JSON/HTML reports are **CI/agent artifacts only** — do not commit them
 under `docs/lighthouse/` (stale committed reports previously still referenced the old
-Rick Roll fixture and drifted from the Medal video + scores in this doc). Reproduce
+Rick Roll fixture and drifted from the Medal Social video + scores in this doc). Reproduce
 locally with the commands below; keep the JSON/HTML out of git.
 
 ## Scores
@@ -32,7 +32,7 @@ locally with the commands below; keep the JSON/HTML out of git.
 
 ## Gate checklist (verified)
 
-- [x] Medal mockup card layout (glyph, author, text, media/link preview, date, “View on \<platform\>”)
+- [x] Medal Social mockup card layout (glyph, author, text, media/link preview, date, “View on \<platform\>”)
 - [x] Zero CLS from cards — reserved `aspect-ratio` + width/height on sized `<img>`
 - [x] Meaningful `alt` on content images; decorative avatar/poster empty alt
 - [x] Pure RSC — YouTube facade is `<details>`/`<summary>` + lazy iframe (no client island)

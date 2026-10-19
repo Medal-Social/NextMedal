@@ -19,6 +19,8 @@ describe('buildQaFixtureMetadata', () => {
       expect(title.length).toBeLessThanOrEqual(60);
       expect(description.length).toBeGreaterThanOrEqual(70);
       expect(description.length).toBeLessThanOrEqual(160);
+      expect(`${title} ${description}`).toMatch(/Medal Social/);
+      expect(`${title} ${description}`).not.toMatch(/Medal(?! Social)/);
 
       expect(metadata.alternates?.canonical).toContain('/qa/social-embeds');
       const languages = metadata.alternates?.languages ?? {};

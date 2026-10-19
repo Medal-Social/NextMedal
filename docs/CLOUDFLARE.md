@@ -33,7 +33,7 @@ The two workflows are **dormant by default**. To enable automatic deploys:
    (Settings → Secrets and variables → Actions → Variables).
 2. **Environment secrets** — add to the `Staging` and `Prod` GitHub environments:
    - `CLOUDFLARE_API_TOKEN` — a token with *Workers Scripts: Edit* (+ *Workers
-     Routes: Edit* for custom domains) on the Medal Cloudflare account.
+     Routes: Edit* for custom domains) on the Medal Social Cloudflare account.
    - `CLOUDFLARE_ACCOUNT_ID` — the account ID.
    - `NEXT_PUBLIC_SANITY_BROWSER_TOKEN`, `NEXT_PUBLIC_UMAMI_SCRIPT_URL`,
      `NEXT_PUBLIC_UMAMI_WEBSITE_ID` (optional — for live preview / analytics).

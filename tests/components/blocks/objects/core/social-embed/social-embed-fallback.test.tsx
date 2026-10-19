@@ -13,7 +13,7 @@ function wrap(ui: React.ReactNode) {
 }
 
 describe('SocialEmbedFallback', () => {
-  it('renders a Medal link-out card without server fetches', () => {
+  it('renders a Medal Social link-out card without server fetches', () => {
     render(
       wrap(
         <SocialEmbedFallback

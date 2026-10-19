@@ -377,7 +377,7 @@ function RichBody({
 }
 
 /**
- * Medal-branded static social card — matches the approved mockup layout.
+ * Medal Social-branded static social card — matches the approved mockup layout.
  * No third-party widget scripts. Pure RSC (YouTube uses a zero-JS
  * details/summary facade).
  */

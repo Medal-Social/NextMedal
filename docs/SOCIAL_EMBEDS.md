@@ -1,6 +1,6 @@
 # Social embeds
 
-NextMedal renders Sanity `socialEmbed` blocks as **Medal-branded static cards** — no third-party widget scripts or cookies by default. Layout matches the approved mockup (Geist, Medal palette, platform glyph, author, text, media/link preview, date, “View on \<platform\>”).
+NextMedal renders Sanity `socialEmbed` blocks as **Medal Social-branded static cards** — no third-party widget scripts or cookies by default. Layout matches the approved mockup (Geist, Medal Social palette, platform glyph, author, text, media/link preview, date, “View on \<platform\>”).
 
 ## Architecture
 
@@ -15,7 +15,7 @@ NextMedal renders Sanity `socialEmbed` blocks as **Medal-branded static cards** 
 
 ### Gallery vs article rendering
 
-`GalleryModuleRenderer` is a client component. It must **not** import the server `SocialEmbed` / `resolve` path (that pulls `server-only` into the client graph and breaks Next Build). It uses `RichtextModule/client`, which keeps paragraphs, images, callouts, code, lead magnets, and video rendering — only `socialEmbed` blocks become the client-safe fallback link card. Article / event / newsletter pages and the server `RichtextModule` still use `Content.server` for full Medal oEmbed cards.
+`GalleryModuleRenderer` is a client component. It must **not** import the server `SocialEmbed` / `resolve` path (that pulls `server-only` into the client graph and breaks Next Build). It uses `RichtextModule/client`, which keeps paragraphs, images, callouts, code, lead magnets, and video rendering — only `socialEmbed` blocks become the client-safe fallback link card. Article / event / newsletter pages and the server `RichtextModule` still use `Content.server` for full Medal Social oEmbed cards.
 
 ### Platforms
 
@@ -33,7 +33,7 @@ Public, token-free enrichment is not available without third-party scripts:
 - **Instagram** `oembed` endpoints redirect to a login HTML wall (no JSON without an app access token).
 - **LinkedIn** has no public anonymous oEmbed; OG scrapes return 404 / login walls.
 
-We keep the Medal fallback link-out card (no scripts, no tokens). Do not add Facebook/LinkedIn SDKs.
+We keep the Medal Social fallback link-out card (no scripts, no tokens). Do not add Facebook/LinkedIn SDKs.
 
 ## SEO / a11y / CLS contract
 
