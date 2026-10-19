@@ -8,11 +8,13 @@ import {
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import migration, {
   applyMutations,
+  assertLeadsExported,
   assertNoBlockingDrafts,
   assertNoFreshChanges,
   checkUnreferenced,
   DOCUMENT_TYPES,
   IGNORE_DRAFTS_ENV,
+  LEADS_EXPORTED_ENV,
   lockedDelete,
   planMutations,
 } from '$/migrations/lean-schema/index';
@@ -211,6 +213,56 @@ describe('assertNoFreshChanges', () => {
   it('refuses without a client', async () => {
     const context = { dryRun: false } as unknown as MigrationContext;
     await expect(assertNoFreshChanges(context, ALL)).rejects.toThrow(/no API client/);
+  });
+});
+
+describe('assertLeadsExported', () => {
+  const LEAD = { _id: 'lead-1', _type: 'lead', _rev: 'l1', email: 'a@example.com' } as Doc;
+
+  it('passes when the dataset holds no lead documents (fixtures, 2026-10-19 export)', () => {
+    expect(ALL.some((d) => d._type === 'lead')).toBe(false);
+    expect(() => assertLeadsExported(ALL, { dryRun: false, env: {} })).not.toThrow();
+  });
+
+  it('a real run refuses while lead documents exist (they may be the only record)', () => {
+    expect(() => assertLeadsExported([...ALL, LEAD], { dryRun: false, env: {} })).toThrow(
+      LEADS_EXPORTED_ENV
+    );
+  });
+
+  it('a dry run warns and continues', () => {
+    const warn = vi.fn();
+    expect(() =>
+      assertLeadsExported([...ALL, LEAD], { dryRun: true, env: {}, warn })
+    ).not.toThrow();
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('lead-1'));
+  });
+
+  it('continues once the operator confirms the leads were exported', () => {
+    const warn = vi.fn();
+    expect(() =>
+      assertLeadsExported([...ALL, LEAD], {
+        dryRun: false,
+        env: { [LEADS_EXPORTED_ENV]: '1' },
+        warn,
+      })
+    ).not.toThrow();
+    expect(warn).toHaveBeenCalled();
+  });
+
+  it('the default export refuses a real run with a lead before asking the API anything', async () => {
+    const { context, fetch } = fakeContext(false);
+    const source = async function* () {
+      for (const doc of [...ALL, LEAD]) yield doc as never;
+    };
+    await expect(
+      (async () => {
+        for await (const _ of collectMigrationMutations(migration, source, context)) {
+          // drain
+        }
+      })()
+    ).rejects.toThrow(LEADS_EXPORTED_ENV);
+    expect(fetch).not.toHaveBeenCalled();
   });
 });
 

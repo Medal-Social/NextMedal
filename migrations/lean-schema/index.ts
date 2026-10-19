@@ -10,6 +10,9 @@
  * - blocking drafts (see blockingDrafts): a real run refuses while there are
  *   any. A dry run refuses too, unless LEAN_SCHEMA_DRY_RUN_IGNORE_DRAFTS=1 —
  *   then it warns and prints the planned mutations (ignored on a real run).
+ * - leads: a real run refuses while `lead` documents exist (possibly the only
+ *   record of a submission) until LEAN_SCHEMA_LEADS_EXPORTED=1 confirms they
+ *   were exported; a dry run warns.
  * - references: nothing is deleted while a document that survives the run
  *   still references it (judged on that document as this run leaves it).
  *   Live run: throws; API dry run: warns; offline dry run: checks the
@@ -48,6 +51,7 @@ import {
 export { applyMutations } from '../nm-fixes/index';
 
 export const IGNORE_DRAFTS_ENV = 'LEAN_SCHEMA_DRY_RUN_IGNORE_DRAFTS';
+export const LEADS_EXPORTED_ENV = 'LEAN_SCHEMA_LEADS_EXPORTED';
 export const DOCUMENT_TYPES = [...MIGRATED_TYPES, ...DELETE_TYPES] as const;
 
 type Warn = (message: string) => void;
@@ -111,6 +115,37 @@ function plannedState(docs: readonly Doc[]): Map<string, Doc> {
     else if (result.action === 'skip') out.set(doc._id, doc);
   }
   return out;
+}
+
+/**
+ * The migration deletes every `lead` (visitor data must not stay in the public
+ * dataset). Until the Medal-only forms are live, a lead may be the only record
+ * of a submission, so a real run refuses while any exist unless the operator
+ * confirms they were exported and handed to Medal (LEADS_EXPORTED_ENV=1).
+ * A dry run warns and continues.
+ */
+export function assertLeadsExported(
+  docs: readonly Doc[],
+  {
+    dryRun,
+    env = process.env,
+    warn = consoleWarn,
+  }: { dryRun: boolean; env?: Record<string, string | undefined>; warn?: Warn }
+): void {
+  const leads = docs.filter((doc) => doc._type === 'lead').map((doc) => doc._id);
+  if (!leads.length) return;
+  const list = leads.map((id) => `  ${id}`).join('\n');
+  const message = `lean-schema: ${leads.length} lead document(s) hold visitor submissions and would be deleted:\n${list}`;
+  if (env[LEADS_EXPORTED_ENV] === '1') {
+    warn(`WARNING ${message}\n(${LEADS_EXPORTED_ENV}=1: confirmed exported, deleting)`);
+    return;
+  }
+  const how = `Export them first (sanity documents query '*[_type == "lead"]' > leads.json), hand them to Medal Social, then run again with ${LEADS_EXPORTED_ENV}=1.`;
+  if (dryRun) {
+    warn(`WARNING ${message}\n${how} (a live run would stop here)`);
+    return;
+  }
+  throw new UnmappedContentError(`${message}\n${how}`);
 }
 
 /** Refuses while a draft would bring the old shape back (dry run: preview flag). */
@@ -223,6 +258,7 @@ export default defineMigration({
     const docs: Doc[] = [];
     for await (const doc of documents()) docs.push(doc as unknown as Doc);
     assertNoBlockingDrafts(docs, { dryRun: context.dryRun });
+    assertLeadsExported(docs, { dryRun: context.dryRun });
     const mutations = planMutations(docs);
     const deletes = mutations.flatMap((m) => (m.type === 'delete' ? [m.id] : []));
     await checkUnreferenced(deletes, docs, context);
