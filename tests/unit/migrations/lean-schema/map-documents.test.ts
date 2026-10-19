@@ -236,6 +236,32 @@ describe('site, pricing, placement, banner', () => {
     expect(() => mapDocument(doc)).toThrow(UnmappedContentError);
   });
 
+  it('a gallery intro link keeps its href (the gallery schema edits href links)', () => {
+    const components = byId('01914fd8-6f5c-4b9d-8830-065fe8f413a5');
+    const link = { _key: 'l1', _type: 'link', href: 'https://example.com' };
+    const gallery = (components.modules as Array<Record<string, unknown>>)[0];
+    const doc = {
+      ...components,
+      modules: [
+        {
+          ...gallery,
+          intro: [
+            {
+              _key: 'i1',
+              _type: 'block',
+              markDefs: [link],
+              children: [{ _key: 's1', _type: 'span', marks: ['l1'], text: 'Docs' }],
+            },
+          ],
+        },
+      ],
+    } as Doc;
+    const out = mapDocument(doc);
+    const mapped = out.action === 'patch' ? out.next : doc;
+    const intro = (mapped.modules as Array<{ intro: Array<{ markDefs: unknown[] }> }>)[0].intro;
+    expect(intro[0].markDefs).toEqual([link]);
+  });
+
   it('fixHrefLinks refuses a link with an href and another target', () => {
     expect(() =>
       fixHrefLinks({ _type: 'link', href: 'https://a', internal: { _ref: 'x' } }, 't')

@@ -136,6 +136,12 @@ export function repointReferences<T>(value: T): T {
 }
 
 /**
+ * The documents whose rich text edits external links (fixHrefLinks runs only
+ * there): the component gallery intro, for one, still edits `href` links.
+ */
+const HREF_LINK_TYPES = ['site', 'banner'];
+
+/**
  * Sanity's default link shape `{ _type: 'link', href }` (footer copyright,
  * banner text) → the link the Studio edits: `{ type: 'external', external }`.
  */
@@ -333,7 +339,8 @@ export function mapDocument(doc: Doc): DocumentResult {
   if (next._type === 'pricing') next = mapPricing(next);
   if (next._type === 'banner') next = mapBanner(next);
   if (next._type === 'form') next = mapForm(next);
-  next = fixHrefLinks(stripCtaStyles(next), doc._id);
+  next = stripCtaStyles(next);
+  if (HREF_LINK_TYPES.includes(next._type)) next = fixHrefLinks(next, doc._id);
   return canonicalJson(next) === canonicalJson(doc)
     ? { action: 'skip' }
     : { action: 'patch', next };
