@@ -7,6 +7,7 @@
 
 import { InsertAboveIcon } from '@sanity/icons/InsertAbove';
 import { defineField, defineType } from 'sanity';
+import { PLACEMENT_BLOCK_NAMES } from '../../page-blocks';
 
 export default defineType({
   name: 'placement',
@@ -64,10 +65,10 @@ export default defineType({
     }),
     defineField({
       name: 'modules',
-      title: 'Content Modules',
-      description: 'The modules to display in this placement.',
+      title: 'Blocks',
+      description: 'What to show in this place.',
       type: 'array',
-      of: [{ type: 'lead-magnet' }, { type: 'callout' }, { type: 'latest-articles' }],
+      of: PLACEMENT_BLOCK_NAMES.map((type) => ({ type })),
     }),
   ],
   preview: {
