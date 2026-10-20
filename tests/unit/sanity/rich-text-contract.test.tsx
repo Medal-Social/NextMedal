@@ -24,7 +24,6 @@ import {
   type RichTextPreset,
   type RichTextPresetName,
 } from '@/sanity/schemaTypes/fragments/rich-text';
-import { DEPRECATED_BLOCK_NAMES } from '@/sanity/schemaTypes/page-blocks';
 
 type Member = {
   type: string;
@@ -37,12 +36,11 @@ type Field = { name: string; type: string; of?: Member[]; fields?: Field[] };
 type SchemaType = { name: string; fields?: Field[] };
 
 /**
- * Types whose rich text is out of scope for the presets: deprecated blocks (deleted
- * later), the developer showcase, and collection bodies other than
- * articles (they keep their own toolbars with code blocks and tables).
+ * Types whose rich text is out of scope for the presets: the developer showcase,
+ * and collection bodies other than articles (they keep their own toolbars with
+ * code blocks and tables).
  */
 const SKIP: readonly string[] = [
-  ...DEPRECATED_BLOCK_NAMES,
   'component-gallery',
   'collection.documentation',
   'collection.changelog',

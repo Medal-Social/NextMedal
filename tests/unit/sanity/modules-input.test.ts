@@ -9,13 +9,9 @@
 import { describe, expect, it } from 'vitest';
 import { insertableModulesProps } from '@/sanity/components/ModulesInput';
 import modulesField from '@/sanity/schemaTypes/fragments/modules';
-import {
-  DEPRECATED_BLOCK_NAMES,
-  DEVELOPER_BLOCK_NAMES,
-  PAGE_BLOCK_NAMES,
-} from '@/sanity/schemaTypes/page-blocks';
+import { DEVELOPER_BLOCK_NAMES, PAGE_BLOCK_NAMES } from '@/sanity/schemaTypes/page-blocks';
 
-const HIDDEN = [...DEPRECATED_BLOCK_NAMES, ...DEVELOPER_BLOCK_NAMES];
+const HIDDEN = [...DEVELOPER_BLOCK_NAMES];
 
 // The compiled array type as Sanity hands it to the input: one member type per
 // `of` entry of the real field, named after its type.
@@ -38,7 +34,7 @@ describe('the page modules input', () => {
   const insertable = insertableModulesProps(props as never) as unknown as typeof props;
   const names = (type: typeof schemaType) => type.of.map((t) => t.name);
 
-  it('starts from the real field, which still accepts the deprecated and developer types', () => {
+  it('starts from the real field, which still accepts the developer showcase', () => {
     for (const name of HIDDEN) expect(names(schemaType)).toContain(name);
   });
 
@@ -54,8 +50,7 @@ describe('the page modules input', () => {
     expect(insertable.members[1]).toBe(props.members[1]);
   });
 
-  it('leaves the stored schema type untouched, so old blocks still validate', () => {
-    expect(names(schemaType)).toContain('videoHero');
+  it('leaves the stored schema type untouched, so the showcase still validates', () => {
     expect(names(schemaType)).toContain('component-gallery');
   });
 });

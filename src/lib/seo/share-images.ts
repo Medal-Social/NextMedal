@@ -76,10 +76,6 @@ export const ROUTE_SHARE_IMAGES = {
 /** Sanity module `_type` → designed card. Includes modules that have no public route of their own. */
 export const MODULE_SHARE_IMAGES = {
   hero: designed('hero.png', 'Eye-catching headers with gradient backgrounds, images, and CTAs.'),
-  videoHero: designed(
-    'video-hero.png',
-    'A high-impact hero section featuring a background video (Mux or YouTube).'
-  ),
   richtext: designed('richtext.png', 'A standard rich text module for long-form content.'),
   'accordion-list': designed(
     'accordion-list.png',

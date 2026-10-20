@@ -335,16 +335,29 @@ function mapVideoHero(module: AnyModule, label: string): AnyModule {
 /** Gallery items whose block type is deleted (owner decision B, 2026-10-19: team). */
 export const REMOVED_GALLERY_ITEMS = ['team'];
 
-/** The /components developer showcase (D8): kept as stored, minus deleted block types. */
+/**
+ * The /components developer showcase (D8): kept as stored, minus deleted block
+ * types; an old video page top becomes a page top (its renderer is deleted).
+ * A gallery nested inside the gallery is mapped the same way.
+ */
 function mapGallery(module: AnyModule): AnyModule {
   if (!Array.isArray(module.groups)) return module;
   const groups = (module.groups as AnyModule[]).map((group) =>
     Array.isArray(group?.items)
       ? {
           ...group,
-          items: (group.items as AnyModule[]).filter(
-            (item) => !REMOVED_GALLERY_ITEMS.includes(item?._type)
-          ),
+          items: (group.items as AnyModule[])
+            .filter((item) => !REMOVED_GALLERY_ITEMS.includes(item?._type))
+            .map((item) => {
+              if (item?._type === 'component-gallery') return mapGallery(item);
+              if (item?._type === 'videoHero') {
+                return mapVideoHero(
+                  item,
+                  `component-gallery ${module._key} videoHero ${item._key}`
+                );
+              }
+              return item;
+            }),
         }
       : group
   );

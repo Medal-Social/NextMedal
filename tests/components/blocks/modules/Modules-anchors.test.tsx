@@ -129,9 +129,13 @@ describe('Modules renders every block through blockDesign', () => {
     expect(html).toContain('id="module-f1"');
   });
 
-  it('old and undesigned blocks pass through unchanged', () => {
-    const video = { _type: 'videoHero', _key: 'v1', options: { bgTo: 'stored' } } as Sanity.Module;
-    const html = renderToStaticMarkup(<Modules modules={[video]} page={at('index')} />);
+  it('undesigned blocks pass through unchanged', () => {
+    const magnet = {
+      _type: 'lead-magnet',
+      _key: 'l1',
+      options: { bgTo: 'stored' },
+    } as Sanity.Module;
+    const html = renderToStaticMarkup(<Modules modules={[magnet]} page={at('index')} />);
     expect(html).toContain('data-bg="stored"');
   });
 });

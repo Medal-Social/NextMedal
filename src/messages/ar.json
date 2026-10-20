@@ -110,24 +110,6 @@
     "trending": "الأكثر قراءة",
     "latest": "الأحدث"
   },
-  "video": {
-    "preparing": "جارٍ تحضير الفيديو...",
-    "loading": "جارٍ تحميل تجربة عالية الجودة",
-    "error": "خطأ في الفيديو",
-    "noVideoId": "لم يتم توفير معرّف الفيديو",
-    "noMuxPlaybackId": "لم يتم العثور على معرّف تشغيل Mux",
-    "extractYouTubeError": "تعذر استخراج معرّف فيديو YouTube",
-    "extractError": "تعذر تحميل الفيديو",
-    "invalidVideoId": "تعذر العثور على معرّف فيديو صالح لهذا الفيديو",
-    "playerError": "خطأ في مشغل الفيديو: {message}",
-    "backToThumbnail": "العودة إلى الصورة المصغرة",
-    "play": "تشغيل الفيديو",
-    "youtubePlayer": "مشغل فيديو YouTube",
-    "thumbnail": "صورة مصغرة للفيديو",
-    "noThumbnail": "لا توجد صورة مصغرة متاحة",
-    "defaultTitle": "فيديو",
-    "watchOn": "شاهد على {platform}"
-  },
   "NotFound": {
     "title": "الصفحة غير موجودة",
     "description": "عذراً، تعذر العثور على الصفحة التي تبحث عنها. ربما تم إزالتها أو حذفها أو لم تكن موجودة أصلاً.",

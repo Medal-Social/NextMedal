@@ -78,7 +78,6 @@ export default defineType({
               description: 'Add modules to this group. The module type will be used as the title.',
               type: 'array',
               of: [
-                { type: 'videoHero' },
                 { type: 'hero' },
                 { type: 'accordion-list' },
                 { type: 'features' },

@@ -327,6 +327,85 @@ describe('kept blocks lose their knobs and nothing else', () => {
     expect(JSON.stringify(mapModule(gallery))).not.toContain('"style"');
   });
 
+  it('the developer gallery turns an old video page top into a page top (its renderer is deleted)', () => {
+    const gallery = {
+      _type: 'component-gallery',
+      _key: 'g',
+      groups: [
+        {
+          _key: 'x',
+          items: [
+            { _type: 'videoHero', _key: 'v', type: 'youtube', videoId: 'dQw4w9WgXcQ' },
+            { _type: 'features', _key: 'f' },
+          ],
+        },
+      ],
+    };
+    const once = mapModule(gallery);
+    expect(once).toEqual({
+      ...gallery,
+      groups: [
+        {
+          _key: 'x',
+          items: [
+            { _type: 'hero', _key: 'v', videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
+            { _type: 'features', _key: 'f' },
+          ],
+        },
+      ],
+    });
+    expect(mapModule(once)).toEqual(once);
+  });
+
+  it('a gallery inside the gallery is mapped too (no videoHero or Team item left at any depth)', () => {
+    const inner = {
+      _type: 'component-gallery',
+      _key: 'inner',
+      groups: [
+        {
+          _key: 'y',
+          items: [
+            { _type: 'videoHero', _key: 'v', type: 'youtube', videoId: 'dQw4w9WgXcQ' },
+            { _type: 'team', _key: 't' },
+          ],
+        },
+      ],
+    };
+    const gallery = {
+      _type: 'component-gallery',
+      _key: 'g',
+      groups: [{ _key: 'x', items: [inner] }],
+    };
+    const once = mapModule(gallery);
+    expect(JSON.stringify(once)).not.toMatch(/"videoHero"|"team"/);
+    expect(once).toEqual({
+      ...gallery,
+      groups: [
+        {
+          _key: 'x',
+          items: [
+            {
+              ...inner,
+              groups: [
+                {
+                  _key: 'y',
+                  items: [
+                    {
+                      _type: 'hero',
+                      _key: 'v',
+                      videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+    expect(mapModule(once)).toEqual(once);
+  });
+
   it('the developer gallery drops its Team item (team block deleted, owner decision B)', () => {
     const gallery = {
       _type: 'component-gallery',

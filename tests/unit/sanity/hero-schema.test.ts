@@ -83,16 +83,20 @@ describe('page top (hero) schema', () => {
 describe('page top query', () => {
   it('no longer resolves Mux videos for the page top', () => {
     const start = MODULES_QUERY.indexOf("_type == 'hero' =>");
-    const end = MODULES_QUERY.indexOf("_type == 'videoHero' =>");
+    const end = MODULES_QUERY.indexOf("_type == 'component-gallery' =>");
     expect(start).toBeGreaterThan(-1);
-    const branch = MODULES_QUERY.slice(start, end > start ? end : undefined);
+    expect(end).toBeGreaterThan(start);
+    const branch = MODULES_QUERY.slice(start, end);
     expect(branch).not.toContain('muxVideo');
     expect(branch).toContain('image {');
   });
 
   it('fetches the picture description', () => {
     const start = MODULES_QUERY.indexOf("_type == 'hero' =>");
-    const branch = MODULES_QUERY.slice(start, MODULES_QUERY.indexOf("_type == 'videoHero' =>"));
+    const branch = MODULES_QUERY.slice(
+      start,
+      MODULES_QUERY.indexOf("_type == 'component-gallery' =>")
+    );
     expect(branch).toMatch(/image \{\s*alt,/);
   });
 });

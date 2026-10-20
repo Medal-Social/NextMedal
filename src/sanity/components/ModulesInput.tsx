@@ -1,7 +1,7 @@
 /**
- * The page `modules` input: deprecated and developer block types stay in the
- * array's `of` so stored content validates and renders (Vault spec 2026-10-18
- * §2), but no insert menu offers them.
+ * The page `modules` input: the developer showcase stays in the array's `of`
+ * so the /components page validates and renders (Vault spec 2026-10-18 §2),
+ * but no insert menu offers it.
  *
  * Sanity 6.10 reads insertable types from two places: the add button's
  * menu (All items, groups, search) from `props.schemaType.of`, and each
@@ -9,16 +9,16 @@
  * the form state sets to the unfiltered array type. Both are replaced here.
  *
  * Side effect: copy/paste checks pasted items against the filtered `of`, so
- * pasting a hidden (old or developer) block into a page is refused. Stored
+ * pasting a hidden (developer) block into a page is refused. Stored
  * ones keep rendering and validating; only new copies are blocked.
  */
 import { useMemo } from 'react';
 import type { ArrayOfObjectsInputProps, ArraySchemaType } from 'sanity';
-import { DEPRECATED_BLOCK_NAMES, DEVELOPER_BLOCK_NAMES } from '../schemaTypes/page-blocks';
+import { DEVELOPER_BLOCK_NAMES } from '../schemaTypes/page-blocks';
 
-const HIDDEN = new Set<string>([...DEPRECATED_BLOCK_NAMES, ...DEVELOPER_BLOCK_NAMES]);
+const HIDDEN = new Set<string>(DEVELOPER_BLOCK_NAMES);
 
-/** The array type with the deprecated and developer block types left out of `of`. */
+/** The array type with the developer block types left out of `of`. */
 export function insertableSchemaType(schemaType: ArraySchemaType): ArraySchemaType {
   return { ...schemaType, of: schemaType.of.filter((type) => !HIDDEN.has(type.name)) };
 }
