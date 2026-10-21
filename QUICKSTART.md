@@ -56,6 +56,7 @@ Before you begin, make sure you have:
 - ✅ **pnpm** - `pnpm --version` works
 - ✅ **Git** - [Download here](https://git-scm.com/) if needed
 - ✅ **A Sanity account** - Free tier works! [Sign up](https://www.sanity.io/)
+- ✅ **A Medal Social API key** - required for forms and for Cloudflare deploys (`MEDAL_API_KEY`). Create one under **Settings → API keys** in your Medal Social workspace ([Authentication & API keys](https://www.medalsocial.com/docs/sdk/authentication)).
 
 ---
 
@@ -128,7 +129,27 @@ If you already have a Sanity project:
    NEXT_PUBLIC_BASE_URL=http://localhost:3000
    ```
 
-3. **(Optional but recommended)** Create a Sanity API token for live preview:
+3. **Add `MEDAL_API_KEY`** (needed for forms; required to deploy):
+
+   `MEDAL_API_KEY` is the Medal Social API key: a single bearer key in `@medalsocial/sdk` 1.x (it replaces the legacy client id and secret pair). Contact forms, newsletter sign-ups, and event registrations go to [Medal Social](https://medalsocial.com) only, through `@medalsocial/sdk`. Nothing is stored in Sanity, whose dataset is public. Without the key, every form answers "We couldn't send your message right now".
+
+   **Where to get it.** In your Medal Social workspace, open **Settings → API keys** and create a key. Keys are prefixed `medal_` and scoped to one workspace. See [Authentication & API keys](https://www.medalsocial.com/docs/sdk/authentication). The key needs the scopes `read:contacts` and `write:contacts` (dotted: `crm.contact.read`, `crm.activity.read`, `write:contacts`, `crm.contact.note.create`).
+
+   **Where to set it locally.** `pnpm dev` reads `.env.local`. The key is server-only — leave off the `NEXT_PUBLIC_` prefix so it is not shipped to the browser.
+
+   ```bash
+   # Needed for forms (contact, newsletter, event registration):
+   MEDAL_API_KEY=medal_your_key_here
+
+   # Optional. Overrides the API base URL. Leave unset to use the SDK default.
+   # MEDAL_API_ENDPOINT=
+   ```
+
+   A local Worker preview (`pnpm preview`) does not read `.env.local`. Copy `.dev.vars.example` to `.dev.vars` and set `MEDAL_API_KEY` there as well.
+
+   `pnpm setup:check` does not require this key, and the dev server still starts without it. Forms will not send until it is set. Cloudflare deploys fail when it is empty — see [Step 8](#step-8-deploy).
+
+4. **(Optional but recommended)** Create a Sanity API token for live preview:
    - Go to [sanity.io/manage](https://www.sanity.io/manage) → Your Project → **API** → **Tokens**
    - Click **Add API Token**
    - Name: "NextMedal Browser Token"
@@ -210,6 +231,18 @@ Your site will be available at:
 5. **View your site:**
    - Go to http://localhost:3000
    - You should now see your homepage! 🎉
+
+---
+
+## Step 8: Deploy
+
+Production and staging run on **Cloudflare Workers**. A push to `dev` deploys staging (`staging.nextmedal.com`); a push to `prod` deploys production (`nextmedal.com` and `www`). Both GitHub workflows stay off until the repository variable `CLOUDFLARE_DEPLOY_ENABLED` is `true`. The rest of the setup (Cloudflare token, account id, optional analytics) is in [docs/CLOUDFLARE.md](./docs/CLOUDFLARE.md).
+
+**Where to set `MEDAL_API_KEY` for a deploy.** Add it as a secret on the GitHub **Staging** and **Prod** environments (Settings → Secrets and variables → Actions → Environments). The workflows read `secrets.MEDAL_API_KEY` and **fail before building** when that secret is empty — a Worker without the key would answer every form with "We couldn't send your message right now". After the Worker deploys, the workflow uploads the same value with `wrangler secret put`. It stays a Worker secret, not a plaintext var.
+
+`MEDAL_API_ENDPOINT` is optional. Set it on the same environments only when you need a non-default API base URL. An empty value is deleted from the Worker so an old endpoint does not linger.
+
+Use the same key scopes as in [Step 3](#step-3-configure-environment-variables): `read:contacts` and `write:contacts` (dotted: `crm.contact.read`, `crm.activity.read`, `write:contacts`, `crm.contact.note.create`).
 
 ---
 
@@ -335,6 +368,28 @@ open https://www.sanity.io/manage
 1. Verify your `NEXT_PUBLIC_SANITY_PROJECT_ID` in `.env.local` matches your project on sanity.io
 2. Make sure CORS origin is added for `http://localhost:3000` (see above)
 3. Try logging out and back in: Click your profile icon → Log out → Refresh page
+
+---
+
+### Forms say "We couldn't send your message right now"
+
+**Problem:** `MEDAL_API_KEY` is missing or empty, so the submission is not sent to Medal Social.
+
+**Solution:**
+1. Create a key in your Medal Social workspace under **Settings → API keys** (scopes `read:contacts` and `write:contacts`). See [Authentication & API keys](https://www.medalsocial.com/docs/sdk/authentication).
+2. Set `MEDAL_API_KEY` in `.env.local` and restart `pnpm dev`.
+3. For `pnpm preview`, set it in `.dev.vars` (copied from `.dev.vars.example`).
+
+---
+
+### Cloudflare deploy fails: `MEDAL_API_KEY is empty`
+
+**Problem:** The **Staging** or **Prod** GitHub environment has no `MEDAL_API_KEY` secret. The workflow exits before the build.
+
+**Solution:**
+1. Add `MEDAL_API_KEY` to that environment (Settings → Secrets and variables → Actions → Environments).
+2. Re-run the workflow. The key is uploaded to the Worker as a secret after deploy.
+3. Details: [Step 8](#step-8-deploy) and [docs/CLOUDFLARE.md](./docs/CLOUDFLARE.md).
 
 ---
 
