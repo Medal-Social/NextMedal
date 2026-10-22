@@ -9,6 +9,7 @@ import { describe, expect, it } from 'vitest';
  * a site whose every form fails. The deploy workflows refuse instead.
  */
 const workflows = ['cloudflare-prod.yml', 'cloudflare-staging.yml'];
+const READ_TOKEN = 'viewer_read_token_value';
 const read = (file: string) =>
   readFileSync(resolve(__dirname, '../../../.github/workflows', file), 'utf8');
 
@@ -75,6 +76,53 @@ describe.each(workflows)('%s', (file) => {
     expect(status).toBe(0);
     expect(calls.some((c) => c.includes('SANITY_WRITE_TOKEN'))).toBe(false);
   });
+
+  it('fails before building when SANITY_API_READ_TOKEN is empty', () => {
+    const readTokenCheck = stepScript(source, 'Require SANITY_API_READ_TOKEN');
+    const result = run(readTokenCheck, { SANITY_API_READ_TOKEN: '' });
+    expect(result.status).not.toBe(0);
+    expect(result.stdout.toString()).toContain('SANITY_API_READ_TOKEN');
+    expect(result.stdout.toString()).not.toContain(READ_TOKEN);
+    expect(result.stderr.toString()).not.toContain(READ_TOKEN);
+  });
+
+  it('passes the read-token check without printing the value', () => {
+    const readTokenCheck = stepScript(source, 'Require SANITY_API_READ_TOKEN');
+    const result = run(readTokenCheck, { SANITY_API_READ_TOKEN: READ_TOKEN });
+    expect(result.status).toBe(0);
+    expect(`${result.stdout}${result.stderr}`).not.toContain(READ_TOKEN);
+  });
+
+  it('checks the read token and scans bundles before deploy', () => {
+    expect(source.indexOf('- name: Require SANITY_API_READ_TOKEN')).toBeLessThan(
+      source.indexOf('- name: Build for Cloudflare Workers')
+    );
+    expect(source.indexOf('- name: Scan client and Studio bundles for tokens')).toBeLessThan(
+      source.indexOf('- name: Deploy to Cloudflare')
+    );
+  });
+
+  it('uploads SANITY_API_READ_TOKEN without printing the value', () => {
+    const { status, calls, output } = fakeUpload(source, ['MEDAL_API_KEY']);
+    expect(status).toBe(0);
+    expect(calls.filter((call) => call.includes('secret put SANITY_API_READ_TOKEN'))).toHaveLength(
+      1
+    );
+    expect(output).not.toContain(READ_TOKEN);
+    expect(calls.join('\n')).not.toContain(READ_TOKEN);
+  });
+
+  it('deletes a leftover public Sanity browser token from the Worker', () => {
+    const { status, calls, output } = fakeUpload(source, [
+      'MEDAL_API_KEY',
+      'NEXT_PUBLIC_SANITY_BROWSER_TOKEN',
+    ]);
+    expect(status).toBe(0);
+    expect(
+      calls.filter((call) => call.includes('secret delete NEXT_PUBLIC_SANITY_BROWSER_TOKEN'))
+    ).toHaveLength(1);
+    expect(output).not.toContain(READ_TOKEN);
+  });
 });
 
 /**
@@ -107,6 +155,7 @@ function fakeUpload(source: string, secretsOnWorker: string[]) {
       CALLS: log,
       SECRETS_JSON: JSON.stringify(secretsOnWorker.map((name) => ({ name }))),
       MEDAL_API_KEY: 'medal_x',
+      SANITY_API_READ_TOKEN: READ_TOKEN,
     } as unknown as NodeJS.ProcessEnv;
     if (Object.keys(env).some((key) => key.startsWith('CLOUDFLARE_'))) {
       throw new Error('refusing to run: Cloudflare credentials in the environment');
@@ -121,7 +170,8 @@ function fakeUpload(source: string, secretsOnWorker: string[]) {
     if (resolved !== fake) throw new Error(`refusing to run: pnpm resolves to ${resolved}`);
     const result = spawnSync('bash', ['-c', stepScript(source, 'Upload Worker secrets')], { env });
     const calls = readFileSync(log, 'utf8').trim().split('\n').filter(Boolean);
-    return { status: result.status, calls };
+    const output = `${result.stdout?.toString() ?? ''}${result.stderr?.toString() ?? ''}`;
+    return { status: result.status, calls, output };
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

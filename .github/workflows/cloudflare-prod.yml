@@ -35,7 +35,9 @@ jobs:
       NEXT_PUBLIC_SANITY_PROJECT_ID: ekjn2yf6
       NEXT_PUBLIC_SANITY_DATASET: production
       NEXT_PUBLIC_SANITY_API_VERSION: '2025-12-23'
-      NEXT_PUBLIC_SANITY_BROWSER_TOKEN: ${{ secrets.NEXT_PUBLIC_SANITY_BROWSER_TOKEN }}
+      # Server-only Viewer token. Not NEXT_PUBLIC_: that prefix is inlined into
+      # public JavaScript. Also uploaded to the Worker as a secret below.
+      SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
       NEXT_PUBLIC_UMAMI_SCRIPT_URL: ${{ secrets.NEXT_PUBLIC_UMAMI_SCRIPT_URL }}
       NEXT_PUBLIC_UMAMI_WEBSITE_ID: ${{ secrets.NEXT_PUBLIC_UMAMI_WEBSITE_ID }}
       MEDAL_API_KEY: ${{ secrets.MEDAL_API_KEY }}
@@ -48,6 +50,13 @@ jobs:
         run: |
           if [ -z "${MEDAL_API_KEY:-}" ]; then
             echo "::error::MEDAL_API_KEY is empty. Add it to the Prod environment (scopes read:contacts + write:contacts) — every form needs it."
+            exit 1
+          fi
+
+      - name: Require SANITY_API_READ_TOKEN
+        run: |
+          if [ -z "${SANITY_API_READ_TOKEN:-}" ]; then
+            echo "::error::SANITY_API_READ_TOKEN is empty. Add a Viewer token to the Prod environment. Do not use a NEXT_PUBLIC_ name."
             exit 1
           fi
 
@@ -69,6 +78,9 @@ jobs:
       - name: Build for Cloudflare Workers
         run: pnpm exec opennextjs-cloudflare build
 
+      - name: Scan client and Studio bundles for tokens
+        run: pnpm scan:client-tokens
+
       - name: Deploy to Cloudflare
         uses: cloudflare/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd # v3
         with:
@@ -85,6 +97,8 @@ jobs:
           existing=$(pnpm exec wrangler secret list --env production 2>/dev/null | jq -r '.[].name' 2>/dev/null || echo "")
           echo "Uploading MEDAL_API_KEY to nextmedal (production)..."
           printf '%s' "$MEDAL_API_KEY" | pnpm exec wrangler secret put MEDAL_API_KEY --env production
+          echo "Uploading SANITY_API_READ_TOKEN to nextmedal (production)..."
+          printf '%s' "$SANITY_API_READ_TOKEN" | pnpm exec wrangler secret put SANITY_API_READ_TOKEN --env production
           # Optional: an empty value deletes it, so a removed endpoint doesn't linger under --keep-vars.
           for name in MEDAL_API_ENDPOINT; do
             value="${!name:-}"
@@ -99,7 +113,7 @@ jobs:
             printf '%s' "$value" | pnpm exec wrangler secret put "$name" --env production
           done
           # Retired: forms no longer write to Sanity. Remove a token left by older deploys.
-          for name in SANITY_WRITE_TOKEN; do
+          for name in SANITY_WRITE_TOKEN NEXT_PUBLIC_SANITY_BROWSER_TOKEN; do
             if echo "$existing" | grep -qx "$name"; then
               echo "::warning::Retired secret '$name' is still on the Worker — deleting."
               echo y | pnpm exec wrangler secret delete "$name" --env production

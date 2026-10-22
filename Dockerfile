@@ -53,11 +53,9 @@ ENV NEXT_DEPLOYMENT_ID=$NEXT_DEPLOYMENT_ID \
     NEXT_TELEMETRY_DISABLED=1 \
     NODE_ENV=production
 
-# Build the Next.js app
-# We mount sensitive tokens as secrets to avoid leaking them in the image layers
-RUN --mount=type=secret,id=NEXT_PUBLIC_SANITY_BROWSER_TOKEN \
-    --mount=type=cache,target=/app/.next/cache \
-    export NEXT_PUBLIC_SANITY_BROWSER_TOKEN=$(cat /run/secrets/NEXT_PUBLIC_SANITY_BROWSER_TOKEN) && \
+# Build the Next.js app. The Sanity read token is a runtime secret, so it is
+# not a build arg and is not exported into this stage.
+RUN --mount=type=cache,target=/app/.next/cache \
     pnpm build
 
 # --- Production image ---
