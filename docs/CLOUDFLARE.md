@@ -33,10 +33,16 @@ The two workflows are **dormant by default**. To enable automatic deploys:
    (Settings → Secrets and variables → Actions → Variables).
 2. **Environment secrets** — add to the `Staging` and `Prod` GitHub environments:
    - `CLOUDFLARE_API_TOKEN` — a token with *Workers Scripts: Edit* (+ *Workers
-     Routes: Edit* for custom domains) on the Medal Cloudflare account.
+     Routes: Edit* for custom domains) on the Medal Social Cloudflare account.
    - `CLOUDFLARE_ACCOUNT_ID` — the account ID.
-   - `NEXT_PUBLIC_SANITY_BROWSER_TOKEN`, `NEXT_PUBLIC_UMAMI_SCRIPT_URL`,
-     `NEXT_PUBLIC_UMAMI_WEBSITE_ID` (optional — for live preview / analytics).
+   - `SANITY_API_READ_TOKEN` — server-only Viewer token for draft mode and
+     server reads. The deploy uploads it as a Worker secret. Do not recreate
+     the old `NEXT_PUBLIC_` token: Next.js inlines that prefix into public
+     JavaScript. `pnpm scan:client-tokens` runs after the Worker build and
+     fails the job if a Sanity token pattern or a `*TOKEN` value is in
+     `.next/static` or a Studio bundle.
+   - `NEXT_PUBLIC_UMAMI_SCRIPT_URL`, `NEXT_PUBLIC_UMAMI_WEBSITE_ID` (optional —
+     analytics).
    - `MEDAL_API_KEY` (**required for forms**) and `MEDAL_API_ENDPOINT`
      (optional). Every contact form, newsletter sign-up and event registration
      goes to Medal Social only — nothing is stored in Sanity — so without the

@@ -12,6 +12,7 @@ NextMedal is a Next.js 16 + Sanity CMS website template built by Medal Social. I
 # Development
 pnpm dev                    # Start dev server with Turbopack (http://localhost:3000)
 pnpm build                  # Production build
+pnpm scan:client-tokens     # Fail if a Sanity token is in .next/static or a Studio bundle
 pnpm start                  # Run production build
 
 # Code Quality
@@ -380,6 +381,7 @@ The article system is the primary content publishing mechanism, replacing the le
 - Revalidation is automatic via `<SanityLive>` component - no webhooks needed
 - Use GROQ projections - only fetch fields you need
 - Use `useCdn: false` only in draft/preview mode
+- The Viewer token is `SANITY_API_READ_TOKEN` in `src/sanity/lib/token.ts`. That module imports `server-only`. `defineLive` receives it as `serverToken` with `browserToken: false`. Draft mode and visual editing read it through the draft-mode route and server actions. Do not add a `NEXT_PUBLIC_` Sanity token: Next.js inlines that prefix into `/_next/static`. After a production build, `pnpm scan:client-tokens` fails if a Sanity token pattern (`sk` plus 100 characters) or a `*TOKEN` value is in `.next/static` or a Studio bundle.
 
 **Portable Text:**
 - Use Next.js `<Link>` for internal links in custom components
@@ -513,7 +515,7 @@ NEXT_PUBLIC_BASE_URL             # Site base URL
 
 Optional:
 ```
-NEXT_PUBLIC_SANITY_BROWSER_TOKEN # Sanity API token for live preview/draft mode (CLIENT-EXPOSED, MUST be read-only/Viewer permissions)
+SANITY_API_READ_TOKEN            # Server-only Viewer token for draft mode and server reads. Never NEXT_PUBLIC_.
 NEXT_PUBLIC_UMAMI_SCRIPT_URL     # Umami analytics script URL
 NEXT_PUBLIC_IMAGE_PROXY_URL      # Custom image proxy (enables custom loader)
 ```

@@ -12,8 +12,8 @@ const envSchema = z.object({
   NEXT_PUBLIC_SANITY_PROJECT_ID: z.string().min(1),
   NEXT_PUBLIC_SANITY_DATASET: z.string().min(1),
   NEXT_PUBLIC_SANITY_API_VERSION: z.string().optional().default('2025-12-23'),
-  // Optional: enables client-side live preview (must be NEXT_PUBLIC_ to work in browser)
-  NEXT_PUBLIC_SANITY_BROWSER_TOKEN: z.string().optional(),
+  // Server-only Viewer token for draft mode and server reads. Never NEXT_PUBLIC_.
+  SANITY_API_READ_TOKEN: z.string().min(1).optional(),
   // Optional: hosted Studio app for `sanity deploy` (forks; see src/sanity/lib/studio-deployment.ts)
   SANITY_STUDIO_APP_ID: z
     .string()
@@ -53,7 +53,8 @@ const rawEnv: Record<string, string | undefined> = {
   NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
   NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET,
   NEXT_PUBLIC_SANITY_API_VERSION: process.env.NEXT_PUBLIC_SANITY_API_VERSION,
-  NEXT_PUBLIC_SANITY_BROWSER_TOKEN: process.env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN,
+  // biome-ignore lint/complexity/useLiteralKeys: a literal key is inlined into client bundles
+  SANITY_API_READ_TOKEN: process.env['SANITY_API_READ_TOKEN']?.trim() || undefined,
   SANITY_STUDIO_APP_ID: process.env.SANITY_STUDIO_APP_ID,
   NEXT_PUBLIC_UMAMI_SCRIPT_URL: process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL,
   NEXT_PUBLIC_UMAMI_WEBSITE_ID: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID,

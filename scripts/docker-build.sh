@@ -22,8 +22,8 @@ if [ ! -f .env ]; then
   echo "⚠️  Warning: .env file not found. Build may fail if required arguments are missing."
 fi
 
-# Build arguments for Next.js (only those needed at build time)
-# We specifically pick only the variables the Dockerfile expects to avoid leaking other secrets
+# Public build arguments the Dockerfile expects. Server secrets, including the
+# Sanity Viewer token, are runtime environment variables and are not forwarded.
 REQUIRED_ARGS=(
   "NEXT_PUBLIC_SANITY_PROJECT_ID"
   "NEXT_PUBLIC_SANITY_DATASET"
@@ -31,11 +31,6 @@ REQUIRED_ARGS=(
   "NEXT_PUBLIC_UMAMI_SCRIPT_URL"
   "NEXT_PUBLIC_UMAMI_WEBSITE_ID"
   "NEXT_PUBLIC_APP_ENV"
-)
-
-# Secrets that should be passed via --secret to avoid leaking them in image layers
-SECRET_ARGS=(
-  "NEXT_PUBLIC_SANITY_BROWSER_TOKEN"
 )
 
 # Resolve outside Docker: .git is intentionally excluded from the build context.
@@ -51,21 +46,7 @@ for ARG in "${REQUIRED_ARGS[@]}"; do
   fi
 done
 
-# Create a temporary directory for secrets to ensure cleanup
-SECRET_DIR=$(mktemp -d)
-trap 'rm -rf "$SECRET_DIR"' EXIT
-
-for ARG in "${SECRET_ARGS[@]}"; do
-  # Extract value from .env if it exists
-  VALUE=$(grep "^$ARG=" .env | cut -d'=' -f2- | sed 's/^"//;s/"$//;s/^\x27//;s/\x27$//')
-  if [ ! -z "$VALUE" ]; then
-    SECRET_FILE="$SECRET_DIR/$ARG"
-    echo "$VALUE" > "$SECRET_FILE"
-    BUILD_ARGS+=(--secret "id=$ARG,src=$SECRET_FILE")
-  fi
-done
-
-echo "🛠️  Build arguments and secrets prepared (filtered from .env)"
+echo "🛠️  Build arguments prepared (filtered from .env)"
 
 # Execute build
 # Note: DOCKER_BUILDKIT=1 might be required for older docker versions

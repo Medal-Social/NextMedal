@@ -36,7 +36,7 @@ const sharedTestConfig = {
     NEXT_PUBLIC_SANITY_PROJECT_ID: 'test-project-id',
     NEXT_PUBLIC_SANITY_DATASET: 'test-dataset',
     NEXT_PUBLIC_SANITY_API_VERSION: '2024-12-01',
-    NEXT_PUBLIC_SANITY_BROWSER_TOKEN: 'test-token',
+    SANITY_API_READ_TOKEN: 'test-token',
   },
   // Highlight slow tests (>300ms)
   slowTestThreshold: 300,
