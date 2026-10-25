@@ -108,7 +108,7 @@ const config = {
         // img.youtube.com — see CLAUDE.md "Image Handling".
         hostname: 'i.ytimg.com',
       },
-      // X / Twitter avatars + media (static Medal cards; go through image loader/proxy when configured)
+      // X / Twitter avatars + media (static Medal Social cards; go through image loader/proxy when configured)
       {
         protocol: 'https',
         hostname: 'pbs.twimg.com',

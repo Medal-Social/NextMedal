@@ -17,7 +17,7 @@ interface SocialEmbedFallbackProps {
 }
 
 /**
- * Client-safe social embed: Medal link-out card with no server fetch / server-only
+ * Client-safe social embed: Medal Social link-out card with no server fetch / server-only
  * imports. Used inside client trees (ComponentGallery) and as a graceful
  * degradation when the async oEmbed resolver cannot run.
  */

@@ -19,6 +19,8 @@ describe('buildQaFixtureMetadata', () => {
       expect(title.length).toBeLessThanOrEqual(60);
       expect(description.length).toBeGreaterThanOrEqual(70);
       expect(description.length).toBeLessThanOrEqual(160);
+      expect(`${title} ${description}`).toMatch(/Medal Social/);
+      expect(`${title} ${description}`).not.toMatch(/Medal(?! Social)/);
 
       expect(metadata.alternates?.canonical).toContain('/qa/social-embeds');
       const languages = metadata.alternates?.languages ?? {};
@@ -34,6 +36,10 @@ describe('buildQaFixtureMetadata', () => {
         expect(String(image.url)).toContain('/api/og?title=');
       }
     }
+
+    expect(String(buildQaFixtureMetadata('nb', false).title)).toBe(
+      'Innbyggingskort for Medal Socials Lighthouse-SEO-test'
+    );
 
     expect(titles.size).toBe(SUPPORTED_LOCALES.length);
   });
