@@ -1,4 +1,4 @@
-import { fetchJson } from '../fetch-json';
+import { fetchJson, SOCIAL_EMBED_FETCH_TIMEOUT_MS } from '../fetch-json';
 import { extractDateFromXOembedHtml, extractXOembedBodyHtml, stripHtml } from '../strip-html';
 import type {
   ParsedSocialUrl,
@@ -159,10 +159,14 @@ function emptyX(parsed: ParsedSocialUrl): SocialEmbedData {
   };
 }
 
-async function fetchSyndication(id: string): Promise<XSyndicationTweet | null> {
+async function fetchSyndication(
+  id: string,
+  signal: AbortSignal
+): Promise<XSyndicationTweet | null> {
   const result = await fetchJson<XSyndicationTweet>(
     `https://cdn.syndication.twimg.com/tweet-result?id=${encodeURIComponent(id)}&lang=en&token=1`,
     {
+      signal,
       headers: {
         // Public syndication endpoint expects a browser-like UA; empty UA returns {}.
         'User-Agent': 'MedalSocial-NextMedal/1.0 (+https://medalsocial.com)',
@@ -173,18 +177,32 @@ async function fetchSyndication(id: string): Promise<XSyndicationTweet | null> {
   return result.data;
 }
 
-async function fetchOembed(url: string): Promise<XOembedResponse | null> {
+async function fetchOembed(url: string, signal: AbortSignal): Promise<XOembedResponse | null> {
   const endpoint = `https://publish.twitter.com/oembed?url=${encodeURIComponent(url)}&omit_script=true&dnt=true`;
-  const result = await fetchJson<XOembedResponse>(endpoint);
+  const result = await fetchJson<XOembedResponse>(endpoint, { signal });
   if (!result.ok || !result.data?.html) return null;
   return result.data;
 }
 
 export async function fetchXEmbed(parsed: ParsedSocialUrl): Promise<SocialEmbedData> {
+  // Both providers share one render budget, including a late fallback.
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), SOCIAL_EMBED_FETCH_TIMEOUT_MS);
+  try {
+    return await resolveXEmbed(parsed, controller.signal);
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function resolveXEmbed(
+  parsed: ParsedSocialUrl,
+  signal: AbortSignal
+): Promise<SocialEmbedData> {
   const base = emptyX(parsed);
 
   if (parsed.id) {
-    const tweet = await fetchSyndication(parsed.id);
+    const tweet = await fetchSyndication(parsed.id, signal);
     if (tweet) {
       const handle = tweet.user?.screen_name ?? parsed.username;
       const linkPreview = pickLinkPreview(tweet.card);
@@ -206,7 +224,8 @@ export async function fetchXEmbed(parsed: ParsedSocialUrl): Promise<SocialEmbedD
     }
   }
 
-  const oembed = await fetchOembed(parsed.url);
+  if (signal.aborted) return base;
+  const oembed = await fetchOembed(parsed.url, signal);
   if (oembed?.html) {
     // Keep only the tweet <p> body — the footer is `&mdash; Author (@handle) <a>Date</a>`
     // and must not be stripped via a greedy em-dash regex (cuts real dashes in the body).

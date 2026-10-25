@@ -1,5 +1,11 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+const intl = vi.hoisted(() => ({ locale: 'en' }));
+vi.mock('next-intl', () => ({ useLocale: () => intl.locale }));
+afterEach(() => {
+  intl.locale = 'en';
+});
 
 // Mock dependencies
 vi.mock('next-sanity', () => ({
@@ -31,6 +37,7 @@ vi.mock('@/lib/validateExternalUrl', () => ({
 }));
 
 import CTA from '@/components/blocks/objects/cta/CTA';
+import CTAList from '@/components/blocks/objects/cta/CTAList';
 
 // Helper to create a minimal internal page for testing
 function createTestPage(slug: string) {
@@ -245,5 +252,97 @@ describe('CTA internal link behavior', () => {
     );
     const link = screen.getByRole('link');
     expect(link).not.toHaveAttribute('target', '_blank');
+  });
+});
+
+describe('CTA on a translated page (spec D4)', () => {
+  const target = (language: string) => ({
+    ...createTestPage(language === 'nb' ? 'om-oss' : 'about'),
+    _id: `about.${language}`,
+    language,
+  });
+
+  it('links to the translation in the visitor language', () => {
+    intl.locale = 'nb';
+    render(
+      <CTA
+        link={{
+          _type: 'menuItem',
+          label: 'Om oss',
+          type: 'internal',
+          internal: {
+            ...target('en'),
+            translations: [target('en'), target('nb')],
+          } as unknown as Sanity.MenuItem['internal'],
+        }}
+      />
+    );
+    const link = screen.getByRole('link', { name: 'Om oss' });
+    expect(link).toHaveAttribute('href', '/nb/om-oss');
+  });
+
+  it('links to the source language when there is no translation', () => {
+    intl.locale = 'nb';
+    render(
+      <CTA
+        link={{
+          _type: 'menuItem',
+          label: 'Features',
+          type: 'internal',
+          internal: { ...target('en'), translations: [] } as unknown as Sanity.MenuItem['internal'],
+        }}
+      />
+    );
+    const link = screen.getByRole('link', { name: 'Features' });
+    // Prefix-free: /en/about would cost a 308 redirect.
+    expect(link).toHaveAttribute('href', '/about');
+  });
+});
+
+describe('CTA with no stored style (lean-schema removes button styles)', () => {
+  const external = (label: string) =>
+    ({
+      _type: 'menuItem',
+      label,
+      type: 'external',
+      external: 'https://github.com/Medal-Social/NextMedal',
+    }) as Sanity.MenuItem;
+
+  it('a null style (CTA_QUERY projects `style`) renders the solid primary button', () => {
+    render(<CTA link={external('View on Github')} style={null as never} />);
+    expect(screen.getByRole('link', { name: 'View on Github' })).toHaveClass('bg-primary');
+  });
+
+  it('header buttons (site ctas) with style null stay solid', () => {
+    render(
+      <CTAList ctas={[{ _key: 'h', link: external('View on Github'), style: null as never }]} />
+    );
+    expect(screen.getByRole('link', { name: 'View on Github' })).toHaveClass('bg-primary');
+  });
+
+  it('price plan buttons with style null stay solid', () => {
+    render(
+      <CTAList
+        className="grid"
+        ctas={[
+          {
+            _key: 'p',
+            link: {
+              _type: 'menuItem',
+              label: 'Get started',
+              type: 'internal',
+              internal: createTestPage('pricing'),
+            },
+            style: null as never,
+          },
+        ]}
+      />
+    );
+    expect(screen.getByRole('link', { name: 'Get started' })).toHaveClass('bg-primary');
+  });
+
+  it('ghost stays ghost', () => {
+    render(<CTA link={external('Docs')} style="ghost" />);
+    expect(screen.getByRole('link', { name: 'Docs' })).not.toHaveClass('bg-primary');
   });
 });

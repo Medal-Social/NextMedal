@@ -14,8 +14,11 @@ const envSchema = z.object({
   NEXT_PUBLIC_SANITY_API_VERSION: z.string().optional().default('2025-12-23'),
   // Optional: enables client-side live preview (must be NEXT_PUBLIC_ to work in browser)
   NEXT_PUBLIC_SANITY_BROWSER_TOKEN: z.string().optional(),
-  // Server-side write token for creating leads (NOT public - server only)
-  SANITY_WRITE_TOKEN: z.string().optional(),
+  // Optional: hosted Studio app for `sanity deploy` (forks; see src/sanity/lib/studio-deployment.ts)
+  SANITY_STUDIO_APP_ID: z
+    .string()
+    .regex(/^[a-z0-9]+$/, 'Sanity app ids are lowercase letters and digits')
+    .optional(),
 
   // Optional: Analytics
   NEXT_PUBLIC_UMAMI_SCRIPT_URL: z.url().optional(),
@@ -51,7 +54,7 @@ const rawEnv: Record<string, string | undefined> = {
   NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET,
   NEXT_PUBLIC_SANITY_API_VERSION: process.env.NEXT_PUBLIC_SANITY_API_VERSION,
   NEXT_PUBLIC_SANITY_BROWSER_TOKEN: process.env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN,
-  SANITY_WRITE_TOKEN: process.env.SANITY_WRITE_TOKEN,
+  SANITY_STUDIO_APP_ID: process.env.SANITY_STUDIO_APP_ID,
   NEXT_PUBLIC_UMAMI_SCRIPT_URL: process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL,
   NEXT_PUBLIC_UMAMI_WEBSITE_ID: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID,
   NEXT_PUBLIC_IMAGE_PROXY_URL: process.env.NEXT_PUBLIC_IMAGE_PROXY_URL,

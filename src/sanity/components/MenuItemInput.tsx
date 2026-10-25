@@ -64,7 +64,7 @@ export function MenuItemInput(props: ObjectInputProps) {
       <Grid gridTemplateColumns={[1, 1, 2]} gap={4}>
         <Box>
           <Label size={1} style={{ marginBottom: '8px' }}>
-            Link Text
+            Link text
           </Label>
           <TextInput
             value={value?.label || ''}
@@ -76,7 +76,7 @@ export function MenuItemInput(props: ObjectInputProps) {
         </Box>
         <Box>
           <Label size={1} style={{ marginBottom: '8px' }}>
-            Type
+            Link to
           </Label>
           <Flex
             style={{
@@ -91,7 +91,7 @@ export function MenuItemInput(props: ObjectInputProps) {
                 mode={isInternal ? 'default' : 'bleed'}
                 tone={isInternal ? 'primary' : 'default'}
                 icon={LinkIcon}
-                text="Internal"
+                text="This site"
                 fontSize={1}
                 padding={2}
                 onClick={() => handleToggleLinkType('internal')}
@@ -106,7 +106,7 @@ export function MenuItemInput(props: ObjectInputProps) {
                 mode={!isInternal ? 'default' : 'bleed'}
                 tone={!isInternal ? 'primary' : 'default'}
                 icon={EarthGlobeIcon}
-                text="External"
+                text="Other website"
                 fontSize={1}
                 padding={2}
                 onClick={() => handleToggleLinkType('external')}
@@ -120,7 +120,7 @@ export function MenuItemInput(props: ObjectInputProps) {
       {/* ROW 2: Destination */}
       <Box>
         <Label size={1} style={{ marginBottom: '8px' }}>
-          Destination
+          {isInternal ? 'Page' : 'Web address'}
         </Label>
         {isInternal ? (
           <Box>
@@ -157,7 +157,7 @@ export function MenuItemInput(props: ObjectInputProps) {
         {/* Increased gap here */}
         <Box>
           <Label size={1} style={{ marginBottom: '8px' }}>
-            Section (Optional)
+            Section (optional)
           </Label>
           {isInternal && anchors.length > 0 ? (
             <Select
@@ -169,16 +169,13 @@ export function MenuItemInput(props: ObjectInputProps) {
               <option value="">Top of page</option>
               {anchors.map((a) => (
                 <option key={a.anchor} value={`#${a.anchor}`}>
-                  {a.type
-                    ? a.type.charAt(0).toUpperCase() + a.type.slice(1).replace('-', ' ')
-                    : 'Section'}
-                  {a.isExplicit ? ` (#${a.anchor})` : ''}
+                  {a.label}
                 </option>
               ))}
             </Select>
           ) : (
             <TextInput
-              placeholder="#section-id"
+              placeholder="e.g. features"
               value={value?.params || ''}
               onChange={(e) => handleFieldChange('params', e.currentTarget.value)}
               fontSize={2}

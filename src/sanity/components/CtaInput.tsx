@@ -31,28 +31,20 @@ const findMember = (members: ObjectInputProps['members'], memberName: string) =>
   return undefined;
 };
 
-// Helper to format anchor label
-const formatAnchorLabel = (anchor: { anchor: string; type?: string; isExplicit?: boolean }) => {
-  const typeLabel = anchor.type
-    ? anchor.type.charAt(0).toUpperCase() + anchor.type.slice(1).replace('-', ' ')
-    : 'Section';
-  return anchor.isExplicit ? `${typeLabel} (#${anchor.anchor})` : typeLabel;
-};
-
 // Helper component for anchor selector
 const AnchorSelector = ({
   anchors,
   value,
   onChange,
 }: {
-  anchors: Array<{ anchor: string; type?: string; isExplicit?: boolean }>;
+  anchors: Array<{ anchor: string; label: string }>;
   value: string;
   onChange: (value: string) => void;
 }) => {
   if (anchors.length === 0) {
     return (
       <TextInput
-        placeholder="#section-id"
+        placeholder="e.g. features"
         value={value}
         onChange={(e) => onChange(e.currentTarget.value)}
         fontSize={2}
@@ -71,7 +63,7 @@ const AnchorSelector = ({
       <option value="">Top of page</option>
       {anchors.map((anchor) => (
         <option key={anchor.anchor} value={`#${anchor.anchor}`}>
-          {formatAnchorLabel(anchor)}
+          {anchor.label}
         </option>
       ))}
     </Select>
@@ -82,19 +74,11 @@ export function CtaInput(props: ObjectInputProps) {
   const { value, onChange, members, renderInput, renderItem, renderPreview } = props;
 
   const linkValue = value?.link || {};
-  const styleValue = value?.style || 'primary';
 
   const isInternal = linkValue?.type === 'internal';
   const internalRef = linkValue?.internal?._ref;
 
   const { anchors } = usePageAnchors(internalRef);
-
-  const handleCtaFieldChange = useCallback(
-    (field: string, nextValue: string | boolean) => {
-      onChange(nextValue ? set(nextValue, [field]) : unset([field]));
-    },
-    [onChange]
-  );
 
   const handleLinkFieldChange = useCallback(
     (field: string, nextValue: string | boolean) => {
@@ -122,41 +106,24 @@ export function CtaInput(props: ObjectInputProps) {
 
   return (
     <Stack gap={4}>
-      {/* ROW 1: Labels & Text */}
-      <Grid gridTemplateColumns={[1, 1, 2]} gap={4}>
-        <Box>
-          <Label size={1} style={{ marginBottom: '6px' }}>
-            Button Text
-          </Label>
-          <TextInput
-            value={linkValue?.label || ''}
-            onChange={(e) => handleLinkFieldChange('label', e.currentTarget.value)}
-            placeholder="e.g. Learn More"
-            fontSize={2}
-            padding={3}
-          />
-        </Box>
-        <Box>
-          <Label size={1} style={{ marginBottom: '6px' }}>
-            Variant
-          </Label>
-          <Select
-            value={styleValue}
-            onChange={(e) => handleCtaFieldChange('style', e.currentTarget.value)}
-            fontSize={2}
-            padding={3}
-          >
-            <option value="primary">Primary (Filled)</option>
-            <option value="ghost">Secondary (Ghost)</option>
-            <option value="link">Link Only</option>
-          </Select>
-        </Box>
-      </Grid>
+      {/* ROW 1: Button text. How the button looks is decided by the block (blockDesign). */}
+      <Box>
+        <Label size={1} style={{ marginBottom: '6px' }}>
+          Button text
+        </Label>
+        <TextInput
+          value={linkValue?.label || ''}
+          onChange={(e) => handleLinkFieldChange('label', e.currentTarget.value)}
+          placeholder="e.g. Learn more"
+          fontSize={2}
+          padding={3}
+        />
+      </Box>
 
       {/* ROW 2: Destination Type Toggle */}
       <Box>
         <Label size={1} style={{ marginBottom: '6px' }}>
-          Destination Type
+          Goes to
         </Label>
         <Flex
           style={{
@@ -172,7 +139,7 @@ export function CtaInput(props: ObjectInputProps) {
               mode={isInternal ? 'default' : 'bleed'}
               tone={isInternal ? 'primary' : 'default'}
               icon={LinkIcon}
-              text="Internal"
+              text="This site"
               fontSize={1}
               padding={2}
               onClick={() => handleToggleLinkType('internal')}
@@ -185,7 +152,7 @@ export function CtaInput(props: ObjectInputProps) {
               mode={!isInternal ? 'default' : 'bleed'}
               tone={!isInternal ? 'primary' : 'default'}
               icon={EarthGlobeIcon}
-              text="External"
+              text="Other website"
               fontSize={1}
               padding={2}
               onClick={() => handleToggleLinkType('external')}
@@ -198,7 +165,7 @@ export function CtaInput(props: ObjectInputProps) {
       {/* ROW 3: The Actual Destination Input */}
       <Box>
         <Label size={1} style={{ marginBottom: '6px' }}>
-          Destination
+          {isInternal ? 'Page' : 'Web address'}
         </Label>
         {isInternal ? (
           <Box>
@@ -233,7 +200,7 @@ export function CtaInput(props: ObjectInputProps) {
       <Grid gridTemplateColumns={[1, 1, 2]} gap={4}>
         <Box>
           <Label size={1} style={{ marginBottom: '6px' }}>
-            Section (Optional)
+            Section (optional)
           </Label>
           {isInternal ? (
             <AnchorSelector
@@ -243,7 +210,7 @@ export function CtaInput(props: ObjectInputProps) {
             />
           ) : (
             <TextInput
-              placeholder="#section-id"
+              placeholder="e.g. features"
               value={linkValue?.params || ''}
               onChange={(e) => handleLinkFieldChange('params', e.currentTarget.value)}
               fontSize={2}

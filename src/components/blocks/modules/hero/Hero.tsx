@@ -10,32 +10,14 @@ import { CTAList } from '@/components/blocks/objects/cta';
 import { Section } from '@/components/ui/section';
 import moduleProps from '@/lib/sanity/module-props';
 import { cn } from '@/lib/utils/index';
-
-// Local type for MuxVideo to match Sanity.Hero interface
-type MuxVideo = Sanity.Hero['muxVideo'];
-
-// Helper to extract a YouTube video ID from the supported URL shapes:
-// watch?v=, youtu.be/, /embed/, /shorts/, /v/ (VideoHero accepts these too).
-function getYouTubeId(url: string | undefined): string | undefined {
-  if (!url) return undefined;
-  const match = url.match(
-    /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([\w-]{11})/
-  );
-  return match ? match[1] : undefined;
-}
+import { getYouTubeId } from '@/lib/youtube';
 
 // Calculate media flags
-function getMediaFlags(
-  videoType: string,
-  image?: { image?: Sanity.Image },
-  muxVideo?: MuxVideo,
-  videoUrl?: string
-) {
+function getMediaFlags(videoType: string, image?: { image?: Sanity.Image }, videoUrl?: string) {
   const hasImage = videoType === 'image' && !!image?.image;
-  const hasMux = videoType === 'mux' && !!muxVideo?.asset?.playbackId;
   const hasYouTube = videoType === 'youtube' && !!videoUrl;
-  const hasMedia = hasImage || hasMux || hasYouTube;
-  return { hasImage, hasMux, hasYouTube, hasMedia };
+  const hasMedia = hasImage || hasYouTube;
+  return { hasImage, hasYouTube, hasMedia };
 }
 
 // Calculate image aspect ratio
@@ -52,7 +34,7 @@ function getImageAspectRatio(
 }
 
 // Build PortableText components
-function buildPortableTextComponents(hasMedia: boolean) {
+export function buildPortableTextComponents(hasMedia: boolean) {
   return {
     block: {
       h1: ({ children }: { children?: ReactNode }) => (
@@ -103,10 +85,11 @@ function HeroBackground({ hasMedia }: { hasMedia: boolean }) {
 }
 
 // Hero image media
-function HeroImage({ image }: { image: Sanity.Image }) {
+function HeroImage({ image, alt }: { image: Sanity.Image; alt?: string }) {
   return (
     <Img
       image={image}
+      alt={alt}
       className="absolute inset-0 h-full w-full object-contain"
       loading="eager"
       fetchPriority="high"
@@ -116,30 +99,9 @@ function HeroImage({ image }: { image: Sanity.Image }) {
   );
 }
 
-// Hero video media (Mux or YouTube)
-function HeroVideo({
-  type,
-  muxVideo,
-  videoUrl,
-  thumbnail,
-}: {
-  type: 'mux' | 'youtube';
-  muxVideo?: MuxVideo;
-  videoUrl?: string;
-  thumbnail?: Sanity.Image;
-}) {
-  if (type === 'mux' && muxVideo) {
-    return (
-      <Video
-        data={{
-          type: 'mux',
-          muxVideo,
-          thumbnail: thumbnail ? { _type: 'image', asset: thumbnail.asset } : undefined,
-        }}
-      />
-    );
-  }
-  if (type === 'youtube' && videoUrl) {
+// Hero video media (YouTube)
+function HeroVideo({ videoUrl, thumbnail }: { videoUrl?: string; thumbnail?: Sanity.Image }) {
+  if (videoUrl) {
     return (
       <Video
         data={{
@@ -156,19 +118,15 @@ function HeroVideo({
 // Hero media container
 function HeroMedia({
   hasImage,
-  hasMux,
   hasYouTube,
   image,
-  muxVideo,
   videoUrl,
   imageAspectRatio,
   prefersReducedMotion,
 }: {
   hasImage: boolean;
-  hasMux: boolean;
   hasYouTube: boolean;
-  image?: { image?: Sanity.Image };
-  muxVideo?: MuxVideo;
+  image?: { image?: Sanity.Image; alt?: string };
   videoUrl?: string;
   imageAspectRatio?: number;
   prefersReducedMotion: boolean | null;
@@ -189,9 +147,8 @@ function HeroMedia({
         )}
         style={style}
       >
-        {hasImage && image?.image && <HeroImage image={image.image} />}
-        {hasMux && <HeroVideo type="mux" muxVideo={muxVideo} thumbnail={image?.image} />}
-        {hasYouTube && <HeroVideo type="youtube" videoUrl={videoUrl} thumbnail={image?.image} />}
+        {hasImage && image?.image && <HeroImage image={image.image} alt={image.alt} />}
+        {hasYouTube && <HeroVideo videoUrl={videoUrl} thumbnail={image?.image} />}
       </div>
     </motion.div>
   );
@@ -246,27 +203,13 @@ function HeroContent({
 }
 
 export default function Hero(props: Sanity.Hero & { className?: string }) {
-  const {
-    className,
-    content,
-    ctas,
-    image,
-    options,
-    videoType = 'image',
-    muxVideo,
-    videoUrl,
-  } = props;
+  const { className, content, ctas, image, options, videoType = 'image', videoUrl } = props;
   const prefersReducedMotion = useReducedMotion();
 
   const bgFrom = stegaClean(options?.bgFrom) || 'brand-vibrant';
   const bgTo = stegaClean(options?.bgTo) || 'brand-purple';
 
-  const { hasImage, hasMux, hasYouTube, hasMedia } = getMediaFlags(
-    videoType,
-    image,
-    muxVideo,
-    videoUrl
-  );
+  const { hasImage, hasYouTube, hasMedia } = getMediaFlags(videoType, image, videoUrl);
   const imageAspectRatio = getImageAspectRatio(hasImage, image);
   const components = buildPortableTextComponents(hasMedia);
 
@@ -299,10 +242,8 @@ export default function Hero(props: Sanity.Hero & { className?: string }) {
           {hasMedia && (
             <HeroMedia
               hasImage={hasImage}
-              hasMux={hasMux}
               hasYouTube={hasYouTube}
               image={image}
-              muxVideo={muxVideo}
               videoUrl={videoUrl}
               imageAspectRatio={imageAspectRatio}
               prefersReducedMotion={prefersReducedMotion}

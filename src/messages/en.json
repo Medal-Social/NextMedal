@@ -10,7 +10,8 @@
     "cancel": "Cancel",
     "done": "Done",
     "processing": "Processing...",
-    "untitled": "Untitled"
+    "untitled": "Untitled",
+    "readMore": "Read more"
   },
   "pagination": {
     "previous": "Previous",
@@ -88,23 +89,6 @@
     "sortOldest": "Oldest first",
     "sortTitle": "By title"
   },
-  "video": {
-    "preparing": "Preparing your video...",
-    "loading": "High quality experience loading",
-    "error": "Video Error",
-    "noVideoId": "No video ID provided",
-    "noMuxPlaybackId": "No Mux playback ID found",
-    "extractYouTubeError": "Could not extract YouTube video ID",
-    "extractError": "Could not load video",
-    "invalidVideoId": "Could not find a valid video ID for this video",
-    "playerError": "Video player error: {message}",
-    "backToThumbnail": "Back to thumbnail",
-    "play": "Play video",
-    "youtubePlayer": "YouTube video player",
-    "thumbnail": "Video thumbnail",
-    "noThumbnail": "No thumbnail available",
-    "defaultTitle": "Video"
-  },
   "NotFound": {
     "title": "Page not found",
     "description": "Sorry, we couldn't find the page you're looking for. It might have been removed, deleted, or possibly never existed.",
@@ -142,7 +126,7 @@
     "email": "Email",
     "phone": "Phone",
     "privacy-link": "privacy policy",
-    "privacy-consent-label": "I agree to the {privacyLink}",
+    "privacy-consent-label": "I agree to the <privacyLink>privacy policy</privacyLink>",
     "privacy-aria-label": "Read our privacy policy",
     "address": "Address",
     "opening-hours": "Opening hours",
@@ -230,7 +214,12 @@
         "registerFor": "Register for {title}",
         "formDescription": "Fill out the form below to reserve your spot.",
         "registering": "Registering...",
-        "close": "Done"
+        "close": "Done",
+        "consent": "I agree that my details are stored to handle my registration.",
+        "submit": "Register",
+        "invalidEmail": "Please enter a valid email address.",
+        "tooFast": "Please take a moment to check your details, then send again.",
+        "checkFields": "Please check your details and try again."
       }
     }
   },

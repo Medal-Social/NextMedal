@@ -10,6 +10,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { type ConsentLink, consentLinkHref } from '@/lib/forms/consent-link';
+import { getExactLocalizedValue, getLocalizedValue } from '@/lib/i18n/localized-value';
+import { withLocalePrefix } from '@/lib/sanity/localized-link';
 import { cn } from '@/lib/utils/index';
 
 interface FormField {
@@ -21,39 +24,28 @@ interface FormField {
   required?: boolean;
 }
 
+type LocalizedText = Sanity.InternationalizedArrayString | string;
+
 interface FormProps {
   form: {
+    _id?: string;
     intent: string;
-    formTitle?: string;
+    /** Per language; old documents store a plain string. */
+    formTitle?: LocalizedText;
     fields: FormField[];
     requireConsent?: boolean;
-    // Legacy fields for backward compatibility
-    submitButtonText?: string;
-    successMessage?: Sanity.BlockContent;
+    submitButtonText?: LocalizedText;
+    successMessage?: LocalizedText;
     acceptance?: {
-      required: boolean;
-      text: string;
-      link?: unknown;
+      /** Legacy switch; `requireConsent` replaced it. */
+      required?: boolean;
+      text?: LocalizedText;
+      link?: ConsentLink;
     };
     redirect?: unknown;
   };
   className?: string;
   locale: string;
-}
-
-// Helper to extract localized value from internationalized array
-function getLocalizedValue(
-  arr: Array<{ _key: string; value: string }> | string | undefined,
-  locale: string,
-  fallback = ''
-): string {
-  if (!arr) return fallback;
-  if (typeof arr === 'string') return arr; // Backward compatibility
-  if (!Array.isArray(arr)) return fallback;
-
-  const item = arr.find((i) => i._key === locale) || arr.find((i) => i._key === 'en') || arr[0];
-
-  return item?.value || fallback;
 }
 
 // Backward compatibility adapter
@@ -163,9 +155,11 @@ function FormFieldRenderer({
 // Success message component
 function SuccessMessage({
   className,
+  text,
   t,
 }: {
   className?: string;
+  text: string;
   t: ReturnType<typeof useTranslations>;
 }) {
   return (
@@ -174,7 +168,9 @@ function SuccessMessage({
         <span className="font-bold text-3xl">&#10003;</span>
       </div>
       <h3 className="mb-4 font-bold text-3xl text-foreground">{t('success-title')}</h3>
-      <p className="mx-auto max-w-md px-6 text-lg text-muted-foreground">{t('success-message')}</p>
+      <p className="mx-auto max-w-md whitespace-pre-line px-6 text-lg text-muted-foreground">
+        {text}
+      </p>
     </div>
   );
 }
@@ -183,25 +179,54 @@ function SuccessMessage({
 function AcceptanceCheckbox({
   accepted,
   onAcceptedChange,
+  text,
+  href,
+  locale,
   t,
 }: {
   accepted: boolean;
   onAcceptedChange: (accepted: boolean) => void;
+  /** Consent text set on the form; empty = the standard text with the privacy link. */
+  text: string;
+  href?: string;
+  locale: string;
   t: ReturnType<typeof useTranslations>;
 }) {
-  const consentLabel = t.rich('privacy-consent-label', {
-    privacyLink: (_chunks) => (
-      <a
-        href="/privacy"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="font-semibold text-primary hover:underline"
-        aria-label={t('privacy-aria-label')}
-      >
-        {t('privacy-link')}
-      </a>
-    ),
-  });
+  const readMore = useTranslations('common')('readMore');
+  // The text stays label text so clicking it ticks the box; only the separate link opens the page.
+  const customLabel = (
+    <>
+      <span className="whitespace-pre-line">{text}</span>
+      {href && (
+        <>
+          {' '}
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-primary hover:underline"
+          >
+            {readMore}
+          </a>
+        </>
+      )}
+    </>
+  );
+  const consentLabel = text
+    ? customLabel
+    : t.rich('privacy-consent-label', {
+        privacyLink: (chunks) => (
+          <a
+            href={withLocalePrefix('/privacy', locale)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-primary hover:underline"
+            aria-label={t('privacy-aria-label')}
+          >
+            {chunks}
+          </a>
+        ),
+      });
 
   return (
     <Field orientation="horizontal">
@@ -326,7 +351,20 @@ export default function Form({ form: rawForm, className, locale }: FormProps) {
 
     const result = await submitForm({
       intent: form.intent,
-      data: { ...formData, _submissionTimestamp: mountTime },
+      // `withSecurity` reads `_submissionTimestamp` from the ROOT of the action
+      // input (not from `data`) and requires it. Before mount there is no
+      // mount time; "now" is then correctly rejected as too fast.
+      _submissionTimestamp: mountTime ?? new Date().toISOString(),
+      // Sent so the server can enforce the consent requirement itself rather
+      // than relying on the client-side check above.
+      ...(form._id ? { formId: form._id } : {}),
+      requireConsent: !!form.requireConsent,
+      consent: accepted,
+      data: { ...formData },
+      metadata: {
+        locale,
+        ...(typeof window !== 'undefined' ? { url: window.location.href } : {}),
+      },
     });
 
     if (result?.data?.success) {
@@ -337,15 +375,18 @@ export default function Form({ form: rawForm, className, locale }: FormProps) {
     setLoading(false);
   };
 
+  const successText = getExactLocalizedValue(form.successMessage, locale) || t('success-message');
+  const consentText = getExactLocalizedValue(form.acceptance?.text, locale);
+  const consentHref = consentLinkHref(form.acceptance?.link, locale);
+  const title = getLocalizedValue(form.formTitle, locale);
+
   if (submitted) {
-    return <SuccessMessage className={className} t={t} />;
+    return <SuccessMessage className={className} text={successText} t={t} />;
   }
 
   return (
     <div className={cn('rounded-lg border bg-card p-8 shadow-sm sm:p-10', className)}>
-      {form.formTitle && (
-        <h3 className="mb-8 font-bold text-2xl text-foreground">{form.formTitle}</h3>
-      )}
+      {title && <h3 className="mb-8 font-bold text-2xl text-foreground">{title}</h3>}
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Security: Invisible Honeypot */}
         <div style={{ display: 'none' }} aria-hidden="true">
@@ -373,7 +414,14 @@ export default function Form({ form: rawForm, className, locale }: FormProps) {
         </FieldGroup>
 
         {form.requireConsent && (
-          <AcceptanceCheckbox accepted={accepted} onAcceptedChange={setAccepted} t={t} />
+          <AcceptanceCheckbox
+            accepted={accepted}
+            onAcceptedChange={setAccepted}
+            text={consentText}
+            href={consentHref}
+            locale={locale}
+            t={t}
+          />
         )}
 
         {error && <FieldError>{error}</FieldError>}
@@ -385,7 +433,7 @@ export default function Form({ form: rawForm, className, locale }: FormProps) {
               <span>{t('submitting')}</span>
             </div>
           ) : (
-            t('submit-button')
+            getExactLocalizedValue(form.submitButtonText, locale) || t('submit-button')
           )}
         </Button>
       </form>

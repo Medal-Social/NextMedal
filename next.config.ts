@@ -29,7 +29,7 @@ const customHeaders = [
   {
     key: 'Content-Security-Policy',
     value: [
-      // Social embeds use youtube-nocookie; VideoHero / YouTubePlayer still use www.youtube.com.
+      // Social embeds use youtube-nocookie; YouTubePlayer still uses www.youtube.com.
       "frame-src 'self' www.youtube-nocookie.com www.youtube.com;",
       // Script sources - 'unsafe-inline' needed for Next.js
       `script-src 'self' 'unsafe-inline'${umamiOrigin};`,

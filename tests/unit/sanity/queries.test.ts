@@ -86,6 +86,23 @@ describe('GROQ Queries - Security & Best Practices', () => {
       expect(LINK_QUERY).toContain('internal->{');
     });
 
+    it('LINK_QUERY fetches the target language and its translations (spec D4)', async () => {
+      const { LINK_QUERY } = await import('@/sanity/lib/queries');
+      const internal = LINK_QUERY.slice(LINK_QUERY.indexOf('internal->{'));
+
+      expect(internal).toMatch(/\blanguage,/);
+      expect(internal).toContain(
+        "*[_type == 'translation.metadata' && references(^._id)].translations[].value->{"
+      );
+      // Broken data can put one document in several groups: flatten them all.
+      expect(internal).not.toContain('references(^._id)][0]');
+    });
+
+    it('LINK_QUERY link title falls back to the page name once page.title is gone', async () => {
+      const { LINK_QUERY } = await import('@/sanity/lib/queries');
+      expect(LINK_QUERY).toContain("'title': coalesce(title, metadata.title),");
+    });
+
     it('IMAGE_QUERY should include asset reference (optimized - no resolution)', async () => {
       const { IMAGE_QUERY } = await import('@/sanity/lib/queries');
 
@@ -114,6 +131,18 @@ describe('GROQ Queries - Security & Best Practices', () => {
       const { SITE_BANNERS_QUERY } = await import('@/sanity/lib/queries');
 
       expect(SITE_BANNERS_QUERY).toContain("*[_type == 'site'][0].banners[]->{");
+    });
+
+    it('SITE_BANNERS_QUERY projects plain blocks and per-language values (stored banners are plain)', async () => {
+      const { SITE_BANNERS_QUERY, PT_BLOCK_QUERY } = await import('@/sanity/lib/queries');
+      const norm = (q: string) => q.replace(/\s+/g, ' ').trim();
+      const query = norm(SITE_BANNERS_QUERY);
+      const block = norm(PT_BLOCK_QUERY);
+
+      expect(query).toContain(
+        `_type == 'internationalizedArrayBlockContentValue' => { _key, _type, language, value[]{ ${block} } }`
+      );
+      expect(query).toContain(`_type != 'internationalizedArrayBlockContentValue' => { ${block} }`);
     });
   });
 
@@ -167,7 +196,7 @@ describe('GROQ Queries - Security & Best Practices', () => {
 
       // MODULES_QUERY should include BASE_MODULES_QUERY patterns
       expect(queries.MODULES_QUERY).toContain('ctas[]{');
-      expect(queries.MODULES_QUERY).toContain("_type == 'breadcrumbs' => {");
+      expect(queries.MODULES_QUERY).toContain("_type == 'hero' => {");
       expect(queries.MODULES_QUERY).toContain("_type == 'logo-cloud' => {");
       expect(queries.MODULES_QUERY).toContain("_type == 'flipbook' => {");
       expect(queries.MODULES_QUERY).toContain("'src': file.asset->url");
@@ -354,7 +383,7 @@ describe('GROQ Queries - Security & Best Practices', () => {
       const queries = await import('@/sanity/lib/queries');
 
       // Should check _type before expanding
-      expect(queries.MODULES_QUERY).toContain("_type == 'breadcrumbs' => {");
+      expect(queries.MODULES_QUERY).toContain("_type == 'hero' => {");
       expect(queries.MODULES_QUERY).toContain("_type == 'callout' => {");
       expect(queries.MODULES_QUERY).toContain("_type == 'logo-cloud' => {");
       expect(queries.MODULES_QUERY).toContain("_type == 'richtext' => {");
@@ -493,13 +522,16 @@ describe('GROQ Queries - Security & Best Practices', () => {
       expect(COLLECTION_ARTICLE_POST_QUERY).toContain("_type == 'link' => {");
     });
 
-    it('richtext module should extract headings for table of contents', async () => {
+    it('richtext module reads no table-of-contents flag (no schema field, no content, no renderer)', async () => {
       const queries = await import('@/sanity/lib/queries');
-
-      // Should use select() with tableOfContents flag
-      expect(queries.MODULES_QUERY).toContain("'headings': select(");
-      expect(queries.MODULES_QUERY).toContain('tableOfContents =>');
-      expect(queries.MODULES_QUERY).toContain("content[style in ['h2', 'h3', 'h4', 'h5', 'h6']]");
+      const start = queries.MODULES_QUERY.indexOf("_type == 'richtext' =>");
+      const branch = queries.MODULES_QUERY.slice(
+        start,
+        queries.MODULES_QUERY.indexOf("_type == 'features' =>")
+      );
+      expect(start).toBeGreaterThan(-1);
+      expect(branch).not.toContain('tableOfContents');
+      expect(branch).not.toContain("'headings'");
     });
   });
 
@@ -593,3 +625,43 @@ describe('GROQ Queries - Security & Best Practices', () => {
  * 7. Avoid nested queries - use parallel queries + application joins (100x faster)
  * 8. Use array::unique() instead of nested count() for O(n) complexity
  */
+
+describe('event registration form projection', () => {
+  it('event detail and event list fetch the same form texts', async () => {
+    const { COLLECTION_EVENTS_QUERY, EVENT_REGISTRATION_FORM_QUERY } = await import(
+      '@/sanity/lib/queries'
+    );
+    for (const field of [
+      'requireConsent',
+      'submitButtonText',
+      'successMessage',
+      'acceptance',
+      'link',
+      'internal->',
+    ]) {
+      expect(EVENT_REGISTRATION_FORM_QUERY).toContain(field);
+    }
+    expect(COLLECTION_EVENTS_QUERY).toContain(
+      `registrationForm->{${EVENT_REGISTRATION_FORM_QUERY}}`
+    );
+    const { readFileSync } = await import('node:fs');
+    const source = readFileSync(
+      'src/components/blocks/modules/frontpage/events/EventsFrontpage.tsx',
+      'utf-8'
+    );
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: checks the interpolation in source
+    expect(source).toContain('registrationForm->{${EVENT_REGISTRATION_FORM_QUERY}}');
+  });
+});
+
+describe('Hero buttons', () => {
+  it('resolve their link target (the hero branch re-spreads raw fields, so it must project ctas again)', async () => {
+    const { MODULES_QUERY, CTA_QUERY } = await import('@/sanity/lib/queries');
+    const start = MODULES_QUERY.indexOf("_type == 'hero' => {");
+    const end = MODULES_QUERY.indexOf("_type == 'component-gallery'", start);
+    expect(start).toBeGreaterThan(-1);
+    const heroBranch = MODULES_QUERY.slice(start, end);
+    expect(heroBranch).toContain('...,');
+    expect(heroBranch).toContain(`ctas[]{${CTA_QUERY}}`);
+  });
+});

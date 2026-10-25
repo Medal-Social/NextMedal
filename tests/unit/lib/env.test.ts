@@ -55,6 +55,17 @@ describe('env', () => {
       expect(env.NEXT_PUBLIC_SANITY_API_VERSION).toBe('2025-12-23');
     });
 
+    it('validates the hosted Studio app id override (SANITY_STUDIO_APP_ID)', async () => {
+      process.env.SANITY_STUDIO_APP_ID = 'forkapp123';
+      const { env } = await import('@/lib/core/env');
+      expect(env.SANITY_STUDIO_APP_ID).toBe('forkapp123');
+    });
+
+    it('rejects a malformed hosted Studio app id', async () => {
+      process.env.SANITY_STUDIO_APP_ID = 'not an id!';
+      await expect(import('@/lib/core/env')).rejects.toThrow('Invalid environment variables');
+    });
+
     it('includes optional env vars when provided', async () => {
       process.env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN = 'secret-token';
       process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID = 'umami-123';
@@ -278,7 +289,6 @@ describe('env', () => {
       process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID = '';
       process.env.NEXT_PUBLIC_IMAGE_PROXY_URL = '';
       process.env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN = '';
-      process.env.SANITY_WRITE_TOKEN = '';
       process.env.MEDAL_API_KEY = '';
       process.env.MEDAL_API_ENDPOINT = '';
 

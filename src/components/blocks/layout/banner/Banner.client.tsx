@@ -1,10 +1,12 @@
 'use client';
 import { X } from 'lucide-react';
+import Link from 'next/link';
+import { useLocale } from 'next-intl';
 import { PortableText, stegaClean } from 'next-sanity';
 import { useEffect, useRef, useState } from 'react';
+import { RichTextLink } from '@/components/blocks/modules/SharedPortableText';
 import { Button } from '@/components/ui/button';
-import { Link } from '@/i18n/navigation';
-import { resolveUrlSync } from '@/lib/sanity/resolve-url';
+import { internalHref, withLocalePrefix } from '@/lib/sanity/localized-link';
 
 /**
  * Generate descriptive aria-label for generic link text to improve accessibility.
@@ -47,8 +49,36 @@ function getAriaLabel(
   return undefined;
 }
 
+type BannerValue = {
+  _type: 'internationalizedArrayBlockContentValue';
+  _key: string;
+  language?: string;
+  value?: Sanity.BlockContent;
+};
+const INTL_VALUE = 'internationalizedArrayBlockContentValue';
+const isValue = (item: { _type?: string }): item is BannerValue => item?._type === INTL_VALUE;
+
+/**
+ * The blocks to show. A translated banner holds one value per language: the
+ * visitor's (language, else legacy `_key`), then English, then the first.
+ * Banners stored as plain blocks (all of them on prod today) render as is.
+ */
+export function bannerBlocks(
+  content: Array<{ _type?: string }> | null | undefined,
+  locale: string
+): Sanity.BlockContent {
+  const items = content ?? [];
+  const values = items.filter(isValue).filter((v) => v.value?.length);
+  const lang = (v: BannerValue) => v.language ?? v._key;
+  const picked =
+    values.find((v) => lang(v) === locale) ?? values.find((v) => lang(v) === 'en') ?? values[0];
+  if (picked?.value) return picked.value;
+  return items.filter((item) => !isValue(item)) as Sanity.BlockContent;
+}
+
 export default function BannerClient({ banner }: { banner: Sanity.Banner & Sanity.Module }) {
   const { content, cta } = banner;
+  const locale = useLocale();
   const [isClosed, setIsClosed] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -98,10 +128,17 @@ export default function BannerClient({ banner }: { banner: Sanity.Banner & Sanit
       <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-center">
         <div className="font-medium text-sm [&_p]:m-0 [&_p]:leading-normal">
           <PortableText
-            value={content}
+            value={bannerBlocks(content, locale)}
             components={{
               block: {
                 normal: ({ children }) => <p className="inline">{children}</p>,
+              },
+              marks: {
+                link: ({ children, value }) => (
+                  <RichTextLink value={value} className="underline">
+                    {children}
+                  </RichTextLink>
+                ),
               },
             }}
           />
@@ -111,7 +148,8 @@ export default function BannerClient({ banner }: { banner: Sanity.Banner & Sanit
           (() => {
             let href = '#';
             if (cta?.type === 'internal') {
-              href = resolveUrlSync(cta.internal, { base: false });
+              // Final href (no /en/ prefix for English, so no 308) for a plain next/link.
+              href = internalHref(cta.internal, locale) ?? withLocalePrefix('/', locale);
             } else if (cta?.external) {
               href = cta.external;
             }

@@ -13,7 +13,8 @@ import { defineField, defineType } from 'sanity';
 
 export default defineType({
   name: 'component-gallery',
-  title: 'Component Gallery',
+  title: 'Component gallery',
+  description: 'Developer showcase used on /components. Not for editors.',
   icon: ImagesIcon,
   type: 'object',
   fields: [
@@ -77,18 +78,14 @@ export default defineType({
               description: 'Add modules to this group. The module type will be used as the title.',
               type: 'array',
               of: [
-                { type: 'videoHero' },
                 { type: 'hero' },
                 { type: 'accordion-list' },
                 { type: 'features' },
                 { type: 'callout' },
                 { type: 'richtext' },
                 { type: 'logo-cloud' },
-                { type: 'team' },
                 { type: 'pricing-list' },
                 { type: 'product-comparison' },
-                { type: 'latest-articles' },
-                { type: 'breadcrumbs' },
                 { type: 'component-gallery' },
               ],
             }),
@@ -103,7 +100,8 @@ export default defineType({
     },
     prepare({ groupCount }) {
       return {
-        title: 'Component Gallery',
+        title: 'Component gallery',
+        description: 'Developer showcase used on /components. Not for editors.',
         subtitle: `${groupCount || 0} group${groupCount === 1 ? '' : 's'}`,
         media: ImagesIcon,
       };

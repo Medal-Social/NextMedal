@@ -15,6 +15,7 @@ import type { CollectionType } from '@/lib/collections/types';
 import { BASE_URL } from '@/lib/core/env';
 import { logger } from '@/lib/core/logger';
 import { groupPlacements, type Placement } from '@/lib/sanity/placement';
+import { PAGE_PLACEMENT_SCOPE } from '@/lib/sanity/placement-scopes';
 import processMetadata from '@/lib/sanity/process-metadata';
 import resolveUrl from '@/lib/sanity/resolve-url-server';
 import { parseFilterParams } from '@/lib/utils/url';
@@ -428,11 +429,15 @@ export default async function Page({ params, searchParams }: Props) {
 
   return (
     <PageProvider page={page}>
-      {placements.top && <Modules modules={placements.top} searchParams={filterParams} />}
+      {placements.top && (
+        <Modules modules={placements.top} locale={locale} searchParams={filterParams} />
+      )}
       {page.modules && page.modules.length > 0 && (
         <Modules modules={page.modules} page={page} searchParams={filterParams} />
       )}
-      {placements.bottom && <Modules modules={placements.bottom} searchParams={filterParams} />}
+      {placements.bottom && (
+        <Modules modules={placements.bottom} locale={locale} searchParams={filterParams} />
+      )}
     </PageProvider>
   );
 }
@@ -551,7 +556,7 @@ export async function generateStaticParams() {
     await Promise.all([
       clientWithoutStega.fetch<{ slug: string }[]>(
         groq`*[
-          _type in ['page', 'component.library'] &&
+          _type == 'page' &&
           defined(metadata.slug.current) &&
           !(metadata.slug.current in ['index'])
         ]{ 'slug': metadata.slug.current }`,
@@ -699,18 +704,16 @@ async function getCollectionEvent(itemSlug: string, locale: string, stega?: bool
 async function getPage(slugParts: string[] | undefined, locale: string, stega?: boolean) {
   const slug = slugParts?.join('/');
 
-  return await fetchSanityLive<
-    Sanity.Page | (Sanity.ComponentLibrary & { placements?: Placement[] })
-  >({
+  return await fetchSanityLive<Sanity.Page & { placements: Placement[] }>({
     query: groq`*[
-      _type in ['page', 'component.library'] &&
+      _type == 'page' &&
       ${SLUG_QUERY} == $slug &&
       language == $locale &&
       !(metadata.slug.current in ['index'])
     ][0]{
       ...,
       'modules': modules[]{ ${MODULES_QUERY} },
-      'placements': ${placementQuery("scope == 'page'")},
+      'placements': ${placementQuery(`scope == '${PAGE_PLACEMENT_SCOPE}'`)},
       parent[]->{ metadata { slug } },
       metadata {
         ...,

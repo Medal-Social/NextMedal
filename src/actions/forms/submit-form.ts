@@ -1,18 +1,38 @@
 'use server';
 
-import type { Medal } from '@medalsocial/sdk';
 import { z } from 'zod';
 import { logger } from '@/lib/core/logger';
 import { actionClient, withSecurity } from '@/lib/core/safe-action';
+import { isConsentRequired } from '@/lib/forms/consent-required';
 import { getMedal } from '@/lib/medal-sdk/client';
+import {
+  noteLines,
+  recordSubmission,
+  SUBMISSION_UNAVAILABLE_MESSAGE,
+  type Submission,
+} from '@/lib/medal-sdk/record-submission';
 
 const submissionSchema = withSecurity(
   z.object({
     intent: z.string(),
+    // Sanity `form` document id. Used to resolve the consent requirement from
+    // the dataset instead of trusting the browser.
+    formId: z.string().optional(),
+    consent: z.boolean().optional(),
+    // Client hint, only consulted when the authoritative Sanity lookup fails.
+    requireConsent: z.boolean().optional(),
     data: z.record(z.string(), z.unknown()),
     metadata: z.record(z.string(), z.unknown()).optional(),
   })
 );
+
+/** Form intents Medal receives. */
+const SUPPORTED_INTENTS = ['lead', 'contact', 'newsletter', 'download'] as const;
+type SupportedIntent = (typeof SUPPORTED_INTENTS)[number];
+
+function isSupportedIntent(intent: string): intent is SupportedIntent {
+  return (SUPPORTED_INTENTS as readonly string[]).includes(intent);
+}
 
 // Helper to safely get string value from data
 function getString(value: unknown): string {
@@ -26,121 +46,182 @@ function getStringOrUndefined(value: unknown): string | undefined {
   return str.length > 0 ? str : undefined;
 }
 
-interface SubmissionContext {
-  medal: Medal;
-  email: string;
-  firstName?: string;
-  company?: string;
-  phone?: string;
-  message?: string;
-  metadata: Record<string, unknown>;
-  data: Record<string, unknown>;
-  intent: string;
-}
+/**
+ * Everything already sent as a contact field or a note line. Whatever is left
+ * is caller-specific context — the brand-test widgets submit scores, a profile
+ * key and an answer vector — and goes into the note as JSON.
+ */
+const MAPPED_DATA_KEYS = new Set([
+  'email',
+  'name',
+  'fullname',
+  'company',
+  'jobTitle',
+  'title',
+  'phone',
+  'tel',
+  'message',
+  'content',
+  'resource',
+  '_honeypot',
+  '_submissionTimestamp',
+]);
+const MAPPED_METADATA_KEYS = new Set(['locale', 'url']);
 
-async function handleLeadOrContact(ctx: SubmissionContext): Promise<void> {
-  try {
-    const { data: contact } = await ctx.medal.contacts.create({
-      email: ctx.email,
-      first_name: ctx.firstName,
-      company: ctx.company,
-      phone: ctx.phone,
-      status: 'lead',
-      labels: [ctx.intent],
-      custom_fields: { ...ctx.metadata, source: ctx.metadata.url || 'contact-form' },
-    });
-    if (ctx.message && contact?.id) {
-      await ctx.medal.contacts.addNote(contact.id, { content: ctx.message });
-    }
-  } catch (err) {
-    logger.error({ err, intent: ctx.intent }, '[medal-sdk] contacts.create failed (non-fatal)');
-  }
-}
+/** Keep the note bounded. */
+const MAX_CONTEXT_LENGTH = 8000;
 
-async function handleNewsletter(ctx: SubmissionContext): Promise<void> {
-  try {
-    await ctx.medal.contacts.create({
-      email: ctx.email,
-      first_name: ctx.firstName,
-      status: 'lead',
-      email_status: 'subscribed',
-      labels: ['newsletter'],
-      custom_fields: { source: 'newsletter-form' },
-    });
-  } catch (err) {
-    logger.error({ err, intent: ctx.intent }, '[medal-sdk] contacts.create failed (non-fatal)');
-  }
-}
+function buildContext(
+  data: Record<string, unknown>,
+  metadata: Record<string, unknown>
+): string | undefined {
+  const omit = (source: Record<string, unknown>, mapped: Set<string>) =>
+    Object.fromEntries(Object.entries(source).filter(([key]) => !mapped.has(key)));
 
-async function handleDownload(ctx: SubmissionContext): Promise<void> {
+  const extraData = omit(data, MAPPED_DATA_KEYS);
+  const extraMetadata = omit(metadata, MAPPED_METADATA_KEYS);
+
+  if (!Object.keys(extraData).length && !Object.keys(extraMetadata).length) return undefined;
+
   try {
-    await ctx.medal.contacts.create({
-      email: ctx.email,
-      first_name: ctx.firstName,
-      status: 'lead',
-      labels: ['download'],
-      custom_fields: {
-        source: 'download-form',
-        resource: getString(ctx.data.resource) || 'unknown',
+    const serialized = JSON.stringify(
+      {
+        ...(Object.keys(extraData).length ? { data: extraData } : {}),
+        ...(Object.keys(extraMetadata).length ? { metadata: extraMetadata } : {}),
       },
-    });
+      null,
+      2
+    );
+    return serialized.length > MAX_CONTEXT_LENGTH
+      ? `${serialized.slice(0, MAX_CONTEXT_LENGTH)}\n… truncated`
+      : serialized;
   } catch (err) {
-    logger.error({ err, intent: ctx.intent }, '[medal-sdk] contacts.create failed (non-fatal)');
+    // Unserializable payload (cycles, BigInt). Losing the extras is survivable;
+    // losing the submission is not.
+    logger.error({ err }, 'Could not serialize submission context');
+    return undefined;
   }
+}
+
+/**
+ * Identifies one submission of one shown form: the same form (shown at the
+ * same time) sending the same content. A retry after an ambiguous Medal
+ * timeout carries the same id, so a returning contact is not noted twice;
+ * a new message from the same visitor gets a new id.
+ */
+async function submissionId(parts: unknown[]): Promise<string> {
+  const bytes = new TextEncoder().encode(JSON.stringify(parts));
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return [...new Uint8Array(digest)]
+    .slice(0, 8)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+const submissionIdLine = (id: string) => `Submission ID: ${id}`;
+
+/** The Medal contact and note for one submission. */
+function toSubmission(
+  intent: SupportedIntent,
+  data: Record<string, unknown>,
+  metadata: Record<string, unknown>,
+  email: string,
+  consentGiven: boolean,
+  id: string
+): Submission {
+  const message = getStringOrUndefined(data.message || data.content);
+  const context = buildContext(data, metadata);
+  const note = [
+    `Website form: ${intent}`,
+    ...(message ? ['', message, ''] : []),
+    ...noteLines([
+      [
+        'Resource',
+        intent === 'download' ? getStringOrUndefined(data.resource) || 'unknown' : undefined,
+      ],
+      ['Page', getStringOrUndefined(metadata.url)],
+      ['Language', getStringOrUndefined(metadata.locale)],
+      ['Privacy terms accepted', consentGiven ? 'yes' : 'no'],
+    ]),
+    submissionIdLine(id),
+    ...(context ? ['', 'Details:', context] : []),
+  ].join('\n');
+
+  return {
+    email,
+    firstName: getStringOrUndefined(data.name || data.fullname),
+    company: getStringOrUndefined(data.company),
+    jobTitle: getStringOrUndefined(data.jobTitle || data.title),
+    phone: getStringOrUndefined(data.phone || data.tel),
+    labels: [intent],
+    note,
+    subscribe: intent === 'newsletter',
+    dedupeLine: submissionIdLine(id),
+  };
 }
 
 export const submitForm = actionClient
   .schema(submissionSchema)
-  .action(async ({ parsedInput: { intent, data, metadata = {} } }) => {
-    if (data._honeypot) {
-      logger.warn('Bot submission blocked via honeypot');
-      return { success: true };
-    }
-
-    const email = getString(data.email);
-    if (!email) {
-      return { error: 'Email is required.' };
-    }
-
-    try {
-      const medal = await getMedal();
-      if (!medal) {
-        // Sanity is the source of truth — SDK is best-effort and may
-        // be unconfigured. Acknowledge the submission either way.
+  .action(
+    async ({
+      parsedInput: {
+        intent,
+        data,
+        metadata = {},
+        formId,
+        consent,
+        requireConsent,
+        _submissionTimestamp,
+      },
+    }) => {
+      if (data._honeypot) {
+        logger.warn('Bot submission blocked via honeypot');
         return { success: true };
       }
 
-      const ctx: SubmissionContext = {
-        medal,
-        email,
-        firstName: getStringOrUndefined(data.name || data.fullname),
-        company: getStringOrUndefined(data.company),
-        phone: getStringOrUndefined(data.phone || data.tel),
-        message: getStringOrUndefined(data.message || data.content),
-        metadata,
-        data,
-        intent,
-      };
-
-      switch (intent) {
-        case 'lead':
-        case 'contact':
-          await handleLeadOrContact(ctx);
-          break;
-        case 'newsletter':
-          await handleNewsletter(ctx);
-          break;
-        case 'download':
-          await handleDownload(ctx);
-          break;
-        default:
-          logger.warn(`Unknown submission intent: ${intent}`);
-          return { error: 'This form is not set up correctly. Please contact support.' };
+      const email = getString(data.email);
+      if (!email) {
+        return { error: 'Email is required.' };
       }
 
-      return { success: true };
-    } catch (error) {
-      logger.error({ err: error, intent }, 'Form submission error');
-      return { error: "We couldn't process your submission. Please try again in a few moments." };
+      // Reject unknown intents before doing any work.
+      if (!isSupportedIntent(intent)) {
+        logger.warn(`Unknown submission intent: ${intent}`);
+        return { error: 'This form is not set up correctly. Please contact support.' };
+      }
+
+      const consentGiven = consent === true;
+      if ((await isConsentRequired(formId, { intent }, requireConsent)) && !consentGiven) {
+        return { error: 'Please accept the privacy terms to continue.' };
+      }
+
+      // Medal is the only destination: no client means the submission would be lost.
+      const medal = await getMedal();
+      if (!medal) {
+        logger.error(
+          { intent },
+          '[medal-sdk] not configured (MEDAL_API_KEY) — submission not sent'
+        );
+        return { error: SUBMISSION_UNAVAILABLE_MESSAGE };
+      }
+
+      try {
+        await recordSubmission(
+          medal,
+          toSubmission(
+            intent,
+            data,
+            metadata,
+            email,
+            consentGiven,
+            await submissionId([formId ?? '', intent, _submissionTimestamp, email, data])
+          ),
+          logger
+        );
+        return { success: true };
+      } catch (err) {
+        logger.error({ err, intent }, '[medal-sdk] submission failed');
+        return { error: SUBMISSION_UNAVAILABLE_MESSAGE };
+      }
     }
-  });
+  );

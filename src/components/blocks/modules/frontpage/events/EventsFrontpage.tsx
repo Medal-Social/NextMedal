@@ -11,9 +11,14 @@ import { Suspense } from 'react';
 import SharedPortableText from '@/components/blocks/modules/SharedPortableText';
 import { Section } from '@/components/ui/section';
 import { getCollectionSlugWithFallback } from '@/lib/collections/registry';
+import type { ConsentLink } from '@/lib/forms/consent-link';
 import moduleProps from '@/lib/sanity/module-props';
 import { fetchSanityLive } from '@/sanity/lib/live';
-import { IMAGE_QUERY, PERSON_PREVIEW_QUERY } from '@/sanity/lib/queries';
+import {
+  EVENT_REGISTRATION_FORM_QUERY,
+  IMAGE_QUERY,
+  PERSON_PREVIEW_QUERY,
+} from '@/sanity/lib/queries';
 import EventsFrontpageClient from './EventsFrontpageClient';
 
 interface EventsFrontpageProps extends Sanity.EventsFrontpage {
@@ -24,25 +29,27 @@ interface EventsFrontpageProps extends Sanity.EventsFrontpage {
 // Form field type from Sanity
 interface FormField {
   _key: string;
-  label: string;
+  label: Sanity.InternationalizedArrayString | string;
   name: { current: string };
   type: 'text' | 'email' | 'tel' | 'textarea' | 'checkbox';
-  placeholder?: string;
+  placeholder?: Sanity.InternationalizedArrayString | string;
   required?: boolean;
 }
 
 // Registration form type
 interface RegistrationForm {
   _id: string;
-  formTitle: string;
-  intent: 'lead' | 'newsletter' | 'download';
+  formTitle: Sanity.InternationalizedArrayString | string;
+  intent: 'contact' | 'lead' | 'newsletter' | 'event' | 'download';
   fields: FormField[];
+  requireConsent?: boolean;
   acceptance?: {
     required?: boolean;
-    text?: string;
+    text?: Sanity.InternationalizedArrayString | string;
+    link?: ConsentLink;
   };
-  submitButtonText: string;
-  successMessage?: Sanity.BlockContent;
+  submitButtonText?: Sanity.InternationalizedArrayString | string;
+  successMessage?: Sanity.InternationalizedArrayText | string;
 }
 
 // Raw event data from Sanity (status is computed, not stored)
@@ -123,25 +130,7 @@ async function fetchCollectionEvents(
           city,
           country
         },
-        registrationForm->{
-          _id,
-          formTitle,
-          intent,
-          fields[] {
-            _key,
-            label,
-            name,
-            type,
-            placeholder,
-            required
-          },
-          acceptance {
-            required,
-            text
-          },
-          submitButtonText,
-          successMessage
-        },
+        registrationForm->{${EVENT_REGISTRATION_FORM_QUERY}},
         speakers[]->${PERSON_PREVIEW_QUERY}
       }
     `,

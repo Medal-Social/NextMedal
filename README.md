@@ -29,7 +29,7 @@ NextMedal is the ultimate choice for developers, agencies, and businesses who de
 
 ### Content & Media
 - **Sanity CMS**: Visual editing, real-time collaboration
-- **Mux Video**: High-performance video streaming
+- **Mux Video** (opt-in): set `MUX_ENABLED` in `src/sanity/lib/mux.ts` to add the Mux plugin and video source
 - **Next-Intl**: Built-in internationalization
 - **Portable Text**: Structured content format
 
@@ -86,7 +86,16 @@ cp .env.example .env.local
 # NEXT_PUBLIC_SANITY_PROJECT_ID=your-project-id-here
 # NEXT_PUBLIC_SANITY_DATASET=production
 # NEXT_PUBLIC_BASE_URL=http://localhost:3000
+
+# Needed for forms (contact, newsletter, event registration):
+# MEDAL_API_KEY=your-medal-api-key
 ```
+
+Form submissions go to [Medal Social](https://medalsocial.com) only, through
+`@medalsocial/sdk` — nothing is stored in Sanity, whose dataset is public.
+Without `MEDAL_API_KEY` the forms tell visitors their message couldn't be sent.
+The key needs the scopes `read:contacts` and `write:contacts` (dotted:
+`crm.contact.read`, `crm.activity.read`, `write:contacts`, `crm.contact.note.create`).
 
 **Get your Sanity Project ID:**
 1. Go to [sanity.io/manage](https://www.sanity.io/manage)

@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Section } from '@/components/ui/section';
+import { getLocalizedValue } from '@/lib/i18n/localized-value';
 import moduleProps from '@/lib/sanity/module-props';
 import { cn } from '@/lib/utils/index';
 import SharedPortableText from '../SharedPortableText';
@@ -124,7 +125,7 @@ export default function LeadMagnet({
           {style === 'featured' && image?.image && (
             <div className="relative shrink-0 lg:w-[40%]">
               <div className="relative z-10 overflow-hidden rounded-xl shadow-2xl transition-transform duration-500 hover:scale-[1.02]">
-                <Img image={image.image} className="h-auto w-full object-cover" />
+                <Img image={image.image} alt={image.alt} className="h-auto w-full object-cover" />
               </div>
               <div className="absolute -inset-4 z-0 rounded-full bg-primary/10 opacity-50 blur-3xl" />
             </div>
@@ -159,7 +160,7 @@ export default function LeadMagnet({
                   <div className="bg-primary px-8 py-6 text-primary-foreground">
                     <DialogHeader>
                       <DialogTitle className="font-bold text-2xl">
-                        {form?.formTitle || t('defaultFormTitle')}
+                        {getLocalizedValue(form?.formTitle, locale) || t('defaultFormTitle')}
                       </DialogTitle>
                     </DialogHeader>
                   </div>

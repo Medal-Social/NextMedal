@@ -1,15 +1,14 @@
 'use client';
 
-import ExternalLink from 'next/link';
+import NextLink from 'next/link';
+import { useLocale } from 'next-intl';
 import { stegaClean } from 'next-sanity';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { Link } from '@/i18n/navigation';
-import { resolveUrlSync } from '@/lib/sanity/resolve-url';
+import { internalHref, type LinkTarget, withLocalePrefix } from '@/lib/sanity/localized-link';
 import { cn } from '@/lib/utils/index';
 import { validateExternalUrl } from '@/lib/validateExternalUrl';
+import { type ButtonVariant, buttonVariantFor } from './button-variant';
 
-// Define the allowed button variants matching the Button component
-type ButtonVariant = 'default' | 'outline' | 'secondary' | 'ghost' | 'link' | 'destructive';
 type ButtonSize = 'default' | 'xs' | 'sm' | 'lg' | 'icon' | 'icon-xs' | 'icon-sm' | 'icon-lg';
 
 type CTAProps = Sanity.CTA & {
@@ -75,12 +74,6 @@ function getAriaLabel(
   return undefined;
 }
 
-// Get button variant from style
-function getVariant(style?: string): ButtonVariant {
-  const cleanStyle = stegaClean(style);
-  return (cleanStyle === 'primary' ? 'default' : cleanStyle) as ButtonVariant;
-}
-
 // Handle smooth scroll for hash links on same page
 function handleHashLinkClick(href: string, e: React.MouseEvent<HTMLAnchorElement>) {
   if (!href.includes('#')) return;
@@ -113,12 +106,16 @@ function InternalLinkButton({
   className?: string;
   buttonContent: React.ReactNode;
 }) {
-  const href = resolveUrlSync(internal, { base: false, params });
+  const locale = useLocale();
+  // Final href (no /en/ prefix for English, so no 308); a plain next/link keeps it as is.
+  const href =
+    internalHref(internal as LinkTarget | undefined, locale, params) ??
+    withLocalePrefix('/', locale);
   const ariaLabel =
     typeof buttonContent === 'string' ? getAriaLabel(buttonContent, internal) : undefined;
 
   return (
-    <Link
+    <NextLink
       href={href}
       target={newTab ? '_blank' : undefined}
       rel={newTab ? 'noopener noreferrer' : undefined}
@@ -127,7 +124,7 @@ function InternalLinkButton({
       aria-label={ariaLabel}
     >
       {buttonContent}
-    </Link>
+    </NextLink>
   );
 }
 
@@ -165,7 +162,7 @@ function ExternalLinkButton({
     typeof buttonContent === 'string' ? getAriaLabel(buttonContent, undefined) : undefined;
 
   return (
-    <ExternalLink
+    <NextLink
       href={validatedUrl}
       target={shouldOpenNewTab ? '_blank' : undefined}
       rel={shouldOpenNewTab ? 'noopener noreferrer' : undefined}
@@ -178,7 +175,7 @@ function ExternalLinkButton({
       }
     >
       {buttonContent}
-    </ExternalLink>
+    </NextLink>
   );
 }
 
@@ -208,7 +205,7 @@ export default function CTA({
   if (!effectiveLink) return null;
 
   const { label, type, internal, external, params, newTab } = effectiveLink;
-  const variant = getVariant(style);
+  const variant = buttonVariantFor(style);
   const buttonContent = children || label || 'Button';
 
   if (type === 'internal' && internal) {

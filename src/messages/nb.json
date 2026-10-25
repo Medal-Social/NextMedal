@@ -10,7 +10,8 @@
     "cancel": "Avbryt",
     "done": "Ferdig",
     "processing": "Behandler...",
-    "untitled": "Uten tittel"
+    "untitled": "Uten tittel",
+    "readMore": "Les mer"
   },
   "pagination": {
     "previous": "Forrige",
@@ -88,23 +89,6 @@
     "sortOldest": "Eldste først",
     "sortTitle": "Etter tittel"
   },
-  "video": {
-    "preparing": "Forbereder video...",
-    "loading": "Laster høykvalitets opplevelse",
-    "error": "Videofeil",
-    "noVideoId": "Ingen video-ID angitt",
-    "noMuxPlaybackId": "Ingen Mux avspillings-ID funnet",
-    "extractYouTubeError": "Kunne ikke hente YouTube video-ID",
-    "extractError": "Kunne ikke laste video",
-    "invalidVideoId": "Kunne ikke finne en gyldig video-ID for denne videoen",
-    "playerError": "Videospillerfeil: {message}",
-    "backToThumbnail": "Tilbake til miniatyrbilde",
-    "play": "Spill av video",
-    "youtubePlayer": "YouTube-videospiller",
-    "thumbnail": "Videominiatyrbilde",
-    "noThumbnail": "Ingen miniatyrbilde tilgjengelig",
-    "defaultTitle": "Video"
-  },
   "NotFound": {
     "title": "Siden ble ikke funnet",
     "description": "Beklager, vi kunne ikke finne siden du leter etter. Den kan ha blitt fjernet, slettet, eller har kanskje aldri eksistert.",
@@ -142,7 +126,7 @@
     "email": "E-post",
     "phone": "Telefon",
     "privacy-link": "personvernerklæring",
-    "privacy-consent-label": "Jeg godtar {privacyLink}",
+    "privacy-consent-label": "Jeg godtar <privacyLink>personvernerklæring</privacyLink>",
     "privacy-aria-label": "Les vår personvernerklæring",
     "address": "Adresse",
     "opening-hours": "Åpningstider",
@@ -230,7 +214,12 @@
         "registerFor": "Meld deg på {title}",
         "formDescription": "Fyll ut skjemaet nedenfor for å reservere din plass.",
         "registering": "Melder deg på...",
-        "close": "Ferdig"
+        "close": "Ferdig",
+        "consent": "Jeg godtar at opplysningene mine lagres for å håndtere påmeldingen.",
+        "submit": "Meld deg på",
+        "invalidEmail": "Skriv inn en gyldig e-postadresse.",
+        "tooFast": "Ta deg et øyeblikk til å se over opplysningene, og send på nytt.",
+        "checkFields": "Se over opplysningene og prøv igjen."
       }
     }
   },

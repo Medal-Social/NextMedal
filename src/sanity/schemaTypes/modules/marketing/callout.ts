@@ -1,73 +1,31 @@
 /**
- * Callout Module Schema
- * @version 1.0.1
- * @lastUpdated 2025-12-23
- * @description A highlighted section with content and call-to-actions.
+ * Message with buttons: a short centred message with one or two buttons.
+ * Button looks and the anchor come from blockDesign.
  * @changelog
- * - 1.0.1: Updated header documentation
- * - 1.0.0: Initial version
+ * - 2.0.0: Lean — no anchor field; plain labels
  */
 
 import { BulbOutlineIcon } from '@sanity/icons/BulbOutline';
-import { defineField, defineType } from 'sanity';
-import { getBlockText } from '@/sanity/lib/utils';
-import { createUidField } from '../ui/uid-input';
+import { defineArrayMember, defineField, defineType } from 'sanity';
+import { richTextField } from '../../fragments/rich-text';
+import { blockPreview } from '../preview';
 
 export default defineType({
   name: 'callout',
-  title: 'Callout',
+  title: 'Message with buttons',
+  description: 'A short message with one or two buttons, centred on the page.',
   icon: BulbOutlineIcon,
   type: 'object',
-  fieldsets: [
-    {
-      name: 'advanced',
-      title: 'Advanced Options',
-      options: { collapsible: true, collapsed: true },
-    },
-  ],
   fields: [
-    defineField({
-      name: 'content',
-      title: 'Content',
-      description: 'The main text of the callout.',
-      type: 'array',
-      of: [
-        {
-          type: 'block',
-          styles: [
-            { title: 'Normal', value: 'normal' },
-            { title: 'Heading 2', value: 'h2' },
-            { title: 'Heading 3', value: 'h3' },
-          ],
-          lists: [],
-          marks: {
-            decorators: [
-              { title: 'Strong', value: 'strong' },
-              { title: 'Emphasis', value: 'em' },
-            ],
-          },
-        },
-      ],
-    }),
+    richTextField('content', 'Text', 'section'),
     defineField({
       name: 'ctas',
-      title: 'Call-to-actions',
-      description: 'Buttons to display in the callout.',
+      title: 'Buttons',
+      description: 'The first is a solid button, the second a quieter one.',
       type: 'array',
-      of: [{ type: 'cta' }],
+      of: [defineArrayMember({ type: 'cta' })],
+      validation: (Rule) => Rule.max(2),
     }),
-    {
-      ...createUidField(),
-      fieldset: 'advanced',
-    },
   ],
-  preview: {
-    select: {
-      content: 'content',
-    },
-    prepare: ({ content }) => ({
-      title: getBlockText(content),
-      subtitle: 'Callout',
-    }),
-  },
+  preview: blockPreview('Message with buttons', { title: 'content' }),
 });

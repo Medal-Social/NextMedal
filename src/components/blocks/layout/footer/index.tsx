@@ -1,16 +1,17 @@
 import { ExternalLink } from 'lucide-react';
+import NextLink from 'next/link';
 import { getLocale } from 'next-intl/server';
-import { PortableText } from 'next-sanity';
 import { Img } from '@/components/blocks/objects/core';
 import { Social } from '@/components/blocks/utility';
 import CookiePreferencesTrigger from '@/components/CookiePreferencesTrigger';
 import { Section } from '@/components/ui/section';
 import { Link } from '@/i18n/navigation';
-import resolveUrl from '@/lib/sanity/resolve-url-server';
+import { internalHref, type LinkTarget } from '@/lib/sanity/localized-link';
 import { cn } from '@/lib/utils/index';
 import { getFooterSettings } from '@/sanity/lib/fetch';
 import { ErrorBoundary } from '../ErrorBoundary';
 import { FooterFallback } from './FooterFallback';
+import FooterRichText from './FooterRichText';
 import Navigation from './Navigation';
 import SystemStatus from './SystemStatus';
 import Wrapper from './wrapper';
@@ -34,16 +35,15 @@ async function FooterInner() {
   const logoImageLight = logo?.image?.light || logo?.image?.default || logo?.image?.dark;
 
   // Pre-resolve footer link URLs
-  const resolvedFooterLinks = await Promise.all(
-    // @ts-expect-error - footerLinks is flattened by the GROQ query but the type definition suggests a nested structure
-    (footerLinks || []).map(async (link) => ({
-      ...link,
-      resolvedUrl:
-        link.external ||
-        (link.internal && (await resolveUrl(link.internal, { base: false }))) ||
-        null,
-    }))
-  );
+  // footerLinks is flattened by the GROQ query; the generated types suggest a nested structure.
+  const resolvedFooterLinks = ((footerLinks || []) as Sanity.MenuItem[]).map((link) => {
+    // Final href (no /en/ prefix for English, so no 308), rendered with a plain next/link.
+    const internal =
+      !link.external && link.internal
+        ? internalHref(link.internal as LinkTarget, locale)
+        : undefined;
+    return { ...link, resolvedUrl: link.external || internal || null };
+  });
 
   return (
     <Wrapper className="bg-background text-foreground">
@@ -80,7 +80,7 @@ async function FooterInner() {
 
           {tagline && (
             <div className="max-w-sm text-balance text-muted-foreground text-sm">
-              <PortableText value={tagline} />
+              <FooterRichText value={tagline} />
             </div>
           )}
 
@@ -98,9 +98,7 @@ async function FooterInner() {
           {/* Left: Copyright + Links */}
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-muted-foreground text-sm">
             {copyright ? (
-              <span className="[&_a]:underline [&_a]:transition-colors hover:[&_a]:text-foreground [&_p]:m-0 [&_p]:inline">
-                <PortableText value={copyright} />
-              </span>
+              <FooterRichText value={copyright} className="[&_p]:m-0 [&_p]:inline" />
             ) : (
               <span>
                 © {new Date().getFullYear()} {title}. All rights reserved.
@@ -110,7 +108,7 @@ async function FooterInner() {
               if (!link.resolvedUrl) return null;
               const isExternal = link.newTab || !!link.external;
               return (
-                <Link
+                <NextLink
                   key={link.label}
                   href={link.resolvedUrl}
                   className={footerLinkStyles}
@@ -122,7 +120,7 @@ async function FooterInner() {
                     {link.label}
                     {isExternal && <ExternalLink className="h-3 w-3" aria-hidden="true" />}
                   </span>
-                </Link>
+                </NextLink>
               );
             })}
             <CookiePreferencesTrigger locale={locale} className={footerLinkStyles} />

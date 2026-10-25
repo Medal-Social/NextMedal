@@ -15,7 +15,8 @@ interface BlockChildrenProps {
   children?: React.ReactNode;
 }
 
-const components = {
+/** The tier features renderer (rich-text preset `tier`): bullets get a check mark. */
+export const pricingTierComponents = {
   list: {
     bullet: ({ children }: BlockChildrenProps) => <ul className="my-4 space-y-2">{children}</ul>,
   },
@@ -109,7 +110,7 @@ function PricingTier({
 
       <CTAList className="grid" ctas={tier.ctas} />
       <div className="prose prose-slate dark:prose-invert max-w-none">
-        <SharedPortableText components={components} value={tier.content} />
+        <SharedPortableText components={pricingTierComponents} value={tier.content} />
       </div>
     </article>
   );

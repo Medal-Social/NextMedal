@@ -1,95 +1,28 @@
 /**
- * Modules Fragment
- * @version 1.4.0
- * @lastUpdated 2026-10-18
- * @description A registry of all available content modules for the page builder.
- * @changelog
- * - 1.4.0: Added pricing-comparison to the Content Sections insert menu
- * - 1.3.0: Added flipbook module
- * - 1.2.0: Renamed listing modules to frontpage (articles-frontpage, etc.)
- * - 1.1.0: Added Frontpages group with articles-frontpage module
- * - 1.0.1: Added header documentation
- * - 1.0.0: Initial version
+ * The page's one `modules` array (Vault spec 2026-10-18 §2): every block lives
+ * here so duplicate, copy/paste across pages and languages, and drag work.
+ * Insert groups and names come from page-blocks.ts. The developer showcase
+ * stays accepted for the /components page; ModulesInput keeps it out of every
+ * insert menu.
  */
-
 import { defineField } from 'sanity';
+import ModulesInput from '../../components/ModulesInput';
+import { DEVELOPER_BLOCK_NAMES, INSERT_GROUPS, PAGE_BLOCK_NAMES } from '../page-blocks';
 
 export default defineField({
   name: 'modules',
-  description: 'Page content',
+  title: 'Page content',
+  description: 'The blocks of this page, top to bottom.',
   type: 'array',
-  of: [
-    { type: 'hero' },
-    { type: 'videoHero' },
-    { type: 'features' },
-    { type: 'accordion-list' },
-    { type: 'lead-magnet' },
-    { type: 'callout' },
-    { type: 'contact' },
-    { type: 'richtext' },
-    { type: 'logo-cloud' },
-    { type: 'flipbook' },
-    { type: 'team' },
-    { type: 'pricing-list' },
-    { type: 'pricing-comparison' },
-    { type: 'product-comparison' },
-    { type: 'latest-articles' },
-    { type: 'breadcrumbs' },
-    { type: 'component-gallery' },
-    // Collection frontpage modules
-    { type: 'articles-frontpage' },
-    { type: 'changelog-frontpage' },
-    { type: 'docs-frontpage' },
-    { type: 'events-frontpage' },
-    { type: 'newsletter-frontpage' },
-  ],
+  of: [...PAGE_BLOCK_NAMES, ...DEVELOPER_BLOCK_NAMES].map((type) => ({ type })),
+  components: { input: ModulesInput },
   options: {
     insertMenu: {
       views: [
-        {
-          name: 'grid',
-          previewImageUrl: (schemaType) => `/block-previews/${schemaType}.png`,
-        },
+        { name: 'grid', previewImageUrl: (schemaType) => `/block-previews/${schemaType}.png` },
         { name: 'list' },
       ],
-      groups: [
-        {
-          name: 'Hero Sections',
-          of: ['videoHero', 'hero'],
-        },
-        {
-          name: 'Content Sections',
-          of: [
-            'richtext',
-            'accordion-list',
-            'features',
-            'logo-cloud',
-            'flipbook',
-            'team',
-            'pricing-list',
-            'pricing-comparison',
-            'product-comparison',
-          ],
-        },
-        {
-          name: 'Marketing & Leads',
-          of: ['callout', 'contact', 'lead-magnet'],
-        },
-        {
-          name: 'Frontpages',
-          of: [
-            'articles-frontpage',
-            'changelog-frontpage',
-            'docs-frontpage',
-            'events-frontpage',
-            'newsletter-frontpage',
-          ],
-        },
-        {
-          name: 'Utility',
-          of: ['breadcrumbs', 'component-gallery', 'latest-articles'],
-        },
-      ],
+      groups: INSERT_GROUPS.map((group) => ({ name: group.name, of: [...group.of] })),
     },
   },
 });

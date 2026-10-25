@@ -74,8 +74,10 @@ declare global {
 
     // Internationalized field types (sanity-plugin-internationalized-array)
     // Generic internationalized array structure
+    // v5 stores the language in `language` with a random `_key`; older entries use `_key`.
     type InternationalizedArray<T> = Array<{
       _key: string;
+      language?: string;
       value: T;
     }>;
 
@@ -140,11 +142,6 @@ declare global {
       modules?: Module[];
     }
 
-    interface ComponentLibrary extends PageBase {
-      readonly _type: 'component.library';
-      modules?: Module[];
-    }
-
     // interface GlobalModule extends SanityDocument {
     //   path: string;
     //   excludePaths?: string[];
@@ -190,6 +187,8 @@ declare global {
           title?: string;
         };
       };
+      /** Placement rules that apply to articles (scope `articles-frontpage`). */
+      placements?: import('@/lib/sanity/placement').Placement[];
       readTime?: number;
       headings?: { style: string; text: string }[];
       translations?: Array<{
@@ -357,7 +356,6 @@ declare global {
       showSearch?: boolean;
       showTableOfContents?: boolean;
       showRelatedDocs?: boolean;
-      defaultArticle?: CollectionDocumentation;
     }
 
     interface CollectionEvents extends SanityDocument {
@@ -485,6 +483,8 @@ declare global {
     interface Img {
       readonly _type: 'img';
       image: Image;
+      /** "Describe the picture" — the alt text. */
+      alt?: string;
       responsive?: {
         image: Image;
         media: string;
@@ -513,7 +513,9 @@ declare global {
       _key?: string;
       label: string;
       type: 'internal' | 'external';
-      internal?: Page | CollectionArticlePost;
+      internal?: (Page | CollectionArticlePost) & {
+        translations?: Array<PageBase | null> | null;
+      };
       external?: string;
       params?: string;
       newTab?: boolean;
@@ -543,16 +545,9 @@ declare global {
       width?: 'default' | 'narrow' | 'wide' | 'full';
       options?: {
         anchorId?: string;
+        bgFrom?: string;
+        bgTo?: string;
       };
-    }
-
-    interface PricingComparisonTier {
-      _key: string;
-      name: string;
-      price: string;
-      description: string;
-      cta: CTA;
-      popular: boolean;
     }
 
     interface SanityImage {
@@ -601,13 +596,14 @@ declare global {
 
     interface Form {
       intent: string;
-      formTitle?: string;
+      formTitle?: InternationalizedArrayString | string;
       fields: FormField[];
-      submitButtonText: string;
-      successMessage?: BlockContent;
+      requireConsent?: boolean;
+      submitButtonText?: InternationalizedArrayString | string;
+      successMessage?: InternationalizedArrayText | string;
       acceptance?: {
-        required: boolean;
-        text: string;
+        required?: boolean;
+        text?: InternationalizedArrayString | string;
         link?: {
           type: 'internal' | 'external';
           internal?: {
@@ -629,31 +625,6 @@ declare global {
       };
     }
 
-    interface Contact extends Module<'contact'> {
-      intro?: BlockContent;
-      form: Form;
-      officeInfo?: {
-        title: string;
-        address: {
-          street: string;
-          city: string;
-          country: string;
-        };
-        email?: string;
-        phone?: string;
-        openingHours?: string;
-      };
-      contactPerson?: {
-        title: string;
-        name: string;
-        position: string;
-        description?: string;
-        image?: Image;
-        email?: string;
-        phone?: string;
-      };
-    }
-
     interface LeadMagnet extends Module<'lead-magnet'> {
       content: BlockContent;
       buttonText: string;
@@ -672,12 +643,6 @@ declare global {
         content: BlockContent;
         open?: boolean;
       }[];
-    }
-
-    interface Breadcrumbs extends Module<'breadcrumbs'> {
-      crumbs?: MenuItem[];
-      hideCurrent?: boolean;
-      currentPage?: Page | CollectionArticlePost | ComponentLibrary;
     }
 
     interface Callout extends Module<'callout'> {
@@ -709,27 +674,15 @@ declare global {
       content?: BlockContent; // renamed from description to match schema
       ctas?: CTA[];
       image?: Img;
-      videoType?: 'image' | 'mux' | 'youtube';
-      muxVideo?: {
-        asset?: {
-          playbackId?: string;
-        };
-      };
+      /** Set by blockDesign from `videoUrl`; no longer an editor field. */
+      videoType?: 'image' | 'youtube';
+      /** "Video link": a YouTube link. Empty shows the picture. */
       videoUrl?: string;
       options?: {
         anchorId?: string;
         bgFrom?: string;
         bgTo?: string;
       };
-    }
-
-    interface LatestArticles extends Module<'latest-articles'> {
-      intro?: BlockContent;
-      layout?: 'grid' | 'carousel';
-      showFeaturedPostsFirst?: boolean;
-      displayFilters?: boolean;
-      limit?: number;
-      filteredCategory?: ArticleCategory; // Resolved
     }
 
     interface ArticlesFrontpage extends Module<'articles-frontpage'> {
@@ -751,34 +704,15 @@ declare global {
       logos?: Logo[]; // Resolved
     }
 
-    interface PricingComparison extends Module<'pricing-comparison'> {
-      title?: string;
-      description?: string;
-      tiers?: PricingComparisonTier[];
-      featureCategories?: {
-        _key: string;
-        category: string;
-        items?: {
-          _key: string;
-          name: string;
-          tooltip?: string;
-          tiers?: (string | boolean)[];
-          subItems?: {
-            _key: string;
-            name: string;
-            tooltip?: string;
-            tiers?: (string | boolean)[];
-          }[];
-        }[];
-      }[];
-    }
-
     interface PricingList extends Module<'pricing-list'> {
       intro?: BlockContent;
       tiers?: Pricing[]; // Resolved
     }
 
     interface ProductComparison extends Module<'product-comparison'> {
+      title?: string;
+      text?: BlockContent;
+      /** Old positional intro; blockDesign builds it from Title and Text (plan Task 18). */
       intro?: BlockContent;
       products?: {
         _key: string;
@@ -790,12 +724,6 @@ declare global {
         name: string;
         featureDetails?: string[];
       }[];
-    }
-
-    interface Team extends Module<'team'> {
-      intro?: BlockContent;
-      people?: Person[]; // Resolved
-      layout?: 'grid' | 'split';
     }
 
     interface Testimonials extends Module<'testimonials'> {
@@ -814,19 +742,6 @@ declare global {
 
     interface Richtext extends Module<'richtext'> {
       content?: BlockContent;
-    }
-
-    interface VideoHero extends Module<'videoHero'> {
-      type: 'mux' | 'youtube';
-      videoId?: string;
-      muxVideo?: {
-        asset?: {
-          playbackId?: string;
-        };
-        playbackId?: string; // added
-      };
-      thumbnail?: Image;
-      title?: string;
     }
   }
 }

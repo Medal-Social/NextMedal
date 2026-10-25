@@ -1,9 +1,11 @@
 'use client';
 import { apiVersion, dataset, projectId } from '@/sanity/lib/env';
-import { defineConfig, defineField, isDev } from 'sanity';
+import { defineConfig, defineField } from 'sanity';
 import { presentation } from '@/sanity/presentation';
 import { visionTool } from '@sanity/vision';
 import { structure } from '@/sanity/structure';
+import { orderStudioTools } from '@/sanity/studio-tools';
+import { MUX_ENABLED } from '@/sanity/lib/mux';
 import { resolveUrlSync } from '@/lib/sanity/resolve-url';
 import { codeInput } from '@sanity/code-input';
 import { documentInternationalization } from '@sanity/document-internationalization';
@@ -12,21 +14,13 @@ import { languageFilter } from '@sanity/language-filter';
 import { media, mediaAssetSource } from 'sanity-plugin-media';
 import { muxInput } from 'sanity-plugin-mux-input';
 import { schemaTypes } from '@/sanity/schemaTypes';
+import { blockContentField } from '@/sanity/schemaTypes/fragments/rich-text';
 import StudioIcon from '@/sanity/ui/StudioIcon';
 
 import { routing, localeConfig, type Locale } from '@/i18n/routing';
 
-// Dev-only plugins - visionTool is only needed for GROQ debugging in development
-const devOnlyPlugins = isDev
-  ? [
-      visionTool({
-        defaultApiVersion: apiVersion,
-      }),
-    ]
-  : [];
-
 export default defineConfig({
-  title: `Studio by Medal Social ${dataset === 'migrationtest' ? '(MIGRATION TEST)' : ''}`,
+  title: `Studio by Medal Social${dataset === 'staging' ? ' (STAGING)' : ''}`,
   icon: StudioIcon,
   projectId,
   dataset,
@@ -48,9 +42,8 @@ export default defineConfig({
     structure,
     codeInput(),
     media(),
-    muxInput({
-      mp4_support: 'standard',
-    }),
+    // Mux is opt-in: set MUX_ENABLED in src/sanity/lib/mux.ts to add the plugin.
+    ...(MUX_ENABLED ? [muxInput({ mp4_support: 'standard' })] : []),
     documentInternationalization({
       supportedLanguages: routing.locales.map((locale) => ({
         id: locale,
@@ -67,24 +60,7 @@ export default defineConfig({
       fieldTypes: [
         'string',
         'text',
-        defineField({
-          name: 'blockContent',
-          type: 'array',
-          of: [
-            {
-              type: 'block',
-              styles: [{ title: 'Normal', value: 'normal' }],
-              lists: [],
-              marks: {
-                decorators: [
-                  { title: 'Strong', value: 'strong' },
-                  { title: 'Emphasis', value: 'em' },
-                ],
-                annotations: [],
-              },
-            },
-          ],
-        }),
+        blockContentField,
         // Navigation array types for site settings
         defineField({
           name: 'headerNavArray',
@@ -120,40 +96,17 @@ export default defineConfig({
         'article.category',
         'docs.category',
         'form',
-        'banner',
         'collection.newsletter',
         'collection.changelog',
         'collection.events',
         'site',
       ],
     }),
-    ...devOnlyPlugins,
+    // Registered in every environment; the tools list shows it to administrators only.
+    visionTool({ defaultApiVersion: apiVersion }),
   ],
 
-  tools: (prev) => {
-    // Extract tools by name for explicit ordering
-    const structureTool = prev.find((tool) => tool.name === 'structure');
-    // Editor is the custom name for presentationTool (see presentation.ts line 7)
-    const editorTool = prev.find((tool) => tool.name === 'editor');
-    const mediaTool = prev.find((tool) => tool.name === 'media');
-    // Try multiple possible names for mux plugin
-    const muxTool =
-      prev.find((tool) => tool.name === 'mux-input') ||
-      prev.find((tool) => tool.name === 'mux') ||
-      prev.find((tool) => tool.title?.toLowerCase().includes('mux'));
-    const visionToolItem = prev.find((tool) => tool.name === 'vision');
-
-    // Explicit order: structure, editor, media, videos (mux), vision
-    const orderedTools = [
-      structureTool,
-      editorTool,
-      mediaTool,
-      muxTool,
-      visionToolItem,
-    ].filter((tool): tool is NonNullable<typeof tool> => Boolean(tool));
-
-    return orderedTools;
-  },
+  tools: orderStudioTools,
 
   schema: {
     types: schemaTypes,

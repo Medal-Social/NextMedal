@@ -1,17 +1,14 @@
 'use client';
 
 import { Suspense } from 'react';
+import { blockDesign, type DesignPage } from './block-design';
 import AccordionList from './content/AccordionList';
 import Features from './content/Features';
-import PricingComparison from './content/PricingComparison';
 import PricingList from './content/PricingList';
 import ProductComparison from './content/ProductComparison';
 import RichtextModuleClient from './content/RichtextModule/client';
-import Team from './content/Team';
 import Hero from './hero/Hero';
-import VideoHero from './hero/VideoHero';
 import Callout from './marketing/Callout';
-import Contact from './marketing/Contact';
 import LeadMagnet from './marketing/LeadMagnet';
 
 function ModuleSkeleton() {
@@ -40,32 +37,24 @@ interface Props {
   module: Sanity.Module;
 }
 
+/** Gallery previews are not page sections: no page anchors, keep `module-<key>` ids. */
+const GALLERY_PAGE: DesignPage = { modules: [] };
+
 /**
  * Simplified module renderer for ComponentGallery previews.
  * Does NOT include ComponentGallery itself to avoid circular dependencies.
  */
-export function GalleryModuleRenderer({ module }: Props) {
+export function GalleryModuleRenderer({ module: stored }: Props) {
+  const module = blockDesign(stored, GALLERY_PAGE);
   switch (module._type) {
     case 'accordion-list': {
       const props = module as Sanity.AccordionList;
       return <AccordionList {...props} />;
     }
 
-    case 'breadcrumbs':
-      return <ServerOnlyPlaceholder moduleType="Breadcrumbs" />;
-
     case 'callout': {
       const props = module as Sanity.Callout;
       return <Callout {...props} />;
-    }
-
-    case 'contact': {
-      const props = module as Sanity.Contact;
-      return (
-        <Suspense fallback={<ModuleSkeleton />}>
-          <Contact {...props} />
-        </Suspense>
-      );
     }
 
     case 'features': {
@@ -78,9 +67,6 @@ export function GalleryModuleRenderer({ module }: Props) {
       return <Hero {...props} />;
     }
 
-    case 'latest-articles':
-      return <ServerOnlyPlaceholder moduleType="Latest Articles" />;
-
     case 'lead-magnet':
     case 'leadMagnet':
     case 'leadmagnet': {
@@ -90,11 +76,6 @@ export function GalleryModuleRenderer({ module }: Props) {
 
     case 'logo-cloud':
       return <ServerOnlyPlaceholder moduleType="Logo Cloud" />;
-
-    case 'pricing-comparison': {
-      const props = module as Sanity.PricingComparison;
-      return <PricingComparison {...props} />;
-    }
 
     case 'pricing-list': {
       const props = module as Sanity.PricingList;
@@ -116,20 +97,6 @@ export function GalleryModuleRenderer({ module }: Props) {
       // they must not pull server-only oEmbed resolve into this client tree.
       const props = module as Sanity.Richtext;
       return <RichtextModuleClient {...props} />;
-    }
-
-    case 'team': {
-      const props = module as Sanity.Team;
-      return (
-        <Suspense fallback={<ModuleSkeleton />}>
-          <Team {...props} />
-        </Suspense>
-      );
-    }
-
-    case 'videoHero': {
-      const props = module as Sanity.VideoHero;
-      return <VideoHero data={props} />;
     }
 
     // ComponentGallery is intentionally NOT rendered here to avoid cycles

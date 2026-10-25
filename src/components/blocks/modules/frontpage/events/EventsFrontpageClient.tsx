@@ -38,6 +38,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Link } from '@/i18n/navigation';
+import type { ConsentLink } from '@/lib/forms/consent-link';
 import {
   cn,
   formatEventDate,
@@ -58,25 +59,27 @@ const useRegistration = () => useContext(RegistrationContext);
 // Form field type
 interface FormField {
   _key: string;
-  label: string;
+  label: Sanity.InternationalizedArrayString | string;
   name: { current: string };
   type: 'text' | 'email' | 'tel' | 'textarea' | 'checkbox';
-  placeholder?: string;
+  placeholder?: Sanity.InternationalizedArrayString | string;
   required?: boolean;
 }
 
 // Registration form type
 interface RegistrationForm {
   _id: string;
-  formTitle: string;
-  intent: 'lead' | 'newsletter' | 'download';
+  formTitle: Sanity.InternationalizedArrayString | string;
+  intent: 'contact' | 'lead' | 'newsletter' | 'event' | 'download';
   fields: FormField[];
+  requireConsent?: boolean;
   acceptance?: {
     required?: boolean;
-    text?: string;
+    text?: Sanity.InternationalizedArrayString | string;
+    link?: ConsentLink;
   };
-  submitButtonText: string;
-  successMessage?: Sanity.BlockContent;
+  submitButtonText?: Sanity.InternationalizedArrayString | string;
+  successMessage?: Sanity.InternationalizedArrayText | string;
 }
 
 // Types

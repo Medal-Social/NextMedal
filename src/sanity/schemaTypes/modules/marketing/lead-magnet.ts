@@ -1,64 +1,26 @@
 /**
- * Lead Magnet Module Schema
- * @version 2.3.1
- * @lastUpdated 2025-12-23
- * @description Flexible lead generation module with refined Studio UX.
+ * Download offer (placements only): a picture, a short text and a button that
+ * opens a form. Look and anchor come from code; LeadMagnet renders "featured".
  * @changelog
- * - 2.3.1: Updated header documentation
+ * - 3.0.0: Lean — no style or anchor options; plain labels
  * - 2.3.0: Refined Studio UX and validation
  */
 
 import { DownloadIcon } from '@sanity/icons/Download';
 import { defineField, defineType } from 'sanity';
-import { createUidField } from '../ui/uid-input';
+import { richTextField } from '../../fragments/rich-text';
+import { blockPreview } from '../preview';
 
 export default defineType({
   name: 'lead-magnet',
-  title: 'Lead Magnet',
+  title: 'Download offer',
+  description: 'A download offer with a picture and a form, shown next to articles.',
   icon: DownloadIcon,
   type: 'object',
-  groups: [
-    { name: 'content', title: 'Content', default: true },
-    { name: 'options', title: 'Advanced Options' },
-  ],
   fields: [
-    defineField({
-      name: 'style',
-      title: 'Visual Style',
-      description: 'Choose the overall look and feel of the lead magnet.',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Featured (Large)', value: 'featured' },
-          { title: 'Sidebar (Small)', value: 'sidebar' },
-        ],
-      },
-      initialValue: 'featured',
-      group: 'content',
-    }),
-    defineField({
-      name: 'content',
-      title: 'Content',
-      description: 'The main text content. Use H2/H3 for headlines and lists for benefits.',
-      type: 'array',
-      of: [
-        {
-          type: 'block',
-          styles: [
-            { title: 'Normal', value: 'normal' },
-            { title: 'Heading 2', value: 'h2' },
-            { title: 'Heading 3', value: 'h3' },
-          ],
-          lists: [{ title: 'Bullet', value: 'bullet' }],
-          marks: {
-            decorators: [
-              { title: 'Strong', value: 'strong' },
-              { title: 'Emphasis', value: 'em' },
-            ],
-          },
-        },
-      ],
-      group: 'content',
+    richTextField('content', 'Title and text', 'section', {
+      description: 'A heading and a short text about what people get.',
+      required: true,
       initialValue: [
         {
           _type: 'block',
@@ -75,83 +37,30 @@ export default defineType({
             },
           ],
         },
-        {
-          _type: 'block',
-          style: 'normal',
-          listItem: 'bullet',
-          children: [{ _type: 'span', text: 'Step-by-step implementation guide' }],
-        },
-        {
-          _type: 'block',
-          style: 'normal',
-          listItem: 'bullet',
-          children: [{ _type: 'span', text: 'Exclusive industry insights' }],
-        },
-        {
-          _type: 'block',
-          style: 'normal',
-          listItem: 'bullet',
-          children: [{ _type: 'span', text: 'Proven templates and checklists' }],
-        },
       ],
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'image',
-      title: 'Resource Image',
-      description:
-        'A professional mockup or cover image of your resource (e.g., Book cover, Course preview).',
+      title: 'Picture',
+      description: 'E.g. the cover of the guide.',
       type: 'img',
-      group: 'content',
-      hidden: ({ parent }) => parent?.style === 'sidebar',
     }),
     defineField({
       name: 'buttonText',
-      title: 'Button Text',
-      description: 'The text displayed on the button that triggers the form modal',
+      title: 'Button text',
+      description: 'The button opens the form.',
       type: 'string',
       initialValue: 'Download now',
-      group: 'content',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'form',
       title: 'Form',
-      description: 'Select the form document to capture leads',
+      description: 'The form people fill in to get the download.',
       type: 'reference',
       to: [{ type: 'form' }],
-      group: 'content',
       validation: (Rule) => Rule.required(),
     }),
-    defineField({
-      name: 'options',
-      type: 'object',
-      title: 'Advanced Options',
-      group: 'options',
-      fields: [createUidField()],
-    }),
   ],
-  preview: {
-    select: {
-      content: 'content',
-      media: 'image.image',
-      style: 'style',
-    },
-    prepare({ content, media, style }) {
-      type BlockItem = { _type: string; children?: Array<{ text?: string }> };
-      const block = (content || []).find((b: BlockItem) => b._type === 'block') as
-        | BlockItem
-        | undefined;
-      const title =
-        block?.children
-          ?.map((child) => child.text)
-          .filter(Boolean)
-          .join('') || 'Lead Magnet';
-      return {
-        title,
-        subtitle: `Lead Magnet • ${style === 'sidebar' ? 'Sidebar' : 'Featured'}`,
-        media: media || DownloadIcon,
-      };
-    },
-  },
+  preview: blockPreview('Download offer', { title: 'content', media: 'image.image' }),
 });
