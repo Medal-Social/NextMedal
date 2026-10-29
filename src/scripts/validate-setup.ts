@@ -102,7 +102,8 @@ if (envLocalExists) {
     'SANITY_API_READ_TOKEN',
     !!envVars.get('SANITY_API_READ_TOKEN')?.trim(),
     'SANITY_API_READ_TOKEN is set',
-    'Create a Viewer token at https://www.sanity.io/manage → API → Tokens. Set SANITY_API_READ_TOKEN. A NEXT_PUBLIC_ name is copied into public JavaScript.'
+    'Create a Viewer token at https://www.sanity.io/manage → API → Tokens. ' +
+      'Set SANITY_API_READ_TOKEN. A NEXT_PUBLIC_ name is copied into public JavaScript.'
   );
 
   warn(
