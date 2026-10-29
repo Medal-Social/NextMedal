@@ -135,7 +135,7 @@ If you already have a Sanity project:
 
    **Where to get it.** In your Medal Social workspace, open **Settings → API keys** and create a key. Keys are prefixed `medal_` and scoped to one workspace. See [Authentication & API keys](https://www.medalsocial.com/docs/sdk/authentication). The key needs the scopes `read:contacts` and `write:contacts` (dotted: `crm.contact.read`, `crm.activity.read`, `write:contacts`, `crm.contact.note.create`).
 
-   **Where to set it locally.** `pnpm dev` reads `.env.local`. The key is server-only — leave off the `NEXT_PUBLIC_` prefix so it is not shipped to the browser.
+   **Where to set it locally.** `pnpm dev` reads `.env.local`. The key is server-only. Leave off the `NEXT_PUBLIC_` prefix so it is not shipped to the browser.
 
    ```bash
    # Needed for forms (contact, newsletter, event registration):
@@ -147,7 +147,7 @@ If you already have a Sanity project:
 
    A local Worker preview (`pnpm preview`) does not read `.env.local`. Copy `.dev.vars.example` to `.dev.vars` and set `MEDAL_API_KEY` there as well.
 
-   `pnpm setup:check` does not require this key, and the dev server still starts without it. Forms will not send until it is set. Cloudflare deploys fail when it is empty — see [Step 8](#step-8-deploy).
+   `pnpm setup:check` does not require this key, and the dev server still starts without it. Forms will not send until it is set. Cloudflare deploys fail when it is empty. See [Step 8](#step-8-deploy).
 
 4. **(Optional but recommended)** Create a Sanity API token for live preview:
    - Go to [sanity.io/manage](https://www.sanity.io/manage) → Your Project → **API** → **Tokens**
@@ -238,7 +238,7 @@ Your site will be available at:
 
 Production and staging run on **Cloudflare Workers**. A push to `dev` deploys staging (`staging.nextmedal.com`); a push to `prod` deploys production (`nextmedal.com` and `www`). Both GitHub workflows stay off until the repository variable `CLOUDFLARE_DEPLOY_ENABLED` is `true`. The rest of the setup (Cloudflare token, account id, optional analytics) is in [docs/CLOUDFLARE.md](./docs/CLOUDFLARE.md).
 
-**Where to set `MEDAL_API_KEY` for a deploy.** Add it as a secret on the GitHub **Staging** and **Prod** environments (Settings → Secrets and variables → Actions → Environments). The workflows read `secrets.MEDAL_API_KEY` and **fail before building** when that secret is empty — a Worker without the key would answer every form with "We couldn't send your message right now". After the Worker deploys, the workflow uploads the same value with `wrangler secret put`. It stays a Worker secret, not a plaintext var.
+**Where to set `MEDAL_API_KEY` for a deploy.** Add it as a secret on the GitHub **Staging** and **Prod** environments (Settings → Secrets and variables → Actions → Environments). The workflows read `secrets.MEDAL_API_KEY` and **fail before building** when that secret is empty. A Worker without the key would answer every form with "We couldn't send your message right now". After the Worker deploys, the workflow uploads the same value with `wrangler secret put`. It stays a Worker secret, not a plaintext var.
 
 `MEDAL_API_ENDPOINT` is optional. Set it on the same environments only when you need a non-default API base URL. An empty value is deleted from the Worker so an old endpoint does not linger.
 
