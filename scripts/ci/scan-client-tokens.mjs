@@ -47,7 +47,6 @@ function isDirectory(path) {
 
 function walkFiles(directory, files) {
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
-    if (entry.name === 'node_modules') continue;
     const fullPath = join(directory, entry.name);
     if (entry.isDirectory()) walkFiles(fullPath, files);
     else if (entry.isFile()) files.push(fullPath);

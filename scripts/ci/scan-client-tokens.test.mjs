@@ -65,7 +65,14 @@ test('scans Next client output and a Studio bundle without printing the secret',
     });
 
     assert.equal(result.ok, false);
-    assert.deepEqual(result.findings, [{ file: 'dist/static/studio.js', kind: 'sanity-pattern' }]);
+    assert.deepEqual(result.findings, [
+      {
+        file: '.next/static/chunks/node_modules/ignored.js',
+        kind: 'env-token',
+        name: 'SANITY_API_READ_TOKEN',
+      },
+      { file: 'dist/static/studio.js', kind: 'sanity-pattern' },
+    ]);
     const report = formatReport(result);
     assert.match(report, /dist\/static\/studio\.js/);
     assert.match(report, /sk followed by 100\+ characters/);
