@@ -345,8 +345,7 @@ The article system is the primary content publishing mechanism, replacing the le
 - `article` - Main content document type (replaces legacy `blog`)
 - `article.category` - Category taxonomy (replaces `blog.category`)
 - `author` - Author profiles
-- `articlesFrontpage` - Frontpage module configuration
-- `latestArticles` - Reusable latest articles widget
+- `articles-frontpage` - Article list block ("Article list"). No editor fields; featured-first, filters, page size and the RSS link come from `blockDesign` in `src/components/blocks/modules/block-design.ts`
 
 **Routing:**
 - Article collection: `/[locale]/articles`
@@ -374,6 +373,7 @@ The article system is the primary content publishing mechanism, replacing the le
   - Run `npx tsx scripts/lint-sanity-schemas.ts` to check for missing names
 - GROQ variables: SCREAMING_SNAKE_CASE (e.g., `ARTICLE_QUERY`)
 - After schema changes: `npx sanity@latest schema extract`
+- **Page blocks**: The page field is **Page content** (`src/sanity/schemaTypes/fragments/modules.ts`). Editors add blocks from `INSERT_GROUPS` in `src/sanity/schemaTypes/page-blocks.ts` (`PAGE_BLOCK_NAMES` is derived from it). The page also accepts `DEVELOPER_BLOCK_NAMES` (the developer showcase), which the insert menu hides. A block in neither list is neither offered nor accepted. Also register the schema in `schemaTypes/index.ts` and add a case in `ModuleRenderer.tsx`. Design (layout, limits, filters, button looks, page-top background) lives in `src/components/blocks/modules/block-design.ts`, not in editor fields. Each block has at most five editor-visible fields (`FIELD_BUDGET_ALLOWLIST` is empty). List blocks such as `articles-frontpage` ("Article list") have none.
 
 **Data fetching:**
 - Use `sanityFetch` from `@/sanity/lib/live` (wraps Live Content API)

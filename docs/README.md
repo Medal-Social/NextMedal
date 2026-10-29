@@ -36,7 +36,7 @@ Show an uploaded PDF as a page-turning book. Covers:
 Learn how to create a new content collection type (e.g., Tutorials, Case Studies, Press Releases). Covers:
 
 - Creating collection schemas
-- Building frontpage modules
+- Building list blocks (no design fields; registered in `page-blocks.ts`, design in `block-design.ts`)
 - Setting up dynamic routing
 - Locale-aware URL configuration
 - Search and RSS integration
@@ -58,12 +58,12 @@ Learn how to create a new content collection type (e.g., Tutorials, Case Studies
 ### Adding a Collection (Quick Steps)
 
 1. Create collection schema in `src/sanity/schemaTypes/documents/collections/`
-2. Create frontpage module in `src/sanity/schemaTypes/modules/frontpage/`
+2. Create the list block in `src/sanity/schemaTypes/modules/frontpage/` with no design fields (see `articles-frontpage`, titled "Article list")
 3. Update `src/lib/collections/types.ts` and `scripts/generate-collections.ts`
 4. Create frontpage component in `src/components/blocks/modules/frontpage/`
-5. Register in `ModuleRenderer.tsx` and `schemaTypes/index.ts`
+5. Register the schema in `schemaTypes/index.ts`, the block in `src/sanity/schemaTypes/page-blocks.ts` (Lists group), the design in `src/components/blocks/modules/block-design.ts`, and the component in `ModuleRenderer.tsx`
 6. Run `pnpm generate:collections`
-7. Create pages in Sanity Studio (one per language)
+7. Create a page per language in Sanity Studio and add the list block under **Page content**
 8. Test frontpage and individual items
 
 ---

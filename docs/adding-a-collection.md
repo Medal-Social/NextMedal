@@ -16,9 +16,10 @@ NextMedal uses a **collection-based content architecture** where content types (
    - Define the content structure (e.g., `collection.article`, `collection.tutorial`)
    - Each collection item has a `metadata.slug` for its URL
 
-2. **Frontpage Modules** (`src/sanity/schemaTypes/modules/frontpage/`)
-   - Define how the collection index page looks (e.g., grid view, filters)
-   - Added to **Page** documents to create collection index pages
+2. **List blocks** (`src/sanity/schemaTypes/modules/frontpage/`)
+   - The block editors place on a page (for example `articles-frontpage`, titled "Article list")
+   - How the index looks (layout, filters, page size) is set in `src/components/blocks/modules/block-design.ts`, not in the Studio form
+   - The block is offered and accepted only when its name is in `src/sanity/schemaTypes/page-blocks.ts`
 
 3. **Build-Time Discovery** (`scripts/generate-collections.ts`)
    - Scans Sanity for pages with frontpage modules
@@ -34,10 +35,11 @@ NextMedal uses a **collection-based content architecture** where content types (
 For a new collection (e.g., **Tutorials**), you'll create:
 
 1. **Collection Document Schema** (`collection.tutorial.tsx`)
-2. **Frontpage Module Schema** (`tutorials-frontpage.ts`)
+2. **List block schema** (`tutorials-frontpage.ts`). No design fields
 3. **Frontpage Component** (`TutorialsFrontpage.tsx`)
-4. **Registry Configuration** (types and defaults)
-5. **Sanity Pages** (one per language with the frontpage module)
+4. **Registry Configuration** (collection types and defaults)
+5. **Page block registry and design** (`page-blocks.ts`, `block-design.ts`)
+6. **Sanity Pages** (one per language, with the list block on **Page content**)
 
 ---
 
@@ -289,61 +291,75 @@ const FRONTPAGE_PAGES_QUERY = groq`
 
 ---
 
-### Step 4: Create Frontpage Module Schema
+### Step 4: Create the list block schema
 
-This defines the configuration options for the collection index page (e.g., how many items per page, show filters, etc.).
+The block marks which page is the collection index. It does not take editor fields for design. Page size, filters and layout are set in code and applied before render (`Modules` calls `blockDesign`). Copy `articles-frontpage` ("Article list"): a plain title, a description, a hidden placeholder field (Sanity requires one field on an object type), and `blockPreview`.
+
+Titles use plain language: one capital at the start, then lowercase words (`Tutorial list`, not "Tutorials Frontpage"). At most five editor-visible fields. Design names such as `limit`, `displayFilters`, `layout` and `showRssLink` are not allowed. A content field such as an intro is allowed (see `events-frontpage`).
 
 **File**: `src/sanity/schemaTypes/modules/frontpage/tutorials-frontpage.ts`
 
 ```typescript
 /**
- * Tutorials Frontpage Module Schema
- * @version 1.0.0
- * @lastUpdated 2026-01-04
- * @description Displays a list of tutorials from a collection.
+ * Tutorial list: all tutorials, newest first. No editor fields: page size
+ * comes from blockDesign. The page holding this block is the tutorials
+ * collection index.
  */
 
-import { RocketIcon } from '@sanity/icons';
+import { BookIcon } from '@sanity/icons/Book';
 import { defineField, defineType } from 'sanity';
+import { blockPreview } from '../preview';
 
 export default defineType({
   name: 'tutorials-frontpage',
-  title: 'Tutorials Frontpage',
-  icon: RocketIcon,
+  title: 'Tutorial list',
+  description: 'All tutorials, newest first.',
+  icon: BookIcon,
   type: 'object',
-  fields: [
-    defineField({
-      name: 'displayFilters',
-      title: 'Display difficulty filters',
-      description: 'Show difficulty level filters.',
-      type: 'boolean',
-      initialValue: true,
-    }),
-    defineField({
-      name: 'limit',
-      title: 'Tutorials per page',
-      description: 'Number of tutorials to show per page.',
-      type: 'number',
-      initialValue: 12,
-      validation: (Rule) => Rule.min(1).integer(),
-    }),
-  ],
-  preview: {
-    select: {
-      limit: 'limit',
-    },
-    prepare: ({ limit }) => ({
-      title: 'Tutorials Frontpage',
-      subtitle: limit ? `${limit} per page` : undefined,
-      media: RocketIcon,
-    }),
-  },
+  // Sanity needs one field on an object type. Hidden: nothing to fill in, nothing stored.
+  fields: [defineField({ name: 'list', title: 'List', type: 'string', hidden: true })],
+  preview: blockPreview('Tutorial list'),
 });
 ```
 
+**Design in code**
+
+**File**: `src/components/blocks/modules/block-design.ts`
+
+Add a constant and a case next to `ARTICLE_LIST`. The component reads these values as props; editors never set them.
+
+```typescript
+export const TUTORIAL_LIST = { limit: 12 } as const;
+
+// inside blockDesign, with the other list cases:
+case 'tutorials-frontpage':
+  Object.assign(out, TUTORIAL_LIST);
+  break;
+```
+
+Add a grid thumbnail at `public/block-previews/tutorials-frontpage.png` (at most 600×420). The insert menu loads `/block-previews/<name>.png`. `tests/unit/sanity/page-blocks-guard.test.ts` checks the registry, the field budget and that thumbnail.
+
 ---
 
-### Step 5: Register Schemas in Sanity
+### Step 5: Register the schema and the page block
+
+Registering the schema alone does not put the block on a page. `src/sanity/schemaTypes/fragments/modules.ts` builds the page `modules` array ("Page content") from `src/sanity/schemaTypes/page-blocks.ts`. `PAGE_BLOCK_NAMES` is derived from `INSERT_GROUPS`; add the list block to the Lists group so the insert menu offers it. `DEVELOPER_BLOCK_NAMES` (the developer showcase) is accepted on the page and kept out of every insert menu. A collection list belongs in the Lists group, not in that hidden list. A name in neither list is neither offered nor accepted.
+
+**File**: `src/sanity/schemaTypes/page-blocks.ts`
+
+```typescript
+{
+  name: 'Lists',
+  of: [
+    'articles-frontpage',
+    'changelog-frontpage',
+    'docs-frontpage',
+    'events-frontpage',
+    'newsletter-frontpage',
+    'tutorials-frontpage', // Add this
+  ],
+},
+```
 
 **File**: `src/sanity/schemaTypes/index.ts`
 
@@ -410,6 +426,7 @@ export default async function TutorialsFrontpage({
   data,
   locale,
 }: TutorialsFrontpageProps) {
+  // limit is applied by blockDesign before render (Step 4), not stored on the block.
   const { limit = 12 } = data;
 
   const { data: tutorials } = await sanityFetch({
@@ -449,14 +466,18 @@ export default async function TutorialsFrontpage({
 
 **File**: `src/components/blocks/modules/ModuleRenderer.tsx`
 
-Add import and case:
+Add an import and a case in the existing switch. Wrap the case in `Suspense` when the component fetches. This case does not add the block to the page; Step 5's `page-blocks.ts` entry does that. `Modules` runs `blockDesign` before this switch.
 
 ```typescript
 import TutorialsFrontpage from './frontpage/tutorials/TutorialsFrontpage';
 
-// In the component:
+// In the switch:
 case 'tutorials-frontpage':
-  return <TutorialsFrontpage key={key} data={module} locale={locale} />;
+  return (
+    <Suspense fallback={<ModuleSkeleton />}>
+      <TutorialsFrontpage data={module} locale={page?.language} />
+    </Suspense>
+  );
 ```
 
 ---
@@ -488,9 +509,8 @@ For each language you support, create a collection frontpage:
 3. Set **Language**: `English`
 4. Set **Metadata > Title**: `Tutorials`
 5. Set **Metadata > Slug**: `tutorials`
-6. In **Modules**, add **Tutorials Frontpage** module
-7. Configure the module options (e.g., limit, filters)
-8. **Publish**
+6. In **Page content**, add **Tutorial list** (Lists group)
+7. **Publish** (there are no design options on the block)
 
 #### Norwegian Page
 
@@ -498,7 +518,7 @@ For each language you support, create a collection frontpage:
 2. Set **Language**: `Norsk`
 3. Set **Metadata > Title**: `Veiledninger`
 4. Set **Metadata > Slug**: `veiledninger` (localized slug!)
-5. Add **Tutorials Frontpage** module
+5. In **Page content**, add **Tutorial list**
 6. **Publish**
 
 Repeat for other languages (Arabic, etc.).
@@ -586,7 +606,10 @@ Before deploying, verify:
 - [ ] Collection type added to `types.ts`
 - [ ] Default slug added to `generate-collections.ts`
 - [ ] Frontpage mapping added to `generate-collections.ts`
-- [ ] Frontpage module schema created
+- [ ] List block schema created (no design fields such as `limit` or `displayFilters`)
+- [ ] Design (page size, filters, layout) set in `block-design.ts`
+- [ ] Block name added to the Lists group in `src/sanity/schemaTypes/page-blocks.ts`
+- [ ] Preview image added at `public/block-previews/<block>.png` (at most 600×420)
 - [ ] Frontpage component created
 - [ ] Component registered in `ModuleRenderer.tsx`
 - [ ] Schemas registered in `schemaTypes/index.ts`
@@ -631,14 +654,15 @@ Before deploying, verify:
 2. Verify GROQ query syntax in `generate-collections.ts`
 3. Run with verbose output: `tsx scripts/generate-collections.ts`
 
-### Issue: Frontpage Module Not Showing in Sanity
+### Issue: List block not showing in Sanity
 
-**Cause**: Schema not registered or dev server needs restart.
+**Cause**: Schema not registered, name missing from `page-blocks.ts`, or dev server needs restart.
 
 **Solution**:
-1. Verify schema is imported and added to `schemaTypes` array
-2. Restart Sanity Studio dev server
-3. Clear browser cache and reload Studio
+1. Verify the schema is imported and added to the `schemaTypes` array
+2. Verify the name is in the Lists group of `INSERT_GROUPS` in `page-blocks.ts` (schema registration alone does not add it to **Page content**)
+3. Restart the dev server
+4. Clear the browser cache and reload Studio
 
 ---
 
@@ -647,12 +671,13 @@ Before deploying, verify:
 Adding a collection involves:
 
 1. **Create collection document schema** (individual items)
-2. **Create frontpage module schema** (index page configuration)
-3. **Update generator script** (types, defaults, mappings)
-4. **Create frontpage component** (React component)
-5. **Register schemas and components**
-6. **Generate configuration** (`pnpm generate:collections`)
-7. **Create pages in Sanity** (one per language)
-8. **Test thoroughly** (frontpage, individual items, locales)
+2. **Create the list block schema** (plain title, no design fields)
+3. **Set list design in `block-design.ts`** (page size, filters, layout)
+4. **Update generator script** (types, defaults, mappings)
+5. **Create frontpage component** (React component)
+6. **Register the schema, the `page-blocks.ts` entry, and the component**
+7. **Generate configuration** (`pnpm generate:collections`)
+8. **Create pages in Sanity** (one per language; add the block under **Page content**)
+9. **Test thoroughly** (frontpage, individual items, locales)
 
 The architecture is designed to be **CMS-first**—editors can configure collection URLs and content without code changes, while developers provide the schema and rendering logic.
