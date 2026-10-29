@@ -102,9 +102,24 @@ describe.each(workflows)('%s', (file) => {
 
   it('skips the pre-deploy token upload when the Worker does not exist yet', () => {
     const script = stepScript(source, 'Upload SANITY_API_READ_TOKEN');
-    const { status, calls, output } = runUpload(script, { listStatus: 1 });
+    const { status, calls, output } = runUpload(script, {
+      listStatus: 1,
+      listStderr: 'Worker not found',
+    });
     expect(status).toBe(0);
     expect(calls.some((call) => call.includes('secret put'))).toBe(false);
+    expect(output).not.toContain(READ_TOKEN);
+  });
+
+  it('stops before deploy when listing Worker secrets fails for another reason', () => {
+    const script = stepScript(source, 'Upload SANITY_API_READ_TOKEN');
+    const { status, calls, output } = runUpload(script, {
+      listStatus: 1,
+      listStderr: 'Authentication error',
+    });
+    expect(status).not.toBe(0);
+    expect(calls.some((call) => call.includes('secret put'))).toBe(false);
+    expect(output).toContain('Could not list');
     expect(output).not.toContain(READ_TOKEN);
   });
 
@@ -207,7 +222,7 @@ function fakeUpload(source: string, secretsOnWorker: string[]) {
 }
 
 /** Runs one workflow script against a fake pnpm. `secret list` exits with listStatus. */
-function runUpload(script: string, options: { listStatus: number }) {
+function runUpload(script: string, options: { listStatus: number; listStderr?: string }) {
   const dir = mkdtempSync(join(tmpdir(), 'nm-predeploy-'));
   try {
     const fake = join(dir, 'pnpm');
@@ -217,7 +232,7 @@ function runUpload(script: string, options: { listStatus: number }) {
       [
         '#!/bin/bash',
         'echo "$*" >> "$CALLS"',
-        'if [[ "$*" == *"secret list"* ]]; then exit "$LIST_STATUS"; fi',
+        'if [[ "$*" == *"secret list"* ]]; then printf "%s" "$LIST_STDERR" >&2; exit "$LIST_STATUS"; fi',
         'cat > /dev/null',
         '',
       ].join('\n')
@@ -230,6 +245,7 @@ function runUpload(script: string, options: { listStatus: number }) {
       XDG_CONFIG_HOME: dir,
       CALLS: log,
       LIST_STATUS: String(options.listStatus),
+      LIST_STDERR: options.listStderr ?? '',
       SANITY_API_READ_TOKEN: READ_TOKEN,
     } as unknown as NodeJS.ProcessEnv;
     if (Object.keys(env).some((key) => key.startsWith('CLOUDFLARE_'))) {

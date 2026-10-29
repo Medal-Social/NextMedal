@@ -98,13 +98,22 @@ jobs:
         run: |
           set -euo pipefail
           sanity_token="$(printf '%s' "$SANITY_API_READ_TOKEN" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
-          # secret put only updates a Worker that already exists. A first deploy
-          # creates the Worker, then the later upload step stores the token.
-          if pnpm exec wrangler secret list >/dev/null 2>&1; then
+          # secret put only updates a Worker that already exists. Skip it only
+          # when the list call says the Worker is missing. Any other failure
+          # stops the job before deploy.
+          list_err=$(mktemp)
+          if pnpm exec wrangler secret list >/dev/null 2>"$list_err"; then
+            rm -f "$list_err"
             echo "Uploading SANITY_API_READ_TOKEN to nextmedal-staging before deploy..."
             printf '%s' "$sanity_token" | pnpm exec wrangler secret put SANITY_API_READ_TOKEN
-          else
+          elif grep -Eqi 'not found|does not exist' "$list_err"; then
+            rm -f "$list_err"
             echo "No staging Worker yet. The token is uploaded after the first deploy."
+          else
+            echo "::error::Could not list staging Worker secrets. Deploy was not started."
+            cat "$list_err" >&2
+            rm -f "$list_err"
+            exit 1
           fi
 
       - name: Deploy to Cloudflare
