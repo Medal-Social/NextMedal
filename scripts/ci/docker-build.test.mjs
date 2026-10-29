@@ -100,3 +100,64 @@ for (const mode of ['git', 'explicit-archive', 'ci-archive', 'unidentified-archi
     }
   });
 }
+
+test('Docker build mounts the Viewer token as a secret and does not pass it as a build arg', () => {
+  const token = 'viewer_read_token_value';
+  const dockerfile = readFileSync(join(root, 'Dockerfile'), 'utf8');
+  const builder = dockerfile.split('FROM base AS builder')[1].split('FROM base AS runner')[0];
+  const runner = dockerfile.split('FROM base AS runner')[1];
+  assert.match(builder, /--mount=type=secret,id=SANITY_API_READ_TOKEN,required=false/);
+  assert.equal(runner.includes('SANITY_API_READ_TOKEN'), false);
+
+  const dir = mkdtempSync(join(tmpdir(), 'nextmedal-docker-secret-'));
+  try {
+    mkdirSync(join(dir, 'scripts'));
+    mkdirSync(join(dir, 'bin'));
+    for (const file of ['docker-build.sh', 'deployment-id.js']) {
+      copyFileSync(join(root, 'scripts', file), join(dir, 'scripts', file));
+    }
+    writeFileSync(
+      join(dir, '.env'),
+      `NEXT_PUBLIC_SANITY_PROJECT_ID=test\nSANITY_API_READ_TOKEN=${token}\n`
+    );
+    writeFileSync(join(dir, 'bin/docker'), '#!/bin/sh\nprintf "%s\\n" "$@" > "$DOCKER_TEST_ARGS"\n', {
+      mode: 0o755,
+    });
+    execFileSync('git', ['init', '-q', dir]);
+    execFileSync(
+      'git',
+      [
+        '-c',
+        'user.name=Test',
+        '-c',
+        'user.email=test@example.com',
+        '-c',
+        'commit.gpgsign=false',
+        'commit',
+        '--allow-empty',
+        '-qm',
+        'fixture',
+      ],
+      { cwd: dir }
+    );
+    const result = spawnSync('bash', ['scripts/docker-build.sh', 'contract-image'], {
+      cwd: dir,
+      env: {
+        ...process.env,
+        PATH: `${join(dir, 'bin')}:${process.env.PATH}`,
+        DOCKER_TEST_ARGS: join(dir, 'args'),
+        NEXT_DEPLOYMENT_ID: 'release-secret-test',
+      },
+      encoding: 'utf8',
+    });
+    assert.equal(result.status, 0, result.stderr);
+    const args = readFileSync(join(dir, 'args'), 'utf8');
+    assert.equal(args.includes(token), false);
+    assert.match(args, /--secret\nid=SANITY_API_READ_TOKEN,src=/);
+    assert.equal(args.includes('--build-arg\nSANITY_API_READ_TOKEN='), false);
+    assert.equal(result.stdout.includes(token), false);
+    assert.equal(result.stderr.includes(token), false);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});

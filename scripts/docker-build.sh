@@ -22,8 +22,8 @@ if [ ! -f .env ]; then
   echo "⚠️  Warning: .env file not found. Build may fail if required arguments are missing."
 fi
 
-# Public build arguments the Dockerfile expects. Server secrets, including the
-# Sanity Viewer token, are runtime environment variables and are not forwarded.
+# Public build arguments the Dockerfile expects. The Viewer token is not one of
+# them. It is mounted as a BuildKit secret below when .env has it.
 REQUIRED_ARGS=(
   "NEXT_PUBLIC_SANITY_PROJECT_ID"
   "NEXT_PUBLIC_SANITY_DATASET"
@@ -43,6 +43,22 @@ for ARG in "${REQUIRED_ARGS[@]}"; do
   VALUE=$(grep "^$ARG=" .env | cut -d'=' -f2- | sed 's/^"//;s/"$//;s/^\x27//;s/\x27$//')
   if [ ! -z "$VALUE" ]; then
     BUILD_ARGS+=(--build-arg "$ARG=$VALUE")
+  fi
+done
+
+# Viewer token for prerender only. The value stays in a temp file passed via
+# --secret, not in a --build-arg and not in the image.
+SECRET_ARGS=(
+  "SANITY_API_READ_TOKEN"
+)
+SECRET_DIR=$(mktemp -d)
+trap 'rm -rf "$SECRET_DIR"' EXIT
+for ARG in "${SECRET_ARGS[@]}"; do
+  VALUE=$(grep "^$ARG=" .env 2>/dev/null | cut -d'=' -f2- | sed 's/^"//;s/"$//;s/^\x27//;s/\x27$//' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+  if [ -n "$VALUE" ]; then
+    SECRET_FILE="$SECRET_DIR/$ARG"
+    printf '%s' "$VALUE" > "$SECRET_FILE"
+    BUILD_ARGS+=(--secret "id=$ARG,src=$SECRET_FILE")
   fi
 done
 

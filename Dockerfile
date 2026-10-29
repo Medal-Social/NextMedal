@@ -53,9 +53,14 @@ ENV NEXT_DEPLOYMENT_ID=$NEXT_DEPLOYMENT_ID \
     NEXT_TELEMETRY_DISABLED=1 \
     NODE_ENV=production
 
-# Build the Next.js app. The Sanity read token is a runtime secret, so it is
-# not a build arg and is not exported into this stage.
-RUN --mount=type=cache,target=/app/.next/cache \
+# Build the Next.js app. The Viewer token is not a build arg. docker-build.sh
+# mounts it for this RUN when .env has it. The export does not survive this
+# layer, and the runner stage below does not copy it.
+RUN --mount=type=secret,id=SANITY_API_READ_TOKEN,required=false \
+    --mount=type=cache,target=/app/.next/cache \
+    if [ -f /run/secrets/SANITY_API_READ_TOKEN ]; then \
+      export SANITY_API_READ_TOKEN="$(cat /run/secrets/SANITY_API_READ_TOKEN)"; \
+    fi && \
     pnpm build
 
 # --- Production image ---
