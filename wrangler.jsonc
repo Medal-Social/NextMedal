@@ -26,8 +26,9 @@
   // rendering paths — which would leave <head> metadata (og:url, canonical,
   // hreflang) rendering with the localhost fallback. NEXT_PUBLIC_* are public by
   // definition (inlined into the client bundle anyway), so plaintext is fine.
-  // Sensitive/server-only values (MEDAL_API_KEY, the browser token, etc.)
-  // stay as Worker secrets / build-time inlined values pushed by the CI workflow.
+  // Sensitive/server-only values (MEDAL_API_KEY, SANITY_API_READ_TOKEN)
+  // stay as Worker secrets pushed by the CI workflow. A Sanity token must not
+  // be a plaintext var or a NEXT_PUBLIC_ value: Next.js inlines that prefix.
   "vars": {
     "NEXT_PUBLIC_BASE_URL": "https://staging.nextmedal.com",
     "NEXT_PUBLIC_APP_ENV": "staging",

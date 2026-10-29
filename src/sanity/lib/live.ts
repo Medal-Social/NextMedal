@@ -1,20 +1,17 @@
+import 'server-only';
 import type { QueryParams } from 'next-sanity';
 import { defineLive } from 'next-sanity/live';
 import { withRetry } from '@/lib/utils';
 import { client } from '@/sanity/lib/client';
 import { token } from '@/sanity/lib/token';
 
-// Browser token for client-side live updates (NEXT_PUBLIC_ prefix exposes it to browser)
-// Only pass browserToken if it's actually set to avoid connection errors
-const browserToken = process.env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN || undefined;
-
+// Published live updates revalidate through next-sanity's server action.
+// Draft mode and visual editing read `token` on the server. `browserToken`
+// stays false so the Viewer token is never sent to the browser.
 export const { sanityFetch, SanityLive } = defineLive({
   client,
   serverToken: token,
-  // When browserToken is undefined, SanityLive will skip client-side live connections
-  ...(browserToken ? { browserToken } : {}),
-  // next-sanity v13 removed `fetchOptions` (time-based revalidation fallback);
-  // cache invalidation is driven by <SanityLive> sync tags instead
+  browserToken: false,
 });
 
 // Wrapper around sanityFetch that returns just the data
