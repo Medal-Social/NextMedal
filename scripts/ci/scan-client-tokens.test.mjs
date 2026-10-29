@@ -28,6 +28,8 @@ test('flags a Sanity token pattern of sk plus 100 characters and ignores a short
     { kind: 'sanity-pattern' },
   ]);
   assert.deepEqual(scanContents(`const fine = "${almostToken}";`, []), []);
+  // Encoded client payloads contain `sk` inside a longer alphanumeric run.
+  assert.deepEqual(scanContents(`g${sanityToken}`, []), []);
 });
 
 test('flags an environment value whose name ends in TOKEN and ignores other secrets', () => {
@@ -123,8 +125,12 @@ test('the read token stays off public env, Docker build args, and workflow brows
   assert.doesNotMatch(token, /NEXT_PUBLIC_/);
   assert.match(live, /browserToken:\s*false/);
   assert.doesNotMatch(live, /NEXT_PUBLIC_/);
-  assert.doesNotMatch(dockerfile, /SANITY_API_READ_TOKEN|NEXT_PUBLIC_SANITY_BROWSER_TOKEN/);
-  assert.doesNotMatch(dockerScript, /SANITY_API_READ_TOKEN|NEXT_PUBLIC_SANITY_BROWSER_TOKEN/);
+  assert.doesNotMatch(dockerfile, /NEXT_PUBLIC_SANITY_BROWSER_TOKEN/);
+  assert.doesNotMatch(dockerfile, /ARG SANITY_API_READ_TOKEN/);
+  assert.doesNotMatch(dockerfile, /ENV SANITY_API_READ_TOKEN/);
+  assert.match(dockerfile, /--mount=type=secret,id=SANITY_API_READ_TOKEN,required=false/);
+  assert.doesNotMatch(dockerScript, /NEXT_PUBLIC_SANITY_BROWSER_TOKEN/);
+  assert.match(dockerScript, /--secret "id=\$ARG,src=\$SECRET_FILE"/);
   for (const name of ['ci.yml', 'cloudflare-staging.yml', 'cloudflare-prod.yml']) {
     const workflow = read(`.github/workflows/${name}`);
     assert.doesNotMatch(workflow, /NEXT_PUBLIC_SANITY_BROWSER_TOKEN:/);

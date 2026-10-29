@@ -2,8 +2,12 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-/** Sanity API tokens are `sk` plus a long alphanumeric secret. */
-export const SANITY_TOKEN_PATTERN = /sk[A-Za-z0-9]{100,}/;
+/**
+ * Sanity API tokens are `sk` plus a long alphanumeric secret. The character
+ * before `sk` must not be alphanumeric: client chunks contain encoded payloads
+ * where `sk` sits in the middle of a longer run, and those are not tokens.
+ */
+export const SANITY_TOKEN_PATTERN = /(?<![A-Za-z0-9])sk[A-Za-z0-9]{100,}/;
 
 const MIN_TOKEN_VALUE_LENGTH = 8;
 
