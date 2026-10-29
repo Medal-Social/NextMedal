@@ -35,7 +35,7 @@ NextMedal uses a **collection-based content architecture** where content types (
 For a new collection (e.g., **Tutorials**), you'll create:
 
 1. **Collection Document Schema** (`collection.tutorial.tsx`)
-2. **List block schema** (`tutorials-frontpage.ts`) — no design fields
+2. **List block schema** (`tutorials-frontpage.ts`). No design fields
 3. **Frontpage Component** (`TutorialsFrontpage.tsx`)
 4. **Registry Configuration** (collection types and defaults)
 5. **Page block registry and design** (`page-blocks.ts`, `block-design.ts`)
@@ -322,7 +322,9 @@ export default defineType({
 });
 ```
 
-**Design in code** — **File**: `src/components/blocks/modules/block-design.ts`
+**Design in code**
+
+**File**: `src/components/blocks/modules/block-design.ts`
 
 Add a constant and a case next to `ARTICLE_LIST`. The component reads these values as props; editors never set them.
 
