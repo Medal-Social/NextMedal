@@ -100,6 +100,25 @@ describe.each(workflows)('%s', (file) => {
     expect(`${result.stdout}${result.stderr}`).not.toContain(READ_TOKEN);
   });
 
+  it('skips the pre-deploy token upload when the Worker does not exist yet', () => {
+    const script = stepScript(source, 'Upload SANITY_API_READ_TOKEN');
+    const { status, calls, output } = runUpload(script, { listStatus: 1 });
+    expect(status).toBe(0);
+    expect(calls.some((call) => call.includes('secret put'))).toBe(false);
+    expect(output).not.toContain(READ_TOKEN);
+  });
+
+  it('uploads the read token before deploy when the Worker already exists', () => {
+    const script = stepScript(source, 'Upload SANITY_API_READ_TOKEN');
+    const { status, calls, output } = runUpload(script, { listStatus: 0 });
+    expect(status).toBe(0);
+    expect(calls.filter((call) => call.includes('secret put SANITY_API_READ_TOKEN'))).toHaveLength(
+      1
+    );
+    expect(output).not.toContain(READ_TOKEN);
+    expect(calls.join('\n')).not.toContain(READ_TOKEN);
+  });
+
   it('checks the read token and scans bundles before deploy', () => {
     expect(source.indexOf('- name: Require SANITY_API_READ_TOKEN')).toBeLessThan(
       source.indexOf('- name: Build for Cloudflare Workers')
@@ -179,6 +198,46 @@ function fakeUpload(source: string, secretsOnWorker: string[]) {
       .trim();
     if (resolved !== fake) throw new Error(`refusing to run: pnpm resolves to ${resolved}`);
     const result = spawnSync('bash', ['-c', stepScript(source, 'Upload Worker secrets')], { env });
+    const calls = readFileSync(log, 'utf8').trim().split('\n').filter(Boolean);
+    const output = `${result.stdout?.toString() ?? ''}${result.stderr?.toString() ?? ''}`;
+    return { status: result.status, calls, output };
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+/** Runs one workflow script against a fake pnpm. `secret list` exits with listStatus. */
+function runUpload(script: string, options: { listStatus: number }) {
+  const dir = mkdtempSync(join(tmpdir(), 'nm-predeploy-'));
+  try {
+    const fake = join(dir, 'pnpm');
+    const log = join(dir, 'calls.log');
+    writeFileSync(
+      fake,
+      [
+        '#!/bin/bash',
+        'echo "$*" >> "$CALLS"',
+        'if [[ "$*" == *"secret list"* ]]; then exit "$LIST_STATUS"; fi',
+        'cat > /dev/null',
+        '',
+      ].join('\n')
+    );
+    chmodSync(fake, 0o755);
+    writeFileSync(log, '');
+    const env = {
+      PATH: `${dir}:/usr/bin:/bin`,
+      HOME: dir,
+      XDG_CONFIG_HOME: dir,
+      CALLS: log,
+      LIST_STATUS: String(options.listStatus),
+      SANITY_API_READ_TOKEN: READ_TOKEN,
+    } as unknown as NodeJS.ProcessEnv;
+    if (Object.keys(env).some((key) => key.startsWith('CLOUDFLARE_'))) {
+      throw new Error('refusing to run: Cloudflare credentials in the environment');
+    }
+    const resolved = spawnSync('bash', ['-c', 'command -v pnpm'], { env }).stdout.toString().trim();
+    if (resolved !== fake) throw new Error(`refusing to run: pnpm resolves to ${resolved}`);
+    const result = spawnSync('bash', ['-c', script], { env });
     const calls = readFileSync(log, 'utf8').trim().split('\n').filter(Boolean);
     const output = `${result.stdout?.toString() ?? ''}${result.stderr?.toString() ?? ''}`;
     return { status: result.status, calls, output };

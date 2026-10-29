@@ -98,8 +98,14 @@ jobs:
         run: |
           set -euo pipefail
           sanity_token="$(printf '%s' "$SANITY_API_READ_TOKEN" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
-          echo "Uploading SANITY_API_READ_TOKEN to nextmedal-staging before deploy..."
-          printf '%s' "$sanity_token" | pnpm exec wrangler secret put SANITY_API_READ_TOKEN
+          # secret put only updates a Worker that already exists. A first deploy
+          # creates the Worker, then the later upload step stores the token.
+          if pnpm exec wrangler secret list >/dev/null 2>&1; then
+            echo "Uploading SANITY_API_READ_TOKEN to nextmedal-staging before deploy..."
+            printf '%s' "$sanity_token" | pnpm exec wrangler secret put SANITY_API_READ_TOKEN
+          else
+            echo "No staging Worker yet. The token is uploaded after the first deploy."
+          fi
 
       - name: Deploy to Cloudflare
         uses: cloudflare/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd # v3
