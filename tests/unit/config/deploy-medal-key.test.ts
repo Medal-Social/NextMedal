@@ -13,6 +13,21 @@ const READ_TOKEN = 'viewer_read_token_value';
 const read = (file: string) =>
   readFileSync(resolve(__dirname, '../../../.github/workflows', file), 'utf8');
 
+/** YAML for one step, from its `- name:` through the line before the next step. */
+function stepBlock(source: string, name: string): string {
+  const lines = source.split('\n');
+  const start = lines.findIndex((line) => line.trim() === `- name: ${name}`);
+  if (start < 0) throw new Error(`no step "${name}"`);
+  let end = lines.length;
+  for (let index = start + 1; index < lines.length; index++) {
+    if (/^ {6}- /.test(lines[index] ?? '')) {
+      end = index;
+      break;
+    }
+  }
+  return lines.slice(start, end).join('\n');
+}
+
 /** The `run: |` script of the step with this name (block scalar, indentation-based). */
 function stepScript(source: string, name: string): string {
   const lines = source.split('\n');
@@ -100,15 +115,63 @@ describe.each(workflows)('%s', (file) => {
     expect(`${result.stdout}${result.stderr}`).not.toContain(READ_TOKEN);
   });
 
-  it('skips the pre-deploy token upload when the Worker does not exist yet', () => {
+  it('skips the pre-deploy token upload only for the missing-Worker error', () => {
     const script = stepScript(source, 'Upload SANITY_API_READ_TOKEN');
-    const { status, calls, output } = runUpload(script, {
-      listStatus: 1,
-      listStderr: 'Worker not found',
-    });
-    expect(status).toBe(0);
-    expect(calls.some((call) => call.includes('secret put'))).toBe(false);
-    expect(output).not.toContain(READ_TOKEN);
+    for (const listStderr of [
+      'This Worker does not exist on your account. [code: 10007]',
+      'code: 10007',
+      'This Worker does not exist',
+    ]) {
+      const { status, calls, output } = runUpload(script, { listStatus: 1, listStderr });
+      expect(status, listStderr).toBe(0);
+      expect(calls.some((call) => call.includes('secret put'))).toBe(false);
+      expect(output).not.toContain(READ_TOKEN);
+    }
+  });
+
+  it('does not treat a broad not-found message as a missing Worker', () => {
+    const script = stepScript(source, 'Upload SANITY_API_READ_TOKEN');
+    for (const listStderr of [
+      'Worker not found',
+      'The secret does not exist',
+      'Account does not exist',
+      'request id 100070',
+    ]) {
+      const { status, calls, output } = runUpload(script, { listStatus: 1, listStderr });
+      expect(status, listStderr).not.toBe(0);
+      expect(calls.some((call) => call.includes('secret put'))).toBe(false);
+      expect(output).toContain('Could not list');
+      expect(output).not.toContain(READ_TOKEN);
+    }
+  });
+
+  it('passes SANITY_API_READ_TOKEN only to the steps that read it', () => {
+    const stepsAt = source.indexOf('\n    steps:\n');
+    const envAt = source.lastIndexOf('\n    env:\n', stepsAt);
+    expect(source.slice(envAt, stepsAt)).not.toContain('SANITY_API_READ_TOKEN');
+
+    for (const name of [
+      'Require SANITY_API_READ_TOKEN',
+      'Build for Cloudflare Workers',
+      'Scan client and Studio bundles for tokens',
+      'Upload SANITY_API_READ_TOKEN',
+      'Upload Worker secrets',
+    ]) {
+      expect(stepBlock(source, name)).toContain('secrets.SANITY_API_READ_TOKEN');
+    }
+
+    for (const name of [
+      'Require MEDAL_API_KEY',
+      'Checkout repository',
+      'Setup pnpm',
+      'Setup Node.js',
+      'Install dependencies',
+      'Deploy to Cloudflare',
+      'Verify release freshness',
+      'Summary',
+    ]) {
+      expect(stepBlock(source, name)).not.toContain('SANITY_API_READ_TOKEN');
+    }
   });
 
   it('stops before deploy when listing Worker secrets fails for another reason', () => {

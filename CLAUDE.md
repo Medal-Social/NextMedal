@@ -12,7 +12,7 @@ NextMedal is a Next.js 16 + Sanity CMS website template built by Medal Social. I
 # Development
 pnpm dev                    # Start dev server with Turbopack (http://localhost:3000)
 pnpm build                  # Production build
-pnpm scan:client-tokens     # Fail if a Sanity token is in .next/static or a Studio bundle
+pnpm scan:client-tokens     # Fail if a Sanity token is in a public bundle or prerendered page
 pnpm start                  # Run production build
 
 # Code Quality
@@ -381,7 +381,7 @@ The article system is the primary content publishing mechanism, replacing the le
 - Revalidation is automatic via `<SanityLive>` component - no webhooks needed
 - Use GROQ projections - only fetch fields you need
 - Use `useCdn: false` only in draft/preview mode
-- The Viewer token is `SANITY_API_READ_TOKEN` in `src/sanity/lib/token.ts`. That module imports `server-only`. `defineLive` receives it as `serverToken` with `browserToken: false`. Draft mode and visual editing read it through the draft-mode route and server actions. Do not add a `NEXT_PUBLIC_` Sanity token: Next.js inlines that prefix into `/_next/static`. After a production build, `pnpm scan:client-tokens` fails if a Sanity token pattern (`sk` plus 100 characters) or a `*TOKEN` value is in `.next/static` or a Studio bundle.
+- The Viewer token is `SANITY_API_READ_TOKEN` in `src/sanity/lib/token.ts`. That module imports `server-only`. `defineLive` receives it as `serverToken` with `browserToken: false`. Draft mode and visual editing read it through the draft-mode route and server actions. Do not add a `NEXT_PUBLIC_` Sanity token: Next.js inlines that prefix into `/_next/static`. After a production build, `pnpm scan:client-tokens` fails if a Sanity token pattern (`sk` plus 100 characters) or a `*TOKEN` value is in `.next/static`, a Studio bundle, or a prerendered `.html` or `.rsc` file under `.next/server/app` or `.open-next/cache`. `data:` URIs are skipped so inlined base64 does not match by chance.
 
 **Portable Text:**
 - Use Next.js `<Link>` for internal links in custom components

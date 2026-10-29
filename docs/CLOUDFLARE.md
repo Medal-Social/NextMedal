@@ -41,7 +41,7 @@ The two workflows are **dormant by default**. To enable automatic deploys:
      the old `NEXT_PUBLIC_` token. Next.js inlines that prefix into public
      JavaScript. `pnpm scan:client-tokens` runs after the Worker build and
      fails the job if a Sanity token pattern or a `*TOKEN` value is in
-     `.next/static` or a Studio bundle.
+     `.next/static`, a Studio bundle, or a prerendered `.html` or `.rsc` file.
    - `NEXT_PUBLIC_UMAMI_SCRIPT_URL`, `NEXT_PUBLIC_UMAMI_WEBSITE_ID` (optional —
      analytics).
    - `MEDAL_API_KEY` (**required for forms**) and `MEDAL_API_ENDPOINT`

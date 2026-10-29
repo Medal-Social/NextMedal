@@ -6,16 +6,26 @@ import { pathToFileURL } from 'node:url';
  * Sanity API tokens are `sk` plus a long alphanumeric secret. The character
  * before `sk` must not be alphanumeric: client chunks contain encoded payloads
  * where `sk` sits in the middle of a longer run, and those are not tokens.
+ *
+ * `data:` URIs are removed before matching. Inlined base64 can contain an
+ * `sk` run of 100 characters by chance, and that is not a token.
  */
 export const SANITY_TOKEN_PATTERN = /(?<![A-Za-z0-9])sk[A-Za-z0-9]{100,}/;
 
 const MIN_TOKEN_VALUE_LENGTH = 8;
+const PRERENDER_EXTENSIONS = ['.html', '.rsc'];
 
 export const BUNDLE_DIRECTORIES = [
   { relativePath: '.next/static', required: true },
   { relativePath: 'dist/static', required: false },
   { relativePath: '.open-next/assets', required: false },
+  { relativePath: '.next/server/app', required: false, extensions: PRERENDER_EXTENSIONS },
+  { relativePath: '.open-next/cache', required: false, extensions: PRERENDER_EXTENSIONS },
 ];
+
+function withoutDataUris(contents) {
+  return contents.replace(/(?:^|[^A-Za-z0-9])data:[^"'`\s)]*/g, ' ');
+}
 
 export function tokenValuesFromEnv(env) {
   const values = [];
@@ -29,10 +39,11 @@ export function tokenValuesFromEnv(env) {
 }
 
 export function scanContents(contents, tokenValues) {
+  const visible = withoutDataUris(contents);
   const hits = [];
-  if (SANITY_TOKEN_PATTERN.test(contents)) hits.push({ kind: 'sanity-pattern' });
+  if (SANITY_TOKEN_PATTERN.test(visible)) hits.push({ kind: 'sanity-pattern' });
   for (const entry of tokenValues) {
-    if (contents.includes(entry.value)) hits.push({ kind: 'env-token', name: entry.name });
+    if (visible.includes(entry.value)) hits.push({ kind: 'env-token', name: entry.name });
   }
   return hits;
 }
@@ -45,11 +56,17 @@ function isDirectory(path) {
   }
 }
 
-function walkFiles(directory, files) {
+function includedFile(name, extensions) {
+  if (!extensions) return true;
+  const lower = name.toLowerCase();
+  return extensions.some((extension) => lower.endsWith(extension));
+}
+
+function walkFiles(directory, files, extensions) {
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
     const fullPath = join(directory, entry.name);
-    if (entry.isDirectory()) walkFiles(fullPath, files);
-    else if (entry.isFile()) files.push(fullPath);
+    if (entry.isDirectory()) walkFiles(fullPath, files, extensions);
+    else if (entry.isFile() && includedFile(entry.name, extensions)) files.push(fullPath);
   }
   return files;
 }
@@ -70,7 +87,7 @@ export function scanBundles({ cwd, env, directories = BUNDLE_DIRECTORIES }) {
   const tokenValues = tokenValuesFromEnv(env);
   const findings = [];
   for (const target of targets) {
-    for (const file of walkFiles(target.absolute, [])) {
+    for (const file of walkFiles(target.absolute, [], target.extensions)) {
       const contents = readFileSync(file).toString('latin1');
       for (const hit of scanContents(contents, tokenValues)) {
         findings.push({ file: relative(cwd, file), ...hit });
@@ -112,5 +129,5 @@ if (isDirectRun()) {
     console.error(formatReport(result));
     process.exit(1);
   }
-  console.log('scan:client-tokens: no Sanity tokens in client or Studio bundles.');
+  console.log('scan:client-tokens: no Sanity tokens in client bundles or prerendered pages.');
 }

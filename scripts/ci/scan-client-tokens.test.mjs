@@ -102,6 +102,47 @@ test('fails when a TOKEN value is inside .next/static', () => {
   }
 });
 
+test('ignores a Sanity-shaped run and a TOKEN value inside a data URI', () => {
+  const tokens = tokenValuesFromEnv({ SANITY_API_READ_TOKEN: viewerToken });
+  const image = `data:image/png;base64,${sanityToken}`;
+  assert.deepEqual(scanContents(`var icon="${image}"`, tokens), []);
+  assert.deepEqual(scanContents(`url(data:image/svg+xml,${viewerToken})`, tokens), []);
+  assert.deepEqual(scanContents(`var icon="${image}"; var leaked="${sanityToken}"`, tokens), [
+    { kind: 'sanity-pattern' },
+  ]);
+  assert.deepEqual(scanContents(`var icon="${image}"; window.TOKEN="${viewerToken}"`, tokens), [
+    { kind: 'env-token', name: 'SANITY_API_READ_TOKEN' },
+  ]);
+  // `metadata:` contains the letters `data:` and must still be scanned.
+  assert.deepEqual(scanContents(`metadata:${sanityToken}`, tokens), [{ kind: 'sanity-pattern' }]);
+});
+
+test('scans prerendered html and rsc files and skips other files beside them', () => {
+  const cwd = fixture();
+  try {
+    writeFileSync(join(cwd, '.next/static/chunks/app.js'), 'published content only');
+    mkdirSync(join(cwd, '.next/server/app/en'), { recursive: true });
+    writeFileSync(join(cwd, '.next/server/app/en/page.js'), sanityToken);
+    writeFileSync(join(cwd, '.next/server/app/en/page.rsc'), `payload ${viewerToken}`);
+    writeFileSync(join(cwd, '.next/server/app/en/page.html'), 'clean html');
+    mkdirSync(join(cwd, '.open-next/cache/pages'), { recursive: true });
+    writeFileSync(join(cwd, '.open-next/cache/pages/index.html'), `html ${sanityToken}`);
+    writeFileSync(join(cwd, '.open-next/cache/pages/data.json'), viewerToken);
+
+    const result = scanBundles({ cwd, env: { SANITY_API_READ_TOKEN: viewerToken } });
+
+    assert.equal(result.ok, false);
+    assert.deepEqual(result.findings.map((finding) => finding.file).sort(), [
+      '.next/server/app/en/page.rsc',
+      '.open-next/cache/pages/index.html',
+    ]);
+    assert.equal(formatReport(result).includes(viewerToken), false);
+    assert.equal(formatReport(result).includes(sanityToken), false);
+  } finally {
+    rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
 test('passes a clean client bundle and still requires .next/static', () => {
   const cwd = fixture();
   try {
