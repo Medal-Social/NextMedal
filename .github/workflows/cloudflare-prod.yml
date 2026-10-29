@@ -55,7 +55,8 @@ jobs:
 
       - name: Require SANITY_API_READ_TOKEN
         run: |
-          if [ -z "${SANITY_API_READ_TOKEN:-}" ]; then
+          sanity_token="$(printf '%s' "${SANITY_API_READ_TOKEN:-}" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          if [ -z "$sanity_token" ]; then
             echo "::error::SANITY_API_READ_TOKEN is empty. Add a Viewer token to the Prod environment. Do not use a NEXT_PUBLIC_ name."
             exit 1
           fi
@@ -81,6 +82,19 @@ jobs:
       - name: Scan client and Studio bundles for tokens
         run: pnpm scan:client-tokens
 
+      # Land the read token on the Worker that is already deployed. The new
+      # server throws when the secret is missing, and `--keep-vars` on the
+      # deploy below keeps this value.
+      - name: Upload SANITY_API_READ_TOKEN
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          sanity_token="$(printf '%s' "$SANITY_API_READ_TOKEN" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          echo "Uploading SANITY_API_READ_TOKEN to nextmedal (production) before deploy..."
+          printf '%s' "$sanity_token" | pnpm exec wrangler secret put SANITY_API_READ_TOKEN --env production
+
       - name: Deploy to Cloudflare
         uses: cloudflare/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd # v3
         with:
@@ -98,7 +112,8 @@ jobs:
           echo "Uploading MEDAL_API_KEY to nextmedal (production)..."
           printf '%s' "$MEDAL_API_KEY" | pnpm exec wrangler secret put MEDAL_API_KEY --env production
           echo "Uploading SANITY_API_READ_TOKEN to nextmedal (production)..."
-          printf '%s' "$SANITY_API_READ_TOKEN" | pnpm exec wrangler secret put SANITY_API_READ_TOKEN --env production
+          sanity_token="$(printf '%s' "$SANITY_API_READ_TOKEN" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          printf '%s' "$sanity_token" | pnpm exec wrangler secret put SANITY_API_READ_TOKEN --env production
           # Optional: an empty value deletes it, so a removed endpoint doesn't linger under --keep-vars.
           for name in MEDAL_API_ENDPOINT; do
             value="${!name:-}"

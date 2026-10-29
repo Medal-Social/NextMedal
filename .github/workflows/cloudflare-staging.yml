@@ -61,7 +61,8 @@ jobs:
 
       - name: Require SANITY_API_READ_TOKEN
         run: |
-          if [ -z "${SANITY_API_READ_TOKEN:-}" ]; then
+          sanity_token="$(printf '%s' "${SANITY_API_READ_TOKEN:-}" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          if [ -z "$sanity_token" ]; then
             echo "::error::SANITY_API_READ_TOKEN is empty. Add a Viewer token to the Staging environment. Do not use a NEXT_PUBLIC_ name."
             exit 1
           fi
@@ -87,10 +88,19 @@ jobs:
       - name: Scan client and Studio bundles for tokens
         run: pnpm scan:client-tokens
 
-      # Deploy the code first, then reconcile secrets — `wrangler secret put`
-      # only works against the currently-deployed version of a Worker.
-      # `--keep-vars` preserves existing Worker vars/secrets during the window
-      # between deploy and secret reconciliation.
+      # Land the read token on the Worker that is already deployed. The new
+      # server throws when the secret is missing, and `--keep-vars` on the
+      # deploy below keeps this value. Other secrets are reconciled after.
+      - name: Upload SANITY_API_READ_TOKEN
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          sanity_token="$(printf '%s' "$SANITY_API_READ_TOKEN" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          echo "Uploading SANITY_API_READ_TOKEN to nextmedal-staging before deploy..."
+          printf '%s' "$sanity_token" | pnpm exec wrangler secret put SANITY_API_READ_TOKEN
+
       - name: Deploy to Cloudflare
         uses: cloudflare/wrangler-action@9acf94ace14e7dc412b076f2c5c20b8ce93c79cd # v3
         with:
@@ -110,7 +120,8 @@ jobs:
           echo "Uploading MEDAL_API_KEY to nextmedal-staging..."
           printf '%s' "$MEDAL_API_KEY" | pnpm exec wrangler secret put MEDAL_API_KEY
           echo "Uploading SANITY_API_READ_TOKEN to nextmedal-staging..."
-          printf '%s' "$SANITY_API_READ_TOKEN" | pnpm exec wrangler secret put SANITY_API_READ_TOKEN
+          sanity_token="$(printf '%s' "$SANITY_API_READ_TOKEN" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          printf '%s' "$sanity_token" | pnpm exec wrangler secret put SANITY_API_READ_TOKEN
           # Optional: an empty value deletes it, so a removed value doesn't linger under --keep-vars.
           for name in MEDAL_API_ENDPOINT; do
             value="${!name:-}"

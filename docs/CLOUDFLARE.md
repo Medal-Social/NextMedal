@@ -35,9 +35,10 @@ The two workflows are **dormant by default**. To enable automatic deploys:
    - `CLOUDFLARE_API_TOKEN` — a token with *Workers Scripts: Edit* (+ *Workers
      Routes: Edit* for custom domains) on the Medal Social Cloudflare account.
    - `CLOUDFLARE_ACCOUNT_ID` — the account ID.
-   - `SANITY_API_READ_TOKEN` — server-only Viewer token for draft mode and
-     server reads. The deploy uploads it as a Worker secret. Do not recreate
-     the old `NEXT_PUBLIC_` token: Next.js inlines that prefix into public
+   - `SANITY_API_READ_TOKEN`: server-only Viewer token for draft mode and
+     server reads. The workflow uploads this Worker secret before it deploys
+     the new code, because pages throw when it is missing. Do not recreate
+     the old `NEXT_PUBLIC_` token. Next.js inlines that prefix into public
      JavaScript. `pnpm scan:client-tokens` runs after the Worker build and
      fails the job if a Sanity token pattern or a `*TOKEN` value is in
      `.next/static` or a Studio bundle.

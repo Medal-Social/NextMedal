@@ -93,11 +93,21 @@ describe.each(workflows)('%s', (file) => {
     expect(`${result.stdout}${result.stderr}`).not.toContain(READ_TOKEN);
   });
 
+  it('rejects a whitespace-only read token without printing it', () => {
+    const readTokenCheck = stepScript(source, 'Require SANITY_API_READ_TOKEN');
+    const result = run(readTokenCheck, { SANITY_API_READ_TOKEN: ' \t' });
+    expect(result.status).not.toBe(0);
+    expect(`${result.stdout}${result.stderr}`).not.toContain(READ_TOKEN);
+  });
+
   it('checks the read token and scans bundles before deploy', () => {
     expect(source.indexOf('- name: Require SANITY_API_READ_TOKEN')).toBeLessThan(
       source.indexOf('- name: Build for Cloudflare Workers')
     );
     expect(source.indexOf('- name: Scan client and Studio bundles for tokens')).toBeLessThan(
+      source.indexOf('- name: Deploy to Cloudflare')
+    );
+    expect(source.indexOf('- name: Upload SANITY_API_READ_TOKEN')).toBeLessThan(
       source.indexOf('- name: Deploy to Cloudflare')
     );
   });
