@@ -120,9 +120,13 @@ test('Docker build mounts the Viewer token as a secret and does not pass it as a
       join(dir, '.env'),
       `NEXT_PUBLIC_SANITY_PROJECT_ID=test\nSANITY_API_READ_TOKEN=${token}\n`
     );
-    writeFileSync(join(dir, 'bin/docker'), '#!/bin/sh\nprintf "%s\\n" "$@" > "$DOCKER_TEST_ARGS"\n', {
-      mode: 0o755,
-    });
+    writeFileSync(
+      join(dir, 'bin/docker'),
+      '#!/bin/sh\nprintf "%s\\n" "$@" > "$DOCKER_TEST_ARGS"\n',
+      {
+        mode: 0o755,
+      }
+    );
     execFileSync('git', ['init', '-q', dir]);
     execFileSync(
       'git',
