@@ -128,15 +128,16 @@ If you already have a Sanity project:
    NEXT_PUBLIC_BASE_URL=http://localhost:3000
    ```
 
-3. **(Optional but recommended)** Create a Sanity API token for live preview:
+3. **Create a server-only Sanity API token** (required to run the app):
    - Go to [sanity.io/manage](https://www.sanity.io/manage) → Your Project → **API** → **Tokens**
    - Click **Add API Token**
-   - Name: "NextMedal Browser Token"
+   - Name: "NextMedal Read Token"
    - Permissions: **Viewer**
-   - Copy the token and add it to `.env.local`:
+   - Add it to `.env.local` as `SANITY_API_READ_TOKEN`. Leave the `NEXT_PUBLIC_` prefix off. Next.js copies `NEXT_PUBLIC_` values into public JavaScript, which would publish the token.
      ```bash
-     NEXT_PUBLIC_SANITY_BROWSER_TOKEN=your_token_here
+     SANITY_API_READ_TOKEN=your_token_here
      ```
+   Draft mode and visual editing read this token on the server (the draft-mode route and server actions). It is not passed to the browser. `pnpm dev` throws if it is missing. A production build can prerender published content without it, and the running server still needs it.
 
 ---
 

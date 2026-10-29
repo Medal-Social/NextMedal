@@ -340,6 +340,18 @@ arguments. `NEXT_DEPLOYMENT_ID` is a public build identifier, not a secret, and
 must be present in the build stage; setting it only when starting the image is
 not sufficient. Missing IDs fail before an archive build invokes Docker.
 
+The running container needs `SANITY_API_READ_TOKEN`, a Sanity Viewer token, in
+its environment. It is not a build argument and it is not stored in the image.
+When `.env` contains it, the build script mounts it as a BuildKit secret for
+`pnpm build` only. Pass it again when you start the container. The value comes
+from the host environment, so it is not written into the command:
+
+```bash
+docker run --env SANITY_API_READ_TOKEN -p 3000:3000 nextmedal
+```
+
+`/api/health` does not call Sanity. Pages that read content need the token.
+
 ## Why Medal Social? 🏆
 
 NextMedal is crafted by Medal Social, a marketing powerhouse that knows how to elevate brands. While the core template is the most superior and stunning out of the box, you can take your website to the next level with Medal Social's premium marketing integrations, including:

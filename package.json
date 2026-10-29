@@ -17,6 +17,7 @@
     "dev": "next dev",
     "prebuild": "pnpm generate:collections",
     "build": "next build",
+    "scan:client-tokens": "node scripts/ci/scan-client-tokens.mjs",
     "start": "next start",
     "preview": "CLOUDFLARE_BUILD=true opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy:staging": "CLOUDFLARE_BUILD=true opennextjs-cloudflare build && wrangler deploy",

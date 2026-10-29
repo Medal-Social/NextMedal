@@ -67,12 +67,14 @@ describe('env', () => {
     });
 
     it('includes optional env vars when provided', async () => {
-      process.env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN = 'secret-token';
+      process.env.SANITY_API_READ_TOKEN = 'server-viewer-token';
+      process.env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN = 'public-browser-token';
       process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID = 'umami-123';
 
       const { env } = await import('@/lib/core/env');
 
-      expect(env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN).toBe('secret-token');
+      expect(env.SANITY_API_READ_TOKEN).toBe('server-viewer-token');
+      expect(env).not.toHaveProperty('NEXT_PUBLIC_SANITY_BROWSER_TOKEN');
       expect(env.NEXT_PUBLIC_UMAMI_WEBSITE_ID).toBe('umami-123');
     });
   });
@@ -288,7 +290,8 @@ describe('env', () => {
       process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL = '';
       process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID = '';
       process.env.NEXT_PUBLIC_IMAGE_PROXY_URL = '';
-      process.env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN = '';
+      process.env.SANITY_API_READ_TOKEN = '';
+      process.env.NEXT_PUBLIC_SANITY_BROWSER_TOKEN = 'public-browser-token';
       process.env.MEDAL_API_KEY = '';
       process.env.MEDAL_API_ENDPOINT = '';
 
@@ -297,6 +300,8 @@ describe('env', () => {
       expect(env.NEXT_PUBLIC_BASE_URL).toBe('https://example.com');
       expect(env.NEXT_PUBLIC_UMAMI_SCRIPT_URL).toBeUndefined();
       expect(env.MEDAL_API_ENDPOINT).toBeUndefined();
+      expect(env.SANITY_API_READ_TOKEN).toBeUndefined();
+      expect(env).not.toHaveProperty('NEXT_PUBLIC_SANITY_BROWSER_TOKEN');
     });
   });
 

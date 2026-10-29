@@ -98,11 +98,19 @@ if (envLocalExists) {
     'Set to http://localhost:3000 for local development'
   );
 
+  check(
+    'SANITY_API_READ_TOKEN',
+    !!envVars.get('SANITY_API_READ_TOKEN')?.trim(),
+    'SANITY_API_READ_TOKEN is set',
+    'Create a Viewer token at https://www.sanity.io/manage → API → Tokens. ' +
+      'Set SANITY_API_READ_TOKEN. A NEXT_PUBLIC_ name is copied into public JavaScript.'
+  );
+
   warn(
     'NEXT_PUBLIC_SANITY_BROWSER_TOKEN',
-    !!envVars.get('NEXT_PUBLIC_SANITY_BROWSER_TOKEN')?.trim(),
-    'NEXT_PUBLIC_SANITY_BROWSER_TOKEN is not set (optional but recommended)',
-    'Create a viewer token at https://www.sanity.io/manage → Your Project → API → Tokens'
+    !envVars.get('NEXT_PUBLIC_SANITY_BROWSER_TOKEN')?.trim(),
+    'NEXT_PUBLIC_SANITY_BROWSER_TOKEN is set. Remove it and use SANITY_API_READ_TOKEN.',
+    'Delete NEXT_PUBLIC_SANITY_BROWSER_TOKEN from .env.local'
   );
 }
 

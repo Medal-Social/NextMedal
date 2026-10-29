@@ -53,11 +53,14 @@ ENV NEXT_DEPLOYMENT_ID=$NEXT_DEPLOYMENT_ID \
     NEXT_TELEMETRY_DISABLED=1 \
     NODE_ENV=production
 
-# Build the Next.js app
-# We mount sensitive tokens as secrets to avoid leaking them in the image layers
-RUN --mount=type=secret,id=NEXT_PUBLIC_SANITY_BROWSER_TOKEN \
+# Build the Next.js app. The Viewer token is not a build arg. docker-build.sh
+# mounts it for this RUN when .env has it. The export does not survive this
+# layer, and the runner stage below does not copy it.
+RUN --mount=type=secret,id=SANITY_API_READ_TOKEN,required=false \
     --mount=type=cache,target=/app/.next/cache \
-    export NEXT_PUBLIC_SANITY_BROWSER_TOKEN=$(cat /run/secrets/NEXT_PUBLIC_SANITY_BROWSER_TOKEN) && \
+    if [ -f /run/secrets/SANITY_API_READ_TOKEN ]; then \
+      export SANITY_API_READ_TOKEN="$(cat /run/secrets/SANITY_API_READ_TOKEN)"; \
+    fi && \
     pnpm build
 
 # --- Production image ---
